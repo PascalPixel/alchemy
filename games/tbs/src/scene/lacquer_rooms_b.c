@@ -33,9 +33,24 @@
 ///
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_effect.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct Trigger *Scene_GetTriggers(void);
 extern struct SceneEntrance gLacquerRoomsB_Entrances[];
@@ -44,22 +59,6 @@ extern struct ActorPlacement gLacquerRoomsB_ActorPlacements[];
 extern struct ActorPlacement gLacquerRoomsB_SchoolRoomActorPlacements[];
 extern struct Trigger gLacquerRoomsB_Triggers[];
 extern struct Trigger gLacquerRoomsB_SchoolRoomTriggers[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/field_effect.h"
-#include "text/msg_ids.h"
-#include "flags.h"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// The actors of the houses, shops and inn, numbered by the rows of
 /// gLacquerRoomsB_ActorPlacements. Each villager is named by what they

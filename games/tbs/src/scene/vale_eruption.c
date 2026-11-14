@@ -33,9 +33,22 @@
 /// The scene sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it. Sol
 /// Sanctum's entrance scene does (sol_sanctum_entrance.c).
 
+#include "flags.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern s32 gValeEruption_LeaderWalksDown[];
@@ -46,20 +59,6 @@ extern u32 gValeEruption_Exits[];
 extern struct ActorPlacement gValeEruption_ActorPlacements[];
 extern struct Trigger gValeEruption_Triggers[];
 extern u16 gValeEruption_SanctumDoorOpens[];
-
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "text/msg_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
 
 /// The placed actors, numbered in the order of gValeEruption_ActorPlacements.
 /// Garet's row places the party's Garet and takes no number.

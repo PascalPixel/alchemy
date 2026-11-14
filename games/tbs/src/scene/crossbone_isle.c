@@ -81,11 +81,30 @@
 /// ivy and plants on the island, the sliding logs' footprints, the corridor's
 /// sunk pillars and the chests the mimics leave.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 
 extern u16 gCrossboneIsle_EntranceCells[];
 extern struct SceneEntrance gCrossboneIsle_IsleEntrances[];
@@ -104,26 +123,6 @@ extern struct Trigger gCrossboneIsle_IsleTriggers[];
 extern struct Trigger gCrossboneIsle_FloatingLogsTriggers[];
 extern struct Trigger gCrossboneIsle_PierTriggers[];
 extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
-
-#include "scene/actor_orbit.h"
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "menu/menu.h"
-#include "field/event.h"
-#include "field/pushed_actor.h"
-#include "field/field_effect.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "sound/sound.h"
-#include "field/event_inline.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "flags.h"
-#include "scene/catch_nut.h"
 
 /// A chest searched while facing the given way.
 #define EXAMINE_CHEST_FACING(facing)                                           \

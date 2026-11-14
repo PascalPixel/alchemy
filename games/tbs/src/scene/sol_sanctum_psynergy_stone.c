@@ -13,25 +13,23 @@
 /// Retreat does not work here. Once Mt. Aleph has erupted, the room rumbles and
 /// shakes, as the rest of the sanctum does.
 
+#include "flags.h"
 #include "types.h"
-#include "field/scene_tables.h"
-
-extern struct SceneEntrance gSolSanctumPsynergyStoneEntrances[];
-extern u32 gSolSanctumPsynergyStoneExits[];
-extern struct ActorPlacement gSolSanctumPsynergyStoneActorPlacements[];
-extern struct Trigger gSolSanctumPsynergyStoneTriggers[];
-
 #include "battle/battle.h"
 #include "debug/debug.h"
+#include "field/event.h"
 #include "field/field.h"
+#include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
 
-#include "field/event.h"
-#include "flags.h"
+extern struct SceneEntrance gSolSanctumPsynergyStoneEntrances[];
+extern u32 gSolSanctumPsynergyStoneExits[];
+extern struct ActorPlacement gSolSanctumPsynergyStoneActorPlacements[];
+extern struct Trigger gSolSanctumPsynergyStoneTriggers[];
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for

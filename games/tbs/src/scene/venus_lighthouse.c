@@ -78,12 +78,37 @@
 /// The FLAG_SCENE_TEMP_ states last only until the next change of scene other
 /// than a return from battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_effect.h"
+#include "field/ground_mask.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_step.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern u32 gPushedActor_DirectionSteps[];
@@ -169,33 +194,6 @@ extern s32 *gVenusFourthFloorMiddlePaths[];
 extern s32 *gVenusFourthFloorSouthwestPaths[];
 extern s32 *gVenusFourthFloorSoutheastPaths[];
 extern s32 **gVenusFourthFloorSocketPaths[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "system/io_write.h"
-#include "field/ground_mask.h"
-#include "scene/walk_into_leader.h"
-
-#include "system/heap_slots.h"
-#include "field/field_effect.h"
-#include "field/pushed_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/iwram_call.h"
-#include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "system/io_reg.h"
-#include "field/map_grid_scroll.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
-#include "ability_ids.h"
-#include "scene/actor_step.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
@@ -623,6 +621,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
 }
 
 /// Unused: nothing in Venus Lighthouse calls it.
+
 #include "shared/pushed_actor_fill_rectangle.c"
 
 /// After a battle, draws every actor whose timer holds a

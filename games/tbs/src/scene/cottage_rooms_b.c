@@ -97,10 +97,34 @@
 /// ValeKradensCottage, Vale and ValePrologue) or between this scene's own
 /// parts.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_blend.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
+#include "sound/sound.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
 #include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 extern s32 gCottageRoomsB_LeaveHouseScript[];
 extern s32 gCottageRoomsB_DoraLeavesScript[];
@@ -128,31 +152,6 @@ extern struct Trigger gCottageRoomsB_TriggersAfterLeaving[];
 extern struct Trigger gCottageRoomsB_TriggersAfterKalay[];
 extern struct Trigger gCottageRoomsB_BabiScholarsTriggers[];
 extern struct Trigger gCottageRoomsB_BabiScholarsLaterTriggers[];
-
-#include "scene/event_psynergy.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/field_blend.h"
-#include "field/map_grid_scroll.h"
-#include "field/event.h"
-#include "system/ram_buffer.h"
-#include "text/msg_ids.h"
-#include "system/io_reg.h"
-#include "field/field_effect.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "system/io_write.h"
-#include "flags.h"
-#include "field/field_psynergy_work.h"
 
 static void CottageRoomsB_DoraWakesIsaac(void);
 static void CottageRoomsB_HurryToThePlaza(void);

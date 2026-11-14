@@ -2,9 +2,29 @@
 /// The Battle Arena overlay: starting linked and monster battles, the exchange
 /// of the two parties, the attendant and the records of wins.
 
+#include "flags.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/iwram_call.h"
+#include "system/serial.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 extern const s32 gBattleArena_SlotValues[];
 extern u32 gBattleArenaCallFrames;
@@ -15,27 +35,6 @@ extern u32 gBattleArenaExits[];
 extern struct ActorPlacement gBattleArenaActorPlacements[];
 extern struct ActorPlacement gBattleArenaBattleActorPlacements[];
 extern struct Trigger gBattleArenaTriggers[];
-
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "system/input.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event_inline.h"
-#include "system/serial.h"
-#include "system/iwram_call.h"
-#include "text/msg_ids.h"
-#include "battle/battle_side.h"
-#include "sound/sound_driver_symbols.h"
-#include "flags.h"
-#include "system/heap_slots.h"
 
 /// The attendant has asked the player to take part. Every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.

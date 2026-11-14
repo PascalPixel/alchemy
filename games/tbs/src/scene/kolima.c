@@ -63,15 +63,35 @@
 ///   it again. Kolima_RestoreBridgeState draws it down on every later visit,
 ///   and the bridge on the World Map is drawn down with the same flag.
 
+#include "scene/kolima.h"
+#include "ability_ids.h"
 #include "djinn_ids.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/character_ids.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/kolima_forest_bridge_falling_effect.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);
@@ -100,27 +120,6 @@ extern struct Trigger gKolimaBridgeTriggers[];
 extern s32 gKolima_GoldenRingsScript[];
 extern s32 gKolima_RegionScript[];
 extern s32 gFallingEffectScript[];
-
-#include "scene/kolima_forest_bridge_falling_effect.h"
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event_inline.h"
-#include "scene/kolima.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "system/io_reg.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
 
 static void Kolima_WitnessForestCurse(void);
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames);

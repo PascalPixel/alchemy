@@ -92,13 +92,40 @@
 /// pairs of sparks rise and fall about him every 16 frames
 /// (ValePlaza_CyclePsynergyPaletteAndSpawnEffects).
 
+#include "ability_ids.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "field/sprite.h"
 #include "game/character_ids.h"
+#include "game/game.h"
+#include "graphics/battle_sprite_id.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/task.h"
 #include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
@@ -134,38 +161,6 @@ extern struct Trigger gValePlaza_DepartureTriggers[];
 extern struct Trigger gValePlaza_TriggersAfterLeaving[];
 extern struct Trigger gValePlaza_TriggersAfterKalay[];
 extern u16 gValePlaza_DoorOpens[];
-
-#include "scene/event_psynergy.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "graphics/battle_sprite_id.h"
-
-#include "field/sprite.h"
-#include "system/task.h"
-
-#include "field/event.h"
-#include "field/field_effect.h"
-
-#include "field/speaker.h"
-#include "field/field_psynergy_work.h"
-
-#include "field/map_grid_scroll.h"
-#include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "ability_ids.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
-#include "scene/walk_into_leader.h"
 
 // Vale's area flags, kept while the party stays in Vale's scenes.
 /// Back from Kalay, a young man has welcomed Isaac home.

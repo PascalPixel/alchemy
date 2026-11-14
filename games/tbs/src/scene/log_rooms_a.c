@@ -66,15 +66,37 @@
 ///   them again (render probe log-rooms-a: the room has no GUESTS_ROOM cell
 ///   once the flag is set).
 
+#include "scene/log_rooms_a.h"
+#include "ability_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "scene_ids.h"
 #include "static_assert.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/sprite.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/vault_item_icon.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 /// Each stop links to up to three others, with a heading for each connection.
 struct LogRoomsAStopConnection {
@@ -132,29 +154,6 @@ extern struct Trigger gLogRoomsA_TriggersAfterThieves[];
 extern s32 *gLogRoomsA_StepActions[];
 extern s32 *gLogRoomsA_IdleActions[];
 extern s32 *gLogRoomsA_ResponseScripts[];
-
-#include "scene/log_rooms_a.h"
-#include "scene/vault_item_icon.h"
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "system/system.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "item_ids.h"
-#include "field/event.h"
-#include "battle/battle_side.h"
-#include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "macros.h"
-#include "sound/sound_driver_symbols.h"
 
 #if TBS_PATCH_3
 #define LOG_ROOMS_A_ENTRY_ACTOR_Z 451

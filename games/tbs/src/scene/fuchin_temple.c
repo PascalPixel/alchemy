@@ -58,9 +58,32 @@
 ///     - Until FLAG_HSU_RESCUED, Hama and the boy monk in her room are away.
 ///     - LACQUER_ROOMS_A_HAMAS_ROOM_TO_LAMA_TEMPLE leads back into Lama
 ///       Temple.
+
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
 #include "field/scene_tables.h"
+#include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern s32 gFuchinTemple_JumpingStudentScript[];
 extern s32 gFuchinTemple_HiddenSpriteScript[];
@@ -77,29 +100,6 @@ extern struct Trigger gFuchinTempleGroundsTriggers[];
 extern struct Trigger gFuchinTempleTriggers[];
 extern struct Trigger gFuchinTempleTriggersFromLamaTemple[];
 extern s32 gFuchinTemple_ShotScript[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "field/actor.h"
-#include "field/script_operands.h"
-#include "field/event.h"
-#include "system/system_call.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "system/heap_slots.h"
-#include "field/field_psynergy_work.h"
-#include "system/io_reg.h"
 
 // Fuchin Temple's area temp flags last until the party enters another area.
 

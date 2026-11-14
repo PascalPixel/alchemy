@@ -96,15 +96,37 @@
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
 /// their own actor placements.
 
+#include "ability_ids.h"
+#include "item_ids.h"
 #include "macros.h"
 #include "sounds.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/tolbi_ship.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 struct Actor;
 
@@ -150,29 +172,6 @@ extern struct Trigger gShipRooms_RowingDeckTriggers[];
 extern struct Trigger gShipRooms_RowingDeckTriggersMonstersAboard[];
 extern struct Trigger gShipRooms_RowingDeckTriggersKrakenAboard[];
 extern struct Trigger gShipRooms_RowingDeckTriggersArrived[];
-
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "field/event.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "game/inventory.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "scene/tolbi_ship.h"
-#include "scene/walk_into_leader.h"
 
 /// The visible anchor charm has been created this visit.
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN FLAG_SCENE_TEMP_00

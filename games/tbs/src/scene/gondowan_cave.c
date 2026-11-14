@@ -57,12 +57,29 @@
 /// 11) from either side either way, and the pillar settles at the same height
 /// in each of columns 41 to 44 either way.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern struct SceneEntrance gGondowanCaveEntrancesOther[];
 extern struct SceneEntrance gGondowanPassageEntrances[];
@@ -79,24 +96,6 @@ extern struct Trigger gGondowanPassageTriggers[];
 extern struct Trigger gGondowanPassageTriggersWithIodem[];
 extern struct Trigger gGondowanCaveRiverTriggers[];
 extern struct Trigger gGondowanCaveTriggers[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "field/pushed_actor.h"
-#include "field/field_effect.h"
-#include "text/msg_ids.h"
-#include "flags.h"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// Gondowan Passage's placed actors, numbered in the order of
 /// gGondowanPassageActorPlacements and

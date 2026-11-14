@@ -54,11 +54,29 @@
 /// On every arrival ValeCave_ApplyEntryState rebuilds the cells of each puzzle
 /// already solved. Once Kite has run behind its ledge, it puts Kite back there.
 
+#include "ability_ids.h"
 #include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/create_configured_actor.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/system_call.h"
 
 s32 Scene_Initialize(void);
@@ -75,27 +93,6 @@ extern struct Trigger gValeCave_TriggersOther[];
 extern struct Trigger gValeCave_MouthTriggers[];
 extern struct Trigger gValeCave_KiteTriggers[];
 extern struct Trigger gValeCave_LogsTriggers[];
-
-#include "scene/field_effect_spawn.h"
-
-#include "field/actor.h"
-#include "field/event.h"
-#include "field/create_configured_actor.h"
-#include "field/pushed_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/field_effect.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "flags.h"
-
-#include "sound/sound_driver_symbols.h"
 
 /// The way in's actor placements (gValeCave_MouthActorPlacements), numbered
 /// from ACTOR_FIRST_PLACED.

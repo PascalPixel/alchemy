@@ -81,10 +81,29 @@
 /// The jar's row finds nothing on the stormy night. After Kalay it is there
 /// only from the third patch on.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
@@ -98,26 +117,6 @@ extern struct Trigger gValeKradensCottage_Triggers[];
 extern struct Trigger gValeKradensCottage_StormTriggers[];
 extern struct Trigger gValeKradensCottage_TriggersAfterKalay[];
 extern u16 gValeKradensCottage_DoorOpens[];
-
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "scene/walk_into_leader.h"
 
 /// The placed actors, numbered in the order of
 /// gValeKradensCottage_ActorPlacements. Garet and Jenna, placed between Kraden

@@ -17,36 +17,35 @@
 /// grass and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
 
+#include "ability_ids.h"
 #include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
 #include "scene/import.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
 #include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/system.h"
 
 extern struct SceneEntrance gKolimaForestGlade_Entrances[];
 extern u32 gKolimaForestGlade_Exits[];
 extern struct ActorPlacement gKolimaForestGlade_ActorPlacements[];
 extern struct Trigger gKolimaForestGlade_Triggers[];
-
-#include "scene/actor_orbit.h"
-#include "scene/kolima_palette.h"
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "field/pushed_actor.h"
-#include "system/io_reg.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "macros.h"
-#include "scene/catch_nut.h"
 
 /// Kolima Forest's actors, numbering the rows of
 /// gKolimaForestGlade_ActorPlacements.

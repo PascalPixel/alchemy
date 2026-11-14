@@ -2,6 +2,7 @@
 /// Kolima and Kolima Forest (SceneId_Kolima, SceneId_KolimaForestEntrance and
 /// SceneId_KolimaForestTree): an effect that
 /// stretches as it travels.
+
 #include "field/script_operands.h"
 
 /// An actor script call: widen the actor by 3/25 of its size a frame, and

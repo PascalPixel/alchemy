@@ -37,36 +37,35 @@
 /// The overlay also keeps three unused hooks and a link-cable input exchange no
 /// table reaches.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
 
 extern struct SceneEntrance gTretTreeBranch_Entrances[];
 extern u32 gTretTreeBranch_Exits[];
 extern struct ActorPlacement gTretTreeBranch_ActorPlacements[];
 extern struct Trigger gTretTreeBranch_Triggers[];
 extern u16 gTretTreeBranch_UnusedCellSteps[];
-
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "system/input.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "system/io_reg.h"
-#include "system/main_routine_work.h"
-#include "ability_ids.h"
-#include "field/event.h"
-#include "system/system_call.h"
-#include "djinn_ids.h"
-#include "graphics/display_transition.h"
-#include "field/map_grid_scroll.h"
-#include "flags.h"
-#include "macros.h"
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), is the only placed actor. Its
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.

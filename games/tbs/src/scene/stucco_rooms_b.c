@@ -57,10 +57,17 @@
 /// Barrels hold a Vial and a Lucky Medal, and searching the ovens shows what
 /// is cooking.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "sounds.h"
 #include "types.h"
+#include "field/actor_script.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
+#include "scene/colosso_story_flags.h"
 #include "system/main_routine_work.h"
+#include "text/msg_ids.h"
 
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
@@ -74,9 +81,6 @@ extern struct Trigger gStuccoRoomsBTriggersFinalsDay[];
 extern struct Trigger gStuccoRoomsBTriggersAfterColosso[];
 extern u16 gStuccoRoomsBDoorOpening[];
 extern struct MapGridCellAnimation gStuccoRoomsBDoors[];
-
-#include "scene/colosso_story_flags.h"
-#include "flags.h"
 
 /// The placed actors, numbering the rows of the actor placement
 /// table from ACTOR_FIRST_PLACED. Both tables hold the same people in the
@@ -188,12 +192,6 @@ enum StuccoRoomsBCellBehavior {
 /// A facing rounded to the nearest of east, south, west and north.
 #define FACING_NEAREST_CARDINAL(facing)                                        \
   ((u16)(((facing) + TRIG_TURN / 8) & ~0x3fff))
-
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "sounds.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for

@@ -36,9 +36,27 @@
 /// exit or trigger answers that opening, so the ivy only hides a way in that
 /// leads nowhere.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern u16 gPalaceGateOpenSteps[];
 extern s32 gGuardWatchesParty[];
@@ -48,27 +66,6 @@ extern struct ActorPlacement gMcCoyPalaceGroundsNoActorPlacements[];
 extern struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[];
 extern struct Trigger gMcCoyPalaceGroundsNoTriggers[];
 extern struct Trigger gMcCoyPalaceGroundsTriggers[];
-
-#include "scene/actor_orbit.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event.h"
-
-#include "item_ids.h"
-
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "scene/catch_nut.h"
 
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared.

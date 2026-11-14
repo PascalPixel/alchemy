@@ -56,9 +56,30 @@
 /// Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and
 /// shakes, as the rest of the sanctum does.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/battle_sprite_id.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_release.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumStatue_Entrances[];
@@ -66,28 +87,6 @@ extern u32 gSolSanctumStatue_Exits[];
 extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];
 extern struct Trigger gSolSanctumStatue_Triggers[];
 extern s32 gSolSanctumStatue_ScrollPhase;
-
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "graphics/battle_sprite_id.h"
-#include "system/heap_release.h"
-#include "system/heap_slots.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/map_grid_scroll.h"
-#include "macros.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "ability_ids.h"
-#include "scene/walk_into_leader.h"
 
 /// Both beams have opened the hole in the floor before the centre statue.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07

@@ -55,10 +55,37 @@
 /// and FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have
 /// Feizhi thank Master Hama alone.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/scene.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "system/dma.h"
+#include "system/fixed_point_position.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
+#include "system/ram_buffer.h"
+#include "system/system.h"
 #include "system/vram_cache.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 void HeatGauge_Start(void);
@@ -81,34 +108,6 @@ extern struct Trigger gLamakanDesertTriggers[];
 extern s16 gHeatGaugeLevel;
 extern s16 gHeatGaugeSlide;
 extern s16 gHeatGaugeFlash;
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "field/actor.h"
-#include "field/event.h"
-#include "system/fixed_point_position.h"
-#include "field/scene.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "system/io_write.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "graphics/display_transition.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "text/msg_ids.h"
-#include "system/iwram_call.h"
-#include "field/event_inline.h"
-#include "field/field_effect.h"
-#include "system/dma.h"
-#include "system/io_write_queue.h"
-#include "system/ram_buffer.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "djinn_ids.h"
-#include "item_ids.h"
 
 static void HeatGauge_SetHeld(u16 held);
 

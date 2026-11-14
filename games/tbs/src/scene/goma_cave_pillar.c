@@ -50,12 +50,29 @@
 ///
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
+
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/field_effect.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "system/fixed_point_position.h"
 #include "system/heap_slots.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gGomaCavePillar_WitnessFrames;
 extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;
@@ -66,24 +83,6 @@ extern struct SceneEntrance gGomaCavePillar_Entrances[];
 extern u32 gGomaCavePillar_Exits[];
 extern struct ActorPlacement gGomaCavePillar_ActorPlacements[];
 extern struct Trigger gGomaCavePillar_Triggers[];
-
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "djinn_ids.h"
-#include "field/pushed_actor.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "system/fixed_point_position.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-
-#include "flags.h"
 
 // Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use

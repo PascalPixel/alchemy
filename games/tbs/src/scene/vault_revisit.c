@@ -41,11 +41,31 @@
 /// the hole the fiery rock burnt in it (render probe vault-revisit, the town
 /// before and after).
 
+#include "ability_ids.h"
 #include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/vault.h"
+#include "scene/vault_range.h"
+#include "sound/sound.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "window/window.h"
+#include "text/msg_ids.h"
 
 extern s32 gVault_BoyRoundTheWellRoute[];
 extern s32 gVault_GirlRoundTheWellRoute[];
@@ -60,27 +80,6 @@ extern u16 gVaultRevisit_WeaponAndArmorShopDoorCells[];
 extern u16 gVaultRevisit_MayorsHouseDoorCells[];
 extern u16 gVaultRevisit_JailDoorCells[];
 extern struct Trigger gVaultRevisit_Triggers[];
-
-#include "scene/vault.h"
-#include "scene/vault_range.h"
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "system/system.h"
-#include "field/actor.h"
-#include "field/event.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/iwram_call.h"
-#include "game/inventory.h"
-#include "text/msg_ids.h"
-#include "flags.h"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// The townspeople, the dog and Sap, numbering
 /// gVaultRevisit_ActorPlacements' rows from ACTOR_FIRST_PLACED.

@@ -45,11 +45,36 @@
 /// Stepping onto either end of it or off its west end switches the cells
 /// beneath it between the deck and the path (shared/vault_toggle.c).
 
+#include "scene/vault.h"
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
 #include "field/sprite.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/vault_range.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/fixed_point_position.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "window/window.h"
+#include "text/msg_ids.h"
 
 extern s32 gVault_WomanWantingTheRoofFixedRoute[];
 extern s32 gVault_BoyRoundTheWellRoute[];
@@ -69,32 +94,6 @@ extern u16 gVault_MayorsHouseDoorCells[];
 extern u16 gVault_JailDoorCells[];
 extern s32 gVault_DriftScriptA[];
 extern s32 gVault_DriftScriptB[];
-
-#include "scene/vault.h"
-#include "scene/vault_range.h"
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "system/system.h"
-#include "field/actor.h"
-#include "field/event.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "battle/battle_side.h"
-#include "text/msg_ids.h"
-#include "system/fixed_point_position.h"
-#include "system/iwram_call.h"
-#include "game/inventory.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "djinn_ids.h"
-#include "scene/walk_into_leader.h"
 
 enum { VAULT_DRIFT_RATE = px(1) / 10 };
 

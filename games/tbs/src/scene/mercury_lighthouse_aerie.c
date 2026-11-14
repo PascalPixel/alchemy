@@ -58,11 +58,36 @@
 /// or code leads there. Only the debug scene selector, which reaches every
 /// scene, can.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "macros.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/create_configured_actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_nearest.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern struct SceneEntrance gMercuryLighthouseAerieEntrances[];
 extern u32 gMercuryLighthouseAerieExits[];
@@ -70,32 +95,6 @@ extern struct ActorPlacement gMercuryLighthouseAerieActorPlacements[];
 extern struct Trigger gMercuryLighthouseAerieTriggers[];
 extern s32 gMercuryLighthouseAerie_PlatformUnderfoot;
 extern s32 gMercuryLighthouseAerie_SparkScript[];
-
-#include "scene/field_effect_spawn.h"
-#include "scene/actor_nearest.h"
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "field/event.h"
-#include "system/system_call.h"
-#include "field/create_configured_actor.h"
-#include "system/heap_slots.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/iwram_call.h"
-#include "field/map_grid_scroll.h"
-#include "text/msg_ids.h"
-#include "macros.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "system/io_reg.h"
-#include "ability_ids.h"
 
 /// The aerie's actors.
 ///

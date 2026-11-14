@@ -60,13 +60,33 @@
 /// - FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM: a byte, the storm that caught the
 ///   leader.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
 #include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/io_write.h"
+#include "system/io_write_queue.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern s32 gSuhallaDesertStormScript[];
 extern s32 gSuhallaDesertFourthStormScript[];
@@ -82,27 +102,6 @@ extern struct ActorPlacement gSuhallaDesertCavesActorPlacements[];
 extern s32 gSuhallaDesertChaseScript[];
 extern struct Trigger gSuhallaDesertTriggersOther[];
 extern struct Trigger gSuhallaDesertCavesTriggers[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/actor.h"
-#include "field/event.h"
-#include "djinn_ids.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/field_psynergy_work.h"
-#include "system/io_write_queue.h"
-#include "field/field_effect.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "system/io_write.h"
-#include "scene/walk_into_leader.h"
 
 /// Storms doused in the first and second scenes, one flag per storm from the
 /// first.

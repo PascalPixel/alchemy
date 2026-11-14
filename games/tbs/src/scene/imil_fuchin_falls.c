@@ -101,14 +101,37 @@
 /// The first room's inscription points the way: `The dragon's flame illuminates
 /// the path of truth in darkness.`
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "battle/battle_side.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/ground_mask.h"
+#include "field/map_grid.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
 #include "system/input.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gImilFuchinFalls_TrackLeader;
 extern s16 gImilFuchinFalls_KeyHeadings[];
@@ -142,32 +165,7 @@ extern s32 gImilFuchinFalls_ShortDustScript[];
 extern s32 gImilFuchinFalls_MediumDustScript[];
 extern s32 gImilFuchinFalls_LongDustScript[];
 
-#include "system/main_routine.h"
-#include "battle/battle.h"
-#include "field/event_inline.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "item_ids.h"
-
 extern void *gHeapSlots[];
-
-#include "djinn_ids.h"
-#include "battle/battle_side.h"
-#include "graphics/display_transition.h"
-#include "field/field_psynergy_work.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/ground_mask.h"
-#include "system/io_reg.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "field/map_grid.h"
 
 /// The placed actors, numbering each scene's placement rows from
 /// ACTOR_FIRST_PLACED: Fever in Imil Falls Cave, the floating logs of Fuchin

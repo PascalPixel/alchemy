@@ -73,10 +73,27 @@
 ///
 /// Its chests hold a Vial, a Psy Crystal and Water of Life.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/map_grid.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/system_call.h"
 
 s32 Scene_Initialize(void);
@@ -95,24 +112,6 @@ extern struct Trigger gBilibinCaveEntranceTriggers[];
 extern struct Trigger gBilibinCaveRapierTriggers[];
 extern struct Trigger gBilibinCaveIceTriggers[];
 extern s32 gPushedActor_DirectionSteps[];
-
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/heap_slots.h"
-#include "field/map_grid.h"
-#include "field/event.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "field/map_grid_scroll.h"
-#include "field/pushed_actor.h"
 
 /// In Bilibin Cave's ice room, a movable torch has melted the third puddle's
 /// ice pillar.

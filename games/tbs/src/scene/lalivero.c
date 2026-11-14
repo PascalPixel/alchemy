@@ -34,10 +34,25 @@
 /// - A jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and
 ///   a Warrior's Helm.
 
+#include "ability_ids.h"
 #include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
@@ -52,22 +67,6 @@ extern u16 gLaliveroDoorOpenSteps[];
 extern u16 gLaliveroGateOpenSteps[];
 extern struct Trigger gLaliveroTriggers[];
 extern struct Trigger gLaliveroTriggersAfterLighthouse[];
-
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event_inline.h"
-#include "field/field_effect.h"
-#include "item_ids.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "flags.h"
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 

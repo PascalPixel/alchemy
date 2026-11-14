@@ -5,6 +5,7 @@
 /// A companion and the party leader: placed on the leader, walked toward the
 /// leader, or walked into the leader and taken off the map, as the scenes'
 /// events gather the party back into one walking sprite.
+
 #include "field/event.h"
 
 /// Puts an actor where the leader stands, if there is a leader.

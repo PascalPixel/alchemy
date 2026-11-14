@@ -73,10 +73,25 @@
 ///
 /// A chest holds Power Bread.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gAlpineCrossing_WorkerActorPlacementScript[];
 extern s32 gAlpineCrossing_FeizhiPath[];
@@ -91,22 +106,6 @@ extern struct ActorPlacement gLamaTemple_ActorPlacements[];
 extern struct ActorPlacement gAlpineCrossing_ActorPlacements[];
 extern struct Trigger gLamaTemple_Triggers[];
 extern struct Trigger gAlpineCrossing_Triggers[];
-
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "field/field_effect.h"
 
 /// The temple's Psynergy Stone. It is an area temp flag, so it refills once the
 /// party has been to another area.

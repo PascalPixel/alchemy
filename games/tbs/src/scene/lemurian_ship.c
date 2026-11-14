@@ -29,11 +29,37 @@
 /// - The game goes to the clear screen by the title's
 ///   TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC_ONCE).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/line_scroll.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/scroll_initialize_hblank_dma.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/fixed_point_position.h"
+#include "system/heap_slots.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/vram_cache.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern u16 gShipGlowPalettes[];
@@ -61,33 +87,6 @@ extern s32 gLeaderBoardsShip[];
 extern s32 gGaretBoardsShip[];
 extern s32 gIvanBoardsShip[];
 extern s32 gMiaBoardsShip[];
-
-#include "scene/scroll_initialize_hblank_dma.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "shop/shop.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "system/heap_slots.h"
-#include "field/event.h"
-#include "system/dma.h"
-#include "system/iwram_call.h"
-#include "system/fixed_point_position.h"
-#include "system/io_write.h"
-#include "field/map_grid_scroll.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "field/line_scroll.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "item_ids.h"
-#include "sound/sound_driver_symbols.h"
-#include "flags.h"
 
 #if TBS_PATCH_3
 #define LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES 30

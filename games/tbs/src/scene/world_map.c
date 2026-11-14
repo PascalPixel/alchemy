@@ -87,13 +87,41 @@
 /// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters
 /// off.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "field/world_map_render_work.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "scene/world_map_attached_effects.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
 #include "system/heap.h"
+#include "system/heap_slots.h"
+#include "system/io_write_queue.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern s32 gWorldMapIodem;
@@ -140,35 +168,6 @@ extern struct ActorPlacement gWorldMapActorPlacementsBeforeShebasFall[];
 extern struct Trigger gWorldTriggers[];
 extern u32 gWorldMapPassengerRowValues[];
 extern s32 gIslandWakeScript[];
-
-#include "scene/world_map_attached_effects.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "field/event.h"
-#include "djinn_ids.h"
-#include "field/world_map_render_work.h"
-#include "field/event_inline.h"
-#include "system/iwram_call.h"
-#include "text/msg_ids.h"
-#include "game/inventory.h"
-#include "field/field_effect.h"
-#include "system/io_write_queue.h"
-#include "ability_ids.h"
-#include "field/field_psynergy_work.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
-#include "scene/walk_into_leader.h"
 
 /// The falling rock of Hammet's caravan event has landed and shattered.
 #define FLAG_WORLD_MAP_FALLING_ROCK_LANDED FLAG_SCENE_TEMP_00

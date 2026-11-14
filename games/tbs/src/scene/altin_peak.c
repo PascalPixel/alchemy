@@ -88,14 +88,41 @@
 /// (AltinPeak_SpawnDebris). The beasts' spray is SPRITE_DUST_PUFF recoloured,
 /// as in Altin.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "macros.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_sequence.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/frost_glint.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s8 gAltinPeak_PaletteScript[];
 extern s32 gAltinPeak_FaceLeaderScript[];
@@ -153,36 +180,6 @@ extern u32 gAltinPeak_RollRadii[];
 extern s32 gAltinPeak_SprayDirection;
 extern s32 gAltinPeak_SprayOrigin[3];
 extern u16 gAltinPeak_FlickerTimer;
-
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "system/input.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "field/event.h"
-#include "system/io_reg.h"
-#include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "field/field_effect.h"
-#include "system/iwram_call.h"
-#include "system/dma.h"
-
-#include "djinn_ids.h"
-
-#include "ability_ids.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "field/map_grid_scroll.h"
-#include "sound/sound_driver_symbols.h"
-#include "scene/frost_glint.h"
 
 // The rooms' floor switches, each set once flipped from its first position;
 // they are area temp flags, kept until the party leaves the mine.

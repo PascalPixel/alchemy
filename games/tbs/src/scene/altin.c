@@ -60,11 +60,25 @@
 /// Each merchant opens across the counter once the shop has dried, and a cook
 /// from Xian paces between his pots (gCottageRoomsD_CookScript).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
 #include "field/event.h"
+#include "field/field.h"
+#include "field/field_effect.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern s32 gCottageRoomsD_CookScript[];
 extern struct SceneEntrance gAltin_NoEntrances[];
@@ -85,21 +99,6 @@ extern u16 gAltin_NorthwestDoorCells[];
 extern u16 gAltin_NorthAndWestDoorCells[];
 extern u16 gAltin_NortheastDoorCells[];
 extern struct MapGridCellAnimation gAltin_Doors[];
-
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/system_call.h"
-#include "field/field_effect.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "item_ids.h"
 
 #if !TBS_PATCH_3
 #define ALTIN_COOK_LAST_POT_X 384

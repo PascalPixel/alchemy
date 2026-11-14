@@ -5,9 +5,36 @@
 /// delete), the door to the Battle Arena and the transfer of a save's data, by
 /// link or as a password.
 
+#include "flags.h"
+#include "item_ids.h"
+#include "resource_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/title.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
+#include "system/ram_buffer.h"
+#include "system/serial.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "window/screens.h"
+#include "window/text_font.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 extern const u16 gFileScreen_ButtonCode[];
 extern const u16 gFileScreen_ExtraButtonCode[];
@@ -27,34 +54,6 @@ extern u32 gFileScreen_PasswordMembers[];
 extern u32 gFileScreen_PasswordFlags[];
 extern u32 gFileScreen_PasswordKeyItems[];
 extern u16 gFileScreen_PasswordStackItems[];
-
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "system/input.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "window/text_font.h"
-#include "system/dma.h"
-#include "system/ram_buffer.h"
-#include "field/event.h"
-#include "system/system_call.h"
-#include "resource_ids.h"
-#include "system/io_write_queue.h"
-#include "system/serial.h"
-#include "text/msg_ids.h"
-#include "sound/sound_driver_symbols.h"
-#include "field/map_grid_scroll.h"
-#include "flags.h"
-#include "scene/title.h"
-#include "item_ids.h"
 
 // Edition-specific text and window layout values.
 // The password buffer: a Gold password is 260 symbols

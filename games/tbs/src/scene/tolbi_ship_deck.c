@@ -63,12 +63,31 @@
 ///   up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
 ///   leads ashore to Tolbi Docks (SceneId_TolbiDocks).
 
+#include "ability_ids.h"
+#include "macros.h"
 #include "sounds.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/tolbi_ship.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 extern const s32 gTolbiShipDeck_KajaLeavesActions[];
 extern const s32 gTolbiShipDeck_CaptainStepsAsideActions[];
@@ -112,26 +131,6 @@ extern const struct Trigger gTolbiShipDeckTriggersAtSea[];
 extern const struct Trigger gTolbiShipDeckTriggersArrived[];
 extern const struct Trigger gTolbiShipDeckTriggersAtIsland[];
 extern const s32 gTolbiShipDeckRowerStrokes[];
-
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event_inline.h"
-#include "system/heap_slots.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "field/map_grid_scroll.h"
-#include "scene/tolbi_ship.h"
-#include "macros.h"
 
 static void TolbiShipDeck_ConfrontCrewman(void);
 static void TolbiShipDeck_ApplyEntryState(void);

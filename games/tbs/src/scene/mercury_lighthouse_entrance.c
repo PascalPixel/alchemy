@@ -82,14 +82,41 @@
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "field/sprite.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "scene/mercury_lighthouse.h"
+#include "scene/mercury_lighthouse_lights.h"
+#include "scene/mercury_lighthouse_pillar.h"
+#include "sound/sound.h"
+#include "system/heap_release.h"
 #include "system/heap_slots.h"
 #include "system/input.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 extern s32 gMercuryLighthouseEntrance_RippleScript[];
 extern s32 gMercuryLighthouse_SparkScript[];
@@ -108,35 +135,6 @@ extern u32 gMercuryLighthouseEntrance_Exits[];
 extern struct ActorPlacement gMercuryLighthouseEntrance_ActorPlacements[];
 extern struct Trigger gMercuryLighthouseEntrance_Triggers[];
 extern s32 gGlint_TwinkleScript[];
-
-#include "scene/field_effect_spawn.h"
-#include "scene/mercury_lighthouse_lights.h"
-#include "scene/mercury_lighthouse_pillar.h"
-#include "field/event_commands.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "system/io_write.h"
-
-#include "field/actor.h"
-#include "system/heap_release.h"
-#include "scene/mercury_lighthouse.h"
-#include "field/pushed_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system_call.h"
-#include "field/field_effect.h"
-#include "system/io_reg.h"
-#include "text/msg_ids.h"
-#include "system/iwram_call.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "item_ids.h"
 
 /// This floor's actors, numbering its actor placement rows from
 /// ACTOR_FIRST_PLACED.

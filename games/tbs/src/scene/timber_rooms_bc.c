@@ -41,13 +41,29 @@
 /// That sends the party outside, where Iodem gives it the Black Orb
 /// (lalivero.c). A barrel holds a Lucky Medal.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gTimberRoomsBC_InnWorkerChores[];
 extern struct SceneEntrance gTimberRoomsBC_Entrances[];
@@ -62,22 +78,6 @@ extern struct Trigger gTimberRoomsB_TriggersAfterLighthouse[];
 extern struct Trigger gTimberRoomsC_Triggers[];
 extern struct Trigger gTimberRoomsC_TriggersAfterLighthouse[];
 
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "scene/walk_into_leader.h"
 static void TimberRoomsBC_TellFaranAboutJenna(void);
 
 /// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED.

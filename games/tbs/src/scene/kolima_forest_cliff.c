@@ -18,32 +18,30 @@
 /// (places/kolima-forest-cliff_cursed/map-0.png).
 
 #include "flags.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
 #include "system/heap_slots.h"
+#include "system/main_routine_work.h"
+#include "system/system.h"
 
 extern struct SceneEntrance gKolimaForestCliffEntrances[];
 extern u32 gKolimaForestCliffExits[];
 extern struct ActorPlacement gKolimaForestCliffActorPlacements[];
 extern struct Trigger gKolimaForestCliffTriggers[];
-
-#include "scene/kolima_palette.h"
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "macros.h"
-
-#include "field/pushed_actor.h"
-#include "system/main_routine_work.h"
-#include "field/event.h"
 
 /// The scene's actors, numbering the rows of
 /// gKolimaForestCliffActorPlacements.

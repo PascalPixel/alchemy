@@ -38,9 +38,34 @@
 ///   opens to show the prize as it is given. In the editions before TBS_PATCH_1
 ///   the coin and medal counts show an `=` after each number.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "shop/shop.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
 #include "system/input.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "system/iwram_call.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern const struct SceneEntrance gTolbiSpring_Entrances[];
@@ -58,32 +83,6 @@ extern const u8 gTolbiSpring_CircleFrames[];
 extern const u8 gTolbiSpring_ActorPixelX[];
 extern const u8 gTolbiSpring_ActorPixelZ[];
 extern const u16 gTolbiSpring_ActorHeadings[];
-
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "shop/shop.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "system/io_reg.h"
-#include "text/msg_ids.h"
-#include "system/heap_slots.h"
-#include "field/event_inline.h"
-#include "game/inventory.h"
-#include "system/iwram_call.h"
-#include "ability_ids.h"
-#include "system/io_write.h"
-#include "item_ids.h"
-#include "field/map_grid_scroll.h"
-#include "flags.h"
-#include "macros.h"
 
 /// The spring has risen and faded into view this visit.
 #define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00

@@ -59,9 +59,26 @@
 /// TOLBI_TO_COLOSSEUM_ENTRANCE to the Colosseum Entrance and TOLBI_TO_WORLD_MAP
 /// out onto the World Map.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "edition.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "sounds.h"
+#include "tbs_edition.h"
 #include "types.h"
 #include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field_effect.h"
+#include "field/map_grid.h"
+#include "field/scene.h"
 #include "field/scene_tables.h"
+#include "scene/colosso_story_flags.h"
+#include "system/heap.h"
+#include "system/iwram_call.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(s32 unused);
@@ -76,19 +93,6 @@ extern struct Trigger gTolbiTriggersFinalsDay[];
 extern struct Trigger gTolbiTriggersAfterColosso[];
 extern u16 gTolbiDoorOpening[];
 extern struct MapGridCellAnimation gTolbiDoors[];
-
-#include "djinn_ids.h"
-#include "window/screens.h"
-#include "edition.h"
-
-#include "field/field_effect.h"
-#include "tbs_edition.h"
-#include "window/window.h"
-#include "field/scene.h"
-#include "system/heap.h"
-
-#include "scene/colosso_story_flags.h"
-#include "flags.h"
 
 /// Growth has raised the sprout into a vine the leader can climb.
 #define FLAG_TOLBI_SPROUT_GROWN FLAG_SCENE_TEMP_00
@@ -190,14 +194,6 @@ enum {
   KID_CHASES_YOUNGER = 1,
   KID_TALKING = 2, ///< set while the party talks to this child
 };
-
-#include "system/iwram_call.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "sounds.h"
-#include "field/map_grid.h"
 
 #if TBS_PATCH_1
 #define TOLBI_JAR_SEARCH_KIND                                                  \

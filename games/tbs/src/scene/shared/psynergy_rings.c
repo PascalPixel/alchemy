@@ -1,6 +1,7 @@
 /// @file
 /// Vale in the storm and Venus Lighthouse's aerie: the rings of light around
 /// someone using Psynergy in an event.
+
 #include "field_effect_vertical.c"
 
 /// Spawns a pair of rings of light on the actor, one rising and one falling

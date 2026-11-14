@@ -53,11 +53,31 @@
 /// Two cells start a battle once each (slots 2 and 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 
+#include "flags.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern u8 gValePrologue_FrameModes[];
@@ -94,27 +114,6 @@ extern u16 gValePrologue_GrandparentsDoorOpens[];
 extern u16 gValePrologue_WestHouseDoorOpens[];
 extern u16 gValePrologue_IsaacsDoorCloses[];
 extern u16 gValePrologue_GrandparentsDoorCloses[];
-
-#include "scene/event_psynergy.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "field/field_effect.h"
-#include "system/heap_slots.h"
-#include "system/vram_cache.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "system/io_reg.h"
-#include "field/field_psynergy_work.h"
-#include "scene/walk_into_leader.h"
 
 static void ValePrologue_DoraSendsIsaacToThePlaza(void);
 static void ValePrologue_ApplyFirstRockCollision(void);

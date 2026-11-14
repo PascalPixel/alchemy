@@ -5,10 +5,32 @@
 ///
 /// Scene_Initialize chooses by entrance.
 
+#include "scene/title.h"
+#include "resource_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "menu/title_intro.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
 #include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "system/save.h"
+#include "system/system.h"
 #include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
 
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gTitleEntrances[];
@@ -16,29 +38,6 @@ extern u32 gTitleExits[];
 extern struct ActorPlacement gTitleActorPlacements[];
 extern struct Trigger gTitleTriggers[];
 extern s16 gTitleVramBlock;
-
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "menu/title_intro.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "system/input.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "system/save.h"
-#include "field/event_inline.h"
-#include "resource_ids.h"
-#include "scene/title.h"
-#include "system/io_write_queue.h"
-#include "system/ram_buffer.h"
-#include "field/map_grid_scroll.h"
-#include "sound/sound_driver_symbols.h"
 
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);

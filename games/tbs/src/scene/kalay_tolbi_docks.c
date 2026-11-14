@@ -78,10 +78,29 @@
 ///   number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO. That entrance
 ///   sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
+#include "ability_ids.h"
 #include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 extern u16 gKalayTolbiDocks_KalayDoorCells[];
 extern u16 gKalayTolbiDocks_TolbiDoorCells[];
@@ -107,27 +126,6 @@ extern struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[];
 extern struct Trigger gKalayTolbiDocks_RoomTriggers[];
 extern struct Trigger gKalayTolbiDocks_RoomTriggersShipGone[];
 extern struct Trigger gKalayTolbiDocks_RoomTriggersStranded[];
-
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "field/speaker.h"
-
-#include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "item_ids.h"
 
 /// Kalay Docks' people, numbering the rows of
 /// gKalayTolbiDocks_KalayActorPlacements from ACTOR_FIRST_PLACED. Garet's row

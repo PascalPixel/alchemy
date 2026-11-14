@@ -54,14 +54,36 @@
 /// The Cloak Ball on show is an actor drawn from the item's icon until the
 /// party takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
 #include "system/heap.h"
+#include "system/heap_slots.h"
 #include "system/input.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern u16 gBabiPalace_DoorCells[];
@@ -80,29 +102,6 @@ extern struct Trigger gBabiPalace_TriggersAfterColosso[];
 extern struct Trigger gBabiPalace_OutsideTriggersBabiMissing[];
 extern struct Trigger gBabiPalace_OutsideTriggersFinals[];
 extern struct Trigger gBabiPalace_OutsideTriggersAfterColosso[];
-
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "system/heap_slots.h"
-#include "graphics/display_transition.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "scene/walk_into_leader.h"
 
 /// The palace's actors are placed by one of three tables, as the story goes on.
 ///

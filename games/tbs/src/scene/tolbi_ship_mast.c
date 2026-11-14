@@ -55,13 +55,31 @@
 /// At sea the lookout says he is the lookout, not an oarsman. At the island he
 /// warns of monsters and wonders at its treasures.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gTolbiShipMast_DriftY;
 extern s32 gTolbiShipMast_DriftX;
@@ -90,25 +108,6 @@ extern struct ActorPlacement gTolbiShipMast_BirdActorPlacements[];
 extern struct ActorPlacement gTolbiShipMast_LandingActorPlacements[];
 extern struct Trigger gTolbiShipMast_Triggers[];
 extern u32 gTolbiShipMast_PassengerRowValues[];
-
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/heap_slots.h"
-#include "item_ids.h"
-#include "flags.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "field/map_grid_scroll.h"
-#include "macros.h"
 
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);

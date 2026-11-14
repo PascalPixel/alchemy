@@ -36,10 +36,35 @@
 /// over a shadow that shrinks with him. The platform's actor,
 /// ACTOR_PLATFORM_SHADOW, draws that shadow.
 
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/ground_mask.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/event_psynergy.h"
+#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/vram_cache.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern s32 gEruption_ArcOriginsHead[];
@@ -56,19 +81,6 @@ extern s8 gSolSanctum_RingDirection[][3];
 extern s32 gSolSanctum_RingMaxScales[];
 extern s32 gSolSanctum_RingScaleSteps[];
 
-#include "scene/event_psynergy.h"
-#include "scene/sol_sanctum_elemental_star_ring_setup.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event.h"
-
 enum CollapseActorId {
   /// The shadow on the platform under each who leaves with Saturos: a
   /// blank actor, whose sprite draws only its shadow, shrunk with
@@ -84,8 +96,6 @@ enum CollapseActorId {
   ACTOR_ALEX
 };
 
-#include "field/ground_mask.h"
-
 extern s32 gEmberState[16];
 extern s32 gEmberTimer;
 extern s32 gArcEffectTimers[10];
@@ -93,19 +103,6 @@ extern struct Actor *gArcEffects[];
 extern s32 gEmberMask;
 extern s32 gEmberLevel;
 extern s32 gEmberLevelTimer;
-
-#include "field/event_inline.h"
-#include "system/iwram_call.h"
-#include "field/field_effect.h"
-#include "text/msg_ids.h"
-#include "system/heap_slots.h"
-#include "system/vram_cache.h"
-#include "macros.h"
-#include "flags.h"
-#include "system/io_reg.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
-#include "field/field_psynergy_work.h"
 
 /// Saturos's group has started to leave, and the embers fall without their
 /// sound.

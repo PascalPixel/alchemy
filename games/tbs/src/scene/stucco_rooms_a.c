@@ -27,11 +27,23 @@
 ///   Sanctum's services when spoken to across the counter. Its exit leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
 #include "field/event.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern struct SceneEntrance gStuccoRoomsA_NoEntrances[];
 extern struct SceneEntrance gStuccoRoomsA_HouseEntrances[];
@@ -47,19 +59,6 @@ extern struct Trigger gStuccoRoomsA_InnTriggers[];
 extern struct Trigger gStuccoRoomsA_SanctumTriggers[];
 extern u16 gStuccoRoomsA_DoorCellSteps[];
 extern struct MapGridCellAnimation gStuccoRoomsA_DoorCells[];
-
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "flags.h"
 
 /// Each table numbers its own rows from ACTOR_FIRST_PLACED.
 ///

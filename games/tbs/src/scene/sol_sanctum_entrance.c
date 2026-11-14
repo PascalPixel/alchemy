@@ -50,10 +50,26 @@
 /// other door. And it makes the three CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells
 /// before it plain ground.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 extern struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[];
@@ -73,19 +89,6 @@ extern struct Trigger gSolSanctumReliefs_Triggers[];
 extern struct Trigger gSolSanctumReliefs_FirstReliefRoomTriggers[];
 extern struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[];
 extern s32 gSolSanctumPushSteps[];
-
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event_inline.h"
-#include "field/event.h"
-#include "flags.h"
 
 /// In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet
 /// and Jenna, placed before him, take their own party slots.
@@ -126,11 +129,6 @@ enum {
 };
 
 extern s32 gSolSanctumEntrance_RumbleTimer;
-
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "scene/walk_into_leader.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for

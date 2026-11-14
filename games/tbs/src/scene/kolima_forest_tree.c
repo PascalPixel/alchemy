@@ -52,11 +52,31 @@
 /// way back, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the
 /// Floodgate Switch's scene (SceneId_KolimaForestFloodgate).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_effect.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern s32 gKolimaForestTree_GaretApproachActions[];
 extern s32 gKolimaForestTree_IvanApproachActions[];
@@ -68,27 +88,6 @@ extern u32 gKolimaForestTreeExits[];
 extern struct ActorPlacement gKolimaForestTreeActorPlacements[];
 extern struct Trigger gKolimaForestTreeTriggers[];
 extern s32 gKolimaForestTreeEffectScript[];
-
-#include "scene/kolima_palette.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/field_effect.h"
-#include "system/system_call.h"
-#include "system/io_reg.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "macros.h"
-#include "sound/sound_driver_symbols.h"
 
 /// The actors, numbering gKolimaForestTreeActorPlacements' rows
 /// from ACTOR_FIRST_PLACED.

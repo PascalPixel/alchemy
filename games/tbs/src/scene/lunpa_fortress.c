@@ -71,11 +71,35 @@
 /// copies of West Lunpa Cave's exits and actor placements, which these
 /// scenes never read.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "edition.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "static_assert.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
 #include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gLunpaFortressRandomPick;
 extern s32 gSecondPatrolRoute[];
@@ -105,35 +129,6 @@ extern u32 gLunpaFortressToadonpaDoorCells[];
 extern u32 gLunpaFortressCaveDoorCells[];
 extern u32 gLunpaFortressUpperFloorDoorCells[];
 extern u32 gLunpaFortressGroundFloorDoorCells[];
-
-#include "scene/walk_into_leader.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/io_write.h"
-#include "system/heap_slots.h"
-
-#include "edition.h"
-
-#include "static_assert.h"
-
-#include "field/event_inline.h"
-
-#include "field/pushed_actor.h"
-#include "field/map_grid_scroll.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "djinn_ids.h"
-#include "sound/sound_driver_symbols.h"
-#include "system/io_reg.h"
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorActorPlacements from ACTOR_FIRST_PLACED,

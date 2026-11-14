@@ -85,12 +85,33 @@
 ///   last comes from the oven with the stew, whose find always answers first,
 ///   so the stew's line is unused.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "field/sprite.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
 #include "system/input.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
@@ -124,28 +145,6 @@ extern u16 gImil_CellStepsA[];
 extern u16 gImil_CellStepsB[];
 /// The position (x, y, z) the unused arc and sway effects move around.
 extern s32 gImil_ArcOrigin[];
-
-#include "scene/walk_into_leader.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/heap_slots.h"
-#include "text/msg_ids.h"
-#include "field/field_effect.h"
-#include "field/field_psynergy_work.h"
-#include "field/event_inline.h"
-#include "system/iwram_call.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "system/io_reg.h"
-#include "field/map_grid_scroll.h"
-#include "macros.h"
-#include "flags.h"
 
 /// The village's actors (Imil), numbering gImil_TownActorPlacements' rows,
 /// and gImil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED.

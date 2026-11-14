@@ -66,14 +66,33 @@
 /// by TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH sets all three stones on it, one
 /// stone on the west platform and two stacked on the east, weights 2 and 4.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/field_coordinate.h"
+#include "field/field_effect.h"
+#include "field/ground_mask.h"
+#include "field/pushed_actor.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);
@@ -93,27 +112,7 @@ extern struct ActorPlacement gTunnelRuinsActorPlacementsOther[];
 extern struct Trigger gTunnelRuinsGreatStatueTriggers[];
 extern struct Trigger gTunnelRuinsTriggersOther[];
 
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "field/ground_mask.h"
-
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "field/field_effect.h"
-#include "field/pushed_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
 
 /// The actors of TunnelRuinsGreatStatue, in the order of its actor placements.
 ///

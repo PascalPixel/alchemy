@@ -57,11 +57,31 @@
 /// - Sanctum, the name the game gives every other entrance, which leaves only
 ///   SANCTUM_UNUSED. No exit leads there, and it places nobody.
 
+#include "ability_ids.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_builtin_scripts.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/input.h"
 #include "system/main_routine_work.h"
+#include "system/save.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
@@ -89,27 +109,6 @@ extern struct Trigger gSanctum_XianTriggers[];
 extern s32 gSanctum_CursorBob[];
 extern s32 gSanctum_OwnerEffectScript[];
 extern s32 gSanctum_SparkEndScript[];
-
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "system/input.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "field/field_effect.h"
-#include "text/msg_ids.h"
-#include "system/save.h"
-#include "field/event_inline.h"
-#include "field/actor_builtin_scripts.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "sound/sound_driver_symbols.h"
 
 /// After the quest is refused, the Great Healer has warned that stepping
 /// outside the village is final.

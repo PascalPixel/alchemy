@@ -60,12 +60,32 @@
 /// with its colours rotated (SPRITE_COLOR_BRG). The rocks Move settles are
 /// SPRITE_TURNING_ROCK drawn in greys (SPRITE_COLOR_GREY).
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/event.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/system_call.h"
+#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 Scene_Initialize(void);
@@ -86,28 +106,7 @@ extern struct Trigger gMogallForestQuartz_Triggers[];
 extern struct Trigger gMogallForestKillerApe_Triggers[];
 extern struct Trigger gMogallForestSidePaths_Triggers[];
 
-#include "scene/actor_orbit.h"
-#include "scene/field_effect_spawn.h"
-
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "field/actor.h"
-#include "field/event.h"
-#include "djinn_ids.h"
-#include "field/field_effect.h"
-#include "field/pushed_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "scene/catch_nut.h"
 
 /// Actors of the first area (SceneId_MogallForestSign), numbered in the
 /// order of gMogallForestSign_ActorPlacements.

@@ -40,10 +40,35 @@
 /// grows with him. The platform's actor, ACTOR_PLATFORM_SHADOW, draws that
 /// shadow.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/create_configured_actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
@@ -58,32 +83,6 @@ extern u8 gSolSanctum_RingSwing[][3];
 extern s8 gSolSanctum_RingDirection[][3];
 extern s32 gSolSanctum_RingMaxScales[];
 extern s32 gSolSanctum_RingScaleSteps[];
-
-#include "scene/field_effect_spawn.h"
-#include "scene/sol_sanctum_elemental_star_ring_setup.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "field/actor.h"
-#include "field/event.h"
-#include "field/create_configured_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "system/io_reg.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
-#include "scene/walk_into_leader.h"
 
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);

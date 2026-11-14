@@ -3,6 +3,7 @@
 /// the scripts that move the lettering's title, `GO` and `WIN`
 /// (Colosso_StartLettering). The code rewrites one wait in the title's and
 /// `WIN`'s each time.
+
 #include "types.h"
 
 // clang-format off

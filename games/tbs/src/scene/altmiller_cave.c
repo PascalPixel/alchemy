@@ -59,11 +59,36 @@
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_builtin_scripts.h"
+#include "field/actor_script.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/display_transition.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
 #include "system/heap_slots.h"
+#include "system/io_write.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 struct LightWheel;
 
@@ -86,33 +111,6 @@ extern struct Trigger gAltmillerCave_VialChestTriggers[];
 extern struct Trigger gAltmillerCave_SquallTriggers[];
 extern struct Trigger gAltmillerCave_CookieChestTriggers[];
 extern struct Trigger gAltmillerCave_DraughtTriggers[];
-
-#include "scene/walk_into_leader.h"
-#include "system/main_routine.h"
-#include "system/io_write.h"
-#include "macros.h"
-
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "djinn_ids.h"
-#include "field/pushed_actor.h"
-#include "field/actor_builtin_scripts.h"
-#include "system/dma.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "graphics/display_transition.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "field/field_psynergy_work.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
 
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
 /// the two men from Tolbi who come looking for him.

@@ -47,9 +47,26 @@
 /// (FLAG_GATEWAY_CAVE_PSYNERGY_STONE), so it is back whenever the party
 /// returns from another area.
 
+#include "ability_ids.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gSuhallaGateWoundedNoCollision[];
 extern s32 gSuhallaGateWounded[];
@@ -67,25 +84,6 @@ extern struct ActorPlacement
 extern struct Trigger gSuhallaGateTriggersOther[];
 extern struct Trigger gSuhallaGateDewTriggers[];
 extern struct Trigger gGatewayCaveTriggers[];
-
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-
-#include "djinn_ids.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "scene/walk_into_leader.h"
 
 /// Gateway Cave's Psynergy Stone has been found.
 ///

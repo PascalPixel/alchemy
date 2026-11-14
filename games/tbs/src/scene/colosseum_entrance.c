@@ -59,11 +59,27 @@
 /// Colosseum's exits are how its arrivals chain into one another and into the
 /// finals stages.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "macros.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
@@ -96,23 +112,6 @@ extern struct Trigger gColosseumTunnelTriggers[];
 extern struct Trigger gColosseumTriggers[];
 extern struct Trigger gColosseumEntranceTriggers[];
 extern struct Trigger gColosseumTriggersFromColosseumAzartMatchWest[];
-
-#include "scene/walk_into_leader.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/actor_script.h"
-#include "macros.h"
-#include "flags.h"
-#include "system/io_reg.h"
-#include "sound/sound_driver_symbols.h"
 
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);

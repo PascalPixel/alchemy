@@ -35,9 +35,26 @@
 ///   river. It has no actors and only its two exits. They lead back south
 ///   into SceneId_GomaCaveStream and out onto the World Map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
+
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 
 extern struct SceneEntrance gGomaCaveStreamEntrances[];
 extern struct SceneEntrance gGomaCaveBridgeEntrances[];
@@ -46,23 +63,6 @@ extern struct ActorPlacement gGomaCaveStreamActorPlacements[];
 extern struct ActorPlacement gGomaCaveBridgeActorPlacements[];
 extern struct Trigger gGomaCaveStreamTriggers[];
 extern struct Trigger gGomaCaveBridgeTriggers[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "field/actor.h"
-#include "field/event.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "ability_ids.h"
 
 /// SceneId_GomaCaveStream's actors, numbering its actor placement
 /// rows from ACTOR_FIRST_PLACED.

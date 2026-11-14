@@ -56,12 +56,41 @@
 /// the Shaman's Rod back to whoever carried it and leaves for Lalivero Sanctum
 /// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_B).
 
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/create_configured_actor.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_psynergy_work.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_nearest.h"
+#include "scene/event_psynergy.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern s32 gVenusLighthouseAerie_JoinLeaderAction[];
@@ -88,17 +117,6 @@ extern s32 gVenusLighthouseAerie_LandedPlatform;
 extern struct Trigger gVenusLighthouseAerieTriggers[];
 extern s32 gVenusLighthouseAerie_BesideParticleScript[];
 
-#include "scene/field_effect_spawn.h"
-#include "scene/actor_nearest.h"
-#include "scene/event_psynergy.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "macros.h"
-
-#include "field/actor.h"
 /// The Lighthouse Aerie's actors; its entrances and exits are in
 /// scene_exits.h.
 
@@ -138,26 +156,6 @@ enum {
   ACTOR_BEAM_UPPER = 27,
   ACTOR_BEAM_TOP = 28
 };
-
-#include "field/field_effect.h"
-#include "sound/sound_driver_symbols.h"
-#include "field/create_configured_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/iwram_call.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "system/heap_slots.h"
-#include "field/pushed_actor.h"
-#include "field/map_grid_scroll.h"
-#include "system/io_reg.h"
-#include "field/field_psynergy_work.h"
-#include "flags.h"
-#include "item_ids.h"
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for

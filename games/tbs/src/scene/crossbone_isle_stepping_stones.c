@@ -46,13 +46,37 @@
 /// The other three side rooms are in crossbone_isle_keys.c, and the ninth
 /// floor's in crossbone_isle.c.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/create_configured_actor.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/ground_mask.h"
 #include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gCrossboneIsleSteppingStones_ActionTable[];
 extern u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[];
@@ -79,31 +103,6 @@ extern struct Trigger gCrossboneIsleIcePillarsTriggers[];
 extern struct Trigger gCrossboneIsleFloodgateTriggers[];
 extern struct Trigger gCrossboneIsleStackedPillarsTriggers[];
 extern struct Trigger gCrossboneIsleDragonStatueTriggers[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "field/actor.h"
-#include "field/field_effect.h"
-#include "field/create_configured_actor.h"
-#include "field/pushed_actor.h"
-#include "system/io_reg.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/dma.h"
-#include "text/msg_ids.h"
-#include "field/event_inline.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/ground_mask.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "macros.h"
 
 /// A chest searched while facing the given way.
 #define EXAMINE_CHEST_FACING(facing)                                           \

@@ -2,19 +2,24 @@
 /// The debug room Increase item and level, whose actors raise the party's
 /// levels, give any item and show the game's icons and portraits.
 
+#include "ability_ids.h"
 #include "edition.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "battle/battle_action_run.h"
 #include "battle/playback_queue.h"
+#include "field/event_inline.h"
+#include "field/field_psynergy_work.h"
 #include "field/field_work.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "gamepak/far_call.h"
+#include "system/dma.h"
 #include "system/heap_slots.h"
 #include "system/input.h"
 #include "system/system.h"
 #include "window/window.h"
+#include "text/msg_ids.h"
 
 u8 *Scene_GetEntrances(void);
 u8 *Scene_GetExits(void);
@@ -36,12 +41,6 @@ extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 
 void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
-
-#include "field/event_inline.h"
-#include "system/dma.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/field_psynergy_work.h"
 
 // Edition-specific text and window layout values: outside Japanese the item
 // browser's details window is 28 tiles wide rather than 13, and its

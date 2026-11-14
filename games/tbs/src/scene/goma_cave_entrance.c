@@ -37,36 +37,36 @@
 /// GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma Cave
 /// (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// World Map.
+
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/create_configured_actor.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_psynergy_work.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s32 gGomaCaveEntranceTallIvyScript[];
 extern struct SceneEntrance gGomaCaveEntranceEntrances[];
 extern u32 gGomaCaveEntranceExits[];
 extern struct ActorPlacement gGomaCaveEntranceActorPlacements[];
 extern struct Trigger gGomaCaveEntranceTriggers[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "menu/menu.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "field/create_configured_actor.h"
-#include "debug/debug.h"
-#include "graphics/graphics.h"
-#include "sound/sound.h"
-#include "game/inventory.h"
-#include "text/msg_ids.h"
-#include "field/actor_script.h"
-#include "system/heap_slots.h"
-#include "ability_ids.h"
-#include "macros.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "field/field_psynergy_work.h"
 
 /// The room's actors.
 ///

@@ -81,11 +81,34 @@
 /// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
 /// (examine triggers 100 to 102).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/create_configured_actor.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/heap_slots.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 extern s16 gTreeRooms_MapPatches[];
 extern s32 gTreeRooms_LeaderGathersActions[];
@@ -101,31 +124,6 @@ extern u32 gTreeRoomsExits[];
 extern struct ActorPlacement gTreeRoomsActorPlacements[];
 extern struct Trigger gTreeRoomsTriggers[];
 extern s32 gTreeRooms_TintIndex;
-
-#include "scene/walk_into_leader.h"
-#include "scene/field_effect_spawn.h"
-#include "macros.h"
-
-#include "field/create_configured_actor.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/heap_slots.h"
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "field/field_effect.h"
-#include "flags.h"
-#include "field/map_grid_scroll.h"
-#include "sound/sound_driver_symbols.h"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
 /// second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.

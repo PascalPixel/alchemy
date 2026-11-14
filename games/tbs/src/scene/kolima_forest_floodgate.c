@@ -28,10 +28,29 @@
 /// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
 
 #include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/map_grid.h"
+#include "field/map_grid_scroll.h"
 #include "field/scene_tables.h"
 #include "field/speaker.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/kolima_palette.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/dma.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 struct Actor;
 
@@ -64,26 +83,6 @@ extern struct SceneEntrance gKolimaForestFloodgateEntrances[];
 extern u32 gKolimaForestFloodgateExits[];
 extern struct ActorPlacement gKolimaForestFloodgateActorPlacements[];
 extern struct Trigger gKolimaForestFloodgateTriggers[];
-
-#include "scene/kolima_palette.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event.h"
-#include "system/system_call.h"
-#include "system/dma.h"
-#include "field/map_grid.h"
-#include "text/msg_ids.h"
-#include "field/map_grid_scroll.h"
-#include "macros.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
 
 /// The actors, numbering gKolimaForestFloodgateActorPlacements'
 /// rows from ACTOR_FIRST_PLACED.

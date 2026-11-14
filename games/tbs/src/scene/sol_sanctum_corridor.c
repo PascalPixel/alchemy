@@ -12,26 +12,23 @@
 /// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
 
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/sol_sanctum_imports.h"
+#include "scene/sol_sanctum_init_zoom.h"
+#include "sound/sound.h"
+#include "system/system.h"
 
 extern struct SceneEntrance gSolSanctumCorridorEntrances[];
 extern u32 gSolSanctumCorridorExits[];
 extern struct ActorPlacement gSolSanctumCorridorActorPlacements[];
 extern struct Trigger gSolSanctumCorridorTriggers[];
-
-#include "scene/sol_sanctum_init_zoom.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-
-#include "scene/sol_sanctum_imports.h"
-
-#include "field/event.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumCorridorEntrances;

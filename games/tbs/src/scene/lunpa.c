@@ -47,9 +47,22 @@
 /// (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from going back up
 /// (CELL_BEHAVIOR_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
+#include "sounds.h"
 #include "types.h"
+#include "field/event.h"
+#include "field/field_effect.h"
+#include "field/scene.h"
 #include "field/scene_tables.h"
+#include "scene/actor_orbit.h"
+#include "scene/catch_nut.h"
+#include "scene/field_effect_spawn.h"
 #include "system/main_routine_work.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern struct SceneEntrance gLunpaEntrances[];
 extern struct SceneEntrance gGateEntrances[];
@@ -61,18 +74,6 @@ extern struct Trigger gLunpaSealedTriggers[];
 extern struct Trigger gLunpaReopenedTriggers[];
 extern struct Trigger gGateTriggers[];
 extern u32 gLunpaUnusedWord;
-
-#include "scene/actor_orbit.h"
-#include "scene/field_effect_spawn.h"
-#include "field/field_effect.h"
-#include "system/system_call.h"
-#include "field/scene.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/event.h"
-#include "flags.h"
-#include "item_ids.h"
-#include "sounds.h"
 
 // Lunpa's and the gates' entrances and exits are in scene_exits.h.
 
@@ -189,9 +190,6 @@ enum { PILLAR_TOP_HEIGHT = px(16), CELL_SIZE = px(16) };
 enum { TREASURE_SPOT_PSYNERGY_STONE = 102 };
 
 extern struct MapGridCellAnimation gLunpaDoors[];
-
-#include "macros.h"
-#include "scene/catch_nut.h"
 
 static void Lunpa_WatchForUncloakedParty(void);
 

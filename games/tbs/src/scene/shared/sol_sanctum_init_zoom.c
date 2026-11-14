@@ -1,6 +1,7 @@
 /// @file
 /// The initialization that two rooms of Sol Sanctum share,
 /// SceneId_SolSanctumMaze and SceneId_SolSanctumCorridor.
+
 #include "flags.h"
 
 /// The scene opens in the window transition over 16 frames.

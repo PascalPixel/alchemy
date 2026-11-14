@@ -47,8 +47,22 @@
 /// him behind the middle layer (`BG2`, priority 2 in this map). The fixed
 /// priority 2 draws him in front of it, as the other diners are.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);
@@ -56,21 +70,6 @@ extern struct SceneEntrance gCottageRoomsCEntrances[];
 extern u32 gCottageRoomsCExits[];
 extern struct ActorPlacement gCottageRoomsCActorPlacements[];
 extern struct Trigger gCottageRoomsCTriggers[];
-
-#include "flags.h"
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// The head chef has shouted his string of orders once, so from then on he
 /// sends the party to the waitress.

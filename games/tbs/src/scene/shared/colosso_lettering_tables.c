@@ -2,6 +2,7 @@
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// where each lettering picture's palette starts, and the scripts that move
 /// the count (3, 2, 1) and `LOSE` (Colosso_StartLettering).
+
 #include "types.h"
 
 // clang-format off

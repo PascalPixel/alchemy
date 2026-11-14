@@ -71,12 +71,30 @@
 /// leader faces one cell unless another actor or the terrain is in the way.
 /// The water drops run as tasks started by Scene_Initialize.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
 #include "field/field.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "field/scene.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_step.h"
+#include "sound/sound.h"
+#include "system/heap_slots.h"
+#include "system/io_write_queue.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
 #include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern s32 gVaultCave_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
@@ -102,25 +120,6 @@ extern s32 gVaultCave_ScheduleTimer;
 extern s32 gVaultCave_ScheduleIndex;
 extern s32 gVaultCave_DropFrames;
 extern s32 gVaultCave_SelectedDrop;
-
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/heap_slots.h"
-#include "text/msg_ids.h"
-#include "field/event.h"
-#include "ability_ids.h"
-#include "flags.h"
-#include "field/actor_script.h"
-#include "field/map_grid_scroll.h"
-#include "item_ids.h"
-#include "system/io_write_queue.h"
-#include "scene/actor_step.h"
-#include "field/pushed_actor.h"
 
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);

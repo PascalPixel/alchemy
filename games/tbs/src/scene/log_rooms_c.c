@@ -41,10 +41,23 @@
 /// in its floor. The family is put out of sight
 /// (places/kolima-interiors_cursed/map-8.png).
 
+#include "ability_ids.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);
@@ -52,21 +65,6 @@ extern struct SceneEntrance gLogRoomsC_Entrances[];
 extern u32 gLogRoomsC_Exits[];
 extern struct ActorPlacement gLogRoomsC_ActorPlacements[];
 extern struct Trigger gLogRoomsC_Triggers[];
-
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
 
 /// Kolima's shops and inn, as Shop_Run and Inn_CheckIn number them.
 enum {

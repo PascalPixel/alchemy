@@ -58,11 +58,20 @@
 /// fortieth a frame as it climbs ever more slowly and drifts right ever faster
 /// (CottageRoomsA_AdvanceSleepZ).
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "sounds.h"
 #include "types.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_inline.h"
+#include "field/field_blend.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "scene/import.h"
 #include "system/main_routine_work.h"
+#include "text/msg_ids.h"
 
 const u32 *Scene_GetExits(void);
 s32 Scene_Initialize(void);
@@ -80,16 +89,6 @@ extern struct Trigger gCottageRoomsA_StormTriggers[];
 extern struct Trigger gCottageRoomsA_Triggers[];
 extern struct Trigger gCottageRoomsA_TriggersAfterLeaving[];
 extern struct Trigger gCottageRoomsA_TriggersAfterKalay[];
-
-#include "field/event.h"
-#include "field/field_blend.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
-#include "sounds.h"
 
 /// The placed actors, numbered in the order of the actor placement tables,
 /// which all place them alike.

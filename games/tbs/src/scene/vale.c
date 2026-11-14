@@ -87,11 +87,43 @@
 /// the hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west and sheds
 /// sparkles, and the pillar cycles its colour modes too.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/field_effect.h"
+#include "field/field_sequence.h"
+#include "field/map_grid_scroll.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/actor_orbit.h"
+#include "scene/actor_polar_target.h"
+#include "scene/catch_nut.h"
+#include "scene/event_psynergy.h"
 #include "scene/import.h"
+#include "scene/walk_into_leader.h"
+#include "scene/world_map_attached_effects.h"
+#include "sound/sound.h"
+#include "system/heap_release.h"
+#include "system/heap_slots.h"
+#include "system/iwram_call.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/task.h"
 #include "system/vram_cache.h"
+#include "window/screens.h"
+#include "window/window.h"
+#include "text/msg_ids.h"
 
 extern s32 gVale_AlephGuardPatrol[];
 extern s32 gVale_LeaderHammers[];
@@ -117,44 +149,8 @@ extern s32 gVale_GuardFromFirstPausePath[];
 extern s32 gVale_LeaderPushedBackPath[];
 extern s32 gVale_GuardFromSecondPausePath[];
 
-#include "scene/actor_orbit.h"
-#include "scene/event_psynergy.h"
-#include "scene/world_map_attached_effects.h"
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "window/window.h"
-#include "window/screens.h"
-#include "system/system.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "system/heap_release.h"
-
-#include "system/task.h"
-
-#include "field/pushed_actor.h"
-#include "field/event.h"
-#include "item_ids.h"
-
 extern struct Trigger gVale_TriggersAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
-
-#include "field/event_inline.h"
-#include "system/iwram_call.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "field/field_effect.h"
-#include "field/map_grid_scroll.h"
-#include "flags.h"
-#include "scene/walk_into_leader.h"
-#include "scene/catch_nut.h"
-#include "scene/actor_polar_target.h"
 
 // Where Garet lands after his jump once Dora has gone in, at the roof's end
 // (Vale_RoofMended): two pixels further south in the TBS_PATCH_2

@@ -51,11 +51,32 @@
 /// Coming back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
 /// Sanctum (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is
 /// not shown again.
+
+#include "ability_ids.h"
 #include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "macros.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "sound/sound.h"
+#include "system/iwram_call.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);
@@ -72,28 +93,6 @@ extern struct SceneEntrance gXian_Entrances[];
 extern u32 gXian_Exits[];
 extern struct ActorPlacement gXian_ActorPlacements[];
 extern struct Trigger gXian_Triggers[];
-
-#include "scene/field_effect_spawn.h"
-#include "field/event_commands.h"
-#include "system/system.h"
-#include "macros.h"
-
-#include "field/actor.h"
-#include "field/event.h"
-#include "system/iwram_call.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "field/event_inline.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "field/actor_script.h"
-#include "flags.h"
 
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"

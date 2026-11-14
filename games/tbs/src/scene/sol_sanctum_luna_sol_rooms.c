@@ -55,26 +55,33 @@
 /// room last showed them flash for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights).
 
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/event_inline.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/walk_into_leader.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gSolSanctumLunaSolRoomsEntrances[];
 extern u32 gSolSanctumLunaSolRoomsExits[];
 extern struct ActorPlacement gSolSanctumLunaSolRoomsActorPlacements[];
 extern struct Trigger gSolSanctumLunaSolRoomsTriggers[];
-
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
 
 /// The placed actors, numbered in the order of
 /// gSolSanctumLunaSolRoomsActorPlacements; Jenna and Garet, its last rows,
@@ -91,15 +98,6 @@ extern s32 gSolSanctumLunaSolRooms_FlashState;
 extern u16 gSolSanctumLunaSolRooms_Light2Timer;
 extern u16 gSolSanctumLunaSolRooms_Light3Timer;
 extern u16 gSolSanctumLunaSolRooms_Light4Timer;
-
-#include "field/event_inline.h"
-#include "system/io_reg.h"
-#include "text/msg_ids.h"
-#include "system/io_write.h"
-#include "flags.h"
-#include "sound/sound_driver_symbols.h"
-#include "item_ids.h"
-#include "scene/walk_into_leader.h"
 
 /// The rooms of Sol and Luna show their plain colours (PALETTE_TINT_NONE), so a
 /// return after a battle keeps them.

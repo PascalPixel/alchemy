@@ -55,11 +55,16 @@
 /// camera bounds, so Frost can never reach it
 /// (WestLunpaCave_UnusedFreezePuddle).
 
+#include "ability_ids.h"
+#include "flags.h"
 #include "scene_ids.h"
+#include "sounds.h"
 #include "types.h"
 #include "field/event.h"
 #include "field/scene_tables.h"
+#include "scene/walk_into_leader.h"
 #include "system/main_routine_work.h"
+#include "text/msg_ids.h"
 
 extern const struct SceneEntrance gCaveEntrances[];
 extern const u32 gCaveExits[];
@@ -67,10 +72,6 @@ extern const struct ActorPlacement gCaveNoActorPlacements[];
 extern const struct ActorPlacement gCaveActorPlacements[];
 extern const struct Trigger gCaveNoTriggers[];
 extern const struct Trigger gCaveTriggers[];
-
-#include "ability_ids.h"
-#include "flags.h"
-#include "sounds.h"
 
 /// The cell behaviors the cave's triggers answer.
 enum WestLunpaCaveCellBehavior {
@@ -195,9 +196,6 @@ enum DepartureMessage {
   DEPARTURE_HAMMET_LONGS_FOR_LAYANA,
   DEPARTURE_BUNZA_SETS_OFF
 };
-
-#include "text/msg_ids.h"
-#include "scene/walk_into_leader.h"
 
 /// The gate's puddle is frozen into a pillar, propping the gate open.
 #define FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00

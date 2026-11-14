@@ -51,33 +51,32 @@
 /// A jar, two barrels and a wooden box keep the first visit's flags, so what
 /// the party took then stays taken. Two bookcases can be read.
 
+#include "ability_ids.h"
+#include "flags.h"
+#include "item_ids.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
+#include "game/inventory.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
+#include "scene/log_rooms_a.h"
+#include "scene/vault_item_icon.h"
+#include "sound/sound.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern struct SceneEntrance gLogRoomsB_Entrances[];
 extern u32 gLogRoomsB_Exits[];
 extern struct ActorPlacement gLogRoomsB_ActorPlacements[];
 extern struct Trigger gLogRoomsB_Triggers[];
-
-#include "scene/log_rooms_a.h"
-#include "scene/vault_item_icon.h"
-#include "field/event_commands.h"
-#include "game/game.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "system/system_call.h"
-#include "game/inventory.h"
-#include "text/msg_ids.h"
-#include "ability_ids.h"
-#include "item_ids.h"
-#include "flags.h"
 
 /// The townspeople, numbering the actor placement rows from
 /// ACTOR_FIRST_PLACED and named by what they say on the party's return.

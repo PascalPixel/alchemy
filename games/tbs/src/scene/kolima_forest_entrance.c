@@ -31,12 +31,32 @@
 
 #include "flags.h"
 #include "types.h"
+#include "battle/battle.h"
+#include "debug/debug.h"
+#include "field/actor_script.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field.h"
+#include "field/field_sequence.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/character_ids.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/kolima.h"
+#include "scene/kolima_forest_bridge_falling_effect.h"
+#include "sound/sound.h"
+#include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
+#include "system/io_reg.h"
+#include "system/main_routine.h"
 #include "system/main_routine_work.h"
+#include "system/system.h"
+#include "system/system_call.h"
+#include "text/msg_ids.h"
 
 extern s32 gKolimaForestEntrance_GaretAction[];
 extern s32 gKolimaForestEntrance_IvanAction[];
@@ -53,27 +73,6 @@ extern struct Trigger gKolimaForestEntrance_Triggers[];
 extern s32 gKolimaForestEntrance_SparkleScript[];
 extern s32 gKolimaForestEntrance_SparkleBurstScript[];
 extern s32 gFallingEffectScript[];
-
-#include "scene/kolima_forest_bridge_falling_effect.h"
-#include "field/field_sequence.h"
-#include "system/main_routine.h"
-#include "field/event_commands.h"
-#include "battle/battle.h"
-#include "debug/debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "system/system_call.h"
-#include "scene/kolima.h"
-#include "field/pushed_actor.h"
-#include "text/msg_ids.h"
-#include "field/actor_script.h"
-#include "system/io_reg.h"
-#include "sound/sound_driver_symbols.h"
 
 /// The scene's actors after Garet's, Ivan's and Mia's party slots,
 /// numbering the rows of gKolimaForestEntrance_ActorPlacements from

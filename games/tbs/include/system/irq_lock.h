@@ -31,9 +31,9 @@
 /// Disables interrupts and saves IME in saved; IRQ_UNLOCK restores it.
 #define IRQ_LOCK(saved)                                                        \
   do {                                                                         \
-    volatile u16 *ime_ = &REG_IME;                                             \
+    volatile u16 *ime_;                                                        \
                                                                                \
-    IME_SAVE(ime_, saved);                                                     \
+    IME_SAVE((ime_ = &REG_IME), saved);                                        \
     IME_DISABLE(ime_);                                                         \
   } while (0)
 

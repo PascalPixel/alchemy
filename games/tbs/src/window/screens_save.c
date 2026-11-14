@@ -910,7 +910,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       // file resumes at MainRoutineWork.restartScene, not where it was saved
       // (scene/file_screen.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
-    } else if (summary->playTime != *(u32 *)summary->secondPartPlayTime) {
+    } else if (summary->playTime != summary->secondPartPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, y);
     } else if (menuMode == FILE_LIST_CLEARED && (s8)summary->sendFlag == 0) {
       Text_DrawMessage(MsgSaveNotCleared, fileList, 10, y);
@@ -986,7 +986,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       // Saved by an older build: see the other editions' list above.
       Text_DrawMessage(MsgSaveContinue, fileList, 10, i * 16);
     } else if (save->summary[i].playTime !=
-               *(u32 *)save->summary[i].secondPartPlayTime) {
+               save->summary[i].secondPartPlayTime) {
       Text_DrawMessage(MsgSaveCorrupted, fileList, 10, i * 16);
     } else if (menuMode == FILE_LIST_CLEARED &&
                (s8)save->summary[i].sendFlag == 0) {

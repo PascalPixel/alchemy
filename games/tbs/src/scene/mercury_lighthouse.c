@@ -332,8 +332,7 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 /// 18).
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  struct FadeOverlayWork *effectWork =
-      *(struct FadeOverlayWork **)Ram_ActorEffectWork;
+  struct FadeOverlayWork *effectWork = gFadeOverlayWork;
 
   if (leader->layer == 0 && FIELD_CELL(leader->z.fixed) > 12 &&
       leader->z.fixed >> 20 <= 18)

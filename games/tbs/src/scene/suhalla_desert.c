@@ -750,7 +750,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   struct MapGridScrollWork *grid;
 
-  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  grid = gMapGridWork[0];
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT) != 0) {

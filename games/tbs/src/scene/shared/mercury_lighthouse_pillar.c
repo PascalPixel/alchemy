@@ -258,7 +258,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  work = gFieldWork;
   actor = work->actors[gMainRoutineWork.leaderActorId];
   flags = &actor->motionFlags;
   saved = *flags;

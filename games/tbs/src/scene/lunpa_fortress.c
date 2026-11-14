@@ -738,7 +738,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = gFieldWork;
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -828,7 +828,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = gFieldWork;
 
   FieldCamera_GetActor();
   if (gFrameCount & 1) {
@@ -902,7 +902,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = gFieldWork;
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;

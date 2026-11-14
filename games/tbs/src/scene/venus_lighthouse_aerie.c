@@ -2911,8 +2911,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_WaitTransitionFrames();
   Event_Wait(80);
   ActorSystem_SuspendProjectionAndShowSprites();
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceSound = 0;
-  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->voiceCountdown = 0;
+  ((struct WindowWork *)gWindowWork[0])->voiceSound = 0;
+  ((struct WindowWork *)gWindowWork[0])->voiceCountdown = 0;
   FieldMessage_ShowCentered(MsgVenusDespiteLongTiring, 0, 0);
   ActorSystem_ResumeProjectionAndHideLayers();
   Event_Wait(80);

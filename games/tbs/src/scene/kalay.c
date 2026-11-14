@@ -1246,19 +1246,16 @@ static void Kalay_PrepareTunnelPassage(void) {
 
 /// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom).
 static void Kalay_PrepareTunnelTreasureRoom(void) {
-#if TBS_PATCH_1
-#endif
   s32 following;
   struct FadeOverlayWork *overlay;
-  void **slots = &gHeapSlots[HEAP_SLOT_FIELD];
 
-  ((struct FieldWork *)slots[0])->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
   // The overlay follows the leader except on the way down from the town.
 #if TBS_PATCH_1
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    overlay = slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
+    overlay = gFadeOverlayWork;
     // The flag's own 0 is the overlay's want of an actor.
     following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (following != 0)
@@ -1267,16 +1264,14 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
   } else {
     Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (gMainRoutineWork.entrance == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-      ((struct FadeOverlayWork *)
-           slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
-          ->actor = NULL;
+      gFadeOverlayWork->actor = NULL;
       GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     }
   }
 #else
   Event_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    overlay = slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
+    overlay = gFadeOverlayWork;
     // The flag's own 0 is the overlay's want of an actor.
     following = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (following != 0)
@@ -1284,8 +1279,7 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
     overlay->actor = (struct Actor *)following;
   } else if (gMainRoutineWork.entrance ==
              KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
-    ((struct FadeOverlayWork *)slots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
-        ->actor = NULL;
+    gFadeOverlayWork->actor = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 #endif

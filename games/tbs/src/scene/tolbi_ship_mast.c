@@ -451,7 +451,6 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 static void TolbiShipMast_RunAvastEvent(void) {
   s32 *cameraOrigin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   struct Actor *actor;
-  struct FieldWork **field;
   s32 sparkleX;
   s32 sparkleY = 0;
 
@@ -461,9 +460,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
-  field = (struct FieldWork **)&HEAP_SLOT_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID,
-                                               HEAP_SLOT_FIELD);
-  (*field)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -523,7 +520,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
   // "Monsters sighted!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 20);
-  (*field)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

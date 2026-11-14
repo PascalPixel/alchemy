@@ -188,7 +188,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   struct Actor *actor;
   struct WeatherWork *sparkles;
 
-  sparkles = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
+  sparkles = gWeatherWork;
   Event_Start();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.

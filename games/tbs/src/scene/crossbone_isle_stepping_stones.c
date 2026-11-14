@@ -1123,8 +1123,7 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 /// follows the leader, and the leader's rise counter starts.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))->actor =
-      leader;
+  gFadeOverlayWork->actor = leader;
   leader->riseCounter = 1;
 }
 
@@ -1133,8 +1132,7 @@ static void CrossboneIsleSteppingStones_StartRising(void) {
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY))->actor =
-      NULL;
+  gFadeOverlayWork->actor = NULL;
   leader->riseCounter = 0;
 }
 

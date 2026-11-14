@@ -254,7 +254,7 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 /// direction.
 static UNREAD_RESULT Tolbi_UpdateKid(struct Actor *updated) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *field = FIELD_WORK_FROM(gWindowWork, HEAP_SLOT_WINDOW);
+  struct FieldWork *field = gFieldWork;
   s32 force = 0;
   s32 range = 18;
   struct Actor *other;

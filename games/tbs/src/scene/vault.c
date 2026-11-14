@@ -147,7 +147,7 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 static UNREAD_RESULT
 Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *field = FIELD_WORK_FROM(gWindowWork, HEAP_SLOT_WINDOW);
+  struct FieldWork *field = gFieldWork;
   s32 force = 0;
   s32 range = 18;
   struct Actor *leader;

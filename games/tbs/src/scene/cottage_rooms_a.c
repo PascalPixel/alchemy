@@ -376,7 +376,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
     Actor_SetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
-    ((struct FieldBlendWork *)gHeapSlots[HEAP_SLOT_FIELD_BLEND])->loud = 1;
+    ((struct FieldBlendWork *)gFieldBlendWork[0])->loud = 1;
     Weather_LastLightning();
     wait(30);
     Event_StartScreenTransition();

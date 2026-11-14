@@ -1013,7 +1013,7 @@ static void HeatGauge_Draw(void) {
   }
 
   // Window 1's left edge follows the gauge on lines 8 to 151.
-  transition = *Ram_DisplayWork;
+  transition = gScreenTransitionWork;
   if (transition != NULL) {
     u16 *edge = transition->pages[transition->page];
     s32 left = (s16)(slide << 3);

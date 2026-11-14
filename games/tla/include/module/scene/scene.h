@@ -101,11 +101,6 @@ struct DoorStep {
   u16 z;
 };
 
-struct EventWork1c4 {
-  u8 unk000[0x1c4];
-  u16 count;
-};
-
 struct CellMapCell {
   u8 unk00[2];
   u8 event;
@@ -136,13 +131,6 @@ struct PushEvent {
   s16 z;
   u8 unk0a[4];
   u16 busy;
-};
-
-struct JupiterLighthouseRoom8EventWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-  u8 unk1b0[0x1c];
-  struct Actor *marker;
 };
 
 struct LightOam {

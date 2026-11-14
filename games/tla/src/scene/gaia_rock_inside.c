@@ -2176,11 +2176,6 @@ struct GaiaRockAnimation {
   u16 angle;
 };
 
-struct GaiaRockInsideSceneWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 extern u32 gData_02005360[];
 extern u32 gData_0200539c[];
 extern u32 gData_020053d8[];
@@ -2871,11 +2866,6 @@ struct GaiaRockAnimation {
   u16 angle;
 };
 
-struct GaiaRockInsideSceneWork {
-  u8 unk000[0x1ac];
-  s32 screenEffect;
-};
-
 extern char SceneId_GaiaRockInside1;
 extern char SceneId_GaiaRockInside2;
 extern char SceneId_GaiaRockInside3;
@@ -2920,8 +2910,7 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  ((struct GaiaRockInsideSceneWork *)Ram_HeapSlots->fieldWork)->screenEffect =
-      516;
+  gFieldWork->transition = 516;
   if (work->scene == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {

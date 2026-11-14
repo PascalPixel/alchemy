@@ -162,16 +162,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Shows the next line of a conversation in a window beside its speaker's
 /// portrait (portrait 56 for kind 8) and closes it after the frames.
 void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
-  // This routine's own view of the event work. A union: the read of width
-  // keeps its place after this store.
-  struct EventWork1c4 {
-    u8 unk000[0x1c4];
-    union {
-      s16 message;
-      s32 word;
-    } u;
-  };
-  struct EventWork1c4 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 b;
   s32 a;
   s32 height;
@@ -189,14 +180,14 @@ void LemuriaEntrance_ShowPortraitLine(s32 kind, s32 frames) {
   if (kind == 7) {
     width = 10;
     height = 10;
-    Text_GetMessageSize(work->u.message, &width, &height, &a, &b);
+    Text_GetMessageSize(work->message, &width, &height, &a, &b);
     x = width + a - 5;
   } else {
     width = 5;
     height = 10;
     x = 5;
   }
-  Call4((void (*)())Message_OpenWindow, work->u.message++, width, height,
+  Call4((void (*)())Message_OpenWindow, work->message++, width, height,
         (resource << 16) | 2);
   x = Portrait_OpenWindow(id, 0, x, 5);
   while (Message_AllTyped() == 0)

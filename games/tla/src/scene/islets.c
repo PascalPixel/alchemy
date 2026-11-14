@@ -1809,12 +1809,12 @@ void Func_02002d48(s32 id, s32 column, s32 row) {
 // (Func_02002d48) at 0, still at 100 and 220, and walking in place at 130.
 void Func_02002d7c(void) {
   u16 *step = (u16 *)((u8 *)gSceneState);
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u16 *owed = (u16 *)(((u8 *)gSceneState) + 2);
   s32 i;
   s32 count;
 
-  if (*(s16 *)(work + 0x166) != 0 || GameFlag_Get(FLAG_SCENE_TEMP_18)) {
+  if (work->psynergy != 0 || GameFlag_Get(FLAG_SCENE_TEMP_18)) {
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->movementState = 1;
     return;
@@ -1826,7 +1826,7 @@ void Func_02002d7c(void) {
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->movementState = 1;
     {
-      s16 *countdown = (s16 *)(work + 0x16a);
+      s16 *countdown = &work->raisedTrigger;
       s32 ticks = 200;
 
       *countdown = ticks;
@@ -1835,7 +1835,7 @@ void Func_02002d7c(void) {
   }
   count = *owed + 1;
   *owed = count;
-  if (*(s16 *)(work + 0x156) != 0 || (u16)count == 0)
+  if (work->pushCell != 0 || (u16)count == 0)
     return;
   do {
     switch (*step) {

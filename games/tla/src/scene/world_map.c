@@ -159,17 +159,17 @@ extern s32 Data_02006be8[8];
 #if !TLA_PATCH_1
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
-    struct EncounterWork *work;                                                \
+    struct FieldWork *work;                                                    \
     struct MainRoutineWork *party;                                             \
                                                                                \
     work = Ram_HeapSlots->fieldWork;                                           \
     party = &gMainRoutineWork;                                                 \
-    if (party->encounterSteps >= work->threshold * 9 / 10) {                   \
+    if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {          \
       if (Random16() < 0x8000) {                                               \
         Event_RequestDjinnBattle(a, b);                                        \
-        work->bias = 0;                                                        \
+        work->encounterBias = 0;                                               \
       } else {                                                                 \
-        party->encounterSteps = work->threshold;                               \
+        party->encounterSteps = work->encounterThreshold;                      \
       }                                                                        \
     }                                                                          \
   }

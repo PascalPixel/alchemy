@@ -916,7 +916,7 @@ extern u32 gData_02003dcc[];
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 speed = 0x18000;
   s32 cue = 539;
   struct Actor *other, *launcher;
@@ -925,9 +925,8 @@ void Func_02001908(struct Actor *shot) {
   s32 *shotPosition;
   struct Actor **objects;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      gMainRoutineWork.renderMode == 5) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0 || gMainRoutineWork.renderMode == 5) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -964,13 +963,13 @@ void Func_02001908(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct FieldWork *)work)->raisedTrigger = 200;
+      work->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
     }
   }
-  objects = (struct Actor **)(work + 0x34);
+  objects = &work->actors[8];
   for (i = 8; i != 64; i++) {
     other = *objects++;
     if (other->script != 0) {

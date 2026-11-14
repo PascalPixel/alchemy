@@ -367,7 +367,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
       } else if (row - leaderRow > 5)
         continue;
       entry = gOverlayArea.triggers();
-      if (entry->kind == (u32)-1)
+      if (entry->kind == -1)
         continue;
       do {
         if (entry->subject == id && (entry->kind & 15) == TRIGGER_EXAMINE) {
@@ -392,7 +392,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
           }
         }
         entry++;
-      } while (entry->kind != (u32)-1);
+      } while (entry->kind != -1);
     }
   }
 }

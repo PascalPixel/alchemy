@@ -158,7 +158,7 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 /// (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED event if it has
 /// one, the event for talking to it while it is stopped (Crossbone Isle's Bane
 /// has one).
-s32 Scene_FindActorTalkTrigger(s32 id) {
+const struct Trigger *Scene_FindActorTalkTrigger(s32 id) {
   const struct Trigger *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
   s32 pausedActorId = gMainRoutineWork.haltedActor;
 
@@ -167,10 +167,10 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
         Scene_FindTrigger(TRIGGER_TALK_HALTED, pausedActorId);
 
     if (pausedTrigger != 0) {
-      return (s32)pausedTrigger;
+      return pausedTrigger;
     }
   }
-  return (s32)talkTrigger;
+  return talkTrigger;
 }
 
 /// Talks to actor id: shows its event's message or calls its event function,

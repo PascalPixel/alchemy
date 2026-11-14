@@ -141,6 +141,5 @@ s32 Math_IntegerSqrt(s32 value) {
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
-/// Returns the address of the basic sprite palettes (gBasicSpritePalettes) as a
-/// number.
-s32 Palette_GetBasicSpriteColors(void) { return (s32)gBasicSpritePalettes; }
+/// Returns the basic sprite palettes (gBasicSpritePalettes).
+const u8 *Palette_GetBasicSpriteColors(void) { return gBasicSpritePalettes; }

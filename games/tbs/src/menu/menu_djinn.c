@@ -471,7 +471,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(BG_CHAR_BLOCK(1) +
                       DJINN_BACKDROP_BORDER_TILE * TILE_SIZE_4BPP,
                   gMenu_BackdropBorderTile, TILE_SIZE_4BPP);
-  Dma_Set((const void *)Palette_GetBasicSpriteColors(),
+  Dma_Set(Palette_GetBasicSpriteColors(),
           (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =

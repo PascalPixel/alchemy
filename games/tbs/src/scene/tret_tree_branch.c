@@ -188,15 +188,12 @@ TretTreeBranch_SetRevealWindow(struct ScreenTransitionState *state) {
 /// Casting Reveal in Tret Tree sets the window transition and BG1's blend over
 /// the rest of the screen again, as when the map opened.
 static void TretTreeBranch_CastReveal(void) {
-  struct ScreenTransitionState *state;
-
   ScreenTransition_InitializeBattleEffectState(9);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  state = gScreenTransitionWork;
-  TretTreeBranch_SetRevealWindow(state);
+  TretTreeBranch_SetRevealWindow(gScreenTransitionWork);
 }
 
 /// Returns the scene's exit, coord, talk and Reveal events.

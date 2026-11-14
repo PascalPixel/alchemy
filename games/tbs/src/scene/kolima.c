@@ -575,11 +575,9 @@ static void Kolima_WitnessForestCurse(void) {
   s32 stagingValue;
   const s32 *squashActions;
   const s32 *restoreScaleActions;
-  u32 *firstCurtainState;
-  s32 *mapState;
+  s32 *miaInParty;
   const s32 *growFieldActions;
   const s32 *shrinkFieldActions;
-  u32 *secondCurtainState;
 
   // Enter the deserted village and let Ivan inspect one of its trees.
   Event_Start();
@@ -830,9 +828,8 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  firstCurtainState = &gFallingEffectState;
   gFallingEffectOffset = px(128);
-  *firstCurtainState = KOLIMA_DUST_CLOSING;
+  gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
   Sound_Play(MUS_FOREST);
@@ -848,7 +845,7 @@ static void Kolima_WitnessForestCurse(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 20);
-  *firstCurtainState = KOLIMA_DUST_CLOSING_WIDE;
+  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -873,8 +870,7 @@ static void Kolima_WitnessForestCurse(void) {
   } else {
     gFieldWork->message++;
   }
-  mapState = (s32 *)&gFallingEffectState;
-  *mapState = KOLIMA_DUST_DRIFTING;
+  gFallingEffectState = KOLIMA_DUST_DRIFTING;
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_IVAN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -910,10 +906,8 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
-  if (*mapState != KOLIMA_DUST_CENTRED) {
-    do {
-      wait(1);
-    } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
+  while (gFallingEffectState != KOLIMA_DUST_CENTRED) {
+    wait(1);
   }
   Event_Wait(300);
   Task_Remove(Kolima_UpdateCurseDust);
@@ -1132,8 +1126,7 @@ static void Kolima_WitnessForestCurse(void) {
   wait(60);
   gFallingEffectWidth = 0;
   gFallingEffectOffset = px(128);
-  secondCurtainState = &gFallingEffectState;
-  *secondCurtainState = KOLIMA_DUST_CLOSING;
+  gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1158,7 +1151,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET, 3);
   Actor_SetSpritePriority(ACTOR_IVAN, 3);
   Actor_SetSpritePriority(ACTOR_MIA, 3);
-  *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
+  gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Sound_Play(SE_SHIMMER);
   Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 120, 248);
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
@@ -1172,7 +1165,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
   Event_Wait(120);
-  *secondCurtainState = KOLIMA_DUST_DRIFTING;
+  gFallingEffectState = KOLIMA_DUST_DRIFTING;
   do {
     wait(1);
   } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
@@ -1276,14 +1269,14 @@ static void Kolima_WitnessForestCurse(void) {
   wait(80);
   Actor_Stop(ACTOR_LEADER_PSYNERGY_FIELD);
   Actor_Stop(ACTOR_IVAN_PSYNERGY_FIELD);
-  mapState = &gKolima_MiaInParty;
+  miaInParty = &gKolima_MiaInParty;
   Actor_Stop(ACTOR_MIA_PSYNERGY_FIELD);
   Actor_Stop(ACTOR_GARET_PSYNERGY_FIELD);
   wait(1);
   shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, shrinkFieldActions);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, shrinkFieldActions);
-  if (*mapState != 0) {
+  if (*miaInParty != 0) {
     Actor_SetScript(ACTOR_MIA_PSYNERGY_FIELD, shrinkFieldActions);
   }
   Actor_RunScriptAndWait(ACTOR_GARET_PSYNERGY_FIELD, shrinkFieldActions);
@@ -1486,7 +1479,6 @@ static void Kolima_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
   s32 framePhase;
-  s32 priorityFlags;
   s32 spawnX = px(98);
   s32 spawnZ = px(105);
   s32 targetX = px(98);
@@ -1505,9 +1497,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   }
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
-  priorityFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  priorityFlags &= sparkle->priorityFlags;
-  sparkle->priorityFlags = priorityFlags;
+  sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
   sparkle->speedLimit = px(8);

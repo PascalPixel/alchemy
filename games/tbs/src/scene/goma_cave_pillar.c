@@ -260,31 +260,27 @@ static void GomaCavePillar_SpawnStumpDust(void) {
   s32 fixedX;
   s32 fixedZ;
   struct Actor *heightSource;
-  struct Actor *firstXSource, *firstZSource;
-  s32 firstRandomX, firstRandomSpeed, firstStyle, firstSpeedBand,
-      firstBandScaled, firstFallingSpeed;
-  struct Actor *secondXSource, *secondZSource;
-  s32 secondRandomX, secondRandomSpeed, secondStyle, secondSpeedBand,
-      secondBandScaled, secondFallingSpeed;
+  struct Actor *firstXSource;
+  s32 firstRandomX, firstStyle, firstSpeedBand, firstBandScaled,
+      firstFallingSpeed;
+  struct Actor *secondXSource;
+  s32 secondRandomX, secondStyle, secondSpeedBand, secondBandScaled,
+      secondFallingSpeed;
 
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
     firstXSource = Actor_Get(ACTOR_STUMP);
     firstRandomX = Random_Next();
     fixedX = firstXSource->x.fixed;
-    fixedX +=
-        ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
+    fixedX += px((u32)firstRandomX * 12 >> 16);
     heightSource = Actor_GetById(ACTOR_STUMP);
-    firstZSource = Actor_Get(ACTOR_STUMP);
-    fixedZ = firstZSource->z.fixed;
+    fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
     fixedZ += px(6);
-    firstRandomSpeed = Random_Next();
-    firstSpeedBand = ((u32)((firstRandomSpeed << 2) + firstRandomSpeed) >> 16);
+    firstSpeedBand = Random_Below(5);
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
     firstBandScaled =
         (((firstSpeedBand << 1) + firstSpeedBand) << 2) + firstSpeedBand;
-    firstFallingSpeed = firstBandScaled << 6;
-    firstFallingSpeed -= firstBandScaled;
+    firstFallingSpeed = (firstBandScaled << 6) - firstBandScaled;
     firstFallingSpeed <<= 3;
     firstFallingSpeed += firstSpeedBand;
     firstStyle = Random_Below(2);
@@ -296,19 +292,14 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondXSource = Actor_Get(ACTOR_STUMP);
       secondRandomX = Random_Next();
       fixedX = secondXSource->x.fixed;
-      fixedX +=
-          ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
+      fixedX += px((u32)secondRandomX * 12 >> 16);
       heightSource = Actor_GetById(ACTOR_STUMP);
-      secondZSource = Actor_Get(ACTOR_STUMP);
-      fixedZ = secondZSource->z.fixed;
+      fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
       fixedZ += px(6);
-      secondRandomSpeed = Random_Next();
-      secondSpeedBand =
-          ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
+      secondSpeedBand = Random_Below(5);
       secondBandScaled =
           (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
-      secondFallingSpeed = secondBandScaled << 6;
-      secondFallingSpeed -= secondBandScaled;
+      secondFallingSpeed = (secondBandScaled << 6) - secondBandScaled;
       secondFallingSpeed <<= 3;
       secondFallingSpeed += secondSpeedBand;
       secondStyle = Random_Below(2);
@@ -324,71 +315,51 @@ s32 gGomaCavePillar_WitnessFrames;
 /// Move on the stump in Goma Cave, until it falls (FLAG_GOMA_CAVE_STUMP_FELL).
 static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
-  void (*fragmentFunc)(void);
   s32 fixedX;
   s32 fixedZ;
   struct Actor *heightSource;
   struct Actor *stump;
-  struct Actor *spriteActor;
-  struct Actor *blendActor;
-  struct Actor *bounceActor, *gravityActor;
-  struct Actor *movedActor;
-  struct Actor *zSource, *xSource;
-  s32 randomX, randomSpeed, style, speedBand, bandScaled, fallingSpeed;
-  struct Actor *overlayActor;
+  s32 style, speedBand, bandScaled, fallingSpeed;
 
   stump = Actor_Get(ACTOR_STUMP);
   column = stump->x.fixed / px(16);
   Event_Start();
   if (column == 25) {
-    overlayActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
-    overlayActor->layer = 1;
-    spriteActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
-    Actor_SetSpriteFlags(spriteActor, 0);
+    Actor_Get(ACTOR_MASK_FOR_STUMP)->layer = 1;
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_MASK_FOR_STUMP), 0);
     // XXX (no evidence): why the mask is drawn black and translucent rather
     // than in SPRITE_COLOR_HIDDEN, which would hide the stump the same way.
     Actor_SetSpriteColorById(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
-    blendActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
-    Actor_SetBlendMode(blendActor, ACTOR_BLEND_TRANSLUCENT);
+    Actor_SetBlendMode(Actor_Get(ACTOR_MASK_FOR_STUMP),
+                       ACTOR_BLEND_TRANSLUCENT);
     Actor_SetPosition(ACTOR_MASK_FOR_STUMP, 414, 240);
     Event_Wait(10);
     // Dust falls while the stump rocks on the edge.
-    fragmentFunc = GomaCavePillar_SpawnStumpDust;
-    Task_AddFrame(fragmentFunc, TASK_PASS_FRAME);
+    Task_AddFrame(GomaCavePillar_SpawnStumpDust, TASK_PASS_FRAME);
     Sound_Play(SE_RUMBLE);
     Actor_SetDestinationOffset(ACTOR_STUMP, 1, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
     Event_Wait(10);
     Actor_SetDestinationOffset(ACTOR_STUMP, 2, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
-    bounceActor = Actor_Get(ACTOR_STUMP);
-    bounceActor->bounce = 0;
-    gravityActor = Actor_Get(ACTOR_STUMP);
-    gravityActor->gravity = px(3) / 5;
+    Actor_Get(ACTOR_STUMP)->bounce = 0;
+    Actor_Get(ACTOR_STUMP)->gravity = px(3) / 5;
     Event_Wait(3);
     // It tips over the edge.
     Actor_SetSpeedAndAcceleration(ACTOR_STUMP, 2.5, 0.25);
     Sound_Play(SE_STOP_ACTION_SE);
     Actor_SetDestination(ACTOR_STUMP, 416, 200);
-    movedActor = Actor_Get(ACTOR_STUMP);
-    Actor_SetSpriteFlags(movedActor, 0);
-    Task_Remove(fragmentFunc);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_STUMP), 0);
+    Task_Remove(GomaCavePillar_SpawnStumpDust);
     Event_Wait(12);
     Sound_Play(SE_STONE_GRIND);
-    xSource = Actor_Get(ACTOR_STUMP);
-    randomX = Random_Next();
-    fixedX = xSource->x.fixed;
-    fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
+    fixedX = Actor_Get(ACTOR_STUMP)->x.fixed + px(Random_Below(12));
     heightSource = Actor_Get(ACTOR_STUMP);
-    zSource = Actor_Get(ACTOR_STUMP);
-    fixedZ = zSource->z.fixed;
-    fixedZ += px(6);
-    randomSpeed = Random_Next();
-    speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
+    fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed + px(6);
+    speedBand = Random_Below(5);
     // A last piece of dust, with the same tenth-pixel speed bands.
     bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
-    fallingSpeed = bandScaled << 6;
-    fallingSpeed -= bandScaled;
+    fallingSpeed = (bandScaled << 6) - bandScaled;
     fallingSpeed <<= 3;
     fallingSpeed += speedBand;
     style = Random_Below(2);

@@ -403,8 +403,7 @@ static inline void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
 static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct Actor *leader;
-  s32 *paletteFrame;
-  s32 flash;
+  u32 flash;
   void (*spawnOrbitSparks)(void);
   const s32 *finalActions;
 
@@ -439,8 +438,7 @@ static void KolimaForestTree_RestoreTret(void) {
   PaletteFade_StartInterpolation(32);
   wait(40);
   // Carry the healing across the forest as its healthy colours return.
-  paletteFrame = &gKolimaForestTreePaletteFrame;
-  *paletteFrame = 0;
+  gKolimaForestTreePaletteFrame = 0;
   Task_AddFrame(KolimaForestTree_UpdateHealingPalette, TASK_PASS_FRAME);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -459,10 +457,8 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(326, CAMERA_KEEP, 384, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);
-  if (*paletteFrame != 24) {
-    do {
-      wait(1);
-    } while (*paletteFrame != 24);
+  while (gKolimaForestTreePaletteFrame != 24) {
+    wait(1);
   }
   Task_Remove(KolimaForestTree_UpdateHealingPalette);
   wait(10);
@@ -475,7 +471,7 @@ static void KolimaForestTree_RestoreTret(void) {
     PaletteFade_StartInterpolation(6);
     flash++;
     wait(6);
-  } while ((u32)flash <= 3);
+  } while (flash <= 3);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(40);
   wait(80);
@@ -811,7 +807,6 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   struct Actor *effect;
   struct Sprite *sprite;
   s32 phase;
-  s32 effectFlags;
   s32 spawnX = px(326);
   s32 spawnY = px(32);
   s32 spawnZ = px(192);
@@ -828,9 +823,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
     return;
   sprite = effect->sprite;
   sprite->flags = phase;
-  effectFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  effectFlags &= effect->priorityFlags;
-  effect->priorityFlags = effectFlags;
+  effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   effect->scaleX = Q16_ONE / 10;
   effect->speedLimit = px(4);

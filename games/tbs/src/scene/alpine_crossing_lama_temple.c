@@ -605,8 +605,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     Actor_SetScript(ACTOR_PARTY_LEADER, gAlpineCrossing_LeaderPath);
     Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
     Event_Wait(10);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    leader->update = NULL;
+    Actor_Get(ACTOR_PARTY_LEADER)->update = NULL;
     Event_Wait(30);
 
     // She cannot hear Hsu's voice.

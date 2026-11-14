@@ -545,7 +545,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    actor->motionFlags &= 126;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part.pixel,
                         components[2].part.pixel);
@@ -819,7 +819,6 @@ static inline void AltmillerCave_FacePartyNorth(void) {
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct ScreenTransitionState *state;
   struct Actor *actor;
-  struct Actor *leader;
   s32 i;
   s32 eva;
   s32 evb;

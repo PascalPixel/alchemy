@@ -700,9 +700,9 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   s32 scrollX;
   u32 column;
 
-  if ((u32)(screenY + 16) <= 175) {
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 10) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+  if (screenY >= -16 && screenY <= 159) {
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 10) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
@@ -710,8 +710,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 9) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 9) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
@@ -719,8 +719,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 8) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 8) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY + SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET;
@@ -968,14 +968,10 @@ static void SolSanctumStatue_RightBeamStatueMoved(void) {
 /// Starting Move beside the centre statue blocks its cells while the leader
 /// stands in their row.
 static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
-  struct Actor *leaderPosition;
   s32 column;
-  struct Actor *leader;
 
-  leaderPosition = Actor_Get(ACTOR_PARTY_LEADER);
-  column = FIELD_CELL(leaderPosition->x.fixed);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FIELD_CELL(leader->z.fixed) == 8) {
+  column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
+  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) == 8) {
     if (column >= 17 && column <= 18) {
       Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
       Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);
@@ -1009,7 +1005,6 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
 /// the statue into the floor.
 static void SolSanctumStatue_CenterStatueMoved(void) {
   struct Actor *statue;
-  struct Actor *leader;
   s32 statueZ;
 
   statue = Actor_Get(ACTOR_CENTER_STATUE);
@@ -1020,11 +1015,9 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
     Event_Start();
     if ((statueZ >> 20) == 8) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
-        leader = Actor_Get(ACTOR_PARTY_LEADER);
-        if ((u32)(leader->z.fixed >> 19) <= 17) {
+        if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 17) {
           Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 289, 158);
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          leader->facing = FACING_NORTH;
+          Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
         }
       }
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
@@ -1100,8 +1093,8 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
       Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
-      movingActor = Actor_Get(ACTOR_PARTY_LEADER);
-      Actor_SetDestination(ACTOR_PARTY_LEADER, movingActor->x.part.pixel, 136);
+      Actor_SetDestination(ACTOR_PARTY_LEADER,
+                           Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
       Actor_WaitForMoveById(ACTOR_CENTER_STATUE);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

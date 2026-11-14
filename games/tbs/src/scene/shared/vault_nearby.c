@@ -16,13 +16,12 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
   u8 **slots = gWindowWork;
   u8 *windowWork = slots[0];
   struct FieldWork *work = FIELD_WORK_FROM(slots, HEAP_SLOT_WINDOW);
-  s16 *flags = &actor->timer;
   s32 force = 0;
   s32 range = 18;
   struct Actor *partner;
   struct Actor *player;
 
-  if ((*flags & 1) != 0) {
+  if ((actor->timer & 1) != 0) {
     partner = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
   } else {
     partner = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
@@ -35,7 +34,7 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
 
   if ((s16)work->talk != 0 || windowWork[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
     range = 26;
-    if ((*flags & 2) != 0) {
+    if ((actor->timer & 2) != 0) {
       force = 1;
     }
   }

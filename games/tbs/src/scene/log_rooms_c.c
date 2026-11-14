@@ -232,7 +232,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsC_Triggers; }
 /// Sets up the houses for the curse and the way they're entered.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
-  s32 actorId;
+  u32 actorId;
   u32 entrance;
 
   work->transition =
@@ -246,7 +246,7 @@ s32 Scene_Initialize(void) {
 
       actorId++;
       Actor_SetSpriteFlags(actor, 0);
-    } while ((u32)actorId <= ACTOR_LAST_VILLAGER);
+    } while (actorId <= ACTOR_LAST_VILLAGER);
   }
 
   entrance = (u16)gMainRoutineWork.entrance;

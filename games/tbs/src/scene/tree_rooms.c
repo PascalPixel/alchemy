@@ -448,7 +448,6 @@ const struct Trigger *Scene_GetTriggers(void) { return gTreeRoomsTriggers; }
 /// 40, while FLAG_TRET_DEFEATED is clear).
 static void TreeRooms_FightTret(void) {
   s32 hasMia;
-  struct Actor *leader;
 
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Event_Start();
@@ -526,7 +525,6 @@ static void TreeRooms_FightTret(void) {
 /// he comes to, thanks the party and says good-bye. "Oh... Mmmmm..."
 static void TreeRooms_PlayPostBattleConversation(void) {
   s32 hasMia;
-  struct Actor *partyActor;
   TaskFunc sparkTask;
   const s32 *actions;
 
@@ -543,18 +541,14 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 166, 80);
-  partyActor = Actor_Get(ACTOR_PARTY_LEADER);
-  partyActor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_GARET, 148, 90);
-  partyActor = Actor_Get(ACTOR_GARET);
-  partyActor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_GARET)->facing = FACING_NORTH;
   Actor_SetPosition(ACTOR_IVAN, 182, 90);
-  partyActor = Actor_Get(ACTOR_IVAN);
-  partyActor->facing = FACING_NORTH;
+  Actor_Get(ACTOR_IVAN)->facing = FACING_NORTH;
   if (hasMia != 0) {
     Actor_SetPosition(ACTOR_MIA, 166, 104);
-    partyActor = Actor_Get(ACTOR_MIA);
-    partyActor->facing = FACING_NORTH;
+    Actor_Get(ACTOR_MIA)->facing = FACING_NORTH;
   }
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   wait(10);

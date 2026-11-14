@@ -832,10 +832,8 @@ ramp:
 
 /// Vale's innkeeper offers a room from behind the counter.
 static void CottageRoomsB_TalkToInnkeeper(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u32)(actor->facing - FACING_SOUTHEAST) > TRIG_TURN * 9 / 16) {
+  if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
+      TRIG_TURN * 9 / 16) {
     Inn_CheckIn(0, ACTOR_INNKEEPER);
   } else {
     Event_Start();
@@ -903,7 +901,6 @@ static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
 
 /// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale.
 static void CottageRoomsB_VisitSickDora(void) {
-  struct Actor *leader;
   s32 firstMessage;
 
   Event_Start();
@@ -994,8 +991,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(40);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->facing = FACING_EAST;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
   wait(1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);

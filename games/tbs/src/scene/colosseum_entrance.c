@@ -491,10 +491,9 @@ static void ColosseumEntrance_TalkToAzart(void) {
     *timer = duration;
   }
   {
-    u16 *work = &contestant->userValue;
     u16 value = 112;
 
-    *work = value;
+    contestant->userValue = value;
   }
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Event_End();
@@ -1574,8 +1573,6 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
 /// In the Colosseum's east passage, a soldier leads Isaac to the next finals
 /// match's tour.
 static void ColosseumEntrance_EscortToEastExit(void) {
-  struct Actor *escort;
-
   if (GameFlag_Get(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveMember(JENNA);
@@ -1587,8 +1584,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   FieldCamera_FollowActor(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, 1.6);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
-  escort = Actor_Get(ACTOR_ESCORTING_SOLDIER);
-  escort->facing = FACING_EAST;
+  Actor_Get(ACTOR_ESCORTING_SOLDIER)->facing = FACING_EAST;
   Event_StartScreenTransition();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_WALK);
@@ -1640,10 +1636,9 @@ static void ColosseumEntrance_AnnounceFinals(void) {
     *timer = duration;
   }
   {
-    u16 *work = &contestant->userValue;
     u16 value = 112;
 
-    *work = value;
+    contestant->userValue = value;
   }
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTH_SOUTHEAST, 0);
@@ -1727,8 +1722,6 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
 /// In the Colosseum's west passage, a soldier leads Isaac to Colosseum Final
 /// 2's tour.
 static void ColosseumEntrance_EscortToWestExit(void) {
-  struct Actor *escort;
-
   if (GameFlag_Get(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveMember(JENNA);
@@ -1740,8 +1733,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
   FieldCamera_FollowActor(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, 1.6);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
-  escort = Actor_Get(ACTOR_ESCORTING_SOLDIER);
-  escort->facing = FACING_WEST;
+  Actor_Get(ACTOR_ESCORTING_SOLDIER)->facing = FACING_WEST;
   Event_StartScreenTransition();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetAnimation(ACTOR_ESCORTING_SOLDIER, ANIM_WALK);

@@ -418,8 +418,6 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
 /// In Kite's part of Vale Cave's second room, coming near Kite makes it hop
 /// away up the ledge.
 static void ValeCave_KiteRunsOff(void) {
-  struct Actor *djinni;
-
   if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_OFF) == 0) {
     GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
     Event_Start();
@@ -435,8 +433,7 @@ static void ValeCave_KiteRunsOff(void) {
     Actor_SetSpeed(ACTOR_KITE, 1);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
     Sound_Play(SE_JUMP);
-    djinni = Actor_Get(ACTOR_KITE);
-    djinni->velocityY = px(8);
+    Actor_Get(ACTOR_KITE)->velocityY = px(8);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 280);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
@@ -448,8 +445,6 @@ static void ValeCave_KiteRunsOff(void) {
 /// In Kite's part of Vale Cave's second room, coming near again makes Kite run
 /// behind the ledge and turn to watch the party.
 static void ValeCave_KiteRunsBehindLedge(void) {
-  struct Actor *djinni;
-
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_RAN_OFF) != 0) {
     if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE) == 0) {
       GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE);
@@ -465,8 +460,7 @@ static void ValeCave_KiteRunsBehindLedge(void) {
       Actor_WalkToAndWait(ACTOR_KITE, 792, 312);
       Event_Wait(10);
       Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
-      djinni = Actor_Get(ACTOR_KITE);
-      djinni->update = VALE_CAVE_FACE_LEADER_CALLBACK;
+      Actor_Get(ACTOR_KITE)->update = VALE_CAVE_FACE_LEADER_CALLBACK;
       Event_End();
     }
   }
@@ -500,7 +494,6 @@ static void ValeCave_HaltKite(void) {
 /// In Vale Cave's third room, pushing the eastern log along the ledge makes it
 /// fall off at the ledge's edge, opening the way.
 static void ValeCave_PushLogOverEdge(void) {
-  struct Actor *movedLog;
   struct PushedActorProbe probe;
 
   Event_Start();
@@ -510,8 +503,7 @@ static void ValeCave_PushLogOverEdge(void) {
     if (FIELD_CELL(probe.position.x) == 17) {
       Actor_SetAnimation(probe.actorSlot, 3);
       Actor_Get(probe.actorSlot)->motionFlags = 0;
-      movedLog = Actor_Get(probe.actorSlot);
-      movedLog->bounce = 0;
+      Actor_Get(probe.actorSlot)->bounce = 0;
       Actor_SetDestinationOffset(probe.actorSlot, -12, 0);
       Actor_WaitForMoveById(probe.actorSlot);
       Actor_SetAnimation(probe.actorSlot, 3);
@@ -521,9 +513,8 @@ static void ValeCave_PushLogOverEdge(void) {
       Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
       Actor_SetAnimation(probe.actorSlot, 8);
-      movedLog = Actor_Get(probe.actorSlot);
 
-      movedLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       // The cells it held on the ledge, and its landing, become open floor.
       PushedActor_FillGridAttributeRectangle(0, FIELD_CELL(probe.position.x),
                                              (FIELD_CELL(probe.position.z) - 2),
@@ -543,8 +534,6 @@ static void ValeCave_PushLogOverEdge(void) {
 /// In Vale Cave's third room, pushing the western log east makes it fall off
 /// the ledge, opening the way.
 static void ValeCave_PushLogOffLedge(void) {
-  struct Actor *pushedLog;
-
   Event_Start();
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
@@ -557,8 +546,7 @@ static void ValeCave_PushLogOffLedge(void) {
   Actor_SetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_WEST_LOG, 2);
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = 0;
-  pushedLog = Actor_Get(ACTOR_WEST_LOG);
-  pushedLog->bounce = 0;
+  Actor_Get(ACTOR_WEST_LOG)->bounce = 0;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -583,7 +571,6 @@ static void ValeCave_PushLogOffLedge(void) {
 /// opening the way.
 static void ValeCave_PushLogNorth(void) {
   struct PushedActorProbe probe;
-  struct Actor *slidingLog;
 
   Event_Start();
   if (PushedActor_FindClearPosition(&probe) != 0) {
@@ -594,9 +581,8 @@ static void ValeCave_PushLogNorth(void) {
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);
     Actor_SetAnimation(ACTOR_SOUTH_LOG, 8);
-    slidingLog = Actor_Get(ACTOR_SOUTH_LOG);
 
-    slidingLog->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_SOUTH_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     PushedActor_FillGridAttributeRectangle(
         0, 13, (FIELD_CELL(probe.position.z)) - 1, 4, 2, 0);
     if (FIELD_CELL(probe.position.z) == 20) {

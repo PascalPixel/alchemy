@@ -356,8 +356,6 @@ static void Lunpa_RevealSecrets(void) {
 
 /// Lunpa, as Reveal ends and on every entry: the secrets hide again.
 static void Lunpa_HideSecrets(void) {
-  struct Actor *puddle;
-
   Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 0, 0);
   Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, 0, 0);
@@ -369,8 +367,7 @@ static void Lunpa_HideSecrets(void) {
   MapGrid_CopyCells(32, 42, 3, 2, 1, 15);
   GameFlag_Clear(FLAG_LUNPA_PUDDLE_FROZEN);
   Actor_SetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
-  puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
-  puddle->update = NULL;
+  Actor_Get(ACTOR_HIDDEN_PUDDLE)->update = NULL;
   Actor_SetColorMode(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
   Task_Remove(Lunpa_UpdateIcePillarDrawOrder);
   GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);

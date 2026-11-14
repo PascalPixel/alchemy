@@ -328,13 +328,11 @@ static void BabiPalace_AskAboutSoldiers(s32 actorId) {
 /// The attendant leads the party to the beds when spoken to before Babi's
 /// rescue.
 static void BabiPalace_ShowBeds(s32 actorId) {
-  struct Actor *leader;
   s16 roundedFacing;
   s32 facingOrMessage;
-  s32 facingBits;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  roundedFacing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & 0xc000;
   Event_Start();
   Field_EndBusyAndReveal();
   if (Event_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
@@ -344,12 +342,8 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     // "We have just enough extra beds in this room for everybody...."
     Event_ShowMessage(actorId, 0);
     Event_Wait(10);
-    /* FAKEMATCH(temporary): the facing compared as a shifted word; as
-     * roundedFacing == FACING_SOUTH, 19 of 130 instructions differ in tbs-en.
-     */
-    facingBits = roundedFacing << 16;
     facingOrMessage = FACING_SOUTH;
-    if (facingBits == (FACING_SOUTH << 16)) {
+    if ((u16)roundedFacing == FACING_SOUTH) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     }
@@ -564,8 +558,6 @@ static void BabiPalace_OfferCloakBall(void) {
 /// Waking after resting before the finals, the leader has dreamt of fighting in
 /// them. The others tease, and the party sets off for the colosseum.
 static void BabiPalace_WakeFromFinalsDream(void) {
-  struct Actor *leader;
-
   Event_Start();
   Event_SetMessageId(MsgTolbiGetUp);
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 0;
@@ -578,8 +570,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->spriteStorageKind = 1;
   Actor_Get(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = 1;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetPosition(ACTOR_GARET, 120, 104);
   Actor_SetPosition(ACTOR_MIA, 104, 80);
   Actor_SetPosition(ACTOR_IVAN, 120, 120);
@@ -600,10 +591,8 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   // "Are you okay? You were having nightmares for quite a while..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->z.fixed -= px(3);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->targetZ -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= px(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -678,8 +667,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.9);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, 0);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Event_Wait(40);
@@ -702,12 +690,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
 /// Searching the beds sends the party to bed, talking it over the first night.
 /// "Would you like to sleep now?"
 static void BabiPalace_RestInPalaceBeds(void) {
-  struct Actor *leader;
   s16 roundedFacing;
   u16 facing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + TRIG_TURN / 8) & -0x4000;
+  roundedFacing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & -0x4000;
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgTolbiLikeSleep);

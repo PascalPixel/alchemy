@@ -329,12 +329,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Returns 1 when it jumped.
 static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
   struct Actor *leader;
-  u8 *flags;
   u8 savedMotionFlags;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  flags = &leader->motionFlags;
-  savedMotionFlags = *flags;
+  savedMotionFlags = leader->motionFlags;
   if (FieldActor_CheckMovementCollision(leader, position) == 0) {
     Event_Start();
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
@@ -344,7 +342,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *flags &= ACTOR_JUMP_KEEPS_MOTION;
+    leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
                         ((union FieldCoordinate *)&position->x)->part.pixel,
@@ -352,7 +350,7 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     wait(6);
-    *flags = savedMotionFlags;
+    leader->motionFlags = savedMotionFlags;
     Event_End();
     return 1;
   }
@@ -375,8 +373,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    SET_POSITION(&target, leader->x.fixed,
+    SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - px(30));
     LogRoomsA_TryJumpTo(&target);
@@ -389,8 +386,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #if TBS_PATCH_1
     Field_TryJumpForward();
 #else
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    SET_POSITION(&target, leader->x.fixed,
+    SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + px(30));
     LogRoomsA_TryJumpTo(&target);
@@ -403,11 +399,8 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 
 /// Once Move pushes the crate aside, the way up to the inn's loft opens.
 static void LogRoomsA_CheckCrateMoved(void) {
-  struct Actor *crate;
-
   Event_Start();
-  crate = Actor_Get(ACTOR_CRATE);
-  if (FIELD_CELL(crate->x.fixed) == 42) {
+  if (FIELD_CELL(Actor_Get(ACTOR_CRATE)->x.fixed) == 42) {
     MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     GameFlag_Set(FLAG_VAULT_CRATE_MOVED);
   }
@@ -2852,8 +2845,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   {
-    u16 *slot = &work->message;
-    s32 saved = (s16)*slot;
+    s32 saved = (s16)work->message;
 
     if (LogRoomsA_GetIvanVenusDjinnCount() != 0) {
       Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
@@ -2862,7 +2854,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
       Vault_ReturnIsaacsDjinni();
     }
     Party_RemoveMemberRestored(IVAN);
-    *slot = saved;
+    work->message = saved;
   }
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 50);
   Actor_WalkToAndWait(ACTOR_IVAN, 776, 408);
@@ -2899,10 +2891,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
 
 /// Opens the window transition and waits one frame after it finishes.
 static void LogRoomsA_OpenWindowTransition(void) {
-  struct FieldWork *state;
-
-  state = gFieldWork;
-  state->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

@@ -743,16 +743,13 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
 /// Mogall Forest, the second area: Force on the south hiding place the first
 /// time.
 static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
-  struct Actor *ape;
-
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480, 7.6);
   Event_Wait(2);
   MogallForest_SpawnPuffRing(ACTOR_SECOND_AREA_SOUTH_APE);
   Actor_SetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
-  ape = Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE);
-  Actor_SetSpriteFlags(ape, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE), 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED);
   Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 424, 480);
@@ -919,20 +916,13 @@ static void MogallForest_ThirdArea_UpdateNorthRock(void) {
 /// Mogall Forest, the third area: Move on the south rock, which sinks into
 /// place on row 27 and stays.
 static void MogallForest_ThirdArea_UpdateSouthRock(void) {
-  s32 column;
-  s32 row;
   struct Actor *rock;
 
   Event_Start();
-  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  column = rock->x.fixed;
-  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  row = rock->z.fixed;
-  column >>= 20;
-  row >>= 20;
-  MogallForest_UpdateRockFootprint(column, row);
-  rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  if (FIELD_CELL(rock->z.fixed) == 27) {
+  MogallForest_UpdateRockFootprint(
+      FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
+      FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed));
+  if (FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed) == 27) {
     rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
     rock->motionFlags = 0;
     rock->groundHeight = -px(2);
@@ -946,7 +936,6 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
 /// Mogall Forest, the third area: Force on the attacking ape's hiding place.
 static void MogallForest_ThirdArea_ApeAttacks(void) {
   struct Actor *ape;
-  struct Actor *leaderForX;
   s32 leaderX;
   struct Actor *leaderForZ;
 
@@ -966,8 +955,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Sound_Play(SE_BEAST_CRY);
   Event_Wait(60);
-  leaderForX = Actor_Get(ACTOR_PARTY_LEADER);
-  leaderX = leaderForX->x.part.pixel;
+  leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
   leaderForZ = Actor_Get(ACTOR_PARTY_LEADER);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, leaderX,
                           leaderForZ->z.part.pixel, 6);
@@ -1058,16 +1046,13 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
 /// Mogall Forest, the third area: Force on the east hiding place the first
 /// time.
 static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
-  struct Actor *ape;
-
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 504, 1);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, 9);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-  ape = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
-  Actor_SetSpriteFlags(ape, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE_STUMP, 744, 504);
@@ -1241,8 +1226,6 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
   s32 entrance;
-  s32 column;
-  s32 fixedZ;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1297,11 +1280,9 @@ s32 Scene_Initialize(void) {
       if (actor != NULL) {
         Actor_SetPositionFixed(ACTOR_NUT, actor->x.fixed, actor->z.fixed);
       }
-      actor = Actor_Get(ACTOR_NUT);
-      actor->update = 0;
+      Actor_Get(ACTOR_NUT)->update = 0;
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-        actor = Actor_Get(ACTOR_NUT);
-        actor->y.fixed = px(32);
+        Actor_Get(ACTOR_NUT)->y.fixed = px(32);
       }
       wait(1);
       Actor_SetPosition(ACTOR_NUT, 632, 440);
@@ -1368,11 +1349,10 @@ s32 Scene_Initialize(void) {
       }
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_LOG);
       Scene_RedrawActorFootprint(ACTOR_SECOND_AREA_SOUTH_LOG);
-      column = Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed;
-      fixedZ = Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed;
-      column >>= 20;
-      PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             CELL_BEHAVIOR_WALL);
+      PushedActor_FillGridAttributeRectangle(
+          2, FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed), 1, 1,
+          CELL_BEHAVIOR_WALL);
       wait(1);
       Actor_SetSpriteColorById(ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
       Actor_Get(ACTOR_SECOND_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -1419,11 +1399,10 @@ s32 Scene_Initialize(void) {
       break;
 
     case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
-      column = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed;
-      fixedZ = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed;
-      column >>= 20;
-      PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             CELL_BEHAVIOR_WALL);
+      PushedActor_FillGridAttributeRectangle(
+          2, FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed), 1, 1,
+          CELL_BEHAVIOR_WALL);
       Actor_SetSpriteColorById(ACTOR_THIRD_AREA_NORTH_ROCK, SPRITE_COLOR_GREY);
       wait(1);
       Actor_Get(ACTOR_THIRD_AREA_LOG)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -1465,11 +1444,10 @@ s32 Scene_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(26, 20, 2, 4, 40, 32);
       }
-      column = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed;
-      fixedZ = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed;
-      column >>= 20;
-      PushedActor_FillGridAttributeRectangle(2, column, fixedZ >> 20, 1, 1,
-                                             CELL_BEHAVIOR_WALL);
+      PushedActor_FillGridAttributeRectangle(
+          2, FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->x.fixed),
+          FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed), 1, 1,
+          CELL_BEHAVIOR_WALL);
       Actor_SetSpriteColorById(ACTOR_THIRD_AREA_SOUTH_ROCK, SPRITE_COLOR_GREY);
       wait(1);
       Actor_Get(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=

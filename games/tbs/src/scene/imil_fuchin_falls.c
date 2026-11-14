@@ -1071,11 +1071,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Walking into the way out of Imil Falls Cave (step trigger 1) faces the
 /// leader south and leaves for Imil.
 static void Imil_LeaveFallsCave(void) {
-  struct Actor *leader;
-
   Event_Start();
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

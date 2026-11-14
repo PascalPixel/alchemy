@@ -1174,23 +1174,15 @@ static void SolSanctumEntrance_DoorTightlyLocked(void) {
 /// Sol Entrance after the eruption: the ground rumbles now and then, and each
 /// shake fades.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
-  s32 randomValue;
-  s32 *timer;
-  s32 remainingFrames;
-
-  timer = &gSolSanctumEntrance_RumbleTimer;
-  if (*timer != 0) {
-    remainingFrames = (*timer - 1);
-    *timer = (*timer - 1);
-    if (remainingFrames == 40) {
+  if (gSolSanctumEntrance_RumbleTimer != 0) {
+    if (--gSolSanctumEntrance_RumbleTimer == 40) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
   } else {
-    randomValue = Random_Next();
-    if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
+    if (Random_Below(120) == 0) {
       Sound_Play(SE_ITEM_BREAK);
       MapGrid_SetShake(1, 2, 1);
-      *timer = 80;
+      gSolSanctumEntrance_RumbleTimer = 80;
     }
   }
 }

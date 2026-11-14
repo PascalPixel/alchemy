@@ -258,8 +258,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
   // The Wise One, a floating rock, appears over the chamber and the quake
   // stops.
-  actor = Actor_Get(ACTOR_WISE_ONE);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), 0);
   Actor_SetPosition(ACTOR_WISE_ONE, 325, 302);
   actor = Actor_Get(ACTOR_WISE_ONE);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
@@ -571,7 +570,6 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   struct Actor *actor;
   struct Actor *shadow;
-  struct Actor *target;
   u8 frame;
 
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
@@ -582,8 +580,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Event_Wait(10);
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   actor = Actor_Get(actorId);
-  target = Actor_Get(actorId);
-  Actor_SetSpriteFlags(target, 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   actor->motionFlags = 0;
   Sound_Play(SE_ASCEND);
@@ -1663,14 +1660,14 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
 /// Stretches each active arc for eight frames, then lifts it out of view.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
   u32 arcIndex;
-  s32 age;
+  u32 age;
   struct Actor *actor;
 
   for (arcIndex = 0; arcIndex <= 9; arcIndex++) {
     age = gArcEffectTimers[arcIndex];
     if (age != 0) {
       actor = gArcEffects[arcIndex];
-      if ((u32)age <= 8) {
+      if (age <= 8) {
         actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
         actor->scaleY += Q16_ONE / 2;
         actor->y.fixed += px(3) / 10;
@@ -1681,7 +1678,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
       }
       age = gArcEffectTimers[arcIndex] + 1;
       gArcEffectTimers[arcIndex] = age;
-      if ((u32)age > 14) {
+      if (age > 14) {
         gArcEffectTimers[arcIndex] = 0;
       }
     }

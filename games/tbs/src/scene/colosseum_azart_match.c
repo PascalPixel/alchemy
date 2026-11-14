@@ -301,16 +301,8 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
   s32 i;
 
   wait(10);
-  i = 0;
-  if (gColosseumAzartMatch_Countdown != 22) {
-    do {
-      wait(1);
-      i++;
-      if (i > 119) {
-        break;
-      }
-    } while (gColosseumAzartMatch_Countdown != 22);
-  }
+  for (i = 0; i < 120 && gColosseumAzartMatch_Countdown != 22; i++)
+    wait(1);
 }
 
 /// Move on a rock in the Rock Challenge, and each push, settles the rocks.
@@ -1026,7 +1018,6 @@ static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
 static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct Actor *second;
-  struct Actor *first;
 
   if (gMainRoutineWork.entrance == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
@@ -1051,14 +1042,12 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_HidePointer();
       wait(2);
-      first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, px(8));
+      ColosseumAzartMatch_SetPipeHeight(Actor_Get(ACTOR_PIPE_WEST), px(8));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, px(32));
       Actor_WaitForMove(second);
       Event_Wait(45);
-      first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, px(24));
+      ColosseumAzartMatch_SetPipeHeight(Actor_Get(ACTOR_PIPE_WEST), px(24));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Actor_WaitForMove(second);

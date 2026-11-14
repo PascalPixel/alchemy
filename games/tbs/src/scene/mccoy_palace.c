@@ -510,7 +510,6 @@ static inline void McCoyPalace_OpenRewardChestRow(void) {
 s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
-  struct Actor *chest;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -549,26 +548,18 @@ s32 Scene_Initialize(void) {
             if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
               McCoyPalace_OpenRewardChestRow();
               McCoyPalace_PositionRewardChests();
-              chest = Actor_Get(ACTOR_VIAL_CHEST);
-              Actor_SetSpriteFlags(chest, 0);
-              chest = Actor_Get(ACTOR_POTION_CHEST);
-              Actor_SetSpriteFlags(chest, 0);
-              chest = Actor_Get(ACTOR_PSY_CRYSTAL_CHEST);
-              Actor_SetSpriteFlags(chest, 0);
-              chest = Actor_Get(ACTOR_WATER_OF_LIFE_CHEST);
-              Actor_SetSpriteFlags(chest, 0);
+              Actor_SetSpriteFlags(Actor_Get(ACTOR_VIAL_CHEST), 0);
+              Actor_SetSpriteFlags(Actor_Get(ACTOR_POTION_CHEST), 0);
+              Actor_SetSpriteFlags(Actor_Get(ACTOR_PSY_CRYSTAL_CHEST), 0);
+              Actor_SetSpriteFlags(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST), 0);
               Actor_Get(ACTOR_VIAL_CHEST)->motionFlags = rewardTaken;
               Actor_Get(ACTOR_POTION_CHEST)->motionFlags = rewardTaken;
               Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->motionFlags = rewardTaken;
               Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->motionFlags = rewardTaken;
-              chest = Actor_Get(ACTOR_VIAL_CHEST);
-              chest->y.fixed = -px(4);
-              chest = Actor_Get(ACTOR_POTION_CHEST);
-              chest->y.fixed = -px(4);
-              chest = Actor_Get(ACTOR_PSY_CRYSTAL_CHEST);
-              chest->y.fixed = -px(4);
-              chest = Actor_Get(ACTOR_WATER_OF_LIFE_CHEST);
-              chest->y.fixed = -px(4);
+              Actor_Get(ACTOR_VIAL_CHEST)->y.fixed = -px(4);
+              Actor_Get(ACTOR_POTION_CHEST)->y.fixed = -px(4);
+              Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->y.fixed = -px(4);
+              Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->y.fixed = -px(4);
             } else {
               McCoyPalace_PresentRewardChests();
             }
@@ -824,8 +815,7 @@ accepted:
   Event_SetMessageId(MsgBilibinHmmmWellGrant);
   // "Hmmm. Well, I'll grant yeh're a brave lot."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
-  actor = Actor_Get(ACTOR_BARRICADE_KEY);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BARRICADE_KEY), 0);
   actor = Actor_Get(ACTOR_BARRICADE_KEY);
   actor->scaleX = Q16_ONE / 2;
   actor->scaleY = Q16_ONE / 2;
@@ -1447,8 +1437,6 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 /// treasure room: the captain shows the four chests and the soldier who keeps
 /// the treasure explains that only one may be chosen.
 static void McCoyPalace_PresentRewardChests(void) {
-  struct Actor *actor;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -1465,8 +1453,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_POTION_CHEST), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PSY_CRYSTAL_CHEST), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST), 0);
-  actor = Actor_Get(ACTOR_VIAL_CHEST);
-  actor->motionFlags = 0;
+  Actor_Get(ACTOR_VIAL_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_POTION_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->motionFlags = 0;

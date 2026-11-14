@@ -253,7 +253,7 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
       updated->targetZ == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u32)(FIELD_CELL(leader->x.fixed) - 17) <= 1 &&
+  if (FIELD_CELL(leader->x.fixed) >= 17 && FIELD_CELL(leader->x.fixed) <= 18 &&
       FIELD_CELL(leader->z.fixed) == 14 && updated->x.fixed >> 20 <= 19 &&
       updated->velocityX <= 0) {
     if (leader->x.fixed <= updated->x.fixed) {
@@ -320,12 +320,10 @@ static void Xian_TalkToWaterCarrier(void) {
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
   Event_Start();
   leaderMustStepAside = 0;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->update = NULL;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = NULL;
   if (Event_GetFlag(FLAG_XIAN_WATER_SPILLED) != 0 ||
       (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed)) <= 19) {
-    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-    savedFacing = carrier->facing;
+    savedFacing = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->facing;
     Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_SetMessageId(MsgXianNowMustGetWaterAgain);
@@ -334,15 +332,13 @@ static void Xian_TalkToWaterCarrier(void) {
       // "Do not speak to me. I might spill my water."
       Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
       Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->timer = 0;
-      carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-      carrier->facing = savedFacing;
+      Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->facing = savedFacing;
     } else {
       // "Now I must get water again. This work is hard on my back."
       Event_ShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
       Actor_FaceDirection(ACTOR_WOMAN_CARRYING_WATER, FACING_WEST, 20);
     }
-    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-    carrier->update = XIAN_WATER_CARRIER_UPDATE;
+    Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = XIAN_WATER_CARRIER_UPDATE;
     Event_End();
     return;
   }
@@ -353,27 +349,26 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
     Event_Wait(5);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-    if (leader->x.fixed < carrier->x.fixed) {
+    if (leader->x.fixed < Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed) {
       Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-      Actor_WalkTo(ACTOR_PARTY_LEADER, (FIELD_CELL(carrier->x.fixed) << 4) - 8,
-                   232);
+      Actor_WalkTo(
+          ACTOR_PARTY_LEADER,
+          (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed) << 4) - 8,
+          232);
       leaderMustStepAside = 1;
     } else {
       Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-      Actor_WalkTo(ACTOR_PARTY_LEADER, (FIELD_CELL(carrier->x.fixed) << 4) + 24,
-                   232);
+      Actor_WalkTo(
+          ACTOR_PARTY_LEADER,
+          (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed) << 4) +
+              24,
+          232);
     }
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   }
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->targetX = ACTOR_NO_TARGET;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->targetY = ACTOR_NO_TARGET;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->targetZ = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->targetX = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->targetY = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->targetZ = ACTOR_NO_TARGET;
   Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
   Actor_SetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
   Actor_RunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
@@ -381,14 +376,11 @@ static void Xian_TalkToWaterCarrier(void) {
   Sound_Play(SE_SPARKLING_PASSAGE);
   puddle->scaleX = 3 * Q16_ONE / 10;
   puddle->scaleY = 3 * Q16_ONE / 10;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrierX = carrier->x.fixed;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrierCellZ = FIELD_CELL(carrier->z.fixed);
+  carrierX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
+  carrierCellZ = FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed);
   Actor_SetPositionFixed(ACTOR_SPILLED_WATER, ((carrierX >> 20) << 20) + px(8),
                          (carrierCellZ << 20) + px(8));
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrierColumnX = carrier->x.fixed;
+  carrierColumnX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   MapGrid_CopyCellAttributes(16, 16, 1, 1, carrierColumnX >> 20,
                              FIELD_CELL(carrier->z.fixed));
@@ -428,10 +420,10 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0.8);
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  if (FIELD_CELL(carrier->z.fixed) != 14) {
-    carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-    Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, carrier->x.part.pixel, 232);
+  if (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed) != 14) {
+    Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER,
+                        Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.part.pixel,
+                        232);
   }
   Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   GameFlag_Set(FLAG_XIAN_WATER_SPILLED);
@@ -456,8 +448,7 @@ static void Xian_FreezeSpilledWater(void) {
   Event_Start();
   Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_Get(ACTOR_SPILLED_WATER)->motionFlags = 0;
-  puddle = Actor_Get(ACTOR_SPILLED_WATER);
-  puddleX = puddle->x.fixed;
+  puddleX = Actor_Get(ACTOR_SPILLED_WATER)->x.fixed;
   puddle = Actor_Get(ACTOR_SPILLED_WATER);
   MapGrid_CopyCellAttributes(3, 17, 1, 1, (puddleX >> 20),
                              (FIELD_CELL(puddle->z.fixed)));
@@ -470,7 +461,6 @@ static void Xian_FreezeSpilledWater(void) {
 /// Talking to the kung fu student in Xian.
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
-  struct Actor *leader;
   s32 reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
@@ -493,8 +483,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     SET_VECTOR(stepBackOffset, demonstrationSeen, demonstrationSeen,
                demonstrationSeen);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    FieldVector_AddPolarOffset(-8, leader->facing,
+    FieldVector_AddPolarOffset(-8, Actor_Get(ACTOR_PARTY_LEADER)->facing,
                                (struct FieldPosition *)stepBackOffset);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, stepBackOffset[0] / px(1),
@@ -702,24 +691,15 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
 /// Raised in Xian when the leader has stood in the water carrier's way for two
 /// seconds.
 static void Xian_MoveAsideForWaterCarrier(void) {
-  struct Actor *carrier;
-
   Event_Start();
   Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->update = 0;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->targetX = ACTOR_NO_TARGET;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->targetZ = ACTOR_NO_TARGET;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->velocityX = 0;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->velocityZ = 0;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->speedLimit = 0;
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->acceleration = 0;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = 0;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->targetX = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->targetZ = ACTOR_NO_TARGET;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->velocityX = 0;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->velocityZ = 0;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->speedLimit = 0;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->acceleration = 0;
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   0);
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
@@ -732,8 +712,7 @@ static void Xian_MoveAsideForWaterCarrier(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetScript(ACTOR_WOMAN_CARRYING_WATER, gXian_WaterCarrierRoute);
-  carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
-  carrier->update = XIAN_WATER_CARRIER_UPDATE;
+  Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = XIAN_WATER_CARRIER_UPDATE;
   Event_End();
 }
 

@@ -120,11 +120,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Move on the west pillar at Goma Cave Entrance, and after each push: the
 /// pillar stands on one of three columns.
 static void GomaCaveEntrance_MoveWestPillar(void) {
-  struct Actor *pillar;
   s32 column;
 
-  pillar = Actor_Get(ACTOR_WEST_PILLAR);
-  column = pillar->x.fixed / px(16);
+  column = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed / px(16);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   if (column == 15) {
@@ -141,11 +139,9 @@ static void GomaCaveEntrance_MoveWestPillar(void) {
 /// Move on the east pillar at Goma Cave Entrance: once it reaches column 23 it
 /// settles into the floor and can be walked over.
 static void GomaCaveEntrance_MoveEastPillar(void) {
-  struct Actor *pillar;
   s32 column;
 
-  pillar = Actor_Get(ACTOR_EAST_PILLAR);
-  column = pillar->x.fixed / px(16);
+  column = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / px(16);
   if (column == 23) {
     Event_Wait(10);
     Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -201,8 +197,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sets up Goma Cave Entrance.
 s32 Scene_Initialize(void) {
-  struct Actor *movedActor;
-
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   Event_Wait(10);
   Scene_QueueMusic(SE_AMBIENT_WATER);
@@ -250,8 +244,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_EAST_PILLAR, 376, 280);
     Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_EAST_PILLAR)->motionFlags = 0;
-    movedActor = Actor_Get(ACTOR_EAST_PILLAR);
-    Actor_SetSpriteFlags(movedActor, 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_EAST_PILLAR), 0);
     MapGrid_CopyCellAttributes(54, 17, 1, 1, 23, 17);
   }
   return 0;
@@ -477,14 +470,12 @@ static void GomaCaveEntrance_IvanRejoins(void) {
 /// leaps away and lies where it lands (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
 static void GomaCaveEntrance_MoveStump(void) {
   s32 column;
-  struct Actor *stump;
 
   Event_Start();
   column = FIELD_CELL(Actor_Get(ACTOR_STUMP)->x.fixed);
   if (column == 11) {
     GomaCaveEntrance_LeapStump(ACTOR_STUMP);
-    stump = Actor_Get(ACTOR_STUMP);
-    stump->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, column);
     GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);

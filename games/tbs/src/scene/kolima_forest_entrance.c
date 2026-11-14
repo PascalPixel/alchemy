@@ -123,15 +123,14 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
 
 /// Each frame, a ground sparkle's timer runs on at random.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
-  s16 *counter = &actor->timer;
-  *counter = (*counter + (Random_Below(100)));
-  if (*counter > 1000)
+  actor->timer = (actor->timer + (Random_Below(100)));
+  if (actor->timer > 1000)
     Actor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
     Actor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
-  if (*counter > 1200) {
+  if (actor->timer > 1200) {
     u16 z = 0;
-    *counter = z;
+    actor->timer = z;
   }
   return 1;
 }
@@ -467,10 +466,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
-  if (gFallingEffectState != KOLIMA_DUST_CENTRED) {
-    do {
-      wait(1);
-    } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
+  while (gFallingEffectState != KOLIMA_DUST_CENTRED) {
+    wait(1);
   }
   Event_Wait(300);
   Task_Remove(Kolima_UpdateCurseDust);
@@ -1055,7 +1052,6 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
   s32 framePhase;
-  s32 priorityFlags;
   s32 spawnX = px(231);
   s32 spawnZ = px(460);
   s32 targetX = px(231);
@@ -1071,9 +1067,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
     return;
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
-  priorityFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  priorityFlags &= sparkle->priorityFlags;
-  sparkle->priorityFlags = priorityFlags;
+  sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
   sparkle->speedLimit = px(8);

@@ -250,18 +250,13 @@ static void BabiLighthouse_LandWithParticles(void) {
 /// The leader arrives at one of the drop entrances of BabiLighthouseLuff. He
 /// drops in and falls on, out through the given exit.
 static void BabiLighthouse_FallToExit(s32 exit) {
-  struct Actor *leader;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->y.fixed = px(130);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->gravity = px(1) / 4;
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->bounce = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_StartScreenTransition();
@@ -270,8 +265,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Sound_Play(SE_DUST_PUFF);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->velocityY = -px(5);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = -px(5);
   Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_EventSetExitRequest(exit);
@@ -1266,8 +1260,8 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
   s32 priority;
 
   sprite = Actor_Get(ACTOR_PARTY_LEADER)->sprite;
-  actor = Actor_Get(ACTOR_LEFT_PILLAR);
-  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
+  if (Actor_Get(ACTOR_LEFT_PILLAR)->z.fixed <
+      Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
@@ -1276,8 +1270,8 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
     Actor_SetSpritePriority(ACTOR_LEFT_PILLAR, priority);
     Actor_Get(ACTOR_LEFT_PILLAR)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
-  actor = Actor_Get(ACTOR_RIGHT_PILLAR);
-  if (actor->z.fixed < Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
+  if (Actor_Get(ACTOR_RIGHT_PILLAR)->z.fixed <
+      Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) {
     Actor_SetSpritePriority(ACTOR_RIGHT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
@@ -1294,19 +1288,17 @@ s32 Scene_Initialize(void) {
   struct Actor *placedActor;
   s32 sceneId;
   s32 mapCopy;
-  struct MainRoutineWork *state;
   s32 x;
   s32 z;
 
   wait(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  state = &gMainRoutineWork;
-  sceneId = state->next;
+  sceneId = gMainRoutineWork.next;
   if (sceneId != SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
-    state->retreatEntrance = 1;
-    state->retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
-    mapCopy = state->next;
+    gMainRoutineWork.retreatEntrance = 1;
+    gMainRoutineWork.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
+    mapCopy = gMainRoutineWork.next;
   }
   // The road: the moved pillar's cell behavior where it stands.
   if (sceneId == SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
@@ -1328,7 +1320,7 @@ s32 Scene_Initialize(void) {
     ((union ActorOrEffect *)Actor_Get(ACTOR_RIGHT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
-    if (state->entrance ==
+    if (gMainRoutineWork.entrance ==
             BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(ACTOR_RIGHT_PILLAR, 312, 328);
@@ -1378,7 +1370,7 @@ s32 Scene_Initialize(void) {
   } else if (mapCopy == SCENE_BABI_LIGHTHOUSE_LUFF) {
     // Match the arrival effect and fall to the entrance used in this
     // room.
-    switch (state->entrance) {
+    switch (gMainRoutineWork.entrance) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
       // Both entrances restore the same remembered cell changes.
@@ -1421,7 +1413,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);
     Actor_SetSpeed(ACTOR_RIGHT_DOOR, 1);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (state->entrance ==
+      if (gMainRoutineWork.entrance ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {
         GameFlag_Set(FLAG_BEYOND_DOOR);
       } else {

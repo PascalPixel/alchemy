@@ -840,12 +840,9 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   verticalScale = 3 * Q16_ONE / 2;
-  actor = Actor_Get(ACTOR_FIRST_IVY);
-  actor->scaleY = verticalScale;
-  actor = Actor_Get(ACTOR_SECOND_IVY);
-  actor->scaleY = verticalScale;
-  actor = Actor_Get(ACTOR_THIRD_IVY);
-  actor->scaleY = verticalScale;
+  Actor_Get(ACTOR_FIRST_IVY)->scaleY = verticalScale;
+  Actor_Get(ACTOR_SECOND_IVY)->scaleY = verticalScale;
+  Actor_Get(ACTOR_THIRD_IVY)->scaleY = verticalScale;
   // Later in the story two things in the plaza are redrawn: the thatched roof
   // north of it shows a dark crack once Kalay is reached, or a blue-grey patch
   // once the party has left Vale, and the stretch of fence between the trees
@@ -885,8 +882,7 @@ s32 Scene_Initialize(void) {
         actor = Actor_Get(ACTOR_STORM_SMALL_ROCK);
         actor->scaleX = 3 * Q16_ONE / 10;
         actor->scaleY = 3 * Q16_ONE / 10;
-        actor = Actor_Get(ACTOR_STORM_SMALL_ROCK);
-        Actor_SetSpriteFlags(actor, 0);
+        Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_SMALL_ROCK), 0);
         actor = Actor_Get(ACTOR_STORM_SMALL_ROCK_SHADOW);
         actor->scaleX = 3 * Q16_ONE / 5;
         actor->scaleY = 3 * Q16_ONE / 5;
@@ -894,8 +890,7 @@ s32 Scene_Initialize(void) {
       } else {
         if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
           Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, 331, 249);
-          actor = Actor_Get(ACTOR_FALLEN_STONE_SPOT);
-          Actor_SetSpriteFlags(actor, 0);
+          Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLEN_STONE_SPOT), 0);
         }
       }
       // BUG: the test is meant for the stormy night, but the flag stays set,
@@ -1162,13 +1157,10 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 /// fight. Win or lose, the party returns by VALE_PLAZA_AFTER_TRAVELERS_BATTLE.
 /// "You must forget everything you heard."
 static void ValePlaza_FightTravelers(void) {
-  struct Actor *actor;
-
   // Garet, still out of sight, calls Isaac to wait; the travelers turn and
   // look down at Isaac.
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_HIDDEN);
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), 0);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
   wait(1);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 0);
@@ -1202,8 +1194,7 @@ static void ValePlaza_FightTravelers(void) {
   // Garet runs in from the west. The first traveler asks whether Isaac was
   // eavesdropping; whatever he answers, Garet thinks they look scary.
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
   Actor_SetSpeed(ACTOR_STORM_GARET, 1.2);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 37, 339);
@@ -1288,15 +1279,11 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SECOND_TRAVELER, FACING_WEST, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->scaleX = -Q16_ONE;
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_Get(ACTOR_PARTY_LEADER)->scaleX = -Q16_ONE;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_STORM_GARET, 7);
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  actor->sprite->rotation = TRIG_TURN / 12;
-  actor = Actor_Get(ACTOR_STORM_GARET);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_Get(ACTOR_STORM_GARET)->sprite->rotation = TRIG_TURN / 12;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STORM_GARET), 0);
   {
     struct FieldWork *work = gFieldWork;
 
@@ -1365,18 +1352,12 @@ static void ValePlaza_DepartForQuest(void) {
   FieldCamera_MoveTo(180, 16, 618, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6);
-  Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9);
-  Actor_SetSpriteFlags(actor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 3), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 4), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 5), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 6), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 9), 0);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpritePriority(ACTOR_GARET, 1);
   Actor_SetSpritePriority(ACTOR_FAREWELL_GARETS_BROTHER, 1);

@@ -978,8 +978,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 5848, 1576);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CARAVAN_HAMMET), 0);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON, 1.6, 0.4);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 1, 1.6, 0.4);
   Actor_SetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 2, 1.6, 0.4);
@@ -1057,8 +1056,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_CARAVAN_HAMMET, 5656, 1784);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  Actor_SetSpriteFlags(spriteActor, SPRITE_FLAG_SHADOW);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_CARAVAN_HAMMET), SPRITE_FLAG_SHADOW);
   Actor_SetSpeed(ACTOR_CARAVAN_HAMMET, 0.8);
   Actor_WalkToAndWait(ACTOR_CARAVAN_HAMMET, 5640, 1784);
   Event_Wait(20);
@@ -1128,21 +1126,16 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SelectAnimation(actor, FALLING_ROCK_ANIMATION_TUMBLE);
   wait(1);
-  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLING_ROCK), 0);
   Task_AddFrame(WorldMap_UpdateFallingRock, TASK_PASS_FRAME);
   do {
     wait(1);
   } while (actor->timer == 0);
-  spriteActor = Actor_Get(ACTOR_FALLING_ROCK);
-  Actor_SetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(ACTOR_INVISIBLE_ROCK_GUIDE);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLING_ROCK), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_ROCK_GUIDE), 0);
   Event_Wait(10);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_MAN);
-  spriteActor->velocityY = px(6);
-  spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
-  spriteActor->velocityY = px(6);
+  Actor_Get(ACTOR_CARAVAN_MAN)->velocityY = px(6);
+  Actor_Get(ACTOR_CARAVAN_HAMMET)->velocityY = px(6);
   Sound_Play(SE_CRASH);
   FieldCamera_SetSpeedAndAcceleration(4, 4);
   WorldMap_ShakeCameraWhereRockFalls();
@@ -1957,8 +1950,9 @@ static void WorldMap_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH(dead): clearing the motion flags again through a pointer. */
-    *(u8 *)&orb->motionFlags = 0;
+    /* FAKEMATCH(dead): the motion flags cleared again, as the icon set-up
+     * that follows the sprite resets clears them. */
+    orb->motionFlags = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
     Vram_Load(sprite->slot, 128, buffer + 1024);
@@ -2270,15 +2264,12 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 /// A leg of the Tolbi-bound Ship's crossing, in which the ship sails north to
 /// its anchorage off the island.
 static void WorldMap_SailTolbiShipToIsland(void) {
-  struct Actor *actor;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetAnimation(ACTOR_CROSSING_SHIP, ANIM_WALK);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 4872, 808);
-  actor = Actor_Get(ACTOR_CROSSING_SHIP);
-  actor->facing = FACING_NORTHWEST;
+  Actor_Get(ACTOR_CROSSING_SHIP)->facing = FACING_NORTHWEST;
   wait(1);
   WorldMap_StartZoom(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2309,8 +2300,7 @@ static s32 WorldMap_GetRowingBalance(void) {
   s32 negativeTotal;
 
   positiveTotal += WorldMap_GetSeatRowValue(2);
-  negativeTotal = WorldMap_GetSeatRowValue(1);
-  negativeTotal += WorldMap_GetSeatRowValue(3);
+  negativeTotal = WorldMap_GetSeatRowValue(1) + WorldMap_GetSeatRowValue(3);
   return positiveTotal - negativeTotal;
 }
 
@@ -2382,7 +2372,6 @@ static void WorldMap_SpawnIslandWake(void) {
 /// with its wake under warm colours.
 static void WorldMap_ShowIslandDrifting(void) {
   struct Actor *actor;
-  struct Actor *spriteActor;
 
   actor = Actor_Get(ACTOR_DRIFTING_ISLAND);
   Event_Wait(60);
@@ -2393,10 +2382,8 @@ static void WorldMap_ShowIslandDrifting(void) {
   FieldCamera_FollowActor(ACTOR_DRIFTING_ISLAND, 1);
   wait(1);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  spriteActor = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(spriteActor, 0);
-  spriteActor = Actor_Get(ACTOR_DRIFTING_ISLAND);
-  Actor_SetSpriteFlags(spriteActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_DRIFTING_ISLAND), 0);
   Actor_SetSpeed(ACTOR_DRIFTING_ISLAND, 0.4);
   actor->timer = 0;
   Actor_SetScript(ACTOR_DRIFTING_ISLAND, gIslandDriftsEast);
@@ -2485,8 +2472,6 @@ static void WorldMap_StartDousingStorm(void) {
 /// it begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
 /// Desert's storms.
 static void WorldMap_DouseMapStorm(void) {
-  struct Actor *leader;
-
   if (gFieldWork->raisedTrigger == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedTrigger = 0;
   }
@@ -2496,8 +2481,7 @@ static void WorldMap_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  leader->motionFlags = ACTOR_FALLS;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 }
 
 /// The storm drops the party outside Suhalla when its time in the air runs out.

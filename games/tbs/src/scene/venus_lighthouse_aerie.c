@@ -575,13 +575,8 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  {
-    /* FAKEMATCH(temporary): south holds the facing. */
-    u16 south = FACING_SOUTH;
-
-    leader->y.fixed = -px(32);
-    leader->facing = south;
-  }
+  leader->facing = FACING_SOUTH;
+  leader->y.fixed = -px(32);
   Event_Wait(20);
   Sound_Play(SE_MATERIALIZE);
   Actor_MoveToAndWait(ACTOR_RISING_PLATFORM, 524, 191);
@@ -808,17 +803,13 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
 
 /// Shows or hides one companion, setting its movement speed when shown.
 static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
-  struct Actor *member;
-
   if (shown != 0) {
     Actor_SetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
-    member = Actor_Get(actorId);
-    Actor_SetSpriteFlags(member, SPRITE_FLAG_SHADOW);
+    Actor_SetSpriteFlags(Actor_Get(actorId), SPRITE_FLAG_SHADOW);
     Actor_SetSpeed(actorId, 0.8);
   } else {
     Actor_SetSpriteColorById(actorId, SPRITE_COLOR_HIDDEN);
-    member = Actor_Get(actorId);
-    Actor_SetSpriteFlags(member, 0);
+    Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   }
 }
 
@@ -828,7 +819,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   s32 rodHolder;
   struct Actor *actor;
   s32 answerAccepted;
-  s32 frame;
+  u32 frame;
   s32 receiptMessage;
 
   Event_Start();
@@ -929,8 +920,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_WalkToAndWait(ACTOR_SHEBA, 260, 186);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_SHEBA, 276, 192);
-  actor = Actor_Get(ACTOR_MENARDI);
-  actor->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_StartRepeatedMotion(ACTOR_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI);
@@ -948,11 +938,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   wait(1);
   frame = 0;
   do {
-    actor = Actor_Get(ACTOR_SHEBA);
-    VenusLighthouseAerie_FlashActorPalette(actor);
+    VenusLighthouseAerie_FlashActorPalette(Actor_Get(ACTOR_SHEBA));
     frame++;
     wait(1);
-  } while ((u32)frame <= 39);
+  } while (frame <= 39);
   Task_AddFrame(VenusLighthouseAerie_UpdateShebaPalette, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -1122,8 +1111,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_SHEBA, 276, 192);
   Sound_Play(MUS_SILENCE);
-  actor = Actor_Get(ACTOR_MENARDI);
-  actor->facing = FACING_SOUTH_SOUTHWEST;
+  Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTH_SOUTHWEST;
   wait(1);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(ACTOR_MENARDI);

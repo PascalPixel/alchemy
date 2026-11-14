@@ -417,11 +417,7 @@ s32 Scene_Initialize(void) {
 /// In Vale's shops, opens the weapon shop across the counter, or the
 /// merchant speaks.
 static void CottageRoomsA_TalkToWeaponMerchant(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-
-  if (FACING_IS_NORTH(leader->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(1, ACTOR_WEAPON_MERCHANT);
     return;
   }
@@ -447,10 +443,7 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
 /// In Vale's shops, opens the armor shop across the counter, or the merchant
 /// speaks.
 static void CottageRoomsA_TalkToArmorMerchant(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(actor->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(2, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
@@ -471,10 +464,7 @@ static void CottageRoomsA_TalkToArmorMerchant(void) {
 /// In Vale's shops, opens the item shop across the counter, or the merchant
 /// speaks.
 static void CottageRoomsA_TalkToItemMerchant(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(actor->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(3, ACTOR_ITEM_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -514,7 +504,6 @@ static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
 
 /// In Garet's house in Vale, back from Kalay, Garet comes home.
 static void CottageRoomsA_GaretComesHome(void) {
-  struct Actor *sleepZ;
   struct Actor *actor;
   s32 motionFlags = 0;
   TaskFunc timedUpdate;
@@ -532,12 +521,9 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetSpeed(ACTOR_MIA, 0.4);
   Actor_SetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
-  Actor_SetSpriteFlags(sleepZ, 0);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 1);
-  Actor_SetSpriteFlags(sleepZ, 0);
-  sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z + 2);
-  Actor_SetSpriteFlags(sleepZ, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z + 1), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_SLEEP_Z + 2), 0);
   Actor_Get(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
   Actor_Get(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;

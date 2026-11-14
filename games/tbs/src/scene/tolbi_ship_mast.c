@@ -410,13 +410,10 @@ static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
 
 /// Keeps the leader visible for the course announcement.
 static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
-  struct Actor *leader;
-
   Event_Start();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 164, 321);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -578,12 +575,10 @@ static inline void TolbiShipMast_PrepareGroupDeparture(void) {
 /// attack, a bird swoops at the lookout twice and Sean cries out. "Monsters!"
 static void TolbiShipMast_ShowMonsters(void) {
   struct Actor *approachingActor;
-  struct Actor *leader;
 
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   Event_AppendActorPlacements(gTolbiShipMast_BirdActorPlacements);
   wait(1);
@@ -666,12 +661,7 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   actor->motionFlags = 0;
   actor->timer = (u32)Random_Next() >> 15;
   actor->userValue = (u32)Random_Next() >> 15;
-  randomValue = Random_Next();
-  randomValue <<= 2;
-  randomValue >>= 16;
-  randomValue <<= 16;
-  randomValue += px(6);
-  actor->y.fixed = randomValue;
+  actor->y.fixed = px(Random_Below(4)) + px(6);
   randomValue = Random_Next();
   actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - px(3) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;
@@ -863,10 +853,10 @@ static s32 TolbiShipMast_GetRowingBalance(void) {
   s32 westSeats;
   s32 eastSeats;
 
-  westSeats = TolbiShipMast_GetSeatRowValue(0);
-  westSeats += TolbiShipMast_GetSeatRowValue(2);
-  eastSeats = TolbiShipMast_GetSeatRowValue(1);
-  eastSeats += TolbiShipMast_GetSeatRowValue(3);
+  westSeats =
+      TolbiShipMast_GetSeatRowValue(0) + TolbiShipMast_GetSeatRowValue(2);
+  eastSeats =
+      TolbiShipMast_GetSeatRowValue(1) + TolbiShipMast_GetSeatRowValue(3);
   return westSeats - eastSeats;
 }
 

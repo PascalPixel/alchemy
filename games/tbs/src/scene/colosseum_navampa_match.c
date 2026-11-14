@@ -428,7 +428,6 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
   s32 lowered;
   struct Actor *log;
   struct Actor *rider;
-  u8 *flags;
 
   actorId = gMainRoutineWork.leaderActorId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
@@ -445,15 +444,14 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, 4);
     rider = Actor_Get(actorId);
-    flags = &rider->motionFlags;
-    *flags = lowered;
+    rider->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(rider, 4);
     Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     Actor_WaitForMoveById(actorId);
     MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     wait(2);
     Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
-    *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    rider->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     rider->groundHeight = rider->y.fixed;
     GameFlag_Set(FLAG_ON_SCALES);
   }
@@ -484,7 +482,6 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
   struct Actor *probe;
   struct Actor *log;
   struct Actor *upper;
-  struct Actor *lower;
   s32 x;
   s32 z;
 
@@ -501,8 +498,7 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
       upper = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
       upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       ColosseumNavampaMatch_MoveOnScales(upper, 32);
-      lower = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
-      ColosseumNavampaMatch_MoveOnScales(lower, 4);
+      ColosseumNavampaMatch_MoveOnScales(Actor_Get(ACTOR_SCALES_WEST_LEDGE), 4);
       GameFlag_Set(FLAG_WEIGHT_ON_SCALES);
       MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, z);
       MapGrid_CopyCellAttributes(1, 25, 1, 1, x, z);
@@ -1638,14 +1634,9 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
-      if (work->raisedTrigger != 5) {
-        do {
-          wait(1);
-          if (++promptResult > 239) {
-            break;
-          }
-        } while (work->raisedTrigger != 5);
-      }
+      for (promptResult = 0; promptResult < 240 && work->raisedTrigger != 5;
+           promptResult++)
+        wait(1);
       ColosseumNavampaMatch_PassSouthWallOpening();
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,

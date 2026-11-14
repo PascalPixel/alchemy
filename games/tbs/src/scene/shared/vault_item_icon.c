@@ -10,23 +10,21 @@
 void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   struct Actor *actor;
   struct Sprite *sprite;
-  u8 *icon;
-  /* FAKEMATCH(temporary): one local holds the 0 of three stores, set before the
-   * call. */
-  s32 zero = 0;
+  GlyphTransfer *icon;
+  u8 clear = 0;
 
   actor = Actor_Create(SPRITE_BLANK, fixed_x, fixed_y, fixed_z);
   if (actor != NULL) {
     sprite = actor->sprite;
-    sprite->flags = zero;
-    sprite->count = zero;
+    sprite->flags = clear;
+    sprite->count = clear;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    actor->motionFlags = zero;
+    actor->motionFlags = clear;
     actor->retainSpriteCache = 1;
     icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(item);
-    VramCache_Load(sprite->slot, 128, icon + 1024);
+    VramCache_Load(sprite->slot, 128, icon->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
 }

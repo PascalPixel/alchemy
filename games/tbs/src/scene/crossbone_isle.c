@@ -471,7 +471,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(42, 10, 1, 1, 40, 10);
   } else {
-    Actor_Get(ACTOR_SINKING_PILLAR)->motionFlags = cleared;
+    Actor_Get(ACTOR_SINKING_PILLAR)->motionFlags = 0;
   }
 }
 
@@ -770,12 +770,9 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 actorId,
   struct Actor *actor = Actor_Get(actorId);
 
   if (actor != NULL) {
-    s32 priorityFlags;
 
     Actor_SetSpritePriority(actorId, 3);
-    priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    priorityFlags |= actor->priorityFlags;
-    actor->priorityFlags = priorityFlags;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     {
       s32 row = FIELD_CELL(actor->z.fixed);
       s32 column = FIELD_CELL(actor->x.fixed) - 1;
@@ -792,12 +789,9 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 actorId,
   struct Actor *actor = Actor_Get(actorId);
 
   if (actor != NULL) {
-    s32 priorityFlags;
 
     Actor_SetSpritePriority(actorId, 3);
-    priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    priorityFlags |= actor->priorityFlags;
-    actor->priorityFlags = priorityFlags;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     {
       s32 column = FIELD_CELL(actor->x.fixed);
       s32 row = FIELD_CELL(actor->z.fixed) - 1;
@@ -899,8 +893,7 @@ static void CrossboneIsle_StepOnNinthLog(void) {
 /// Tests a step, then moves the leader with the log-pushing animation.
 static s32 CrossboneIsle_TryHop(struct Actor *actor,
                                 struct FieldPosition *requested) {
-  u8 *motionFlags = &actor->motionFlags;
-  s32 savedMotionFlags = *motionFlags;
+  s32 savedMotionFlags = actor->motionFlags;
 #if TBS_PATCH_1
   struct FieldPosition destination;
 
@@ -917,8 +910,6 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
 #else
   if (FieldActor_CheckMovementCollision(actor, requested) == 0) {
 #endif
-    s32 movingFlags;
-
     Event_Start();
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     wait(6);
@@ -927,9 +918,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    movingFlags = 126;
-    movingFlags &= *motionFlags;
-    *motionFlags = (u8)movingFlags;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
 #if TBS_PATCH_1
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.x >> 16,
@@ -944,7 +933,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
 #endif
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-    *motionFlags = (u8)savedMotionFlags;
+    actor->motionFlags = savedMotionFlags;
     Event_End();
     return 1;
   }
@@ -1608,7 +1597,7 @@ static void CrossboneIsle_SlideSecondLogNorth(void) {
       return;
     }
     CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, -48);
-  } else if ((u32)row <= 9) {
+  } else if (row >= 0 && row <= 9) {
     return;
   }
   wait(2);
@@ -1641,7 +1630,7 @@ static void CrossboneIsle_SlideSecondLogSouth(void) {
     if (seventhLogColumn >= 9 && seventhLogColumn <= 11) {
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 48);
     } else {
-      if ((u32)(twelfthLogColumn - 9) > 2) {
+      if (twelfthLogColumn < 9 || twelfthLogColumn > 11) {
         CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 80);
       }
       CrossboneIsle_MoveSelectedActorAndLog(ACTOR_SECOND_LOG, 0, 96);

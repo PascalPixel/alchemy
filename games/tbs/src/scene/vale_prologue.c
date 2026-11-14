@@ -780,7 +780,6 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
 /// cannot get around it.
 static void ValePrologue_FirstRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
   struct Sprite *rockSprite;
 
@@ -823,8 +822,7 @@ static void ValePrologue_FirstRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(326, 918);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, 918);
           } else {
@@ -851,7 +849,6 @@ static void ValePrologue_ApplyFirstRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_SecondRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) == 0) {
@@ -890,8 +887,7 @@ static void ValePrologue_SecondRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(219, 843);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 829);
           } else {
@@ -991,7 +987,6 @@ static void ValePrologue_ApplyThirdRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_FourthRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) == 0) {
@@ -1026,8 +1021,7 @@ static void ValePrologue_FourthRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->z.fixed < px(1146)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < px(1146)) {
             ValePrologue_GaretCommentsOnBlockedPath(412, 1120);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 414, 1068);
           } else {
@@ -1185,7 +1179,6 @@ static void ValePrologue_GaretLeavesHisChest(void) {
 /// Unused: another version of Garet joining Isaac on the stormy night,
 /// which the game never plays.
 static void ValePrologue_UnusedGaretJoinsIsaac(void) {
-  struct Actor *actor;
   s32 message;
 
   if (Event_GetFlag(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -1208,8 +1201,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_SetScript(ACTOR_GARET_CHILD, gValePrologue_UnusedGaretPantingScript);
     // "*Hah* *Hah*"
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-    actor = Actor_Get(ACTOR_GARET_CHILD);
-    actor->scaleY = Q16_ONE;
+    Actor_Get(ACTOR_GARET_CHILD)->scaleY = Q16_ONE;
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
     Event_Wait(20);
     // "Are you trapped, too?"
@@ -1685,9 +1677,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_SetDestination(ACTOR_JENNAS_MOTHER, 247, 1210);
   Actor_MoveToAndWait(ACTOR_JENNA_CHILD, 227, 1189);
   {
-    struct Actor *actor;
-    actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    actor->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_JENNAS_MOTHER)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   Actor_Get(ACTOR_JENNA_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHWEST, 0);
@@ -2084,7 +2074,6 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   struct Actor *actor;
   struct Actor *lookingActor;
   struct Actor *boulderShadow;
-  struct Actor *currentActor;
   u32 random;
   const s32 *entryActions;
   const s32 *lookAroundActions;
@@ -2182,10 +2171,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(40);
   wait(40);
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
-  currentActor = Actor_Get(ACTOR_BOULDER);
-  Actor_SetSpriteFlags(currentActor, 0);
-  currentActor = Actor_Get(ACTOR_BOULDER_SHADOW);
-  Actor_SetSpriteFlags(currentActor, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER_SHADOW), 0);
   boulderShadow->scaleX = 4 * Q16_ONE / 5;
   boulderShadow->scaleY = 4 * Q16_ONE / 5;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2194,18 +2181,12 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->motionFlags = 0;
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actorVisual->image.priority = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetX = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetY = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetZ = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityX = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityY = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityZ = 0;
+  FieldCamera_GetActor()->targetX = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetY = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetZ = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->velocityX = 0;
+  FieldCamera_GetActor()->velocityY = 0;
+  FieldCamera_GetActor()->velocityZ = 0;
   wait(1);
   FieldCamera_MoveTo(247, 128, 917, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -2225,18 +2206,12 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   MapGrid_WaitForShakeToSettle();
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetX = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetY = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->targetZ = ACTOR_NO_TARGET;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityX = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityY = 0;
-  currentActor = FieldCamera_GetActor();
-  currentActor->velocityZ = 0;
+  FieldCamera_GetActor()->targetX = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetY = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->targetZ = ACTOR_NO_TARGET;
+  FieldCamera_GetActor()->velocityX = 0;
+  FieldCamera_GetActor()->velocityY = 0;
+  FieldCamera_GetActor()->velocityZ = 0;
   Task_Remove(ValePrologue_UpdateBoulderShadow);
   Actor_Stop(ACTOR_BOULDER);
   wait(1);
@@ -2386,8 +2361,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
       ~ACTOR_PRIORITY_AUTOMATIC;
   Task_AddFrame(ValePrologue_CopyLeaderSpritePriority, TASK_PASS_FRAME);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 181, 1273);
-  currentActor = Actor_Get(ACTOR_PARTY_LEADER);
-  currentActor->facing = FACING_NORTHEAST;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTHEAST;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldCamera_MoveTo(181, 0, 1273, 0);
   MapGrid_CenterOnFollowedPoint();

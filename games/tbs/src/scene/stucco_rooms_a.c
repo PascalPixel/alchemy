@@ -297,7 +297,6 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
   struct FieldWork *work = gFieldWork;
   u32 slot;
   s32 doorIndex;
-  struct Actor *leader;
 
   Event_Start();
 
@@ -338,8 +337,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
 
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->motionFlags = 0;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
 
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);

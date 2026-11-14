@@ -302,8 +302,7 @@ static void Tolbi_GrowSprout(void) {
   if (sprout != NULL) {
     sprout->collisionFlags = 0;
   }
-  sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
-  Actor_SetSpriteFlags(sprout, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_TOLBI_SPROUT), 0);
   Field_SetCellBehaviorAt(0, 544, 288, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_TOLBI_SPROUT_GROWN);
 }
@@ -577,8 +576,7 @@ s32 Scene_Initialize(s32 unused) {
   actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   actor->timer = 0;
   actor->update = kidUpdate;
-  actor = Actor_Get(ACTOR_TOLBI_OLD_MAN);
-  actor->update = Tolbi_CopyLeaderPriority;
+  Actor_Get(ACTOR_TOLBI_OLD_MAN)->update = Tolbi_CopyLeaderPriority;
 
   // What the party has already done here.
   if (GameFlag_Get(FLAG_TOLBI_SPRING_OPENED) != 0) {

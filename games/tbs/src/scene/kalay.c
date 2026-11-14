@@ -317,9 +317,7 @@ static void Kalay_UpdateNutOrbit(void);
 
 /// Clears the flag a guide's script sets when it is done.
 static inline void Kalay_ClearScriptDone(struct Actor *actor) {
-  s32 completed = 0;
-
-  actor->timer = completed;
+  actor->timer = 0;
 }
 
 /// Talking to Scorch, a Mars Djinni, in the Kalay Tunnel

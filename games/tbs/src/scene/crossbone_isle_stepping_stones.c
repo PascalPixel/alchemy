@@ -187,7 +187,7 @@ CrossboneIsleSteppingStones_SettleActorOnGround(struct Actor *actor) {
       break;
     }
     wait(1);
-    if ((u32)actor->y.fixed == (u32)actor->groundHeight) {
+    if (actor->y.fixed == actor->groundHeight) {
       break;
     }
     remainingFrames--;
@@ -294,7 +294,6 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   s32 layerOriginX, layerOriginZ;
   struct PushedActorProbe probe;
   s32 cellX, cellZ;
-  u8 mask = 2;
 
   if (CrossboneIsleSteppingStones_QueryFootprint(
           actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
@@ -306,7 +305,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
   Actor_SelectAnimation(actor, 4);
-  actor->priorityFlags |= mask;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 
   if (width > depth) {
     MapGrid_CopyCellsTo(70, 40, probe.position.x + 32, probe.position.z + 2,

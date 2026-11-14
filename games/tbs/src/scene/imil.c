@@ -339,11 +339,7 @@ static void Imil_TalkToFreezingYoungMan(void) {
   } else {
     Event_SetMessageId(MSGNO(MsgImilBrrrrrChooImFreezingMia));
   }
-  {
-    s32 val = 0;
-    s32 speaker = ACTOR_FREEZING_YOUNG_MAN;
-    Event_ShowMessage(speaker, val);
-  }
+  Event_ShowMessage(ACTOR_FREEZING_YOUNG_MAN, 0);
   Event_End();
 }
 
@@ -1227,7 +1223,8 @@ static void Imil_UpdateFootprints(void) {
   // In units of 8 pixels.
   column = x >> 19;
   if ((column >= 24 && column <= 31) ||
-      ((u32)((actor->z.fixed >> 19) - 36) <= 9 && (u32)(column - 22) <= 9)) {
+      (((actor->z.fixed >> 19) >= 36 && (actor->z.fixed >> 19) <= 45) &&
+       (column >= 22 && column <= 31))) {
     isSet = GameFlag_Get(zoneFlag);
     if (isSet != 0)
       return;

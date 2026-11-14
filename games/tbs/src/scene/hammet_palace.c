@@ -258,7 +258,7 @@ static void HammetPalace_LeaveThroughDoor(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.next == (u32)SCENE_HAMMET_PALACE) {
+  if (gMainRoutineWork.next == SCENE_HAMMET_PALACE) {
     HammetPalace_SetUpEntrance();
   }
   return 0;
@@ -268,8 +268,6 @@ s32 Scene_Initialize(void) {
 static void HammetPalace_SetUpEntrance(void) {
   struct Actor *actor;
   s32 facing;
-  s32 waitingX = px(906);
-  s32 waitingZ = px(422);
 
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -288,7 +286,7 @@ static void HammetPalace_SetUpEntrance(void) {
     } else {
       Actor_SetPosition(ACTOR_HAMMET, 0, 0);
       if (GameFlag_Get(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA) != 0) {
-        Actor_SetPositionFixed(ACTOR_LAYANA, waitingX, waitingZ);
+        Actor_SetPosition(ACTOR_LAYANA, 906, 422);
         actor = Actor_Get(ACTOR_LAYANA);
         facing = FACING_NORTH_NORTHEAST;
         actor->facing = facing;

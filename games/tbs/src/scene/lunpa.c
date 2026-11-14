@@ -865,7 +865,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
   work = gFieldWork;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (gMainRoutineWork.cloaked == 0 &&
-      (u32)(leader->x.fixed - px(144)) <= px(32) &&
+      (leader->x.fixed >= px(144) && leader->x.fixed <= px(176)) &&
       leader->z.fixed >= px(168) && leader->z.fixed < px(176)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
     work->raisedTrigger = RAISED_PARTY_SPOTTED;

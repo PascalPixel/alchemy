@@ -807,18 +807,13 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   struct Actor *effect;
   struct Sprite *sprite;
   s32 phase;
-  s32 spawnX = px(326);
-  s32 spawnY = px(32);
-  s32 spawnZ = px(192);
-  s32 targetX = px(326);
-  s32 targetZ = px(240);
 
   phase = gFrameCount & 3;
   if (phase != 0)
     return;
   if (gKolimaForestTreePlaySparkSound != 0)
     Sound_Play(SE_SPARKLE_FALL);
-  effect = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, spawnY, spawnZ);
+  effect = FieldActor_Create(SPRITE_GOLDEN_RINGS, px(326), px(32), px(192));
   if (effect == NULL)
     return;
   sprite = effect->sprite;
@@ -830,7 +825,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   effect->acceleration = px(4);
   effect->motionFlags = phase;
   Actor_SelectAnimation(effect, 2);
-  FieldActor_SetMoveTargetFixed(effect, targetX, 0, targetZ);
+  FieldActor_SetMoveTargetFixed(effect, px(326), 0, px(240));
   Actor_StartScript(effect, gKolimaForestTreeEffectScript);
 }
 

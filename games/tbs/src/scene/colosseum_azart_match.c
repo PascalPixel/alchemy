@@ -146,7 +146,7 @@ extern s32 gColosso_PrizeScript[];
 extern struct SceneEntrance gColosseumAzartMatch_Entrances[];
 extern u32 gColosseumAzartMatch_Exits[];
 extern struct ActorPlacement gColosseumAzartMatch_ActorPlacements[];
-extern s32 gColosseumAzartMatch_Countdown;
+extern u32 gColosseumAzartMatch_Countdown;
 extern struct Trigger gColosseumAzartMatch_Triggers[];
 extern s16 gColosso_LetteringTitle[];
 extern s16 gColosso_LetteringGo[];
@@ -252,7 +252,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Advances the bridge animation and the cell behaviors that make it
 /// walkable.
 static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
-  switch ((u32)gColosseumAzartMatch_Countdown) {
+  switch (gColosseumAzartMatch_Countdown) {
   case 66:
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
@@ -1285,7 +1285,7 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-s32 gColosseumAzartMatch_Countdown = 0;
+u32 gColosseumAzartMatch_Countdown = 0;
 
 struct Trigger gColosseumAzartMatch_Triggers[] = {
     { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRockOrCheckAhead) },

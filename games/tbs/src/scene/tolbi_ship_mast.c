@@ -453,8 +453,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   struct Actor *actor;
   struct FieldWork **field;
   s32 sparkleX;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
-  s32 zero = 0;
+  s32 sparkleY = 0;
 
   Event_Start();
   Event_AppendActorPlacements(gTolbiShipMast_FirstAttackActorPlacements);
@@ -473,9 +472,9 @@ static void TolbiShipMast_RunAvastEvent(void) {
   gTolbiShipMast_CameraOrigin[1] = *cameraOrigin;
   Actor_SetPosition(ACTOR_SPARKLE, 80, 210);
   sparkleX = px(80);
-  Actor_Get(ACTOR_SPARKLE)->motionFlags = zero;
+  Actor_Get(ACTOR_SPARKLE)->motionFlags = 0;
   gTolbiShipMast_CameraCenter[0] = sparkleX;
-  gTolbiShipMast_CameraCenter[1] = zero;
+  gTolbiShipMast_CameraCenter[1] = sparkleY;
   Actor_SetScript(ACTOR_SPARKLE, gTolbiShipMast_FollowCameraActions);
   Event_Wait(20);
   Sound_Play(MUS_CONFRONTATION);

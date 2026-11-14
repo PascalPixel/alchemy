@@ -1261,7 +1261,6 @@ static void ValePrologue_WarnAboutMtAleph(void) {
 /// Called by the four rock events. x and y are the pixels where Garet stands.
 static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct Actor *leaderAtStart;
-  s32 speed = px(1);
   s32 acceleration = (px(1) / 2);
 
   leaderAtStart = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1269,7 +1268,7 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
     Actor_SetPositionFixed(ACTOR_GARET_CHILD, leaderAtStart->x.fixed,
                            leaderAtStart->z.fixed);
   }
-  Actor_SetSpeedFixed(ACTOR_GARET_CHILD, speed, acceleration);
+  Actor_SetSpeedFixed(ACTOR_GARET_CHILD, px(1), acceleration);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, x, y);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_Wait(20);

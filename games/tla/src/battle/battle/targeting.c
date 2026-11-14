@@ -809,7 +809,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   if (abilityId == 312 || abilityId == 316)
     aid = plan->actorId2;
   else
-    aid = plan->actorId;
+    aid = plan->unitId;
   tid = plan->targetIds[slot];
   abilityId = plan->abilityId;
   element = plan->element;
@@ -1055,7 +1055,7 @@ power_end:
 
           atk = actor->atk;
           if (abilityId == 312 || abilityId == 316) {
-            atk = ((struct BattleUnit *)Unit_Get(plan->actorId))->atk;
+            atk = ((struct BattleUnit *)Unit_Get(plan->unitId))->atk;
             if (abilityId == 312)
               atk += ((struct BattleUnit *)Unit_Get(plan->actorId2))->atk / 4;
           }

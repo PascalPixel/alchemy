@@ -207,7 +207,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     result = BattleActionRun_Build(request, &battle->plan);
   }
   if (result == 0) {
-    switch (battle->plan.outcome) {
+    switch (battle->plan.staging) {
     case 0:
       break;
     case STAGING_MESSAGES:
@@ -253,14 +253,14 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       battle->skipPlayback = 0;
       battle->plan.targetIds[0] = swap;
-      swap = battle->plan.actorId;
-      battle->plan.actorId = battle->plan.actorId2;
+      swap = battle->plan.unitId;
+      battle->plan.unitId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
-      battle->plan.presentationFlags = BattleUnit_GetPartyAttackEffect(
-          ((struct BattleUnit *)Unit_Get(battle->plan.actorId))->enemyId);
-      if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
-        MessageArgument_PushFar(battle->plan.actorId, MESSAGE_ARGUMENT_ACTOR);
-        if (battle->plan.actorId == battle->plan.targetIds[0])
+      battle->plan.battleEffect = BattleUnit_GetPartyAttackEffect(
+          ((struct BattleUnit *)Unit_Get(battle->plan.unitId))->enemyId);
+      if (((battle->plan.unitId ^ battle->plan.targetIds[0]) >> 7) == 0) {
+        MessageArgument_PushFar(battle->plan.unitId, MESSAGE_ARGUMENT_ACTOR);
+        if (battle->plan.unitId == battle->plan.targetIds[0])
           BattleMessage_ShowAndWaitFar((s32)&MsgStopHittingYourself);
         else
           BattleMessage_ShowAndWaitFar((s32)&MsgAttacksAlly);
@@ -268,8 +268,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_RunAttack(
           &battle->plan,
           battle->plan.abilityId == ABILITY_MELD ? ATTACK_WITH_PARTNER : 0);
-      swap = battle->plan.actorId;
-      battle->plan.actorId = battle->plan.actorId2;
+      swap = battle->plan.unitId;
+      battle->plan.unitId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
       break;
     }
@@ -340,10 +340,10 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
 
   livingTargets = 0;
   effect->flags = 0;
-  flags = plan->presentationFlags;
+  flags = plan->battleEffect;
   effect->kind = flags & 0xfff;
   effect->variant = (flags & 0x3000) >> 12;
-  effect->actor = plan->actorId;
+  effect->actor = plan->unitId;
   targetIndex = 0;
   if (targetIndex < plan->targetCount) {
     inputTarget = plan->targetIds;
@@ -351,7 +351,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
     do {
       if (BattleUnit_IsListed(*inputTarget) &&
           (((struct BattleUnit *)Unit_Get(*inputTarget))->hp != 0 ||
-           (plan->presentationFlags & 0x10000))) {
+           (plan->battleEffect & 0x10000))) {
         *outputTarget++ = *inputTarget;
         livingTargets++;
       }
@@ -375,7 +375,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
   struct EscapeTransition *presentation =
       (struct EscapeTransition *)Ram_HeapSlots->transitionWork;
-  u32 aid = plan->actorId;
+  u32 aid = plan->unitId;
   struct BattleWork *scene = Ram_HeapSlots->battleWork;
   // Default: 0 until the party branch copies completed.
   s32 partyMode = 0;
@@ -411,12 +411,12 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   } else if (((Random16() * 10) >> 16) <= 6) {
     s16 event[2];
 
-    event[0] = plan->actorId;
+    event[0] = plan->unitId;
     event[1] = 0xff;
     BattleMotion_SetupEscapeObject(event[0]);
     wait(8);
-    BattleObject_RemoveFromLists(plan->actorId);
-    BattleObject_MarkForRelease(plan->actorId);
+    BattleObject_RemoveFromLists(plan->unitId);
+    BattleObject_MarkForRelease(plan->unitId);
   } else {
     BattleMessage_ShowAndWaitFar((s32)MsgNoEscape);
     BattleMessage_WaitForAdvance();
@@ -438,9 +438,9 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   u16 *list;
 
   BattleStaging_BuildTargetList(plan, &work);
-  actor = plan->actorId;
+  actor = plan->unitId;
   target = plan->targetIds[0];
-  if (plan->presentationFlags & 0x8000) {
+  if (plan->battleEffect & 0x8000) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
 
     if (actor <= ALLY_MAX)
@@ -492,7 +492,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattlePlayback_Push(0, plan->actorId);
+      BattlePlayback_Push(0, plan->unitId);
       BattlePlayback_Push(4, (u32)&MsgPsynergyBlocked);
     } else {
       BattlePlayback_Push(4, (u32)&MsgCastLacksPp);
@@ -524,7 +524,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       for (child = 0; child != animation->count - 1; child++)
         work.params[i][child] = animation->entries[child]->param;
     }
-    if (plan->presentationFlags & 0x8000) {
+    if (plan->battleEffect & 0x8000) {
       if (target <= ALLY_MAX)
         work.side = 1;
       else
@@ -535,12 +535,12 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       else
         work.side = 0;
     }
-    if (plan->presentationFlags & 0x20000)
+    if (plan->battleEffect & 0x20000)
       work.side ^= 1;
     Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
-    if (plan->presentationFlags & 0x8000)
+    if (plan->battleEffect & 0x8000)
       BattleEffect_RunSceneEffectFar((s32 *)&work);
-    else if (plan->presentationFlags & 0x4000)
+    else if (plan->battleEffect & 0x4000)
       BattleEffect_DispatchByIdRangeFar(&work);
     else
       BattleEffect_RunFromTableFar(&work);

@@ -42,10 +42,10 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   s32 count;
   s32 i;
 
-  if ((u32)(plan->outcome - 15) > 2 || plan->failure != 0)
+  if ((u32)(plan->staging - 15) > 2 || plan->failure != 0)
     return NULL;
   {
-    u8 sides = (plan->actorId ^ plan->targetIds[0]) & 0x80;
+    u8 sides = (plan->unitId ^ plan->targetIds[0]) & 0x80;
     single = sides != 0;
   }
   saved = Heap_AllocEwram(sizeof(struct SavedBattleObj));
@@ -151,17 +151,17 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   }
   saved->classId = classId;
   if (!single) {
-    saved->unitId = (plan->actorId ^ 0x80) & 0x80;
+    saved->unitId = (plan->unitId ^ 0x80) & 0x80;
     if (BattleObject_Get(saved->unitId)->object == NULL) {
       saved->reactivate = 1;
       BattleObject_Reset(BattleObject_Get(saved->unitId));
       BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
     }
   } else {
-    saved->unitId = plan->actorId;
+    saved->unitId = plan->unitId;
   }
   work->actor = saved->unitId;
-  actor = BattleObject_Get(plan->actorId)->object;
+  actor = BattleObject_Get(plan->unitId)->object;
   Actor_SelectAnimationFar(actor, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
   IoWriteQueue_Store16(0x04000050, 0x3f40);
@@ -332,7 +332,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattleObj *battleObject;
 
   view = Ram_HeapSlots->transitionWork;
-  actorId = plan->actorId;
+  actorId = plan->unitId;
   battleObject = BattleObject_Get(actorId);
   {
     s32 x = battleObject->anchorX;
@@ -366,7 +366,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   critical = plan->targetCritical[0];
   missed = plan->targetMultiplier[0] == 0;
 
-  object = BattleObject_Get(plan->actorId)->object;
+  object = BattleObject_Get(plan->unitId)->object;
   animation = GetMotionRecord(object, 0);
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
@@ -375,7 +375,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   else
     BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
                                 BattleSprite_GetAttackHop(unit->enemyId) << 16);
-  if ((mode & 32) && plan->actorId != plan->actorId2 &&
+  if ((mode & 32) && plan->unitId != plan->actorId2 &&
       plan->actorId2 != (work.actors[0] & 0x80)) {
     object = BattleObject_Get(plan->actorId2);
 
@@ -421,7 +421,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   } else {
     zoomOnCritical = 0;
     work.flags = 0;
-    if (plan->presentationFlags != 0)
+    if (plan->battleEffect != 0)
       work.flags = 1;
     if (critical != 0)
       work.kind += 200;
@@ -454,7 +454,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (work.kind != 0) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->presentationFlags & 0x4000)
+      if (plan->battleEffect & 0x4000)
         BattleEffect_DispatchByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);
@@ -500,7 +500,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       (struct BattlePresentationTransition *)Ram_HeapSlots->transitionWork;
   s32 targetYaw;
 
-  if (plan->actorId > 4)
+  if (plan->unitId > 4)
     targetYaw = YAW_ENEMY_ACTION;
   else
     targetYaw = YAW_PARTY_ACTION;
@@ -557,7 +557,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       targetOrFadeIndex++;
       fade += 0x444;
     } while (targetOrFadeIndex < 20);
-    if (plan->presentationFlags & 0x4000)
+    if (plan->battleEffect & 0x4000)
       BattleEffect_DispatchByIdRangeFar(&work);
     else
       BattleEffect_RunFromTableFar(&work);
@@ -653,16 +653,16 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   s32 isDjinni;
   s32 targetIndex;
 
-  if (plan->presentationFlags & 0x40000) {
-    if (plan->actorId <= ALLY_MAX)
+  if (plan->battleEffect & 0x40000) {
+    if (plan->unitId <= ALLY_MAX)
       transition->targetYaw = YAW_ENEMY_ACTION;
     else
       transition->targetYaw = YAW_BEHIND_ENEMIES;
     transition->frames = 60;
   } else {
-    struct MotionObject *actor = BattleObject_Get(plan->actorId)->object;
+    struct MotionObject *actor = BattleObject_Get(plan->unitId)->object;
     u32 target = plan->targetIds[0];
-    u32 actorId = plan->actorId;
+    u32 actorId = plan->unitId;
     s32 angle = (u16)ArcTan2(actor->x, actor->z);
     s32 targetYaw;
 
@@ -679,8 +679,8 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     if (transition->targetYaw != targetYaw)
       transition->targetYaw = targetYaw;
   }
-  if (plan->presentationFlags & 0x80000) {
-    if (plan->actorId <= ALLY_MAX)
+  if (plan->battleEffect & 0x80000) {
+    if (plan->unitId <= ALLY_MAX)
       transition->targetYaw = YAW_ENEMY_ACTION;
     else
       transition->targetYaw = YAW_PARTY_ACTION;
@@ -719,7 +719,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattlePlayback_Push(0, plan->actorId);
+      BattlePlayback_Push(0, plan->unitId);
       BattlePlayback_Push(4, (u32)&MsgPsynergyBlocked);
     } else {
       BattlePlayback_Push(4, (u32)&MsgCastLacksPp);
@@ -732,7 +732,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     if (work.kind) {
       if (saved)
         BattleMotion_ReleaseBuffer(saved);
-      if (plan->presentationFlags & 0x4000)
+      if (plan->battleEffect & 0x4000)
         BattleEffect_DispatchByIdRangeFar(&work);
       else
         BattleEffect_RunFromTableFar(&work);

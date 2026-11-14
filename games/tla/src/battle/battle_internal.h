@@ -329,7 +329,7 @@ enum BattleActionFailure {
   ACTION_FAILURE_NO_PP   ///< the user has too little PP
 };
 
-/// BattlePlan.outcome, The Broken Seal's BattleActionRun.staging: how
+/// BattlePlan.staging: how
 /// BattleStaging_DispatchAction shows the action, set by BattleActionRun_Build
 /// from the ability (gAbilityStaging where it gives one). The Lost Age adds the
 /// stagings from STAGING_TEAM_STRIKE on.
@@ -375,7 +375,7 @@ enum BattleCastKind {
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
-// BattlePlan.presentationFlags, The Broken Seal's battleEffect: the effect kind
+// BattlePlan.battleEffect: the effect kind
 // in the low twelve bits and its strength (a double or triple blow) above them;
 // then how the effect is staged.
 #define EFFECT_VARIANT_SHIFT 12

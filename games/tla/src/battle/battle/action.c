@@ -197,9 +197,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   BattlePlayback_Reset();
   ((s32 *)plan)[25] = 0;
   plan->hauntDamage = 0;
-  plan->actorId = request->unitId;
+  plan->unitId = request->unitId;
   plan->targetCount = 0;
-  plan->presentationFlags = 0;
+  plan->battleEffect = 0;
   plan->failure = ACTION_FAILURE_NONE;
   plan->actorId2 = request->unitId;
   plan->element = ELEMENT_NONE;
@@ -279,7 +279,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       BattleMessage_ShowAndWaitFar((s32)&MsgActorRuns);
     }
     BattleMessage_WaitForAdvance();
-    plan->outcome = STAGING_FLEE;
+    plan->staging = STAGING_FLEE;
     return 0;
 
   case COMMAND_ATTACK:
@@ -587,13 +587,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
-    plan->outcome = STAGING_ATTACK;
+    plan->staging = STAGING_ATTACK;
     if (actor->classIndex == CLASS_NONE) {
-      plan->presentationFlags =
+      plan->battleEffect =
           BattleSprite_GetAttackEffect(actor->enemyId) | EFFECT_BY_ID_RANGE;
     } else {
-      plan->presentationFlags = 0;
-      plan->presentationFlags = BattleUnit_GetPartyAttackEffect(actor->enemyId);
+      plan->battleEffect = 0;
+      plan->battleEffect = BattleUnit_GetPartyAttackEffect(actor->enemyId);
     }
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
@@ -623,7 +623,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
     plan->abilityId = abilityId;
     plan->element = ability->element;
-    plan->presentationFlags = 0;
+    plan->battleEffect = 0;
     if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
         ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
         ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 ||
@@ -710,7 +710,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       }
     }
     if (abilityId == ABILITY_MELD) {
-      plan->actorId2 = BattleUnit_FindStrongestAlly(plan->actorId);
+      plan->actorId2 = BattleUnit_FindStrongestAlly(plan->unitId);
     } else if (abilityId == ABILITY_MOLD) {
       s32 tries = 0;
 
@@ -723,35 +723,35 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       } while (++tries <= 9);
     }
     if (abilityId >= 0 && abilityId <= ABILITY_PSY_BOOST) {
-      plan->presentationFlags = gAbilityBattleEffects[abilityId];
+      plan->battleEffect = gAbilityBattleEffects[abilityId];
       if (plan->targetMultiplier[0] > 1)
-        plan->presentationFlags =
+        plan->battleEffect =
             gAbilityBattleEffects[abilityId] +
             (plan->targetMultiplier[0] << EFFECT_VARIANT_SHIFT) -
             (1 << EFFECT_VARIANT_SHIFT);
     }
     if ((abilityId >= 0 && abilityId <= ABILITY_PSY_BOOST) &&
         gAbilityStaging[abilityId] != 0)
-      plan->outcome = gAbilityStaging[abilityId];
+      plan->staging = gAbilityStaging[abilityId];
     else if (Ability_IsPsynergy(abilityId))
-      plan->outcome = STAGING_CAST;
-    else if (plan->presentationFlags != 0) {
+      plan->staging = STAGING_CAST;
+    else if (plan->battleEffect != 0) {
       if (actor->classIndex == CLASS_NONE)
-        plan->outcome = STAGING_ENEMY_CAST;
+        plan->staging = STAGING_ENEMY_CAST;
       else
-        plan->outcome = STAGING_CAST;
+        plan->staging = STAGING_CAST;
     } else
-      plan->outcome = STAGING_MESSAGES;
+      plan->staging = STAGING_MESSAGES;
     if (Battle_IsReviveEffectFar(ability->effect))
-      plan->presentationFlags |= EFFECT_ON_DOWNED;
+      plan->battleEffect |= EFFECT_ON_DOWNED;
     if ((abilityId == ABILITY_ANNIHILATION || abilityId == ABILITY_WHORL ||
          ability->effect == 82) &&
         plan->targetHit[0] != 0)
-      plan->presentationFlags |= 1 << EFFECT_VARIANT_SHIFT;
+      plan->battleEffect |= 1 << EFFECT_VARIANT_SHIFT;
   }
-  if (request->command == COMMAND_ITEM && plan->outcome != STAGING_SUMMON &&
-      plan->outcome != STAGING_FULL_SCREEN)
-    plan->outcome = STAGING_ITEM;
+  if (request->command == COMMAND_ITEM && plan->staging != STAGING_SUMMON &&
+      plan->staging != STAGING_FULL_SCREEN)
+    plan->staging = STAGING_ITEM;
   plan->command = request->command;
   return 0;
 }

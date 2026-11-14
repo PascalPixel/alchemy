@@ -71,7 +71,7 @@ gBattleAI_DullahanForms:
 	.global gActionRun_EffectChance
 gActionRun_EffectChance:
 	.byte 100, 60, 30, 30, 30, 30
-@ Each ability's staging (BattlePlan.outcome, enum BattleStaging), 0 for the
+@ Each ability's staging (BattlePlan.staging, enum BattleStaging), 0 for the
 @ default, by ability id, as The Broken Seal's gAbilityStaging.
 	.global gAbilityStaging
 gAbilityStaging:
@@ -809,7 +809,7 @@ gAbilityStaging:
 	.byte 0
 	.byte 6
 	.byte 0
-@ Each ability's staging bits (BattlePlan.presentationFlags, the EFFECT_ bits),
+@ Each ability's staging bits (BattlePlan.battleEffect, the EFFECT_ bits),
 @ by ability id, as The Broken Seal's gAbilityBattleEffects.
 	.global gAbilityBattleEffects
 gAbilityBattleEffects:

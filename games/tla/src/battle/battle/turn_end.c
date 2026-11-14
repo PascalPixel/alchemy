@@ -713,7 +713,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   s32 strongestElement;
   s32 recoveryTurn;
 
-  unitId = plan->actorId;
+  unitId = plan->unitId;
   battleContinues = 0;
   unit = Unit_Get(unitId);
   if (unitId <= ALLY_MAX ||

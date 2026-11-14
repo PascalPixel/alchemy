@@ -2290,11 +2290,6 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
-/// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
-/// from self, 12 pixels up, along self's angle (unk66), faces it that way,
-/// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
-/// scale and action, has it watch what self watches, and calls
-/// Event_PlaySound(SE_104). The twin of overlay 6ac's Func_02002e6c.
 void Func_02003304(struct Actor *self) {
   struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;

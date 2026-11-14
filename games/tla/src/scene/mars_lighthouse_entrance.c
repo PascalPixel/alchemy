@@ -159,9 +159,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gMarsLighthouseEntrance_Placements;
 }
 
-// XXX: what the field work's unkd38 does once set; nothing in this overlay
-// calls this, and staging it beside a render of the rooms would settle it.
-UNUSED void Func_02000118(void) {
+// XXX: what Blaze does otherwise once the field work's unkd38 is set (its
+// mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of the
+// mode would settle it.
+/// Unused: as the dragon hall's, readies Blaze for a dragon statue.
+UNUSED void MarsLighthouseEntrance_BeginBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->unkd38 = 1;
@@ -1880,11 +1882,6 @@ void TileMap_ConvertBuffer(s32 scene, s32 a1);
 
 #include "shared/actor_attach.h"
 
-/// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
-/// from self, 12 pixels up, along self's angle (unk66), faces it that way,
-/// gives it Actor_RollAndCrumble as its update hook and its speed, clears its
-/// scale and action, has it watch what self watches, and calls
-/// Event_PlaySound(SE_104). The twin of overlay 6ac's Func_02002e6c.
 #include "shared/actor_launch_ahead.h"
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);

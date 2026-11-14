@@ -14,7 +14,7 @@ struct CellTargetEntry;
 void Leader_KnockBack(void);
 void Actor_LaunchAhead(struct Actor *object);
 
-void Func_020014f4(void);
+void MarsLighthouseStarRoom_ShootFireballs(void);
 
 void Beam_DrawTargets(void);
 
@@ -25,19 +25,17 @@ void Actor_RollAndCrumble(struct Actor *actor);
 void Leader_StopIfPending(void);
 void Actor_SteerByPad(struct Actor *object);
 
-extern struct CellTarget gData_02004cf4;
-
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void Func_02000060(void);
+void MarsLighthouseStarRoom_BeginBlazeOnStatue(void);
 
-void Func_02000074(void);
+void MarsLighthouseStarRoom_BlazeStatue(void);
 
-void Func_02000188(void);
+void MarsLighthouseStarRoom_WestFireballCracksIce(void);
 
-void Func_020001e8(void);
+void MarsLighthouseStarRoom_EastFireballCracksIce(void);
 
-void Func_020005b0(void);
+void MarsLighthouseStarRoom_WakeFlameDragons(void);
 
 void MarsLighthouseStarRoom_HoldWarmHand(void);
 
@@ -45,10 +43,6 @@ void MarsLighthouseStarRoom_TakeMarsStar(void);
 
 void MarsLighthouseStarRoom_UseMarsStar(void);
 
-void Func_0200007c(void);
-
-extern u32 gData_0200485c[];
-extern u32 gData_02004898[];
-extern u32 gData_020048d4[];
+void MarsLighthouseStarRoom_EndBlazeOnStatue(void);
 
 #endif

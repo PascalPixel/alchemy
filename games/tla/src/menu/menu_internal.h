@@ -235,8 +235,8 @@ struct PsynergyMenuState {
   struct MenuWindow *rowWindow;
   struct MenuIcon *sideIcons[2];
   s8 tabIndex[2];
-  s8 tabCount;
-  u8 unk01f[5];
+  s8 tabCounts[2]; ///< party members each side chooses from
+  u8 unk020[4];
   s32 psynergyWindow;
   void *statusWindow;
   s32 shortcutWindow;

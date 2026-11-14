@@ -15,23 +15,23 @@ a row's position. The Healing Ring is item 265: row 265 of the item table
 holds its price and what it does, and its name is the message at 265 past
 the first item name. Nothing in a row says which item it is.
 
-The Lost Age's tables keep each row at its place, with its name from the
-English release in a comment above it, so a table reads like this:
+The item table names each row by its number, whose name comes from the
+English release (`item_ids.h`), so a row reads like this:
 
 ```c
-    // Long Sword
-    {
+    [ITEM_LONG_SWORD] = {
         .price = 200,
         .type = ITEM_TYPE_WEAPON,
-        .equipMask = 0x93,
+        .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(PIERS),
         .icon = 1,
         .primaryBonus = 14,
         .element = ELEMENT_NONE,
     },
 ```
 
-The mask has a bit for each character who can wield it: Isaac, Garet,
-Felix and Piers.
+The mask has a bit for each character who can wield it. The other tables
+still keep each row at its place, with its name from the English release
+in a comment above it.
 
 The tables are `gItem_DefinitionTable` (516 items),
 `gAbilityDefinitions` (734 abilities), `gEnemy_DefinitionTable` (380

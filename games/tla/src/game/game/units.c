@@ -483,7 +483,7 @@ void GameFlag_RefreshLureCap(void) {
     unit = Unit_Get(gMainRoutineWork.activeOwners[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
-        struct ItemEffect *effect;
+        struct EquipEffect *effect;
         s32 effectIndex;
 
         effect = Item_GetDirect(unit->inventory[inventorySlot])->effects;

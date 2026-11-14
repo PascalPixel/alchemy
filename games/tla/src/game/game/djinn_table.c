@@ -4,540 +4,470 @@
 // Part of game.c.
 
 #include "../game_internal.h"
+#include "ability_ids.h"
+#include "djinn_ids.h"
 
 // clang-format off
 const struct DjinnDefinition gDjinn_DefinitionTable[] = {
-    // Flint
-    {
-        .abilityId = 300,
+    [DJINNI_FLINT] = {
+        .abilityId = ABILITY_FLINT,
         .hp = 8,
         .pp = 4,
         .atk = 3,
     },
-    // Granite
-    {
-        .abilityId = 301,
+    [DJINNI_GRANITE] = {
+        .abilityId = ABILITY_GRANITE,
         .hp = 9,
         .def = 2,
         .agi = 2,
         .luck = 1,
     },
-    // Quartz
-    {
-        .abilityId = 302,
+    [DJINNI_QUARTZ] = {
+        .abilityId = ABILITY_QUARTZ,
         .hp = 10,
         .pp = 3,
         .agi = 3,
     },
-    // Vine
-    {
-        .abilityId = 303,
+    [DJINNI_VINE] = {
+        .abilityId = ABILITY_VINE,
         .hp = 12,
         .pp = 4,
         .def = 3,
         .luck = 1,
     },
-    // Sap
-    {
-        .abilityId = 304,
+    [DJINNI_SAP] = {
+        .abilityId = ABILITY_SAP,
         .hp = 10,
         .atk = 3,
         .luck = 1,
     },
-    // Ground
-    {
-        .abilityId = 305,
+    [DJINNI_GROUND] = {
+        .abilityId = ABILITY_GROUND,
         .hp = 9,
         .pp = 3,
         .agi = 3,
     },
-    // Bane
-    {
-        .abilityId = 306,
+    [DJINNI_BANE] = {
+        .abilityId = ABILITY_BANE,
         .hp = 12,
         .atk = 4,
     },
-    // Echo
-    {
-        .abilityId = 307,
+    [DJINNI_ECHO] = {
+        .abilityId = ABILITY_ECHO,
         .hp = 9,
         .pp = 4,
         .atk = 3,
     },
-    // Iron
-    {
-        .abilityId = 308,
+    [DJINNI_IRON] = {
+        .abilityId = ABILITY_IRON,
         .hp = 11,
         .def = 2,
         .agi = 3,
     },
-    // Steel
-    {
-        .abilityId = 309,
+    [DJINNI_STEEL] = {
+        .abilityId = ABILITY_STEEL,
         .hp = 9,
         .atk = 4,
         .def = 2,
         .luck = 1,
     },
-    // Mud
-    {
-        .abilityId = 310,
+    [DJINNI_MUD] = {
+        .abilityId = ABILITY_MUD,
         .hp = 10,
         .pp = 4,
         .agi = 3,
     },
-    // Flower
-    {
-        .abilityId = 311,
+    [DJINNI_FLOWER] = {
+        .abilityId = ABILITY_FLOWER,
         .hp = 12,
         .pp = 4,
     },
-    // Meld
-    {
-        .abilityId = 312,
+    [DJINNI_MELD] = {
+        .abilityId = ABILITY_MELD,
         .hp = 9,
         .agi = 4,
         .luck = 1,
     },
-    // Petra
-    {
-        .abilityId = 313,
+    [DJINNI_PETRA] = {
+        .abilityId = ABILITY_PETRA,
         .hp = 11,
         .def = 3,
     },
-    // Salt
-    {
-        .abilityId = 314,
+    [DJINNI_SALT] = {
+        .abilityId = ABILITY_SALT,
         .hp = 9,
         .pp = 5,
         .luck = 1,
     },
-    // Geode
-    {
-        .abilityId = 315,
+    [DJINNI_GEODE] = {
+        .abilityId = ABILITY_GEODE,
         .hp = 12,
         .atk = 6,
     },
-    // Mold
-    {
-        .abilityId = 316,
+    [DJINNI_MOLD] = {
+        .abilityId = ABILITY_MOLD,
         .hp = 8,
         .atk = 4,
         .agi = 2,
         .luck = 1,
     },
-    // Crystal
-    {
-        .abilityId = 317,
+    [DJINNI_CRYSTAL] = {
+        .abilityId = ABILITY_CRYSTAL,
         .hp = 10,
         .pp = 5,
         .def = 2,
     },
     // Earth18
-    {
-        .abilityId = 318,
+    [DJINNI_18] = {
+        .abilityId = ABILITY_EARTH18,
     },
     // Earth19
-    {
-        .abilityId = 319,
+    [DJINNI_19] = {
+        .abilityId = ABILITY_EARTH19,
     },
-    // Fizz
-    {
-        .abilityId = 320,
+    [DJINNI_FIZZ] = {
+        .abilityId = ABILITY_FIZZ,
         .hp = 9,
         .pp = 4,
         .def = 3,
     },
-    // Sleet
-    {
-        .abilityId = 321,
+    [DJINNI_SLEET] = {
+        .abilityId = ABILITY_SLEET,
         .hp = 12,
         .atk = 3,
         .luck = 1,
     },
-    // Mist
-    {
-        .abilityId = 322,
+    [DJINNI_MIST] = {
+        .abilityId = ABILITY_322,
         .hp = 11,
         .atk = 4,
     },
-    // Spritz
-    {
-        .abilityId = 323,
+    [DJINNI_SPRITZ] = {
+        .abilityId = ABILITY_SPRITZ,
         .hp = 8,
         .pp = 4,
         .agi = 3,
     },
-    // Hail
-    {
-        .abilityId = 324,
+    [DJINNI_HAIL] = {
+        .abilityId = ABILITY_HAIL,
         .hp = 9,
         .atk = 4,
         .luck = 1,
     },
-    // Tonic
-    {
-        .abilityId = 325,
+    [DJINNI_TONIC] = {
+        .abilityId = ABILITY_TONIC,
         .hp = 8,
         .pp = 3,
         .def = 2,
         .luck = 2,
     },
-    // Dew
-    {
-        .abilityId = 326,
+    [DJINNI_DEW] = {
+        .abilityId = ABILITY_DEW,
         .hp = 13,
         .pp = 4,
         .agi = 4,
     },
-    // Fog
-    {
-        .abilityId = 327,
+    [DJINNI_FOG] = {
+        .abilityId = ABILITY_FOG,
         .hp = 9,
         .def = 2,
         .agi = 2,
         .luck = 1,
     },
-    // Sour
-    {
-        .abilityId = 328,
+    [DJINNI_SOUR] = {
+        .abilityId = ABILITY_SOUR,
         .hp = 8,
         .pp = 4,
         .atk = 3,
     },
-    // Spring
-    {
-        .abilityId = 329,
+    [DJINNI_SPRING] = {
+        .abilityId = ABILITY_SPRING,
         .hp = 11,
         .pp = 5,
     },
-    // Shade
-    {
-        .abilityId = 330,
+    [DJINNI_SHADE] = {
+        .abilityId = ABILITY_SHADE,
         .hp = 9,
         .def = 3,
         .luck = 2,
     },
-    // Chill
-    {
-        .abilityId = 331,
+    [DJINNI_CHILL] = {
+        .abilityId = ABILITY_CHILL,
         .hp = 10,
         .pp = 3,
         .def = 2,
     },
-    // Steam
-    {
-        .abilityId = 332,
+    [DJINNI_STEAM] = {
+        .abilityId = ABILITY_STEAM,
         .hp = 10,
         .atk = 5,
     },
-    // Rime
-    {
-        .abilityId = 333,
+    [DJINNI_RIME] = {
+        .abilityId = ABILITY_RIME,
         .hp = 10,
         .pp = 6,
     },
-    // Gel
-    {
-        .abilityId = 334,
+    [DJINNI_GEL] = {
+        .abilityId = ABILITY_GEL,
         .hp = 9,
         .atk = 5,
         .agi = 2,
     },
-    // Eddy
-    {
-        .abilityId = 335,
+    [DJINNI_EDDY] = {
+        .abilityId = ABILITY_EDDY,
         .hp = 9,
         .agi = 3,
         .luck = 2,
     },
-    // Balm
-    {
-        .abilityId = 336,
+    [DJINNI_BALM] = {
+        .abilityId = ABILITY_BALM,
         .hp = 13,
         .pp = 4,
     },
-    // Serac
-    {
-        .abilityId = 337,
+    [DJINNI_SERAC] = {
+        .abilityId = ABILITY_SERAC,
         .hp = 12,
         .atk = 3,
     },
     // Water18
-    {
-        .abilityId = 338,
+    [DJINNI_38] = {
+        .abilityId = ABILITY_WATER18,
     },
     // Water19
-    {
-        .abilityId = 339,
+    [DJINNI_39] = {
+        .abilityId = ABILITY_WATER19,
     },
-    // Forge
-    {
-        .abilityId = 340,
+    [DJINNI_FORGE] = {
+        .abilityId = ABILITY_FORGE,
         .hp = 10,
         .atk = 2,
         .agi = 2,
         .luck = 2,
     },
-    // Fever
-    {
-        .abilityId = 341,
+    [DJINNI_FEVER] = {
+        .abilityId = ABILITY_FEVER,
         .hp = 8,
         .atk = 3,
         .agi = 2,
     },
-    // Corona
-    {
-        .abilityId = 342,
+    [DJINNI_CORONA] = {
+        .abilityId = ABILITY_CORONA,
         .hp = 12,
         .pp = 3,
         .def = 3,
         .luck = 1,
     },
-    // Scorch
-    {
-        .abilityId = 343,
+    [DJINNI_SCORCH] = {
+        .abilityId = ABILITY_SCORCH,
         .hp = 8,
         .atk = 3,
     },
-    // Ember
-    {
-        .abilityId = 344,
+    [DJINNI_EMBER] = {
+        .abilityId = ABILITY_EMBER,
         .hp = 9,
         .pp = 4,
         .def = 2,
         .agi = 2,
     },
-    // Flash
-    {
-        .abilityId = 345,
+    [DJINNI_FLASH] = {
+        .abilityId = ABILITY_FLASH,
         .hp = 14,
         .pp = 3,
         .def = 2,
     },
-    // Torch
-    {
-        .abilityId = 346,
+    [DJINNI_TORCH] = {
+        .abilityId = ABILITY_TORCH,
         .hp = 9,
         .atk = 3,
         .luck = 1,
     },
-    // Cannon
-    {
-        .abilityId = 347,
+    [DJINNI_CANNON] = {
+        .abilityId = ABILITY_CANNON,
         .hp = 10,
         .atk = 3,
     },
-    // Spark
-    {
-        .abilityId = 348,
+    [DJINNI_SPARK] = {
+        .abilityId = ABILITY_SPARK,
         .hp = 11,
         .pp = 6,
     },
-    // Kindle
-    {
-        .abilityId = 349,
+    [DJINNI_KINDLE] = {
+        .abilityId = ABILITY_KINDLE,
         .hp = 8,
         .atk = 5,
         .luck = 1,
     },
-    // Char
-    {
-        .abilityId = 350,
+    [DJINNI_CHAR] = {
+        .abilityId = ABILITY_CHAR,
         .hp = 9,
         .atk = 2,
         .agi = 2,
         .luck = 1,
     },
-    // Coal
-    {
-        .abilityId = 351,
+    [DJINNI_COAL] = {
+        .abilityId = ABILITY_COAL,
         .hp = 11,
         .pp = 3,
         .agi = 3,
     },
-    // Reflux
-    {
-        .abilityId = 352,
+    [DJINNI_REFLUX] = {
+        .abilityId = ABILITY_REFLUX,
         .hp = 9,
         .def = 3,
         .luck = 2,
     },
-    // Core
-    {
-        .abilityId = 353,
+    [DJINNI_CORE] = {
+        .abilityId = ABILITY_CORE,
         .hp = 8,
         .atk = 4,
         .def = 2,
     },
-    // Tinder
-    {
-        .abilityId = 354,
+    [DJINNI_TINDER] = {
+        .abilityId = ABILITY_TINDER,
         .hp = 12,
         .pp = 5,
     },
-    // Shine
-    {
-        .abilityId = 355,
+    [DJINNI_SHINE] = {
+        .abilityId = ABILITY_SHINE,
         .hp = 9,
         .atk = 3,
         .def = 3,
         .agi = 2,
     },
-    // Fury
-    {
-        .abilityId = 356,
+    [DJINNI_FURY] = {
+        .abilityId = ABILITY_FURY,
         .hp = 12,
         .pp = 4,
     },
-    // Fugue
-    {
-        .abilityId = 357,
+    [DJINNI_FUGUE] = {
+        .abilityId = ABILITY_FUGUE,
         .hp = 11,
         .pp = 4,
         .def = 2,
     },
     // Fire18
-    {
-        .abilityId = 358,
+    [DJINNI_58] = {
+        .abilityId = ABILITY_FIRE18,
     },
     // Fire19
-    {
-        .abilityId = 359,
+    [DJINNI_59] = {
+        .abilityId = ABILITY_FIRE19,
     },
-    // Gust
-    {
-        .abilityId = 360,
+    [DJINNI_GUST] = {
+        .abilityId = ABILITY_GUST,
         .hp = 9,
         .atk = 2,
         .agi = 2,
     },
-    // Breeze
-    {
-        .abilityId = 361,
+    [DJINNI_BREEZE] = {
+        .abilityId = ABILITY_BREEZE,
         .hp = 12,
         .pp = 5,
         .def = 2,
         .luck = 1,
     },
-    // Zephyr
-    {
-        .abilityId = 362,
+    [DJINNI_ZEPHYR] = {
+        .abilityId = ABILITY_ZEPHYR,
         .hp = 11,
         .pp = 3,
         .agi = 2,
         .luck = 1,
     },
-    // Smog
-    {
-        .abilityId = 363,
+    [DJINNI_SMOG] = {
+        .abilityId = ABILITY_SMOG,
         .hp = 9,
         .atk = 3,
     },
-    // Kite
-    {
-        .abilityId = 364,
+    [DJINNI_KITE] = {
+        .abilityId = ABILITY_KITE,
         .hp = 8,
         .pp = 4,
         .agi = 3,
     },
-    // Squall
-    {
-        .abilityId = 365,
+    [DJINNI_SQUALL] = {
+        .abilityId = ABILITY_SQUALL,
         .hp = 10,
         .atk = 5,
     },
-    // Luff
-    {
-        .abilityId = 366,
+    [DJINNI_LUFF] = {
+        .abilityId = ABILITY_LUFF,
         .hp = 11,
         .pp = 5,
         .def = 2,
         .luck = 1,
     },
-    // Breath
-    {
-        .abilityId = 367,
+    [DJINNI_BREATH] = {
+        .abilityId = ABILITY_BREATH,
         .hp = 9,
         .def = 3,
         .agi = 4,
     },
-    // Blitz
-    {
-        .abilityId = 368,
+    [DJINNI_BLITZ] = {
+        .abilityId = ABILITY_BLITZ,
         .hp = 10,
         .pp = 4,
         .atk = 3,
     },
-    // Ether
-    {
-        .abilityId = 369,
+    [DJINNI_ETHER] = {
+        .abilityId = ABILITY_ETHER,
         .hp = 8,
         .pp = 4,
         .agi = 3,
         .luck = 2,
     },
-    // Waft
-    {
-        .abilityId = 370,
+    [DJINNI_WAFT] = {
+        .abilityId = ABILITY_WAFT,
         .hp = 11,
         .atk = 4,
     },
-    // Haze
-    {
-        .abilityId = 371,
+    [DJINNI_HAZE] = {
+        .abilityId = ABILITY_HAZE,
         .hp = 10,
         .def = 2,
         .agi = 3,
         .luck = 2,
     },
-    // Wheeze
-    {
-        .abilityId = 372,
+    [DJINNI_WHEEZE] = {
+        .abilityId = ABILITY_WHEEZE,
         .hp = 9,
         .pp = 3,
         .atk = 5,
     },
-    // Aroma
-    {
-        .abilityId = 373,
+    [DJINNI_AROMA] = {
+        .abilityId = ABILITY_AROMA,
         .hp = 11,
         .agi = 3,
         .luck = 2,
     },
-    // Whorl
-    {
-        .abilityId = 374,
+    [DJINNI_WHORL] = {
+        .abilityId = ABILITY_WHORL,
         .hp = 9,
         .atk = 4,
         .def = 2,
     },
-    // Gasp
-    {
-        .abilityId = 375,
+    [DJINNI_GASP] = {
+        .abilityId = ABILITY_GASP,
         .hp = 12,
         .pp = 5,
     },
-    // Lull
-    {
-        .abilityId = 376,
+    [DJINNI_LULL] = {
+        .abilityId = ABILITY_LULL,
         .hp = 11,
         .pp = 6,
     },
-    // Gale
-    {
-        .abilityId = 377,
+    [DJINNI_GALE] = {
+        .abilityId = ABILITY_377,
         .hp = 10,
         .agi = 5,
         .luck = 3,
     },
     // Wind18
-    {
-        .abilityId = 378,
+    [DJINNI_78] = {
+        .abilityId = ABILITY_WIND18,
     },
     // Wind19
-    {
-        .abilityId = 379,
+    [DJINNI_79] = {
+        .abilityId = ABILITY_WIND19,
     },
 };
 // clang-format on

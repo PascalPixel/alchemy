@@ -3,11 +3,12 @@
 // Part of game.c.
 
 #include "../game_internal.h"
+#include "item_ids.h"
+#include "game/character_ids.h"
 
 // clang-format off
 const struct CharacterDefinition gCharacter_DefinitionTable[] = {
-    // Isaac
-    {
+    [ISAAC] = {
         .hp = {30, 182, 334, 486, 638, 790},
         .pp = {20, 80, 130, 170, 210, 250},
         .atk = {13, 86, 162, 237, 313, 388},
@@ -16,10 +17,9 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {3, 3, 3, 3, 3, 3},
         .elementBonus = {54, 3, 1, 2},
         .startingLevel = 28,
-        .items = {0x4, 0x50, 0x79, 0x96},
+        .items = {ITEM_GREAT_SWORD, ITEM_STEEL_ARMOR, ITEM_KNIGHTS_SHIELD, ITEM_KNIGHTS_HELM},
     },
-    // Garet
-    {
+    [GARET] = {
         .hp = {33, 191, 351, 510, 670, 830},
         .pp = {18, 76, 124, 162, 200, 238},
         .atk = {11, 83, 156, 228, 301, 373},
@@ -28,10 +28,9 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {2, 2, 2, 2, 2, 2},
         .elementBonus = {1, 2, 54, 3},
         .startingLevel = 28,
-        .items = {0x21, 0x50, 0x79, 0x96},
+        .items = {ITEM_GREAT_AXE, ITEM_STEEL_ARMOR, ITEM_KNIGHTS_SHIELD, ITEM_KNIGHTS_HELM},
     },
-    // Ivan
-    {
+    [IVAN] = {
         .hp = {28, 166, 304, 442, 581, 719},
         .pp = {24, 92, 150, 196, 242, 288},
         .atk = {8, 76, 144, 211, 277, 344},
@@ -40,10 +39,9 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {4, 4, 4, 4, 4, 4},
         .elementBonus = {2, 1, 3, 54},
         .startingLevel = 28,
-        .items = {0x13, 0x5e, 0x8b, 0xa9},
+        .items = {ITEM_MASTER_RAPIER, ITEM_SILVER_VEST, ITEM_SILVER_ARMLET, ITEM_PLATINUM_CIRCLET},
     },
-    // Mia
-    {
+    [MIA] = {
         .hp = {29, 173, 317, 462, 606, 751},
         .pp = {23, 90, 146, 190, 235, 280},
         .atk = {9, 79, 150, 220, 289, 359},
@@ -52,10 +50,9 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {5, 5, 5, 5, 5, 5},
         .elementBonus = {3, 54, 2, 1},
         .startingLevel = 28,
-        .items = {0x2e, 0x5e, 0x8b, 0xa9},
+        .items = {ITEM_WAR_MACE, ITEM_SILVER_VEST, ITEM_SILVER_ARMLET, ITEM_PLATINUM_CIRCLET},
     },
-    // Felix
-    {
+    [FELIX] = {
         .hp = {32, 187, 342, 498, 654, 810},
         .pp = {19, 78, 127, 166, 205, 244},
         .atk = {13, 87, 164, 240, 316, 392},
@@ -64,10 +61,9 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {2, 2, 2, 2, 2, 2},
         .elementBonus = {54, 3, 1, 2},
         .startingLevel = 5,
-        .items = {0x10, 0x59, 0x7f, 0xb4, 0xb4, 0x41, 0xdf},
+        .items = {ITEM_SHORT_SWORD, ITEM_COTTON_SHIRT, ITEM_PADDED_GLOVES, ITEM_HERB, ITEM_HERB, ITEM_SHAMANS_ROD, ITEM_MYTHRIL_BAG_JUPITER_STAR},
     },
-    // Jenna
-    {
+    [JENNA] = {
         .hp = {29, 177, 326, 474, 622, 770},
         .pp = {21, 85, 138, 180, 223, 265},
         .atk = {10, 81, 153, 224, 295, 366},
@@ -76,10 +72,9 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {4, 4, 4, 4, 4, 4},
         .elementBonus = {1, 2, 54, 3},
         .startingLevel = 5,
-        .items = {0x37, 0x67, 0x7f, 0xb4, 0xb4, 0xb4},
+        .items = {ITEM_WOODEN_STICK, ITEM_ONE_PIECE_DRESS, ITEM_PADDED_GLOVES, ITEM_HERB, ITEM_HERB, ITEM_HERB},
     },
-    // Sheba
-    {
+    [SHEBA] = {
         .hp = {28, 169, 311, 452, 593, 735},
         .pp = {24, 91, 148, 193, 238, 284},
         .atk = {8, 78, 147, 215, 283, 351},
@@ -88,10 +83,9 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {5, 5, 5, 5, 5, 5},
         .elementBonus = {2, 1, 3, 54},
         .startingLevel = 5,
-        .items = {0x37, 0x5a, 0x88, 0xa6, 0xb4},
+        .items = {ITEM_WOODEN_STICK, ITEM_TRAVEL_VEST, ITEM_LEATHER_ARMLET, ITEM_CIRCLET, ITEM_HERB},
     },
-    // Piers
-    {
+    [PIERS] = {
         .hp = {30, 184, 337, 491, 644, 798},
         .pp = {19, 79, 129, 168, 208, 248},
         .atk = {11, 82, 155, 226, 298, 370},
@@ -100,7 +94,7 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .luck = {3, 3, 3, 3, 3, 3},
         .elementBonus = {3, 54, 2, 1},
         .startingLevel = 18,
-        .items = {0x2d, 0x4d, 0x78, 0x92, 0xb4, 0xbb, 0xbc},
+        .items = {ITEM_BATTLE_MACE, ITEM_CHAIN_MAIL, ITEM_IRON_SHIELD, ITEM_BRONZE_HELM, ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR},
     },
 };
 // clang-format on

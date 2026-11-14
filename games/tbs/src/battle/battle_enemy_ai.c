@@ -85,7 +85,7 @@ UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
 select_again:
   strategyKind = *actionStrategy;
   switch (strategyKind) {
-  // The three weight tables are in battle_tables.s.
+  // The three weight tables are in battle_tables.c.
   case ACTION_STRATEGY_EVEN:
     selection = BattleEnemy_SelectWeightedAction(
         gBattleAI_ActionWeights[ACTION_STRATEGY_EVEN]);

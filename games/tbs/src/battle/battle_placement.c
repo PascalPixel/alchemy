@@ -377,7 +377,7 @@ void BattleUnit_RefreshPlacement(void) {
     *place-- = number;
 
   // The party, at its fixed spots in pixels: x 80, z 48, 16, -16 and -48
-  // (gBattlePlacement_StepPairs, battle_tables.s).
+  // (gBattlePlacement_StepPairs, battle_tables.c).
   for (i = 0; i < count; partyPlace++, i++) {
     s32 unitId = unitIds[i];
 

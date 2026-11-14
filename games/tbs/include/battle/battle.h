@@ -15,7 +15,7 @@ struct BattleEffectParams;
 struct Actor;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
-/// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_tables.s).
+/// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_tables.c).
 extern const s8 gBattlePlacement_StepPairs[];
 /// Read as a halfword by Actor_SetOthersPaused: the actor id of the
 /// player's actor, which it leaves alone.
@@ -44,7 +44,7 @@ extern const u8 gMindRead_CasterPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
 /// even, falling by 6, or falling steeply from 113 to 5.
-extern u8 gBattleAI_ActionWeights[3][8];
+extern const u8 gBattleAI_ActionWeights[3][8];
 /// The knockback's speed gained each frame by variant (enum BattleKnockback),
 /// 16.16 pixels a frame: 1, but 8 for KNOCKBACK_HURL.
 extern s32 gBattleKnockback_Acceleration[];
@@ -58,7 +58,7 @@ extern s32 gBattleKnockback_SpeedLimit[];
 extern s32 gBattleKnockback_VelocityY[];
 /// A fixed formation's places by order, as offsets from the middle place:
 /// 0, -1, 1, -2, 2 and so on out to 4.
-extern s8 gBattleParty_CenterOrderOffsets[];
+extern const s8 gBattleParty_CenterOrderOffsets[];
 /// Turn-end effects go to the party (BATTLE_SIDE_MASK_PARTY), then the enemies
 /// (BATTLE_SIDE_MASK_ENEMIES).
 extern const struct BattleSideOrder gBattleParty_TurnEndSideOrder;
@@ -74,20 +74,20 @@ extern const u8 gBattleTransition_CurtainTiles[];
 /// time into the curtain's first tile.
 extern const u8 gBattleTransition_CurtainVariants[];
 /// Garet's weapon sprite by weapon kind (BattleUnit_GetWeaponSprite).
-extern u16 gBattleUnit_WeaponAnimationsGaret[];
+extern const u16 gBattleUnit_WeaponAnimationsGaret[];
 /// Ivan's weapon sprite by weapon kind.
-extern u16 gBattleUnit_WeaponAnimationsIvan[];
+extern const u16 gBattleUnit_WeaponAnimationsIvan[];
 /// Mia's weapon sprite by weapon kind.
-extern u16 gBattleUnit_WeaponAnimationsMia[];
+extern const u16 gBattleUnit_WeaponAnimationsMia[];
 /// Jenna's weapon sprite by weapon kind; Felix draws none.
-extern u16 gBattleUnit_WeaponAnimationsJenna[];
+extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 /// The size of BitDecoder_DecodeImage, which BattleBackground_Load copies to
 /// HEAP_SLOT_RAM_CODE_TEMP; ld_script.ld defines it as an address equal to
 /// the size.
 extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
 /// commands are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words.
-extern u8 gBattleCamera_CommandMatrix[];
+extern const s32 gBattleCamera_CommandMatrix[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
 extern s32 gElementGlow_StarPictures[];
@@ -129,7 +129,7 @@ extern const u8 gActor_FaceWatchedScript[];
 /// (Scene_SetRestartPoint).
 extern const s16 gScene_RestartRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_GetWeaponSprite).
-extern u16 gBattleUnit_WeaponAnimationsIsaac[];
+extern const u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// Battle backgrounds by scene: a background word (bit 31 set, resource id
 /// below) and then its scenes, ended by 0; a scene not listed takes the last
 /// background (BattleBackground_SelectForMap).

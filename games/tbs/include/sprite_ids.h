@@ -506,7 +506,7 @@ enum SpriteId {
   SPRITE_319,
   /// The weapons drawn in a party member's hand as they attack, from here to
   /// SPRITE_WEAPON_JENNA_BLADE: each member's gBattleUnit_WeaponAnimations
-  /// table (battle_tables.s) gives one for each enum BattleWeaponKind. Isaac's
+  /// table (battle_tables.c) gives one for each enum BattleWeaponKind. Isaac's
   /// for long swords, and for staffs, ankhs and anything the list lacks.
   SPRITE_WEAPON_ISAAC_SWORD,
   /// Garet's for maces, staffs, ankhs and anything the list lacks.

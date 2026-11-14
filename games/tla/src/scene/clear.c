@@ -839,7 +839,7 @@ done:
 // the field in the tilemap flags of a rectangle of a window, clipped to the
 // screen.
 void Clear_DrawGridCell(const struct Window *object, s32 x, s32 y, s32 width,
-                   s32 height, u32 field) {
+                        s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   x += (s16)object->x + 1;

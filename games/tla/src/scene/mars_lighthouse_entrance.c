@@ -3,10 +3,11 @@
 /// overlay: ice cones Pound flattens (MarsLighthouseEntrance_PoundIceCone),
 /// ice sheets that burst and ice to Grind (MarsLighthouseEntrance_GrindIce),
 /// floors of ice the leader slides across (MarsLighthouseEntrance_SlideOnIce),
-/// the platforms that carry the party (Ride_UpdateCarried), a statue pushed
-/// into the flames (MarsLighthouseEntrance_PushStatueIntoFlames) and the
-/// teleporters on (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and
-/// the Mercury Djinni Balm fight here (MarsLighthouseEntrance_FightFugue,
+/// flame throwers whose flames knock the leader back (Beam_Start,
+/// Ride_UpdateCarried), a statue pushed into the flames
+/// (MarsLighthouseEntrance_PushStatueIntoFlames) and the teleporters on
+/// (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and the Mercury
+/// Djinni Balm fight here (MarsLighthouseEntrance_FightFugue,
 /// MarsLighthouseEntrance_FightBalm).
 ///
 /// Outside the gates (room 1) the storm rains. In the first hall (room 2) Grind
@@ -2348,7 +2349,7 @@ UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
 #include "shared/actor_set_cell_open.h"
 
 // clang-format off
-u32 gMarsLighthouseEntrance_Room3WestPlatformRoute[] = {                                                               
+u32 gMarsLighthouseEntrance_Room3WestFlameThrowerRoute[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
@@ -2361,7 +2362,7 @@ u32 gMarsLighthouseEntrance_Room3WestPlatformRoute[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
-u32 gMarsLighthouseEntrance_Room3EastPlatformRoute[] = {                                                               
+u32 gMarsLighthouseEntrance_Room3EastFlameThrowerRoute[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x800),                                                 
@@ -2374,7 +2375,7 @@ u32 gMarsLighthouseEntrance_Room3EastPlatformRoute[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
-u32 gMarsLighthouseEntrance_Room4PlatformRoute[] = {                                                               
+u32 gMarsLighthouseEntrance_Room4FlameThrowerRoute[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 2),                                                    
       SC_SET(SW_Y, px(48)),                                                
@@ -2390,7 +2391,7 @@ u32 gMarsLighthouseEntrance_Room4PlatformRoute[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
-u32 gMarsLighthouseEntrance_Room6WestPlatformRoute[] = {
+u32 gMarsLighthouseEntrance_Room6WestFlameThrowerRoute[] = {
     SC_SET(SW_STEERING, 0),
     SC_SET(SW_MOTION, 2),
     SC_SET(SW_Y, px(48)),
@@ -2410,7 +2411,7 @@ u32 gMarsLighthouseEntrance_Room6WestPlatformRoute[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-u32 gMarsLighthouseEntrance_Room6EastPlatformRoute[] = {                                                               
+u32 gMarsLighthouseEntrance_Room6EastFlameThrowerRoute[] = {                                                               
       SC_SET(SW_STEERING, 0),                                                  
       SC_SET(SW_MOTION, 0),                                                   
       SC_SET(SW_Y, px(32)),                                                
@@ -2865,8 +2866,8 @@ void MarsLighthouseEntrance_CheckCrackedFloor(void);
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_Room3Placements[] = {
     ACTOR_PLACEMENT(413, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room3WestPlatformRoute, 104, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room3EastPlatformRoute, 280, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room3WestFlameThrowerRoute, 104, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room3EastFlameThrowerRoute, 280, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(414, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2885,7 +2886,7 @@ struct ActorPlacement gMarsLighthouseEntrance_Room3Placements[] = {
 
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_Room4Placements[] = {
-    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room4PlatformRoute, 840, 0, 528, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room4FlameThrowerRoute, 840, 0, 528, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 872, 0, 568, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(413, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 792, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(413, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 792, FACING_WEST, TALK_FACING_KEEP, 0),
@@ -2919,9 +2920,9 @@ struct ActorPlacement gMarsLighthouseEntrance_Room5Placements[] = {
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_Room6Placements[] = {
     ACTOR_PLACEMENT(413, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room6WestPlatformRoute, 120, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room6WestFlameThrowerRoute, 120, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 88, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room6EastPlatformRoute, 792, 0, 128, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(414, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_Room6EastFlameThrowerRoute, 792, 0, 128, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(419, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_StatueScript, 56, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_IceConeScript, 200, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, (s32)gMarsLighthouseEntrance_IceConeScript, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),

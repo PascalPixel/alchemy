@@ -1,0 +1,97 @@
+#ifndef ALCHEMY_PERSPECTIVE_H
+#define ALCHEMY_PERSPECTIVE_H
+
+/// @file
+/// The world map's perspective view work.
+
+#include "static_assert.h"
+#include "types.h"
+
+/// The world map's perspective view, as The Broken Seal's: the followed
+/// position, screen shake, view position, window, pitch and yaw, tile ids and
+/// zoom, in the map's heap slot. The Lost Age's World Map is four times The
+/// Broken Seal's, so its tile id grid is 32 by 32, and it adds the still
+/// picture's state and the region tint at the end.
+struct WorldMapView {
+  s32 *origin; ///< the followed point, as in MapWork
+  s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapWork
+  u8 *script;                     ///< NULL at load
+  u16 fade; ///< MapWork's flags: REG_DISPCNT bits, BG0 to BG3 and the sprites
+            ///< at load
+  u8 fadeStep; ///< MapWork's wideTiles, 0x80 at load
+  /// As MapWork: footprints, tileset animations and blend script.
+  u8 animationsAndBlend[0xe4 - 0x17];
+  s32 viewX;  ///< the view's left, 16.16 fixed-point pixels
+  s32 viewY;  ///< the view's top, 16.16 fixed-point pixels
+  s32 scaleX; ///< 32 in 16.16 at load
+  s32 scaleY; ///< 64 in 16.16 at load
+  s32 limitX; ///< 16352 in 16.16 at load
+  s32 limitY; ///< 16352 in 16.16 at load
+  u8 unk0fc[4];
+  /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
+  /// tileset animations are then neither suspended nor resumed.
+  s8 animationActive;
+  u8 unused[3];
+  /// Screen rows, 0 and 159 at load and 200 and 255 from
+  /// WorldMap_StartStillPicture; each frame copies them to shownTop and
+  /// shownBottom and picks BG mode 2 or 0 from them.
+  ///@{
+  u16 windowTop;
+  u16 windowBottom;
+  ///@}
+  u16 shownTop;      ///< windowTop as the frame update last applied it
+  u16 shownBottom;   ///< windowBottom as the frame update last applied it
+  u16 windowPending; ///< cleared by the frame update; not set by name
+  u8 unusedAfterWindow[6];
+  /// The world map's tile offsets (ResourceId_PerspectiveDataA), each tile
+  /// LZ-compressed.
+  void *tiles;
+  u8 unusedAfterTiles[4];
+  u16 pitch; ///< 1/65536 turns
+  u16 yaw;   ///< 1/65536 turns
+  /// A row of gWorldMap_GraphicsResources, by the region the party is in.
+  const u32 *resources;
+  u8 unusedAfterResources[0x24];
+  u16 tileIds[32 * 32]; ///< the world map tile in each of 32 by 32 cells
+  /// The tile each quarter of each layer's block buffer shows, so an unchanged
+  /// quarter is not decoded again.
+  u16 quarterTiles[8];
+  /// Steps left of reloading the area's graphics after the region changed,
+  /// one a frame from 12 (WorldMap_PreloadCurrentTileBlock).
+  s32 reloadSteps;
+  s32 farPlane;             ///< 510 pixels at load
+  s32 distance;             ///< farPlane scaled by the zoom
+  s32 previousZoom;         ///< the zoom a transition starts from
+  s32 zoom;                 ///< 16.16 fixed point, Q16_ONE full size
+  u16 zoomTransitionFrames; ///< a zoom transition's length; 0 when none
+  s16 zoomTransitionStep;   ///< frames of the transition done
+  /// Set when a field Psynergy cast on the World Map has used the second half
+  /// of the BG tile buffer; the still picture then decodes it again.
+  s8 tileBufferUsed;
+  /// Set while BG1 shows the still picture: the view then only shakes BG1.
+  s8 stillPictureShown;
+  /// Set while the view is held for the still picture or the world picture:
+  /// no tile is preloaded, and without a shake the frame does nothing.
+  s8 viewHeld;
+  s8 tintRegion; ///< the encounter region the tint was chosen for
+  s8 tint;       ///< brightness steps, darker when negative
+  s8 tintTarget; ///< the tint the region asks for
+  s8 fixedEye;   ///< set: the frame update leaves the eye where it is
+};
+
+STATIC_ASSERT(offsetof(struct WorldMapView, viewX) == 0xe4);
+STATIC_ASSERT(offsetof(struct WorldMapView, animationActive) == 0x100);
+STATIC_ASSERT(offsetof(struct WorldMapView, windowTop) == 0x104);
+STATIC_ASSERT(offsetof(struct WorldMapView, tiles) == 0x114);
+STATIC_ASSERT(offsetof(struct WorldMapView, pitch) == 0x11c);
+STATIC_ASSERT(offsetof(struct WorldMapView, resources) == 0x120);
+STATIC_ASSERT(offsetof(struct WorldMapView, tileIds) == 0x148);
+STATIC_ASSERT(offsetof(struct WorldMapView, reloadSteps) == 0x958);
+STATIC_ASSERT(offsetof(struct WorldMapView, farPlane) == 0x95c);
+STATIC_ASSERT(offsetof(struct WorldMapView, zoom) == 0x968);
+STATIC_ASSERT(offsetof(struct WorldMapView, tileBufferUsed) == 0x970);
+STATIC_ASSERT(offsetof(struct WorldMapView, tintRegion) == 0x973);
+STATIC_ASSERT(offsetof(struct WorldMapView, fixedEye) == 0x976);
+STATIC_ASSERT(sizeof(struct WorldMapView) == 0x978);
+
+#endif

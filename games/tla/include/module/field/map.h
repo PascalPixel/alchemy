@@ -22,14 +22,6 @@ struct ReflectionAnimation {
   struct ReflectionSprite *sprite;
 };
 
-struct WorldTint {
-  struct MapWork map;
-  u8 unk970[3];
-  s8 region;
-  s8 tint;
-  s8 target;
-};
-
 struct WorldMapBlock {
   u8 unk0[2];
   u8 unk2;

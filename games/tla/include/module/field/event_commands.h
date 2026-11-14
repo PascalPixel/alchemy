@@ -501,7 +501,7 @@ struct CleanupWork {
 
 void FieldEffect_CheckCloakTile(void);
 
-void Func_080dc954(void);
+void FieldPsynergy_MarkWorldMapTilesUsed(void);
 
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);

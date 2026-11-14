@@ -26,8 +26,13 @@
 extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
 #define gWorldMapWork gWorldMapWork__tile_animation
 
+/// Loads the first of the 2x2 world map tiles around the player that is not
+/// shown yet (at most one a frame), without drawing it. When the region under
+/// the party picks another graphics set, reloads that set over the next 12
+/// frames, one step a frame, unless a screen transition is running.
 void WorldMap_PreloadCurrentTileBlock(void) {
-  struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
   s32 x = 0;
   s32 y = 0;
   s32 x0;
@@ -36,14 +41,14 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   s32 row;
   s32 col;
   s32 tile;
-  struct Data02020000 *block;
+  struct WorldMapCell *block;
   const u32 *resources;
   s32 graphicsSet;
   s32 value;
   u8 *buffer;
 
-  if (window->origin != NULL) {
-    s32 *p = window->origin;
+  if (perspective->origin != NULL) {
+    s32 *p = perspective->origin;
 
     x = *p++;
     y = p[1];
@@ -54,7 +59,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     for (row = 0; row <= 1; row++) {
       for (col = 0; col <= 1; col++) {
         tile = (((y0 + row) & 31) << 5) + ((x0 + col) & 31);
-        tile = window->tileIds[tile];
+        tile = perspective->tileIds[tile];
         tile += layer << 10;
         if (WorldMap_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) !=
             0)
@@ -62,7 +67,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
       }
     }
   }
-  block = (struct Data02020000 *)Ram_MapBlocks +
+  block = (struct WorldMapCell *)Ram_MapBlocks +
           (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
@@ -81,17 +86,17 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     break;
   }
   resources = gWorldMap_GraphicsResources[graphicsSet];
-  if (resources != window->resources) {
-    window->resources = resources;
-    window->reloadSteps = 12;
+  if (resources != perspective->resources) {
+    perspective->resources = resources;
+    perspective->reloadSteps = 12;
   }
   value = ScreenTransition_IsScanlineActiveFar();
-  if (window->reloadSteps == 0)
+  if (perspective->reloadSteps == 0)
     return;
   if (value != 0)
     return;
   buffer = Heap_Alloc(0x200);
-  switch (window->reloadSteps) {
+  switch (perspective->reloadSteps) {
   case 12: {
     s16 backdropColor = *(s16 *)BG_PLTT;
 
@@ -138,11 +143,12 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
     break;
   }
-  window->reloadSteps--;
+  perspective->reloadSteps--;
   Heap_Release(buffer);
 }
 
-void MapAnimation_PresentPicture(void) {
+/// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM.
+void WorldMap_PresentStillPicture(void) {
   s32 control;
   volatile u32 *dma;
 
@@ -159,35 +165,41 @@ void MapAnimation_PresentPicture(void) {
           DMA_COPY_WORDS(0xa000 / 4), dma);
 }
 
+/// Freezes the world map's perspective view as a still picture on BG1: decodes
+/// the area's tiles again where a field Psynergy used their buffer, saves BG1's
+/// tiles, draws the current affine frame into pixels and hands the window and
+/// VBlank to it.
 void MapAnimation_Start(void) {
   u8 *pages = Ram_HeapSlots->unk1c[0];
-  struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
   u32 *resources;
   s32 one;
   s8 *active;
 
-  active = &work->animationActive;
+  active = &perspective->animationActive;
   one = 1;
   *active = one;
   Task_SuspendAll(TilesetAnim_Update);
-  work->picturePending = one;
-  resources = work->resources;
+  perspective->viewHeld = one;
+  resources = perspective->resources;
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
-  if (work->extraTiles != 0)
+  if (perspective->tileBufferUsed != 0)
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
-  work->extraTiles = 0;
+  perspective->tileBufferUsed = 0;
   Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
           REG_DMA3);
   wait(1);
   TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 0x1400 + 0xc80,
                           Ram_MapCellBuffer);
-  work->windowTop = 200;
-  work->windowBottom = 255;
-  gVBlankCallback = MapAnimation_PresentPicture;
-  work->pictureShown = one;
+  perspective->windowTop = 200;
+  perspective->windowBottom = 255;
+  gVBlankCallback = WorldMap_PresentStillPicture;
+  perspective->stillPictureShown = one;
 }
 
-void Map_ShowBg1FromBuffer(void) {
+/// VBlank: shows BG1 and copies the area's tiles back into VRAM.
+void WorldMap_ShowBg1FromBuffer(void) {
   s32 control;
   volatile u32 *dma;
 
@@ -204,15 +216,17 @@ void Map_ShowBg1FromBuffer(void) {
           dma);
 }
 
+/// Reloads the world map area's palette and tiles after the still picture, puts
+/// the default cells back and returns to the perspective view.
 s32 WorldMap_LoadAreaGraphics(void) {
-  struct MapViewWork *state;
+  struct WorldMapView *perspective;
   u32 *resources;
   u8 *buffer;
   s16 value;
 
-  state = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  perspective = (struct WorldMapView *)Ram_HeapSlots->mapWork;
   buffer = Ram_MapCellBuffer;
-  resources = state->resources;
+  resources = perspective->resources;
   value = *(s16 *)BG_PLTT;
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
@@ -223,27 +237,30 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
-  gVBlankCallback = Map_ShowBg1FromBuffer;
-  state->windowTop = 0;
-  state->windowBottom = 159;
+  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  perspective->windowTop = 0;
+  perspective->windowBottom = 159;
   wait(1);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
                       buffer);
   WorldMap_UpdateCurrentTileBlock();
-  state->animationActive = 0;
+  perspective->animationActive = 0;
   Task_ResumeAll(TilesetAnim_Update);
-  state->picturePending = 0;
-  state->pictureShown = 0;
-  WorldMap_UpdateRegionTint(state->area, 0);
+  perspective->viewHeld = 0;
+  perspective->stillPictureShown = 0;
+  WorldMap_UpdateRegionTint(perspective->tintRegion, 0);
   wait(1);
 }
 
+/// Puts the default world map cells back after the still picture and returns to
+/// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
-  struct MapViewWork *work = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
 
-  gVBlankCallback = Map_ShowBg1FromBuffer;
-  work->windowTop = 0;
-  work->windowBottom = 0x9f;
+  gVBlankCallback = WorldMap_ShowBg1FromBuffer;
+  perspective->windowTop = 0;
+  perspective->windowBottom = 0x9f;
   wait(1);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
                       Ram_MapCellBuffer);
@@ -350,12 +367,12 @@ void TilesetAnim_StartAll(const u16 *script) {
 }
 
 void TilesetAnim_SuspendAll(void) {
-  if (((struct MapViewWork *)Ram_HeapSlots->mapWork)->animationActive == 0)
+  if (((struct WorldMapView *)Ram_HeapSlots->mapWork)->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
 void TilesetAnim_ResumeAll(void) {
-  if (((struct MapViewWork *)Ram_HeapSlots->mapWork)->animationActive == 0)
+  if (((struct WorldMapView *)Ram_HeapSlots->mapWork)->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
 }
 
@@ -509,23 +526,24 @@ void PaletteCycle_Step(void) {
 /// set, any other clears the tint. Gradually, the tint moves one step every 16
 /// frames; at once, it jumps there. Flag 0x106 holds the tint as it is.
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
-  struct WorldTint *work = (struct WorldTint *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
 
-  if (work->region != region) {
-    work->region = region;
+  if (perspective->tintRegion != region) {
+    perspective->tintRegion = region;
     if (region == 9)
-      work->target = 12;
+      perspective->tintTarget = 12;
     else if (region == 18 && !GameFlag_Get(0x8ef))
-      work->target = -6;
+      perspective->tintTarget = -6;
     else
-      work->target = 0;
+      perspective->tintTarget = 0;
   }
   if (GameFlag_Get(FLAG_MENU_OPEN))
     return;
   if (gradual == 0) {
-    work->tint = work->target;
+    perspective->tint = perspective->tintTarget;
   } else {
-    region = work->target - work->tint;
+    region = perspective->tintTarget - perspective->tint;
     if (region == 0)
       return;
     if (gFrameCount & 15)
@@ -534,9 +552,9 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
       region = -1;
     else
       region = 1;
-    work->tint += region;
+    perspective->tint += region;
   }
-  if (work->tint > 0) {
+  if (perspective->tint > 0) {
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
     {
       struct IoWriteQueue *q = &gIoWriteQueue;
@@ -556,7 +574,7 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
         /* FAKEMATCH(barrier): an empty asm. */
         asm("");
         entry = (u32 *)((u8 *)q->entries + offset);
-        *entry++ = (u16)work->tint;
+        *entry++ = (u16)perspective->tint;
         *entry++ = 0x4000054;
         *entry = 0x20000;
       }
@@ -564,7 +582,7 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
     }
   } else {
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x3fce, 0x20000);
-    IO_WRITE_QUEUE_PUSH(0x4000054, (u16)-work->tint, 0x20000);
+    IO_WRITE_QUEUE_PUSH(0x4000054, (u16)-perspective->tint, 0x20000);
   }
 }
 

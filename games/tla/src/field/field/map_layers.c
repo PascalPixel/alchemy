@@ -923,8 +923,8 @@ void Map_LoadCellsAndShapes(void) {
 }
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
-  struct PerspectiveTiles *perspective =
-      (struct PerspectiveTiles *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
   u32 *tileOffsets = perspective->tiles;
   u16 *shownQuarter;
   u16 *decodedTile;

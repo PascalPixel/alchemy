@@ -10,6 +10,7 @@
 #include "types.h"
 #include "system/scene.h"
 #include "field/sprite.h"
+#include "field/perspective.h"
 #include "system/ram_buffer.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
@@ -206,51 +207,8 @@ struct MapScrollWork {
   struct MapLayerScroll layers[3];
 };
 
-struct WorldView {
-  s32 *origin;
-  s32 shakeX, shakeY, shakeDecay;
-  u8 *script;  ///< NULL at load, as The Broken Seal's WorldMapView
-  u16 fade;    ///< REG_DISPCNT bits, BG0 to BG3 and the sprites at load
-  u8 fadeStep; ///< 0x80 at load
-  u8 unk017[0xcd];
-  s32 viewX;
-  s32 viewY;
-  s32 scaleX; ///< 32 in 16.16 at load, as The Broken Seal's WorldMapView
-  s32 scaleY; ///< 64 in 16.16 at load
-  s32 limitX; ///< 16352 in 16.16 at load
-  s32 limitY; ///< 16352 in 16.16 at load
-  u8 unk0fc[8];
-  u16 windowTop;
-  u16 windowBottom;
-  u8 unk108[0xc];
-  /// The world map's tile offsets (ResourceId_PerspectiveDataA).
-  void *tiles;
-  u8 unk118[4];
-  u16 pitch;
-  u16 yaw;
-  u8 unk120[0x28];
-  u16 tileIds[1024]; ///< the world map tile in each cell
-  u8 unk948[0x14];
-  s32 farPlane;
-  s32 distance;
-  u8 unk964[4];
-  s32 unk968;
-  u16 unk96c;
-  u8 unk96e[3];
-  s8 flat;
-  s8 paused;
-  u8 unk973[3];
-  s8 fixedEye;
-};
-
 struct EyeOffset {
   s32 x, y, z;
-};
-
-struct MapTileWindow_08010d48 {
-  s32 *position;
-  u8 unk004[0x144];
-  u16 tiles[32][32];
 };
 
 struct Unk_WakeActor {
@@ -298,13 +256,6 @@ struct MapHeader {
   u8 unk00[44];
   s32 cells;
   s32 shapes;
-};
-
-struct PerspectiveTiles {
-  u8 unk000[0x114];
-  u32 *tiles;
-  u8 unk118[0x830];
-  u16 quarterTiles[8];
 };
 
 struct SpriteAngle {
@@ -363,15 +314,6 @@ struct MapAffinePair {
 struct MapAffineWork {
   struct MapScanline scanlines[160];
   struct MapAffinePair pages[2][160];
-};
-
-struct PerspectiveWindow {
-  u8 unk000[0x104];
-  u16 windowTop;
-  u16 windowBottom;
-  u16 shownTop;
-  u16 shownBottom;
-  u16 windowPending;
 };
 
 extern char ResourceId_Data199;

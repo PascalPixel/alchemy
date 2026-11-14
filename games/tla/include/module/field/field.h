@@ -185,23 +185,13 @@ struct ReelSave {
   s8 wonPrizes[16];
 };
 
-/// One word of the table at Ram_MapBlocks, 32 words to a row.
-struct Data02020000 {
-  u32 unk0 : 24;
-  /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the set. The Broken
-  /// Seal's WorldMapCell keeps the encounter region at these bits.
+/// One 32-pixel cell of the World Map, as The Broken Seal's: its tile and its
+/// encounter region; Ram_MapBlocks holds 32 by 32 of them.
+struct WorldMapCell {
+  u32 tile : 24; ///< low halfword: the cell picture
+  /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
   u32 region : 6;
   u32 unk1e : 2;
-};
-
-struct MapTileWindow {
-  s32 *origin;
-  u8 unk004[0x11c];
-  const u32 *resources;
-  u8 unk124[0x24];
-  u16 tileIds[32 * 32];
-  u8 unk948[0x10];
-  s32 reloadSteps;
 };
 
 /// A map cell's terrain kind, as The Broken Seal's enum TerrainKind: the low

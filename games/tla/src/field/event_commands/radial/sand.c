@@ -35,7 +35,7 @@ void FieldPsynergy_Sand(void) {
   savedFlags = *motionFlags;
   if (*(u16 *)((u8 *)owner->sprite + 20) != 0x2020)
     goto end;
-  Func_080dc954();
+  FieldPsynergy_MarkWorldMapTilesUsed();
   Actor_SetOthersPaused(owner, 1, 0);
   if (MapGrid_IsSandCell(owner->x, owner->z, owner->terrainId) == 0)
     event->standing = 1;

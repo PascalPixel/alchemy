@@ -16,6 +16,7 @@
 #include "battle/battle_system.h"
 #include "field/event.h"
 #include "field/field.h"
+#include "field/perspective.h"
 #include "flag_call.h"
 #include "gamepak/far_call/window.h"
 #include "system/heap_release.h"
@@ -287,7 +288,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   first = 17;
   if (work->animation >= first &&
       (work->animation <= 27 || work->animation == 30))
-    Func_080dc954();
+    FieldPsynergy_MarkWorldMapTilesUsed();
   if (event->psynergyActing != 0)
     return;
   BattleEffect_WaitForArcGroups();
@@ -320,14 +321,14 @@ void BattleEffect_CleanupSceneObjects(void) {
   HeapSlot_Release(224);
 }
 
-/// When the event work's mode byte at 0x18a is 3, copies it to the map
-/// work's byte at 0x970.
-void Func_080dc954(void) {
+/// On the World Map, notes that the field Psynergy has used the second half of
+/// the BG tile buffer, so the next still picture decodes it again.
+void FieldPsynergy_MarkWorldMapTilesUsed(void) {
   struct HeapSlots *slots = Ram_HeapSlots;
   s32 mode = ((struct FieldWork *)slots->fieldWork)->mode;
 
   if (mode == 3)
-    *((u8 *)slots->mapWork + 0x970) = mode;
+    ((struct WorldMapView *)slots->mapWork)->tileBufferUsed = mode;
 }
 
 #define WAVE_FX_SLOT 88

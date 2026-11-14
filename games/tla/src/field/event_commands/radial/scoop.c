@@ -694,7 +694,7 @@ void Teleport_PlayWhirl(void) {
   } while (state != 999);
   VramCache_FreeEntry(entry);
   HeapSlot_Release(92);
-  Func_080dc954();
+  FieldPsynergy_MarkWorldMapTilesUsed();
 }
 
 #define SPARK_COUNT 100

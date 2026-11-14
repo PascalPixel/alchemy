@@ -760,7 +760,7 @@ s32 WorldPicture_Show(s32 mode) {
     }
     objects->suspended = 1;
     wait(1);
-    ((struct MapViewWork *)map)->picturePending = 1;
+    ((struct WorldMapView *)map)->viewHeld = 1;
     do {
       /* FAKEMATCH(dead): the statement in a once-only block. */
       blend = REG_BLDALPHA;
@@ -946,7 +946,7 @@ done:
     objects->suspended = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
-    ((struct MapViewWork *)map)->picturePending = 0;
+    ((struct WorldMapView *)map)->viewHeld = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     event->transitionFrames = savedDelay;

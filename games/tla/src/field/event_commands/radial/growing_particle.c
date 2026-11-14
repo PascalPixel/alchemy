@@ -73,7 +73,7 @@ void FieldPsynergy_EndSand(void) {
   s32 delay;
   s32 mask;
 
-  Func_080dc954();
+  FieldPsynergy_MarkWorldMapTilesUsed();
   gMainRoutineWork.pendingThird = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(FieldPsynergy_WatchSandGround);

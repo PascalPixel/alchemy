@@ -1,6 +1,6 @@
 /// @file
-/// The world map's window cells, and drawing its tiles into a BG map, with
-/// routines not yet understood.
+/// The world map: its perspective view, its tiles, and drawing its cells into
+/// a BG map.
 // Part of field.c.
 
 #include "../field_internal.h"
@@ -25,9 +25,12 @@
 extern u32 Render_ResetTransformState__f02b998(void) __asm__("Transform_Reset");
 #endif
 
+/// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
+/// camera work, the projection, the per-scanline ground plane routine in RAM
+/// (Transform_UpdateVertices) and its first frame, and the per-frame view and
+/// HBlank updates.
 void WorldMap_InitializePerspective(void) {
-  u8 *perspective;
-  struct WorldView *view;
+  struct WorldMapView *perspective;
   u8 *camera;
   u8 *affineWork;
   u8 *affinePages;
@@ -40,17 +43,17 @@ void WorldMap_InitializePerspective(void) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
-  perspective = HeapSlot_Alloc(32, 0x978);
-  view = (struct WorldView *)perspective;
-  Dma_Fill32Cell(fill, 0, perspective, 0x978);
-  view->viewX = 0;
-  view->viewY = 0;
-  view->scaleX = Q16_ONE * 32;
-  view->scaleY = Q16_ONE * 64;
-  view->limitX = px(16352);
-  view->limitY = px(16352);
-  view->script = NULL;
-  view->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
+  perspective = HeapSlot_Alloc(32, sizeof(struct WorldMapView));
+  Dma_Fill32Cell(fill, 0, perspective, sizeof(struct WorldMapView));
+  perspective->viewX = 0;
+  perspective->viewY = 0;
+  perspective->scaleX = Q16_ONE * 32;
+  perspective->scaleY = Q16_ONE * 64;
+  perspective->limitX = px(16352);
+  perspective->limitY = px(16352);
+  perspective->script = NULL;
+  perspective->tiles =
+      Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
@@ -58,9 +61,9 @@ void WorldMap_InitializePerspective(void) {
   REG_BLDY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
                       gMapCellBuffer);
-  view->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
-               DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
-  view->fadeStep = 128;
+  perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
+                      DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
+  perspective->fadeStep = 128;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data199),
                       gData_0202e000);
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
@@ -88,11 +91,11 @@ void WorldMap_InitializePerspective(void) {
   affineWork = HeapSlot_Alloc(28, 0x3484);
   affinePages = affineWork + 0xc80;
   farPlane = 0x1fe0000;
-  view->farPlane = farPlane;
-  view->distance = farPlane;
-  view->unk968 = 0x10000;
+  perspective->farPlane = farPlane;
+  perspective->distance = farPlane;
+  perspective->zoom = 0x10000;
   cameraPosition = (s32 *)(camera + 12);
-  view->unk96c = 0;
+  perspective->zoomTransitionFrames = 0;
   *(s32 *)(camera + 24) = 0;
   *(s32 *)(camera + 28) = 0;
   gCameraSceneParameters[3] = 120;
@@ -103,19 +106,19 @@ void WorldMap_InitializePerspective(void) {
   cameraPosition[2] = 0;
   Render_ResetTransformState__f02b998();
   SceneTransform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(view->yaw);
-  Transform_ApplyPitch(view->pitch);
+  Transform_ApplyYaw(perspective->yaw);
+  Transform_ApplyPitch(perspective->pitch);
   SET_POSITION(&eyeOffset, 0, 0, farPlane);
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState__f02b998();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
   RamCode_LoadSlot(104, Transform_UpdateVerticesCode,
                    Transform_UpdateVerticesCodeSize);
-  WorldMap_BuildScanlineTable(
-      Iwram_RatioMulQ14(Trig_Cos(view->pitch), Trig_Sin(view->pitch)),
-      cameraPosition, affineWork);
+  WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
+                                                Trig_Sin(perspective->pitch)),
+                              cameraPosition, affineWork);
   gScanlineAngle = 0;
-  gScanlinePitch = view->pitch;
+  gScanlinePitch = perspective->pitch;
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->unk64[1])(
       camera, cameraPosition, affineWork,
       affinePages + (gFrameCount & 1) * 0x1400);
@@ -123,14 +126,14 @@ void WorldMap_InitializePerspective(void) {
   cameraPosition[1] = 0;
   cameraPosition[2] = 0;
   Render_ResetTransformState__f02b998();
-  view->pitch = 0xe000;
-  view->yaw = 0;
+  perspective->pitch = 0xe000;
+  perspective->yaw = 0;
   Render_ResetTransformState__f02b998();
   SceneTransform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(view->yaw);
-  Transform_ApplyPitch(view->pitch);
-  if (view->fixedEye == 0) {
-    SET_POSITION(&eyeOffset, 0, 0, view->distance + 0x10000);
+  Transform_ApplyYaw(perspective->yaw);
+  Transform_ApplyPitch(perspective->pitch);
+  if (perspective->fixedEye == 0) {
+    SET_POSITION(&eyeOffset, 0, 0, perspective->distance + 0x10000);
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   REG_MOSAIC = 0;
@@ -141,27 +144,29 @@ void WorldMap_InitializePerspective(void) {
   gBgScroll[2].y = 0;
   gBgScroll[3].x = 0;
   gBgScroll[3].y = 0;
-  view->windowTop = 0;
-  view->windowBottom = 159;
+  perspective->windowTop = 0;
+  perspective->windowBottom = 159;
   Task_Add(WorldMap_UpdateView, 0x485);
   Task_Add(WorldMap_ApplyAffinePage, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
-    view->tileIds[tileIndex] = tileIndex;
+    perspective->tileIds[tileIndex] = tileIndex;
 }
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
+/// Puts world map tile (x / 16, y / 16) at cell (px / 16, py / 16) of the tile
+/// id grid, and draws it at once when it is next to the view.
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
-  struct MapTileWindow_08010d48 *window;
+  struct WorldMapView *perspective;
   s32 *position;
   s32 originX;
   s32 originY;
   s32 tile;
 
-  window = (struct MapTileWindow_08010d48 *)Ram_HeapSlots->mapWork;
+  perspective = (struct WorldMapView *)Ram_HeapSlots->mapWork;
   originX = 0;
   originY = 0;
-  position = window->position;
+  position = perspective->origin;
   if (position != 0) {
     originX = *position++;
     originY = position[1];
@@ -174,7 +179,7 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   px >>= 3;
   py >>= 3;
   tile = (y << 5) + x;
-  window->tiles[(py / 2) & 31][(px / 2) & 31] = tile;
+  perspective->tileIds[(((py / 2) & 31) << 5) + ((px / 2) & 31)] = tile;
 
   if (ABS(originX - px) <= 1 && ABS(originY - py) <= 1) {
     WorldMap_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
@@ -186,13 +191,13 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
 /// (x / 16, y / 16) at cell (px / 16, py / 16) of the tile grid and draws it in
 /// both layers.
 void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
-  struct MapTileWindow_08010d48 *window;
+  struct WorldMapView *perspective;
   s32 *position;
   s32 originX;
   s32 originY;
   s32 tile;
 
-  window = (struct MapTileWindow_08010d48 *)Ram_HeapSlots->mapWork;
+  perspective = (struct WorldMapView *)Ram_HeapSlots->mapWork;
   if (position != 0) {
     originX = *position++;
     originY = position[1];
@@ -203,7 +208,7 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
   px >>= 3;
   py >>= 3;
   tile = (y << 5) + x;
-  window->tiles[(py / 2) & 31][(px / 2) & 31] = tile;
+  perspective->tileIds[(((py / 2) & 31) << 5) + ((px / 2) & 31)] = tile;
   WorldMap_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
   WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
 }
@@ -215,10 +220,12 @@ void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py) {
  * type. */
 extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
 
+/// Loads the world map's palette and tiles for the area at (x, z): the set
+/// its region picks, its tint, and the plain BG maps the world map draws over.
 void WorldMap_LoadGraphics(s32 x, s32 z) {
   u8 *buffer;
-  struct MapViewWork *view;
-  struct Data02020000 *block;
+  struct WorldMapView *perspective;
+  struct WorldMapCell *block;
   const u32 *resources;
   s32 graphicsSet;
   s32 region;
@@ -229,9 +236,9 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   s32 column;
 
   buffer = Heap_Alloc(512);
-  view = (struct MapViewWork *)Ram_HeapSlots->mapWork;
+  perspective = (struct WorldMapView *)Ram_HeapSlots->mapWork;
   block =
-      &((struct Data02020000 *)
+      &((struct WorldMapCell *)
             Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
   WorldMap_UpdateRegionTint(block->region, 0);
   // Reused: the region, then its group of ten.
@@ -252,7 +259,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
     break;
   }
   resources = gWorldMap_GraphicsResources[graphicsSet];
-  view->resources = (u32 *)resources;
+  perspective->resources = (u32 *)resources;
   backdropColor = *(s16 *)BG_PLTT;
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
@@ -305,13 +312,16 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Heap_Release(buffer);
 }
 
+/// HBlank setup each VBlank on the world map: copies the first scanline's BG2
+/// and BG3 affine parameters, starts the HBlank DMA for the rest, and picks the
+/// BG mode from the window's top and bottom.
 void WorldMap_ApplyAffinePage(void) {
   struct MapAffinePair(*affinePages)[160] =
       ((struct MapAffineWork *)Ram_HeapSlots->unk1c[0])->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
   u32 *affineRegisters = (u32 *)0x04000020;
-  struct PerspectiveWindow *perspective =
-      (struct PerspectiveWindow *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
   volatile u16 *dma0 = REG_DMA0;
   u32 *affineSource;
   u32 mode;
@@ -360,7 +370,7 @@ void WorldMap_ApplyAffinePage(void) {
 extern u8 gMapBlocks__world_map[] __asm__("gMapBlocks");
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
-static __inline__ void CopyWorldMapTileColumn(u8 *cellBytes, u8 *screenTile) {
+static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   u32 cellPictureIndex = *(u16 *)cellBytes;
   u16 *cellPictureTiles = (u16 *)Ram_MapCellBuffer;
 
@@ -387,7 +397,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   }
   column = 0;
   do {
-    CopyWorldMapTileColumn(cellBytes, screenTile);
+    WorldMap_CopyCellTiles(cellBytes, screenTile);
     column++;
     screenTile += 2;
     cellBytes += 4;
@@ -404,7 +414,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   cellBytes += 0xf80;
   column = 0;
   do {
-    CopyWorldMapTileColumn(cellBytes, screenTile);
+    WorldMap_CopyCellTiles(cellBytes, screenTile);
     column++;
     screenTile += 2;
     cellBytes += 4;
@@ -426,7 +436,7 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   screenTile = (u8 *)((tileColumn & 62) + screenBase);
   row = 0;
   do {
-    CopyWorldMapTileColumn(cellBytes, screenTile);
+    WorldMap_CopyCellTiles(cellBytes, screenTile);
     row++;
     screenTile += 128;
     cellBytes += 128;
@@ -437,15 +447,20 @@ void WorldMap_BuildScanlineTable__resource_slot(
     s32 ratio, s32 *position,
     void *affineWork) __asm__("WorldMap_BuildScanlineTable");
 
+/// Each frame: follows the followed point with the screen shake, draws the rows
+/// and columns that came into view, and recomputes the projection and the
+/// ground plane for the current pitch and yaw; while the still picture shows,
+/// only BG1 shakes.
 void WorldMap_UpdateView(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;
   u8 *affineWork = Ram_HeapSlots->unk1c[0];
-  struct WorldView *view = (struct WorldView *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
   s32 *cameraPosition = (s32 *)(camera + 12);
-  s32 *followedPosition = view->origin;
+  s32 *followedPosition = perspective->origin;
   u8 *affinePages = affineWork + 0xc80;
-  s32 distance = view->farPlane;
-  s32 height = view->distance;
+  s32 distance = perspective->farPlane;
+  s32 height = perspective->distance;
   s32 tileRow;
   s32 shakeOffsetX;
   s32 shakeOffsetY;
@@ -453,8 +468,8 @@ void WorldMap_UpdateView(void) {
 
   shakeOffsetX = 0;
   shakeOffsetY = 0;
-  if (view->paused != 0) {
-    if (view->shakeX == 0 && view->shakeY == 0)
+  if (perspective->viewHeld != 0) {
+    if (perspective->shakeX == 0 && perspective->shakeY == 0)
       return;
   } else {
     WorldMap_PreloadCurrentTileBlock();
@@ -464,43 +479,45 @@ void WorldMap_UpdateView(void) {
     s32 y = followedPosition[2];
     s32 tileColumn;
 
-    if (view->shakeX != 0) {
+    if (perspective->shakeX != 0) {
       s32 shakeDifference = Random16();
 
       shakeDifference -= Random16();
-      shakeOffsetX = Iwram_MulQ16(view->shakeX, shakeDifference);
+      shakeOffsetX = Iwram_MulQ16(perspective->shakeX, shakeDifference);
       x += shakeOffsetX;
-      view->shakeX = Iwram_MulQ16(view->shakeX, view->shakeDecay);
+      perspective->shakeX =
+          Iwram_MulQ16(perspective->shakeX, perspective->shakeDecay);
     }
-    if (view->shakeY != 0) {
+    if (perspective->shakeY != 0) {
       s32 shakeDifference = Random16();
 
       shakeDifference -= Random16();
-      shakeOffsetY = Iwram_MulQ16(view->shakeY, shakeDifference);
+      shakeOffsetY = Iwram_MulQ16(perspective->shakeY, shakeDifference);
       y += shakeOffsetY;
-      view->shakeY = Iwram_MulQ16(view->shakeY, view->shakeDecay);
+      perspective->shakeY =
+          Iwram_MulQ16(perspective->shakeY, perspective->shakeDecay);
     }
     tileColumn = x / 0x100000;
     tileRow = y / 0x100000;
-    if ((view->viewX ^ x) & 0x100000) {
-      if (view->viewX < x)
+    if ((perspective->viewX ^ x) & 0x100000) {
+      if (perspective->viewX < x)
         WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
       else
         WorldMap_RenderPaletteMappedColumn(tileColumn - 16);
     }
-    if ((view->viewY ^ y) & 0x100000) {
-      if (view->viewY < y)
+    if ((perspective->viewY ^ y) & 0x100000) {
+      if (perspective->viewY < y)
         WorldMap_RenderPaletteMappedRow(tileRow + 12);
       else
         WorldMap_RenderPaletteMappedRow(tileRow - 18);
     }
-    view->viewX = x;
-    view->viewY = y;
+    perspective->viewX = x;
+    perspective->viewY = y;
   }
-  cameraPosition[0] = view->viewX;
+  cameraPosition[0] = perspective->viewX;
   cameraPosition[1] = 0;
-  cameraPosition[2] = view->viewY;
-  if (view->flat != 0) {
+  cameraPosition[2] = perspective->viewY;
+  if (perspective->stillPictureShown != 0) {
     gBgScroll[1].x = shakeOffsetX / Q16_ONE;
     gBgScroll[1].y = shakeOffsetY / Q16_ONE;
     return;
@@ -510,30 +527,32 @@ void WorldMap_UpdateView(void) {
   Projection_Set(distance, height / 2, height * 2);
   Transform_Reset();
   SceneTransform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(view->yaw);
-  Transform_ApplyPitch(view->pitch);
-  if (view->fixedEye == 0) {
+  Transform_ApplyYaw(perspective->yaw);
+  Transform_ApplyPitch(perspective->pitch);
+  if (perspective->fixedEye == 0) {
     SET_POSITION(&eyeOffset, 0, 0, height + 0x10000);
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
   Transform_Reset();
   Transform_SetLookAt((s32 *)camera, cameraPosition);
-  if (gScanlinePitch != view->pitch) {
-    s32 cosine = Trig_Cos(view->pitch);
-    s32 sine = Trig_Sin(view->pitch);
+  if (gScanlinePitch != perspective->pitch) {
+    s32 cosine = Trig_Cos(perspective->pitch);
+    s32 sine = Trig_Sin(perspective->pitch);
 
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(cosine, sine), cameraPosition,
                                 affineWork);
     gScanlineAngle = 0;
-    gScanlinePitch = view->pitch;
+    gScanlinePitch = perspective->pitch;
   }
   ((void (*)(void *, s32 *, void *, void *))Ram_HeapSlots->unk64[1])(
       camera, cameraPosition, affineWork,
       affinePages + (gFrameCount & 1) * 0x1400);
 }
 
+/// Loads and draws the 2x2 world map tiles around the player in both layers.
 void WorldMap_UpdateCurrentTileBlock(void) {
-  struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
+  struct WorldMapView *perspective =
+      (struct WorldMapView *)Ram_HeapSlots->mapWork;
   s32 x0 = 0;
   s32 y0 = 0;
   u32 layer;
@@ -542,8 +561,8 @@ void WorldMap_UpdateCurrentTileBlock(void) {
   s32 bias;
   s32 tile;
 
-  if (window->origin != NULL) {
-    s32 *p = window->origin;
+  if (perspective->origin != NULL) {
+    s32 *p = perspective->origin;
 
     x0 = *p++;
     y0 = p[1];
@@ -554,7 +573,7 @@ void WorldMap_UpdateCurrentTileBlock(void) {
     for (row = 0; row < 2; row++) {
       for (col = 0; col < 2; col++) {
         tile = (((y0 + row) & 31) << 5) + ((x0 + col) & 31);
-        tile = window->tileIds[tile];
+        tile = perspective->tileIds[tile];
         tile += layer << 10;
         WorldMap_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
       }

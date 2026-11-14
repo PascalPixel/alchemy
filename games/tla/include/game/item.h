@@ -139,7 +139,7 @@ STATIC_ASSERT(offsetof(struct EquipEffect, amount) == 0x01);
 /// An item's definition: its price, type, who can equip it, its bonuses and
 /// unleash, its effects and the action it is used for.
 struct ItemDefinition {
-  s16 price;          ///< coins
+  u16 price;          ///< coins
   u8 type;            ///< enum ItemType; 0 for an item that is not equipment
   u8 flags;           ///< enum ItemFlags
   u16 equipMask;      ///< one bit per character that can equip it, bit 0 Isaac

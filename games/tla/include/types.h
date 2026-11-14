@@ -41,4 +41,22 @@ typedef unsigned long long u64;
 #define SFP_CLOBBER "sfp"
 #endif
 
+/// The result of a routine whose callers never read it: a task, an update
+/// routine, or a call whose result is dropped. The ROM's routine sets r0
+/// before it returns, as one with an int result does, while its callers call
+/// it as void. That call is undefined behaviour, so under UBFIX the routine
+/// returns nothing; RETURN_UNREAD(value) returns its result. As The Broken
+/// Seal's types.h.
+#ifdef UBFIX
+#define UNREAD_RESULT void
+#define RETURN_UNREAD(value)                                                   \
+  do {                                                                         \
+    (void)(value);                                                             \
+    return;                                                                    \
+  } while (0)
+#else
+#define UNREAD_RESULT s32
+#define RETURN_UNREAD(value) return value
+#endif
+
 #endif

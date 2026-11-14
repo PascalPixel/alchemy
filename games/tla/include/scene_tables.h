@@ -51,6 +51,11 @@ enum Facing {
 /// A sixteenth of a turn, half the step between two headings.
 enum { FACING_STEP = TRIG_TURN / 16 };
 
+/// The cardinal heading nearest to facing, as The Broken Seal's macro: the
+/// shop counters turn a customer this way.
+#define FACING_NEAREST_CARDINAL(facing)                                        \
+  ((u16)(((facing) + TRIG_TURN / 8) & ~0x3fff))
+
 enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 
 /// A table row's condition: CONDITION_ALWAYS, a flag number that must be
@@ -132,7 +137,14 @@ enum MovementType {
   MOVEMENT_TYPE_WANDER_CLOSE = 4,
   MOVEMENT_TYPE_FOLLOW_WATCHED = 5, ///< moves toward the watched actor
   MOVEMENT_TYPE_FACE_LEADER = 6,    ///< watches the leader and turns toward it
-  MOVEMENT_TYPE_RESET_ACTION = 10   ///< gMovementType_ResetActionScript
+  /// gMovementType_ClearCollisionScript: clears the actor's child and
+  /// collision flags (Actor_ClearChildAndCollisionFlags).
+  MOVEMENT_TYPE_CLEAR_COLLISION = 7,
+  /// gMovementType_SquashScript: squashes and stretches for ever.
+  MOVEMENT_TYPE_SQUASH = 8,
+  MOVEMENT_TYPE_TAKE_LEADER_LAYER = 9, ///< gMovementType_TakeLeaderLayerScript
+  MOVEMENT_TYPE_RESET_ACTION = 10,     ///< gMovementType_ResetActionScript
+  MOVEMENT_TYPE_CLEAR_CHILD = 11       ///< gMovementType_ClearChildScript
 };
 
 /// How a placed actor turns when the leader talks to it
@@ -162,6 +174,10 @@ struct Trigger {
   u32 value;     ///< a message (FIND_MESSAGE) or an event (EVENT)
 };
 
+/// What a search finds, an examine trigger's value, as The Broken Seal's: an
+/// item, coins or a message.
+#define FIND_ITEM(item) (0x00100000 | (item))
+#define FIND_COINS(coins) (0x00200000 | (coins))
 #define FIND_MESSAGE(message) (0x00400000 | (message))
 #define EVENT(event) ((u32)(event))
 #define TRIGGER_TABLE_END 0xffffffff

@@ -121,10 +121,23 @@
 /// No random battles until the party enters another area; Scene_Arrive clears
 /// it with a new area.
 #define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
+#define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
 /// In debug mode, steps on the field are not processed.
 #define FLAG_DEBUG_STEPS_OFF 0x163
+/// Holds the field's weather still, its particles and its next burst, while a
+/// menu is open, as The Broken Seal's.
+#define FLAG_WEATHER_HELD 0x166
+/// Auto battle: every living unit, party and enemies, makes a plain attack
+/// each turn with no command menu, as The Broken Seal's; the debug battle menu
+/// sets it.
+#define FLAG_AUTO_BATTLE 0x16a
+#define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
 /// The next battle is a link battle.
 #define FLAG_LINK_BATTLE 0x16c
+/// In debug mode, with it set, holding R as an action is planned defeats every
+/// enemy, and R with Select the party (BattleActionRun_Build), as The Broken
+/// Seal's.
+#define FLAG_DEBUG_BATTLE_KEYS 0x16d
 /// The Djinn lesson: its battle and the parts of it the Djinn menu plays.
 #define FLAG_DJINN_LESSON 0x16e
 /// With FLAG_DJINN_LESSON set, this and FLAG_DJINN_LESSON_PART_B choose the
@@ -134,6 +147,15 @@
 /// A battle against monsters with formations matched to the party's level, and
 /// no spoils.
 #define FLAG_MONSTER_BATTLE 0x173
+/// Lets the monster battles choose enemies above level 3 the party has never
+/// defeated, as The Broken Seal's.
+#define FLAG_MONSTER_BATTLE_ANY_ENEMY 0x174
+/// A linked battle has been arranged in the Battle Arena, with
+/// FLAG_LINK_BATTLE: only the first three party members take part.
+#define FLAG_LINK_BATTLE_ARRANGED 0x172
+/// Holds the field's palette blend still while a menu is open, as The Broken
+/// Seal's.
+#define FLAG_PALETTE_BLEND_HELD 0x152
 
 /// A scene's own flags, cleared on every ordinary entry (Scene_Arrive):
 /// puzzles reset when the party walks back in.
@@ -144,6 +166,19 @@
 /// so the scenes name them.
 #define FLAG_AREA_TEMP_FIRST 0x300
 #define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
+
+/// Set as Madra's gate guards let the party through (Madra_InspectPartyAtGate,
+/// "You there! Hold your ground!"); then the worker no longer blocks the hole
+/// into the catacombs and Daila skips Alex's event.
+#define FLAG_MADRA_GATE_INSPECTED 0x910
+/// Set at the end of the jail scene where Piers wards off his interrogator
+/// with Frost (MadraInteriors_InterrogatePiers); then the two witnesses of the
+/// ice stand outside the jail and the lady can grant passage to Osenia.
+#define FLAG_PIERS_INTERROGATED 0x911
+/// Set as the lady grants passage over the drawbridge ("Then I hereby grant my
+/// permission to these four travelers!"); the drawbridge guards let the party
+/// by once it is set.
+#define FLAG_OSENIA_PASSAGE_GRANTED 0x913
 
 /// Set once the old werewolf of Garoh's inn has asked the party whether they
 /// learned Reveal; he then only sighs about his wasted years.

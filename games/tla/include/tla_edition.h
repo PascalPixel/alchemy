@@ -7,6 +7,14 @@
 #define RENDER_DIRECT_OFFSET 0x508
 #define WINDOW_COUNT 12
 
+// The window text ring: 256 codes in Japanese, 512 in the others, as The Broken
+// Seal's.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TEXT_BUFFER_MASK 0xFF
+#else
+#define TEXT_BUFFER_MASK 0x1FF
+#endif
+
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 #define SELECT_MENU_WIDTH 7
 #else

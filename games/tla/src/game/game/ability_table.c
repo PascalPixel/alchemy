@@ -3003,7 +3003,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .power = 5,
     },
     // Sonic Wave
-    [ABILITY_436] = {
+    [ABILITY_SONIC_WAVE_STRONG] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ENEMY_DAMAGE,
         .element = ELEMENT_JUPITER,

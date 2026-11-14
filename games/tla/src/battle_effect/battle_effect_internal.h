@@ -269,27 +269,27 @@ extern const struct WordPair gEclipse_Scales;
 
 extern const u8 gEclipse_GlintFlips[];
 
-extern const u8 Data_08197748[];
+extern const u8 gEclipse_TileObjects[];
 
-extern const u8 Data_0819774f[];
+extern const u8 gEclipse_FillFrames[];
 
-extern const u32 Data_08197760[];
+extern const u32 gEclipse_FillLevels[];
 
-extern const u8 Data_081977a4[];
+extern const u8 gEclipse_ObjectX[];
 
-extern const u8 Data_081977c4[];
+extern const u8 gEclipse_ObjectZ[];
 
-extern const u8 Data_081977e4[];
+extern const u8 gEclipse_RingGrowth[];
 
-extern const s8 Data_081977e8[];
+extern const s8 gEclipse_RingHeights[];
 
 // The four crystals: the frame each starts after 48, how fast it grows and
 // how tall.
-extern u8 Data_081977ec[];
+extern u8 gFormChange_WaveStarts[];
 
-extern u8 Data_081977f0[];
+extern u8 gFormChange_WaveGrowth[];
 
-extern u8 Data_081977f4[];
+extern u8 gFormChange_WaveStretch[];
 
 extern char ResourceId_EffectPalette03;
 
@@ -364,9 +364,9 @@ extern char ResourceId_CrescentRowSheet;
 
 extern const struct RequestPair gZagan_UnitScale;
 
-extern const u16 Data_08197a38[][2]; // the charging Zagan's parts
+extern const u16 gZagan_ChargePoints[][2]; // the charging Zagan's parts
 
-extern const u16 Data_08197a64[][2]; // the galloping Zagan's
+extern const u16 gZagan_GallopPoints[][2]; // the galloping Zagan's
 
 extern const u8 gZagan_RingStarts[]; // each ring's start
 
@@ -393,7 +393,7 @@ extern u8 gDjinnBeams_HeadHeights[]; // ... their heights
 // Each mode's record: whether its shots burst into shards (else into smoke),
 // the shots' blitter, shots per target, and frames before the targets'
 // share.
-extern s8 Data_08197880[];
+extern s8 gLobbedShells_Styles[];
 
 extern u8 gLobbedShells_ShardWidths[]; // shard widths
 
@@ -403,11 +403,11 @@ extern u16 gLobbedShells_ShardPictures[]; // shard cell offsets
 
 extern u8 gNereid_Columns[]; // the three columns' feet, x and y
 
-extern s32 Data_08197998[]; // a falling spark's gravity, by spark
+extern s32 gNereid_Gravity[]; // a falling spark's gravity, by spark
 
 // Per mode: how many motes each target gets, and the effect's frame count
 // before the targets' share.
-extern u8 Data_08197864[];
+extern u8 gGatheringLights_Counts[];
 
 extern u8 gPlasma_Counts[];
 
@@ -417,13 +417,13 @@ extern u16 gPlasma_Sparks[]; // ☀️ gPlasma_Sparks: sparks, shake
 
 // ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
-extern u16 Data_081979de[][5];
+extern u16 gPlasma_Shapes[][5];
 
 extern u8 gPlasma_FlashPictures[]; // ☀️ gPlasma_FlashCells
 
 // ☀️ gPrism_Counts, with a third byte: crystals, frames and the frame
 // that begins phase 134, for each variant.
-extern u8 Data_081979b7[];
+extern u8 gPrism_Counts[];
 
 extern struct Scale gProcne_UnitScale; // the comets' unit scale
 
@@ -469,7 +469,7 @@ extern u8 gTargetMotes_GlintFlips[]; // ☀️ gTargetMotes_GlintFlips
 
 // Seven bytes for each mode (The Broken Seal's gTargetStrike_Styles, grown
 // from 12 modes to 21).
-extern u8 Data_0819754f[][7];
+extern u8 gTargetStrike_Styles[][7];
 
 // The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
 // and the column stages (gTargetStrike_BiteStages).

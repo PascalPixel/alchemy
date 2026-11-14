@@ -48,7 +48,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
 
   // The crystals wait above the screen, each eight frames behind the last,
   // and drift sideways so that they land over the targets.
-  for (k = 0; k != Data_081979b7[effect->variant * 3]; k++) {
+  for (k = 0; k != gPrism_Counts[effect->variant * 3]; k++) {
     seed = &work->particles[k];
     x = Random16() & 31;
     seed->y = -px(64);
@@ -65,7 +65,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
     seed->variant = k * 8;
   }
 
-  for (frame = 0; frame != Data_081979b7[effect->variant * 3 + 1]; frame++) {
+  for (frame = 0; frame != gPrism_Counts[effect->variant * 3 + 1]; frame++) {
     // The strongest variant turns the camera, slowing from frame 96.
     if (effect->variant == 2 && frame <= 103) {
       struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -80,17 +80,17 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
       else
         camera->yaw += speed;
     }
-    if (frame == Data_081979b7[effect->variant * 3 + 2])
+    if (frame == gPrism_Counts[effect->variant * 3 + 2])
       BattlePlayback_StartFar(134);
 
     // Darken over the last eight frames.
-    if (frame == Data_081979b7[effect->variant * 3 + 1] - 8) {
+    if (frame == gPrism_Counts[effect->variant * 3 + 1] - 8) {
       work->transferMode = 3;
       work->transferValue = 0x06060606;
     }
 
-    if (frame <= Data_081979b7[effect->variant * 3 + 1] - 8) {
-      for (i = 0; i != Data_081979b7[effect->variant * 3]; i++) {
+    if (frame <= gPrism_Counts[effect->variant * 3 + 1] - 8) {
+      for (i = 0; i != gPrism_Counts[effect->variant * 3]; i++) {
         cry = &work->particles[i];
         if (cry->z == SHATTERED) {
           // A shattered crystal: its shards fly and spin, slowing down.
@@ -98,10 +98,11 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
             cell = (j % 5) * 3 +
                    (shards[i * SHARDS_PER_CRYSTAL + j].variant / 96) % 3;
             shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-            draw[j <= 2](canvas, work->sheet + gData_08197834[cell] + 0x800,
+            draw[j <= 2](canvas,
+                         work->sheet + gPrism_ShardPictures[cell] + 0x800,
                          HI(shard->x) - gPrism_ShardWidths[cell] / 2,
-                         HI(shard->y) - gData_08197826[cell] / 2,
-                         gPrism_ShardWidths[cell], gData_08197826[cell]);
+                         HI(shard->y) - gPrism_ShardHeights[cell] / 2,
+                         gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector2(shard, 64, 0x2000);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))

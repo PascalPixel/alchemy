@@ -15,7 +15,7 @@ extern u16 gHelmSplitter_Pictures[];
 extern s8 gHelmSplitter_PictureBiasX[];
 extern s8 gHelmSplitter_PictureBiasY[];
 extern u8 gHelmSplitter_PictureWidths[];
-extern u8 gData_08199d38[];
+extern u8 gHelmSplitter_PictureHeights[];
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
@@ -104,13 +104,15 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
                   gHelmSplitter_PictureBiasX[cell] + 30,
                   gHelmSplitter_PictureBiasY[cell] + position.y - 60,
-                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
+                  gHelmSplitter_PictureWidths[cell],
+                  gHelmSplitter_PictureHeights[cell]);
         } else {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
                   -gHelmSplitter_PictureBiasX[cell] -
                       gHelmSplitter_PictureWidths[cell] + 98,
                   gHelmSplitter_PictureBiasY[cell] + position.y - 60,
-                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
+                  gHelmSplitter_PictureWidths[cell],
+                  gHelmSplitter_PictureHeights[cell]);
         }
       }
     } else {
@@ -124,13 +126,15 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
                   position.x / 2 + gHelmSplitter_PictureBiasX[cell] - 16,
                   gHelmSplitter_PictureBiasY[cell] + position.y - 92,
-                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
+                  gHelmSplitter_PictureWidths[cell],
+                  gHelmSplitter_PictureHeights[cell]);
         } else {
           draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
                   position.x / 2 - gHelmSplitter_PictureBiasX[cell] -
                       gHelmSplitter_PictureWidths[cell] + 16,
                   gHelmSplitter_PictureBiasY[cell] + position.y - 92,
-                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
+                  gHelmSplitter_PictureWidths[cell],
+                  gHelmSplitter_PictureHeights[cell]);
         }
       }
     }
@@ -219,7 +223,7 @@ extern u16 gBattleEffect_MotePictures[];
 
 // How many of the 56 embers are sparks, by variant (48 and 40); the rest
 // are flashes.
-extern u8 Data_08199d5c[];
+extern u8 gDragonCloud_SparkCounts[];
 
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 

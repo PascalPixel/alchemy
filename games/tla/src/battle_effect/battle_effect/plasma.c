@@ -189,7 +189,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 #define FLASH_FRAMES 18 // six cels of three frames
 #define GROUND_Y px(108)
 
-#define SHAPE(n) Data_081979de[effect->variant][n]
+#define SHAPE(n) gPlasma_Shapes[effect->variant][n]
 #define SPARK_COUNT SHAPE(0)
 #define GROUP_COUNT SHAPE(1)
 #define GROUP_X(i) SHAPE((i) + 2)

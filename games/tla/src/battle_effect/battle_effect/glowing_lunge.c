@@ -65,12 +65,12 @@ extern u8 gData_02014000[];
 
 // The streak quad's faces (32x64) and the flash quad's (128x128), and the
 // corners of a 64x64 square around the origin, which both scale.
-extern u8 Data_081992b0[];
+extern u8 gBattleEffect_TallMesh32[];
 extern const u8 gBattleEffect_SquareMesh128[];
 extern const u8 gBattleEffect_SquareCorners[];
 
 // The streak's scale per mode, 16.16.
-extern const s32 Data_081994b8[];
+extern const s32 gRushingStrike_Scales[];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
 extern u16 gBattleEffect_MotePictures[];
@@ -221,7 +221,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
     *(u32 *)&texture = (*(u32 *)&texture & ~0xff00) | 6 << 8;
     texture.pixels = work->sheet;
     quad->texture = &texture;
-    quad->faces = Data_081992b0;
+    quad->faces = gBattleEffect_TallMesh32;
     quad->kind = 6;
     quad->vertices = vertices;
     quad->brightness = brightness;
@@ -230,8 +230,9 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       SceneTransform_ApplyPosition3((caster.x - 128) << 16,
                                     (caster.y - 88) << 16, 0);
-      SceneTransform_ApplyScale3(Data_081994b8[mode] << 1,
-                                 Data_081994b8[mode] << 1, Data_081994b8[mode]);
+      SceneTransform_ApplyScale3(gRushingStrike_Scales[mode] << 1,
+                                 gRushingStrike_Scales[mode] << 1,
+                                 gRushingStrike_Scales[mode]);
       if (effect->side == 1)
         Transform_ApplyYaw(TRIG_TURN / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);

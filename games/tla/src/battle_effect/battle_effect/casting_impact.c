@@ -170,43 +170,43 @@ extern u16 gBattleEffect_GlintPictures[];
 extern u8 gBattleEffect_GlintPictureWidths[];
 extern u8 gBattleEffect_GlintPictureHeights[];
 extern u8 gSpire_ShardWidths[];
-extern u8 gData_081974ad[];
+extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardPictures[];
-extern u8 gData_0819750c[];
-extern u8 gData_0819751a[];
+extern u8 gCastingImpact_PictureX[];
+extern u8 gCastingImpact_PictureY[];
 extern u8 gPrism_ShardStarts[];
 extern u8 gPrism_ShardWidths[];
-extern u8 gData_08197826[];
-extern s32 gData_08197834[];
-extern const u8 gData_0819887e[];
-extern const u8 gData_08198882[];
-extern const u8 gCastingImpact_GlintDrawFlags[];
-extern const u16 gData_0819888a[];
-extern const u16 gData_0819889e[];
-extern const u16 gData_081988b2[];
-extern u16 gData_081988c6[];
-extern u16 gData_081988da[];
-extern const u16 gData_081988ee[];
-extern const u16 gData_081988fc[];
-extern const u16 gData_0819890a[];
-extern const u16 gData_08198918[];
-extern u16 gCastingImpact_PictureX[];
-extern const u16 gData_08198934[];
-extern const u8 gData_0819893a[];
-extern const u8 gData_0819893d[];
-extern u8 gData_08198940[][2];
-extern const u16 gCastingImpact_PictureY[];
-extern const u8 gData_0819894e[];
-extern const u8 gData_08198952[];
-extern const u8 gData_08198956[];
-extern const s8 gData_0819895a[];
-extern const u8 gData_0819895e[];
-extern const u8 gData_08198962[];
-extern const u8 gData_08198966[];
-extern const u8 gData_08198c6c[];
-extern const u8 gData_08198d2c[];
-extern const u8 gData_08199090[];
-extern const u8 gData_081990d0[];
+extern u8 gPrism_ShardHeights[];
+extern s32 gPrism_ShardPictures[];
+extern const u8 gCastingImpact_SquallGlintFlips[];
+extern const u8 gCastingImpact_SapGlintFlips[];
+extern const u8 gCastingImpact_BitePictures[];
+extern const u16 gCastingImpact_RaidensWrathPictures[];
+extern const u16 gCastingImpact_RaidensWrathWidths[];
+extern const u16 gCastingImpact_RaidensWrathHeights[];
+extern u16 gCastingImpact_RaidensWrathX[];
+extern u16 gCastingImpact_RaidensWrathY[];
+extern const u16 gCastingImpact_ApocalypsePictures[];
+extern const u16 gCastingImpact_ApocalypseWidths[];
+extern const u16 gCastingImpact_ApocalypseHeights[];
+extern const u16 gCastingImpact_ApocalypseX[];
+extern u16 gCastingImpact_ApocalypseY[];
+extern const u16 gCastingImpact_ApocalypseBurstPictures[];
+extern const u8 gCastingImpact_ApocalypseBurstWidths[];
+extern const u8 gCastingImpact_ApocalypseBurstHeights[];
+extern u8 gCastingImpact_ApocalypseBurstPoints[][2];
+extern const u16 gCastingImpact_IceChipPictures[];
+extern const u8 gCastingImpact_StunBoltGlintFlips[];
+extern const u8 gCastingImpact_StunJipBandStarts[];
+extern const u8 gCastingImpact_StunJipBandGrowth[];
+extern const s8 gCastingImpact_StunJipBandHeights[];
+extern const u8 gCastingImpact_ArmorCrushWaveStarts[];
+extern const u8 gCastingImpact_ArmorCrushWaveGrowth[];
+extern const u8 gCastingImpact_ArmorCrushWaveStretch[];
+extern const u8 gBattleEffect_OctagonBandCorners[];
+extern const u8 gCastingImpact_BandMesh[];
+extern const u8 gBattleEffect_RingCorners[];
+extern const u8 gBattleEffect_RingMesh[];
 extern const u8 gBattleEffect_TaperedBeamCorners[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 extern const u8 gBattleEffect_ColumnMesh[];
@@ -1425,8 +1425,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             HeapSlot_Release(104);
             /* FAKEMATCH(dead): a once-only block. */
             do {
-              BattleEffect_BuildBlitter(188, 7, 7,
-                                        gData_0819887e[Random16() & 3] | 3, 0);
+              BattleEffect_BuildBlitter(
+                  188, 7, 7,
+                  gCastingImpact_SquallGlintFlips[Random16() & 3] | 3, 0);
             } while (0);
             IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintPictures[m], x,
                           y + 56, gBattleEffect_GlintPictureWidths[m],
@@ -1449,8 +1450,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             y = ((Trig_Cos(angle) << 4) >> 16) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
             RELEASE_BLITTERS();
-            BattleEffect_BuildBlitter(188, 7, 7,
-                                      gData_08198882[Random16() & 3] | 3, 1);
+            BattleEffect_BuildBlitter(
+                188, 7, 7, gCastingImpact_SapGlintFlips[Random16() & 3] | 3, 1);
             IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintPictures[m], x,
                           y + 80, gBattleEffect_GlintPictureWidths[m],
                           gBattleEffect_GlintPictureHeights[m]);
@@ -1580,38 +1581,38 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         y = (target[1] >> 16) + ((Trig_Cos(frame << 9) << 2) >> 16) + 16;
         if (frame < 4) {
           drawFuncs.draw[0](screen, work->frames,
-                            gData_0819750c[action->side * 7],
-                            y + gData_0819751a[0], 57, 98);
+                            gCastingImpact_PictureX[action->side * 7],
+                            y + gCastingImpact_PictureY[0], 57, 98);
         } else {
           if (frame < 8)
             drawFuncs.draw[0](screen, work->frames,
-                              gData_0819750c[action->side * 7],
-                              y + gData_0819751a[0], 57, 98);
+                              gCastingImpact_PictureX[action->side * 7],
+                              y + gCastingImpact_PictureY[0], 57, 98);
           drawFuncs.draw[0](screen, work->frames + 0x15d2,
-                            gData_0819750c[action->side * 7 + 1],
-                            y + gData_0819751a[1], 99, 69);
+                            gCastingImpact_PictureX[action->side * 7 + 1],
+                            y + gCastingImpact_PictureY[1], 99, 69);
           if (frame >= 4 && frame < 6)
             Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
           if (frame >= 6 && frame < 8)
             drawFuncs.draw[0](screen, work->frames + 0x3081,
-                              gData_0819750c[action->side * 7 + 2],
-                              y + gData_0819751a[2], 128, 91);
+                              gCastingImpact_PictureX[action->side * 7 + 2],
+                              y + gCastingImpact_PictureY[2], 128, 91);
           if (frame >= 8 && frame < 10)
             drawFuncs.draw[0](screen, buffer,
-                              gData_0819750c[action->side * 7 + 3],
-                              y + gData_0819751a[3], 128, 91);
+                              gCastingImpact_PictureX[action->side * 7 + 3],
+                              y + gCastingImpact_PictureY[3], 128, 91);
           if (frame >= 10 && frame < 12)
             drawFuncs.draw[0](screen, buffer + 0x2d80,
-                              gData_0819750c[action->side * 7 + 4],
-                              y + gData_0819751a[4], 128, 59);
+                              gCastingImpact_PictureX[action->side * 7 + 4],
+                              y + gCastingImpact_PictureY[4], 128, 59);
           if (frame >= 12 && frame < 14)
             drawFuncs.draw[0](screen, buffer + 0x4b00,
-                              gData_0819750c[action->side * 7 + 5],
-                              y + gData_0819751a[5], 122, 29);
+                              gCastingImpact_PictureX[action->side * 7 + 5],
+                              y + gCastingImpact_PictureY[5], 122, 29);
           if (frame >= 14 && frame < 16)
             drawFuncs.draw[0](screen, buffer + 0x58d2,
-                              gData_0819750c[action->side * 7 + 6],
-                              y + gData_0819751a[6], 76, 25);
+                              gCastingImpact_PictureX[action->side * 7 + 6],
+                              y + gCastingImpact_PictureY[6], 76, 25);
         }
       } else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
         s32 h;
@@ -1690,7 +1691,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame < 20) {
           s32 m;
           if (frame < 8)
-            m = gCastingImpact_GlintDrawFlags[frame / 2];
+            m = gCastingImpact_BitePictures[frame / 2];
           else
             m = 3;
           HeapSlot_Release(188);
@@ -1764,14 +1765,20 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         m = frame / 2;
         if (m < 10) {
           if (action->side == 0)
-            drawFuncs.draw[0](screen, buffer + gData_0819888a[m],
-                              gData_081988c6[m], gData_081988da[m],
-                              gData_0819889e[m], gData_081988b2[m]);
+            drawFuncs.draw[0](screen,
+                              buffer + gCastingImpact_RaidensWrathPictures[m],
+                              gCastingImpact_RaidensWrathX[m],
+                              gCastingImpact_RaidensWrathY[m],
+                              gCastingImpact_RaidensWrathWidths[m],
+                              gCastingImpact_RaidensWrathHeights[m]);
           else
-            drawFuncs.draw[0](screen, buffer + gData_0819888a[m],
-                              128 - gData_081988c6[m] - gData_0819889e[m],
-                              gData_081988da[m], gData_0819889e[m],
-                              gData_081988b2[m]);
+            drawFuncs.draw[0](screen,
+                              buffer + gCastingImpact_RaidensWrathPictures[m],
+                              128 - gCastingImpact_RaidensWrathX[m] -
+                                  gCastingImpact_RaidensWrathWidths[m],
+                              gCastingImpact_RaidensWrathY[m],
+                              gCastingImpact_RaidensWrathWidths[m],
+                              gCastingImpact_RaidensWrathHeights[m]);
         }
         HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -1809,15 +1816,20 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Iwram_FillWords(screen, 0x4000, 0x3f3f3f3f);
         if (frame >= 0 && (m = frame / 3) < 7) {
           if (action->side == 0)
-            drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
-                              gData_08198918[m],
-                              gCastingImpact_PictureX[m] - 16,
-                              gData_081988fc[m], gData_0819890a[m]);
+            drawFuncs.draw[0](screen,
+                              buffer + gCastingImpact_ApocalypsePictures[m],
+                              gCastingImpact_ApocalypseX[m],
+                              gCastingImpact_ApocalypseY[m] - 16,
+                              gCastingImpact_ApocalypseWidths[m],
+                              gCastingImpact_ApocalypseHeights[m]);
           else
-            drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
-                              128 - gData_08198918[m] - gData_081988fc[m],
-                              gCastingImpact_PictureX[m] - 16,
-                              gData_081988fc[m], gData_0819890a[m]);
+            drawFuncs.draw[0](screen,
+                              buffer + gCastingImpact_ApocalypsePictures[m],
+                              128 - gCastingImpact_ApocalypseX[m] -
+                                  gCastingImpact_ApocalypseWidths[m],
+                              gCastingImpact_ApocalypseY[m] - 16,
+                              gCastingImpact_ApocalypseWidths[m],
+                              gCastingImpact_ApocalypseHeights[m]);
         }
         for (i = 0; i != 3; i++) {
           s32 m;
@@ -1825,17 +1837,23 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (t >= 0 && t <= 8) {
             m = t / 3;
             if (action->side == 0)
-              drawFuncs.draw[0](screen, buffer + gData_08198934[m],
-                                gData_08198940[i][0] - gData_0819893a[m] / 2,
-                                gData_08198940[i][1] - gData_0819893d[m] / 2 -
-                                    16,
-                                gData_0819893a[m], gData_0819893d[m]);
+              drawFuncs.draw[0](
+                  screen, buffer + gCastingImpact_ApocalypseBurstPictures[m],
+                  gCastingImpact_ApocalypseBurstPoints[i][0] -
+                      gCastingImpact_ApocalypseBurstWidths[m] / 2,
+                  gCastingImpact_ApocalypseBurstPoints[i][1] -
+                      gCastingImpact_ApocalypseBurstHeights[m] / 2 - 16,
+                  gCastingImpact_ApocalypseBurstWidths[m],
+                  gCastingImpact_ApocalypseBurstHeights[m]);
             else
               drawFuncs.draw[0](
-                  screen, buffer + gData_08198934[m],
-                  128 - gData_08198940[i][0] - gData_0819893a[m] / 2,
-                  gData_08198940[i][1] - gData_0819893d[m] / 2 - 16,
-                  gData_0819893a[m], gData_0819893d[m]);
+                  screen, buffer + gCastingImpact_ApocalypseBurstPictures[m],
+                  128 - gCastingImpact_ApocalypseBurstPoints[i][0] -
+                      gCastingImpact_ApocalypseBurstWidths[m] / 2,
+                  gCastingImpact_ApocalypseBurstPoints[i][1] -
+                      gCastingImpact_ApocalypseBurstHeights[m] / 2 - 16,
+                  gCastingImpact_ApocalypseBurstWidths[m],
+                  gCastingImpact_ApocalypseBurstHeights[m]);
           }
         }
         HeapSlot_Release(104);
@@ -1927,7 +1945,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2 + target[0] / 2;
             point[1] = point[1] + target[1] + 32;
-            drawFuncs.draw[1](screen, buffer + gCastingImpact_PictureY[m],
+            drawFuncs.draw[1](screen,
+                              buffer + gCastingImpact_IceChipPictures[m],
                               point[0] - 4, point[1] - 4, 8, 8);
             p->x -= 6;
             if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
@@ -2038,10 +2057,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               m = a + particle->life / 96 % 3;
             }
             drawFuncs.draw[i > 2 ? 0 : 1](
-                screen, buffer + 0x800 + gData_08197834[m],
+                screen, buffer + 0x800 + gPrism_ShardPictures[m],
                 (particle->x >> 16) - gPrism_ShardWidths[m] / 2,
-                (particle->y >> 16) - gData_08197826[m] / 2,
-                gPrism_ShardWidths[m], gData_08197826[m]);
+                (particle->y >> 16) - gPrism_ShardHeights[m] / 2,
+                gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
             BattleEffectKernels_IntegrateVector2(particle, 64, 0x2000);
             particle->life += particle->z;
             if (particle->z > 1 && (frame & 1))
@@ -2099,7 +2118,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             w = gSpire_ShardWidths[m];
             left = (particle->x >> 16) - w / 2;
             top = particle->y >> 16;
-            h = gData_081974ad[m];
+            h = gSpire_ShardHeights[m];
             top -= h / 2;
             drawFuncs.draw[0](screen, buffer + 0x83c + gSpire_ShardPictures[m],
                               left, top, w, h);
@@ -2141,8 +2160,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             y = ((Trig_Cos(angle) << 4) >> 16) -
                 gBattleEffect_GlintPictureHeights[m] / 2;
             RELEASE_BLITTERS();
-            BattleEffect_BuildBlitter(188, 7, 7,
-                                      gData_0819894e[Random16() & 3] | 3, 1);
+            BattleEffect_BuildBlitter(
+                188, 7, 7,
+                gCastingImpact_StunBoltGlintFlips[Random16() & 3] | 3, 1);
             IWRAM_SLOT_BC(screen, buffer + gBattleEffect_GlintPictures[m], x,
                           y + 80, gBattleEffect_GlintPictureWidths[m],
                           gBattleEffect_GlintPictureHeights[m]);
@@ -2414,27 +2434,31 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         texture140.width = 7;
         texture140.height = 4;
         texture140.pixels = buffer + 0x4000;
-        model->mesh = gData_08198d2c;
+        model->mesh = gCastingImpact_BandMesh;
         for (i = 0; i != 2; i++) {
           s32 start;
-          start = gData_08198952[i] + 4;
+          start = gCastingImpact_StunJipBandStarts[i] + 4;
           if (frame > start) {
             fade = (start - frame) * 8;
             if (fade > -16)
               fade = -16;
             if (fade > -64) {
-              scale = (frame - start) * gData_08198956[i] * 1500 + 0x4180;
+              scale =
+                  (frame - start) * gCastingImpact_StunJipBandGrowth[i] * 1500 +
+                  0x4180;
               model->fade = fade;
               Transform_Reset();
-              SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
-                                            gData_0819895a[i] << 16, 0);
+              SceneTransform_ApplyPosition3(
+                  (target[0] / 2 - 60) << 16,
+                  gCastingImpact_StunJipBandHeights[i] << 16, 0);
               SceneTransform_ApplyScale3(scale * 2, scale * 4, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
                 Transform_ApplyYaw((i * 2 + frame) << 12);
               else
                 Transform_ApplyYaw((i * 2 - frame) << 12);
-              Render_TransformVertices(gData_08198c6c, matrix, 16);
+              Render_TransformVertices(gBattleEffect_OctagonBandCorners, matrix,
+                                       16);
               Render_DrawModelList(model);
             }
           }
@@ -2456,9 +2480,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         model->matrix = matrix;
         tex->pixels = buffer;
         model->kind = 7;
-        model->mesh = gData_081990d0;
+        model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 4; i++) {
-          start = gData_0819895e[i] + 4;
+          start = gCastingImpact_ArmorCrushWaveStarts[i] + 4;
           model->frame = (frame * 8 + i * 32) & 127;
           if (frame == start + 4)
             Sound_PlayFar(SE_104);
@@ -2467,19 +2491,22 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             if (fade > -16)
               fade = -16;
             if (fade > -64) {
-              scale = (frame - start) * gData_08198962[i] * 2000 + Q16_ONE / 4;
+              scale = (frame - start) * gCastingImpact_ArmorCrushWaveGrowth[i] *
+                          2000 +
+                      Q16_ONE / 4;
               model->fade = fade;
               Transform_Reset();
               SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
                                             0x280000, 0);
-              SceneTransform_ApplyScale3(scale, gData_08198966[i] * scale * 2,
-                                         scale / 4);
+              SceneTransform_ApplyScale3(
+                  scale, gCastingImpact_ArmorCrushWaveStretch[i] * scale * 2,
+                  scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
                 Transform_ApplyYaw((i * 8 + frame) << 10);
               else
                 Transform_ApplyYaw((i * 8 - frame) << 10);
-              Render_TransformVertices(gData_08199090, matrix, 32);
+              Render_TransformVertices(gBattleEffect_RingCorners, matrix, 32);
               Render_DrawModelList(model);
             }
           }

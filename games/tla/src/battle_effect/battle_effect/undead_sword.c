@@ -21,8 +21,8 @@
 #define PHASE_HIT 212
 
 extern char ResourceId_LimeColumnSheet;
-extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
-extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
+extern const u16 gUndeadSword_SparkPictures[]; // ☀️ gUndeadSword_SparkCells
+extern const u16 gUndeadSword_SparkSizes[];    // ☀️ gUndeadSword_SparkSizes
 
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.
@@ -138,8 +138,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
         py = HI(particle->y);
         if (cell > 6)
           cell = 6;
-        picture = work->sheet + gData_08198afc[cell] + BLAST_SHEET_OFFSET;
-        size = gData_08198b0a[cell];
+        picture =
+            work->sheet + gUndeadSword_SparkPictures[cell] + BLAST_SHEET_OFFSET;
+        size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, picture, px - size / 2, py - size / 2, size, size);
         particle->variant++;
         BattleEffectKernels_IntegrateVector2(particle, 62, -0x2000);
@@ -762,7 +763,7 @@ extern char ResourceId_TanPalette;
 
 extern u8 Data_02010108[];
 extern u8 Data_02010318[];
-extern const u8 Data_08198b24[]; // the funnels per mode
+extern const u8 gWindFunnel_Counts[]; // the funnels per mode
 
 #define WAFT_SEGMENTS 33
 
@@ -975,7 +976,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 104;
     model->vertices = vertices;
     model->shade = shade;
-    for (k = 0; k != Data_08198b24[mode]; k++) {
+    for (k = 0; k != gWindFunnel_Counts[mode]; k++) {
       Transform_Reset();
       if (mode == 0) {
         s32 scale;
@@ -1020,17 +1021,17 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
 extern char ResourceId_CrystalBitmapSheet;
 extern char ResourceId_Data0C1;
 
-extern u8 Data_02014e20[];      // gMapCellBuffer + 20000, the berg
-extern s32 gData_08197834[];    // the shards' cells: offsets,
-extern u8 gPrism_ShardWidths[]; // widths
-extern u8 gData_08197826[];     // and heights
+extern u8 Data_02014e20[];         // gMapCellBuffer + 20000, the berg
+extern s32 gPrism_ShardPictures[]; // the shards' cells: offsets,
+extern u8 gPrism_ShardWidths[];    // widths
+extern u8 gPrism_ShardHeights[];   // and heights
 extern const u8 gBattleEffect_CylinderMesh[];    // the ripple's mesh
 extern const u8 gBattleEffect_CylinderCorners[]; // its corners
-extern const u8 Data_08198b26[4];                // per ripple: its start,
-extern const u8 Data_08198b2a[4];                // its growth
-extern const s8 Data_08198b2e[4];                // and its height
-extern const s16 Data_08198b32[8];               // per flash: its roll
-extern const s16 Data_08198b42[8];               // and pitch
+extern const u8 gDiamondBerg_RingStarts[4];      // per ripple: its start,
+extern const u8 gDiamondBerg_RingGrowth[4];      // its growth
+extern const s8 gDiamondBerg_RingHeights[4];     // and its height
+extern const s16 gDiamondBerg_ShardRolls[8];     // per flash: its roll
+extern const s16 gDiamondBerg_ShardPitches[8];   // and pitch
 
 #define DIAMOND_BERG_FRAMES 148
 
@@ -1180,13 +1181,13 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           continue;
         }
         cell = i % 5 * 3 + shard->variant / 96 % 3;
-        pixels = work->sheet + 0x800 + gData_08197834[cell];
+        pixels = work->sheet + 0x800 + gPrism_ShardPictures[cell];
         width = gPrism_ShardWidths[cell];
         x = HI(shard->x) - (width >> 1);
         y = HI(shard->y);
-        // The heights table through a local: as gData_08197826[cell] the
+        // The heights table through a local: as gPrism_ShardHeights[cell] the
         // width moves to the stack one place early.
-        heights = gData_08197826;
+        heights = gPrism_ShardHeights;
         height = heights[cell];
         y -= height >> 1;
         blit[0](canvas, pixels, x, y, width, height);
@@ -1219,14 +1220,14 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
 
       // The frost ripples.
       for (k = 0; k != 4; k++) {
-        s32 start = Data_08198b26[k] + 6;
+        s32 start = gDiamondBerg_RingStarts[k] + 6;
         s32 scale;
         s32 shade;
 
         if (frame <= start) {
           continue;
         }
-        scale = (frame - start) * Data_08198b2a[k] * 1400 + 16768;
+        scale = (frame - start) * gDiamondBerg_RingGrowth[k] * 1400 + 16768;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -1237,7 +1238,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         model->shade = shade;
         Transform_Reset();
         SceneTransform_ApplyPosition3((centerX - 64) << 16,
-                                      Data_08198b2e[k] << 16, 0);
+                                      gDiamondBerg_RingHeights[k] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
@@ -1274,8 +1275,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
                                       (target.y - 80) << 16, 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyYaw((effect->side << 15) + TRIG_TURN / 2);
-        Transform_ApplyRoll(Data_08198b32[k]);
-        Transform_ApplyPitch(Data_08198b42[k]);
+        Transform_ApplyRoll(gDiamondBerg_ShardRolls[k]);
+        Transform_ApplyPitch(gDiamondBerg_ShardPitches[k]);
         SceneTransform_ApplyUniformScale(scale);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);

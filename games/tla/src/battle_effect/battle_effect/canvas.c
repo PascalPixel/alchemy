@@ -202,7 +202,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         for (i = 0; i != 7; i++) {
 
           void *o = (void *)OBJ_TILES(
-              (struct EclipseObject *)work->objects[Data_08197748[i]]);
+              (struct EclipseObject *)work->objects[gEclipse_TileObjects[i]]);
           // Default: set for real below; as s32 size = 0x400, 762 differ.
           s32 size = 0;
           size = 0x400;
@@ -219,8 +219,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Sound_PlayFar(SE_CLATTER);
       }
       for (i = 0; i != 17; i++) {
-        if (frame == Data_0819774f[i]) {
-          Iwram_FillWords(canvas, 0x3c00, Data_08197760[i]);
+        if (frame == gEclipse_FillFrames[i]) {
+          Iwram_FillWords(canvas, 0x3c00, gEclipse_FillLevels[i]);
         }
       }
       req = gEclipse_Scales;
@@ -256,8 +256,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           place[0] = baseX + 0x200000;
           place[2] = baseY + 0x400000;
         } else {
-          place[0] = baseX + (Data_081977a4[i] << 16);
-          place[2] = baseY + (Data_081977c4[i] << 16);
+          place[0] = baseX + (gEclipse_ObjectX[i] << 16);
+          place[2] = baseY + (gEclipse_ObjectZ[i] << 16);
         }
         if (place[2] <= 0xc7ffff) {
           Render_ApplyProjectedPlacementFar(work->objects[i], place,
@@ -744,7 +744,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           s32 t = frame + 24 - i * 6;
 
           if (t >= 0 && t <= 63) {
-            s32 s = (Data_081977e4[i] * t << 10) + 0x4000;
+            s32 s = (gEclipse_RingGrowth[i] * t << 10) + 0x4000;
 
             shade = 0;
             if (t <= 15) {
@@ -760,7 +760,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             Transform_ApplyPitch(10000);
             Transform_ApplyYaw((frame + i * 8) << 10);
             SceneTransform_ApplyScale3(Q16_ONE, 0x60000, Q16_ONE);
-            SceneTransform_ApplyPosition3(0, Data_081977e8[i] << 16, 0);
+            SceneTransform_ApplyPosition3(0, gEclipse_RingHeights[i] << 16, 0);
             Render_TransformVertices(Data_02012000, vertices, 64);
             Render_DrawModelList(model);
           }
@@ -1048,9 +1048,9 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
       texture.pixels = Data_02012000;
       model->kind = 7;
       texture.logHeight = 6;
-      model->model = gData_081990d0;
+      model->model = gBattleEffect_RingMesh;
       for (i = 0; i != 4; i++) {
-        s32 start = Data_081977ec[i] + 48;
+        s32 start = gFormChange_WaveStarts[i] + 48;
 
         model->shade = (frame * 8 + i * 32) & 127;
         if (frame > start) {
@@ -1058,20 +1058,22 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
           if (bias > -16)
             bias = -16;
           if (bias > -64) {
-            s32 growth = (frame - start) * Data_081977f0[i] * 2000 + 0x4000;
+            s32 growth =
+                (frame - start) * gFormChange_WaveGrowth[i] * 2000 + 0x4000;
 
             model->depthBias = bias;
             Transform_Reset();
             SceneTransform_ApplyPosition3((center.x / 2 - 60) << 16, 0x200000,
                                           0);
             SceneTransform_ApplyScale3(
-                growth * 2, Data_081977f4[i] * growth + 0x40000, growth / 4);
+                growth * 2, gFormChange_WaveStretch[i] * growth + 0x40000,
+                growth / 4);
             Transform_ApplyPitch(1000);
             if (i & 1)
               Transform_ApplyYaw((i * 8 + frame) << 10);
             else
               Transform_ApplyYaw((i * 8 - frame) << 10);
-            Render_TransformVertices(gData_08199090, corners, 32);
+            Render_TransformVertices(gBattleEffect_RingCorners, corners, 32);
             Render_DrawModelList(model);
           }
         }

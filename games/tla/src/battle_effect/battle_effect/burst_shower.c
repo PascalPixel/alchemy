@@ -652,7 +652,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
           u32 width = gSpire_ShardWidths[cel];
           s32 x = HI(shot->x);
           u32 half = width >> 1;
-          const u8 *shardHeights = gData_081974ad;
+          const u8 *shardHeights = gSpire_ShardHeights;
           u32 height;
           s32 y;
           x -= half;

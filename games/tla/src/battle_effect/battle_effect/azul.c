@@ -102,13 +102,13 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data0B4;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u8 Data_081986f2[][2];
-extern const u8 Data_08198828[];
-extern const u8 Data_08198830[];
-extern const u8 Data_0819883c[];
-extern const u8 Data_08198848[];
-extern const s8 Data_08198850[];
-extern const s8 Data_08198858[];
+extern const u8 gAzul_PartPoints[][2];
+extern const u8 gAzul_UnitScale[];
+extern const u8 gAzul_ObjectX[];
+extern const u8 gAzul_ObjectZ[];
+extern const u8 gAzul_LateUnitScale[];
+extern const s8 gAzul_LateObjectX[];
+extern const s8 gAzul_LateObjectZ[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_SquareMesh64[];
 extern const u8 gBattleEffect_SquareMesh128[];
@@ -278,9 +278,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (n = 0; n != 31; n++) {
         for (i = 0; i != 4; i++) {
           verts[n * 4 + i].x =
-              Data_081986f2[n * 5 + i + 1][0] - Data_081986f2[n * 5][0];
+              gAzul_PartPoints[n * 5 + i + 1][0] - gAzul_PartPoints[n * 5][0];
           verts[n * 4 + i].y =
-              Data_081986f2[n * 5 + i + 1][1] - Data_081986f2[n * 5][1];
+              gAzul_PartPoints[n * 5 + i + 1][1] - gAzul_PartPoints[n * 5][1];
           verts[n * 4 + i].z = 0;
         }
         faces[n * 3].corner[1] = 1;
@@ -294,13 +294,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         faces[n * 3 + 2].corner[2] = 0;
         for (i = 0; i != 3; i++) {
           faces[n * 3].uv[i][0] =
-              Data_081986f2[n * 5 + faces[n * 3].corner[i] + 1][0];
+              gAzul_PartPoints[n * 5 + faces[n * 3].corner[i] + 1][0];
           faces[n * 3].uv[i][1] =
-              Data_081986f2[n * 5 + faces[n * 3].corner[i] + 1][1];
+              gAzul_PartPoints[n * 5 + faces[n * 3].corner[i] + 1][1];
           faces[n * 3 + 1].uv[i][0] =
-              Data_081986f2[n * 5 + faces[n * 3 + 1].corner[i] + 1][0];
+              gAzul_PartPoints[n * 5 + faces[n * 3 + 1].corner[i] + 1][0];
           faces[n * 3 + 1].uv[i][1] =
-              Data_081986f2[n * 5 + faces[n * 3 + 1].corner[i] + 1][1];
+              gAzul_PartPoints[n * 5 + faces[n * 3 + 1].corner[i] + 1][1];
         }
       }
       for (i = 0; i != effect->count; i++) {
@@ -417,19 +417,19 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
       if (frame <= 53) {
         for (i = 0; i != 12; i++) {
-          place[0] = ((40 - Data_08198830[i]) << 16) + base.x;
-          place[2] = ((128 - Data_0819883c[i] * 31 / 32) << 16) + base.y;
+          place[0] = ((40 - gAzul_ObjectX[i]) << 16) + base.x;
+          place[2] = ((128 - gAzul_ObjectZ[i] * 31 / 32) << 16) + base.y;
           if (i > 8) {
             place[2] += -0xf00000;
           }
           CLAMP_Y(place);
           Render_ApplyProjectedPlacementFar(work->objects[i], place,
-                                            (s32 *)Data_08198828, 0);
+                                            (s32 *)gAzul_UnitScale, 0);
         }
         for (i = 0; i != 16; i++) {
-          place[0] = ((39 - Data_08198830[(i & 3) + 5]) << 16) + base.x;
+          place[0] = ((39 - gAzul_ObjectX[(i & 3) + 5]) << 16) + base.x;
           place[2] =
-              ((-(Data_0819883c[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
+              ((-(gAzul_ObjectZ[(i & 3) + 5] * 30 / 32) - i / 4 * 60) << 16) +
               base.y + 0x420000;
           // CLAMP_Y written out: the macro's once-only block holds the clamp's
           // constant after the store (4 of 2209 differ).
@@ -439,33 +439,33 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
             place[2] = 0xa00000;
           obj = work->objects[i + 12];
           obj->tile = ((struct AzulObject *)work->objects[(i & 3) + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
                                             0);
         }
       } else {
         for (i = 0; i != 12; i++) {
-          place[0] = (Data_08198830[i] << 16) + base.x;
-          place[2] = (Data_0819883c[i] << 16) + base.y;
+          place[0] = (gAzul_ObjectX[i] << 16) + base.x;
+          place[2] = (gAzul_ObjectZ[i] << 16) + base.y;
           if (i > 8) {
             place[2] += 0x1000000;
           }
           CLAMP_Y(place);
           Render_ApplyProjectedPlacementFar(work->objects[i], place,
-                                            (s32 *)Data_08198828, 0);
+                                            (s32 *)gAzul_UnitScale, 0);
         }
         i = 0;
-        xs = Data_08198830;
+        xs = gAzul_ObjectX;
         for (; i != 16; i++) {
           s32 m = i & 3;
           s32 row = m + 5;
 
           place[0] = (xs[row] << 16) + base.x + -0x10000;
           place[2] =
-              ((Data_0819883c[row] + i / 4 * 64) << 16) + base.y + 0x400000;
+              ((gAzul_ObjectZ[row] + i / 4 * 64) << 16) + base.y + 0x400000;
           CLAMP_Y(place);
           obj = work->objects[i + 12];
           obj->tile = ((struct AzulObject *)work->objects[m + 5])->tile;
-          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,
+          Render_ApplyProjectedPlacementFar(obj, place, (s32 *)gAzul_UnitScale,
                                             0);
         }
       }
@@ -499,10 +499,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         y = (Trig_Cos(frame << 9) << 3) + base.y;
       }
       for (i = 0; i != 8; i++) {
-        place[0] = (Data_08198850[i] << 16) + x;
-        place[2] = (Data_08198858[i] << 16) + y;
+        place[0] = (gAzul_LateObjectX[i] << 16) + x;
+        place[2] = (gAzul_LateObjectZ[i] << 16) + y;
         Render_ApplyProjectedPlacementFar(work->objects[i], place,
-                                          (s32 *)Data_08198848, 0);
+                                          (s32 *)gAzul_LateUnitScale, 0);
       }
     }
     if ((u32)(frame - 138) <= 29) {
@@ -531,7 +531,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_CLATTER);
       i = 0;
       p = work->particles;
-      piece = Data_081986f2[0];
+      piece = gAzul_PartPoints[0];
       for (; i != 31; i++, piece += 10, p++) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];

@@ -11,7 +11,7 @@ extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_BlueFlameSheet;
 extern struct Scale gNeptune_UnitScale;   // the serpent's scale
 extern u16 gBattleEffect_FlarePictures[]; // the sparkle cells by size
-extern s32 Data_08198aec[];               // the spray's four gravities
+extern s32 gNeptune_Gravity[];            // the spray's four gravities
 
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 width);
@@ -395,7 +395,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                     HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k,
                     k * 2);
           BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
-                                               Data_08198aec[i & m]);
+                                               gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
           if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104)
             PARTICLES[i].variant = -1;

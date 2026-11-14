@@ -153,7 +153,7 @@ extern char ResourceId_BoulderSheet;
 
 // The Broken Seal's table of this name, ShardHeights and ShardCells.
 extern u8 gSpire_ShardWidths[];
-extern u8 gData_081974ad[];
+extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardPictures[];
 
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -263,7 +263,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 
       blit(canvas, work->sheet + gSpire_ShardPictures[cell] + 0x83c,
            HI(rock->x) - width / 2 + scrollX,
-           HI(rock->y) - gData_081974ad[cell] / 2, width, gData_081974ad[cell]);
+           HI(rock->y) - gSpire_ShardHeights[cell] / 2, width,
+           gSpire_ShardHeights[cell]);
       if (rock->variant == 0) {
         if (effect->side == 0) {
           if (targetPosition.x > HI(rock->x) + userPosition.x - 64) {
@@ -332,8 +333,8 @@ extern char ResourceId_OrangePaletteB;
 
 // The Broken Seal's gEruption_PuffPictures and gCybele_EmberSizes:
 // the spark pictures by stage.
-extern u16 Data_08198b5e[];
-extern u16 Data_08198b6c[];
+extern u16 gSoulShatter_SparkPictures[];
+extern u16 gSoulShatter_SparkSizes[];
 
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags,
@@ -499,9 +500,11 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
           if (cell > 6)
             cell = 6;
           draw[(i & 3) ? 0 : 1](
-              canvas, work->sheet + Data_08198b5e[cell] + SPARK_OFFSET,
-              x - Data_08198b6c[cell] / 2, y - Data_08198b6c[cell] / 2,
-              Data_08198b6c[cell], Data_08198b6c[cell]);
+              canvas,
+              work->sheet + gSoulShatter_SparkPictures[cell] + SPARK_OFFSET,
+              x - gSoulShatter_SparkSizes[cell] / 2,
+              y - gSoulShatter_SparkSizes[cell] / 2,
+              gSoulShatter_SparkSizes[cell], gSoulShatter_SparkSizes[cell]);
           spark->variant++;
           BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
         }
@@ -659,16 +662,16 @@ extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
 #define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
-extern u8 Data_02012540[];       // the mesh's end, after 112 faces
-extern const s8 Data_08198b7a[]; // the cone's ring heights
-extern const s8 Data_08198b82[]; // and radii
-extern const u8 Data_08198b8a[]; // each ripple's delay
-extern const u8 Data_08198b8e[]; // its growth
-extern const s8 Data_08198b92[]; // its height
+extern u8 Data_02012540[];            // the mesh's end, after 112 faces
+extern const s8 gSerac_RowHeights[];  // the cone's ring heights
+extern const s8 gSerac_RowRadii[];    // and radii
+extern const u8 gSerac_RingStarts[];  // each ripple's delay
+extern const u8 gSerac_RingGrowth[];  // its growth
+extern const s8 gSerac_RingHeights[]; // its height
 extern const u8 gBattleEffect_CylinderCorners[];
 extern const u8 gBattleEffect_CylinderMesh[];
-extern const u8 Data_0819919c[];
-extern const u8 Data_081991a4[];
+extern const u8 gBattleEffect_TriangleMesh[];
+extern const u8 gBattleEffect_TriangleCorners[];
 
 // Abilities: Serac.
 //
@@ -750,11 +753,11 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             s32 angle;
 
             if (row == 0) {
-              height = Data_08198b7a[row];
-              radius = Data_08198b82[row];
+              height = gSerac_RowHeights[row];
+              radius = gSerac_RowRadii[row];
             } else {
-              height = Data_08198b7a[row] + (Random16() & 3);
-              radius = Data_08198b82[row] + (Random16() & 3);
+              height = gSerac_RowHeights[row] + (Random16() & 3);
+              radius = gSerac_RowRadii[row] + (Random16() & 3);
             }
             angle = (column << 13) + TRIG_TURN / 16;
             VERTICES[row * 8 + column].x = (Trig_Sin(angle) * radius) >> 16;
@@ -963,7 +966,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         } else {
           model->kind = 2;
           model->unk04 = 0;
-          model->mesh = Data_0819919c;
+          model->mesh = gBattleEffect_TriangleMesh;
           model->vertices = vertices;
           for (i = 0; i != 64; i++) {
             struct EffectStep *p = &work->particles[i];
@@ -981,7 +984,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             Transform_ApplyPitch(angle);
             Transform_ApplyRoll(angle);
             SceneTransform_ApplyUniformScale(Q16_ONE);
-            Render_ProjectVertices(Data_081991a4, vertices, 3);
+            Render_ProjectVertices(gBattleEffect_TriangleCorners, vertices, 3);
             Render_DrawModelList(model);
             Transform_Pop();
           }
@@ -1043,11 +1046,11 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             s32 size;
             s32 shade;
 
-            start = Data_08198b8a[i] + 22;
+            start = gSerac_RingStarts[i] + 22;
             if (frame <= start) {
               continue;
             }
-            size = (frame - start) * Data_08198b8e[i] * 1500 + 0x4180;
+            size = (frame - start) * gSerac_RingGrowth[i] * 1500 + 0x4180;
             shade = (start - frame) * 8 + 56;
             if (shade > 0) {
               shade = 0;
@@ -1057,8 +1060,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             }
             Transform_Push();
             model->shade = (const void *)shade;
-            SceneTransform_ApplyPosition3(target->x, Data_08198b92[i] << 16,
-                                          target->z);
+            SceneTransform_ApplyPosition3(
+                target->x, gSerac_RingHeights[i] << 16, target->z);
             SceneTransform_ApplyScale3(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(gBattleEffect_CylinderCorners, vertices, 32);

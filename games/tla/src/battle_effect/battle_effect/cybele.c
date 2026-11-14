@@ -218,11 +218,11 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
           s32 x = HI(thorn->x);
           s32 y = thorn->y >> 16;
           u8 *cell = work->sheet + gCybele_ThornPictures[cel];
-          u32 width = Data_0819820c[cel];
+          u32 width = gCybele_ThornWidths[cel];
           u32 tall;
 
           x -= width >> 1;
-          tall = Data_08198211[cel];
+          tall = gCybele_ThornHeights[cel];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
           BattleEffectKernels_IntegrateVector2(thorn, 64, 0x1000);

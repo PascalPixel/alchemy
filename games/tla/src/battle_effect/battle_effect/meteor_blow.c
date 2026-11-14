@@ -101,17 +101,17 @@ extern u8 gMapCellBuffer[];
 extern s32 Data_02010018[]; // the shards' variants, 28 bytes apart
 extern u16 gBattleEffect_MotePictures[];
 extern const struct PointPair gMeteorBlow_DoubleScale;
-extern const u8 Data_08199e70[];
-extern const u8 Data_08199e77[];
-extern const u16 Data_08199e7e[];
-extern const u8 Data_08199e8c[];
-extern const u8 Data_08199e90[];
-extern const u8 Data_08199e94[];
-extern const u8 Data_08199e98[];
-extern const u8 Data_08199e9c[];
-extern const s8 Data_08199ea0[];
-extern const u8 gData_081990d0[];
-extern const u8 gData_08199090[];
+extern const u8 gMeteorBlow_PictureWidths[];
+extern const u8 gMeteorBlow_PictureHeights[];
+extern const u16 gMeteorBlow_Pictures[];
+extern const u8 gMeteorBlow_WaveStarts[];
+extern const u8 gMeteorBlow_WaveGrowth[];
+extern const u8 gMeteorBlow_WaveStretch[];
+extern const u8 gMeteorBlow_RingStarts[];
+extern const u8 gMeteorBlow_RingGrowth[];
+extern const s8 gMeteorBlow_RingHeights[];
+extern const u8 gBattleEffect_RingMesh[];
+extern const u8 gBattleEffect_RingCorners[];
 extern const u8 gBattleEffect_CylinderMesh[];
 extern const u8 gBattleEffect_CylinderCorners[];
 
@@ -439,9 +439,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
               blit[0](gMapCellBuffer, sprites + i % 30, screen[0], screen[1], 1,
                       1);
             } else {
-              blit[0](gMapCellBuffer, work->sheet + Data_08199e7e[kind],
-                      screen[0], screen[1], Data_08199e70[kind],
-                      Data_08199e77[kind]);
+              blit[0](gMapCellBuffer, work->sheet + gMeteorBlow_Pictures[kind],
+                      screen[0], screen[1], gMeteorBlow_PictureWidths[kind],
+                      gMeteorBlow_PictureHeights[kind]);
             }
           }
         }
@@ -615,14 +615,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     texture2.logHeight = 6;
     texture2.pixels = work->sheet + 0x4000;
     model->kind = 7;
-    model->mesh = gData_081990d0;
+    model->mesh = gBattleEffect_RingMesh;
     x0 = hx / 2 - 60;
     step = frame << 11;
     i = 0;
     back = -step;
     angle = step;
     for (; i != 4; i++, back += TRIG_TURN / 8, angle += TRIG_TURN / 8) {
-      s32 start = Data_08199e8c[i] + 16;
+      s32 start = gMeteorBlow_WaveStarts[i] + 16;
 
       if (frame > start) {
         shade = (start - frame) * 8 + 56;
@@ -631,19 +631,19 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           shade = -16;
         }
         if (shade > -64) {
-          s32 s = (frame - start) * Data_08199e90[i] * 2000 + 42768;
+          s32 s = (frame - start) * gMeteorBlow_WaveGrowth[i] * 2000 + 42768;
 
           model->shade = shade;
           Transform_Reset();
           SceneTransform_ApplyPosition3(x0 << 16, 0x280000, 0);
-          SceneTransform_ApplyScale3(s, s * Data_08199e94[i], s / 4);
+          SceneTransform_ApplyScale3(s, s * gMeteorBlow_WaveStretch[i], s / 4);
           Transform_ApplyPitch(1000);
           if (i & 1) {
             Transform_ApplyYaw(angle);
           } else {
             Transform_ApplyYaw(back);
           }
-          Render_TransformVertices(gData_08199090, verts, 32);
+          Render_TransformVertices(gBattleEffect_RingCorners, verts, 32);
           Render_DrawModelList(model);
         }
       }
@@ -654,7 +654,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     texture2.logHeight = 7;
     half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;
     for (i = 0; i != 3; i++) {
-      s32 start = Data_08199e98[i] + 8;
+      s32 start = gMeteorBlow_RingStarts[i] + 8;
 
       if (frame > start) {
         shade = (start - frame) * 8 + 40;
@@ -663,12 +663,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           shade = 0;
         }
         if (shade > -64) {
-          s32 s = (frame - start) * Data_08199e9c[i] * 1500 + 0x4180;
+          s32 s = (frame - start) * gMeteorBlow_RingGrowth[i] * 1500 + 0x4180;
 
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(half << 16, Data_08199ea0[i] << 16, 0);
+          SceneTransform_ApplyPosition3(half << 16,
+                                        gMeteorBlow_RingHeights[i] << 16, 0);
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(2000);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);

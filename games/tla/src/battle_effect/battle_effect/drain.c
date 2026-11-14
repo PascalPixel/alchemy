@@ -264,7 +264,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
 
           if (mote->variant >= 0) {
-            u8 size = Data_081982f4[mode];
+            u8 size = gDrainMotes_Sizes[mode];
 
             // The canvas shows at twice the width: halve x.
             EffectPosition_ProjectPoint((s32 *)mote, &screen);

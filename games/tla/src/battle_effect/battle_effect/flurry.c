@@ -67,7 +67,7 @@ void BattleEffect_RunDoublestep(struct EffectStep *step) {
 #define MOTE_COUNT 256
 
 // A variant's record.
-#define RECORD(field) Data_081985b3[variant * 8 + (field)]
+#define RECORD(field) gBurstScene_Styles[variant * 8 + (field)]
 enum {
   RECORD_ARC_SHEET,
   RECORD_PALETTE,
@@ -87,7 +87,7 @@ extern char ResourceId_BlueArcSheetB;
 extern char ResourceId_WaveSheet;
 
 // The variants' records, eight bytes each.
-extern u8 Data_081985b3[];
+extern u8 gBurstScene_Styles[];
 
 // A glint's four flips.
 extern const u8 gBurstScene_GlintFlips[];

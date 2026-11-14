@@ -48,11 +48,11 @@ extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_Data0DA;
 extern char ResourceId_OrangePaletteB;
 extern u8 gMapCellBuffer[];
-extern const u8 gData_081990d0[];
-extern const u8 Data_08198b52[]; // each ring's start
-extern const u8 Data_08198b56[]; // growth
-extern const s8 Data_08198b5a[]; // height
-extern const u8 Data_08199050[];
+extern const u8 gBattleEffect_RingMesh[];
+extern const u8 gGeode_WaveStarts[];  // each ring's start
+extern const u8 gGeode_WaveGrowth[];  // growth
+extern const s8 gGeode_WaveHeights[]; // height
+extern const u8 gGeode_RingCorners[];
 
 struct ModelVertex {
   s8 x;
@@ -357,19 +357,20 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       dust.pixels = work->sheet + 0x4710;
       rings->kind = 7;
       rings->texture = &dust;
-      rings->mesh = gData_081990d0;
+      rings->mesh = gBattleEffect_RingMesh;
       rings->vertices = ring;
       rings->scrollU = 0;
       rings->scrollV = 0;
       for (i = 0; i != 4; i++) {
-        s32 start = Data_08198b52[i] + 48;
+        s32 start = gGeode_WaveStarts[i] + 48;
         s32 scale;
         s32 shade;
 
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * Data_08198b56[i] * 125) << 4) + Q16_ONE / 2;
+        scale =
+            (((frame - start) * gGeode_WaveGrowth[i] * 125) << 4) + Q16_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -380,7 +381,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         rings->shade = shade;
         Transform_Reset();
         SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
-                                      Data_08198b5a[i] << 16, 0);
+                                      gGeode_WaveHeights[i] << 16, 0);
         SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale >> 1);
         Transform_ApplyPitch(1000);
         if (i & 1) {
@@ -388,7 +389,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         } else {
           Transform_ApplyYaw((i * 4 - frame) << 11);
         }
-        Render_TransformVertices(Data_08199050, ring, 32);
+        Render_TransformVertices(gGeode_RingCorners, ring, 32);
         Render_DrawModelList(rings);
       }
       Heap_Release(rings);

@@ -28,7 +28,7 @@ extern u8 gSpire_DropFrames[];
 // _ShardHeights.
 extern u16 gSpire_ShardPictures[];
 extern u8 gSpire_ShardWidths[];
-extern u8 gData_081974ad[];
+extern u8 gSpire_ShardHeights[];
 
 void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -111,7 +111,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
           blit(canvas, work->sheet + gSpire_ShardPictures[cel] + 0x83c,
                HI(shard->x) - ((width = gSpire_ShardWidths[cel]) >> 1),
-               HI(shard->y) - ((height = gData_081974ad[cel]) >> 1), width,
+               HI(shard->y) - ((height = gSpire_ShardHeights[cel]) >> 1), width,
                height);
           BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
           shard->variant += shard->z;

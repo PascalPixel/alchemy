@@ -50,8 +50,8 @@ extern char ResourceId_Data134;
 extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
 extern u16 gBattleEffect_MotePictures[];
-extern const s32 Data_081994a8[4]; // the early drops' drags
-extern u8 gData_02014000[];        // the spray sheet
+extern const s32 gOceanFist_DropGravity[4]; // the early drops' drags
+extern u8 gData_02014000[];                 // the spray sheet
 // The drops' lives: gMapCellBuffer's EffectSteps from their variant on.
 extern s32 Data_02010018[];
 
@@ -237,7 +237,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
             BattleEffectKernels_IntegrateVector2(drop, 62, 0x4000);
           } else {
             BattleEffectKernels_IntegrateVector2(drop, 62,
-                                                 Data_081994a8[i & 3]);
+                                                 gOceanFist_DropGravity[i & 3]);
           }
           drop->variant++;
           if (drop->velocityY > 0 && (drop->y >> 16) > 104) {

@@ -407,20 +407,21 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
 #define FIGURE_BODY 0             // 96x83
 #define FIGURE_ARM_LOWERED 0x1f20 // 42x35
 #define FIGURE_ARM_RAISED 0x24de  // 48x51
-#define FIGURE_SWING 0x2e6e       // four cels, Data_081993d0 to d8
-#define FIGURE_FIST 0x4e9d        // 32x29, then eight cels in Data_081993e0..f0
+#define FIGURE_SWING 0x2e6e       // four pictures, gHeartbreak_SwingPictures
+#define FIGURE_FIST                                                            \
+  0x4e9d // 32x29, then eight pictures, gHeartbreak_FistPictures
 
 extern char ResourceId_Data0DC;
 
 // The swing's cels: widths, heights and offsets; the fist's: heights,
 // y offsets and offsets.
 // Plain externs: const changes the code that reads them.
-extern u8 gData_081993d0[];
-extern u8 gData_081993d4[];
-extern u16 gData_081993d8[];
-extern u8 gData_081993e0[];
-extern u8 gData_081993e8[];
-extern u16 gData_081993f0[];
+extern u8 gHeartbreak_SwingWidths[];
+extern u8 gHeartbreak_SwingHeights[];
+extern u16 gHeartbreak_SwingPictures[];
+extern u8 gHeartbreak_FistHeights[];
+extern u8 gHeartbreak_FistY[];
+extern u16 gHeartbreak_FistPictures[];
 
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 
@@ -524,15 +525,19 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
 
       if (effect->side == 0) {
         draw[effect->side](
-            canvas, Ram_MapCellBuffer + FIGURE_SWING + gData_081993d8[cel],
-            46 - gData_081993d0[cel] / 2, y - gData_081993d4[cel] / 2 + 61,
-            gData_081993d0[cel], gData_081993d4[cel]);
+            canvas,
+            Ram_MapCellBuffer + FIGURE_SWING + gHeartbreak_SwingPictures[cel],
+            46 - gHeartbreak_SwingWidths[cel] / 2,
+            y - gHeartbreak_SwingHeights[cel] / 2 + 61,
+            gHeartbreak_SwingWidths[cel], gHeartbreak_SwingHeights[cel]);
       } else {
         draw[effect->side](
-            canvas, Ram_MapCellBuffer + FIGURE_SWING + gData_081993d8[cel],
-            gData_081993d0[cel] / 2 - gData_081993d0[cel] + 82,
-            y - gData_081993d4[cel] / 2 + 61, gData_081993d0[cel],
-            gData_081993d4[cel]);
+            canvas,
+            Ram_MapCellBuffer + FIGURE_SWING + gHeartbreak_SwingPictures[cel],
+            gHeartbreak_SwingWidths[cel] / 2 - gHeartbreak_SwingWidths[cel] +
+                82,
+            y - gHeartbreak_SwingHeights[cel] / 2 + 61,
+            gHeartbreak_SwingWidths[cel], gHeartbreak_SwingHeights[cel]);
       }
     }
 
@@ -552,13 +557,17 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
           cel = 0;
         if (cel <= 7) {
           if (effect->side == 0)
-            draw[effect->side](
-                canvas, Ram_MapCellBuffer + FIGURE_FIST + gData_081993f0[cel],
-                63, y + gData_081993e8[cel] - 8, 32, gData_081993e0[cel]);
+            draw[effect->side](canvas,
+                               Ram_MapCellBuffer + FIGURE_FIST +
+                                   gHeartbreak_FistPictures[cel],
+                               63, y + gHeartbreak_FistY[cel] - 8, 32,
+                               gHeartbreak_FistHeights[cel]);
           else
-            draw[effect->side](
-                canvas, Ram_MapCellBuffer + FIGURE_FIST + gData_081993f0[cel],
-                33, y + gData_081993e8[cel] - 8, 32, gData_081993e0[cel]);
+            draw[effect->side](canvas,
+                               Ram_MapCellBuffer + FIGURE_FIST +
+                                   gHeartbreak_FistPictures[cel],
+                               33, y + gHeartbreak_FistY[cel] - 8, 32,
+                               gHeartbreak_FistHeights[cel]);
         }
       }
     }

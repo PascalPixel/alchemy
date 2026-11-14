@@ -80,7 +80,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   for (i = 0; i != 56; i++) {
     step = &work->particles[8 + i];
     SET_POSITION(step, object->x, 0, object->z);
-    if (i >= Data_08199d5c[effect->variant]) {
+    if (i >= gDragonCloud_SparkCounts[effect->variant]) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 12;
     } else {
@@ -301,7 +301,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           if (position.depth > 799)
             position.depth = 799;
           size = 9 - (position.depth - 160) / 64;
-          if (i >= Data_08199d5c[effect->variant]) {
+          if (i >= gDragonCloud_SparkCounts[effect->variant]) {
             s32 cell;
 
             if (effect->variant == 0)

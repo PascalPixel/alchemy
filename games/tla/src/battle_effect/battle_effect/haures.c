@@ -94,17 +94,17 @@ extern u16 gBattleEffect_PuffArcPictures[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 extern const u8 gBattleEffect_SquareMesh32Reversed[];
-extern const u8 Data_081992f8[];
+extern const u8 gHaures_BandMesh[];
 extern const u8 gBattleEffect_SquareMesh64[];
 extern const u8 gBattleEffect_SquareMesh128[];
-extern const u8 Data_08199388[];
-extern const struct HalfPair Data_08199a12[];
-extern const u8 Data_08199a3e[];
-extern s32 Data_08199a44[];
-extern const u8 Data_08199a4c[];
-extern u8 Data_08199bec[];
-extern const u8 Data_08199bf9[];
-extern const u8 Data_08199d2f[];
+extern const u8 gHaures_BurstMesh[];
+extern const struct HalfPair gHaures_FeatherPoints[];
+extern const u8 gHaures_ParticleX[];
+extern s32 gHaures_UnitScale[];
+extern const u8 gHaures_WingShapes[];
+extern u8 gHaures_WingMorphSteps[];
+extern const u8 gHaures_PartPoints[];
+extern const u8 gHaures_BandStarts[];
 
 // Resource ids, named after their places in the resource directory.
 extern char ResourceId_Data0F7;
@@ -333,7 +333,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             q[1] = 1;
           }
         }
-        q2 = Data_08199a3e;
+        q2 = gHaures_ParticleX;
         {
           struct EffectStep *p = work->particles;
 
@@ -414,8 +414,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                 if (p->variant == 0) {
                   place[0] = p->x;
                   place[2] = p->y;
-                  Render_ApplyProjectedPlacementFar(work->objects[16 + (i & 1)],
-                                                    place, Data_08199a44, 0);
+                  Render_ApplyProjectedPlacementFar(
+                      work->objects[16 + (i & 1)], place, gHaures_UnitScale, 0);
                   BattleEffectKernels_IntegrateVector2(p, 63, 0x2000);
                   if (HALF_HI(p->y) > 119) {
                     p->variant = 1;
@@ -425,8 +425,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                   place[2] = p->y;
                   Animation_ApplyChildArgumentFar(work->objects[12 + (i & 1)],
                                                   (p->variant / 6) & 3);
-                  Render_ApplyProjectedPlacementFar(work->objects[12 + (i & 1)],
-                                                    place, Data_08199a44, 0);
+                  Render_ApplyProjectedPlacementFar(
+                      work->objects[12 + (i & 1)], place, gHaures_UnitScale, 0);
                   p->variant++;
                 }
               }
@@ -498,15 +498,16 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             b = next % 13;
             n = morphStep;
             morphStep = n + 1;
-            if (morphStep == Data_08199bec[a]) {
+            if (morphStep == gHaures_WingMorphSteps[a]) {
               morphStep = 0;
               morph = next;
             }
             for (i = 0; i != 32; i++) {
-              wing[i].y = -(
-                  Data_08199a4c[i + a * 32] +
-                  n * (Data_08199a4c[i + b * 32] - Data_08199a4c[i + a * 32]) /
-                      Data_08199bec[a]);
+              wing[i].y = -(gHaures_WingShapes[i + a * 32] +
+                            n *
+                                (gHaures_WingShapes[i + b * 32] -
+                                 gHaures_WingShapes[i + a * 32]) /
+                                gHaures_WingMorphSteps[a]);
             }
             for (i = 0; i != 32; i++) {
               Data_020104f0[i].x = i * 4 - 64;
@@ -660,7 +661,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             texture2.logWidth = 6;
             texture2.logHeight = 7;
             texture2.pixels = buffer;
-            model->mesh = Data_08199388;
+            model->mesh = gHaures_BurstMesh;
             Transform_Reset();
             SceneTransform_ApplyPosition3(0, -0x40000, 0);
             SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, Q16_ONE * 2);
@@ -693,7 +694,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           }
           Sprite_DestroyFar(work->objects[18]);
           BattleEffect_SpawnObjects(11, 0x293, 2);
-          q = Data_08199bf9;
+          q = gHaures_PartPoints;
           {
             struct EffectStep *p = work->particles;
 
@@ -733,8 +734,9 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               velocity.a; // velocity.a, not velocity.b, as the ROM has it
         }
         for (i = 0; i != 11; i++) {
-          place2[0] = (Data_08199a12[i].x << 16) + position.a;
-          place2[1] = 0x1100000 - ((Data_08199a12[i].y << 16) + position.b);
+          place2[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
+          place2[1] =
+              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
           place2[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->objects[i], place2,
                                             (s32 *)&req3, 0);
@@ -752,10 +754,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               s8 *dst = (s8 *)cells + j * 16 + i * 4;
 
               dst[2] = none;
-              dst[0] =
-                  Data_08199bf9[j * 10 + i * 2 + 2] - Data_08199bf9[j * 10];
-              dst[1] =
-                  Data_08199bf9[j * 10 + i * 2 + 3] - Data_08199bf9[j * 10 + 1];
+              dst[0] = gHaures_PartPoints[j * 10 + i * 2 + 2] -
+                       gHaures_PartPoints[j * 10];
+              dst[1] = gHaures_PartPoints[j * 10 + i * 2 + 3] -
+                       gHaures_PartPoints[j * 10 + 1];
             }
             mesh[j * 12 + 1] = 1;
             mesh[j * 12 + 2] = 2;
@@ -950,16 +952,18 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if ((u32)t <= 19) {
         req2.a = -0x10001;
         for (i = 0; i != 11; i++) {
-          place2[0] = position.a - (Data_08199a12[i].x << 16);
-          place2[1] = 0x1100000 - ((Data_08199a12[i].y << 16) + position.b);
+          place2[0] = position.a - (gHaures_FeatherPoints[i].x << 16);
+          place2[1] =
+              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
           place2[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->objects[i], place2,
                                             (s32 *)&req2, 0);
         }
       } else {
         for (i = 0; i != 11; i++) {
-          place2[0] = (Data_08199a12[i].x << 16) + position.a;
-          place2[1] = 0x1100000 - ((Data_08199a12[i].y << 16) + position.b);
+          place2[0] = (gHaures_FeatherPoints[i].x << 16) + position.a;
+          place2[1] =
+              0x1100000 - ((gHaures_FeatherPoints[i].y << 16) + position.b);
           place2[2] = 0x1000000;
           Render_ApplyProjectedPlacementFar(work->objects[i], place2,
                                             (s32 *)&req2, 0);
@@ -1017,12 +1021,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     model->texture = &texture4;
     texture4.logWidth = 6;
     texture4.logHeight = 5;
-    model->mesh = Data_081992f8;
+    model->mesh = gHaures_BandMesh;
     model->vertices = verts;
     texture4.pixels = work->sheet;
     model->scrollU = (frame * 8) & 127;
     for (i = 0; i != 2; i++) {
-      s32 start = Data_08199d2f[i];
+      s32 start = gHaures_BandStarts[i];
 
       if (frame >= start && frame < start + 16) {
         s32 amp = Trig_Sin((frame - start) << 11) / 8;
@@ -1048,7 +1052,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
     texture4.logWidth = 6;
     texture4.logHeight = 5;
-    model->mesh = Data_081992f8;
+    model->mesh = gHaures_BandMesh;
     model->kind = 7;
     if ((u32)(frame - 56) <= 31) {
       s32 sh = 0;

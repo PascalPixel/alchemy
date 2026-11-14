@@ -66,20 +66,20 @@ void Transform_Pop(void);
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
 extern u8 gMapCellBuffer[];
-extern const u8 Data_0819928c[];               // the sword's mesh
+extern const u8 gHeavyBlow_SwordMesh[];        // the sword's mesh
 extern const u8 gBattleEffect_BeamCorners[];   // its corners
 extern const u8 gBattleEffect_SquareMesh64[];  // the axe's mesh
 extern const u8 gBattleEffect_SquareCorners[]; // its corners
-extern u8 Data_08198b96[];                     // per mode: the strike's frame
-extern u8 Data_08198b98[];                     // per mode: the chips
-extern const u8 Data_08198b9a[];               // a chip's two pixels
+extern u8 gHeavyBlow_StrikeFrames[];           // per mode: the strike's frame
+extern u8 gHeavyBlow_ChipCounts[];             // per mode: the chips
+extern const u8 gHeavyBlow_ChipPixels[];       // a chip's two pixels
 
 // The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
 // a great sword (with four fading after-images, each a dimmer copy of the
 // sheet) swings down from over the caster, striking at frame
-// Data_08198b96[0]. Strong Hit: an axe is thrown, spinning, from the caster
-// to the target. Either way chips of stone fly from the target and bounce
-// on the ground.
+// gHeavyBlow_StrikeFrames[0]. Strong Hit: an axe is thrown, spinning, from the
+// caster to the target. Either way chips of stone fly from the target and
+// bounce on the ground.
 void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -179,7 +179,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
 
       texture.logWidth = 5;
       texture.logHeight = 7;
-      model->mesh = Data_0819928c;
+      model->mesh = gHeavyBlow_SwordMesh;
       if (frame > 59) {
         size = 68 - frame;
       } else {
@@ -268,25 +268,28 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
     Heap_Release(model);
     Heap_Release(vertices);
 
-    if (frame == Data_08198b96[mode]) {
+    if (frame == gHeavyBlow_StrikeFrames[mode]) {
       BattlePlayback_StartFar(144);
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
       work->shakeFrames = 8;
     }
-    if (frame >= Data_08198b96[mode]) {
+    if (frame >= gHeavyBlow_StrikeFrames[mode]) {
       i = 0;
-      if (i != Data_08198b98[mode]) {
+      if (i != gHeavyBlow_ChipCounts[mode]) {
         DrawRectangle blitter = blit[0];
         struct EffectStep *chip = (struct EffectStep *)gMapCellBuffer;
 
         do {
           if (chip->variant >= 0) {
-            blitter(canvas, Data_08198b9a, HI(chip->x), HI(chip->y) - 1, 1, 2);
+            blitter(canvas, gHeavyBlow_ChipPixels, HI(chip->x), HI(chip->y) - 1,
+                    1, 2);
             BattleEffectKernels_IntegrateVector2(chip, 62, 0x1000);
-            blitter(canvas, Data_08198b9a, HI(chip->x), HI(chip->y) - 1, 1, 2);
+            blitter(canvas, gHeavyBlow_ChipPixels, HI(chip->x), HI(chip->y) - 1,
+                    1, 2);
             BattleEffectKernels_IntegrateVector2(chip, 62, 0x1000);
-            blitter(canvas, Data_08198b9a, HI(chip->x), HI(chip->y) - 1, 1, 2);
+            blitter(canvas, gHeavyBlow_ChipPixels, HI(chip->x), HI(chip->y) - 1,
+                    1, 2);
             BattleEffectKernels_IntegrateVector2(chip, 62, 0x1000);
             if (HI(chip->y) > 104) {
               chip->velocityY = -chip->velocityY;
@@ -296,7 +299,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
           }
           i++;
           chip++;
-        } while (i != Data_08198b98[mode]);
+        } while (i != gHeavyBlow_ChipCounts[mode]);
       }
     }
     if (mode == 0) {
@@ -326,14 +329,14 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_BlueFlameSheet;
 
 // The columns, by number: x, start frame, full height and lean.
-extern s16 Data_08198b9c[];
-extern u8 Data_08198bb0[];
-extern u8 Data_08198bba[];
-extern u8 Data_08198bc4[];
+extern s16 gCool_ColumnX[];
+extern u8 gCool_ColumnStarts[];
+extern u8 gCool_ColumnHeights[];
+extern u8 gCool_ColumnLeans[];
 // The Broken Seal's gEruption_PuffPictures and gCybele_EmberSizes:
 // the spark pictures by stage.
-extern u16 Data_08198bce[];
-extern u16 Data_08198bdc[];
+extern u16 gCool_SparkPictures[];
+extern u16 gCool_SparkSizes[];
 
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags,
@@ -424,8 +427,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
         draw[1] = *(DrawRectangle *)&Ram_HeapSlots->unkb8[1];
 
         for (i = 0; i != effect->variant * 3 + 4; i++) {
-          s32 age = frame - Data_08198bb0[i];
-          s32 x = Data_08198b9c[i];
+          s32 age = frame - gCool_ColumnStarts[i];
+          s32 x = gCool_ColumnX[i];
           s32 scale;
           s32 height;
 
@@ -441,9 +444,9 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 
           // The slim columns stand a little over half as high.
           scale = 60;
-          if (Data_08198bc4[i] > LEAN_RIGHT)
+          if (gCool_ColumnLeans[i] > LEAN_RIGHT)
             scale = 35;
-          scale = Data_08198bba[i] * scale / 64;
+          scale = gCool_ColumnHeights[i] * scale / 64;
           if (frame < sinkFrame)
             height = age * 10;
           else
@@ -451,7 +454,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
           if (height > scale)
             height = scale;
 
-          switch (Data_08198bc4[i]) {
+          switch (gCool_ColumnLeans[i]) {
           case LEAN_LEFT:
             x -= height / 2;
             break;
@@ -465,12 +468,13 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
             x += height / 4;
             break;
           }
-          if (Data_08198bc4[i] <= LEAN_RIGHT)
-            draw[Data_08198bc4[i] & 1](canvas, work->sheet, x - 18,
-                                       112 - height, 36, height);
+          if (gCool_ColumnLeans[i] <= LEAN_RIGHT)
+            draw[gCool_ColumnLeans[i] & 1](canvas, work->sheet, x - 18,
+                                           112 - height, 36, height);
           else
-            draw[Data_08198bc4[i] & 1](canvas, work->sheet + SLIM_COLUMN_OFFSET,
-                                       x - 9, 108 - height, 17, height);
+            draw[gCool_ColumnLeans[i] & 1](canvas,
+                                           work->sheet + SLIM_COLUMN_OFFSET,
+                                           x - 9, 108 - height, 17, height);
         }
         HeapSlot_Release(104);
         HeapSlot_Release(188);
@@ -493,8 +497,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 
             if (cell > 6)
               cell = 6;
-            src = work->sheet + Data_08198bce[cell] + SPARK_OFFSET;
-            size = Data_08198bdc[cell];
+            src = work->sheet + gCool_SparkPictures[cell] + SPARK_OFFSET;
+            size = gCool_SparkSizes[cell];
             draw[0](canvas, src, x - size / 2, y - size / 2, size, size);
             spark->variant++;
             BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
@@ -526,7 +530,7 @@ extern char ResourceId_Data0D8;
 
 extern u8 gData_02014000[];
 extern u16 gBattleEffect_MotePictures[];
-extern const s8 Data_08198bea[]; // the drops' bounce speeds
+extern const s8 gWyrdCurse_DropBounces[]; // the drops' bounce speeds
 extern const u8
     gBattleEffect_SquareMesh32Reversed[]; // the glow's and the splashes' mesh
 extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
@@ -682,7 +686,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
             // DEAD: overwritten by the next store; the random number is still
             // drawn.
             drop->velocityX = ((Random16() & 31) - 16) << 12;
-            drop->velocityX = Data_08198bea[i % 4] << 13;
+            drop->velocityX = gWyrdCurse_DropBounces[i % 4] << 13;
             drop->velocityY = 0;
           }
         }

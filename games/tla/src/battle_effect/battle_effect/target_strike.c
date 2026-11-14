@@ -130,7 +130,7 @@ struct Model;
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
 
-#define RECORD(mode, field) Data_0819754f[(mode)][(field)]
+#define RECORD(mode, field) gTargetStrike_Styles[(mode)][(field)]
 #define RECORD_KIND 0    // 0: strikes across the target, 1: columns on it
 #define RECORD_COUNT 1   // strikes or columns
 #define RECORD_FLAGS 2   // the parts drawn (FLAG_*)

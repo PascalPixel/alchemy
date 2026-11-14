@@ -67,12 +67,12 @@ struct FxPartyList;
 
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
-extern char ResourceId_Data134;             // ☀️ ParticleSpritesA
-extern u8 gCastingImpact_IceChipPictures[]; // the pillars' feet, x and y
+extern char ResourceId_Data134;  // ☀️ ParticleSpritesA
+extern u8 gNereidCopy_Columns[]; // the pillars' feet, x and y
 // ☀️ gBattleEffect_MotePictures: the Data134 sheet's spark cells, by size - 1
 // (byte offsets).
 extern u16 gBattleEffect_MotePictures[];
-extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
+extern const s32 gNereidCopy_Gravity[]; // ☀️ gNereid_Gravity
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -234,12 +234,11 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
 
           draw[0](canvas, work->sheet + PILLAR_SHEET,
-                  gCastingImpact_IceChipPictures[k * 2] - 17,
-                  gCastingImpact_IceChipPictures[k * 2 + 1] - span - 104, 34,
-                  104);
+                  gNereidCopy_Columns[k * 2] - 17,
+                  gNereidCopy_Columns[k * 2 + 1] - span - 104, 34, 104);
           draw[0](canvas, work->sheet + PILLAR_SHEET,
-                  gCastingImpact_IceChipPictures[k * 2] - 17,
-                  gCastingImpact_IceChipPictures[k * 2 + 1] - span, 34, span);
+                  gNereidCopy_Columns[k * 2] - 17,
+                  gNereidCopy_Columns[k * 2 + 1] - span, 34, span);
         }
       }
 
@@ -277,7 +276,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
           if (frame > SPOUT_END_FRAME)
             ember->velocityY += -(px(1) / 2);
           else
-            ember->velocityY += gData_08198974[k & 3];
+            ember->velocityY += gNereidCopy_Gravity[k & 3];
           ember->velocityX = ember->velocityX * 62 / 64;
           ember->velocityY = ember->velocityY * 62 / 64;
           ember->variant++;
@@ -330,12 +329,12 @@ extern const u8 gHelmSplitter_TwelveX[];
 extern const u8 gHelmSplitter_TwelveZ[];
 extern const u8 gHelmSplitter_RightEightX[];
 extern const u8 gHelmSplitter_RightEightZ[];
-extern const u8 gData_081989ac[];
-extern const u8 gData_081989b4[];
+extern const u8 gFormationObjects_X[];
+extern const u8 gFormationObjects_Z[];
 extern const u8 gHelmSplitter_SmallEightX[];
 extern const u8 gHelmSplitter_SmallEightZ[];
-extern const s8 gData_081989cc[];
-extern const u8 gData_081989d7[];
+extern const s8 gFormationObjects_WideX[];
+extern const u8 gFormationObjects_WideZ[];
 
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
@@ -386,8 +385,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 6:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gData_081989ac[i] << 16) + x;
-      pos[2] = (gData_081989b4[i] << 16) + z;
+      pos[0] = (gFormationObjects_X[i] << 16) + x;
+      pos[2] = (gFormationObjects_Z[i] << 16) + z;
       Render_ApplyProjectedPlacementFar(work->objects[i], pos, &normal.x, 0);
     }
     break;
@@ -400,8 +399,8 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 4:
     for (i = 0; i != 11; i++) {
-      pos[0] = (gData_081989cc[i] << 16) + x;
-      pos[2] = (gData_081989d7[i] << 16) + z;
+      pos[0] = (gFormationObjects_WideX[i] << 16) + x;
+      pos[2] = (gFormationObjects_WideZ[i] << 16) + z;
       Render_ApplyProjectedPlacementFar(work->objects[i], pos, &normal.x, 0);
     }
     break;
@@ -732,7 +731,7 @@ extern char ResourceId_BlastSheet;
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_FireballPoints[][2];
 extern u16 gParticleStreams_FlashPictures[]; // ☀️ gParticleStreams_FlashCells
-extern u16 Data_08198a56[];                  // ☀️ gParticleStreams_FlashSizes
+extern u16 gParticleStreams_FlashSizes[];    // ☀️ gParticleStreams_FlashSizes
 
 void BattleEffect_ConfigureEffectDisplay(void);
 
@@ -1278,9 +1277,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
           s32 cell = flash->variant / 2;
 
           draw(canvas, work->sheet + gParticleStreams_FlashPictures[cell],
-               point.x - Data_08198a56[cell] / 2,
-               point.y - Data_08198a56[cell] / 2, Data_08198a56[cell],
-               Data_08198a56[cell]);
+               point.x - gParticleStreams_FlashSizes[cell] / 2,
+               point.y - gParticleStreams_FlashSizes[cell] / 2,
+               gParticleStreams_FlashSizes[cell],
+               gParticleStreams_FlashSizes[cell]);
         }
         flash->variant++;
         if (flash->variant == 14) {

@@ -52,7 +52,7 @@ extern const u8 gBattleEffect_SquareMesh128[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 
 // The three bites' frames: 0, 12 and 24.
-extern u8 gData_08199d94[];
+extern u8 gTripleChomp_BiteFrames[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gBattleEffect_MotePictures[];
@@ -149,7 +149,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     for (i = 0; i != 3; i++) {
       // The bite closes: 32 sparks fly from the target's middle, and the
       // target jolts and flashes. The last bite ends the action.
-      if (frame == gData_08199d94[i]) {
+      if (frame == gTripleChomp_BiteFrames[i]) {
         for (j = 0; j != 32; j++) {
           struct EffectStep *spark = &SPARKS[i * 128 + j];
           s32 angle;
@@ -180,8 +180,9 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
       }
 
       // For 16 frames the jaw grows from a quarter of its size and fades.
-      if (frame >= gData_08199d94[i] && frame < gData_08199d94[i] + 16) {
-        s32 age = frame - gData_08199d94[i];
+      if (frame >= gTripleChomp_BiteFrames[i] &&
+          frame < gTripleChomp_BiteFrames[i] + 16) {
+        s32 age = frame - gTripleChomp_BiteFrames[i];
         s32 alpha = 64 - age * 8;
         s32 scale = age * 10192 + Q16_ONE / 4;
 

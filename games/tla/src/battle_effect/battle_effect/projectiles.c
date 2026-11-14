@@ -493,11 +493,11 @@ extern char ResourceId_IceChipSheet;
 
 // The Broken Seal's gVolley_* tables, in effect_table.s.
 extern u8 gProjectileVolley_CometHeights[]; // _CometHeights, by kind
-extern u8 Data_08198478[][5];               // _Modes: five bytes for each mode
+extern u8 gProjectileVolley_Modes[][5];     // _Modes: five bytes for each mode
 extern u8 gProjectileVolley_FlashWidths[];  // _FlashWidths
 extern u8 gProjectileVolley_FlashHeights[]; // _FlashHeights
 extern u8 gProjectileVolley_FlashSteps[];   // _FlashSteps
-extern u8 Data_081984ec[];                  // _FlashRises
+extern u8 gProjectileVolley_FlashRises[];   // _FlashRises
 extern u16 gProjectileVolley_FlashPictures[];  // _FlashOffsets
 extern u16 gProjectileVolley_PelletPictures[]; // _PelletOffsets
 extern u8 gProjectileVolley_GlintFlips[];      // the glints' palettes
@@ -506,11 +506,11 @@ extern u8 gProjectileVolley_GlintFlips[];      // the glints' palettes
 extern u16 gBattleEffect_GlintPictures[];
 extern u8 gBattleEffect_GlintPictureWidths[];
 extern u8 gBattleEffect_GlintPictureHeights[];
-extern s32 gData_08197834[];
+extern s32 gPrism_ShardPictures[];
 extern u8 gPrism_ShardWidths[];
-extern u8 gData_08197826[];
+extern u8 gPrism_ShardHeights[];
 
-// The five bytes of a mode in Data_08198478.
+// The five bytes of a mode in gProjectileVolley_Modes.
 #define VOLLEY_SHOTS 0   // shots at each target
 #define VOLLEY_STEPS 1   // frames a shot takes to reach its target
 #define VOLLEY_STAGGER 2 // frames between shots
@@ -715,11 +715,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
   // Where each shot starts and how fast it flies.
   user = BattleObject_GetFar(effect->actor)->object;
-  shots = Data_08198478[mode][VOLLEY_SHOTS];
-  steps = Data_08198478[mode][VOLLEY_STEPS];
+  shots = gProjectileVolley_Modes[mode][VOLLEY_SHOTS];
+  steps = gProjectileVolley_Modes[mode][VOLLEY_STEPS];
   {
-    s32 stagger = Data_08198478[mode][VOLLEY_STAGGER];
-    s32 delay = Data_08198478[mode][VOLLEY_DELAY];
+    s32 stagger = gProjectileVolley_Modes[mode][VOLLEY_STAGGER];
+    s32 delay = gProjectileVolley_Modes[mode][VOLLEY_DELAY];
     s32 height = BattleUnit_GetEffectHeightFar(effect->actor);
 
     if (shots * effect->count > 63) // the shots must fit particles[64]
@@ -1001,7 +1001,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                     p->velocityY = ((Random16() & 255) - 128) << shift;
                     p->variant = (Random16() & 7) + 16;
                     spawned++;
-                    if (spawned == Data_08198478[mode][VOLLEY_SPARKS])
+                    if (spawned == gProjectileVolley_Modes[mode][VOLLEY_SPARKS])
                       break;
                   }
                 }
@@ -1054,13 +1054,13 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             s32 cel = (i * shots + j) % 5 * 3 + frame / 4 % 3;
             u32 width;
             u32 height;
-            u8 *picture = work->sheet + gData_08197834[cel] + 0x800;
+            u8 *picture = work->sheet + gPrism_ShardPictures[cel] + 0x800;
             s32 left;
             s32 top;
 
             width = gPrism_ShardWidths[cel];
             left = pos->x - (width >> 1);
-            height = gData_08197826[cel];
+            height = gPrism_ShardHeights[cel];
             top = pos->y - (height >> 1);
             draw[0](canvas, picture, left, top, width, height);
           } else if (mode == 11) {
@@ -1086,7 +1086,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               DRAW_ALTERNATE(
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x - gProjectileVolley_FlashWidths[step],
-                  flash->y - Data_081984ec[step],
+                  flash->y - gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
               /* FAKEMATCH(dead): an empty once-only block before the release.
@@ -1100,7 +1100,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                   canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x,
                   flash->y + gProjectileVolley_FlashSteps[step] -
-                      Data_081984ec[step],
+                      gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
                   gProjectileVolley_FlashHeights[step]);
               RELEASE_DRAW_BLITTER();
@@ -1119,7 +1119,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 do {
                   picture = work->sheet + offset + 0x128a;
                   left = flash->x;
-                  rise = Data_081984ec[step];
+                  rise = gProjectileVolley_FlashRises[step];
                 } while (0);
                 width = gProjectileVolley_FlashWidths[step];
                 DRAW_ALTERNATE(canvas, picture, left - rise, flash->y - width,
@@ -1134,7 +1134,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              work->sheet +
                                  gProjectileVolley_FlashPictures[step] + 0x128a,
                              flash->x + gProjectileVolley_FlashSteps[step] -
-                                 Data_081984ec[step],
+                                 gProjectileVolley_FlashRises[step],
                              flash->y, gProjectileVolley_FlashHeights[step],
                              gProjectileVolley_FlashWidths[step]);
               RELEASE_DRAW_BLITTER();

@@ -232,9 +232,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet;
-      model->mesh = Data_081992b0;
+      model->mesh = gBattleEffect_TallMesh32;
       for (i = 0; i != 8; i++) {
-        s32 start = Data_08199eb4[i];
+        s32 start = gLiquifier_SplashStarts[i];
 
         if (frame >= start && frame < start + 16) {
           s32 age;
@@ -246,10 +246,11 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3((from.x - 128) << 16,
                                         (from.y - 74) << 16, 0);
           Transform_ApplyRoll((i << 12) - 0x3800);
-          SceneTransform_ApplyScale3(
-              0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2,
-              TRIG_TURN / 2);
-          Render_TransformVertices(Data_08199ea4, projected, 4);
+          SceneTransform_ApplyScale3(0x5555,
+                                     Trig_Sin(age << 11) *
+                                         gLiquifier_SplashHeights[i] / 64 * 2,
+                                     TRIG_TURN / 2);
+          Render_TransformVertices(gLiquifier_SplashCorners, projected, 4);
           Render_DrawModelList(model);
         }
       }
@@ -665,7 +666,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
           if ((u32)flame->variant <= 17)
             draw[0](canvas,
                     work->sheet + 0x800 +
-                        (Data_08199ec5[flame->variant / 3] << 11),
+                        (gCanvasBurst_FlamePictures[flame->variant / 3] << 11),
                     x - 16, y - 32, 32, 64);
           if (flame->variant > 0)
             flame->variant = flame->variant - 1;

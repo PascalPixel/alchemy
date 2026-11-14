@@ -87,9 +87,9 @@ extern char ResourceId_FlashBurstSheet;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
-extern const u8
-    Data_08198c14[]; // each mode's flags for BattleEffect_RunDjinniEntrance
-extern const s32 Data_08198c18[4]; // the debris's gravities
+extern const u8 gDjinniCharge_EntranceFlags[]; // each mode's flags for
+                                               // BattleEffect_RunDjinniEntrance
+extern const s32 gDjinniCharge_DebrisGravity[4]; // the debris's gravities
 extern u16 gBattleEffect_MotePictures[];
 
 // The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
@@ -128,7 +128,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
-      effect, (effect->side << 4) | (Data_08198c14[mode] << 5) | 2,
+      effect,
+      (effect->side << 4) | (gDjinniCharge_EntranceFlags[mode] << 5) | 2,
       (s32 *)&screen, focus);
   {
     s32 *target;
@@ -365,8 +366,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         size += 2;
         blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 debris.x / 2 - size / 2, debris.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(&work->particles[i], 62,
-                                             Data_08198c18[i & 3]);
+        BattleEffectKernels_IntegrateVector3(
+            &work->particles[i], 62, gDjinniCharge_DebrisGravity[i & 3]);
         if (work->particles[i].y < 0) {
           work->particles[i].velocityY = -work->particles[i].velocityY / 2;
         }

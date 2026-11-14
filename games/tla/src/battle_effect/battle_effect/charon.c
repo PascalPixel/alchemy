@@ -193,7 +193,7 @@ extern const struct ScalePair gCharon_PulseScale;
 extern const struct ScalePair gCharon_RevealScale;
 extern const struct ScalePair gCharon_FinaleScale;
 extern u16 gBattleEffect_MotePictures[];
-extern u8 gData_08198c67[];
+extern u8 gCharon_FlashFrames[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 extern const u8 gBattleEffect_SquareMesh64[];
 extern const u8 gBattleEffect_SquareMesh128[];
@@ -1562,10 +1562,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     if (frame < 120) {
       for (i = 0; i != 3; i++) {
-        if (frame == gData_08198c67[i]) {
+        if (frame == gCharon_FlashFrames[i]) {
           Iwram_FillWords(PLTT + 0x60, 0x100, 0x7fff7fff);
         }
-        if (frame >= gData_08198c67[i] + 1 && frame < gData_08198c67[i] + 16) {
+        if (frame >= gCharon_FlashFrames[i] + 1 &&
+            frame < gCharon_FlashFrames[i] + 16) {
           u16 *target = SYSTEM_WORK->scene->palette;
           u16 *color = PLTT + 0x60;
 

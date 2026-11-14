@@ -68,18 +68,18 @@ extern char ResourceId_DustCloudSheet;
 
 // Each breath's length, the frame its burst starts, and the glow's widest
 // size by variant.
-extern u8 Data_08199d97[];
-extern u8 Data_08199d9b[];
-extern u8 Data_08199d9f[];
+extern u8 gBreaths_Frames[];
+extern u8 gBreaths_BurstFrames[];
+extern u8 gBreaths_MaxSizes[];
 
 // The four jaws of variant 2, by breath: their start frames, their growth,
 // and their x offsets from the mouth.
-extern u8 Data_08199da3[];
-extern u8 Data_08199daf[];
-extern s8 Data_08199dbb[];
+extern u8 gBreaths_RingStarts[];
+extern u8 gBreaths_RingGrowth[];
+extern s8 gBreaths_RingX[];
 
 // The frame each breath hits the targets.
-extern u8 Data_08199dc7[];
+extern u8 gBreaths_FlashFrames[];
 
 // The quad and jaw meshes and corners.
 extern const u8 gBattleEffect_SquareMesh128[];
@@ -224,7 +224,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
   }
   EffectPosition_ProjectBattler(effect->actors[0], &target);
 
-  for (frame = 0; frame != Data_08199d97[mode]; frame++) {
+  for (frame = 0; frame != gBreaths_Frames[mode]; frame++) {
     // Frame 0: 32 motes wait around the mouth, each a frame later; the
     // rolling ball sets out from the mouth toward the target.
     if (frame == 0) {
@@ -258,10 +258,10 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         s32 size = frame - 16;
 
         if (frame > 63)
-          size = Data_08199d9f[effect->variant] - frame + 64;
+          size = gBreaths_MaxSizes[effect->variant] - frame + 64;
         size = size / 2 * 2;
-        if (size > Data_08199d9f[effect->variant])
-          size = Data_08199d9f[effect->variant];
+        if (size > gBreaths_MaxSizes[effect->variant])
+          size = gBreaths_MaxSizes[effect->variant];
         if (size > 0) {
           BattleEffect_DrawShadedCirclesMirrored(work->sheet + 0x4000, size,
                                                  0x10000);
@@ -285,9 +285,9 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 mouthY - size, size, half * 4);
       }
 
-      if (frame >= Data_08199d9b[mode]) {
+      if (frame >= gBreaths_BurstFrames[mode]) {
         // The burst: the motes fly out of the mouth, away from the targets.
-        if (frame == Data_08199d9b[mode]) {
+        if (frame == gBreaths_BurstFrames[mode]) {
           for (i = 0; i != 32; i++) {
             step = &work->particles[32 + i];
             step->x = mouthX << 16;
@@ -358,7 +358,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
             }
           }
         }
-      } else if (mode == BREATH_ROLLING_FLAME && frame >= Data_08199d9b[mode]) {
+      } else if (mode == BREATH_ROLLING_FLAME &&
+                 frame >= gBreaths_BurstFrames[mode]) {
         // The ball of dust rolls to the target.
         step = &work->particles[0];
         draw[0](canvas, work->sheet, HI(step->x) - 16, HI(step->y) - 24, 32,
@@ -369,7 +370,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         step->variant++;
       }
 
-      if (frame >= Data_08199d9b[mode]) {
+      if (frame >= gBreaths_BurstFrames[mode]) {
         void *vertices;
         struct Model__f18bc98 *model;
 
@@ -387,7 +388,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         // Breath's is two, crossed.
         if (mode != BREATH_ROLLING_FLAME) {
           s32 growth = 10192;
-          s32 age = frame - Data_08199d9b[mode];
+          s32 age = frame - gBreaths_BurstFrames[mode];
           s32 scale = age * growth + Q16_ONE / 2;
           s32 alpha = 128 - age * 8;
 
@@ -435,11 +436,12 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           model->kind = 7;
           model->mesh = gBattleEffect_CylinderMesh;
           for (i = 0; i != 4; i++) {
-            s32 start = Data_08199da3[mode * 4 + i];
+            s32 start = gBreaths_RingStarts[mode * 4 + i];
 
             if (frame > start) {
               s32 scale =
-                  (frame - start) * Data_08199daf[mode * 4 + i] * 1500 + 0x4180;
+                  (frame - start) * gBreaths_RingGrowth[mode * 4 + i] * 1500 +
+                  0x4180;
               s32 alpha = (start - frame) * 8 + 56;
 
               if (alpha > 0)
@@ -451,20 +453,20 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                   scale /= 2;
                   if (effect->side == 0)
                     SceneTransform_ApplyPosition3(
-                        (mouthX + Data_08199dbb[mode * 4 + i] - 48) << 16,
+                        (mouthX + gBreaths_RingX[mode * 4 + i] - 48) << 16,
                         (mouthY - 64) << 16, 0);
                   else
                     SceneTransform_ApplyPosition3(
-                        (mouthX - Data_08199dbb[mode * 4 + i] - 80) << 16,
+                        (mouthX - gBreaths_RingX[mode * 4 + i] - 80) << 16,
                         (mouthY - 64) << 16, 0);
                 } else {
                   if (effect->side == 0)
                     SceneTransform_ApplyPosition3(
-                        (mouthX + Data_08199dbb[mode * 4 + i] - 64) << 16,
+                        (mouthX + gBreaths_RingX[mode * 4 + i] - 64) << 16,
                         (mouthY - 64) << 16, 0);
                   else
                     SceneTransform_ApplyPosition3(
-                        (mouthX - Data_08199dbb[mode * 4 + i] - 64) << 16,
+                        (mouthX - gBreaths_RingX[mode * 4 + i] - 64) << 16,
                         (mouthY - 64) << 16, 0);
                 }
                 SceneTransform_ApplyScale3(scale, scale, scale);
@@ -529,8 +531,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           BattlePlayback_StartFar(134);
         }
         for (i = 0; i != effect->count; i++) {
-          if (frame >= i * 4 + Data_08199d9b[mode] &&
-              frame < Data_08199d97[mode] - 8 && (frame & 3) == i) {
+          if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
+              frame < gBreaths_Frames[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
             // DEAD: never true inside Blast Breath; the source keeps the test.
             if (mode == 6)
@@ -541,7 +543,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                                           0x40000, 0x20000, frame + 100);
           }
         }
-      } else if (frame == Data_08199dc7[mode]) {
+      } else if (frame == gBreaths_FlashFrames[mode]) {
         // The others hit every target at once, and the screen flashes.
         for (i = 0; i != effect->count; i++) {
           BattleMotion_ApplyKnockbackFar(effect->actors[i], 4);

@@ -304,12 +304,12 @@ extern u16 gBattleEffect_PuffArcPictures[];
 extern u8 gBattleEffect_PuffArcPictureWidths[];
 extern u8 gBattleEffect_PuffArcPictureBiasY[];
 extern u8 gBattleEffect_PuffArcPictureHeights[];
-extern const u16 Data_08198686[];
-extern const u8 Data_08198662[];
-extern const u8 Data_08198674[];
-extern const s8 Data_081986aa[];
-extern const u8 Data_08198654[];
-extern const u8 Data_0819865b[];
+extern const u16 gUlysses_Pictures[];
+extern const u8 gUlysses_PictureWidths[];
+extern const u8 gUlysses_PictureHeights[];
+extern const s8 gUlysses_ParticleStarts[];
+extern const u8 gUlysses_ObjectX[];
+extern const u8 gUlysses_ObjectZ[];
 struct PlacementSource {
   s32 unk00;
   s32 unk04;
@@ -492,10 +492,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       s32 k = (frame / 4) % 18;
       s32 x = 60 - ((Trig_Sin(frame * 860) << 3) >> 16);
       s32 y = frame - 8;
-      u8 *source = work->sheet + 0x1781 + Data_08198686[k];
-      u8 w = Data_08198662[k];
+      u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
+      u8 w = gUlysses_PictureWidths[k];
       s32 left = x - (w >> 1);
-      u8 h = Data_08198674[k];
+      u8 h = gUlysses_PictureHeights[k];
 
       blit[1](canvas, source, left, y - (h >> 1), w, h);
     }
@@ -612,7 +612,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                     DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                     DISPCNT_WIN1_ON;
-      src = Data_081986aa;
+      src = gUlysses_ParticleStarts;
       q = (struct EffectStep *)(work->sheet + 0x4b98);
       for (i = 0; i != 6; i++, src += 5) {
         p = &work->particles[i];
@@ -692,12 +692,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
-          u8 *source = work->sheet + 0x1781 + Data_08198686[k];
+          u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
           s32 x = HI(step->x);
-          u8 w = Data_08198662[k];
+          u8 w = gUlysses_PictureWidths[k];
           s32 left = x - (w >> 1);
           s32 y = HI(step->y);
-          u8 h = Data_08198674[k];
+          u8 h = gUlysses_PictureHeights[k];
 
           blit[1](canvas, source, left, y - (h >> 1), w, h);
           t = step->variant;
@@ -867,8 +867,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       if (draw) {
         place[1] = place[3] = 0;
         for (i = 0; i != 7; i++) {
-          place[0] = (Data_08198654[i] << 16) + ship.x - 0x200000;
-          place[2] = (Data_0819865b[i] << 16) + ship.z - 0x200000;
+          place[0] = (gUlysses_ObjectX[i] << 16) + ship.x - 0x200000;
+          place[2] = (gUlysses_ObjectZ[i] << 16) + ship.z - 0x200000;
           Render_ApplyProjectedPlacementFar(work->objects[i], place,
                                             (s32 *)&req, 0);
         }
@@ -1025,7 +1025,7 @@ extern char ResourceId_LimePalette;
 extern const u16 gSpiderWeb_Pictures[];
 extern const u8 gSpiderWeb_PictureX[];
 extern const u8 gSpiderWeb_PictureWidths[];
-extern const s8 gData_081986ec[];
+extern const s8 gSpiderWeb_PictureBiasY[];
 extern const u8 gSpiderWeb_PictureHeights[];
 
 void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
@@ -1090,13 +1090,13 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       if (cel <= 3)
         draw[0](canvas, work->sheet + gSpiderWeb_Pictures[cel],
                 gSpiderWeb_PictureX[cel + effect->side * 6],
-                gData_081986ec[cel] + 32, gSpiderWeb_PictureWidths[cel],
-                gSpiderWeb_PictureHeights[cel]);
+                gSpiderWeb_PictureBiasY[cel] + 32,
+                gSpiderWeb_PictureWidths[cel], gSpiderWeb_PictureHeights[cel]);
       else
         draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Pictures[cel],
                 gSpiderWeb_PictureX[cel + effect->side * 6],
-                gData_081986ec[cel] + 32, gSpiderWeb_PictureWidths[cel],
-                gSpiderWeb_PictureHeights[cel]);
+                gSpiderWeb_PictureBiasY[cel] + 32,
+                gSpiderWeb_PictureWidths[cel], gSpiderWeb_PictureHeights[cel]);
     }
     // The hit.
     if (frame == 8) {

@@ -336,7 +336,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Sound_PlayFar(SE_ENEMY_CRY);
 
-  for (frame = 0; frame != Data_08197864[mode * 2 + 1] + effect->count * 20;
+  for (frame = 0;
+       frame != gGatheringLights_Counts[mode * 2 + 1] + effect->count * 20;
        frame++) {
     s32 *row;
     s32 sway;
@@ -356,8 +357,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
     row = work->bg2xLines;
-    sway = Trig_Sin((frame << 15) /
-                    (Data_08197864[mode * 2 + 1] + effect->count * 20)) *
+    sway = Trig_Sin((frame << 15) / (gGatheringLights_Counts[mode * 2 + 1] +
+                                     effect->count * 20)) *
                16 >>
            16;
     scrollX = gBgScroll[1].x;
@@ -383,7 +384,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
       if (frame == k * 20 + 70)
         BattleEffect_TintBattler(effect->actors[k], 7, 5, k, 26);
       if (frame > k * 20) {
-        for (i = 0; i != Data_08197864[mode * 2]; i++) {
+        for (i = 0; i != gGatheringLights_Counts[mode * 2]; i++) {
           struct EffectStep *mote = &PARTICLES[k * 128 + i];
 
           if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {

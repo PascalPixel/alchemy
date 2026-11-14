@@ -269,8 +269,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
           if ((i & 1) == 0) {
             draw(canvas, work->sheet + gBoreas_SprayPictures[n],
-                 HI(PARTICLES[i].x), HI(PARTICLES[i].y), Data_081982c0[n],
-                 Data_081982c3[n]);
+                 HI(PARTICLES[i].x), HI(PARTICLES[i].y), gBoreas_SprayWidths[n],
+                 gBoreas_SprayHeights[n]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
@@ -384,7 +384,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           s32 n = i % 3;
 
           draw(canvas, work->sheet + gBoreas_FallPictures[n], HI(q->x),
-               y - Data_081982db[n], Data_081982d8[n], Data_081982db[n]);
+               y - gBoreas_FallHeights[n], gBoreas_FallWidths[n],
+               gBoreas_FallHeights[n]);
           BattleEffectKernels_IntegrateVector2(q, 64, px(1));
           if (HI(q->y) > 120 && q->velocityY > px(8)) {
             q->velocityY = -q->velocityY / 4;

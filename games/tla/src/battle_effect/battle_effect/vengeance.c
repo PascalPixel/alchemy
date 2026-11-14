@@ -718,7 +718,7 @@ extern const s8 gGeyser_DropMinSizes[];
 extern u16 gBattleEffect_MotePictures[];
 
 // The geyser: a mesh of sixteen corners and its faces.
-extern const u8 gData_08198c6c[];
+extern const u8 gBattleEffect_OctagonBandCorners[];
 extern const u8 gGeyser_Faces[];
 
 static inline void CopyPalette(const void *palette) {
@@ -924,7 +924,8 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
         column->texture = &texture;
         column->vertices = vertices;
         SceneTransform_ApplyScale3(scale * 2, Q16_ONE * 7, scale * 2);
-        Render_TransformVertices(gData_08198c6c, vertices, 16);
+        Render_TransformVertices(gBattleEffect_OctagonBandCorners, vertices,
+                                 16);
         Render_DrawModelList(column);
         Heap_Release(column);
         Heap_Release(vertices);

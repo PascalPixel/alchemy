@@ -101,13 +101,13 @@ struct FloraWork {
 extern u8 gData_02014000[];
 extern const struct WordPair gFlora_UnitScale;
 extern u16 gBattleEffect_MotePictures[];
-extern const u8 Data_08199421[];
-extern const u16 Data_08199426[];
-extern const u16 Data_0819942e[];
-extern const s16 Data_08199436[];
-extern const s16 Data_0819943e[];
-extern const s8 Data_08199446[];
-extern const s8 Data_0819944a[];
+extern const u8 gFlora_PetalSizes[];
+extern const u16 gFlora_PetalPictures[];
+extern const u16 gFlora_BloomFrames[];
+extern const s16 gFlora_BloomRolls[];
+extern const s16 gFlora_BloomPitches[];
+extern const s8 gFlora_BloomX[];
+extern const s8 gFlora_BloomY[];
 extern const u8 gBattleEffect_GroundSquareCorners[];
 extern const u8 gBattleEffect_SquareMesh128[];
 extern char ResourceId_VioletSkyBackdrop;
@@ -345,9 +345,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 223) <= 29) {
       s32 k = Random16() & 3;
-      s32 n = Data_08199421[k] * 2;
+      s32 n = gFlora_PetalSizes[k] * 2;
 
-      Canvas_BlitAtFoot(source + Data_08199426[k], 44, 78, n);
+      Canvas_BlitAtFoot(source + gFlora_PetalPictures[k], 44, 78, n);
     }
     u = frame - 112;
     if (u <= 31) {
@@ -634,7 +634,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     model->mesh = gBattleEffect_SquareMesh128;
     model->vertices = verts;
     for (i = 0; i != 4; i++) {
-      s32 d = frame - Data_0819942e[i];
+      s32 d = frame - gFlora_BloomFrames[i];
 
       if (d >= 0) {
         s32 scale = d << 13;
@@ -646,11 +646,11 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         model->shade = sh;
         if (sh > -64) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3(Data_08199446[i] << 16,
-                                        Data_0819944a[i] << 16, 0);
+          SceneTransform_ApplyPosition3(gFlora_BloomX[i] << 16,
+                                        gFlora_BloomY[i] << 16, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyRoll(Data_08199436[i]);
-          Transform_ApplyPitch(Data_0819943e[i]);
+          Transform_ApplyRoll(gFlora_BloomRolls[i]);
+          Transform_ApplyPitch(gFlora_BloomPitches[i]);
           SceneTransform_ApplyUniformScale(scale);
           Transform_ApplyYaw(frame << 11);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -990,8 +990,8 @@ extern char ResourceId_CrossedDaggersSheet;
 
 // The dagger quad: its face list and its four corners, 32x80 pixels from
 // (-16, -16) to (16, 64), the point down.
-extern const u8 gData_08199450[];
-extern const u8 gData_08199474[];
+extern const u8 gSabreDance_DaggerMesh[];
+extern const u8 gSabreDance_DaggerCorners[];
 
 // Crossed daggers. The canvas is moved over the target. Eight daggers rise
 // spinning from below it, and the target is struck eight times, six frames
@@ -1072,7 +1072,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     quad->texture = &texture;
     texture.pixels = work->sheet;
     quad->kind = 9;
-    quad->faces = gData_08199450;
+    quad->faces = gSabreDance_DaggerMesh;
     quad->vertices = vertices;
     for (i = 0, dagger = work->particles; i != DAGGER_COUNT; i++, dagger++) {
       // The fall: from 48 pixels above the canvas, fanned out by angle and
@@ -1094,7 +1094,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPosition3(dagger->x - px(64), dagger->y - px(64), 0);
       SceneTransform_ApplyUniformScale(Q16_ONE / 2);
       Transform_ApplyRoll(dagger->z);
-      Render_TransformVertices(gData_08199474, vertices, 4);
+      Render_TransformVertices(gSabreDance_DaggerCorners, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
         BattleEffectKernels_IntegrateVector3(dagger, 64, 0);

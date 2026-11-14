@@ -89,11 +89,11 @@ extern u8 gBattleEffect_GlintPictureHeights[]; // heights
 extern const u8 gBattleEffect_CylinderCorners[];
 extern const u8 gBattleEffect_CylinderMesh[];
 extern const u8 gBattleEffect_ColumnMesh[];
-extern const u8 Data_08199dcb[];  // each ring's start
-extern const u8 Data_08199dd3[];  // growth
-extern const s8 Data_08199ddb[];  // height
-extern const s32 Data_08199de4[]; // each trident's yaw and turn
-extern const u8 Data_08199e24[];
+extern const u8 gTrident_RingStarts[];  // each ring's start
+extern const u8 gTrident_RingGrowth[];  // growth
+extern const s8 gTrident_RingHeights[]; // height
+extern const s32 gTrident_Spins[];      // each trident's yaw and turn
+extern const u8 gTrident_ProngCorners[];
 extern const u8 gTrident_GlintFlips[];
 
 // Abilities: Trident (Poseidon).
@@ -333,13 +333,13 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
 
       // Eight rings of foam.
       for (i = 0; i != 8; i++) {
-        s32 start = Data_08199dcb[i];
+        s32 start = gTrident_RingStarts[i];
         s32 shade;
 
         if (frame <= start) {
           continue;
         }
-        scale = (frame - start) * Data_08199dd3[i] * 1500 + 0x4180;
+        scale = (frame - start) * gTrident_RingGrowth[i] * 1500 + 0x4180;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -350,7 +350,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         model->shade = shade;
         Transform_Reset();
         SceneTransform_ApplyPosition3((centerX - 64) << 16,
-                                      Data_08199ddb[i] << 16, 0);
+                                      gTrident_RingHeights[i] << 16, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
@@ -373,7 +373,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         model->scrollU = 0;
         model->scrollV = 0;
         if (frame == 8) {
-          for (i = 0, t = &work->particles[32], spin = Data_08199de4; i != 8;
+          for (i = 0, t = &work->particles[32], spin = gTrident_Spins; i != 8;
                i++, t++, spin += 2) {
             t->z = spin[0];
             t->velocityZ = spin[1];
@@ -403,7 +403,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           }
           spinner->z += spinner->velocityZ;
           SceneTransform_ApplyScale3(Q16_ONE * 2, 0x12710, Q16_ONE);
-          Render_TransformVertices(Data_08199e24 + x * 16, vertices, 4);
+          Render_TransformVertices(gTrident_ProngCorners + x * 16, vertices, 4);
           Render_DrawModelList(model);
         }
       }
@@ -531,17 +531,17 @@ extern char ResourceId_FlameballSheet;
 extern char ResourceId_ClawSlashSheet;
 
 extern const u8 gBattleEffect_SquareMesh64[];
-extern const u8 gData_081990d0[];
+extern const u8 gBattleEffect_RingMesh[];
 
 extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 gData_08199090[];
+extern const u8 gBattleEffect_RingCorners[];
 
-extern const u8 Data_08199e58[];
-extern const u8 Data_08199e5c[];
-extern const s8 Data_08199e60[];
-extern const u8 Data_08199e64[];
-extern const u8 Data_08199e68[];
-extern const s8 Data_08199e6c[];
+extern const u8 gLeapingStrike_WaveStarts[];
+extern const u8 gLeapingStrike_WaveGrowth[];
+extern const s8 gLeapingStrike_WaveHeights[];
+extern const u8 gLeapingStrike_RingStarts[];
+extern const u8 gLeapingStrike_RingGrowth[];
+extern const s8 gLeapingStrike_RingHeights[];
 
 void BattleEffect_ConfigureEffectDisplay(void);
 
@@ -766,9 +766,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
         texture.logHeight = 6;
         texture.pixels = work->sheet + 0x4000;
         model->kind = 7;
-        model->mesh = gData_081990d0;
+        model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 3; i++) {
-          s32 start = Data_08199e58[i] + 40;
+          s32 start = gLeapingStrike_WaveStarts[i] + 40;
 
           if (frame > start) {
             shade = (start - frame) * 8 + 56;
@@ -779,20 +779,21 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
               s32 scale;
 
               start = frame - start;
-              scale = start * Data_08199e5c[i] * 2000 + Q16_ONE / 2;
+              scale = start * gLeapingStrike_WaveGrowth[i] * 2000 + Q16_ONE / 2;
 
               model->shade = shade;
               Transform_Reset();
               model->scrollV = (frame * 8 + i * 16) & 63;
-              SceneTransform_ApplyPosition3((pos.x - 60) << 16,
-                                            Data_08199e60[i] << 16, 0);
+              SceneTransform_ApplyPosition3(
+                  (pos.x - 60) << 16, gLeapingStrike_WaveHeights[i] << 16, 0);
               SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
                 Transform_ApplyYaw((i * 4 + frame) << 11);
               else
                 Transform_ApplyYaw((i * 4 - frame) << 11);
-              Render_TransformVertices(gData_08199090, projected, 32);
+              Render_TransformVertices(gBattleEffect_RingCorners, projected,
+                                       32);
               Render_DrawModelList(model);
             }
           }
@@ -805,7 +806,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
         texture.logWidth = 7;
         texture.logHeight = 7;
         for (i = 0; i != 2; i++) {
-          s32 start = Data_08199e64[i] + 34;
+          s32 start = gLeapingStrike_RingStarts[i] + 34;
           struct EffectStep *base = &work->particles[i];
 
           if (frame == start) {
@@ -822,7 +823,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
               s32 scroll;
 
               start = frame - start;
-              scale = start * Data_08199e68[i] * 1500 + 0x4180;
+              scale = start * gLeapingStrike_RingGrowth[i] * 1500 + 0x4180;
 
               model->shade = shade;
               // Masked in place, the mask assigned first.
@@ -830,8 +831,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
               scroll &= frame + i * 5;
               model->scrollU = scroll << 4;
               Transform_Reset();
-              SceneTransform_ApplyPosition3((base->x - 60) << 16,
-                                            Data_08199e6c[i] << 16, 0);
+              SceneTransform_ApplyPosition3(
+                  (base->x - 60) << 16, gLeapingStrike_RingHeights[i] << 16, 0);
               SceneTransform_ApplyScale3(scale, scale * 2, scale);
               Transform_ApplyPitch(2000);
               Render_TransformVertices(gBattleEffect_CylinderCorners, projected,

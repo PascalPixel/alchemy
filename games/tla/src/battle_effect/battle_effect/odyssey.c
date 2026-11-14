@@ -59,11 +59,11 @@ extern u8 gData_02014000[];
 extern u8 Data_02016000[];
 extern u16 gBattleEffect_MotePictures[];
 extern const u8 gBattleEffect_SquareMesh128[];
-extern const u8 Data_0819919c[];
+extern const u8 gBattleEffect_TriangleMesh[];
 extern const u8 gBattleEffect_SquareCorners[];
-extern const u8 Data_081991a4[];
-extern const s16 Data_08199f2a[];
-extern const s16 Data_08199f2e[];
+extern const u8 gBattleEffect_TriangleCorners[];
+extern const s16 gOdyssey_FlashPitches[];
+extern const s16 gOdyssey_FlashYaws[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
@@ -381,8 +381,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           Transform_Reset();
           SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
-          Transform_ApplyPitch(Data_08199f2a[i]);
-          Transform_ApplyYaw(Data_08199f2e[i]);
+          Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
+          Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -405,8 +405,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         Transform_Reset();
         SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
-        Transform_ApplyPitch(Data_08199f2a[i]);
-        Transform_ApplyYaw(Data_08199f2e[i]);
+        Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
+        Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
         Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
         Render_DrawModelList(model);
       }
@@ -426,8 +426,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           Transform_Reset();
           SceneTransform_ApplyPosition3((to.x / 2 - 64) << 16, 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
-          Transform_ApplyPitch(Data_08199f2a[i]);
-          Transform_ApplyYaw(Data_08199f2e[i]);
+          Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
+          Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -444,7 +444,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       s32 x;
       s32 y;
 
-      model->mesh = Data_0819919c;
+      model->mesh = gBattleEffect_TriangleMesh;
       model->kind = flatKind;
       if (frame > 99) {
         work->transferMode = fillMode;
@@ -463,7 +463,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
                                    step->variant);
         Transform_ApplyPitch(step->z);
         Transform_ApplyYaw(step->z);
-        Render_TransformVertices(Data_081991a4, projected, 3);
+        Render_TransformVertices(gBattleEffect_TriangleCorners, projected, 3);
         Render_DrawModelList(model);
         BattleEffectKernels_IntegrateVector3(step, 62, 0);
         step++;

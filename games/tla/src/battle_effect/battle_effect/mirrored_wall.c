@@ -404,7 +404,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     work->transferValue = 75;
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  total = Data_08197880[mode * 4 + RECORD_FRAMES] + effect->count * 8;
+  total = gLobbedShells_Styles[mode * 4 + RECORD_FRAMES] + effect->count * 8;
   Sound_PlayFar(SE_CURSE);
 
   for (frame = 0; frame != total; frame++) {
@@ -417,7 +417,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     // The shots: each starts four frames after the last, flies under
     // gravity and turns through ten pictures; at the ground it bursts.
     for (k = 0; k != effect->count; k++) {
-      for (i = 0; i != Data_08197880[mode * 4 + RECORD_SHOTS]; i++) {
+      for (i = 0; i != gLobbedShells_Styles[mode * 4 + RECORD_SHOTS]; i++) {
         s32 start = k * 8 + i * 4;
 
         if (frame >= start) {
@@ -437,11 +437,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
             position.x >>= 1;
             position.y -= 8;
             if (step > 4)
-              draw[Data_08197880[mode * 4 + RECORD_SHOT_BLITTER]](
+              draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 16,
                   position.y - 12, 32, 24);
             else
-              draw[Data_08197880[mode * 4 + RECORD_SHOT_BLITTER]](
+              draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 12,
                   position.y - 16, 24, 32);
             if (shot->variant == 0)
@@ -452,14 +452,14 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
 
               shot->y = 0;
               shot->variant = 1;
-              if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0)
+              if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0)
                 count = 4;
               else
                 count = 16;
               for (n = 0; n != count; n++) {
                 piece = &BURSTS[(k * 4 + i) * 8 + n];
                 SET_POSITION(piece, shot->x, shot->y, shot->z);
-                if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0) {
+                if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0) {
                   piece->velocityX = ((Random16() & 63) - 32) << 11;
                   piece->velocityY = 0;
                   piece->velocityZ = ((Random16() & 63) - 32) << 11;
@@ -482,7 +482,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
         EffectPosition_ProjectPoint((s32 *)burst, &position);
         position.x >>= 1;
-        if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0) {
+        if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0) {
           draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + SMOKE_SHEET,
                   position.x - 12, position.y - 24, 24, 48);
         } else {
@@ -500,7 +500,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
               gLobbedShells_ShardWidths[picture],
               gLobbedShells_ShardHeights[picture]);
         }
-        if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0)
+        if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0)
           BattleEffectKernels_IntegrateVector3(burst, 62, 0x800);
         else
           BattleEffectKernels_IntegrateVector3(burst, 62, -0x8000);

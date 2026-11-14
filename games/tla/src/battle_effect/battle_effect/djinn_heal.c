@@ -514,15 +514,18 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     if (!(frame & 1) || !skip) {
       if (frame > 156) {
         for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-          placement[0] = (Data_08197a38[i][0] << 16) + position.x - 0x200000;
-          placement[2] = (Data_08197a38[i][1] << 16) + position.y + 0x100000;
+          placement[0] =
+              (gZagan_ChargePoints[i][0] << 16) + position.x - 0x200000;
+          placement[2] =
+              (gZagan_ChargePoints[i][1] << 16) + position.y + 0x100000;
           Render_ApplyProjectedPlacementFar(work->objects[i], placement,
                                             (s32 *)&request, 0);
         }
       } else {
         for (i = 0; i != ZAGAN_PARTS; i++) {
-          placement[0] = (Data_08197a64[i][0] << 16) + position.x;
-          placement[2] = (Data_08197a64[i][1] << 16) + position.y - 0x100000;
+          placement[0] = (gZagan_GallopPoints[i][0] << 16) + position.x;
+          placement[2] =
+              (gZagan_GallopPoints[i][1] << 16) + position.y - 0x100000;
           Render_ApplyProjectedPlacementFar(work->objects[i], placement,
                                             (s32 *)&request, 0);
         }

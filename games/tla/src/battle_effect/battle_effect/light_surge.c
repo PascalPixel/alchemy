@@ -93,9 +93,9 @@ extern char ResourceId_MercuryDjinnSheet;
 extern u8 gMapCellBuffer[];
 extern const u8 gBattleEffect_SquareMesh32Reversed[]; // a quad's mesh
 extern const u8 gBattleEffect_SquareCorners[];        // its corners
-extern const s32 Data_08198bfc[4];                    // per pillar: its size,
-extern const s8 Data_08198c0c[4];                     // its shade
-extern s8 Data_08198c10[4];                           // and its offset
+extern const s32 gLightSurge_PillarSizes[4];          // per pillar: its size,
+extern const s8 gLightSurge_PillarShades[4];          // its shade
+extern s8 gLightSurge_PillarOffsets[4];               // and its offset
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
@@ -368,9 +368,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
         s32 x = ((center.x / 2 - 64) << 16) -
-                (Data_08198c10[i] * sway / (TRIG_TURN)) *
+                (gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                     Trig_Sin((s16)camera->yaw);
-        s32 z = -((Data_08198c10[i] * sway / (TRIG_TURN)) *
+        s32 z = -((gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                   Trig_Cos((s16)camera->yaw));
         s32 growth;
         u32 scale;
@@ -383,13 +383,13 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         } else {
           growth = 0x10000;
         }
-        scale = (u32)(Data_08198bfc[i] * growth) >> 16;
+        scale = (u32)(gLightSurge_PillarSizes[i] * growth) >> 16;
         if (frame > 63) {
-          shade = Data_08198c0c[i] - frame * 8 + 512;
+          shade = gLightSurge_PillarShades[i] - frame * 8 + 512;
         } else if (frame <= 23) {
-          shade = Data_08198c0c[i] + frame * 8 - 192;
+          shade = gLightSurge_PillarShades[i] + frame * 8 - 192;
         } else {
-          shade = Data_08198c0c[i];
+          shade = gLightSurge_PillarShades[i];
         }
         model->shade = shade;
         Transform_Reset();

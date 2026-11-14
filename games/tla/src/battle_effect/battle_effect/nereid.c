@@ -208,7 +208,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           if (frame > 80)
             spark->velocityY += -(px(1) / 2);
           else
-            spark->velocityY += Data_08197998[k & 3];
+            spark->velocityY += gNereid_Gravity[k & 3];
           spark->velocityX = spark->velocityX * 62 / 64;
           spark->velocityY = spark->velocityY * 62 / 64;
           spark->variant++;

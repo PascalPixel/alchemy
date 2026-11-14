@@ -49,9 +49,9 @@ extern char ResourceId_Data0C2;
 // eight blades of the opening fan.
 extern const u8 gBattleEffect_SquareMesh128[];
 // The quad meshes and corners: the card, the pictures and their spread.
-extern u8 Data_081992b0[];
+extern u8 gBattleEffect_TallMesh32[];
 extern const u8 gBattleEffect_SquareCorners[];
-extern s32 Data_08199200[];
+extern s32 gLegend_WingCorners[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gBattleEffect_MotePictures[];
@@ -301,7 +301,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         texture.logWidth = 5;
         texture.logHeight = 6;
         texture.pixels = work->sheet + 0x5000;
-        model->mesh = Data_081992b0;
+        model->mesh = gBattleEffect_TallMesh32;
         for (i = 0; i != 8; i++) {
           model->alpha = 0;
           Transform_Reset();
@@ -317,7 +317,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyScale3(
               0x8000, 0x10000,
               (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
-          Render_TransformVertices(Data_08199200, vertices, 4);
+          Render_TransformVertices(gLegend_WingCorners, vertices, 4);
           Render_DrawModelList(model);
         }
       }
@@ -378,13 +378,13 @@ extern char ResourceId_EffectPalette02;
 extern char ResourceId_OrangePaletteB;
 
 // Each card's length in frames: 124, 140, 132 and 130.
-extern u8 Data_08199d60[];
-extern struct SparkMotion Data_08199d64[];
+extern u8 gElementCards_Frames[];
+extern struct SparkMotion gElementCards_SparkMotions[];
 
 // The crystal shards' cells.
-extern s32 gData_08197834[];
+extern s32 gPrism_ShardPictures[];
 extern u8 gPrism_ShardWidths[];
-extern u8 gData_08197826[];
+extern u8 gPrism_ShardHeights[];
 
 extern const u8 gBattleEffect_ColumnMesh[];
 
@@ -458,7 +458,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
-  for (frame = 0; frame != Data_08199d60[mode]; frame++) {
+  for (frame = 0; frame != gElementCards_Frames[mode]; frame++) {
     // Frame 0: clear the particles, give each member a strike countdown, and
     // find the user and every target.
     if (frame == 0) {
@@ -549,10 +549,10 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
           if ((u32)step->variant <= 1023) {
             s32 cell = i % 5 * 3 + step->variant / 96 % 3;
 
-            draw[0](canvas, work->sheet + gData_08197834[cell] + 0x1000,
+            draw[0](canvas, work->sheet + gPrism_ShardPictures[cell] + 0x1000,
                     HI(step->x) - gPrism_ShardWidths[cell] / 2,
-                    HI(step->y) - gData_08197826[cell] / 2,
-                    gPrism_ShardWidths[cell], gData_08197826[cell]);
+                    HI(step->y) - gPrism_ShardHeights[cell] / 2,
+                    gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
             if (step->y > px(96))
               step->velocityY = -step->velocityY / 2;
@@ -655,7 +655,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
     texture.pixels = work->sheet;
     model->kind = 8;
     model->texture = &texture;
-    model->mesh = Data_081992b0;
+    model->mesh = gBattleEffect_TallMesh32;
     model->vertices = vertices;
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.
@@ -774,7 +774,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
           size += 1;
         else
           size += 3;
-        for (j = 0; j != Data_08199d64[mode].steps; j++) {
+        for (j = 0; j != gElementCards_SparkMotions[mode].steps; j++) {
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
           if (step->y > px(104)) {
@@ -782,7 +782,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
             step->velocityY = -step->velocityY / 2;
           }
           BattleEffectKernels_IntegrateVector2(
-              step, Data_08199d64[mode].damping, Data_08199d64[mode].gravity);
+              step, gElementCards_SparkMotions[mode].damping,
+              gElementCards_SparkMotions[mode].gravity);
         }
         step->variant--;
       }

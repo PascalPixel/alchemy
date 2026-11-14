@@ -82,9 +82,9 @@ void Transform_Pop(void);
 #define EXTRA_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 
 extern u16 gBattleEffect_MotePictures[];
-extern const s8 Data_08198c28[];
-extern const u8 Data_08198c34[];
-extern const u8 Data_08198c64[];
+extern const s8 gGaspFamily_StreakSteps[];
+extern const u8 gGaspFamily_StreakMesh[];
+extern const u8 gGaspFamily_Counts[];
 extern const u8 gBattleEffect_CylinderCorners[];
 extern const u8 gBattleEffect_CylinderMesh[];
 extern const u8 gBattleEffect_TaperedBeamCorners[];
@@ -417,8 +417,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         if (n > 8)
           n = 8;
         dx = to.x - from.x;
-        head = from.x + Data_08198c28[n] * dx / 16;
-        tail = from.x + Data_08198c28[n - 1] * dx / 16;
+        head = from.x + gGaspFamily_StreakSteps[n] * dx / 16;
+        tail = from.x + gGaspFamily_StreakSteps[n - 1] * dx / 16;
         for (i = 0, step = head - tail, acc = 0; i != 4; i++, acc += step)
           draw[0](canvas, FIGURE(work), tail + acc / 3 - 10, from.y - 20, 20,
                   40);
@@ -714,7 +714,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         texture.pixels = work->sheet + 0x4000;
         model->texture = &texture;
         model->kind = 7;
-        model->mesh = Data_08198c34;
+        model->mesh = gGaspFamily_StreakMesh;
         model->vertices = verts;
         if (frame == 0) {
           for (i = 0; i != 16; i++) {
@@ -890,7 +890,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame > 9) {
-        for (i = 0; i != Data_08198c64[effect->variant]; i++) {
+        for (i = 0; i != gGaspFamily_Counts[effect->variant]; i++) {
           struct EffectStep *q = &EXTRA_PARTICLES[i];
 
           if (q->variant >= 0) {

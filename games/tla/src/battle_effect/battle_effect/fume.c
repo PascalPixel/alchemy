@@ -79,7 +79,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
                            s32 count);
 
-// Columns of Data_08199484, one row per Fume level (effect->variant): the
+// Columns of gFume_Levels, one row per Fume level (effect->variant): the
 // plume's width, the frame its tail starts, its arc's height, the sparks'
 // spread, count and lift.
 enum {
@@ -96,7 +96,7 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_ClawSlashSheet;
 extern u8 gMapCellBuffer[];
-extern const u16 Data_08199484[][FUME_COLUMNS];
+extern const u16 gFume_Levels[][FUME_COLUMNS];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern const u8 gBattleEffect_SquareMesh64[];  // the head's mesh
@@ -190,13 +190,13 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         spark->x = (target.x / 2) << 16;
         spark->y = (target.y + (Random16() & 15) - 32) << 16;
         spark->velocityX =
-            ((Random16() % Data_08199484[effect->variant][FUME_SPREAD]) -
-             (Data_08199484[effect->variant][FUME_SPREAD] >> 1))
+            ((Random16() % gFume_Levels[effect->variant][FUME_SPREAD]) -
+             (gFume_Levels[effect->variant][FUME_SPREAD] >> 1))
             << 12;
         spark->velocityY = (192 - (Random16() & 255)) << 10;
       }
     }
-    for (i = 0; i != Data_08199484[effect->variant][FUME_SPARKS]; i++) {
+    for (i = 0; i != gFume_Levels[effect->variant][FUME_SPARKS]; i++) {
       particle = &work->particles[i];
       if ((u32)particle->variant <= 23) {
         if (particle->variant > 1) {
@@ -205,7 +205,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
                     HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
         }
         BattleEffectKernels_IntegrateVector2(
-            particle, 60, -Data_08199484[effect->variant][FUME_LIFT]);
+            particle, 60, -gFume_Levels[effect->variant][FUME_LIFT]);
       }
       particle->variant++;
     }
@@ -222,14 +222,14 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       s32 vertex;
       s32 shade;
 
-      width = Data_08199484[effect->variant][FUME_WIDTH];
+      width = gFume_Levels[effect->variant][FUME_WIDTH];
       arc.head = frame * 44;
       if (arc.head > 988) {
         arc.head = 988;
       }
-      if (frame >= Data_08199484[effect->variant][FUME_TAIL_START]) {
+      if (frame >= gFume_Levels[effect->variant][FUME_TAIL_START]) {
         arc.tail =
-            (frame - Data_08199484[effect->variant][FUME_TAIL_START]) * 44;
+            (frame - gFume_Levels[effect->variant][FUME_TAIL_START]) * 44;
         if (arc.tail > 988) {
           arc.tail = 988;
         }
@@ -251,7 +251,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         if (distance < 0) {
           distance = -distance;
         }
-        height = Data_08199484[effect->variant][FUME_HEIGHT];
+        height = gFume_Levels[effect->variant][FUME_HEIGHT];
         thickness = j * 4;
         if (thickness > 24) {
           thickness = 24;

@@ -127,8 +127,8 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
 // The models: the rings' quad (gBattleEffect_SquareMesh32), its corners, the
 // crystal and its corners.
-extern const u8 gData_081990d0[];
-extern const u8 gData_08199090[];
+extern const u8 gBattleEffect_RingMesh[];
+extern const u8 gBattleEffect_RingCorners[];
 extern char ResourceId_Data0DA;
 void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -183,10 +183,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                                      s32 mode);
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 void Palette_MirrorBgColors(void);       // mode 3 only
-extern s32 gData_08197834[];             // ☀️ gPrism_ShardOffsets
+extern s32 gPrism_ShardPictures[];       // ☀️ gPrism_ShardOffsets
 extern u8 gPrism_ShardWidths[];
-extern u8 gData_08197826[];     // ☀️ gPrism_ShardHeights
-extern u8 gPrism_ShardStarts[]; // ☀️ gPrism_ShardStarts: x, y for each shard
+extern u8 gPrism_ShardHeights[]; // ☀️ gPrism_ShardHeights
+extern u8 gPrism_ShardStarts[];  // ☀️ gPrism_ShardStarts: x, y for each shard
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
@@ -294,7 +294,7 @@ extern u8 gBattleEffect_PuffArcPictureHeights[];
 extern u8 gBattleEffect_PuffArcPictureBiasY[];
 extern u16 gBattleEffect_PuffArcPictures[];
 extern u8 gSpire_ShardWidths[];
-extern u8 gData_081974ad[]; // the shard heights
+extern u8 gSpire_ShardHeights[]; // the shard heights
 extern u16 gSpire_ShardPictures[];
 void BattleEffect_StepPaletteToResource(s32);
 extern char ResourceId_Data0C9;
@@ -303,22 +303,22 @@ extern char ResourceId_Data0D7;
 void BattleEffect_WipeCanvas(s32, s32);
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 // The quad meshes and corners: the card, the pictures and their spread.
-extern u8 Data_081992b0[];
+extern u8 gBattleEffect_TallMesh32[];
 // The dagger's shards, ☀️'s palette ramp shards.
 extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
 void BattleEffect_BuildWindowEdgeTable(void);
 extern char ResourceId_Data0CB;
-extern const u8 Data_08199eb4[];
-extern const u8 Data_08199ebc[];
-extern const u8 Data_08199ea4[];
-extern const u8 Data_08199ec5[];
+extern const u8 gLiquifier_SplashStarts[];
+extern const u8 gLiquifier_SplashHeights[];
+extern const u8 gLiquifier_SplashCorners[];
+extern const u8 gCanvasBurst_FlamePictures[];
 void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode);
 extern u8 gCybele_ObjectPoses[];
 extern u16 gCybele_ThornPictures[]; // ☀️ gCybele_ThornOffsets
-extern u8 Data_0819820c[];          // ☀️ gCybele_ThornWidths
-extern u8 Data_08198211[];          // ☀️ gCybele_ThornHeights
+extern u8 gCybele_ThornWidths[];    // ☀️ gCybele_ThornWidths
+extern u8 gCybele_ThornHeights[];   // ☀️ gCybele_ThornHeights
 extern u16 gCybele_FlowerPictures[];
 extern u8 gCybele_FlowerSizes[];
 extern u16 gCybele_ChipPictures[]; // ☀️ the second gCybele_ThornOffsets
@@ -339,16 +339,16 @@ extern u16 gBoreas_DebrisPictures[];
 extern u8 gBoreas_DebrisWidths[];
 extern u8 gBoreas_DebrisHeights[];
 extern u16 gBoreas_SprayPictures[];
-extern u8 Data_081982c0[];                  // ☀️ gBoreas_SprayWidths
-extern u8 Data_081982c3[];                  // ☀️ gBoreas_SprayHeights
+extern u8 gBoreas_SprayWidths[];            // ☀️ gBoreas_SprayWidths
+extern u8 gBoreas_SprayHeights[];           // ☀️ gBoreas_SprayHeights
 extern u16 gBoreas_RisingCrystalPictures[]; // ☀️ gBoreas_BoulderCells
 extern u8 gBoreas_RisingCrystalWidths[];    // ☀️ gBoreas_BoulderWidths
 extern u8 gBoreas_RisingCrystalHeights[];   // ☀️ gBoreas_BoulderHeights
 extern u16 gBoreas_FallPictures[];          // ☀️ gBoreas_FallCells
-extern u8 Data_081982d8[];                  // ☀️ gBoreas_FallWidths
-extern u8 Data_081982db[];                  // ☀️ gBoreas_FallHeights
+extern u8 gBoreas_FallWidths[];             // ☀️ gBoreas_FallWidths
+extern u8 gBoreas_FallHeights[];            // ☀️ gBoreas_FallHeights
 extern s32 gDrain_Gravities[];
-extern u8 Data_081982f4[]; // the mote size by mode
+extern u8 gDrainMotes_Sizes[]; // the mote size by mode
 void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode);
 extern u8 gQuake_Timings[][3];
 extern struct RockWallHeights gRockWall_Heights;

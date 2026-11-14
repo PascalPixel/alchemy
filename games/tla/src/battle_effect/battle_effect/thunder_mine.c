@@ -401,7 +401,7 @@ extern u16 gBattleEffect_SparklePictures[]; // the sparkles' cells
 extern u8 gBattleEffect_SparkleSizes[];     // and sizes
 
 extern const u8 gMegaera_GlintFlips[];
-extern const u8 Data_08198bf8[];
+extern const u8 gMegaera_GlintModes[];
 
 // Abilities: Megaera.
 //
@@ -707,7 +707,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               } while (0);
               BattleEffect_BuildBlitter(188, 7, 7,
                                         3 | gMegaera_GlintFlips[Random16() & 3],
-                                        Data_08198bf8[effect->variant]);
+                                        gMegaera_GlintModes[effect->variant]);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, PICTURES + gBattleEffect_GlintPictures[k], gx - 4,
                   gy + 40, gBattleEffect_GlintPictureWidths[k],

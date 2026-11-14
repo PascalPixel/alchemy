@@ -78,11 +78,11 @@ extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
 
 // The reaper's seven panels: x by side (seven each), then y.
-extern u8 gData_0819750c[];
-extern u8 gData_0819751a[];
+extern u8 gCastingImpact_PictureX[];
+extern u8 gCastingImpact_PictureY[];
 
 // The card's quad: its mesh and its corners.
-extern u8 Data_081992b0[];
+extern u8 gBattleEffect_TallMesh32[];
 extern const u8 gBattleEffect_SquareCorners[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -338,7 +338,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       texture.pixels = CARD;
       model->kind = 8;
       model->texture = &texture;
-      model->mesh = Data_081992b0;
+      model->mesh = gBattleEffect_TallMesh32;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
       SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - px(64), 0);
@@ -506,38 +506,38 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       if (frame > 51) {
         if (frame <= 63) {
           draw[0](canvas, work->sheet,
-                  overflow + gData_0819750c[effect->side * 7],
-                  gData_0819751a[0], 57, 98);
+                  overflow + gCastingImpact_PictureX[effect->side * 7],
+                  gCastingImpact_PictureY[0], 57, 98);
         } else {
           if (frame <= 67)
             draw[0](canvas, work->sheet,
-                    overflow + gData_0819750c[effect->side * 7],
-                    gData_0819751a[0], 57, 98);
+                    overflow + gCastingImpact_PictureX[effect->side * 7],
+                    gCastingImpact_PictureY[0], 57, 98);
           draw[0](canvas, work->sheet + 0x15d2,
-                  overflow + gData_0819750c[effect->side * 7 + 1],
-                  gData_0819751a[1], 99, 69);
+                  overflow + gCastingImpact_PictureX[effect->side * 7 + 1],
+                  gCastingImpact_PictureY[1], 99, 69);
           if (frame >= 64 && frame <= 65)
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           if (frame >= 66 && frame <= 67)
             draw[0](canvas, work->sheet + 0x3081,
-                    overflow + gData_0819750c[effect->side * 7 + 2],
-                    gData_0819751a[2], 128, 91);
+                    overflow + gCastingImpact_PictureX[effect->side * 7 + 2],
+                    gCastingImpact_PictureY[2], 128, 91);
           if (frame >= 68 && frame <= 69)
             draw[0](canvas, Ram_MapCellBuffer,
-                    overflow + gData_0819750c[effect->side * 7 + 3],
-                    gData_0819751a[3], 128, 91);
+                    overflow + gCastingImpact_PictureX[effect->side * 7 + 3],
+                    gCastingImpact_PictureY[3], 128, 91);
           if (frame >= 70 && frame <= 71)
             draw[0](canvas, Ram_MapCellBuffer + 0x2d80,
-                    overflow + gData_0819750c[effect->side * 7 + 4],
-                    gData_0819751a[4], 128, 59);
+                    overflow + gCastingImpact_PictureX[effect->side * 7 + 4],
+                    gCastingImpact_PictureY[4], 128, 59);
           if (frame >= 72 && frame <= 73)
             draw[0](canvas, Ram_MapCellBuffer + 0x4b00,
-                    overflow + gData_0819750c[effect->side * 7 + 5],
-                    gData_0819751a[5], 122, 29);
+                    overflow + gCastingImpact_PictureX[effect->side * 7 + 5],
+                    gCastingImpact_PictureY[5], 122, 29);
           if (frame >= 74 && frame <= 75)
             draw[0](canvas, Ram_MapCellBuffer + 0x58d2,
-                    overflow + gData_0819750c[effect->side * 7 + 6],
-                    gData_0819751a[6], 76, 25);
+                    overflow + gCastingImpact_PictureX[effect->side * 7 + 6],
+                    gCastingImpact_PictureY[6], 76, 25);
         }
       }
     }

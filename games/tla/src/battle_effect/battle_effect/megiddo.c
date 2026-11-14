@@ -88,15 +88,15 @@ extern u16 gBattleEffect_MotePictures[];
 extern const u8 gBattleEffect_SquareMesh128[];
 extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gBattleEffect_StandingSquareCorners[];
-extern u8 Data_081992b0[];
-extern const u16 Data_08199ee0[]; // the five rings' start frames
-extern const s16 Data_08199ecc[];
-extern const s16 Data_08199ed6[];
-extern const s16 Data_08199eea[];
-extern const s16 Data_08199efa[];
-extern const s16 Data_08199f0a[];
-extern const s8 Data_08199f1a[];
-extern const s8 Data_08199f22[];
+extern u8 gBattleEffect_TallMesh32[];
+extern const u16 gMegiddo_FlashStarts[]; // the five rings' start frames
+extern const s16 gMegiddo_FlashPitches[];
+extern const s16 gMegiddo_FlashYaws[];
+extern const s16 gMegiddo_RayPitches[];
+extern const s16 gMegiddo_RayYaws[];
+extern const s16 gMegiddo_RayRolls[];
+extern const s8 gMegiddo_RayX[];
+extern const s8 gMegiddo_RayY[];
 
 extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_Data0C2;
@@ -603,7 +603,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     model->texture = &texture2;
     model->vertices = verts;
     for (i = 0; i != 5; i++) {
-      s32 start = Data_08199ee0[i];
+      s32 start = gMegiddo_FlashStarts[i];
 
       if (frame >= start && frame < start + 20) {
         s32 t = frame - start;
@@ -624,8 +624,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3(0, 0x100000, 0);
           }
           SceneTransform_ApplyScale3(s, s * 2, s);
-          Transform_ApplyPitch(Data_08199ecc[i]);
-          Transform_ApplyYaw(Data_08199ed6[i]);
+          Transform_ApplyPitch(gMegiddo_FlashPitches[i]);
+          Transform_ApplyYaw(gMegiddo_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -635,7 +635,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     texture2.logWidth = 5;
     texture2.logHeight = 6;
     texture2.pixels = work->sheet;
-    model->mesh = Data_081992b0;
+    model->mesh = gBattleEffect_TallMesh32;
     for (i = 0; i != 8; i++) {
       s32 start = 16 + i * 2;
 
@@ -657,21 +657,21 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         Transform_Reset();
         if (!effect->side) {
           SceneTransform_ApplyPosition3(
-              (pos.x / 2 + Data_08199f1a[i] - 64) << 16,
-              (Data_08199f22[i] + pos.y - 54) << 16, 0);
+              (pos.x / 2 + gMegiddo_RayX[i] - 64) << 16,
+              (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
         } else {
           SceneTransform_ApplyPosition3(
-              (pos.x / 2 - Data_08199f1a[i] - 62) << 16,
-              (Data_08199f22[i] + pos.y - 54) << 16, 0);
+              (pos.x / 2 - gMegiddo_RayX[i] - 62) << 16,
+              (gMegiddo_RayY[i] + pos.y - 54) << 16, 0);
         }
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (!effect->side) {
-          Transform_ApplyRoll(Data_08199f0a[i]);
+          Transform_ApplyRoll(gMegiddo_RayRolls[i]);
         } else {
-          Transform_ApplyRoll(-Data_08199f0a[i]);
+          Transform_ApplyRoll(-gMegiddo_RayRolls[i]);
         }
-        Transform_ApplyPitch(Data_08199eea[i]);
-        Transform_ApplyYaw(Data_08199efa[i]);
+        Transform_ApplyPitch(gMegiddo_RayPitches[i]);
+        Transform_ApplyYaw(gMegiddo_RayYaws[i]);
         SceneTransform_ApplyScale3(s / 4, s * 4, s / 2);
         Render_TransformVertices(gBattleEffect_StandingSquareCorners, verts, 4);
         Render_DrawModelList(model);

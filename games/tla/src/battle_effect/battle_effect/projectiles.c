@@ -424,7 +424,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunStunSting, BattleEffect_RunProjectileVolley,
                    17)
 
 /// Kind 402: Ice Breath and Blue Dragon.
-// Named, as The Broken Seal names it, for Ice Blessing.
 DEFINE_EFFECT_KIND(BattleEffect_RunIceBlessing,
                    BattleEffect_RunProjectileVolley, 10)
 
@@ -485,7 +484,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
   s32 steps;
   struct MotionObject *user;
   s32 k;
-  // The smoke puffs placed, and later the sparks' speed shift, as the twin.
+  // The smoke puffs placed, and later the sparks' speed shift.
   s32 shift;
   s32 x;
 
@@ -1170,7 +1169,6 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
 
 /// Moves the object rate percent of the way to the target's object in the
 /// given frames.
-// The Broken Seal's BattleEffect_SetApproachMotion always moves 80 percent.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
                                     s32 rate) {
   struct BattleObj *slot = BattleObject_GetFar(id);

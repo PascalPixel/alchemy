@@ -501,7 +501,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *args) {
           formationSpeedX = formationSpeedX * 60 / 64;
           formationSpeedY = formationSpeedY * 60 / 64;
         }
-        BattleEffect_PlaceFormationObjects(0, formationX, formationY);
+        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
+                                           formationY);
       }
       // Smoke around the formation.
       if ((u32)(frame - 16) <= 127) {
@@ -543,7 +544,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *args) {
 
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    BattleEffect_RunImpactBurst(0, formationX, formationY);
+    BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
     Sprite_DestroyFar(work->objects[i]);

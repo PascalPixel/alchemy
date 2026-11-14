@@ -845,9 +845,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, BattleEffect_RunStarSwarm, 0)
 /// Abilities: Mystic Call (kind 466).
 DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 
-// The Lost Age's blitter modes run the other way from The Broken Seal's:
-// additive 0, max 1, transparent 2, copy 3.
-
 #define STARS_PER_TARGET 64 // each target's slice of the star buffer
 #define STAR_TOTAL 384
 

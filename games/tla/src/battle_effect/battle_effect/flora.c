@@ -1036,9 +1036,6 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
-// The Lost Age's blitter modes run the other way from The Broken Seal's:
-// additive 0, max 1, transparent 2, copy 3.
-
 #define STAR_FRAMES 60
 #define STAR_LEAP_FRAME 16  // the caster leaps at the target
 #define STAR_BURST_FRAME 32 // and strikes it

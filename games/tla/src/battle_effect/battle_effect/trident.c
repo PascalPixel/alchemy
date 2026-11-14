@@ -786,7 +786,6 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *args,
 /// actor_move_random.c's BattleEffect_ArmPaletteHBlankDma: stops DMA 0,
 /// then arms it to copy one BG palette word per scanline from the line table in
 /// the effect work, so the backdrop's colour changes down the screen.
-// The Broken Seal's BattleEffect_ArmPaletteHBlankDma.
 void BattleEffect_ArmMeteorBlowPaletteDma(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;

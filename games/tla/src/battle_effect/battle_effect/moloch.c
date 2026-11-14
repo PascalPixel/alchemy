@@ -277,7 +277,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
       }
 
       if (frame > 139)
-        BattleEffect_PlaceFormationObjects(5, focus.x, focus.y);
+        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_MOLOCH, focus.x,
+                                           focus.y);
 
       // Frames 212-268, every eight: the targets flash and are thrown back.
       for (i = 0; i != 8; i++) {
@@ -325,7 +326,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
-    BattleEffect_RunImpactBurst(5, focus.x, focus.y);
+    BattleEffect_RunImpactBurst(SUMMON_FORMATION_MOLOCH, focus.x, focus.y);
     for (i = 0; i != 12; i++)
       Sprite_DestroyFar(work->objects[i]);
   }
@@ -2471,10 +2472,10 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
 }
 
 // BattleEffect_BuildBlitter walks The Lost Age's blitter template once and
-// writes the blitter's ARM code into a heap slot: The Broken Seal's step list
-// (battle_effect/blitter.c) with short copies as block moves and longer ones
-// by DMA, modes 0 additive, 1 max, 2 transparent, default copy, and the
-// second run copied from the first by its measured length.
+// writes the blitter's ARM code into a heap slot: a list of steps with short
+// copies as block moves and longer ones by DMA, modes 0 additive, 1 max, 2
+// transparent, default copy, and the second run copied from the first by its
+// measured length.
 
 CAMELOT_ASM("ldmia and stmia of two registers from r0 to r1 with scratch from "
             "r2 up, in the shape of Dma_Set: agscc's block moves leave r0 and "

@@ -43,8 +43,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)BG_PLTT = 0;
-  *(u16 *)(BG_PLTT + 1) = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);

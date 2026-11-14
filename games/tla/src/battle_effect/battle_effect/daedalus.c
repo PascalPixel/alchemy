@@ -10,8 +10,6 @@ struct Model;
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
-// The Lost Age's blitter modes run the other way from The Broken Seal's:
-// additive 0, max 1, transparent 2, copy 3.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define BURST_FRAMES 48

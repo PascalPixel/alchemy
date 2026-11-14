@@ -26,8 +26,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
-  // Unused: the second position gives the stack frame its 72 bytes, as in
-  // The Broken Seal's twin (one position: 4 of 549 differ, 2026-11-08).
+  // Unused: the second position gives the stack frame its 72 bytes,.
   struct EffectPosition pos[2];
   s32 curve[2];
   s32 visible;

@@ -9,7 +9,6 @@
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
 
-// The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -47,9 +46,9 @@ struct Model__f188714 {
 // target, and both leap; at frame 11 they turn upside down, lifted by their
 // own heights. At frame 54 the target flashes and both are thrown back, the
 // user to his place, and at frame 64 they land the right way up.
-// Variant 0 is ☀️'s: a large flash at the user for two frames, then 16
+// Variant 0: a large flash at the user for two frames, then 16
 // flashes that spread in a rising ring for twelve frames.
-// Variant 1 is ⚓️'s own, in the colours of effect palette 2:
+// Variant 1, in the colours of effect palette 2:
 // 32 sparks burst from the target at frame 56 (of which the first 16 are
 // drawn), and Triple Chomp's jaw closes on the target twice, at 45 and 135
 // degrees, growing and fading from frame 56.

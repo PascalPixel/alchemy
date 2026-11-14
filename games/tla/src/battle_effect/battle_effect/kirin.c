@@ -45,8 +45,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *args) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  *(u16 *)BG_PLTT = 0;
-  *(u16 *)(BG_PLTT + 1) = 0x18;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0x18;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   // Setup: wipe the battle away, swap in the forest and wipe back.

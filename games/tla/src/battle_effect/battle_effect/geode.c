@@ -33,8 +33,8 @@ struct ModelVertex {
 void BattleEffect_RunGeode(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: blit[1], the second of The Broken Seal's pair of blitters, gives
-  // the stack frame its 4 bytes at sp 72 (differ 688 as one DrawRectangle).
+  // Unused: blit[1], the idle half of the pair, gives the stack frame its 4
+  // bytes.
   DrawRectangle blit[2];
   s32 *transition;
   u8 *projected;

@@ -253,7 +253,7 @@ enum {
   RING_BLITTER    // which of the pair draws the flames
 };
 
-// The transform entry as The Broken Seal types it.
+// The transform entry, typed as its callers use it.
 #define TransformVector                                                        \
   ((s32 (*)(const void *, s32 *))Iwram_TransformVectorEntry)
 

@@ -1340,10 +1340,8 @@ void BattleEffect_SetupCanvasWindows(void) {
   REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
 }
 
-// Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
-// changes: BattleEffect_ConfigureEffectDisplay for the display set-up, DISPCNT
-// 0x1741, Palette_StepFadeTransfer at 0x480, BattleEffect_SetupCanvasWindows
-// for the display registers and one more work word cleared.
+/// Opens the canvas layer on BG2 with control bgControl: the display, the
+/// canvas's tiles and map, the windows and the backdrop's fade.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -1650,7 +1648,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-/// The Broken Seal's routine, with the fraction in
+/// Draws a line into the canvas, clipped to it, with the fraction kept in
 /// bit 31 (started at 0x80 << 23, carried when negative and cleared with a
 /// shift pair) and dx and dy reused as the step direction.
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,

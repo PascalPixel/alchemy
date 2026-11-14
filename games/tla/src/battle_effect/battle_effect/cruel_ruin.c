@@ -550,7 +550,7 @@ void BattleEffect_TransferHalvedCanvas(void) {
   }
 }
 
-/// The Broken Seal's routine.
+/// Draws the streaks of the backdrop and halves the canvas into VRAM.
 void BattleEffect_DrawStreaks(void) {
   struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battleFxWork[0];
   s32 frame;

@@ -43,9 +43,8 @@ void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
 void BattleEffect_RunWaterColumn(struct BattleEffectArgument *args, u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
-  // Unused: the second of The Broken Seal's blitter pair gives the stack frame
-  // its 176 bytes (the unused word at sp 76); as one DrawRectangle the frame is
-  // 172 bytes and every stack offset below it moves.
+  // Unused: the idle half of the blitter pair gives the stack frame its 176
+  // bytes.
   DrawRectangle blit[2];
   s32 frame;
   s32 *camera;

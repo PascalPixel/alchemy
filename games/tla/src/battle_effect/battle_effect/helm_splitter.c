@@ -6,8 +6,8 @@
 
 // Effect kind 51: the caster dashes at the target while a swirl of flame grows
 // over seven frames, then bursts into sparks that fall and bounce on the
-// ground. Variant 0 is ☀️'s: the swirl rises at the caster and throws pink
-// stars. Variant 1 is ⚓️'s own: the swirl, recoloured into the blue flame's
+// ground. Variant 0: the swirl rises at the caster and throws pink
+// stars. Variant 1: the swirl, recoloured into the blue flame's
 // palette, rises at the target and throws 32 skulls.
 void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work =

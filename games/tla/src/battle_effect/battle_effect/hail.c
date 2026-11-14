@@ -75,7 +75,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *args) {
       orbit = frame << 11;
       x = ((-Trig_Sin(orbit) << 2) >> 16) + screen[0] / 2 - 10;
       y = ((Trig_Cos(orbit) << 1) >> 16) + screen[1] - 22;
-      // Never true in 64 frames; ☀️ has the same test.
+      // Never true in 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
       blit[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);

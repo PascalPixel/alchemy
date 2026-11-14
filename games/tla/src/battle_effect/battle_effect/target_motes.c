@@ -422,7 +422,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *args) {
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
-// As in The Broken Seal's twin, which loads the same sheet: a small flame
+// A small flame
 // burns above each target in turn, MARKER_STAGGER frames apart, for up to
 // MARKER_FRAMES frames each, over a marker at its feet.
 void BattleEffect_RunCurse(struct BattleEffectArgument *args) {

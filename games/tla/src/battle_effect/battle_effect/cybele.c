@@ -182,7 +182,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
     height += speed;
     if (height > px(64))
       height = px(64);
-    BattleEffect_PlaceFormationObjects(2, px(128), height);
+    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, px(128),
+                                       height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 

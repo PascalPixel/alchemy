@@ -333,10 +333,6 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *args) {
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
-// The Lost Age's blitter modes run the other way from The Broken Seal's:
-// additive 0, max 1, transparent 2, copy 3; 2 << 4 | 3 is transparent and
-// clipped, and | 4 mirrors it.
-
 #define FIGURE_FRAMES 108
 #define FIGURE_SWING_FRAME 30 // the first blow
 #define FIGURE_HIT_FRAME 80   // the second, which starts the result phase

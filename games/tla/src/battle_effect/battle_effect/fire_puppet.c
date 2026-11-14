@@ -235,10 +235,6 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *args) {
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
-// The Lost Age's blitter modes run the other way from The Broken Seal's:
-// additive 0, max 1, transparent 2, copy 3; 1 << 4 | 3 is max and clipped,
-// and | 4 mirrors it.
-
 #define SWING_FRAMES 52
 #define SWING_HIT_FRAME 18
 #define SPARK_COUNT 256

@@ -39,8 +39,7 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
 struct FxPartyList;
 
-// The heap blocks the dispatcher hands every canvas effect, as byte offsets
-// into Ram_HeapSlots (☀️ uses slot indices).
+// The blitters' heap slots, as byte offsets into Ram_HeapSlots.
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 
@@ -61,8 +60,7 @@ struct FxPartyList;
 #define RESULTS_FRAME 120
 
 /// Unused: nothing reaches it (no handler, summon case or call). A second
-/// copy of The Broken Seal's BattleEffect_RunNereid, which this game keeps
-/// for summon 2 as BattleEffect_RunNereid. As written:
+/// copy of BattleEffect_RunNereid. As written:
 /// a formation of twelve sweeps in from the right; three pillars of fire
 /// stream upward and a fountain of embers spouts from the ground, falls, and
 /// at the end rises away, while the targets jolt every twelve frames.
@@ -152,7 +150,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *args) {
         if (focus.x < px(120))
           velocity.x += px(1) / 2;
       }
-      BattleEffect_PlaceFormationObjects(1, focus.x, focus.y);
+      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
+                                         focus.y);
 
       // The first spout fills the first 256 slots; then 16 embers a frame
       // from the ground at (32, 96).
@@ -283,7 +282,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *args) {
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
-    BattleEffect_RunImpactBurst(1, focus.x, focus.y);
+    BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       Sprite_DestroyFar(work->objects[k]);
   }
@@ -298,9 +297,9 @@ struct FormationScale {
 extern const struct FormationScale gFormationObjects_Scale;
 extern const struct FormationScale gFormationObjects_LargeScale;
 
-/// The Broken Seal's routine with The Lost Age's
-/// three more formations (4: eleven objects from signed columns, 5: twelve in
-/// a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
+/// Places the summoned objects of one formation around (x, z): seven
+/// formations, the last three (4: eleven objects from signed columns, 5: twelve
+/// in a 4x3 grid, 6: eight more), in the order 0, 5, 1, 2, 6, 3, 4.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -511,8 +510,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   EFFECT_RELEASE_BLITTERS();
 }
 
-/// Adds the deltas to BG palette entries 1 to 63, as The Broken Seal does, but
-/// clamped at 0.
+/// Adds the deltas to BG palette entries 1 to 63, clamped
+/// at 0.
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
   u16 *color = (u16 *)(BG_PLTT + 1);
   s32 i;
@@ -606,7 +605,6 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
 
 /// Stops DMA 0, then arms it to copy one palette line from the battle effect
 /// work into the BG palette at each horizontal blank.
-// The Broken Seal's BattleEffect_ArmPaletteHBlankDma.
 void BattleEffect_ArmPaletteHBlankDma(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   volatile u16 *channel = REG_DMA0;
@@ -629,18 +627,9 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 
 #undef EMBERS
 
-// BattleEffect_RunParticleStreams, summon 11 and summon 0's default
-// (BattleEffect_RunSceneEffect's default case, through BattleEffect_RunMeteor
-// and BattleEffect_RunOuterSpace), with its nested
-// helpers AddFlame and AddMote (unused).
-
-// Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
-// ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
-// kept as the argument, BattleEffect_WipeCanvas for the canvas wipe, the fills
-// through IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 +
-// i * 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640
-// in the work (☀️ 0x1f80), the blitter modes counted down from 3, and the
-// callback orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
+// BattleEffect_RunParticleStreams, which Meteor (SUMMON_EFFECT_METEOR and
+// SUMMON_EFFECT_NONE) and the outer space scene run, with its nested helpers
+// AddFlame and AddMote (unused).
 
 // The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
 // tiles), then, in the second act, the flashes and the embers.
@@ -650,8 +639,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 // The scanline palette the HBlank DMA feeds into BG colour 0, in the work.
 #define HEAT_LINES(work) ((u16 *)((u8 *)(work) + 0x7640))
 
-// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted
-// down from 3) in the high nibble, the COMPOSITE_ flags in the low one.
+// BattleEffect_LoadBlitter's argument: the blitter mode in the high nibble,
+// the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define STREAM_FRAMES 192
@@ -754,8 +743,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *args,
 
   // A dark backdrop and an empty canvas.
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)BG_PLTT = 0;
-  *(u16 *)(BG_PLTT + 1) = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);

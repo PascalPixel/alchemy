@@ -406,7 +406,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
       position.y += velocity.y;
       velocity.x = velocity.x * 59 / 64;
       velocity.y = velocity.y * 59 / 64;
-      BattleEffect_PlaceFormationObjects(4, position.x, position.y);
+      BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_MEGAERA, position.x,
+                                         position.y);
       if (frame == 108) {
         for (i = 0; i != 512; i++) {
           SPARKS[i].variant = -1;
@@ -650,7 +651,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  BattleEffect_RunImpactBurst(4, position.x, position.y);
+  BattleEffect_RunImpactBurst(SUMMON_FORMATION_MEGAERA, position.x, position.y);
   for (i = 0; i != 11; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }

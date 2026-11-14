@@ -79,8 +79,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *args,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
   secondSlot = Ram_HeapSlots->unkb8[1];
-  // Columns draw through a pointer to the pair, as the twin does; it holds
-  // that one address all its life.
+  // Columns draw through a pointer to the pair, which holds that one address
+  // all its life.
   draw = rectangle;
   draw[1] = secondSlot;
 

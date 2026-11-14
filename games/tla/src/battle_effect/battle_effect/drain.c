@@ -148,7 +148,7 @@ void BattleEffect_RunTrueCollide(u8 *args) {
 #define MOTES ((struct EffectStep *)Ram_MapCellBuffer)
 
 /// Motes of light burst out of each target in turn, 20 frames apart, and
-/// are drawn into the user, as The Broken Seal's BattleEffect_RunDrain.
+/// are drawn into the user.
 /// Setup: each target's 128 motes start at the middle of its body with
 /// random velocities; the canvas darkens by 4 a transfer (in mode 2 it
 /// trails instead). Frame loop: a target flashes as its motes leave; ten

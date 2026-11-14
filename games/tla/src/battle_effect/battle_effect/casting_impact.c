@@ -128,10 +128,10 @@ struct IwramPointers {
   } while (0)
 
 /// The casting impacts, by effect kind less 100: each is named for the first
-/// ability whose effect entry selects it as a casting impact, as The Broken
-/// Seal's are; those no ability selects are named UNUSED_ and for what they
-/// load or share. Kinds up to CASTING_IMPACT_LAST_DJINNI are Djinn;
-/// Terra Strike on are the enemies' abilities, in The Broken Seal's order.
+/// ability whose effect entry selects it as a casting impact; those no ability
+/// selects are named UNUSED_ and for what they load or share. Kinds up to
+/// CASTING_IMPACT_LAST_DJINNI are Djinn; Terra Strike on are the enemies'
+/// abilities.
 enum CastingImpact {
   CASTING_IMPACT_IMPACT_BANE = 0,
   CASTING_IMPACT_IMPACT_SMOG,

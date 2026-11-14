@@ -54,8 +54,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *args) {
   // below the line the IRQ handler picks.
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)BG_PLTT = 0;
-  *(u16 *)(BG_PLTT + 1) = 0;
+  PLTT_BACKDROP = 0;
+  BG_PLTT_COLOR(0, 1) = 0;
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_FRAME);
   Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;

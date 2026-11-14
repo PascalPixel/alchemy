@@ -734,9 +734,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  // Unused: the second blitter, as in The Broken Seal's pair, gives the
-  // stack frame its 84 bytes (the word at sp 40); as one DrawRectangle, 48
-  // of 609 differ (2026-11-08).
+  // Unused: the second blitter, the idle half of the pair, gives the stack
+  // frame its 84 bytes.
   DrawRectangle blit[2];
   struct BattleCamera *camera;
   struct EffectPosition other;
@@ -756,8 +755,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *args, s32 mode) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
-  // Read through funnel at the corner loop and the transform only; through it
-  // at the head loop, 14 of 609 differ (2026-11-08).
+  // Read through funnel at the corner loop and the transform only.
   funnel = gMapCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
@@ -984,8 +982,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  // Unused: gives the stack frame its 4 bytes. (blit[1], at sp 28, as The
-  // Broken Seal's pair; as one DrawRectangle, 68 differ.)
+  // Unused: blit[1], the idle half of the pair, gives the stack frame its 4
+  // bytes.
   DrawRectangle blit[2];
   struct EffectPosition pos;
   struct EffectPosition target;

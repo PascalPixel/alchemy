@@ -14,18 +14,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-// Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's
-// BattleEffect_RunProcne, ported by trial 2 and rewritten here. The
-// Lost Age's changes: BattleEffect_FetchRectangleBlitters for the pair; the
-// whirlwind unpacked with its palette by Resource_LoadAndDecompress into the
-// work sheet, the comets into work->sheet + 0x3600; frame / 4 % 3 written
-// through Math_UnsignedMulHighAdd(x, 0x55555556, -3) and the depth divisions by
-// 36 and 90 through Math_UnsignedMulHigh with their reciprocals (calls the
-// source makes: agscc emits __modsi3 and __divsi3 for the operators);
-// Iwram_TransformVector at the comet sparks; formation resource 646; the effect
-// argument for the actor loops; gCameraSceneParameters declared unsized (with
-// the shared u32[3], word 3 folds into the address).
-
 // frame / 4 % 3, as the source writes it: the multiply-high routine with the
 // reciprocal of 3, where a plain % calls __modsi3.
 #define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), 0x55555556, -3)
@@ -875,9 +863,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
           Animation_ApplyChildArgumentFar(work->objects[4], 4);
         }
         if (alternate == 1)
-          BattleEffect_PlaceFormationObjects(6, focus.x, focus.y);
+          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT_ALTERNATE,
+                                             focus.x, focus.y);
         else
-          BattleEffect_PlaceFormationObjects(3, focus.x, focus.y);
+          BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
+                                             focus.y);
       }
       if (frame == 138) {
         for (i = 0; i != args->count; i++) {
@@ -929,9 +919,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
     EFFECT_RELEASE_BLITTERS();
     if (mode == 0) {
       if (alternate == 1)
-        BattleEffect_RunImpactBurst(6, focus.x, focus.y);
+        BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT_ALTERNATE, focus.x,
+                                    focus.y);
       else
-        BattleEffect_RunImpactBurst(3, focus.x, focus.y);
+        BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     }
     if (mode == 0) {
       for (i = 0; i != 8; i++)

@@ -15,7 +15,6 @@
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap
 /// slot 26), out[1] adds the colours (slot 47). BattleEffect_LoadBlitter takes
 /// each slot's heap offset and the blitter flags.
-// The Broken Seal's BattleEffect_FetchRectangleBlitters.
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
   // Unused: gives the stack frame its 4 bytes.
   UNUSED u8 unused[4];

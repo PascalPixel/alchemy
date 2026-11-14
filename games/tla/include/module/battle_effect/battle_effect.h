@@ -21,6 +21,19 @@ struct SummonArgument;
 /// The large effects BattleEffect_RunSceneEffect runs, by kind: The Broken
 /// Seal's twelve summons, The Lost Age's twelve, and the scenes of Daedalus's
 /// second strike, Trident, Cruel Ruin and Meteor Blow.
+/// The summons' sprite formations (BattleEffect_PlaceFormationObjects and
+/// BattleEffect_RunImpactBurst), each named for the summon that keeps it.
+enum SummonFormation {
+  SUMMON_FORMATION_THOR,    ///< nine in a 3x3 grid at 32-pixel spacing
+  SUMMON_FORMATION_NEREID,  ///< twelve in rows of 1, 3, 4 and 4
+  SUMMON_FORMATION_CYBELE,  ///< eight in rows of 3, 2 and 3
+  SUMMON_FORMATION_TIAMAT,  ///< eight drawn at 1.25 times their size
+  SUMMON_FORMATION_MEGAERA, ///< eleven from signed columns
+  SUMMON_FORMATION_MOLOCH,  ///< twelve in a 4x3 grid
+  /// Tiamat's eight when the first target's animation kind is 2.
+  SUMMON_FORMATION_TIAMAT_ALTERNATE
+};
+
 enum SummonEffectId {
   SUMMON_EFFECT_NONE,         ///< runs Meteor's effect
   SUMMON_EFFECT_RAMSES,       ///< BattleEffect_RunRamses (ramses.c)

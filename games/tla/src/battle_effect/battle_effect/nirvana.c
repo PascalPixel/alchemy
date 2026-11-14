@@ -289,9 +289,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *args) {
 // frame, stands at 80 pixels (drawn with max blitters) and sinks from
 // frame 80; the target is thrown up at frame 10 and comes down at frame
 // 80.
-/// Soul Shatter, The Broken Seal's BattleEffect_RunUndeadSword as The Lost Age
-/// reworked it: the same two mirrored halves of a column and sixteen sparks,
-/// over a longer effect in which the target is thrown up and 32 motes of its
+/// Soul Shatter: two mirrored halves of a column and sixteen sparks, in an
+/// effect in which the target is thrown up and 32 motes of its
 /// soul drift back into the user.
 void BattleEffect_RunSoulShatter(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;

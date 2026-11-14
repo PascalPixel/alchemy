@@ -55,9 +55,8 @@ struct FxGroup {
 
 static __inline__ u8 GroupCount(struct FxGroup *group) { return group->count; }
 
-/// The Broken Seal's routine as The Lost Age has it: the
-/// member count is a byte at 0x1b, the timers sit at 0x78dc of the effect
-/// work, and a member's frame is reset only when its parameter changes.
+/// Updates every effect group of one unit's battle object: its palette, its
+/// pose (reset only when it changes) and the timer slot's frames.
 void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
                               s32 stateSlot, s32 stateValue) {
   struct FxSlot *set;

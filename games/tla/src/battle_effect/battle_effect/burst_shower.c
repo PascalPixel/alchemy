@@ -9,7 +9,6 @@
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
-// The Broken Seal's BattleEffect_ArmBg2AffineHBlankDma.
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -132,9 +131,7 @@ void BattleEffect_RunFireDance(struct BattleEffectArgument *args) {
 // BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
 // above (23 effect kinds, modes 0-24).
 
-// New in The Lost Age. Its nearest relative is The Broken Seal's
-// BattleEffect_RunProjectileVolley (effect.c; shape 0.44, structure 0.53): the
-// same frame: a shot launched each frame from the user toward one target
+// Each frame a shot launched each frame from the user toward one target
 // after another, every live shot drawn and moved, the targets hit four
 // frames apart, and a fade over the last eight frames. The mode chooses
 // the picture and how it is prepared (holes punched at random, a level
@@ -142,18 +139,7 @@ void BattleEffect_RunFireDance(struct BattleEffectArgument *args) {
 // how many shots and where they aim; modes 5 and 23 draw one big picture at
 // the user instead, mode 10 also draws motes into the user, mode 24 adds
 // glints around the targets, and modes 11, 14 and 18 hand over to
-// BattleEffect_RunStatReduction at the end. Resources not yet named in
-// directory.s, by row and asset: 0x151 BattleEffect_MarsDjinnSmallSheet,
-// 0x157 BattleEffect_VenusDjinnSmallSheet, 0x11c
-// BattleEffect_VioletLightningSheetA, 0xd7 Resource_Data0D7, 0x14d
-// BattleEffect_BoulderSheet, 0x116 BattleEffect_DemonFaceSheet, 0x16e
-// BattleEffect_HeartSheet, 0x161 BattleEffect_SmokeSheet, 0x13e
-// BattleEffect_FlashBurstSheet, 0x12f BattleEffect_WaterSpraySheet, 0x164
-// BattleEffect_PinkPalette, 0x187 BattleEffect_RockSpireSheet, 0x150
-// BattleEffect_MarsDjinnSheet, 0x148 BattleEffect_OrangePaletteB, 0x163
-// BattleEffect_LimePalette, 0x166 BattleEffect_CyanPalette, 0x184
-// BattleEffect_BlastSheet, 0x190 BattleEffect_BlueBeamSheet and 0xb9
-// BattleEffect_EffectPalette01.
+// BattleEffect_RunStatReduction at the end.
 
 #define DJINNI_BEHIND 64
 

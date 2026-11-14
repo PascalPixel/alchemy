@@ -9,7 +9,6 @@
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
 
-// The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.

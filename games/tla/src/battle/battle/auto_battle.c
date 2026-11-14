@@ -139,7 +139,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
 }
 
 s32 BattleObject_IsValidId(u32 objectId) {
-  if (objectId <= 7) {
+  if (objectId <= ALLY_MAX) {
     return 0;
   }
   if (objectId - 128 <= 5) {
@@ -232,7 +232,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   Random16();
   actorRecord = BattleObject_Get(actorId)->object;
 
-  if (targetId >= 0 && targetId <= 7) {
+  if (targetId >= 0 && targetId <= ALLY_MAX) {
     sideCount = BattleParty_ListLivingUnits(2, visibleUnits);
     sideStart = 0x80;
   } else {
@@ -269,7 +269,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
         visibleUnits[livingCount++] = index;
     }
   }
-  visibleUnits[livingCount] = 0xff;
+  visibleUnits[livingCount] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForList((s16 *)visibleUnits, 0);
 
   context.kind = action->parameter;
@@ -277,7 +277,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   for (index = 0; index != livingCount; index++)
     context.actors[index] = visibleUnits[index];
   context.count = livingCount;
-  if (targetId >= 0 && targetId <= 7)
+  if (targetId >= 0 && targetId <= ALLY_MAX)
     context.side = 1;
   else
     context.side = 0;
@@ -331,7 +331,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   BattleObject_Get(work.actors[0]);
 
   work.count = 1;
-  if ((u16)work.actors[0] <= 7)
+  if ((u16)work.actors[0] <= ALLY_MAX)
     work.side = 1;
   else
     work.side = 0;
@@ -384,7 +384,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar((struct Actor *)object, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
-  if ((u16)action->target <= 7) {
+  if ((u16)action->target <= ALLY_MAX) {
     work.side = 1;
     BattleParty_ListLivingUnits(1, (u16 *)work.actors);
     work.count = 1;
@@ -446,7 +446,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   PartyStatus_DrawFar(0);
   MessageArgument_ClearAllFar();
 
-  if (unitId <= 7) {
+  if (unitId <= ALLY_MAX) {
     if (showMessage != 0)
       BattleMessage_ShowAndWaitFar((s32)MsgBitterBlow);
     MessageArgument_PushFar(damage, MESSAGE_ARGUMENT_NUMBER);
@@ -462,7 +462,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   BattleMotion_PlayFall(unitId);
-  if (unitId <= 7) {
+  if (unitId <= ALLY_MAX) {
     if (character->hp <= 0) {
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)MsgGoesDown);

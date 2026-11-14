@@ -89,7 +89,7 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleEnemy_ClaimNameLetter(unit, 1);
   BattleUnit_SetFar(128, unit, 255);
   work->enemyIds[0] = 128;
-  work->enemyIds[1] = 255;
+  work->enemyIds[1] = BATTLE_UNIT_LIST_END;
   Enemy_Update();
   object = (s32 *)BattleObject_Get(128);
   BattleObject_Make((struct BattleObj *)object, 128, object[3] / Q16_ONE,
@@ -365,7 +365,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         }
         if (enemyGroup == 80)
           Battle_PlayFormChange(80);
-        if (actingUnit <= 7 && battle->defeated == 1) {
+        if (actingUnit <= ALLY_MAX && battle->defeated == 1) {
           /* FAKEMATCH(barrier): an empty asm before the defeatState store. */
           asm("");
           battle->defeatState = 3;
@@ -732,8 +732,8 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
   order = Ram_HeapSlots->battleWork;
   count = 0;
   if (groups & 1) {
-    for (i = 0; order->partyUnits[i] != 255; i++) {
-      if (order->partyUnits[i] != 254) {
+    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED) {
         if (dst != NULL)
           *dst++ = order->partyUnits[i];
         count++;
@@ -741,8 +741,8 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
     }
   }
   if (groups & 2) {
-    for (i = 0; order->enemyIds[i] != 255; i++) {
-      if (order->enemyIds[i] != 254) {
+    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED) {
         if (dst != NULL)
           *dst++ = order->enemyIds[i];
         count++;
@@ -763,8 +763,8 @@ s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
   order = Ram_HeapSlots->battleWork;
   count = 0;
   if (groups & 1) {
-    for (i = 0; order->partyUnits[i] != 255; i++) {
-      if (order->partyUnits[i] != 254 &&
+    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED &&
           ((struct BattleUnit *)Unit_Get(order->partyUnits[i]))->hp != 0) {
         if (dst != NULL)
           *dst++ = order->partyUnits[i];
@@ -773,8 +773,8 @@ s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
     }
   }
   if (groups & 2) {
-    for (i = 0; order->enemyIds[i] != 255; i++) {
-      if (order->enemyIds[i] != 254 &&
+    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED &&
           ((struct BattleUnit *)Unit_Get(order->enemyIds[i]))->hp != 0) {
         if (dst != NULL)
           *dst++ = order->enemyIds[i];

@@ -545,7 +545,7 @@ s32 Battle_FindUnitPlace(u32 id) {
   s32 i;
   s16 unit;
 
-  if (id <= 7) {
+  if (id <= ALLY_MAX) {
     for (i = 0;; i++) {
       unit = work->partyUnits[i];
       if (unit == BATTLE_UNIT_LIST_END)

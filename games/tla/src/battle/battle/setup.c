@@ -113,7 +113,7 @@ void BattleUnit_Collect(void) {
   count = BattleParty_PrepareMembers(buf);
   for (i = 0; i < count; i++)
     battle->partyUnits[i] = buf[i];
-  battle->partyUnits[count] = 0xff;
+  battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
   count = BattleEnemy_List(buf);
   kind = battle->unk042;
@@ -129,7 +129,7 @@ void BattleUnit_Collect(void) {
     battle->enemyIds[index] = buf[i];
   }
 done:
-  battle->enemyIds[count] = 0xff;
+  battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
 /// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the

@@ -102,7 +102,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
       sprite = 513;
       break;
     }
-    if ((u32)unitId > 7)
+    if ((u32)unitId > ALLY_MAX)
       palette = 1;
   }
 
@@ -514,8 +514,8 @@ void Enemy_Update(void) {
   s32 i;
   s32 total;
 
-  for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++) {
-    if (work->enemyIds[i] == 0xfe) {
+  for (i = 0; i < 6 && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+    if (work->enemyIds[i] == BATTLE_UNIT_REMOVED) {
       if (count == 0)
         continue;
     } else {
@@ -529,7 +529,7 @@ void Enemy_Update(void) {
   for (i = 0; i < total; i++) {
     s32 id = unitIds[i];
 
-    if (id != 0xfe) {
+    if (id != BATTLE_UNIT_REMOVED) {
       struct BattleObj *object = BattleObject_Get(id);
 
       object->anchorX = x[i] << 16;
@@ -573,14 +573,14 @@ void BattleUnit_RefreshPlacement(void) {
                       gBattlePlacement_StepPairs[place * 2],
                       gBattlePlacement_StepPairs[place * 2 + 1]);
   }
-  for (i = 0; i < 6 && work->enemyIds[i] != 0xff; i++)
+  for (i = 0; i < 6 && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++)
     ids[i] = work->enemyIds[i];
   count = i;
   BattlePlacement_LayoutEnemies(ids, count, x, z);
   for (i = 0; i < count; i++, stand++) {
     s32 id = work->enemyIds[i];
 
-    if (id != 0xfe)
+    if (id != BATTLE_UNIT_REMOVED)
       BattleObject_Make(BattleObject_Get(id), id, x[stand], z[stand]);
   }
 }
@@ -597,7 +597,7 @@ s32 BattlePlacement_ContainsId(s16 *list, s32 no) {
   do {
     u16 id = *list++;
 
-    if (id == 0xff)
+    if (id == BATTLE_UNIT_LIST_END)
       break;
     if (id == no)
       return 1;

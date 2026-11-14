@@ -257,8 +257,8 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
         action->targetMode == TARGET_MODE_SELF)
       ownSide = 1;
 
-    if (((actorId < 0 || actorId > 7) && ownSide == 0) ||
-        (actorId >= 0 && actorId <= 7 && ownSide != 0)) {
+    if (((actorId < 0 || actorId > ALLY_MAX) && ownSide == 0) ||
+        (actorId >= 0 && actorId <= ALLY_MAX && ownSide != 0)) {
       targetIndex = 0;
       while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
         slot = &turnOrder->partyUnits[targetIndex];
@@ -960,13 +960,13 @@ power_end:
         s32 i;
 
         for (i = 0; i < 6; i++) {
-          if (work->enemyIds[i] == 254) {
+          if (work->enemyIds[i] == BATTLE_UNIT_REMOVED) {
             work->enemyIds[i] = ent;
             break;
           }
-          if (work->enemyIds[i] == 255) {
+          if (work->enemyIds[i] == BATTLE_UNIT_LIST_END) {
             work->enemyIds[i] = ent;
-            work->enemyIds[i + 1] = 255;
+            work->enemyIds[i + 1] = BATTLE_UNIT_LIST_END;
             break;
           }
         }
@@ -2408,7 +2408,7 @@ select_again:
         allyTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (allyTarget == -2) {
         allyIsParty = 0;
-        if ((u16)request->unitId <= 7)
+        if ((u16)request->unitId <= ALLY_MAX)
           allyIsParty = 1;
         allyTarget = BattleAI_ChooseRandomTarget(allyIsParty);
       }
@@ -2421,7 +2421,7 @@ select_again:
       opponentTarget = BattleAI_ChooseTarget(request->unitId, ability);
       if (opponentTarget == -2) {
         opponentIsParty = 0;
-        if ((u16)request->unitId <= 7)
+        if ((u16)request->unitId <= ALLY_MAX)
           opponentIsParty = 1;
         opponentTarget = BattleAI_ChooseRandomTarget(opponentIsParty);
       }

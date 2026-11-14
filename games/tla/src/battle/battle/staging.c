@@ -50,12 +50,12 @@ void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   s32 side = 2;
   s32 own;
 
-  if (source[0] > 7)
+  if (source[0] > ALLY_MAX)
     side = 1;
   count = BattleUnit_ListIds(side, ids);
   Iwram_ClearWordsEntry(targets, sizeof *targets);
   own = 0;
-  if (source[0] <= 7)
+  if (source[0] <= ALLY_MAX)
     own = 1;
   own = Battle_GetUnitAtPlace(BattleAI_ChooseRandomTarget(own));
   targets->value50 = 2;
@@ -88,7 +88,7 @@ void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
   s32 i;
   s32 side = 1;
 
-  if (targets->actorId > 7)
+  if (targets->actorId > ALLY_MAX)
     side = 2;
   count = BattleUnit_ListIds(side, ids);
   for (i = 0; i < count; i++) {
@@ -110,7 +110,7 @@ void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
   s32 count;
   s32 i;
 
-  if (targets->actorId <= 7) {
+  if (targets->actorId <= ALLY_MAX) {
     count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
@@ -386,7 +386,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   presentation->active = 1;
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
 
-  if (aid <= 7) {
+  if (aid <= ALLY_MAX) {
     partyMode = completed;
     if (scene->encounterMode != 2)
       partyMode = 1;
@@ -444,7 +444,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   if (plan->presentationFlags & 0x8000) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
 
-    if (actor <= 7)
+    if (actor <= ALLY_MAX)
       view->targetYaw = YAW_PARTY_ACTION;
     else
       view->targetYaw = YAW_BEHIND_ENEMIES;
@@ -454,7 +454,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     s32 yaw;
 
     yaw = YAW_ENEMY_ACTION;
-    if (actor <= 7)
+    if (actor <= ALLY_MAX)
       yaw = YAW_PARTY_ACTION;
     if (view->targetYaw != yaw)
       view->targetYaw = yaw;
@@ -468,12 +468,12 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   i = 0;
   count = BattleParty_ListActorIds(3, list);
   for (; i != count; i++) {
-    if (units[i] == 254)
+    if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
     if ((mode & 2) || units[i] != actor) {
       u32 unit = units[i];
 
-      if ((target <= 7) != (unit <= 7))
+      if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
         BattleHighlight_SetSpriteMode(unit, 1);
     } else {
       Actor_SelectAnimationFar((struct Actor *)object,
@@ -508,15 +508,15 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       if (unit == actor) {
         if (!(mode & 1))
           units[kept++] = actor;
-      } else if ((target <= 7) == (unit <= 7)) {
+      } else if ((target <= ALLY_MAX) == (unit <= ALLY_MAX)) {
         units[kept++] = unit;
       }
     }
-    units[kept] = 255;
+    units[kept] = BATTLE_UNIT_LIST_END;
     BattleActor_SpawnObjectsForList((s16 *)units, 0);
     for (i = 0; i < plan->targetCount; i++)
       units[i] = plan->targetIds[i];
-    units[i] = 255;
+    units[i] = BATTLE_UNIT_LIST_END;
     for (i = 0; i != work.count; i++) {
       struct CastAnimation *animation =
           GetMotionRecord(BattleObject_Get(work.actors[i])->object, 0);
@@ -526,12 +526,12 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
         work.params[i][child] = animation->entries[child]->param;
     }
     if (plan->presentationFlags & 0x8000) {
-      if (target <= 7)
+      if (target <= ALLY_MAX)
         work.side = 1;
       else
         work.side = 0;
     } else {
-      if (plan->targetIds[0] <= 7)
+      if (plan->targetIds[0] <= ALLY_MAX)
         work.side = 1;
       else
         work.side = 0;
@@ -554,12 +554,12 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   for (i = 0; i != count; i++) {
     u32 unit;
 
-    if (units[i] == 254)
+    if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
     if (!(mode & 2) && units[i] == actor && work.kind == 3)
       continue;
     unit = units[i];
-    if ((target <= 7) != (unit <= 7))
+    if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
       BattleHighlight_SetSpriteMode(unit, 1);
   }
   for (i = 0; i != 16; i++) {

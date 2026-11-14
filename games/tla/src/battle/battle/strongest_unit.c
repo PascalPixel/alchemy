@@ -32,14 +32,14 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
   work = Ram_HeapSlots->battleWork;
 
   if (party != 0) {
-    for (i = 0; work->partyUnits[i] != 255; i++) {
-      if (work->partyUnits[i] != 254 &&
+    for (i = 0; work->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (work->partyUnits[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get__strongest_unit(work->partyUnits[i])->hp != 0)
         targets[count++] = i | 0x100;
     }
   } else {
-    for (i = 0; work->enemyIds[i] != 255; i++) {
-      if (work->enemyIds[i] != 254 &&
+    for (i = 0; work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (work->enemyIds[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get__strongest_unit(work->enemyIds[i])->hp != 0)
         targets[count++] = i | 0x180;
     }
@@ -60,9 +60,9 @@ s32 BattleUnit_FindStrongestAlly(u32 unitId) {
   s32 i;
   s32 id;
 
-  if (unitId <= 7) {
-    for (i = 0; (id = work->partyUnits[i]) != 255; i++) {
-      if (id != 254 && Unit_Get__strongest_unit(id)->hp != 0) {
+  if (unitId <= ALLY_MAX) {
+    for (i = 0; (id = work->partyUnits[i]) != BATTLE_UNIT_LIST_END; i++) {
+      if (id != BATTLE_UNIT_REMOVED && Unit_Get__strongest_unit(id)->hp != 0) {
         if (best == unitId ||
             (id != unitId && Unit_Get__strongest_unit(id)->atk > bestAttack)) {
           best = id;
@@ -71,8 +71,8 @@ s32 BattleUnit_FindStrongestAlly(u32 unitId) {
       }
     }
   } else {
-    for (i = 0; (id = work->enemyIds[i]) != 255; i++) {
-      if (id != 254 && Unit_Get__strongest_unit(id)->hp != 0) {
+    for (i = 0; (id = work->enemyIds[i]) != BATTLE_UNIT_LIST_END; i++) {
+      if (id != BATTLE_UNIT_REMOVED && Unit_Get__strongest_unit(id)->hp != 0) {
         if (best == unitId ||
             (id != unitId && Unit_Get__strongest_unit(id)->atk > bestAttack)) {
           best = id;

@@ -272,13 +272,13 @@ void BattlePlayback_Run(void) {
         if (events->timer & 2) {
           struct BattleObj *slot;
 
-          selection[0] = 255;
+          selection[0] = BATTLE_UNIT_LIST_END;
           slot = BattleObject_Get(events->actorId);
           BattleObject_SetColorMode(
               slot->object, BattleMotion_GetSlotPalette(events->actorId));
         } else {
           selection[0] = events->actorId;
-          selection[1] = 255;
+          selection[1] = BATTLE_UNIT_LIST_END;
           BattleObject_SetColorMode(BattleObject_Get(events->actorId)->object,
                                     7);
         }

@@ -8,6 +8,7 @@
 #include "types.h"
 #include "system/io_reg.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "map.h"
 #include "system/ram_buffer.h"
 #include "system/iwram_call.h"
@@ -43,7 +44,24 @@ static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 /// The twelve colours, a frame in four, the water's shimmer takes in turn.
 extern s16 gAncientLemuria_ShimmerColors[];
 
-void AncientLemuria_RimeJoins(void) { Djinn_JoinParty(12, 1, 13); }
+/// Rime's story: brought out of the first bush by Cyclone, hiding in the blue
+/// statue, which shakes, until Tremor shakes it out.
+#define FLAG_RIME_REVEALED 0x96c
+#define FLAG_RIME_SHAKEN_OUT 0x96d
+#define FLAG_RIME_IN_THE_STATUE 0x96e
+
+enum AncientLemuriaActorId {
+  ACTOR_RIME = ACTOR_FIRST_PLACED + 4,
+  // XXX: whether this Mercury Djinni, placed until Rime is had and shaken
+  // while Rime hides, is Rime in the blue statue or the statue itself; a render
+  // after Cyclone on the first bush would settle it.
+  ACTOR_HIDING_RIME
+};
+
+void AncientLemuria_RimeJoins(void) {
+  Djinn_JoinParty(ACTOR_RIME, DJINNI_RIME / DJINN_PER_ELEMENT,
+                  DJINNI_INDEX(DJINNI_RIME));
+}
 
 void AncientLemuria_ShakeTheStatue(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
@@ -94,30 +112,30 @@ void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
     AncientLemuria_MeetTheLemurians();
 }
 
-/// One hop of object 12 by (dx, dz).
+/// One of Rime's hops, by (dx, dz).
 static inline void Hop(s32 dx, s32 dz) {
-  Actor_Jump(12, 5, 0);
-  Actor_WalkByAndWaitById(12, dx, dz);
+  Actor_Jump(ACTOR_RIME, 5, 0);
+  Actor_WalkByAndWaitById(ACTOR_RIME, dx, dz);
   Event_Wait(3);
 }
 
-/// Once (flag 0x96c): object 12 spins for 30 frames while it grows from half
-/// scale, then hops thirteen times while the leader follows, and object 13
-/// takes AncientLemuria_ShakeTheStatue as its update.
+/// Cyclone on the first bush brings out Rime, once: it spins as it grows, hops
+/// away with the leader after it and hides in the blue statue, which starts to
+/// shake.
 void AncientLemuria_CycloneRevealsRime(void) {
   struct Actor *object;
   s32 i;
 
   /* FAKEMATCH(wrapper): scene.h's MapCopy. */
   MapCopy(7, 13, 1, 1, 5, 13, 0);
-  if (Event_GetFlag(0x96c))
+  if (Event_GetFlag(FLAG_RIME_REVEALED))
     return;
-  object = Actor_GetById(12);
-  Event_SetFlag(0x96c);
-  Event_SetFlag(0x96e);
-  Actor_SetSpriteFlags(Actor_GetById(12), 0);
-  Actor_SetPosition(12, 88, 216);
-  Actor_Jump(12, 9, 0);
+  object = Actor_GetById(ACTOR_RIME);
+  Event_SetFlag(FLAG_RIME_REVEALED);
+  Event_SetFlag(FLAG_RIME_IN_THE_STATUE);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIME), 0);
+  Actor_SetPosition(ACTOR_RIME, 88, 216);
+  Actor_Jump(ACTOR_RIME, 9, 0);
   object->scaleY = Q16_ONE / 2;
   object->scaleX = Q16_ONE / 2;
   for (i = 29; i >= 0; i--) {
@@ -138,13 +156,13 @@ void AncientLemuria_CycloneRevealsRime(void) {
   object->facing = 0x3000;
   object->scaleY = Q16_ONE;
   object->scaleX = Q16_ONE;
-  Actor_SetSpriteFlags(Actor_GetById(12), 1);
-  Actor_SetSpritePriority(12, 1);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIME), 1);
+  Actor_SetSpritePriority(ACTOR_RIME, 1);
   Event_Wait(8);
-  Actor_Jump(12, 9, 0);
-  Actor_WalkToAndWaitById(12, 120, 200);
-  Actor_GetById(12)->priorityFlags |= 1;
-  Actor_WalkToAndWaitById(12, 136, 200);
+  Actor_Jump(ACTOR_RIME, 9, 0);
+  Actor_WalkToAndWaitById(ACTOR_RIME, 120, 200);
+  Actor_GetById(ACTOR_RIME)->priorityFlags |= 1;
+  Actor_WalkToAndWaitById(ACTOR_RIME, 136, 200);
   Event_Wait(3);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
@@ -162,9 +180,9 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Hop(16, 0);
   Hop(16, 0);
   Hop(16, 0);
-  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
-  Actor_GetById(13)->update = AncientLemuria_ShakeTheStatue;
-  Actor_GetById(13)->timer = 0;
+  Actor_SetHorizontalPositionWithTerrain(ACTOR_RIME, 0, 0);
+  Actor_GetById(ACTOR_HIDING_RIME)->update = AncientLemuria_ShakeTheStatue;
+  Actor_GetById(ACTOR_HIDING_RIME)->timer = 0;
 }
 
 void AncientLemuria_CycloneSecondBush(void) { MapCopy(9, 9, 2, 3, 8, 9, 0); }
@@ -181,30 +199,28 @@ void AncientLemuria_StartTremorOnTheStatue(void) {
   AncientLemuria_StillTheStatue(13);
 }
 
-/// Once flag 0x96c is set and 0x96d is not: sets 0x96d, clears 0x96e, launches
-/// object 12 from 22 pixels up at half size and turns it an eighth of a turn a
-/// frame for 24 frames while it grows back to full size, then leaves it facing
-/// 0x3000.
+/// Tremor on the shaking statue, once Rime hides in it: Rime is thrown out,
+/// spinning as it grows back to its full size.
 void AncientLemuria_TremorShakesOutRime(void) {
   struct Actor *object;
   s32 i;
   struct Actor *p;
 
-  if (Event_GetFlag(0x96d))
+  if (Event_GetFlag(FLAG_RIME_SHAKEN_OUT))
     return;
-  if (!GameFlag_Get(0x96c))
+  if (!GameFlag_Get(FLAG_RIME_REVEALED))
     return;
-  object = Actor_GetById(12);
-  GameFlag_Set(0x96d);
-  GameFlag_Clear(0x96e);
+  object = Actor_GetById(ACTOR_RIME);
+  GameFlag_Set(FLAG_RIME_SHAKEN_OUT);
+  GameFlag_Clear(FLAG_RIME_IN_THE_STATUE);
   AncientLemuria_StillTheStatue(13);
-  Actor_SetPosition(12, 270, 184);
+  Actor_SetPosition(ACTOR_RIME, 270, 184);
   object->y = 22 << 16;
-  Actor_Jump(12, 11, 0);
+  Actor_Jump(ACTOR_RIME, 11, 0);
   object->scaleY = Q16_ONE / 2;
   object->scaleX = Q16_ONE / 2;
-  Actor_SetSpeed(12, 2.2);
-  Actor_WalkTo(12, 312, 184);
+  Actor_SetSpeed(ACTOR_RIME, 2.2);
+  Actor_WalkTo(ACTOR_RIME, 312, 184);
   for (i = 23; i >= 0; i--) {
     {
       s32 turn = 0x2000;
@@ -221,7 +237,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
   p->facing = 0x3000;
   p->scaleY = Q16_ONE;
   p->scaleX = Q16_ONE;
-  Actor_WaitForMoveById(12);
+  Actor_WaitForMoveById(ACTOR_RIME);
 }
 
 void AncientLemuria_HeadForTheDock(void) {
@@ -306,15 +322,14 @@ s32 Scene_Initialize(void) {
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   }
-  if (Event_GetFlag(0x96d))
-    Actor_SetPosition(12, 312, 184);
-  if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(0x96d) &&
-      GameFlag_Get(0x96c)) {
-    *(void (**)(void))(((u8 *)Actor_GetById(13)) + 108) =
-        AncientLemuria_ShakeTheStatue;
-    *(u16 *)(((u8 *)Actor_GetById(13)) + 100) = 0;
+  if (Event_GetFlag(FLAG_RIME_SHAKEN_OUT))
+    Actor_SetPosition(ACTOR_RIME, 312, 184);
+  if (gMainRoutineWork.entrance == 1 && !GameFlag_Get(FLAG_RIME_SHAKEN_OUT) &&
+      GameFlag_Get(FLAG_RIME_REVEALED)) {
+    Actor_GetById(ACTOR_HIDING_RIME)->update = AncientLemuria_ShakeTheStatue;
+    Actor_GetById(ACTOR_HIDING_RIME)->timer = 0;
   }
-  Actor_SetSpriteFlags(Actor_GetById(13), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_HIDING_RIME), 0);
   return 0;
 }
 
@@ -830,7 +845,8 @@ struct ActorPlacement gActorPlacements[] = {
                     0x5000, TALK_FACING_PARTY, 0),
     {56, CONDITION_ALWAYS, 1, -px(56), 0, -px(56), FACING_NORTH, 2, 0},
     {7, CONDITION_ALWAYS, 1, -px(56), 0, -px(56), FACING_NORTH, 2, 0},
-    {244, 0x51, 1, -px(56), 0, -px(56), FACING_SOUTH, 0, 0},
+    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), 1, -px(56), 0, -px(56),
+     FACING_SOUTH, 0, 0},
     ACTOR_PLACEMENT(289, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 184,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

@@ -457,7 +457,8 @@ void Islets_TalkToBird(void) {
   return;
 }
 
-/// Object 10's talk, and its exchange of the party's item 0x1c4 for item 0x1c5.
+/// The bird of SE Angara Islet: it takes the Pretty Stone and gives the Red
+/// Cloth in return.
 void Islets_TradeWithBird(void) {
   struct Actor *leader;
   struct Actor *object;
@@ -554,15 +555,10 @@ void Islets_TradeWithBird(void) {
     GameFlag_Set(0xaa3);                                                       \
   }
 
-/// The Islets' trade of item 453 with object 10. With the item in the party, if
-/// flag 513 is set (asked before) the camera moves and object 10 asks again
-/// (MsgAreYouGiving); otherwise it notices the item (MsgOhThatRed), the leader
-/// steps up and shows it (object type 489, its picture set to the item by
-/// Actor_SetItemIcon) and object 10 asks. A yes hands the item across step by
-/// step, takes item 453 and gives item 454 (object 10 hands it back over the
-/// leader's head), sets flag 0xaa3 and counts the answer in the event work's
-/// halfword 0x1c4 the first time; a no sets flag 513. Without the item, object
-/// 10 says MsgYupANice after the trade or MsgIVeBeenFeeling before it.
+/// The cow of N Osenia Islet: it notices the Red Cloth ("Oh! That red
+/// neckerchief...") and asks for it; a yes trades it for Milk, handed back
+/// over the leader's head, and a no leaves it to ask again. Without the cloth
+/// it talks of how it feels, or after the trade of the neckerchief.
 void Islets_TradeWithCow(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;
@@ -1227,8 +1223,8 @@ void Islets_StartWave(void) {
   Task_AddFrame(Islets_StartWaveDma, 0xc80);
 }
 
-/// When object 19 stands in its target area, actor 9 and the leader react and
-/// the party is given item 0x1c4.
+/// Once the log carrying Pengulina reaches Pengus, the two and the leader react
+/// and the party is given the Pretty Stone.
 void Islets_PengusGivesPrettyStone(void) {
   struct Actor *object = Actor_GetById(19);
   struct Actor *leader;
@@ -1361,9 +1357,8 @@ void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
   }
 }
 
-/// Records objects 12 and 13's positions; with them on cells (7, 29) and
-/// (7, 28), clears layer 2's collision under object 12, and with them on
-/// (12, 25) and (12, 26), under object 13.
+/// Keeps the two crates' places as they are pushed; a crate pushed into the
+/// water at (7, 28) or (12, 25) floats there, the way over it open.
 void Islets_StartPushingCrate(void) {
   struct Actor *object;
   s32 *x0;
@@ -1691,12 +1686,9 @@ void Islets_ArriveAtSecretSpot(void) {
 extern u32 gIslets_TurtleSwimsScript[];
 extern u32 gIslets_TurtleTurnsScript[];
 
-/// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
-/// is placed, the screen fades in, both run their action scripts
-/// (Actor_EmitSmoke updates) until actor 9's byte 0x63 is set, then actor 9
-/// speaks (MsgWellHereWe) and the leader is launched up to (152, 742) and
-/// turned; ends with Islets_StartWaterShimmer. The Japanese edition does not
-/// set the event work's transition word 0x1ac.
+/// Lonesome George brings the party back from his secret spot: he swims in
+/// with the leader, says "Well, here we are." and lifts him ashore. The
+/// Japanese edition starts no screen transition here.
 void Islets_ArriveBackAtIsland(void) {
   struct Actor *leader = OBJECT(gMainRoutineWork.currentOwner);
   struct Actor *guide = OBJECT(9);

@@ -1,4 +1,10 @@
 /// @file
+/// Jupiter Lighthouse's aerie, the open top of the tower between its two
+/// archer statues, with the lid over the well guarded by two angels. An
+/// energy path block pushed into each side's gap sets that archer shooting at
+/// its angel (JupiterLighthouse_PlacePathBlock), and the angel lifts its half
+/// of the lid (JupiterLighthouse_EnergizeAngels); with both, the lid is off and
+/// the well is open (FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED).
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -41,6 +47,22 @@
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+
+enum JupiterLighthouseAerieActorId {
+  ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
+  ACTOR_RIGHT_ANGEL,
+  ACTOR_LEFT_ARCHER,
+  ACTOR_RIGHT_ARCHER,
+  ACTOR_LEFT_PATH_BLOCK,
+  ACTOR_RIGHT_PATH_BLOCK,
+  ACTOR_FIRST_VINE,
+  ACTOR_SECOND_VINE,
+  /// Six blocks standing above the floor, three on each side of the well.
+  ACTOR_FIRST_RAISED_BLOCK,
+  ACTOR_LAST_RAISED_BLOCK = ACTOR_FIRST_RAISED_BLOCK + 5,
+  /// The lid over the well, which the angels lift.
+  ACTOR_LID
+};
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
@@ -126,20 +148,20 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void JupiterLighthouse_EnergizeAngels(s32 mode) {
-  struct Actor *left = Actor_Get(9);
-  struct Actor *right = Actor_Get(10);
-  struct Actor *rider = Actor_Get(23);
-  u8 *sprite = rider->sprite;
+  struct Actor *left = Actor_Get(ACTOR_LEFT_ANGEL);
+  struct Actor *right = Actor_Get(ACTOR_RIGHT_ANGEL);
+  struct Actor *lid = Actor_Get(ACTOR_LID);
+  u8 *sprite = lid->sprite;
   s32 i;
 
-  FieldActor_SetPositionAndResetMotion(rider, rider->x, rider->y, rider->z);
+  FieldActor_SetPositionAndResetMotion(lid, lid->x, lid->y, lid->z);
   if (mode == 0 || mode == 2) {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
       left->y += 0x1999;
-      rider->y += 0x7ae;
+      lid->y += 0x7ae;
       // Through a union, so this store may alias the sprite read after it.
-      ((union ActorCoordinate *)&rider->x)->value += -0xa3d;
+      ((union ActorCoordinate *)&lid->x)->value += -0xa3d;
       *(u16 *)(sprite + 18) += 32;
       System_Wait(1);
     }
@@ -147,8 +169,8 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
       right->y += 0x1999;
-      rider->y += 0x7ae;
-      rider->x += 0xa3d;
+      lid->y += 0x7ae;
+      lid->x += 0xa3d;
       *(u16 *)(sprite + 18) += 0xffe0;
       System_Wait(1);
     }
@@ -160,9 +182,9 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   JupiterLighthouse_StartBeamFlicker(right);
   Event_PlaySound(SE_522);
   for (i = 255; i >= 0; i--) {
-    Actor_Get(9)->y += 0x1999;
-    Actor_Get(10)->y += 0x1999;
-    rider->y += 0x1999;
+    Actor_Get(ACTOR_LEFT_ANGEL)->y += 0x1999;
+    Actor_Get(ACTOR_RIGHT_ANGEL)->y += 0x1999;
+    lid->y += 0x1999;
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -172,7 +194,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   Sound_WaitForJingle();
   left->motionFlags = 4;
   right->motionFlags = 4;
-  rider->motionFlags = 4;
+  lid->motionFlags = 4;
 }
 
 void JupiterLighthouse_EnergizeLeftAngel(void) {
@@ -181,7 +203,7 @@ void JupiterLighthouse_EnergizeLeftAngel(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  JupiterLighthouse_StartBeam(11, 9, 0);
+  JupiterLighthouse_StartBeam(ACTOR_LEFT_ARCHER, ACTOR_LEFT_ANGEL, 0);
   FieldEvent_Wait(40);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED) == 0) {
     JupiterLighthouse_EnergizeAngels(0);
@@ -192,13 +214,13 @@ void JupiterLighthouse_EnergizeLeftAngel(void) {
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ANGEL)));
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ANGEL)));
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ARCHER)));
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ARCHER)));
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -209,7 +231,7 @@ void JupiterLighthouse_EnergizeRightAngel(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  JupiterLighthouse_StartBeam(12, 10, 1);
+  JupiterLighthouse_StartBeam(ACTOR_RIGHT_ARCHER, ACTOR_RIGHT_ANGEL, 1);
   FieldEvent_Wait(40);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) == 0) {
     JupiterLighthouse_EnergizeAngels(1);
@@ -220,38 +242,32 @@ void JupiterLighthouse_EnergizeRightAngel(void) {
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ANGEL)));
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ANGEL)));
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_LEFT_ARCHER)));
   JupiterLighthouse_StopBeamFlicker(
-      ((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
+      ((struct JupiterLighthouseAerieObject *)Actor_Get(ACTOR_RIGHT_ARCHER)));
   FieldCamera_WaitForArrival();
   Event_End();
 }
 
-void JupiterLighthouse_StartMovingAngelBlock(s32 unused, s32 actor) {
+void JupiterLighthouse_LiftPathBlock(s32 unused, s32 actor) {
   struct JupiterLighthouseAerieObject *object =
       ((struct JupiterLighthouseAerieObject *)Actor_Get(actor));
 
   MapGrid_SetCellHeight(object->x, object->z, 0, 4);
 }
 
-// Jupiter Lighthouse aerie's two pushed objects: object 13 on cell (6, 12) or
-// object 14 on cell (57, 12) sets its flag (2570, 2571), falls into place
-// (waited on for at most 30 frames), copies cells
-// (MapGrid_CopyCellPictureCellsRect, Map_CopyCellAttributeRect) with sounds 134
-// and 167 and runs its part (JupiterLighthouse_EnergizeLeftAngel,
-// JupiterLighthouse_EnergizeRightAngel); off its cell it only marks the cell it
-// stands on (MapGrid_SetCellHeight). With both flags set, flag 2591 is set. The
-// fall wait is an if around a do-while.
-
-void JupiterLighthouse_PlaceAngelBlock(s32 unused, s32 id) {
+/// An energy path block set down: in its side's gap, cell (6, 12) on the
+/// left or (57, 12) on the right, it lights the path to the archer, which
+/// shoots at its angel; once both angels are energized the lid is off.
+void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 i;
 
-  if (id == 13) {
+  if (id == ACTOR_LEFT_PATH_BLOCK) {
     if (object->x >> 20 == 6 && *(s32 *)&object->z >> 20 == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
       object->motionFlags = 3;
@@ -281,7 +297,7 @@ void JupiterLighthouse_PlaceAngelBlock(s32 unused, s32 id) {
       MapGrid_SetCellHeight(object->x, object->z, 0, 6);
     }
   }
-  if (id == 14) {
+  if (id == ACTOR_RIGHT_PATH_BLOCK) {
     if (object->x >> 20 == 57 && *(s32 *)&object->z >> 20 == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
       object->motionFlags = 3;
@@ -323,37 +339,37 @@ s32 Scene_Initialize(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   JupiterLighthouse_LoadPalettesZero(0);
-  Import_HangingVinePlace(15, 1);
-  Import_HangingVinePlace(16, 1);
+  Import_HangingVinePlace(ACTOR_FIRST_VINE, 1);
+  Import_HangingVinePlace(ACTOR_SECOND_VINE, 1);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
-  Actor_Get(17)->priorityFlags |= 128;
-  Actor_Get(18)->priorityFlags |= 128;
-  Actor_Get(19)->priorityFlags |= 128;
-  Actor_Get(20)->priorityFlags |= 128;
-  Actor_Get(21)->priorityFlags |= 128;
-  Actor_Get(22)->priorityFlags |= 128;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK)->priorityFlags |= 128;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 1)->priorityFlags |= 128;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 2)->priorityFlags |= 128;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 3)->priorityFlags |= 128;
+  Actor_Get(ACTOR_FIRST_RAISED_BLOCK + 4)->priorityFlags |= 128;
+  Actor_Get(ACTOR_LAST_RAISED_BLOCK)->priorityFlags |= 128;
   JupiterLighthouse_PlaceRaisedActors();
   return 0;
 }
 
-/// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
-/// cells copied when set), then the terrain under each.
+/// Lays out the energy path blocks: gone into their gaps, their paths lit,
+/// for each angel already energized.
 s32 Scene_PrepareMap(void) {
   struct Actor *object;
 
   Scene_SetArrivalFlags(0);
   LightSprites_InitB();
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    Actor_SetPosition(13, 0, 0);
+    Actor_SetPosition(ACTOR_LEFT_PATH_BLOCK, 0, 0);
     MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10);
     MapGrid_CopyCellsLayered(5, 75, 1, 1, 6, 75);
     MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12);
     MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
   } else {
-    LightSprites_Add(13, 3);
-    Actor_Get(13)->priorityFlags |= 32;
+    LightSprites_Add(ACTOR_LEFT_PATH_BLOCK, 3);
+    Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |= 32;
   }
-  object = Actor_Get(13);
+  object = Actor_Get(ACTOR_LEFT_PATH_BLOCK);
   object->motionFlags = 0;
   {
     s32 last = 6;
@@ -361,24 +377,24 @@ s32 Scene_PrepareMap(void) {
     MapGrid_SetCellHeight(object->x, object->z, 0, last);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    Actor_SetPosition(14, 0, 0);
+    Actor_SetPosition(ACTOR_RIGHT_PATH_BLOCK, 0, 0);
     MapGrid_CopyCellsLayered(68, 39, 1, 1, 121, 10);
     MapGrid_CopyCellsLayered(58, 75, 1, 1, 57, 75);
     MapGrid_CopyCellAttributes(58, 12, 1, 1, 57, 12);
     MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
   } else {
-    LightSprites_Add(14, 5);
-    Actor_Get(14)->priorityFlags |= 32;
+    LightSprites_Add(ACTOR_RIGHT_PATH_BLOCK, 5);
+    Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |= 32;
   }
-  object = Actor_Get(14);
+  object = Actor_Get(ACTOR_RIGHT_PATH_BLOCK);
   object->motionFlags = 0;
   {
     s32 last = 6;
 
     MapGrid_SetCellHeight(object->x, object->z, 0, last);
   }
-  BYTE_AT(Actor_Get(11), 0x62) = 1;
-  BYTE_AT(Actor_Get(12), 0x62) = 1;
+  BYTE_AT(Actor_Get(ACTOR_LEFT_ARCHER), 0x62) = 1;
+  BYTE_AT(Actor_Get(ACTOR_RIGHT_ARCHER), 0x62) = 1;
   return 0;
 }
 
@@ -1205,12 +1221,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingAngelBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceAngelBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingAngelBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceAngelBlock)},
-    {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingAngelBlock)},
-    {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlaceAngelBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LEFT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RIGHT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
+    {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
+    {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
     {TRIGGER_TABLE_END},
 };
 

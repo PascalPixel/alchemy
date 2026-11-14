@@ -899,7 +899,7 @@ s32 WorldPicture_Show(s32 mode) {
         WorldPicture_GetLeaderPoint(&screenX, &screenY);
         *cursorX = screenX << 16;
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
-        // the reload.
+        // the load.
         input = &gInput;
         *cursorZ = screenY << 16;
         gliding = 1;

@@ -186,9 +186,8 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   return handle;
 }
 
-/// The held keys, read again at each test through a volatile pointer; as
-/// plain reads, combined into one test of 0x305, 62 of 82 instructions of
-/// FieldMessage_ShowAtActorAndWait differ in tla-en.
+/// The held keys, read again at each test.
+/* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
 #define HELD (*(volatile u32 *)&gInput.held)
 
 /// Opens the message at the object and waits for its window; after ten

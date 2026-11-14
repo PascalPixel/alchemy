@@ -48,8 +48,7 @@ struct RenderModel__liquifier {
   s32 shade;
 };
 
-// The first load names the buffer by its address: as the symbol it would
-// combine with the second.
+/* FAKEMATCH(temporary): the pictures' buffer by its address. */
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
 // Effect kind 123, 111 frames. Sparks gather at the caster (frames 0-15)

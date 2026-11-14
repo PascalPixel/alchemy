@@ -659,7 +659,7 @@ s32 Field_PlaceAtEntrance(void) {
     if (*(s8 *)cursor == -1) {
       *angle = 0x4000;
       {
-        // A halfword constant through a plain pointer comes from the pool.
+        /* FAKEMATCH(temporary): the zero in a local of its own. */
         s32 zero = 0;
         *turn = zero;
       }

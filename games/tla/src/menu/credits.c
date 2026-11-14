@@ -943,8 +943,6 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 /// heap (the fill word marks the second block's tiles), and queues the
 /// resource's 64-colour palette. Then it copies the map at position into the
 /// tilemap (CopyScrollMap), flips the block and restarts the fade-in counter.
-/// The size is a linker symbol (the pool holds 0x234 where movs and a shift
-/// would do).
 void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
   /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 cell;

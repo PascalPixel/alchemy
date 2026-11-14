@@ -14,9 +14,8 @@
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
-/// The held keys, read again at each use through a volatile pointer, as The
-/// Broken Seal's gKeysHeld is declared; as gInput.held, 45 of 241 instructions
-/// of Actor_MoveByKeys differ in tla-en.
+/// The held keys, read again at each use, as The Broken Seal's gKeysHeld is.
+/* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
 #define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
 
 /// The script command 0x1b: moves an object 8 pixels at a time by the

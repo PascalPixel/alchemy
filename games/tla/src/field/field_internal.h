@@ -255,8 +255,7 @@ struct Unk_WakeActor {
 
 struct Unk_ClimbEventWork {
   u8 unk000[0xd4a];
-  /// Read as the low byte of a halfword: as a u8 or s16 field the read waits
-  /// for the sprite store (8 of 965 instructions differ in tla-en).
+  /* FAKEMATCH(signature): read as the low byte of a halfword. */
   u16 unkd4a : 8;
   u16 unkd4b : 8;
 };

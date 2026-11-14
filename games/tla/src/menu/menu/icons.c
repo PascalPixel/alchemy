@@ -560,8 +560,7 @@ void MenuIcon_LoadSlots(void) {
     if (entry <= 95) {
       u32 *attributes;
 
-      // As ids[i] the table and index combine into one walking pointer; the
-      // byte offset kept apart is what matches.
+      /* FAKEMATCH(temporary): the table read at a byte offset of its own. */
       Resource_LoadByModeIntoSlotFar(8, *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = &slot->attributes;
       *attributes++ = 0x40000000;

@@ -331,8 +331,7 @@ void FieldPsynergy_EndUnnamed28(void) {
     Window_LoadGraphics();
   } while (0);
   {
-    // A local that holds one constant: the control word is built with a
-    // shift; stored as a constant it loads from the pool (60 of 226 differ).
+    /* FAKEMATCH(temporary): the control word in a local of its own. */
     s32 control = 0x400;
 
     REG_BG0CNT = control;

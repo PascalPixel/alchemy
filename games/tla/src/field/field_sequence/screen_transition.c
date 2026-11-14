@@ -1058,9 +1058,7 @@ s32 ScreenTransition_IsScanlineActive(void) {
   return 1 - ((u32)(-other | other) >> 31);
 }
 
-/// The layer flags read through a volatile pointer, which keeps them the AND's
-/// second operand and builds the mask in the result register; as map->flags,
-/// 24 of 31 instructions of ScreenTransition_HideBackgrounds differ in tla-en.
+/* FAKEMATCH(volatile): the layer flags read through a volatile pointer. */
 #define MAP_LAYER_FLAGS(map) (*(volatile u16 *)&(map)->flags)
 
 /// Clears the flag of each map layer whose argument is nonzero.

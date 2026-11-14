@@ -1214,8 +1214,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             BattleEffect_BuildBlitter(188, 7, 7,
                                       Data_0819850a[Random16() & 3] | CLIP, 0);
             do {
-              // The empty once-only loop keeps loop.c from hoisting the glint
-              // size tables (without it, 1901 of 2278 differ, 2026-11-08).
+              /* FAKEMATCH(dead): an empty once-only block before the glints. */
             } while (0);
             DRAW_ALTERNATE(
                 canvas, work->sheet + 0x22 + gBattleEffect_GlintCells[glint],

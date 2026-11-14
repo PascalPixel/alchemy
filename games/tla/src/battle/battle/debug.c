@@ -91,8 +91,7 @@ void ScriptedBattle_SaveUnits(void) {
 /// Restores the five units ScriptedBattle_SaveUnits snapshotted: for each one
 /// still in the battle party and listed, the first three's four tag bytes and
 /// each one's 25 snapshot bytes, and the last two's HP and PP through
-/// Unit_SetHpFar and Unit_SetPpFar. PP is read through the global, which
-/// reloads the base as the native does.
+/// Unit_SetHpFar and Unit_SetPpFar.
 void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;

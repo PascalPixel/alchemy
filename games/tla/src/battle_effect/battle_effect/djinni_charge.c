@@ -220,8 +220,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         if ((u32)frame <= 15) {
           s32 turn;
 
-          // DEAD: frame is at most 15 here, so the second arm never runs. This
-          // arm order gives frame's reload into r4.
+          // DEAD: frame is at most 15 here, so the second arm never runs; the
+          // ROM keeps its test.
           if (frame <= 71) {
             turn = 256;
           } else {

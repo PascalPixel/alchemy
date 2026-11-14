@@ -194,7 +194,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     if (frame > 15) {
       s32 length;
       s32 j;
-      // The fixed address, not the symbol: loop.c steps the row offset alone.
+      /* FAKEMATCH(temporary): the cell buffer by its fixed address. */
       struct ModelVertex(*cells)[2] =
           (struct ModelVertex(*)[2])Ram_MapCellBuffer;
       u8 *projected = Data_02011000;
@@ -259,8 +259,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       if (frame > 73) {
         SceneTransform_ApplyUniformScale((212 << 10) - (frame << 11));
       }
-      // The buffers named directly, though cells and projected hold them:
-      // with the locals, gcse's table changes size and 8 differ.
+      /* FAKEMATCH(temporary): the buffers named, not cells and projected. */
       Render_TransformVertices(Ram_MapCellBuffer, Data_02011000, 66);
       Render_DrawModelList(model);
 

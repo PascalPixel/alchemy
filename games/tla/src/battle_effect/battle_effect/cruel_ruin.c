@@ -1548,8 +1548,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               u = t_ - q_;
             }
           } else {
-            // j * 9 written again: this product, used twice, is the one loop.c
-            // keeps as row, so row is set up and stepped before last.
+            /* FAKEMATCH(temporary): j * 9 written again for the row. */
             {
               s32 m = j * 9;
               m += i;

@@ -299,13 +299,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   }
 }
 
-struct MenuEntryWindow {
-  u8 unk00[12];
-  s16 x;
-  s16 y;
-};
-
-void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
+void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
                                  s32 originY) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 i;
@@ -315,8 +309,8 @@ void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
   Menu_CreateOwnerEntryObjects(0);
   for (i = 0; i <= 3; i++) {
     if (menu->memberSprites[i] != NULL) {
-      menu->memberX[i] = (i * 3 + (window->x + originX)) * 8;
-      menu->memberY[i] = (window->y + originY) * 8 + 16;
+      menu->memberX[i] = (i * 3 + ((s16)window->x + originX)) * 8;
+      menu->memberY[i] = ((s16)window->y + originY) * 8 + 16;
       menu->memberScale[i] = Q16_ONE;
     }
   }
@@ -534,19 +528,13 @@ void MenuIcon_SetActive(s32 active) {
   menu->menuIconsShown = active;
 }
 
-struct MenuPanel {
-  u8 unk00[12];
-  s16 x;
-  s16 y;
-};
-
 /// Lists usable entries with icons and names, or "none" when no entries
 /// qualify.
-void MenuPanel_DrawEntryList(struct MenuPanel *panel, s32 x, s32 y,
+void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
                              const u8 *enabled) {
   s32 count = 0;
-  s32 icon_x = panel->x * 8 + x + 8;
-  s32 icon_y = panel->y * 8 + y + 8;
+  s32 icon_x = (s16)panel->x * 8 + x + 8;
+  s32 icon_y = (s16)panel->y * 8 + y + 8;
   s32 i;
 
   for (i = 0; i <= 4; i++) {

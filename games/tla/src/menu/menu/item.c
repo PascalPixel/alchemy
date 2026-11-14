@@ -8,7 +8,6 @@
 
 // Defined below or in later parts of the menu object.
 struct OwnerInventoryState;
-struct MenuEntryWindow;
 s32 ItemMenu_ChooseCommand(void);
 s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
                           s32 mode);
@@ -34,7 +33,7 @@ s32 ItemMenu_ShowDetails(s32 value);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_Use(void);
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
-void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
+void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
                                  s32 originY);
 
 /// @file

@@ -6,7 +6,6 @@
 #include "sounds.h"
 #include "window_tile.h"
 #include "module/window/screens.h"
-#include "menu/psynergy_menu.h"
 
 #define NAVIGATION ((struct PsynergyMenuNavigation *)Ram_HeapSlots->unke4[0])
 
@@ -80,7 +79,7 @@
 /// or a sealed party member's, can be chosen. The Psynergy command runs it
 /// (Battle_CollectPartyCommands), listing only abilities usable in battle.
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
-  struct PsynergyMenuWork *work;
+  struct WindowWork *work;
   s32 drawnFirstEntry;
   s32 firstEntry;
   s32 drawnRow;
@@ -108,7 +107,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   struct PsynergyMenuSprite sprites[5];
   s32 glyph;
 
-  work = (struct PsynergyMenuWork *)Ram_HeapSlots->windowTiles;
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = VramCache_AllocEntry(128);
@@ -148,7 +147,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     /* FAKEMATCH(temporary): iconSprite holds &cursor. */
     iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
-      work->holdTilemapUpload = 1;
+      work->menuBusy = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
                            window->width - 2, 1, 15);
       Text_FillCanvasBackground();
@@ -182,12 +181,12 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
             Text_SetColor(TEXT_COLOR_RED);
           else if (unit->psySeal != 0)
             Text_SetColor(TEXT_COLOR_PINK);
-          work->textPalette = 5;
+          work->level = 5;
           Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityNothing,
                                   window, 16, i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
-          work->textPalette = 15;
+          work->level = 15;
           if (action->element != 4)
             Window_SetTilemapEntry(window, action->element + 0x5001,
                                    RANGE_COLUMN, i * 2, 0);
@@ -214,7 +213,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
                            window->width - 2, 1, 14);
       work->dirty = 1;
-      work->holdTilemapUpload = 0;
+      work->menuBusy = 0;
     }
 
     if (count > 5) {

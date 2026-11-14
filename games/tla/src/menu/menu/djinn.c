@@ -666,25 +666,19 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
 #define GRID_CELL_WIDTH 6
 #endif
 
-struct UiPanel {
-  u8 unk00[0xc];
-  s16 x;
-  s16 y;
-};
-
 void DjinnMenu_DrawFirstPage(struct DjinnMenuBackdrop *backdrop) {
   DjinnMenu_DrawPage(backdrop, 0);
 }
 
-void Window_SetInteriorPaletteBitRect(struct UiPanel *panel, s32 x, s32 y,
+void Window_SetInteriorPaletteBitRect(struct RenderInput *panel, s32 x, s32 y,
                                       s32 width, s32 height, s32 style) {
-  Window_HighlightRectFar(panel->x + x + 1, panel->y + y + 1, width, height,
-                          style);
+  Window_HighlightRectFar((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
+                          height, style);
 }
 
 /// Highlights the cell of a four-column grid at index's column and row's line,
 /// with style 14 when selected and 15 otherwise.
-void UiPanel_HighlightGridCell(struct UiPanel *panel, s32 index, s32 row,
+void UiPanel_HighlightGridCell(struct RenderInput *panel, s32 index, s32 row,
                                s32 selected) {
   s32 style = ((0u - selected) | selected) >> 31;
 
@@ -695,17 +689,10 @@ void UiPanel_HighlightGridCell(struct UiPanel *panel, s32 index, s32 row,
 
 #undef GRID_CELL_WIDTH
 
-struct WindowTiles {
-  u8 unk00[3];
-  u8 dirty; ///< bits: one per four tile rows, from bit 1
-  u8 unk04[4];
-  u16 cells[32][32];
-};
-
 /// Gives every cell of a tile rectangle that uses palette 15 the palette
 /// given instead, clipped to the screen, and marks its rows for upload.
 void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
-  struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *tiles = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
   palette <<= 12;
 
@@ -726,7 +713,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
 
   if (width > 0 && height > 0) {
     do {
-      u16 *p = &tiles->cells[y][x];
+      u16 *p = &tiles->tilemap[y][x];
       s32 col = width;
 
       if (col != 0) {
@@ -753,10 +740,10 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   }
 }
 
-void Window_SetInteriorRectPalette(struct UiPanel *panel, s32 x, s32 y,
+void Window_SetInteriorRectPalette(struct RenderInput *panel, s32 x, s32 y,
                                    s32 width, s32 height, s32 palette) {
-  Window_SetRectPalette(panel->x + x + 1, panel->y + y + 1, width, height,
-                        palette);
+  Window_SetRectPalette((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
+                        height, palette);
 }
 
 struct UiChannelSlot *Message_OpenDecodedFar(void *window, s32 message);
@@ -768,14 +755,14 @@ struct UiChannelSlot *Message_OpenDecodedFar(void *window, s32 message);
 /// or Select, back to the list, or DJINN_RESULT_START for Start, which closes
 /// the Djinn menu.
 s32 DjinnMenu_ShowHelp(void) {
-  struct UiPanel *helpWindow;
-  struct UiPanel *statusWindow;
+  struct RenderInput *helpWindow;
+  struct RenderInput *statusWindow;
   struct DjinnMenuWork *menu;
   struct WindowWork *render;
   s32 result;
   s32 previous;
   s32 selection;
-  struct UiPanel *list;
+  struct RenderInput *list;
   struct UiChannelSlot *channel;
   s32 message;
   s32 helpIndex;
@@ -817,7 +804,7 @@ s32 DjinnMenu_ShowHelp(void) {
     Window_SetInteriorPaletteBitRect(list, 0, selection, 6, 1, 14);
     previous = selection;
     for (;;) {
-      MenuCursor_Position(-12, (list->y + selection) * 8 + 8);
+      MenuCursor_Position(-12, ((s16)list->y + selection) * 8 + 8);
       wait(1);
       if (gInput.repeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
@@ -896,11 +883,6 @@ s32 DjinnMenu_ShowHelp(void) {
 #else
 #define TRADE_HELP_DJINNI_FIRST 0
 #endif
-
-struct DjinnWindowWork {
-  u8 unk0[3];
-  u8 dirty;
-};
 
 extern u8 gDjinnMenu_TextLevel[];
 
@@ -1161,7 +1143,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Window_ClearInteriorTilesFar(listWindow, 0, 96, 224, 104);
 #endif
       }
-      ((struct DjinnWindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
+      ((struct WindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;
       redraw = 0;
     }
     wait(1);

@@ -27,12 +27,8 @@ struct DjinnPreviewWindow {
 };
 
 struct DjinnMenuWork {
-  u8 unk000[3];
-  u8 dirty; ///< set to redraw the menu
-  u8 unk004[2];
-  u8 holdTilemapUpload;
-  u8 unk007;
-  s32 member; ///< the party member whose Djinn are shown
+  u8 unused[8]; ///< no view of the menu work names it
+  s32 member;   ///< the party member whose Djinn are shown
   u8 unk00c[4];
   s32 statusWindow;
   struct WindowSprite *cursor;

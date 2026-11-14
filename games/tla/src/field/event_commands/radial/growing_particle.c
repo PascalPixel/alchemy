@@ -45,13 +45,6 @@ void GrowingParticle_Update(struct EffectSprite *sprite,
 
 struct PendingEvent;
 
-/* VIEW(growing_particle): variable gMainRoutineWork as extern u8
- * gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork
- * gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[],
- * it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/growing_particle.c:48: conflicting
- * types for `gMainRoutineWork'. */
-extern u8 gMainRoutineWork__growing_particle[] __asm__("gMainRoutineWork");
 extern u8 Data_02000452;
 
 void Func_080dc954(void);
@@ -83,7 +76,7 @@ void FieldPsynergy_EndSand(void) {
   u8 *particle;
   u8 *particleSprite;
   u8 *animation;
-  u8 *party;
+  struct MainRoutineWork *party;
   s32 pictureOffset;
   s32 ripple;
   s32 frame;
@@ -92,7 +85,7 @@ void FieldPsynergy_EndSand(void) {
   s32 mask;
 
   Func_080dc954();
-  gMainRoutineWork__growing_particle[620] = 0;
+  gMainRoutineWork.pendingThird = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(FieldPsynergy_WatchSandGround);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
@@ -117,8 +110,8 @@ void FieldPsynergy_EndSand(void) {
   mask = 63;
   Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                      owner->z);
-  party = gMainRoutineWork__growing_particle;
-  Actor_SetFirstSpriteAnimationFar(owner, *(s32 *)(party + 532));
+  party = &gMainRoutineWork;
+  Actor_SetFirstSpriteAnimationFar(owner, party->currentOwner);
   ((u8 *)owner->sprite)[5] &= mask;
   mask &= ((u8 *)owner->sprite)[7];
   mask |= 128;

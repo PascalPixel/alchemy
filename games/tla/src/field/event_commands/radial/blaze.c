@@ -338,13 +338,6 @@ struct CueEvent {
   u16 cue;
 };
 
-/* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[];
- * main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried
- * as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in
- * tla-ja: games/tla/src/field/event_commands/radial/blaze.c:341: conflicting
- * types for `gMainRoutineWork'. */
-extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
-
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer);
 s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
@@ -353,15 +346,15 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 /// it leaves a climbable cell or faces one that is not.
 void FieldPsynergy_WatchSandGround(void) {
   struct CueEvent *event = Ram_HeapSlots->eventWork;
-  u8 *party = gMainRoutineWork__f0e3d04;
-  struct Actor *object = ObjectTable_Get(*(s32 *)(party + 532));
+  struct MainRoutineWork *party = &gMainRoutineWork;
+  struct Actor *object = ObjectTable_Get(party->currentOwner);
   s32 reason = 0;
 
-  if (*(s8 *)(party + 707) != 0)
+  if ((s8)party->unk2c3 != 0)
     reason = 1;
   if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
     reason = 2;
-  if (party[530] == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
+  if (party->renderMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;

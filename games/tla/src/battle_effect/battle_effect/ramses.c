@@ -90,12 +90,10 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       ((struct FxAnimObject *)work->objects[FIRST_ROCK + i])->priority = 1;
     }
   }
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER_ALTERNATE,
-      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
               WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
@@ -250,8 +248,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
           s32 cell = puff->variant / 6 + 3;
 
           draw[0](canvas, work->sheet + gRamses_PuffPictures[cell],
-                  HI(puff->x) - gRamses_PuffSizes[cell] / 2,
-                  HI(puff->y) - gRamses_PuffSizes[cell] / 2,
+                  Q_16_16_UPPER_HALF(puff->x) - gRamses_PuffSizes[cell] / 2,
+                  Q_16_16_UPPER_HALF(puff->y) - gRamses_PuffSizes[cell] / 2,
                   gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
         }
         BattleEffectKernels_IntegrateVector2(puff, 60, -0x4000);
@@ -291,8 +289,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
         s32 size = (spark->variant >> 3) + 1;
 
         draw[i & 1](canvas, cells + gBattleEffect_MotePictures[size - 1],
-                    HI(spark->x) - size / 2, HI(spark->y) - size, size,
-                    size * 2);
+                    Q_16_16_UPPER_HALF(spark->x) - size / 2,
+                    Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 62, 0x1000);
         spark->variant--;
       }
@@ -306,7 +304,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   for (i = 0; i != FIRST_ROCK + ROCK_COUNT; i++)
     Sprite_DestroyFar(work->objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

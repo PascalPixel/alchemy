@@ -57,7 +57,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   Actor_SelectAnimationFar(caster, 2);
   Actor_SetAnimationSpeedFar(caster, 48);
   BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      HEAP_BLITTER, BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -184,8 +184,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -232,7 +232,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                        Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      HEAP_BLITTER, BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -323,7 +323,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

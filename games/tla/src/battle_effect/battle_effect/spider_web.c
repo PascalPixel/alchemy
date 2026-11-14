@@ -233,7 +233,6 @@ void Render_DrawModelList__ability_effects(struct Model *model) __asm__(
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) ((v) >> 16)
 
 struct PlacementSource {
   s32 unk00;
@@ -597,18 +596,19 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           u8 *source = work->sheet + gBattleEffect_PuffArcPictures[k];
           u8 w = gBattleEffect_PuffArcPictureWidths[k];
 
-          blits[0](canvas, source, HI(step->x) - (w >> 1),
-                   HI(step->y) + gBattleEffect_PuffArcPictureBiasY[k] - 36, w,
-                   gBattleEffect_PuffArcPictureHeights[k]);
+          blits[0](canvas, source, Q_16_16_TO_INT(step->x) - (w >> 1),
+                   Q_16_16_TO_INT(step->y) +
+                       gBattleEffect_PuffArcPictureBiasY[k] - 36,
+                   w, gBattleEffect_PuffArcPictureHeights[k]);
           t = step->variant;
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
           u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
-          s32 x = HI(step->x);
+          s32 x = Q_16_16_TO_INT(step->x);
           u8 w = gUlysses_PictureWidths[k];
           s32 left = x - (w >> 1);
-          s32 y = HI(step->y);
+          s32 y = Q_16_16_TO_INT(step->y);
           u8 h = gUlysses_PictureHeights[k];
 
           blit[1](canvas, source, left, y - (h >> 1), w, h);
@@ -657,8 +657,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           t = step->variant;
         }
         if (t == 64) {
-          anchor->x = HI(step->x);
-          anchor->y = HI(step->y);
+          anchor->x = Q_16_16_TO_INT(step->x);
+          anchor->y = Q_16_16_TO_INT(step->y);
           j = 0;
           {
             s32 first = i * 16;
@@ -698,7 +698,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
 
           if (draw) {
             blit[1](canvas, sprites + gBattleEffect_FlarePictures[n - 1],
-                    HI(q->x) - n, HI(q->y) - n, n * 2, n * 2);
+                    Q_16_16_TO_INT(q->x) - n, Q_16_16_TO_INT(q->y) - n, n * 2,
+                    n * 2);
           }
           BattleEffectKernels_IntegrateVector2(q, 60, 0x2000);
           q->variant--;
@@ -842,8 +843,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   transition[4] = 0;
   battle = Ram_HeapSlots->battleWork;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
@@ -942,15 +943,13 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = Q_8_8(1);
   if (effect->side == 1) {
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER,
-        BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_TRANSPARENT);
     draw[0] = (DrawRectangle)slots->unk64[1];
   } else {
-    BattleEffect_LoadBlitter(HEAP_BLITTER,
-                             BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X |
-                                                           COMPOSITE_CLIP_Y |
-                                                           COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_TRANSPARENT);
     draw[0] = (DrawRectangle)slots->unk64[1];
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
@@ -1019,7 +1018,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1027,7 +1026,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 
 // Builds the transparent blitter for one quarter.
 #define LOAD_QUARTER(flags)                                                    \
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, flags))
+  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLITTER_TRANSPARENT, flags))
 
 // Draws one quarter of the web with the blitter just built.
 #define DRAW_QUARTER(x, y)                                                     \
@@ -1038,7 +1037,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 // UB: HeapSlot_Release returns nothing; the releases between the quarters
 // call it through a function type that returns s64.
 #ifdef UBFIX
-#define RELEASE_QUARTER() HeapSlot_Release(HEAP_BLITTER)
+#define RELEASE_QUARTER() HeapSlot_Release(HEAP_SLOT_RAM_CODE)
 #else
 #define RELEASE_QUARTER() ((s64 (*)(s32))HeapSlot_Release)(HEAP_BLITTER)
 #endif
@@ -1096,7 +1095,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       LOAD_QUARTER(CLIP | COMPOSITE_FLIP);
     } while (0);
     DRAW_QUARTER(64, 72);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
     // The battle resumes, hit cue 143; every target flashes at frame 10.
     if (frame == 32)
@@ -1123,6 +1122,5 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 #undef RELEASE_QUARTER
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef HEAP_BLITTER
 #undef CLIP

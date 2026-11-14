@@ -71,14 +71,12 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
                WINOUT_WINOBJ_ALL;
   transition[4] = 1;
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER,
-        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                        COMPOSITE_CLIP_Y |
-                                                        COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -375,7 +373,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Actor_SetAnimationSpeedFar(caster, 16);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

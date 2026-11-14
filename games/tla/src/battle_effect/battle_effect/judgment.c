@@ -44,7 +44,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   work->transferMode = CANVAS_COPY;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -344,8 +344,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       ((struct JudgmentObject *)work->objects[i])->priority = 0;
     }
   }
-  HeapSlot_Release(SLOT_BLITTER);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
                              work->sheet + 0x4000, 1, 1);
@@ -700,7 +700,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
 
-    BattleEffect_LoadBlitter(SLOT_ALT, 3);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     if (frame > 85) {
       draw[1](canvas, work->sheet, 0, 0, 120, 120);
@@ -773,7 +774,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         }
       }
     }
-    HeapSlot_Release(SLOT_ALT);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     if (frame > 63) {
       /* FAKEMATCH(temporary): the scroll value through a local. */
       s32 y = Random16() % 4 + 30;
@@ -787,6 +788,6 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     Sprite_DestroyFar(work->objects[i]);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

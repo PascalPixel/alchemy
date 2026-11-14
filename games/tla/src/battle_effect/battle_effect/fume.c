@@ -57,7 +57,6 @@ extern const u16 gFume_Levels[][FUME_COLUMNS];
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-#define HI(v) (((s16 *)&(v))[1])
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
 
@@ -99,8 +98,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -150,7 +148,8 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         if (particle->variant > 1) {
           blit.draw(canvas,
                     work->sheet + 0x800 + ((particle->variant / 4) << 11),
-                    HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(particle->x) - 16,
+                    Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
         }
         BattleEffectKernels_IntegrateVector2(
             particle, 60, -gFume_Levels[effect->variant][FUME_LIFT]);
@@ -273,12 +272,11 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     BattleCamera_Shake(effect->variant * 2 + 2, effect->variant * 2 + 2);
     EFFECT_PRESENT_CANVAS(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef FUME_FRAMES
 #undef FUME_SEGMENTS

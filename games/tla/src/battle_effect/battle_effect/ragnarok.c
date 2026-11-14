@@ -9,7 +9,6 @@
 
 // The sheet holds the blade (64 x 128) and then the flash pictures.
 #define FLASH_SHEET (64 * 128)
-#define FLASH_PICTURE_BYTES (32 * 64)
 
 // The map cell buffer holds each column's sparks.
 
@@ -179,9 +178,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
           s32 life;
           s32 y;
 
-          y = HI(flash->y);
-          x = HI(flash->x) + gRagnarok_StrikeColumns[col + effect->side * 3] +
-              baseX;
+          y = Q_16_16_UPPER_HALF(flash->y);
+          x = Q_16_16_UPPER_HALF(flash->x) +
+              gRagnarok_StrikeColumns[col + effect->side * 3] + baseX;
           life = flash->variant;
           if (life >= 0 && life <= 17)
             draw[0](canvas,
@@ -251,8 +250,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
   Actor_SetAnimationSpeedFar(user, 16);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -309,12 +308,10 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   centerX = target.x / 2;
 
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER_ALTERNATE,
-      BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   if (mode != 2)
@@ -421,8 +418,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
         s32 life;
         s32 y;
 
-        y = HI(flash->y);
-        x = HI(flash->x) + centerX;
+        y = Q_16_16_UPPER_HALF(flash->y);
+        x = Q_16_16_UPPER_HALF(flash->x) + centerX;
         life = flash->variant;
         if (life >= 0 && life <= 17)
           draw[0](canvas,
@@ -520,7 +517,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
           if (frame > 76)
             size = 10;
           draw[0](canvas, cells + gBattleEffect_MotePictures[size - 1],
-                  HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
+                  Q_16_16_UPPER_HALF(dust->x) - size / 2,
+                  Q_16_16_UPPER_HALF(dust->y) - size, size, size * 2);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
@@ -531,7 +529,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
           dust->velocityX = dust->velocityX * 62 / 64;
           dust->velocityY = dust->velocityY * 62 / 64;
           dust->variant++;
-          if (dust->velocityY > 0 && HI(dust->y) > 108)
+          if (dust->velocityY > 0 && Q_16_16_UPPER_HALF(dust->y) > 108)
             dust->variant = -1;
         }
         i++;
@@ -617,8 +615,8 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
   } while (frame != 102);
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -660,12 +658,12 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
   BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);         \
-  HeapSlot_Release(SLOT_ALT)
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
 // The same draw, the routine read through a pointer to its slot.
 #define DRAW_ALT_THROUGH(slot, mode, sheet, x, y, w, h)                        \
   BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
-  HeapSlot_Release(SLOT_ALT)
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
 

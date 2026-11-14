@@ -30,7 +30,8 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(104, flags);
     out[0] = slots[26];
-    BattleEffect_LoadBlitter(188, 3);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
     out[1] = slots[47];
   } else {
     u32 heap = 0xc0;
@@ -42,7 +43,9 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
     slots = (void **)(heap << 18);
     BattleEffect_LoadBlitter(104, flags);
     out[0] = slots[26];
-    BattleEffect_LoadBlitter(188, 7);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
     out[1] = slots[47];
   }
 }
@@ -149,13 +152,13 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
-      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->unkb8[1];
 
     // A mote every eight frames drifts down a pixel a frame, swaying 16
@@ -243,8 +246,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_PRESENT_CANVAS(work);
   }
 
@@ -507,8 +510,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == 3 || mode == 5) {

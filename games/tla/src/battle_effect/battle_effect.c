@@ -60,7 +60,6 @@
 #undef HEAP_BLITTER
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 
 // The effects from the Cybele summon to Bolt.
 #include "battle_effect/cybele.c"
@@ -80,11 +79,9 @@
 #include "battle_effect/growth.c"
 #include "battle_effect/bolt.c"
 
-#undef HI
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
 #undef PARTICLES
-#undef BLIT_MODE
 #undef SHARDS
 #undef MOTES
 #undef SPARKS
@@ -100,10 +97,8 @@
 #undef OBJ_VRAM
 #undef COLUMN_COUNT
 #undef PHASE_RESULTS
-#undef BLITTER_TRANSPARENT
 #undef PREPARE_KIND
 #undef PREPARE_ANCHOR
-#undef BLITTER_MAX
 
 #undef FxGroup
 #undef PUFF_COUNT
@@ -182,7 +177,6 @@
 
 #include "battle_effect/liquifier.c"
 
-#undef HI
 #undef Actor_SetAnimationSpeedFar
 
 // The Megiddo, Moloch and Iris summons, Odyssey, and the model renderers the

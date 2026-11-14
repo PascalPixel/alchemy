@@ -18,7 +18,6 @@ struct StripQuad;
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 #define VENGEANCE_FRAMES 124
 #define BLADES 7
@@ -111,13 +110,12 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_OBJ |
                WINOUT_WIN01_CLR | WINOUT_WINOBJ_CLR;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B0, work->sheet, 1, 1);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER,
-      BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(
-      188, BLITTER(BLIT_TRANSPARENT,
-                   COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   backgroundX = 0x560000;
@@ -241,42 +239,45 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
           blade->variant = 1;
           if (effect->side == 0) {
-            blade->x = pos.x / 2 - HI(blade->x);
+            blade->x = pos.x / 2 - Q_16_16_UPPER_HALF(blade->x);
           } else {
-            blade->x = pos.x / 2 - HI(blade->x) + 128;
+            blade->x = pos.x / 2 - Q_16_16_UPPER_HALF(blade->x) + 128;
           }
         }
       }
       if (effect->side == 0) {
         if (blade->variant == 0) {
           draw[0](canvas, work->sheet + 0x42cc, (blade->x >> 16) - 111,
-                  HI(blade->y) + 24, 51, 12);
-          draw[0](canvas, work->sheet + 0x42cc, HI(blade->x) + 17,
-                  HI(blade->y) + 96, 51, 12);
-          draw[0](canvas, work->sheet + 0x4200, HI(blade->x) - 128,
-                  HI(blade->y) + 24, 17, 12);
-          draw[0](canvas, work->sheet + 0x4200, HI(blade->x), HI(blade->y) + 96,
-                  17, 12);
+                  Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
+          draw[0](canvas, work->sheet + 0x42cc,
+                  Q_16_16_UPPER_HALF(blade->x) + 17,
+                  Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
+          draw[0](canvas, work->sheet + 0x4200,
+                  Q_16_16_UPPER_HALF(blade->x) - 128,
+                  Q_16_16_UPPER_HALF(blade->y) + 24, 17, 12);
+          draw[0](canvas, work->sheet + 0x4200, Q_16_16_UPPER_HALF(blade->x),
+                  Q_16_16_UPPER_HALF(blade->y) + 96, 17, 12);
         } else {
           draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 111,
-                  HI(blade->y) + 24, 51, 12);
+                  Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
           draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x + 17,
-                  HI(blade->y) + 96, 51, 12);
+                  Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
         }
       } else if (blade->variant == 0) {
-        draw[1](canvas, work->sheet + 0x42cc, blade->x >> 16, HI(blade->y) + 24,
-                51, 12);
-        draw[1](canvas, work->sheet + 0x42cc, HI(blade->x) - 128,
-                HI(blade->y) + 96, 51, 12);
-        draw[1](canvas, work->sheet + 0x4200, HI(blade->x) + 51,
-                HI(blade->y) + 24, 17, 12);
-        draw[1](canvas, work->sheet + 0x4200, HI(blade->x) - 77,
-                HI(blade->y) + 96, 17, 12);
+        draw[1](canvas, work->sheet + 0x42cc, blade->x >> 16,
+                Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
+        draw[1](canvas, work->sheet + 0x42cc,
+                Q_16_16_UPPER_HALF(blade->x) - 128,
+                Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
+        draw[1](canvas, work->sheet + 0x4200, Q_16_16_UPPER_HALF(blade->x) + 51,
+                Q_16_16_UPPER_HALF(blade->y) + 24, 17, 12);
+        draw[1](canvas, work->sheet + 0x4200, Q_16_16_UPPER_HALF(blade->x) - 77,
+                Q_16_16_UPPER_HALF(blade->y) + 96, 17, 12);
       } else {
         draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x,
-                HI(blade->y) + 24, 51, 12);
+                Q_16_16_UPPER_HALF(blade->y) + 24, 51, 12);
         draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 128,
-                HI(blade->y) + 96, 51, 12);
+                Q_16_16_UPPER_HALF(blade->y) + 96, 51, 12);
       }
     }
 
@@ -295,8 +296,8 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *effect) {
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1V = WIN_RANGE(16, 136);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -348,14 +349,12 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 6);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F5, gMapCellBuffer, 1, 1);
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER,
-        BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_TRANSPARENT);
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                             BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X |
-                                                           COMPOSITE_CLIP_Y |
-                                                           COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_TRANSPARENT);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -577,7 +576,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -595,8 +594,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, BattleEffect_RunGeyser, 2)
 /// Abilities: Djinn Storm (kind 462).
 DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, BattleEffect_RunGeyser, 1)
 
-#define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
-#define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
+#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
 #define GEYSER_FRAMES 54
 #define GEYSER_DRAW_FRAMES 40
@@ -838,8 +836,8 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *effect, s32 mode) {
       EFFECT_END_FRAME(work);
     }
   }
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -852,7 +850,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
 
 // The Lost Age's blitter modes run the other way from The Broken Seal's:
 // additive 0, max 1, transparent 2, copy 3.
-#define BLITTER_ADDITIVE 0
 
 #define STARS_PER_TARGET 64 // each target's slice of the star buffer
 #define STAR_TOTAL 384
@@ -884,7 +881,8 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, 7));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 0)
     frames = effect->count * 8 + 38;
@@ -1035,7 +1033,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1057,7 +1055,6 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 
 // The Lost Age numbers its blitter modes from the other end of The Broken
 // Seal's: additive 0, max 1, transparent 2, copy 3.
-#define BLITTER_MAX 1
 
 #define BUBBLE_COUNT 256
 #define BUBBLE_FRAMES 60
@@ -1081,9 +1078,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect) {
   // Each frame the transfer task copies the canvas and clears it.
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  BattleEffect_LoadBlitter(
-      HEAP_SLOT_BLITTER,
-      BLITTER(BLITTER_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The blue beam's palette colours the bubble cels.
@@ -1117,11 +1112,12 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect) {
         u32 width;
         u32 height;
 
-        draw[0](
-            canvas, work->sheet + gBubbleColumn_Pictures[cel],
-            HI(bubble->x) - ((width = gBubbleColumn_PictureWidths[cel]) >> 1),
-            HI(bubble->y) - ((height = gBubbleColumn_PictureHeights[cel]) >> 1),
-            width, height);
+        draw[0](canvas, work->sheet + gBubbleColumn_Pictures[cel],
+                Q_16_16_UPPER_HALF(bubble->x) -
+                    ((width = gBubbleColumn_PictureWidths[cel]) >> 1),
+                Q_16_16_UPPER_HALF(bubble->y) -
+                    ((height = gBubbleColumn_PictureHeights[cel]) >> 1),
+                width, height);
         BattleEffectKernels_IntegrateVector2(bubble, 63, -0x4000);
         if (bubble->y < -(gBubbleColumn_PictureHeights[cel] << 16))
           bubble->variant = -1;
@@ -1147,7 +1143,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -1176,7 +1172,6 @@ struct SpriteView {
 #define COLOR_RED(c) ((c) & 31)
 #define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
 #define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)
-#define HALF_HI(v) (((s16 *)&(v))[1])
 
 // Fills the scanline gradient behind the serpent: dark rows above and below,
 // a ramp shaded by level in between.
@@ -1227,10 +1222,10 @@ struct SpriteView {
                                                                                \
     {                                                                          \
       u8 *src_ = work->sheet + 0x4800 + gCoatlicue_Pictures[n_];               \
-      s32 x0_ = HALF_HI((p)->x);                                               \
+      s32 x0_ = Q_16_16_UPPER_HALF((p)->x);                                    \
       u8 w_ = gCoatlicue_PictureWidths[n_];                                    \
       s32 x_ = x0_ - (w_ >> 1);                                                \
-      s32 y_ = HALF_HI((p)->y);                                                \
+      s32 y_ = Q_16_16_UPPER_HALF((p)->y);                                     \
       u8 h_ = gCoatlicue_PictureHeights[n_];                                   \
                                                                                \
       blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_);                       \
@@ -1289,7 +1284,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_CANVAS(work);
   }
   zero = 0;
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -1697,7 +1692,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           }
           q = &pos;
           EffectPosition_ProjectPoint(p, q);
-          q->depth = HALF_HI(q->depth) - 228;
+          q->depth = Q_16_16_UPPER_HALF(q->depth) - 228;
           n = q->depth * 6 / 50 + gCoatlicue_PictureBias[p->variant];
           if (n < 0) {
             n = 0;
@@ -1706,9 +1701,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             n = 14;
           }
           {
-            s32 x = HALF_HI(q->x);
+            s32 x = Q_16_16_UPPER_HALF(q->x);
 
-            q->y = HALF_HI(q->y);
+            q->y = Q_16_16_UPPER_HALF(q->y);
             q->x = x + 60;
           }
           if (frame > 539) {
@@ -1738,7 +1733,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         struct EffectStep *step = &work->particles[k * 7 + i];
 
         if (work->particles[k * 7 + 6].variant >= 0) {
-          s32 n = 14 - HALF_HI(step->z);
+          s32 n = 14 - Q_16_16_UPPER_HALF(step->z);
           s32 x =
               (step->x + (Trig_Sin((frame - (i % 7) * 8) << 10) << 2)) >> 16;
 
@@ -2155,26 +2150,22 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     Heap_Release(verts2);
     EFFECT_END_FRAME(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef VENGEANCE_FRAMES
 #undef BLADES
 #undef LIFE_SHEAR_FRAMES
 #undef HEAP_SLOT_BLITTER
-#undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef GEYSER_FRAMES
 #undef GEYSER_DRAW_FRAMES
 #undef GEYSER_PEAK_FRAME
 #undef DROP_COUNT
-#undef BLITTER_ADDITIVE
 #undef STARS_PER_TARGET
 #undef STAR_TOTAL
-#undef BLITTER_MAX
 #undef BUBBLE_COUNT
 #undef BUBBLE_FRAMES
 #undef BUBBLE_HIT_CUE
@@ -2183,7 +2174,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
 #undef COLOR_RED
 #undef COLOR_GREEN
 #undef COLOR_BLUE
-#undef HALF_HI
 #undef FILL_GRADIENT
 #undef BLIT_CELL
 #undef DRAW_SPARK

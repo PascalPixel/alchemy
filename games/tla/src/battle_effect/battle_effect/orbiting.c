@@ -103,8 +103,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -136,9 +136,9 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
-  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   rectangleB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   for (i = 0; i != 64; i++) {
@@ -207,8 +207,8 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 

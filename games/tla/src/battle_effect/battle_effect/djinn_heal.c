@@ -86,13 +86,12 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - anchor[0]) << 8;
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(HEAP_BLITTER,
-                             BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
-                                 COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   else
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
-                                               COMPOSITE_CLIP_X |
-                                               COMPOSITE_CLIP_Y);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   draws[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   for (frame = 0; frame != QUAD_FRAMES; frame++) {
@@ -223,7 +222,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
   }
 
   // Tear down.
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -232,7 +231,6 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 #define ZAGAN_PARTS 12
 
@@ -622,8 +620,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   transition[4] = 0;
   for (i = 0; i != ZAGAN_PARTS; i++) {
     Sprite_DestroyFar(work->objects[i]);

@@ -84,12 +84,10 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -227,7 +225,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     BattleCamera_Shake(4, 4);
     EFFECT_PRESENT_CANVAS(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -237,17 +235,10 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
 // The Lost Age's blitter modes run the other way from The Broken Seal's:
 // additive 0, max 1, transparent 2, copy 3; 1 << 4 | 3 is max and clipped,
 // and | 4 mirrors it.
-#define BLITTER_MAX 1
-
-#define CLIP_XY 3
-#define FLIP_X 4
 
 #define SWING_FRAMES 52
 #define SWING_HIT_FRAME 18
 #define SPARK_COUNT 256
-
-// The pixel half of a 16.16 value.
-#define HI(v) (((s16 *)&(v))[1])
 
 // A swing. A five-cel slash sweeps across the caster's front, six frames a
 // cel, mirrored on the far side; at frame 18 the target is knocked back and
@@ -273,11 +264,11 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
 
   BattleEffect_StartCanvasLayer(1);
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->unk64[1];
   } else {
-    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                             BLITTER(BLITTER_MAX, CLIP_XY | FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->unk64[1];
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
@@ -369,7 +360,8 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
           s32 size = (spark->variant >> 3) + 1;
 
           draw[0](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
-                  HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+                  Q_16_16_UPPER_HALF(spark->x) - size / 2,
+                  Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           if (i & 1)
             BattleEffectKernels_IntegrateVector2(spark, 60, -0x2000);
           else
@@ -384,7 +376,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER
@@ -392,10 +384,6 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
 #undef FIRE_PUPPET_FRAMES
 #undef PUPPET_SEGMENTS
 #undef HEAP_SLOT_BLITTER
-#undef BLITTER_MAX
-#undef CLIP_XY
-#undef FLIP_X
 #undef SWING_FRAMES
 #undef SWING_HIT_FRAME
 #undef SPARK_COUNT
-#undef HI

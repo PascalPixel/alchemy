@@ -100,7 +100,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
             xyz[2] = mote->z * Trig_Cos(mote->x);
             EffectPosition_ProjectPoint(xyz, pos = &screen);
             pos->x = (pos->x >> 17) + 64;
-            pos->y = HI(pos->y) + 60;
+            pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
             draw[1](canvas, work->sheet + gFrost_MoteCells[cel],
                     pos->x - ((width = gFrost_MoteWidths[cel]) >> 1),
                     pos->y - ((height = gFrost_MoteHeights[cel]) >> 1), width,
@@ -172,8 +172,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
         if (chip->variant >= 0) {
           s32 cel = i % 8;
 
-          draw[1](canvas, work->sheet + gFrost_ChipCells[cel], HI(chip->x),
-                  HI(chip->y), gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
+          draw[1](canvas, work->sheet + gFrost_ChipCells[cel],
+                  Q_16_16_UPPER_HALF(chip->x), Q_16_16_UPPER_HALF(chip->y),
+                  gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->variant--;
@@ -214,9 +215,10 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
           u32 size;
 
           draw[1](canvas, dots + gBattleEffect_SparklePictures[cel],
-                  HI(puff->velocityX) -
+                  Q_16_16_UPPER_HALF(puff->velocityX) -
                       ((size = gBattleEffect_SparkleSizes[cel]) >> 1),
-                  HI(puff->velocityY) - (size >> 1) - rise, size, size);
+                  Q_16_16_UPPER_HALF(puff->velocityY) - (size >> 1) - rise,
+                  size, size);
         }
         puff->variant--;
         if ((puff->variant == -1 || puff->variant == 17) &&
@@ -230,8 +232,8 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

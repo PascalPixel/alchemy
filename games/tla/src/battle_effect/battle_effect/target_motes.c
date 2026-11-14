@@ -200,18 +200,16 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   RENDER_MODE_TORNADO,
               x, y + 16, w[frame & 3], h[frame & 3]);
-          HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
 
       // An additive and a max blitter for this target's motes.
-      BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
-                                                 COMPOSITE_CLIP_X |
-                                                 COMPOSITE_CLIP_Y);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 |
-                                                           COMPOSITE_CLIP_X |
-                                                           COMPOSITE_CLIP_Y);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->pos);
@@ -275,8 +273,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           }
         }
       }
-      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
       // The target flashes 16 frames into its turn, until the end.
       if (frame == member * 8 + 16) {
@@ -333,13 +331,11 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
-                                             COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   drawA = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X |
-                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                      BLITTER_TRANSPARENT);
   drawB = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   // The sheep wait above the screen with a random spin and starting cel.
@@ -419,8 +415,8 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -455,9 +451,8 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
-                                             COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferValue = 0;
@@ -506,7 +501,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -742,8 +737,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -763,7 +758,6 @@ void BattleEffect_RunPhoenix(struct BattleEffectArgument *effect) {
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef HEAP_BLITTER
 #undef GROUND_Y
 #undef MOTE_MAX

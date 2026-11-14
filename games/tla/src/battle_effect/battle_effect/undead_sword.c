@@ -100,9 +100,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       if (height > 0) {
         if (height > COLUMN_MAX_HEIGHT) {
           height = COLUMN_MAX_HEIGHT;
-          mode = BLIT_MAX;
+          mode = BLITTER_MAX;
         } else {
-          mode = BLIT_ADDITIVE;
+          mode = BLITTER_ADDITIVE;
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
@@ -114,7 +114,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           (draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1])(
               canvas, work->sheet, x, 112 - height, 14, height);
-          HeapSlot_Release(HEAP_BLITTER);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
     }
@@ -128,8 +128,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
         s32 py;
 
         cell = particle->variant / 3;
-        px = HI(particle->x);
-        py = HI(particle->y);
+        px = Q_16_16_UPPER_HALF(particle->x);
+        py = Q_16_16_UPPER_HALF(particle->y);
         if (cell > 6)
           cell = 6;
         picture =
@@ -141,8 +141,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       }
       particle++;
     }
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
     if (frame < COLUMN_RISE_FRAME)
       BattleCamera_Shake(4, 4);
@@ -266,7 +266,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
         step->variant--;
         BattleEffectKernels_IntegrateVector2(step, 60, 0x2000);
         draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(step->x) - size / 2,
+                Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
       }
     }
 
@@ -280,7 +281,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
 
         BattleEffectKernels_IntegrateVector2(step, 60, -0x2000);
         draw[0](canvas, work->sheet + 0x2000 + picture * 0x800,
-                HI(step->x) - 16, HI(step->y) - 32, 32, 64);
+                Q_16_16_UPPER_HALF(step->x) - 16,
+                Q_16_16_UPPER_HALF(step->y) - 32, 32, 64);
       }
     }
 
@@ -298,8 +300,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(104);
-  HeapSlot_Release(188);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -395,9 +397,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER,
-      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = (s16)camera->yaw;
@@ -656,12 +656,12 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         /* FAKEMATCH(temporary): position holds &screen. */
         position = &screen;
         if (EffectPosition_ProjectPoint(step, position) == 0 &&
-            HI(position->depth) > 10) {
-          s32 x = HI(position->x);
+            Q_16_16_UPPER_HALF(position->depth) > 10) {
+          s32 x = Q_16_16_UPPER_HALF(position->x);
           s32 y;
 
           position->x = x + 64;
-          y = HI(position->y);
+          y = Q_16_16_UPPER_HALF(position->y);
           position->y = y + 64;
           blit[0](canvas, work->sheet + 0x3000 + picture * 0x480, x + 52,
                   y + 40, 24, 48);
@@ -712,7 +712,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -770,12 +770,10 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
                                    (s32 *)&screen, (s32 *)&other);
   }
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -968,7 +966,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(transfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -1005,8 +1003,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EffectPosition_ProjectBattler(effect->actors[0], &pos);
   centerX = pos.x / 2;
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
   cells = gMapCellBuffer;
@@ -1121,8 +1118,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         cell = i % 5 * 3 + shard->variant / 96 % 3;
         pixels = work->sheet + 0x800 + gPrism_ShardPictures[cell];
         width = gPrism_ShardWidths[cell];
-        x = HI(shard->x) - (width >> 1);
-        y = HI(shard->y);
+        x = Q_16_16_UPPER_HALF(shard->x) - (width >> 1);
+        y = Q_16_16_UPPER_HALF(shard->y);
         // The heights table through a local: as gPrism_ShardHeights[cell] the
         // width moves to the stack one place early.
         heights = gPrism_ShardHeights;
@@ -1130,7 +1127,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         y -= height >> 1;
         blit[0](canvas, pixels, x, y, width, height);
         BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
-        if (HI(shard->y) > 104) {
+        if (Q_16_16_UPPER_HALF(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }
         shard->variant += shard->z;
@@ -1227,10 +1224,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
-#undef HI
 #undef EMBERS
 #undef BLITTER
 #undef SPARKS

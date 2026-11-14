@@ -209,20 +209,14 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
 
     // The arcs and waves, mirrored on odd blows.
     if (effect->side == 0) {
-      BattleEffect_LoadBlitter(
-          HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                     COMPOSITE_CLIP_Y |
-                                                     COMPOSITE_FLIP_Y));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     } else {
-      BattleEffect_LoadBlitter(
-          HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                              COMPOSITE_FLIP_X));
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                     COMPOSITE_CLIP_Y |
-                                                     COMPOSITE_FLIP));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
     }
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     draw[1] = ((struct {
@@ -277,18 +271,15 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         draw[0](canvas, ORB_CELS + ((frame - start - 2) / 2) * 960,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
     // The motes, until their life runs out, bouncing off the ground.
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER,
-        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER_ALTERNATE,
-        BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     draw[1] = ((struct {
                 u8 before[188];
@@ -312,8 +303,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         mote->variant--;
       }
     }
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
     if (frame > 3) {
       // The glints: three a frame around the target, each with its own
@@ -336,32 +327,32 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
                                     gBurstScene_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                    BLIT_ADDITIVE);
+                                    BLITTER_ADDITIVE);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
               gBattleEffect_GlintPictureWidths[cel],
               gBattleEffect_GlintPictureHeights[cel]);
-          HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
       // The smoke: sixteen puffs rise from the target's feet, six cels of
       // four frames each.
       if (RECORD(RECORD_EXTRA) == EXTRA_RIPPLE) {
-        BattleEffect_LoadBlitter(
-            HEAP_BLITTER,
-            BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                            BLITTER_ADDITIVE);
         draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
         for (i = 0; i != 16; i++) {
           struct EffectStep *puff = &work->particles[i];
 
           if ((u32)puff->variant <= 23) {
             draw[0](canvas, SMOKE_CELS + (puff->variant / 4) * 0x480,
-                    HI(puff->x) - 12, HI(puff->y) - 24, 24, 48);
+                    Q_16_16_UPPER_HALF(puff->x) - 12,
+                    Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
             BattleEffectKernels_IntegrateVector2(puff, 62, -0x1000);
           }
           puff->variant++;
         }
-        HeapSlot_Release(HEAP_BLITTER);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
     }
     BattleCamera_Shake(8, 8);

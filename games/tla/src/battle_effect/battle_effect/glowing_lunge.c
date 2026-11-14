@@ -7,8 +7,7 @@
 
 struct Model;
 
-#define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
-#define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
+#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
 #define LUNGE_FRAMES 60
 #define LUNGE_STREAK_FRAMES 15 // the streak follows the caster
@@ -46,9 +45,6 @@ struct RenderPrimitive__f17e0c0 {
   struct Texture__f17e0c0 *texture;
   s32 brightness;
 };
-
-// The pixel half of a 16.16 value.
-#define HI(v) (((s16 *)&(v))[1])
 
 // A lunge. The caster runs 80 percent of the way to the target in ten
 // frames behind a glowing streak (a 32x32 flare and its reflection); on
@@ -287,8 +283,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -304,11 +300,9 @@ void BattleEffect_RunRecovery(s32 a0) { BattleEffect_RunMirroredWall(a0, 2); }
 /// Abilities: Sack (kind 431).
 void BattleEffect_RunSack(s32 a0) { BattleEffect_RunMirroredWall(a0, 3); }
 #undef HEAP_SLOT_BLITTER
-#undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef LUNGE_FRAMES
 #undef LUNGE_STREAK_FRAMES
 #undef LUNGE_HIT_FRAME
 #undef LUNGE_FLASH_FRAMES
 #undef SPARK_COUNT
 #undef BURST_COUNT
-#undef HI

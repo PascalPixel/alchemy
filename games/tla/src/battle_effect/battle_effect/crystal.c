@@ -75,10 +75,12 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
                        128);
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   if (effect->side == 1) {
-    BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   } else {
-    BattleEffect_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                      COMPOSITE_FLIP_X);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   }
   draw[0] = BLITTER;
   {
@@ -202,7 +204,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef BLITTER

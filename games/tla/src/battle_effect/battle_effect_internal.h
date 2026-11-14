@@ -497,7 +497,32 @@ extern u8 gVortices_Shapes[];
   (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |     \
    DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
 
+/// The whole pixels of a 16.16 value.
+#define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
+
+/// The whole pixels of a stored 16.16 value, read as its upper halfword.
+// UB: the s32 is read through an s16.
+#ifdef UBFIX
+#define Q_16_16_UPPER_HALF(v) ((s32)(v) >> 16)
+#else
+#define Q_16_16_UPPER_HALF(v) (((s16 *)&(v))[1])
+#endif
+
 // The canvas life cycle, shared by every canvas effect.
+
+/// The heap slots the effects build their blitters in, as
+/// BattleEffect_LoadBlitter and HeapSlot_Release take a slot: a byte offset
+/// into Ram_HeapSlots. The second is released before the first.
+#define HEAP_SLOT_RAM_CODE 104   // Ram_HeapSlots->unk64[1]
+#define HEAP_SLOT_RAM_CODE_2 188 // Ram_HeapSlots->unkb8[1]
+
+/// Clips overflow on all four sides.
+#define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
+
+/// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
+/// and blend mode (BLIT_ADDITIVE to BLIT_COPY).
+#define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
+  BattleEffect_LoadBlitter(slot, (mode) << 4 | (flags))
 
 /// How the canvas transfer task treats the canvas after each copy
 /// (work->transferMode); work->transferValue is its argument.

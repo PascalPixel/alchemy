@@ -227,26 +227,30 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     if (effect->side == 0) {
       BattleEffect_FetchRectangleBlitters(0, pair);
     } else {
-      BattleEffect_LoadBlitter(104,
-                               BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      BattleEffect_LoadBlitter(
-          188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          BLITTER_ADDITIVE);
 
       pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     }
   } else if (mode == 20) {
-    BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_TRANSPARENT, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_TRANSPARENT);
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleEffect_LoadBlitter(
-        188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_TRANSPARENT);
 
     pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     REG_BLDALPHA = BLEND_ALPHA(16, 3);
   } else if (mode == 7 || mode == 21) {
-    BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 
     pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   } else {
@@ -622,17 +626,20 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
             continue;
           if (age > 7)
             pair[effect->side](canvas, work->sheet + VOLLEY_B_PICTURE,
-                               HI(shot->x) - 16, HI(shot->y) - 32, 32, 64);
+                               Q_16_16_UPPER_HALF(shot->x) - 16,
+                               Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
         } else if (mode == 22) {
           if (i & 1)
             continue;
           if (age > 2)
-            pair[0](canvas, work->sheet + VOLLEY_B_PICTURE, HI(shot->x) - 16,
-                    HI(shot->y) - 32, 32, 64);
+            pair[0](canvas, work->sheet + VOLLEY_B_PICTURE,
+                    Q_16_16_UPPER_HALF(shot->x) - 16,
+                    Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
         } else if (mode == 12 || mode == 16) {
           if (age > 1)
-            pair[0](canvas, work->sheet + VOLLEY_B_BEAM, HI(shot->x) - 12,
-                    HI(shot->y) - 24, 24, 48);
+            pair[0](canvas, work->sheet + VOLLEY_B_BEAM,
+                    Q_16_16_UPPER_HALF(shot->x) - 12,
+                    Q_16_16_UPPER_HALF(shot->y) - 24, 24, 48);
         } else if (mode == 9 || mode == 17) {
           cel = i / 2 % 3;
 
@@ -640,20 +647,20 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
           if (i & 1) {
             s32 y = shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5);
 
-            pair[1](canvas, work->sheet + cel * 1024, HI(shot->x) - 16,
-                    (y >> 16) - 16, 32, 32);
+            pair[1](canvas, work->sheet + cel * 1024,
+                    Q_16_16_UPPER_HALF(shot->x) - 16, (y >> 16) - 16, 32, 32);
           }
         } else if (mode == 20) {
           s32 cel = i % 5 * 3 + age % 3;
           u32 width = gSpire_ShardWidths[cel];
-          s32 x = HI(shot->x);
+          s32 x = Q_16_16_UPPER_HALF(shot->x);
           u32 half = width >> 1;
           const u8 *shardHeights = gSpire_ShardHeights;
           u32 height;
           s32 y;
           x -= half;
           height = shardHeights[cel];
-          y = HI(shot->y) - (height >> 1);
+          y = Q_16_16_UPPER_HALF(shot->y) - (height >> 1);
 
           pair[0](canvas,
                   work->sheet + gSpire_ShardPictures[cel] + VOLLEY_B_GLOW, x, y,
@@ -664,24 +671,27 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
           cel = age >> 2;
           y = (shot->y + (wobble << 5)) >> 16;
 
-          pair[1](canvas, work->sheet + cel * 1152, HI(shot->x) - 12, y - 24,
-                  24, 48);
+          pair[1](canvas, work->sheet + cel * 1152,
+                  Q_16_16_UPPER_HALF(shot->x) - 12, y - 24, 24, 48);
         } else if (mode == 18) {
           if (age > 1)
-            pair[0](canvas, work->sheet, HI(shot->x) - 11, HI(shot->y) - 21, 22,
-                    42);
+            pair[0](canvas, work->sheet, Q_16_16_UPPER_HALF(shot->x) - 11,
+                    Q_16_16_UPPER_HALF(shot->y) - 21, 22, 42);
         } else if (mode == 4) {
           if (age > 5)
             pair[0](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 2048,
-                    HI(shot->x) - 16, HI(shot->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(shot->x) - 16,
+                    Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
         } else if (mode == 24) {
           if (age > 1)
             pair[1](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 1152,
-                    HI(shot->x) - 12, HI(shot->y) - 24, 24, 48);
+                    Q_16_16_UPPER_HALF(shot->x) - 12,
+                    Q_16_16_UPPER_HALF(shot->y) - 24, 24, 48);
         } else if (mode != 5) {
           if (age > 1)
             pair[0](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 2048,
-                    HI(shot->x) - 16, HI(shot->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(shot->x) - 16,
+                    Q_16_16_UPPER_HALF(shot->y) - 32, 32, 64);
         }
         shot->x += shot->velocityX;
         shot->y += shot->velocityY;
@@ -722,16 +732,16 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
               heights = gBattleEffect_GlintPictureHeights;
               y -= heights[cel] >> 1;
 
-              HeapSlot_Release(188);
-              HeapSlot_Release(104);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE);
               BattleEffect_BuildBlitter(
                   188, 7, 7,
                   gProjectileVolleyB_GlintFlips[Random16() & 3] | CLIP,
-                  BLIT_ADDITIVE);
+                  BLITTER_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
                   widths[cel], heights[cel]);
-              HeapSlot_Release(188);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               BattleEffect_FetchRectangleBlitters(effect->side, pair);
             }
           }
@@ -830,8 +840,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (mode == 11 || mode == 14 || mode == 18) {
       // Hand over to the canvas effect: clear both canvases first.
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);

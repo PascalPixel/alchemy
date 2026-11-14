@@ -84,8 +84,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT, picture, 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
-  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
-  BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   draw[1] = ALTERNATE_BLITTER_SLOT;
   gCameraSceneParameters[4] = 240;
@@ -165,8 +166,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
       if (frame >= start) {
         struct EffectStep *slash = &work->particles[i];
-        s32 x = HI(slash->x);
-        s32 y = HI(slash->y);
+        s32 x = Q_16_16_UPPER_HALF(slash->x);
+        s32 y = Q_16_16_UPPER_HALF(slash->y);
 
         if (frame == i * 8 + 84)
           Sound_PlayFar(SE_POWER_UP);
@@ -324,7 +325,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

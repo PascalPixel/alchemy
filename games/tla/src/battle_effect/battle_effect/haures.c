@@ -14,7 +14,6 @@ struct StripQuad;
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 struct HalfPair {
   u16 x;
@@ -40,7 +39,6 @@ extern const struct HalfPair gHaures_FeatherPoints[];
 #define SLOT_ALT 188 // unkb8[1]
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
-#define HALF_HI(v) (((s16 *)&(v))[1])
 
 static __inline__ void PLACE(s32 x, s32 y) {
   SceneTransform_ApplyPosition3(x << 16, y << 16, 0);
@@ -324,7 +322,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                                                     wingPlace,
                                                     gHaures_UnitScale, 0);
                   BattleEffectKernels_IntegrateVector2(p, 63, 0x2000);
-                  if (HALF_HI(p->y) > 119) {
+                  if (Q_16_16_UPPER_HALF(p->y) > 119) {
                     p->variant = 1;
                   }
                 } else if (p->variant <= 23) {
@@ -485,7 +483,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                 }
               }
             }
-            HeapSlot_Release(SLOT_ALT);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           }
           req.a = frame * 1128 - 103664;
           if (req.a > 0x40000) {
@@ -698,8 +696,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           for (i = 0; i != 31; i++) {
             struct EffectStep *p = &work->particles[i];
             model->mesh = mesh + i * 12;
-            if ((u32)(HALF_HI(p->x) + 16) <= 152 && (p->y >> 16) >= -16 &&
-                (p->y >> 16) <= 136) {
+            if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
+                (p->y >> 16) >= -16 && (p->y >> 16) <= 136) {
               Transform_Reset();
               SceneTransform_ApplyPosition3(p->x + -0x400000, p->y + -0x400000,
                                             0);
@@ -785,7 +783,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->unk64[1];
   for (frame = 0; frame != 92; frame++) {
     struct RenderModel *model;
@@ -823,7 +821,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           s32 n = (p->variant >> 3) + 1;
 
           draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                  HALF_HI(p->x) - n / 2, HALF_HI(p->y) - n, n, n * 2);
+                  Q_16_16_UPPER_HALF(p->x) - n / 2,
+                  Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
           BattleEffectKernels_IntegrateVector2(p, 63, -0x8000);
           p->variant--;
         }
@@ -1000,7 +999,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     Sprite_DestroyFar(work->objects[i]);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1084,13 +1083,11 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef SCRATCH
 #undef SPARKS
 #undef SLOT_ALT
 #undef STAMP_TILES
 #undef STAMP_CANVAS
-#undef HALF_HI
 #undef FIRST_RING_Y
 #undef RING_SPACING
 #undef COLUMN_WIDTH

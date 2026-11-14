@@ -15,8 +15,6 @@
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-#define HI(v) (((s16 *)&(v))[1])
-
 #define CARD (gMapCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
 
@@ -100,24 +98,18 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 2);
   if (mode == CARD_SWORD) {
     if (effect->side == 0)
-      BattleEffect_LoadBlitter(
-          HEAP_SLOT_BLITTER,
-          BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
     else
-      BattleEffect_LoadBlitter(
-          HEAP_SLOT_BLITTER,
-          BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                  BLIT_ADDITIVE));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          BLITTER_ADDITIVE);
   } else {
     if (effect->side == 0)
-      BattleEffect_LoadBlitter(
-          HEAP_SLOT_BLITTER,
-          BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     else
-      BattleEffect_LoadBlitter(
-          HEAP_SLOT_BLITTER,
-          BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                  BLIT_MAX));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   scale = 0;
@@ -332,7 +324,8 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         step = &work->particles[i];
         if (step->variant >= 0 && step->variant <= 15) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
-                  overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);
+                  overflow + Q_16_16_UPPER_HALF(step->x) - 16,
+                  Q_16_16_UPPER_HALF(step->y) - 16, 32, 32);
           BattleEffectKernels_IntegrateVector2(step, 62, -0x1000);
           if (step->y > px(96)) {
             step->velocityY = 0;
@@ -367,7 +360,8 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         if (step->variant >= 0 && step->variant <= 63) {
           draw[0](canvas,
                   Ram_MapCellBuffer + 0x683e + ((step->variant / 4 & 3) << 10),
-                  overflow + HI(step->x) - 16, HI(step->y) - 16, 32, 32);
+                  overflow + Q_16_16_UPPER_HALF(step->x) - 16,
+                  Q_16_16_UPPER_HALF(step->y) - 16, 32, 32);
           BattleEffectKernels_IntegrateVector2(step, 62, 0x2000);
           step->variant++;
         }
@@ -420,13 +414,14 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
 
           step = &work->particles[i];
           cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
-          draw[0](canvas,
-                  work->sheet + 0x2580 +
-                      (fade * 696 + gStatChange_ShardPictures[cell]),
-                  overflow + HI(step->x) - gStatChange_ShardWidths[cell] / 2,
-                  HI(step->y) - gStatChange_ShardHeights[cell] / 2,
-                  gStatChange_ShardWidths[cell],
-                  gStatChange_ShardHeights[cell]);
+          draw[0](
+              canvas,
+              work->sheet + 0x2580 +
+                  (fade * 696 + gStatChange_ShardPictures[cell]),
+              overflow + Q_16_16_UPPER_HALF(step->x) -
+                  gStatChange_ShardWidths[cell] / 2,
+              Q_16_16_UPPER_HALF(step->y) - gStatChange_ShardHeights[cell] / 2,
+              gStatChange_ShardWidths[cell], gStatChange_ShardHeights[cell]);
           BattleEffectKernels_IntegrateVector2(step, 60, 0);
         }
       }
@@ -489,11 +484,10 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == CARD_BAFFLE)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef CARD
 #undef CARD_NOISE

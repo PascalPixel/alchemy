@@ -163,25 +163,20 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   // The blitters face the target: one for the picture, one flipped upside
   // down for its reflection.
   if (effect->side == 1)
-    BattleEffect_LoadBlitter(HEAP_BLITTER,
-                             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                        COMPOSITE_CLIP_Y |
-                                                        COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   else
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER,
-        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (effect->side == 1)
-    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                        COMPOSITE_CLIP_Y |
-                                                        COMPOSITE_FLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_ADDITIVE);
   else
-    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                        COMPOSITE_CLIP_Y |
-                                                        COMPOSITE_FLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                        BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   Sound_PlayFar(SE_POWER_UP);
@@ -235,8 +230,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(HEAP_BLITTER);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.

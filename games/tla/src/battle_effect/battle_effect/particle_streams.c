@@ -39,9 +39,6 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
 struct FxPartyList;
 
-// The pixel half of a 16.16 fixed-point value.
-#define HI(v) (((s16 *)&(v))[1])
-
 // The heap blocks the dispatcher hands every canvas effect, as byte offsets
 // into Ram_HeapSlots (☀️ uses slot indices).
 #define HEAP_BLITTER 104
@@ -246,7 +243,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
             size = 10;
           draw[ember->velocityY > 0](
               canvas, cells + gBattleEffect_MotePictures[size - 1],
-              HI(ember->x) - size / 2, HI(ember->y) - size, size, size * 2);
+              Q_16_16_UPPER_HALF(ember->x) - size / 2,
+              Q_16_16_UPPER_HALF(ember->y) - size, size, size * 2);
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           if (frame > SPOUT_END_FRAME)
@@ -256,7 +254,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
           ember->velocityX = ember->velocityX * 62 / 64;
           ember->velocityY = ember->velocityY * 62 / 64;
           ember->variant++;
-          if (ember->velocityY > 0 && HI(ember->y) > 104)
+          if (ember->velocityY > 0 && Q_16_16_UPPER_HALF(ember->y) > 104)
             ember->variant = -1;
         }
       }
@@ -284,8 +282,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *effect) {
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       Sprite_DestroyFar(work->objects[k]);
@@ -392,9 +390,10 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   REG_BG2X = 0;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  BattleEffect_LoadBlitter(104, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   maxBlend = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_ADDITIVE);
   additive = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
@@ -463,8 +462,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         p->variant--;
         BattleEffectKernels_IntegrateVector2(p, 60, 0);
         size = p->variant / 16 + 3;
-        px = HI(p->x);
-        py = HI(p->y);
+        px = Q_16_16_UPPER_HALF(p->x);
+        py = Q_16_16_UPPER_HALF(p->y);
         additive(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                  px - size / 2, py - size, size, size * 2);
       }
@@ -479,8 +478,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         p->variant--;
         BattleEffectKernels_IntegrateVector2(p, 60, 0);
         size = p->variant / 16 + 1;
-        px = HI(p->x);
-        py = HI(p->y);
+        px = Q_16_16_UPPER_HALF(p->x);
+        py = Q_16_16_UPPER_HALF(p->y);
         additive(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                  px - size / 2, py - size, size, size * 2);
       }
@@ -496,8 +495,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
         BattleEffectKernels_IntegrateVector2(shard, 64, 0);
         cell = (frame - 36) / 7;
-        px = HI(shard->x);
-        py = HI(shard->y);
+        px = Q_16_16_UPPER_HALF(shard->x);
+        py = Q_16_16_UPPER_HALF(shard->y);
         maxBlend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12,
                  12, 24);
       }
@@ -510,8 +509,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 }
 
 /// Adds the deltas to BG palette entries 1 to 63, as The Broken Seal does, but
@@ -870,7 +869,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
     BattleEffect_BuildBlitter(HEAP_BLITTER, 8, 7,
-                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX);
+                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLITTER_MAX);
     draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
     EFFECT_SET_TRANSFER(work, transferMode, CANVAS_FILL_WORD(2));
     Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
@@ -1015,8 +1014,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         vector[1] = (gParticleStreams_OrbitPoints[i][1] + frame) << 16;
         vector[2] = (gParticleStreams_OrbitPoints[i][2] / 2) << 16;
         EffectPosition_ProjectPoint(vector, pos = &spot);
-        pos->x = HI(pos->x) + 128;
-        pos->y = HI(pos->y) + 60;
+        pos->x = Q_16_16_UPPER_HALF(pos->x) + 128;
+        pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
         draw(Ram_MapCellBuffer, work->sheet + 0x1f40, pos->x - 4, pos->y - 4, 8,
              8);
       }
@@ -1045,7 +1044,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
         if (mote->variant >= 0) {
           draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
-               HI(mote->x) - 16, HI(mote->y) - 16, 32, 32);
+               Q_16_16_UPPER_HALF(mote->x) - 16,
+               Q_16_16_UPPER_HALF(mote->y) - 16, 32, 32);
           mote->x -= direction * 0x14000;
           mote->y -= px(5);
           mote->variant++;
@@ -1067,7 +1067,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
 
   // Act two: the blast.
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -1075,8 +1075,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT =
       BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   for (i = 0; i != 32; i++) {
@@ -1237,7 +1236,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == 0)
     Sprite_DestroyFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();

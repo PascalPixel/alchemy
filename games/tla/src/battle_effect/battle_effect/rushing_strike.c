@@ -7,7 +7,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-#define HI(v) (((s16 *)&(v))[1])
 #define STAR_MINE_FRAMES 144
 #define STARS 6
 #define STAR_SPARKS 48
@@ -189,7 +188,8 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         if (particle->variant > 1) {
           blitters[0](canvas,
                       work->sheet + 0x4000 + ((particle->variant / 4) << 11),
-                      HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+                      Q_16_16_UPPER_HALF(particle->x) - 16,
+                      Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
         }
         BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
         particle->variant++;
@@ -201,8 +201,8 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
         s32 size = (particle->variant >> 3) + 1;
 
         blitters[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                    HI(particle->x) - size / 2, HI(particle->y) - size, size,
-                    size * 2);
+                    Q_16_16_UPPER_HALF(particle->x) - size / 2,
+                    Q_16_16_UPPER_HALF(particle->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
         particle->variant--;
       }
@@ -211,8 +211,8 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -308,8 +308,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -582,7 +581,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       if ((u32)picture <= 23) {
         if (picture > 1) {
           blit[0](canvas, work->sheet + 0x800 + ((picture / 4) << 11),
-                  HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+                  Q_16_16_UPPER_HALF(particle->x) - 16,
+                  Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
         }
         BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
         particle->variant++;
@@ -645,7 +645,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
           size = 1;
         }
         blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(spark->x) - size / 2,
+                Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
         spark->variant--;
       }
@@ -657,7 +658,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -687,7 +688,6 @@ void BattleEffect_RunStunMuscle(s32 a0) {
 void BattleEffect_RunLivingArmor(s32 a0) {
   BattleEffect_RunRushingStrike(a0, 5);
 }
-#undef HI
 #undef STAR_MINE_FRAMES
 #undef STARS
 #undef STAR_SPARKS

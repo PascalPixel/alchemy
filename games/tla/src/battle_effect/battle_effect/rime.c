@@ -110,12 +110,12 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - center[0]) << 8;
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                             COMPOSITE_CLIP_Y |
-                                                             COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   else
-    BattleEffect_LoadBlitter(
-        104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   for (frame = 0; frame != 48; frame++) {
@@ -232,7 +232,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -105,9 +105,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   transition[4] = 1;
-  BattleEffect_LoadBlitter(104, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
@@ -230,8 +230,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     if (beamFrame >= 0 && beamFrame < 88) {
       for (i = 0, glint = work->particles; i != 32; i++, glint++) {
         if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
-          s32 fx = HI(glint->x) + 112;
-          s32 fy = HI(glint->y) + 62;
+          s32 fx = Q_16_16_UPPER_HALF(glint->x) + 112;
+          s32 fy = Q_16_16_UPPER_HALF(glint->y) + 62;
           s32 r = (i & 3) + 5;
 
           glintSize = r * 2;
@@ -376,12 +376,13 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
           s32 k = i % 3 + 2;
 
           drawSpray(canvas, cells + gBattleEffect_MotePictures[k - 1],
-                    HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k,
-                    k * 2);
+                    Q_16_16_UPPER_HALF(PARTICLES[i].x) - k / 2,
+                    Q_16_16_UPPER_HALF(PARTICLES[i].y) - k, k, k * 2);
           BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
                                                gNeptune_Gravity[i & m]);
           PARTICLES[i].variant++;
-          if (PARTICLES[i].velocityY > 0 && HI(PARTICLES[i].y) > 104)
+          if (PARTICLES[i].velocityY > 0 &&
+              Q_16_16_UPPER_HALF(PARTICLES[i].y) > 104)
             PARTICLES[i].variant = -1;
         }
       }
@@ -506,7 +507,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

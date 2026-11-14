@@ -9,9 +9,6 @@ struct FxPartyList;
 struct Model;
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
-#define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
-#define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
-#define HI(v) (((s16 *)&(v))[1])
 #define OCEAN_FIST_FRAMES 92
 #define OCEAN_DROPS 512
 
@@ -133,7 +130,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
       for (i = 0, spray = work->particles; i != 24; i++, spray++) {
         if ((u32)spray->variant <= 17) {
           blitters[0](canvas, (u8 *)(((spray->variant / 3) << 11) + (s32)sheet),
-                      HI(spray->x) - 16, HI(spray->y) - 32, 32, 64);
+                      Q_16_16_UPPER_HALF(spray->x) - 16,
+                      Q_16_16_UPPER_HALF(spray->y) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(spray, 62, -0x2000);
         }
         if (++spray->variant == 0) {
@@ -181,9 +179,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
         if (drop->variant >= 0) {
           s32 size = i % 3 + 3;
 
-          blitters[i & 1](
-              canvas, sprites + gBattleEffect_MotePictures[size - 1],
-              HI(drop->x) - size / 2, HI(drop->y) - size, size, size * 2);
+          blitters[i & 1](canvas,
+                          sprites + gBattleEffect_MotePictures[size - 1],
+                          Q_16_16_UPPER_HALF(drop->x) - size / 2,
+                          Q_16_16_UPPER_HALF(drop->y) - size, size, size * 2);
           if (frame > 31) {
             BattleEffectKernels_IntegrateVector2(drop, 62, 0x4000);
           } else {
@@ -213,13 +212,10 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef BLITTER
-#undef BLIT_MODE
-#undef BLIT_CLIP
-#undef HI
 #undef OCEAN_FIST_FRAMES
 #undef OCEAN_DROPS

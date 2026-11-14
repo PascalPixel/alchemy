@@ -29,9 +29,6 @@
 
 struct Model;
 
-// The integer (pixel) half of a 16.16 value, read as the halfword it is.
-#define HI(v) (((s16 *)&(v))[1])
-
 #define KIND123_FRAMES 111
 
 // A model for the ARM renderer (Render_DrawModelList).
@@ -156,7 +153,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
             for (; j != 2; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  HI(step->x) - half, HI(step->y) - size, size, twice);
+                  Q_16_16_UPPER_HALF(step->x) - half,
+                  Q_16_16_UPPER_HALF(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, 64, 0);
             }
           }
@@ -205,7 +203,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
             for (; j != 4; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
                   canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  HI(step->x) - half, HI(step->y) - size, size, twice);
+                  Q_16_16_UPPER_HALF(step->x) - half,
+                  Q_16_16_UPPER_HALF(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, 64, 0);
             }
           }
@@ -350,8 +349,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -402,23 +401,26 @@ void BattleEffect_RunMineBall(struct BattleEffectArgument *effect) {
 // offset comes first: the sum only matches in integer form, cells on the right.
 static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
-  BattleEffect_LoadBlitter(188, 1 << 4 | 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
                                            x - (size >> 1), y - size, size >> 1,
                                            size);
-  HeapSlot_Release(188);
-  BattleEffect_LoadBlitter(188, 1 << 4 | 7);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
                                            x, y - size, size >> 1, size);
-  HeapSlot_Release(188);
-  BattleEffect_LoadBlitter(188, 1 << 4 | 11);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
                                            x - (size >> 1), y, size >> 1, size);
-  HeapSlot_Release(188);
-  BattleEffect_LoadBlitter(188, 1 << 4 | 15);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                      BLITTER_MAX);
   ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (u8 *)(discs[index] + cells),
                                            x, y, size >> 1, size);
-  HeapSlot_Release(188);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 }
 
 // The canvas burst family (its wrappers are above). A glowing ball (or
@@ -461,7 +463,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
   else
     BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(104, 1 << 4 | 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   discs = (s16 *)work->sheet;
   if (mode == 0)
@@ -650,8 +652,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
       if (mode == 0 || mode == 2 || mode == 3) {
         flame = work->particles;
         for (i = 0; i != 16; i++) {
-          s32 x = HI(flame->x);
-          s32 y = HI(flame->y);
+          s32 x = Q_16_16_UPPER_HALF(flame->x);
+          s32 y = Q_16_16_UPPER_HALF(flame->y);
 
           BattleEffectKernels_IntegrateVector2(flame, 60, 0);
           if ((u32)flame->variant <= 17)
@@ -674,7 +676,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
           s32 size = (spark->variant >> 2) + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+                  Q_16_16_UPPER_HALF(spark->x) - size / 2,
+                  Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, 0);
           spark->variant--;
         }
@@ -686,7 +689,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == 0) {
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);

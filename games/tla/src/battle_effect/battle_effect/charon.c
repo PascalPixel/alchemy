@@ -157,7 +157,6 @@ struct RegisterQueue {
 };
 
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
-#define REGISTER_QUEUE ((struct RegisterQueue *)&gIoWriteQueue)
 
 #define SPRITES ((struct SpriteObject__f175f74 **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapCellBuffer
@@ -1014,9 +1013,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         } else {
           t = 104;
         }
-        HeapSlot_Release(188);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         Canvas_BlitAtFoot(work->buffer + 0x1000, height, 58, t);
-        BattleEffect_LoadBlitter(188, 3);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                            BLITTER_ADDITIVE);
         blit[1] = SYSTEM_WORK->blitBc;
       }
       for (j = 0; j != 2; j++) {
@@ -1288,8 +1288,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   for (i = 0; i != 48; i++) {
     Sprite_DestroyFar((struct ResourceObjectWork *)SPRITES[i]);
   }
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
@@ -1452,7 +1452,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
         work->shakeFrames = 3;
       }
-      BattleEffect_LoadBlitter(104, 31);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       routine[0] = SYSTEM_WORK->blit;
       for (i = 0; i != 16; i++) {
         struct Particle__f175f74 *p = &PARTICLES[96 + i];
@@ -1488,7 +1489,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           p->timer--;
         }
       }
-      HeapSlot_Release(104);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     if (frame < 120) {
       for (i = 0; i != 3; i++) {
@@ -1608,7 +1609,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       if (frame >= 0) {
         gBgScroll[1].x += 0xfff4;
-        BattleEffect_LoadBlitter(104, 27);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
         {
           struct Particle__f175f74 *column;
           s32 x;
@@ -1623,14 +1625,15 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             if (i == 3) {
               column->x -= 8;
               column->y = y2;
-              HeapSlot_Release(104);
-              BattleEffect_LoadBlitter(104, 19);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                                  BLITTER_MAX);
             }
             SYSTEM_WORK->blit(canvas, work->buffer, column->x - halfCell,
                               column->y, halfCell, width);
           }
         }
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         for (i = 0; i != 12; i++) {
           struct Particle__f175f74 *drop = &work->drops[i];
 
@@ -1650,7 +1653,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             drop->y += drop->vy;
           }
         }
-        BattleEffect_LoadBlitter(104, 31);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
         routine[0] = SYSTEM_WORK->blit;
         for (i = 0; i != 4; i++) {
           s32 width = 120 - work->columns[i].x;
@@ -1660,8 +1664,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                        i * 30, width, 30);
           }
         }
-        HeapSlot_Release(104);
-        BattleEffect_LoadBlitter(104, 47);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                            BLITTER_TRANSPARENT);
         routine[0] = SYSTEM_WORK->blit;
         for (i = 0; i != 96; i++) {
           struct Particle__f175f74 *p = &PARTICLES[i];
@@ -1676,7 +1682,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             p->timer--;
           }
         }
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
       {
         void *texture = Heap_AllocEwram(32);
@@ -1722,7 +1728,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   } while (frame != 180);
   for (i = 0; i != arg->count; i++) {
   }
-  HeapSlot_Release(188);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -1770,7 +1776,6 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
   SET_VECTOR(quad[count].upper.vertex, 0, 0, 0);
 }
 #undef SYSTEM_WORK
-#undef REGISTER_QUEUE
 #undef SPRITES
 #undef SPRITE_BUFFER
 #undef OAM_BUFFER

@@ -14,8 +14,6 @@
 
 #include "system/heap_release.h"
 
-#define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
-
 #define SHARDS_PER_MEMBER 128
 #define SHARDS ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -45,8 +43,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
                        128);
-  BattleEffect_LoadBlitter(
-      104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
@@ -116,11 +113,12 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 
             size = i % 3 + 1;
             draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                 HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
+                 Q_16_16_UPPER_HALF(shard->x) - size / 2,
+                 Q_16_16_UPPER_HALF(shard->y) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(shard, 62,
                                                  gDrain_Gravities[i & 3]);
             shard->variant++;
-            if (shard->velocityY > 0 && HI(shard->y) > 112)
+            if (shard->velocityY > 0 && Q_16_16_UPPER_HALF(shard->y) > 112)
               shard->variant = -1;
           }
           shard++;
@@ -131,7 +129,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -215,8 +213,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  BattleEffect_LoadBlitter(
-      104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 2) {
     // A violet ramp from color 1, blended 16:6, with a trail.
@@ -297,6 +294,6 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

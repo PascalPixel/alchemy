@@ -127,9 +127,6 @@ struct Model;
 #define gBlitter ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define gBlitterAlternate ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 
-// The pixel half of a 16.16 value.
-#define HI(value) (((s16 *)&(value))[1])
-
 #define RECORD(mode, field) gTargetStrike_Styles[(mode)][(field)]
 #define RECORD_KIND 0    // 0: strikes across the target, 1: columns on it
 #define RECORD_COUNT 1   // strikes or columns
@@ -332,8 +329,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
           targetPosition.y += (Random16() & 15) - 8;
         }
         if (effect->side == 1) {
-          BattleEffect_LoadBlitter(SLOT_BLITTER,
-                                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                              EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                              BLITTER_MAX);
           gBlitter(canvas, work->sheet + gTargetStrike_Pictures[picture],
                    targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
                        gTargetStrike_Widths[picture] + 8,
@@ -341,14 +339,15 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                    gTargetStrike_Widths[picture],
                    gTargetStrike_Heights[picture]);
         } else {
-          BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                              BLITTER_MAX);
           gBlitter(
               canvas, work->sheet + gTargetStrike_Pictures[picture],
               targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
         }
-        HeapSlot_Release(SLOT_BLITTER);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
         // A star sounds four frames before its hit.
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
@@ -444,7 +443,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       BUILD_BLITTER(SLOT_BLITTER, 7, 7, CLIP, RECORD(mode, RECORD_BLEND));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
-      HeapSlot_Release(SLOT_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       BattleEffect_BuildBlitter(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
                                 RECORD(mode, RECORD_BLEND));
       do {
@@ -452,7 +451,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       } while (0);
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
-      HeapSlot_Release(SLOT_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
       // The hit, on each column's fourth picture.
       if (frame % (RECORD(mode, RECORD_RATE) * 4) ==
@@ -517,9 +516,10 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
             (gBattleEffect_GlintPictureWidths[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleEffect_GlintPictureHeights[image] / 2);
-        BattleEffect_BuildBlitter(
-            SLOT_BLITTER_ALTERNATE, 7, 7,
-            gTargetStrike_GlintDrawFlags[Random16() & 3] | CLIP, BLIT_ADDITIVE);
+        BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
+                                  gTargetStrike_GlintDrawFlags[Random16() & 3] |
+                                      CLIP,
+                                  BLITTER_ADDITIVE);
         do {
           /* FAKEMATCH(dead): an empty once-only block. */
         } while (0);
@@ -527,16 +527,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                           work->sheet + gBattleEffect_GlintPictures[image], x,
                           y, gBattleEffect_GlintPictureWidths[image],
                           gBattleEffect_GlintPictureHeights[image]);
-        HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
 
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
-    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = gBlitter;
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_ADDITIVE, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
     draw[1] = gBlitterAlternate;
     for (k = 0; k != 1; k++) {
       source = BattleObject_GetFar(effect->actor)->object;
@@ -550,7 +550,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
             s32 picture = step->variant / 4;
 
             draw[i & 1](canvas, work->sheet + picture * 1152 + 0x3200,
-                        HI(step->x) - 12, HI(step->y) - 24, 24, 48);
+                        Q_16_16_UPPER_HALF(step->x) - 12,
+                        Q_16_16_UPPER_HALF(step->y) - 24, 24, 48);
             BattleEffectKernels_IntegrateVector2(step, 62, -0x400);
             step->variant++;
           }
@@ -564,7 +565,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 
           if (step->variant >= 0 && step->variant <= 23) {
             draw[0](canvas, work->sheet + (step->variant / 4 << 11) + 0x3200,
-                    HI(step->x) - 16, HI(step->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(step->x) - 16,
+                    Q_16_16_UPPER_HALF(step->y) - 32, 32, 64);
             BattleEffectKernels_IntegrateVector2(step, 62, -0x800);
             BattleEffectKernels_IntegrateVector2(step, 62, -0x800);
             step->variant++;
@@ -628,8 +630,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         }
       }
     }
-    HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-    HeapSlot_Release(SLOT_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
     // The star: a textured square, swelling on a sine from frame 8 to 17
     // over the target's middle (the canvas is cleared to colour 0x3f first).
@@ -700,10 +702,12 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                           BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   blit = draw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
@@ -798,8 +802,8 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -879,7 +883,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
       CANVAS_COPY_AND_FADE; // each transfer leaves 3/4 of the old picture,
   work->transferValue = 75; // a trail
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   effect->variant++;
   if (effect->variant <= 0)
@@ -902,7 +906,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
       s32 n;
 
       n = frame / 2 % 4; // a pillar picture every 2 frames
-      BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_MAX);
       /* FAKEMATCH(dead): the left half's pillar draw and glow index in a
        * once-only block. */
       do {
@@ -912,16 +917,16 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
       } while (0);
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
               43);
-      HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-      BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                               BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36, 24,
               43);
-      HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
@@ -951,7 +956,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(SLOT_BATTLE_SHEET);
@@ -1020,8 +1025,9 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
-  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
@@ -1046,8 +1052,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   }
 
   // Put the background and the display back.
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_TintBattler(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
@@ -1066,7 +1072,6 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 #undef RECORD
 #undef gBlitter
 #undef gBlitterAlternate
-#undef HI
 #undef RECORD_KIND
 #undef RECORD_COUNT
 #undef RECORD_FLAGS

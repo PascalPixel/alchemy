@@ -19,7 +19,6 @@
 // The sparks live in the map cell buffer's second 16 KB.
 #define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
-#define HI(v) (((s16 *)&(v))[1])
 
 // Each bite's anchor, where its jaw is drawn: the first three particles.
 #define BITE_ANCHOR(bite) (&work->particles[bite])
@@ -76,10 +75,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 
   // A clipped, mirrored MAX blitter for the sparks; the jaw's texture, the
   // spark sheet and the blue flame's colours.
-  BattleEffect_LoadBlitter(
-      HEAP_SLOT_BLITTER,
-      BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-              BLIT_MAX));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
@@ -173,10 +170,12 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
         s32 size = (left >> 2) + 3;
 
         draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(drawn->x) - size / 2,
+                Q_16_16_UPPER_HALF(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
         draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(drawn->x) - size / 2,
+                Q_16_16_UPPER_HALF(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
         drawn->variant--;
       }
@@ -189,7 +188,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -215,5 +214,4 @@ DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, BattleEffect_RunBreaths, 3)
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT
-#undef HI
 #undef BITE_ANCHOR

@@ -11,9 +11,6 @@
 struct FxPartyList;
 struct Model;
 
-// The integer (pixel) half of a 16.16 value, read as the halfword it is.
-#define HI(v) (((s16 *)&(v))[1])
-
 // Summon 16's frames: the shower of motes, the rising flames, the rings and
 // the closing glow, by frame.
 #define SUMMON16_FRAMES 296
@@ -120,13 +117,13 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             s32 size = gMoloch_MoteSizes[i & 7];
 
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                    HI(mote->x) - (size >> 1), HI(mote->y) - size, size,
-                    size * 2);
+                    Q_16_16_UPPER_HALF(mote->x) - (size >> 1),
+                    Q_16_16_UPPER_HALF(mote->y) - size, size, size * 2);
 
             // Frames 91-119: motes still at rest head for a random point of
             // the middle, timed to arrive as they reach the ground.
             if ((u32)(frame - 91) <= 28 && mote->velocityX == 0 &&
-                HI(mote->y) <= 113) {
+                Q_16_16_UPPER_HALF(mote->y) <= 113) {
               s32 dx;
 
               mote->velocityX = ((Random16() & 63) << 16) + px(56);
@@ -189,7 +186,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             if ((u32)flame->variant <= 23) {
               draw[flame->velocityZ](canvas,
                                      work->sheet + (flame->variant >> 2) * 2048,
-                                     HI(flame->x), HI(flame->y), 32, 64);
+                                     Q_16_16_UPPER_HALF(flame->x),
+                                     Q_16_16_UPPER_HALF(flame->y), 32, 64);
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
             }
@@ -221,7 +219,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             flame = &work->particles[24 + i];
             if ((u32)flame->variant <= 23) {
               draw[0](canvas, work->sheet + (flame->variant >> 2) * 2048,
-                      HI(flame->x), HI(flame->y), 32, 64);
+                      Q_16_16_UPPER_HALF(flame->x),
+                      Q_16_16_UPPER_HALF(flame->y), 32, 64);
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
             }
@@ -324,8 +323,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     } while (frame != SUMMON16_FRAMES);
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     BattleEffect_RunImpactBurst(5, focus.x, focus.y);
     for (i = 0; i != 12; i++)
       Sprite_DestroyFar(work->objects[i]);
@@ -990,8 +989,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     camera[27] = yaw;
   }
   tileBuffer = Data_02010578;
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
-  BattleEffect_LoadBlitter(SLOT_ALT, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_ADDITIVE);
   draw[0] = Ram_HeapSlots->unk64[1];
   draw[1] = Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, tileBuffer, 0, 0);
@@ -1001,7 +1001,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   BattleEffect_DrawShadedCircles(work->sheet, 32, 0x10000);
   Graphics_LoadGreyRamp();
   frame = 0;
-  HeapSlot_Release(SLOT_ALT);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
   Transform_Reset();
 
   for (;;) {
@@ -1079,7 +1079,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame <= 175) {
-      BattleEffect_LoadBlitter(SLOT_ALT, 3);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
       draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 15; i++) {
         if (!(frame & 1)) {
@@ -1155,7 +1156,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
       }
-      HeapSlot_Release(SLOT_ALT);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       {
         s32 size = scene->radiusPixels * 2;
 
@@ -1424,7 +1425,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
     }
-    BattleEffect_LoadBlitter(SLOT_ALT, 3);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
     if ((u32)(frame - 240) <= 127 && !(frame & 15)) {
       s32 v = (240 - frame) / 16;
 
@@ -1457,7 +1459,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 279) <= 132 || frame > 446)
       UpdateSparks();
-    HeapSlot_Release(SLOT_ALT);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
     // The pillars of light.
     if (frame == 370) {
@@ -2023,7 +2025,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   }
 
   camera[27] = savedZoom;
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iris_RestoreBattle();
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
@@ -2144,7 +2146,7 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
 
       top = ax[1] >> 16;
       middle = ax[4] >> 16;
-      bottom = HI(ax[7]);
+      bottom = Q_16_16_UPPER_HALF(ax[7]);
       if (top != middle)
         slopeA = Iwram_RatioMulQ14(ax[4] - ax[1], ax[3] - ax[0]);
       if (top != bottom)
@@ -2444,12 +2446,15 @@ void Func_08196248(s32 vertexCount, s32 faceCount) {
       *y1 += 64 << 16;
       *x2 += 64 << 16;
       *y2 += 64 << 16;
-      BattleEffect_DrawClippedCanvasLine(HI(*x0), HI(*y0), HI(*x1), HI(*y1),
-                                         color);
-      BattleEffect_DrawClippedCanvasLine(HI(*x1), HI(*y1), HI(*x2), HI(*y2),
-                                         color);
-      BattleEffect_DrawClippedCanvasLine(HI(*x0), HI(*y0), HI(*x2), HI(*y2),
-                                         color);
+      BattleEffect_DrawClippedCanvasLine(
+          Q_16_16_UPPER_HALF(*x0), Q_16_16_UPPER_HALF(*y0),
+          Q_16_16_UPPER_HALF(*x1), Q_16_16_UPPER_HALF(*y1), color);
+      BattleEffect_DrawClippedCanvasLine(
+          Q_16_16_UPPER_HALF(*x1), Q_16_16_UPPER_HALF(*y1),
+          Q_16_16_UPPER_HALF(*x2), Q_16_16_UPPER_HALF(*y2), color);
+      BattleEffect_DrawClippedCanvasLine(
+          Q_16_16_UPPER_HALF(*x0), Q_16_16_UPPER_HALF(*y0),
+          Q_16_16_UPPER_HALF(*x2), Q_16_16_UPPER_HALF(*y2), color);
     }
   }
 }
@@ -3035,7 +3040,6 @@ void Render_DrawModelList(struct Model *model) {
     model++;
   }
 }
-#undef HI
 #undef SUMMON16_FRAMES
 #undef SUMMON16_SKIP_TO
 #undef SLOT_BLITTER

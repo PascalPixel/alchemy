@@ -52,9 +52,6 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 #include "battle_effect_work.h"
 #include "graphics/resource.h"
 
-// The pixel half of a 16.16 value.
-#define HI(v) (((s16 *)&(v))[1])
-
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 #define FORMATION_THORN_VINES 645 // eight objects
@@ -111,13 +108,12 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
-                                             COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X |
-                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = -0x2000;
@@ -208,7 +204,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
         if (frame >= i + 72 && thorn->y < px(104)) {
           s32 cel = (frame + i) / 4 % 5;
-          s32 x = HI(thorn->x);
+          s32 x = Q_16_16_UPPER_HALF(thorn->x);
           s32 y = thorn->y >> 16;
           u8 *cell = work->sheet + gCybele_ThornPictures[cel];
           u32 width = gCybele_ThornWidths[cel];
@@ -302,9 +298,9 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
         if (chip->variant >= 0) {
           s32 cel = i % 5;
 
-          draw[0](canvas, work->sheet + gCybele_ChipPictures[cel], HI(chip->x),
-                  HI(chip->y), gCybele_ChipWidths[cel],
-                  gCybele_ChipHeights[cel]);
+          draw[0](canvas, work->sheet + gCybele_ChipPictures[cel],
+                  Q_16_16_UPPER_HALF(chip->x), Q_16_16_UPPER_HALF(chip->y),
+                  gCybele_ChipWidths[cel], gCybele_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += px(1) / 4;
@@ -444,18 +440,16 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     // Switch to the explosion: the blast sheet, max blitters, and ten
     // embers 72 degrees apart around each target.
     if (frame == 302) {
-      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + 0x1680, 1, 1);
-      BattleEffect_LoadBlitter(
-          HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                               BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
-                                   COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       draw[1] = (DrawRectangle) * (Ram_HeapSlots->unkb8 + 1);
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;
@@ -530,8 +524,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattlePlayback_StartFar(134);
   // Tear down.
   /* FAKEMATCH(wrapper): the burst through BurstAt_. */

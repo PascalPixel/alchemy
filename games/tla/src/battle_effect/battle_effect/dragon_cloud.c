@@ -189,8 +189,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 size = (step->variant >> 4) + 1;
 
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                      HI(step->x) - size / 2, HI(step->y) - size, size,
-                      size * 2);
+                      Q_16_16_UPPER_HALF(step->x) - size / 2,
+                      Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(step, 62, 0x4000);
           if (step->y > ((i & 3) + 108) << 16)
             step->velocityY = -step->velocityY / 2;
@@ -351,8 +351,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 size = (spark->variant >> 4) + 1;
 
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                      HI(spark->x) - size / 2, HI(spark->y) - size, size,
-                      size * 2);
+                      Q_16_16_UPPER_HALF(spark->x) - size / 2,
+                      Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
           spark->variant--;
         }
@@ -390,13 +390,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER
-#undef HI
-#undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef SPARKS
 #undef SPARK_COUNT

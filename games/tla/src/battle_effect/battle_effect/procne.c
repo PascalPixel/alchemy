@@ -536,8 +536,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     } while (index != COMETS);
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     BattleEffect_EndCanvasLayer();
   }
 }
@@ -551,9 +551,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
 #undef FORMATION_RESOURCE
 
 // The rising grains live in the map buffer.
-
-// The high halfword of a 16.16 value: its whole pixels.
-#define HI(v) (((s16 *)&(v))[1])
 
 #define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
@@ -797,7 +794,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
           if (flash->variant >= 0) {
             draw[0](canvas, work->sheet + ((flash->variant >> 2) << 11),
-                    HI(flash->x) - 16, HI(flash->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(flash->x) - 16,
+                    Q_16_16_UPPER_HALF(flash->y) - 32, 32, 64);
             flash->x += flash->velocityX * dir;
             flash->y += flash->velocityY;
             flash->variant++;
@@ -813,8 +811,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
         s32 size = 1;
 
         if (spark->variant >= 0) {
-          draw[1](canvas, gTiamat_SparkPixels, HI(spark->x),
-                  HI(spark->y) - size, size, size * 2);
+          draw[1](canvas, gTiamat_SparkPixels, Q_16_16_UPPER_HALF(spark->x),
+                  Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
           spark->velocityY += -(px(1) / 64);
@@ -835,7 +833,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             s32 height = size * 2;
 
             draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                    HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
+                    Q_16_16_UPPER_HALF(grain->x) - size / 2,
+                    Q_16_16_UPPER_HALF(grain->y) - size, size, height);
             grain->x += grain->velocityX * dir;
             grain->y += grain->velocityY;
             if (frame > 128) {
@@ -927,8 +926,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
 
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (mode == 0) {
       if (alternate == 1)
         BattleEffect_RunImpactBurst(6, focus.x, focus.y);

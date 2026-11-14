@@ -13,7 +13,6 @@
 
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
 // slot.
-#define BLITTER_MAX (1 << 4)
 
 // The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->unkb8[1])
@@ -35,8 +34,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
-  BattleEffect_LoadBlitter(104,
-                           BLITTER_MAX | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
@@ -126,7 +124,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintPictures[kind], x,
                      y, gBattleEffect_GlintPictureWidths[kind],
                      gBattleEffect_GlintPictureHeights[kind]);
-          HeapSlot_Release(188);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
     }
@@ -157,6 +155,6 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
 
   // Tear down: stop the transfer, free the blitter, close the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

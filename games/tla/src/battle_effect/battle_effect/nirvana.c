@@ -40,7 +40,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   orb->velocityY = 0;
   orb->velocityZ = 0;
   orb->variant = 0;
-  BattleEffect_LoadBlitter(104, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Sound_PlayFar(SE_SWIRL);
@@ -107,7 +107,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -116,7 +116,6 @@ static inline s16 *Fixed_Halves(s32 *value) {
   /* FAKEMATCH(wrapper): the halves read through this inline. */
   return (s16 *)value;
 }
-#define HI(v) (Fixed_Halves(&(v))[1])
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -156,8 +155,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  BattleEffect_LoadBlitter(
-      104, BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   scroll = 0;
@@ -220,17 +219,19 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       width = gSpire_ShardWidths[cell];
 
       blit(canvas, work->sheet + gSpire_ShardPictures[cell] + 0x83c,
-           HI(rock->x) - width / 2 + scrollX,
-           HI(rock->y) - gSpire_ShardHeights[cell] / 2, width,
+           Fixed_Halves(&rock->x)[1] - width / 2 + scrollX,
+           Fixed_Halves(&rock->y)[1] - gSpire_ShardHeights[cell] / 2, width,
            gSpire_ShardHeights[cell]);
       if (rock->variant == 0) {
         if (effect->side == 0) {
-          if (targetPosition.x > HI(rock->x) + userPosition.x - 64) {
+          if (targetPosition.x >
+              Fixed_Halves(&rock->x)[1] + userPosition.x - 64) {
             rock->variant = 1;
             hit = 1;
           }
         } else {
-          if (targetPosition.x < HI(rock->x) + userPosition.x - 64) {
+          if (targetPosition.x <
+              Fixed_Halves(&rock->x)[1] + userPosition.x - 64) {
             rock->variant = 1;
             hit = 1;
           }
@@ -269,14 +270,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 
   Actor_SetAnimationSpeedFar(user, 16);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
-
-#undef HI
-
-// The pixel half of a 16.16 fixed-point value.
-#define HI(v) (((s16 *)&(v))[1])
 
 #define SPARK_OFFSET 0x460
 #define SPARKS 16
@@ -402,9 +398,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
 
         if (height > 80) {
           height = 80;
-          mode = BLIT_MAX;
+          mode = BLITTER_MAX;
         } else {
-          mode = BLIT_ADDITIVE;
+          mode = BLITTER_ADDITIVE;
         }
         for (i = 0, x = centre - 14; i != 2; i++, x += 14) {
           if (i == 0)
@@ -416,7 +412,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
                 COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
           draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
           draw[0](canvas, work->sheet, x, 104 - height, 14, height);
-          HeapSlot_Release(104);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
     }
@@ -430,8 +426,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
         if (frame >= i / 2 + 8 && spark->variant <= 28) {
           s32 cell = spark->variant / 3;
-          s32 x = HI(spark->x);
-          s32 y = HI(spark->y);
+          s32 x = Q_16_16_UPPER_HALF(spark->x);
+          s32 y = Q_16_16_UPPER_HALF(spark->y);
 
           if (cell > 6)
             cell = 6;
@@ -499,8 +495,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       }
     }
 
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (frame <= 7)
       BattleCamera_Shake(4, 4);
     else
@@ -965,8 +961,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -975,7 +971,6 @@ void BattleEffect_RunHeavyDivide(s32 a0) { BattleEffect_RunHeavyBlow(a0, 0); }
 
 /// Abilities: Strong Hit (kind 469).
 void BattleEffect_RunStrongHit(s32 a0) { BattleEffect_RunHeavyBlow(a0, 1); }
-#undef HI
 #undef BLITTER
 #undef ROCKS
 #undef SPARK_OFFSET

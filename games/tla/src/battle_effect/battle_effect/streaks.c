@@ -93,17 +93,17 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     drawUpper = heap->unk64[1];
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     drawLower = heap->unkb8[1];
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                        BLITTER_MAX);
     drawUpper = heap->unk64[1];
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     drawLower = heap->unkb8[1];
   }
 
@@ -249,8 +249,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -314,10 +314,10 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
 
   // Motes draw at their maximum; the second blitter, mirrored top to
   // bottom, is loaded but not used.
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                           BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   if (mode == MODE_SOOTHING_STAR)
@@ -436,8 +436,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == MODE_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);

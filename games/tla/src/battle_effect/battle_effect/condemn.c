@@ -52,10 +52,12 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, cells, 1, 0);
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
@@ -202,7 +204,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

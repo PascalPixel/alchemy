@@ -199,7 +199,8 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
             size = 10;
           draw[spark->velocityY > 0](
               canvas, graphics + gBattleEffect_MotePictures[size - 1],
-              HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+              Q_16_16_UPPER_HALF(spark->x) - size / 2,
+              Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
@@ -209,7 +210,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           spark->velocityX = spark->velocityX * 62 / 64;
           spark->velocityY = spark->velocityY * 62 / 64;
           spark->variant++;
-          if (spark->velocityY > 0 && HI(spark->y) > 104)
+          if (spark->velocityY > 0 && Q_16_16_UPPER_HALF(spark->y) > 104)
             spark->variant = -1;
         }
       }
@@ -239,8 +240,8 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
 
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       Sprite_DestroyFar(work->objects[k]);

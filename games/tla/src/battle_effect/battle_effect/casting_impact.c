@@ -122,9 +122,9 @@ struct IwramPointers {
 #define ALT_BLITTER (IWRAM->altBlitter)
 /* FAKEMATCH(dead): the second release in a once-only block. */
 #define RELEASE_BLITTERS()                                                     \
-  HeapSlot_Release(188);                                                       \
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);                                      \
   do {                                                                         \
-    HeapSlot_Release(104);                                                     \
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);                                      \
   } while (0)
 
 /// The casting impacts, by effect kind less 100: each is named for the first
@@ -710,8 +710,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      HeapSlot_Release(188);
-      HeapSlot_Release(104);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       Actor_SelectAnimationFar(object, 3);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS)
         BattleEffect_RunProjectileVolley(action, 9);
@@ -733,8 +733,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      HeapSlot_Release(188);
-      HeapSlot_Release(104);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       action->variant = 3;
       BattleEffect_RunSparkGroups(action, 2);
       return;
@@ -1296,8 +1296,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = ((Trig_Cos(angle) * amp) >> 16) + off -
                 gBattleEffect_GlintPictureHeights[m] / 2;
-            HeapSlot_Release(188);
-            HeapSlot_Release(104);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE);
             /* FAKEMATCH(dead): a once-only block. */
             do {
               BattleEffect_BuildBlitter(
@@ -1307,7 +1307,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 56, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
-            HeapSlot_Release(188);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
         }
@@ -1330,7 +1330,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
-            HeapSlot_Release(188);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
         }
@@ -1355,8 +1355,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Sound_PlayFar(SE_RISE_WITH_SPARKS);
       } else if (kind == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
         s32 count;
-        HeapSlot_Release(188);
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         if (frame >= 0 && frame < 24) {
           s32 x;
           x = target[0] / 2;
@@ -1366,11 +1366,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             top = 0;
           while (scroll > 104)
             scroll -= 104;
-          BattleEffect_LoadBlitter(188, 19);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                              BLITTER_MAX);
           ALT_BLITTER(screen, buffer, x - 8, top + scroll - 104, 17, 104);
           ALT_BLITTER(screen, buffer, x - 8, top + scroll, 17, 104 - scroll);
           ALT_BLITTER(screen, buffer + 0x6e8, x - 17, top + 47, 34, 65);
-          HeapSlot_Release(188);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           if (frame == 8)
             work->shakeFrames = 8;
           if (frame > 1) {
@@ -1395,18 +1396,21 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
         s32 x;
-        HeapSlot_Release(188);
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         if (frame >= 4 && frame < 24) {
           s32 h;
           x = target[0] / 2;
           h = 48;
-          BattleEffect_LoadBlitter(188, 19);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                              BLITTER_MAX);
           ALT_BLITTER(screen, buffer, x - 24, h, 24, h);
-          HeapSlot_Release(188);
-          BattleEffect_LoadBlitter(188, 23);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                              EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                              BLITTER_MAX);
           ALT_BLITTER(screen, buffer, x, h, 24, h);
-          HeapSlot_Release(188);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
@@ -1494,9 +1498,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 y;
         REG_BLDCNT = 0;
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-        HeapSlot_Release(188);
-        HeapSlot_Release(104);
-        BattleEffect_LoadBlitter(104, 35);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                            BLITTER_TRANSPARENT);
         drawFuncs.draw[0] = BLITTER;
         if (frame == 0) {
           for (i = 0; i != 1104; i++)
@@ -1557,7 +1562,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             break;
           }
         }
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
                  kind == CASTING_IMPACT_IMPACT_DINOX ||
@@ -1568,20 +1573,23 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             m = gCastingImpact_BitePictures[frame / 2];
           else
             m = 3;
-          HeapSlot_Release(188);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           /* FAKEMATCH(dead): a once-only block. */
           do {
             /* FAKEMATCH(pin): a 56 pinned to r3 for the first draw. */
             register s32 pinned __asm__("r3");
-            HeapSlot_Release(104);
-            BattleEffect_LoadBlitter(104, 3);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                                BLITTER_ADDITIVE);
             BLITTER(screen, buffer + m * 0x360, target[0] / 2 - 18, pinned = 56,
                     18, 48);
-            HeapSlot_Release(104);
-            BattleEffect_LoadBlitter(104, 7);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                                BLITTER_ADDITIVE);
           } while (0);
           BLITTER(screen, buffer + m * 0x360, target[0] / 2, 56, 18, 48);
-          HeapSlot_Release(104);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
         if ((kind == CASTING_IMPACT_IMPACT_DINOX ||
@@ -1613,12 +1621,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       } else if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
         s32 m;
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-        HeapSlot_Release(188);
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         if (action->side == 0)
-          BattleEffect_LoadBlitter(104, 35);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                              BLITTER_TRANSPARENT);
         else
-          BattleEffect_LoadBlitter(104, 39);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                              EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                              BLITTER_TRANSPARENT);
         drawFuncs.draw[0] = BLITTER;
         scrollA += scrollB;
         if (frame > 6)
@@ -1653,7 +1664,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                               gCastingImpact_RaidensWrathWidths[m],
                               gCastingImpact_RaidensWrathHeights[m]);
         }
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
         s32 m;
@@ -1666,12 +1677,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Sound_PlayFar(SE_HEAVY_IMPACT);
         if (frame == 15)
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        HeapSlot_Release(188);
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         if (action->side == 0)
-          BattleEffect_LoadBlitter(104, 35);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                              BLITTER_TRANSPARENT);
         else
-          BattleEffect_LoadBlitter(104, 39);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                              EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                              BLITTER_TRANSPARENT);
         drawFuncs.draw[0] = BLITTER;
         scrollA += scrollB;
         if (frame == 5)
@@ -1728,7 +1742,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                   gCastingImpact_ApocalypseBurstHeights[m]);
           }
         }
-        HeapSlot_Release(104);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_ASURA) {
         s32 t;
@@ -2035,7 +2049,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             ALT_BLITTER(screen, buffer + gBattleEffect_GlintPictures[m], x,
                         y + 80, gBattleEffect_GlintPictureWidths[m],
                         gBattleEffect_GlintPictureHeights[m]);
-            HeapSlot_Release(188);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
         }
@@ -2140,9 +2154,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             fade = 0x38000 - (frame << 12);
           if (two > 1 && fade > 0) {
             BattleEffect_DrawShadedCircles(work->frames, m * 4, fade);
-            HeapSlot_Release(188);
+            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             Canvas_BlitAtFoot(work->frames, target[0] / 2, target[1], m * 4);
-            BattleEffect_LoadBlitter(188, 15);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                                BLITTER_ADDITIVE);
           }
         }
       } else if (kind == CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE ||
@@ -2674,8 +2690,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      HeapSlot_Release(188);
-      HeapSlot_Release(104);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||
           kind == CASTING_IMPACT_IMPACT_CHILL ||
           kind == CASTING_IMPACT_IMPACT_ICE_CRUSH ||
@@ -2701,8 +2717,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
       Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     BattleEffect_EndCanvasLayer();
   }
 }

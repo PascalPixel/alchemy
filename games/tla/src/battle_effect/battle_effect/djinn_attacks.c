@@ -171,7 +171,8 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         s32 size = dot->variant / 16 + 2;
 
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(dot->x) - size / 2,
+                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
       }
@@ -184,8 +185,8 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -290,7 +291,8 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
         s32 size = dot->variant / 16 + 1;
 
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(dot->x) - size / 2,
+                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
       }
@@ -304,8 +306,8 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -354,12 +356,10 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
   sheet = slots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                          COMPOSITE_FLIP_Y));
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER_ALTERNATE,
-      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                      BLITTER_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)slots->unk64[1];
   draw[1] = (DrawRectangle)slots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
@@ -435,7 +435,8 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
         s32 size = dot->variant / 16 + 2;
 
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(dot->x) - size / 2,
+                Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
       }
@@ -449,8 +450,8 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -575,9 +576,10 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
         s32 wobble;
 
         size = (member & 1) + 3;
-        x = HI(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
+        x = Q_16_16_UPPER_HALF(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                x - ((u32)size >> 1), HI(spark->y) - size, size, size * 2);
+                x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
+                size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 64, -0x2000);
         wobble = spark->z;
         spark->z = wobble + 0x800;
@@ -604,7 +606,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

@@ -28,7 +28,6 @@ struct ModelTexture__f179f18 {
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 struct FloraObject {
   u8 unk0[8];
@@ -215,7 +214,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     w->y[i] = u2 + 128;
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = Ram_HeapSlots->unk64[1];
   for (frame = 0;
        frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
@@ -593,7 +592,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
       spin += 16;
       angle += spin;
-      BattleEffect_LoadBlitter(SLOT_ALT, 3);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
       draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 32; i++) {
         s32 a = (i / 4) << 13;
@@ -628,7 +628,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         draw[1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 x - size / 2, y - size, size, size * 2);
       }
-      HeapSlot_Release(SLOT_ALT);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
     if ((u32)(frame - 186) <= 79) {
       s32 v = frame - 186;
@@ -801,7 +801,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     for (i = 0; i != 64; i++, p++) {
       if (frame > i) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
-                HI(p->x) - 4, HI(p->y), 16, 16);
+                Q_16_16_UPPER_HALF(p->x) - 4, Q_16_16_UPPER_HALF(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, 64, 0);
         p->velocityX += -(px(1) / 16);
         p->variant++;
@@ -827,7 +827,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -1037,9 +1037,6 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 
 // The Lost Age's blitter modes run the other way from The Broken Seal's:
 // additive 0, max 1, transparent 2, copy 3.
-#define BLITTER_ADDITIVE 0
-
-#define CLIP_XY 3
 
 #define STAR_FRAMES 60
 #define STAR_LEAP_FRAME 16  // the caster leaps at the target
@@ -1075,8 +1072,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                           BLITTER(BLITTER_ADDITIVE, CLIP_XY));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -1116,7 +1112,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
       for (i = 0, puff = work->particles; i != 24; i++, puff++) {
         if (frame >= i / 8 && puff->variant <= 23) {
           draw[0](canvas, work->sheet + (puff->variant / 4) * 0x480,
-                  HI(puff->x) - 12, HI(puff->y) - 24, 24, 48);
+                  Q_16_16_UPPER_HALF(puff->x) - 12,
+                  Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
           BattleEffectKernels_IntegrateVector2(puff, 48, -0x2000);
           puff->variant++;
         }
@@ -1173,7 +1170,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
         if (star->variant >= 0) {
           draw[0](canvas,
                   work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
-                  HI(star->x) - 8, HI(star->y) - 8, 16, 16);
+                  Q_16_16_UPPER_HALF(star->x) - 8,
+                  Q_16_16_UPPER_HALF(star->y) - 8, 16, 16);
           BattleEffectKernels_IntegrateVector2(star, 56, 0);
           star->variant--;
         }
@@ -1190,12 +1188,11 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
     battle[0x866] = cleared;
   }
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef SLOT_ALT
 #undef w
 #undef OBJ_TILES
@@ -1204,8 +1201,6 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
 #undef DAGGER_FALL_FRAME
 #undef DAGGER_LAST_HIT
 #undef HEAP_SLOT_BLITTER
-#undef BLITTER_ADDITIVE
-#undef CLIP_XY
 #undef STAR_FRAMES
 #undef STAR_LEAP_FRAME
 #undef STAR_BURST_FRAME

@@ -92,8 +92,10 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
         cel = (chip->z / 128) & 3;
         blit[i & 1](canvas, work->sheet + 0x400 + gHail_Pictures[cel],
-                    HI(chip->x) - (width = gHail_PictureWidths[cel]) / 2,
-                    HI(chip->y) - (height = gHail_PictureHeights[cel]) / 2,
+                    Q_16_16_UPPER_HALF(chip->x) -
+                        (width = gHail_PictureWidths[cel]) / 2,
+                    Q_16_16_UPPER_HALF(chip->y) -
+                        (height = gHail_PictureHeights[cel]) / 2,
                     width, height);
         BattleEffectKernels_IntegrateVector3(chip, 63, 0x1000);
       }
@@ -129,8 +131,8 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -182,12 +184,10 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
                                  otherPoint);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 1)
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
@@ -228,18 +228,16 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
         if (frame > 16)
           y = y - frame * 2 + 32;
         if (effect->side == 1)
-          BattleEffect_LoadBlitter(
-              HEAP_BLITTER_ALTERNATE,
-              BLITTER(BLIT_ADDITIVE,
-                      COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                              EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                              BLITTER_ADDITIVE);
         else
-          BattleEffect_LoadBlitter(
-              HEAP_BLITTER_ALTERNATE,
-              BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                              BLITTER_ADDITIVE);
         if (frame <= 3)
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet + 0x65c0,
                                                    x, y, 20, 40);
-        HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
       }
 
@@ -286,7 +284,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 
               // A max blitter with the chip's own flip, for this chip only.
               {
-                s32 mode = BLIT_MAX;
+                s32 mode = BLITTER_MAX;
                 s32 flags = chip->velocityY;
                 /* FAKEMATCH(barrier): an empty asm after the mode and the flags
                  * are set. */
@@ -309,7 +307,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
                       work->sheet + gHail_PortalPictures[chip->velocityX],
                       chipX, chipY, gHail_PortalWidths[chip->velocityX],
                       gHail_PortalHeights[chip->velocityX]);
-              HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
             rock->x += rock->velocityX;
             rock->y += rock->velocityY;
@@ -343,7 +341,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 

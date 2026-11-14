@@ -39,8 +39,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadBlitter(
-      104, BLIT_MODE(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The arc: from -90 degrees in steps of 22.5.
@@ -114,7 +113,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
     frame += 1;
   } while (frame != 60);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

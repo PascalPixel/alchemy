@@ -30,7 +30,6 @@ struct RenderModel__f1843fc {
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 // An effect sprite as this effect reaches it: its OAM priority and its VRAM
 // cache entry.
@@ -47,7 +46,6 @@ struct MeshVertex {
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 +                                                                \
    gResourceTableEntries[((struct SpriteObject *)(obj))->slot].offset)
-#define HALF_HI(v) (((s16 *)&(v))[1])
 
 // Catastrophe: a black moon rises over a burning city, its towers crack and
 // fall in fire, the sky tears open, and a meteor of shadow crushes the foes.
@@ -107,7 +105,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   *(volatile u16 *)BG_PLTT = 0;
   *(volatile u16 *)(BG_PLTT + 1) = 0;
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = Ram_HeapSlots->unk64[1];
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -115,7 +113,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   gCameraSceneParameters[4] = 240;
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
   Palette_BrightenSavedBattleBg(-31, -31, -31);
   transition[4] = 1;
@@ -244,7 +242,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   cueTimer = 0;
   cueIndex = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = Ram_HeapSlots->unk64[1];
   frame = 0;
   while (frame != 637) {
@@ -593,7 +591,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         s32 n = (p->variant >> 3) + 1;
 
         blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                HALF_HI(p->x) - n / 2, HALF_HI(p->y) - n, n, n * 2);
+                Q_16_16_UPPER_HALF(p->x) - n / 2, Q_16_16_UPPER_HALF(p->y) - n,
+                n, n * 2);
         BattleEffectKernels_IntegrateVector2(p, 63, 0);
         p->variant--;
       }
@@ -1111,7 +1110,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                     gBattleEffect_GlintPictureWidths[n],
                     gBattleEffect_GlintPictureHeights[n]);
               }
-              HeapSlot_Release(SLOT_ALT);
+              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
           }
         }
@@ -1431,7 +1430,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         for (i = 0; i != 64; i++, q2++) {
           if ((u32)q2->variant <= 11) {
             blit[0](canvas, work->sheet + 0x1800 + (q2->variant / 2 << 11),
-                    HALF_HI(q2->x) - 16, HALF_HI(q2->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(q2->x) - 16,
+                    Q_16_16_UPPER_HALF(q2->y) - 32, 32, 64);
             BattleEffectKernels_IntegrateVector2(q2, 63, 0);
             q2->variant++;
           }
@@ -1586,7 +1586,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 s32 h = n * 2;
 
                 blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                        HALF_HI(d->x) - n / 2, HALF_HI(d->y) - n, n, h);
+                        Q_16_16_UPPER_HALF(d->x) - n / 2,
+                        Q_16_16_UPPER_HALF(d->y) - n, n, h);
                 BattleEffectKernels_IntegrateVector2(d, 56, 0x2000);
                 d->velocityX -= work->scrollStepX << 12;
                 d->variant--;
@@ -1614,13 +1615,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     } while (frame != 104);
     transition[4] = 0;
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(SLOT_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     BattleEffect_EndCanvasLayer();
   }
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef SLOT_ALT
 #undef OBJ_TILES
-#undef HALF_HI

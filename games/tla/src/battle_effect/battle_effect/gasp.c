@@ -30,7 +30,6 @@ struct RenderModel__f173aac {
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 // A second, larger particle table, always reached at its fixed address.
 #define EXTRA_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
@@ -241,19 +240,26 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   if (mode == 2 || mode == 7 || mode == 4) {
     if (effect->side == 0)
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 7);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          BLITTER_ADDITIVE);
     else
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
   } else if (mode == 3 || mode == 5) {
     if (effect->side == 1)
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 7);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          BLITTER_ADDITIVE);
     else
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
   } else {
     if (effect->side == 0)
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 23);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     else
-      BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
@@ -353,7 +359,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
             s32 n = (p->variant >> 3) + 2;
 
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
+                    Q_16_16_UPPER_HALF(p->x) - n / 2,
+                    Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0x400);
             p->variant--;
           }
@@ -786,8 +793,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         p = &work->particles[i];
 
         if ((u32)p->variant <= 23) {
-          draw[0](canvas, work->sheet + p->variant / 4 * 1152, HI(p->x) - 12,
-                  HI(p->y) - 24, 24, 48);
+          draw[0](canvas, work->sheet + p->variant / 4 * 1152,
+                  Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
+                  24, 48);
           BattleEffectKernels_IntegrateVector2(p, 60, -0x1000);
           p->variant++;
         }
@@ -800,7 +808,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
             s32 n = q->variant / 4 + 3;
 
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                    HI(q->x) - n / 2, HI(q->y) - n, n, n * 2);
+                    Q_16_16_UPPER_HALF(q->x) - n / 2,
+                    Q_16_16_UPPER_HALF(q->y) - n, n, n * 2);
             BattleEffectKernels_IntegrateVector2(q, 62, 0);
             q->variant--;
           }
@@ -989,7 +998,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
               s32 n = p->variant / 8 + 1;
 
               draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                      HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
+                      Q_16_16_UPPER_HALF(p->x) - n / 2,
+                      Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
               BattleEffectKernels_IntegrateVector2(p, 63, 0x800);
               if (p->y > 0x680000) {
                 p->y = px(104);
@@ -1314,7 +1324,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       WAIT_TRANSFER(work) {}
     EFFECT_PRESENT_CANVAS(work);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (mode == 0 || mode == 6)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -1322,7 +1332,6 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef EXTRA_PARTICLES
 #undef FIGURE
 #undef LOAD_BG_PALETTE

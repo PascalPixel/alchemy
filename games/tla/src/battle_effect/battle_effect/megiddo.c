@@ -27,7 +27,6 @@ void Render_DrawModelList(struct Model *model);
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 // Megiddo: the caster rises in a column of light, a winged figure gathers
 // above and dives in a storm of feathers and rings onto the target.
@@ -84,7 +83,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   meshA = work->sheet + 0x5f40;
   meshB = work->sheet + 0x6340;
@@ -602,9 +601,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(
       1, (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI

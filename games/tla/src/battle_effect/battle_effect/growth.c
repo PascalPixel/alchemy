@@ -26,7 +26,6 @@ void BattleEffect_RunPunji(void *object) {
 
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
 // slot.
-#define BLITTER_TRANSPARENT (2 << 4)
 
 void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                                     s32 mode) {
@@ -74,11 +73,12 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
     REG_BG2X = -0x7000;
   }
   // Odd columns draw mirrored.
-  BattleEffect_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X |
-                                    COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   rectangle[0] = Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X |
-                                    COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   secondSlot = Ram_HeapSlots->unkb8[1];
   // Columns draw through a pointer to the pair, as the twin does; it holds
   // that one address all its life.
@@ -261,8 +261,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
   }
   // Tear down: stop the transfer, free both blitters, close the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -317,11 +317,12 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   REG_BG2X = (CANVAS_MIDDLE - first.x) << 8;
 
   // Odd vines draw mirrored.
-  BattleEffect_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X |
-                                    COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)heap->unk64[1];
-  BattleEffect_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X |
-                                    COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   draw[1] = (DrawRectangle)heap->unkb8[1];
 
   vine = work->particles;
@@ -375,8 +376,8 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
 
   // Tear down: stop the transfer, free both blitters, close the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -419,11 +420,12 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  BattleEffect_LoadBlitter(104, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X |
-                                    COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw = ((DrawRectangle *)heap)[26];
-  BattleEffect_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X |
-                                    COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   drawFlip = ((DrawRectangle *)heap)[47];
   work->transferMode =
       CANVAS_COPY_AND_CLEAR; // clear the canvas to 0 every frame
@@ -546,7 +548,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
 
   // Tear down: stop the transfer, free both blitters, close the layer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

@@ -85,15 +85,14 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
+                        BLITTER_ADDITIVE);
   } else {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER_ALTERNATE,
-        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                        BLITTER_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
   }
   draw[0] = Ram_HeapSlots->unk64[1];
   draw[1] = Ram_HeapSlots->unkb8[1];
@@ -215,8 +214,8 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmWin0HBlankDma);
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
   BattleEffect_ConfigureEffectDisplay();
 }
@@ -273,10 +272,9 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
               WININ_WIN1_BG1 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Drops draw at their maximum; droplets add their light.
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
   draw[0] = heapCache[26];
-  BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                           BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y, BLITTER_ADDITIVE);
   draw[1] = heapCache[47];
 
   for (i = 0; i != 512; i++)
@@ -408,8 +406,8 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
   Task_Remove(BattleEffect_ArmWin0HBlankDma);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
   BattleEffect_ConfigureEffectDisplay();
 }

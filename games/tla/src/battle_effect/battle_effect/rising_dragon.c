@@ -37,7 +37,6 @@ struct RenderModel__f178710 {
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 #define DRAGON_SEGMENTS 33
 
@@ -87,12 +86,10 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    BattleEffect_LoadBlitter(
-        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -172,7 +169,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           s32 size = (mote->variant >> 3) + 2;
 
           blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                  HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+                  Q_16_16_UPPER_HALF(mote->x) - size / 2,
+                  Q_16_16_UPPER_HALF(mote->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(mote, 60, 0x1000);
           mote->variant--;
         }
@@ -326,22 +324,17 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       EFFECT_PRESENT_CANVAS(work);
     }
     Actor_SetAnimationSpeedFar(caster, 16);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }
   BattleEffect_EndCanvasLayer();
 }
 
-#define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
-#define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
+#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
 // The Lost Age's blitter modes run the other way from The Broken Seal's:
 // additive 0, max 1, transparent 2, copy 3; 2 << 4 | 3 is transparent and
 // clipped, and | 4 mirrors it.
-#define BLITTER_TRANSPARENT 2
-
-#define CLIP_XY 3
-#define FLIP_X 4
 
 #define FIGURE_FRAMES 108
 #define FIGURE_SWING_FRAME 30 // the first blow
@@ -380,11 +373,12 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   BattleEffect_StartTiledCanvas(0x2001);
   REG_BG2PA = Q_8_8(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DC, parts, 1, 1);
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                           BLITTER(BLITTER_TRANSPARENT, CLIP_XY));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   draw[0] = (DrawRectangle)heap->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER_ALTERNATE,
-                           BLITTER(BLITTER_TRANSPARENT, CLIP_XY | FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                      BLITTER_TRANSPARENT);
   draw[1] = ((DrawRectangle *)heap)[47];
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -423,8 +417,10 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
     }
 
     // The sway, and the canvas moved with the figure.
-    x = HI(work->particles[0].x) + ((Trig_Sin(frame << 8) << 3) >> 16);
-    y = HI(work->particles[0].y) + ((Trig_Cos(frame << 8) << 3) >> 16);
+    x = Q_16_16_UPPER_HALF(work->particles[0].x) +
+        ((Trig_Sin(frame << 8) << 3) >> 16);
+    y = Q_16_16_UPPER_HALF(work->particles[0].y) +
+        ((Trig_Cos(frame << 8) << 3) >> 16);
     REG_BG2X = -x << 8;
 
     // The body, and the arm raised until frame 48.
@@ -520,20 +516,15 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *effect) {
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 #undef TARGET_ANCHOR_PERCENT
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef DRAGON_SEGMENTS
 #undef HEAP_SLOT_BLITTER
-#undef HEAP_SLOT_BLITTER_ALTERNATE
-#undef BLITTER_TRANSPARENT
-#undef CLIP_XY
-#undef FLIP_X
 #undef FIGURE_FRAMES
 #undef FIGURE_SWING_FRAME
 #undef FIGURE_HIT_FRAME

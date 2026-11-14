@@ -90,9 +90,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   s32 shift;
   s32 flags;
   s32 start;
-  // Holds BLIT_ADDITIVE for the whole function: the lights' second build
+  // Holds BLITTER_ADDITIVE for the whole function: the lights' second build
   // then reloads its 0 in place of a fresh constant.
-  s32 additive = BLIT_ADDITIVE;
+  s32 additive = BLITTER_ADDITIVE;
   // Holds 0 for the whole function: the center's coordinates are stored from
   // it.
   s32 zero = 0;
@@ -261,7 +261,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
 
-      // The mode is the prelude, 1 here: BLIT_MAX.
+      // The mode is the prelude, 1 here: BLITTER_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
       BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags ^ flipX2,
                                 additive);
@@ -273,8 +273,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
-      HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
-      HeapSlot_Release(BLITTER_SLOT);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
 
     for (member = 0; member != effect->count; member++) {
@@ -303,7 +303,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame > member * 8) {
           /* FAKEMATCH(barrier): an empty asm through mode. */
           __asm__("" : "+h"(mode));
-          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+          LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, flags,
                                     additive);
           {
@@ -352,8 +352,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
               }
             }
           }
-          HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
-          HeapSlot_Release(BLITTER_SLOT);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
 
@@ -373,10 +373,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         } while (0);
         cel = (frame - member * 8 - 52) / 4 % 6;
 
-        LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+        LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
-        HeapSlot_Release(BLITTER_SLOT);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
 
       // From frame 80, the mode's picture.
@@ -385,20 +385,20 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cel = (frame - member * 8 - 80) / 4 % 7;
 
-          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+          LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
-          HeapSlot_Release(BLITTER_SLOT);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == 3 || mode == 5 || mode == 8 || mode == 12) {
         // Six 32x64 pictures, four frames apart.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+          LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
           draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
-          HeapSlot_Release(BLITTER_SLOT);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == 4 || mode == 9) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
@@ -407,27 +407,27 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           u8 *picture;    // the cel, drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
 
-          BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, BLIT_MAX);
+          BattleEffect_BuildBlitter(BLITTER_SLOT, 7, 7, flags, BLITTER_MAX);
           lowerFlags = flags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
           BattleEffect_BuildBlitter(BLITTER_SLOT_ALTERNATE, 7, 7, lowerFlags,
-                                    BLIT_MAX);
+                                    BLITTER_MAX);
           picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
           draw[0](canvas, picture, screen.x - 32, screen.y - 24, 64, 32);
           draw[1](canvas, picture, screen.x - 32, screen.y + 8, 64, 32);
-          HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
-          HeapSlot_Release(BLITTER_SLOT);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          LOAD_BLITTER(draw[0], flags, BLIT_ADDITIVE);
+          LOAD_BLITTER(draw[0], flags, BLITTER_ADDITIVE);
           draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
-          HeapSlot_Release(BLITTER_SLOT);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
     }
@@ -641,7 +641,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

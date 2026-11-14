@@ -10,9 +10,6 @@
 
 struct Model;
 
-// The integer (pixel) half of a 16.16 value, read as the halfword it is.
-#define HI(v) (((s16 *)&(v))[1])
-
 #define KIND125_FRAMES 114
 
 /* VIEW(summon_effects): tag union BattleBackgroundId as union
@@ -90,9 +87,10 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(104, 1 << 4 | 3);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
-    BattleEffect_LoadBlitter(104, 1 << 4 | 7);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   caster = BattleObject_GetFar(effect->actor)->object;
   transition = Ram_HeapSlots->transitionWork;
@@ -210,12 +208,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       }
       draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
       if (effect->side == 0)
-        BattleEffect_LoadBlitter(188, 1 << 4 | 11);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
       else
-        BattleEffect_LoadBlitter(188, 1 << 4 | 15);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
-      HeapSlot_Release(188);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
 
     // Until frame 89: the sparks of the claws' hits, shrinking.
@@ -225,7 +225,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           s32 size = (step->variant >> 2) + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
+                  Q_16_16_UPPER_HALF(step->x) - size / 2,
+                  Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(step, 60, 0);
           step->variant--;
         }
@@ -289,14 +290,18 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         }
         if (i == 1) {
           if (effect->side == 0)
-            BattleEffect_LoadBlitter(188, 1 << 4 | 11);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                                BLITTER_MAX);
           else
-            BattleEffect_LoadBlitter(188, 1 << 4 | 15);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                                EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                                BLITTER_MAX);
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         }
         draw[i](canvas, work->sheet, x - 20, y, 40, 80);
         if (i == 1)
-          HeapSlot_Release(188);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
 
@@ -430,7 +435,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(1, BACKGROUND(Ram_HeapSlots->battleWork), 24);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -482,7 +487,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
 
   // The cloud sheet, recoloured to palette entries 96 on, drawn into the
   // canvas through the copy blitter.
-  BattleEffect_LoadBlitter(104, 1 << 4 | 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
   /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette. */
@@ -497,7 +502,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   sheetDraw[0](canvas, work->sheet, 0, 0, 128, 128);
   EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
   // The swirl itself in the canvas (colour 0 made 1, so none is clear),
   // copied twice side by side into the map buffer.
@@ -560,7 +565,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScrollX;
   transition->active = 0;
   Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -585,7 +590,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
    * frame's outgoing argument word at sp+0. */
   if (0)
     BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
-  BattleEffect_LoadBlitter(104, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
   REG_BG2PA = 0x48;
 
@@ -628,7 +633,7 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
     if (i == half && midpoint != NULL)
       midpoint();
   }
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 }
 
 struct ChildObject {
@@ -779,7 +784,6 @@ void Iris_RestoreBattle(void) {
   // The battle's background.
   BattleBackground_LoadFar(1, *(u16 *)battle->unk670, 24);
 }
-#undef HI
 #undef KIND125_FRAMES
 #undef BACKGROUND
 #undef SWIRL_MAX_FRAMES

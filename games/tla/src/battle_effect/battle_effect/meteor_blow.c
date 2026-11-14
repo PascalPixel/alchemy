@@ -31,7 +31,6 @@ struct PointPair {
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 // One star of the opening sky: a point on a sphere and its cell kind.
 struct MeteorStar {
@@ -342,9 +341,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         for (i = 0; i != 256; i++, s++) {
           s32 kind = s->kind;
 
-          point[0] = HI(s->x);
-          point[1] = HI(s->y);
-          point[2] = HI(s->z);
+          point[0] = Q_16_16_UPPER_HALF(s->x);
+          point[1] = Q_16_16_UPPER_HALF(s->y);
+          point[2] = Q_16_16_UPPER_HALF(s->z);
           Render_ProjectPoint(point, screen);
           if (screen[2] > 0) {
             if (kind == 7) {
@@ -410,7 +409,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   } else {
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
   // DEAD: frame 0 sets hx and hz again before any read.
   hx = 200;
@@ -427,7 +426,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
                WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG2;
   REG_WIN0V = WIN_RANGE(16, 124);
   REG_WIN1V = WIN_RANGE(0, 136);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -598,7 +597,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           s32 n = (p->variant >> 2) + 1;
 
           blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                  HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
+                  Q_16_16_UPPER_HALF(p->x) - n / 2,
+                  Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
           p->variant--;
           BattleEffectKernels_IntegrateVector2(p, 56, 0x2000);
         }
@@ -609,10 +609,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Sprite_DestroyFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI

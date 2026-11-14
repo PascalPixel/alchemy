@@ -52,12 +52,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   REG_WIN0H = WIN_RANGE(240, 240);
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_TRANSPARENT << 4 |
-                                                       COMPOSITE_CLIP_X |
-                                                       COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   drawAlt = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
@@ -236,8 +234,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           else
             n = i & 3;
           drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[n],
-                  HI(PARTICLES[i].x), HI(PARTICLES[i].y),
-                  gBoreas_DebrisWidths[n], gBoreas_DebrisHeights[n]);
+                  Q_16_16_UPPER_HALF(PARTICLES[i].x),
+                  Q_16_16_UPPER_HALF(PARTICLES[i].y), gBoreas_DebrisWidths[n],
+                  gBoreas_DebrisHeights[n]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
           PARTICLES[i].velocityY += px(1) / 8;
@@ -263,7 +262,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
           if ((i & 1) == 0) {
             draw(canvas, work->sheet + gBoreas_SprayPictures[n],
-                 HI(PARTICLES[i].x), HI(PARTICLES[i].y), gBoreas_SprayWidths[n],
+                 Q_16_16_UPPER_HALF(PARTICLES[i].x),
+                 Q_16_16_UPPER_HALF(PARTICLES[i].y), gBoreas_SprayWidths[n],
                  gBoreas_SprayHeights[n]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
@@ -290,7 +290,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           s32 sz = gBattleEffect_SparkleSizes[n];
 
           draw(canvas, dots + gBattleEffect_SparklePictures[n],
-               HI(q->x) - sz / 2, HI(q->y) - sz / 2, sz, sz);
+               Q_16_16_UPPER_HALF(q->x) - sz / 2,
+               Q_16_16_UPPER_HALF(q->y) - sz / 2, sz, sz);
           if (++q->variant == 18) {
             q->x = p->x;
             q->y = p->y;
@@ -372,15 +373,15 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
         count = 64;
       for (i = 0; i != count; i++) {
         q = &work->particles[i];
-        y = HI(q->y);
+        y = Q_16_16_UPPER_HALF(q->y);
         if (y <= 135) {
           s32 n = i % 3;
 
-          draw(canvas, work->sheet + gBoreas_FallPictures[n], HI(q->x),
-               y - gBoreas_FallHeights[n], gBoreas_FallWidths[n],
-               gBoreas_FallHeights[n]);
+          draw(canvas, work->sheet + gBoreas_FallPictures[n],
+               Q_16_16_UPPER_HALF(q->x), y - gBoreas_FallHeights[n],
+               gBoreas_FallWidths[n], gBoreas_FallHeights[n]);
           BattleEffectKernels_IntegrateVector2(q, 64, px(1));
-          if (HI(q->y) > 120 && q->velocityY > px(8)) {
+          if (Q_16_16_UPPER_HALF(q->y) > 120 && q->velocityY > px(8)) {
             q->velocityY = -q->velocityY / 4;
             q->y = px(120);
             work->shakeFrames = 1;
@@ -391,8 +392,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     // The falling ice blocks (24x48), sent up again until frame 47.
     if (frame <= 71) {
       for (i = 0; i != 64; i++) {
-        draw(canvas, work->sheet, HI(work->particles[i].x) - 12,
-             HI(work->particles[i].y) - 24, 24, 48);
+        draw(canvas, work->sheet, Q_16_16_UPPER_HALF(work->particles[i].x) - 12,
+             Q_16_16_UPPER_HALF(work->particles[i].y) - 24, 24, 48);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;
         if ((work->particles[i].y >> 16) > 120 && frame <= 47) {
@@ -433,8 +434,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   }
 
   // Tear down.
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -16,7 +16,6 @@ struct StripQuad;
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 extern const struct PlacementSource gTrident_UnitScale;
 
@@ -65,8 +64,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
   REG_WIN0V = WIN_RANGE(16, 124);
   REG_WIN1V = WIN_RANGE(16, 136);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   blit[0] = draw;
@@ -226,8 +224,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           s32 index = drop - 2;
 
           if ((u32)index <= 61) {
-            s32 dropX = HI(p->x);
-            s32 dropY = HI(p->y);
+            s32 dropX = Q_16_16_UPPER_HALF(p->x);
+            s32 dropY = Q_16_16_UPPER_HALF(p->y);
             s32 tier = index >> 1;
 
             BattleEffectKernels_IntegrateVector2(p, 64, 0);
@@ -374,7 +372,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         if ((u32)drawn->variant <= 23) {
           blit[0](canvas,
                   Ram_MapCellBuffer + 0x5000 + ((drawn->variant / 4) << 11),
-                  HI(drawn->x) - 16, HI(drawn->y) - 32, 32, 64);
+                  Q_16_16_UPPER_HALF(drawn->x) - 16,
+                  Q_16_16_UPPER_HALF(drawn->y) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(drawn, 62, -0x4000);
         }
         drawn->variant++;
@@ -391,8 +390,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         spark = (drawn->variant >> 3) + 1;
         at = (spark - 1) * 2;
         blit[0](canvas, sprites + *(const u16 *)(cellTable + at),
-                HI(drawn->x) - spark / 2, HI(drawn->y) - spark, spark,
-                spark * 2);
+                Q_16_16_UPPER_HALF(drawn->x) - spark / 2,
+                Q_16_16_UPPER_HALF(drawn->y) - spark, spark, spark * 2);
         drawn->variant--;
         BattleEffectKernels_IntegrateVector2(drawn, 56, 0x2000);
       }
@@ -421,14 +420,14 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             canvas, work->sheet + gBattleEffect_GlintPictures[k], x, y,
             gBattleEffect_GlintPictureWidths[k],
             gBattleEffect_GlintPictureHeights[k]);
-        HeapSlot_Release(188);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != 4; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }
@@ -496,9 +495,10 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
                        128);
   // The blitter faces the caster's side.
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(104, 1 << 4 | 3);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   else
-    BattleEffect_LoadBlitter(104, 1 << 4 | 7);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (mode == 0)
@@ -777,7 +777,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -849,6 +849,5 @@ void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef LEAP_FRAMES
 #undef SPARKS

@@ -39,9 +39,8 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER,
-      BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                      BLITTER_TRANSPARENT);
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // The canvas is centred between the first and the last target.
@@ -94,9 +93,11 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
           shard = &SHARDS[i * SHARDS_PER_ROCK + j];
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
           blit(canvas, work->sheet + gSpire_ShardPictures[cel] + 0x83c,
-               HI(shard->x) - ((width = gSpire_ShardWidths[cel]) >> 1),
-               HI(shard->y) - ((height = gSpire_ShardHeights[cel]) >> 1), width,
-               height);
+               Q_16_16_UPPER_HALF(shard->x) -
+                   ((width = gSpire_ShardWidths[cel]) >> 1),
+               Q_16_16_UPPER_HALF(shard->y) -
+                   ((height = gSpire_ShardHeights[cel]) >> 1),
+               width, height);
           BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
@@ -107,7 +108,8 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
       // and rests at y 50.
       if (frame < gSpire_DropFrames[i] + FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
-          blit(canvas, work->sheet, gSpire_RockX[i] + 47, HI(rock->y), 34, 62);
+          blit(canvas, work->sheet, gSpire_RockX[i] + 47,
+               Q_16_16_UPPER_HALF(rock->y), 34, 62);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += px(1);
@@ -126,7 +128,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 

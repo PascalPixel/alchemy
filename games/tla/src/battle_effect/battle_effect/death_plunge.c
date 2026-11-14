@@ -15,8 +15,6 @@
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-#define HI(v) (((s16 *)&(v))[1])
-
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 /* VIEW(f188714): tag struct ModelTexture as struct ModelTexture__f188714;
@@ -94,15 +92,11 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
     work->transferValue = 50;
-    BattleEffect_LoadBlitter(
-        HEAP_SLOT_BLITTER,
-        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-    BattleEffect_LoadBlitter(
-        HEAP_SLOT_BLITTER,
-        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   }
   work->transferMode = CANVAS_COPY_AND_FADE;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -206,7 +200,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
         spark = &work->particles[i];
         if (spark->variant >= 0 && spark->variant <= 23) {
           draw[0](canvas, work->sheet + ((spark->variant / 4) << 11),
-                  HI(spark->x) - 16, HI(spark->y) - 32, 32, 64);
+                  Q_16_16_UPPER_HALF(spark->x) - 16,
+                  Q_16_16_UPPER_HALF(spark->y) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
         }
         spark->variant++;
@@ -281,6 +276,6 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

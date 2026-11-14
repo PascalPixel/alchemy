@@ -146,7 +146,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   velX = 0;
   velY = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
@@ -402,10 +402,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
               canvas, work->sheet + 0x2000 + gBattleEffect_GlintPictures[t], x,
               y, gBattleEffect_GlintPictureWidths[t],
               gBattleEffect_GlintPictureHeights[t]);
-          HeapSlot_Release(SLOT_ALT);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
-      HeapSlot_Release(SLOT_ALT);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_PRESENT_CANVAS(work);
     }
   }
@@ -744,7 +744,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -763,9 +763,6 @@ struct Model;
 #define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
-
-// The pixel half of a 16.16 value.
-#define HI(value) (((s16 *)&(value))[1])
 
 // One model for the IWRAM renderer.
 /* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c;
@@ -808,7 +805,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -916,7 +913,8 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
         for (i = 0; i != 16; i++, flash++) {
           if (flash->variant >= 0 && flash->variant <= 17) {
             draw[0](canvas, work->sheet + (flash->variant / 3 << 11),
-                    HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
+                    Q_16_16_UPPER_HALF(flash->x) - 16,
+                    Q_16_16_UPPER_HALF(flash->y) - 48, 32, 64);
             BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
             flash->variant++;
           }
@@ -1040,7 +1038,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   if (kind == KIND_FINALE) {
     // Put the scene's view back by hand.
     Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
@@ -1337,8 +1335,6 @@ void BattleEffect_SetupCanvasWindows(void) {
   REG_WIN1V = WIN_RANGE(16, 136);
   REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
 }
-
-#undef HI
 
 // Twin: The Broken Seal's BattleEffect_StartCanvasLayer. The Lost Age's
 // changes: BattleEffect_ConfigureEffectDisplay for the display set-up, DISPCNT

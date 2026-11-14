@@ -117,41 +117,30 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
   wait(1);
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
-      BattleEffect_LoadBlitter(HEAP_BLITTER,
-                               BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                          COMPOSITE_CLIP_Y |
-                                                          COMPOSITE_FLIP_Y));
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                     COMPOSITE_CLIP_Y |
-                                                     COMPOSITE_FLIP_Y));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+                          BLITTER_ADDITIVE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
     } else {
-      BattleEffect_LoadBlitter(HEAP_BLITTER,
-                               BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                          COMPOSITE_CLIP_Y |
-                                                          COMPOSITE_FLIP));
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                     COMPOSITE_CLIP_Y |
-                                                     COMPOSITE_FLIP));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                          BLITTER_ADDITIVE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
     }
   } else {
     if (effect->side == 0) {
-      BattleEffect_LoadBlitter(
-          HEAP_BLITTER,
-          BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      BattleEffect_LoadBlitter(
-          HEAP_BLITTER_ALTERNATE,
-          BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          BLITTER_ADDITIVE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_MAX);
     } else {
-      BattleEffect_LoadBlitter(HEAP_BLITTER,
-                               BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                          COMPOSITE_CLIP_Y |
-                                                          COMPOSITE_FLIP_X));
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                     COMPOSITE_CLIP_Y |
-                                                     COMPOSITE_FLIP_X));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                          BLITTER_ADDITIVE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     }
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -320,8 +309,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   gBgScroll[1].y = 32;
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
@@ -367,21 +356,15 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   BattleEffect_SetupCanvasTileMap();
   REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER,
-        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-    BattleEffect_LoadBlitter(
-        HEAP_BLITTER_ALTERNATE,
-        BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    BattleEffect_LoadBlitter(HEAP_BLITTER,
-                             BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                        COMPOSITE_CLIP_Y |
-                                                        COMPOSITE_FLIP_X));
-    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                   COMPOSITE_CLIP_Y |
-                                                   COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   slots = (DrawRectangle *)Ram_HeapSlots;
   draw[0] = slots[HEAP_BLITTER / 4];
@@ -559,8 +542,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
 
   // Teardown: the background palette steps back over seven frames.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   gBgScroll[1].y = 32;
   for (frame = 0, background = (u16 *)Ram_HeapSlots->battleWork->unk670;
        frame != 7; frame++) {

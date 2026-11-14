@@ -179,15 +179,15 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
       if (frame <= 3)
         draw[1](canvas, work->sheet + DJINN_SHEET, x, y, DJINN_SIZE,
                 DJINN_SIZE);
-      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
 
     // A fresh pair of max blitters each frame, the second flipped.
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->unkb8[1];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -251,8 +251,8 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
         }
       }
     }
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_PRESENT_CANVAS(work);
   }
 
@@ -316,10 +316,10 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
     // A fresh pair of max blitters each frame, the second flipped.
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[1] = (DrawRectangle)heap->unkb8[1];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
@@ -383,8 +383,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
         }
       }
     }
-    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-    HeapSlot_Release(HEAP_BLITTER);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_PRESENT_CANVAS(work);
   }
 

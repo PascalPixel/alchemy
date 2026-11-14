@@ -85,8 +85,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  BattleEffect_LoadBlitter(
-      104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -170,7 +169,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 

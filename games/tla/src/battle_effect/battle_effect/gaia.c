@@ -147,13 +147,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
     }
   }
   // Two max blitters, the second mirrored for the right half.
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                 COMPOSITE_CLIP_Y |
-                                                 COMPOSITE_FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -266,7 +263,8 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
           s32 size = (i & 3) + 5;
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
+                  Q_16_16_UPPER_HALF(dust->x) - size / 2,
+                  Q_16_16_UPPER_HALF(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
             dust->y = px(96);
@@ -354,8 +352,8 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != ROCK_COUNT; i++)
     Sprite_DestroyFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();
@@ -484,9 +482,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 }
 #undef Actor_SetAnimationSpeedFar
 #undef PARTICLES
-#undef HI
-#undef BLITTER_ADDITIVE
-#undef BLITTER_MAX
 #undef CLIP
 #undef PHASE_RESULTS
 #undef HEAP_BLITTER
@@ -495,8 +490,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 #undef SPARKS
 #undef PUFF_COUNT
 #undef ROCK_COUNT
-#undef BLIT_MODE
-#undef BLIT_CLIP
 #undef MOTES
 #undef DUST
 #undef FIRST_ROCK

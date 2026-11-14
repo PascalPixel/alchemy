@@ -109,9 +109,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     i++;
   } while (i != 64);
 
-  BattleEffect_LoadBlitter(
-      HEAP_BLITTER,
-      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -212,7 +210,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
           s32 size = i % 3 + 1;
 
           draw(canvas, sheet + gBattleEffect_MotePictures[size - 1], fire->x,
-               HI(fire->y) - size, size, size * 2);
+               Q_16_16_UPPER_HALF(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
           fire->velocityY = fire->velocityY * 48 / 64;
@@ -372,7 +370,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
           s32 size = 3;
 
           draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
-               HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
+               Q_16_16_UPPER_HALF(burst->x) - size / 2,
+               Q_16_16_UPPER_HALF(burst->y) - size, size, size * 2);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;
           burst->variant--;
@@ -418,7 +417,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     i++;
   } while (i != 9);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -436,17 +435,7 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 // Here PARTICLES, the map cell buffer, holds the spray (and, at the start,
 // the serpent's tiles and the window's column noise).
 
-#define SERPENT_PARTS 8 // four across, two down, 48 pixels apart
-#define SPRAY_COUNT 1024
-#define SPARKLE_SHEET 0x4e20 // the sparkle cells after the spray picture
-
 #define SCENE_FRAMES 244  // act one; A or B ends it after frame 16
-#define OPEN_FRAMES 16    // the window opens over the sea
-#define SERPENT_FRAME 22  // the serpent rises
-#define SECOND_SPRAY 76   // a second fountain of spray
-#define GATHER_FRAME 152  // light gathers at its mouth
-#define RAYS_FRAME 176    // the rays reach out
-#define BREATH_FRAME 222  // and it breathes
 #define PILLAR_FRAMES 144 // act two
 #define RESULTS_FRAME 96
 

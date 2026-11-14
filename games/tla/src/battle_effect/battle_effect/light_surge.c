@@ -30,7 +30,6 @@ struct RenderModel__f171430 {
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 struct SurgeTarget {
   u8 unk00[8];
@@ -90,8 +89,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0,
@@ -197,8 +195,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       index >>= 1;
       x = pos->x / 2;
       y = pos->y;
-      BattleEffect_LoadBlitter(
-          188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                          BLITTER_MAX);
       index <<= 1;
       index += (s32)circles;
       half = size >> 1;
@@ -208,26 +206,23 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       index = y - size;
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cel, left, index, half,
                                                size);
-      HeapSlot_Release(188);
-      BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                          COMPOSITE_CLIP_Y |
-                                                          COMPOSITE_FLIP_X));
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                          EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
                                                x, index, half, size);
-      HeapSlot_Release(188);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       if (i > 15) {
-        BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                            COMPOSITE_CLIP_Y |
-                                                            COMPOSITE_FLIP_Y));
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, (void *)(*entry + cells), x - half, y, half, size);
-        HeapSlot_Release(188);
-        BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                            COMPOSITE_CLIP_Y |
-                                                            COMPOSITE_FLIP));
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, (void *)(*entry + cells), x, y, half, size);
-        HeapSlot_Release(188);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
 
@@ -346,7 +341,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -366,6 +361,5 @@ void BattleEffect_RunPoisonFlow(s32 a0) { BattleEffect_RunWaterColumn(a0, 3); }
 void BattleEffect_RunRagingFlood(s32 a0) { BattleEffect_RunWaterColumn(a0, 4); }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef LIGHT_SURGE_FRAMES
 #undef SURGE_BOLTS

@@ -120,9 +120,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
     frames = 52;
   }
   if (!effect->side) {
-    BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER, 23);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -570,7 +571,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
     target[6] = work->particles[63].velocityX;
     target[7] = work->particles[63].velocityY;
   }
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

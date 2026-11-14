@@ -8,7 +8,6 @@
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
-#define HEAP_SLOT_BLITTER_ALTERNATE 188
 
 // The transfer task runs at this priority, where The Broken Seal's runs at
 // 0x480.
@@ -16,8 +15,6 @@
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
-
-#define HI(v) (((s16 *)&(v))[1])
 
 // The jaws' texture, unpacked into the map cell buffer's second 16 KB.
 #define JAW_TEXTURE (Ram_MapCellBuffer + 0x4000)
@@ -136,18 +133,13 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
   // A clipped MAX blitter facing the targets, and a clipped additive one.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(
-        HEAP_SLOT_BLITTER,
-        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                BLIT_MAX));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   else
-    BattleEffect_LoadBlitter(
-        HEAP_SLOT_BLITTER,
-        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(
-      HEAP_SLOT_BLITTER_ALTERNATE,
-      BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                      BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -250,8 +242,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
             else if (effect->variant == 2)
               size = (i & 3) + 3;
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                        HI(step->x) - size / 2, HI(step->y) - size, size,
-                        size * 2);
+                        Q_16_16_UPPER_HALF(step->x) - size / 2,
+                        Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(step, 60, 0);
             step->variant--;
           }
@@ -302,8 +294,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                  frame >= gBreaths_BurstFrames[mode]) {
         // The ball of dust rolls to the target.
         step = &work->particles[0];
-        draw[0](canvas, work->sheet, HI(step->x) - 16, HI(step->y) - 24, 32,
-                48);
+        draw[0](canvas, work->sheet, Q_16_16_UPPER_HALF(step->x) - 16,
+                Q_16_16_UPPER_HALF(step->y) - 24, 32, 48);
         BattleEffectKernels_IntegrateVector2(step, 56, 0);
         step->velocityX += step->z;
         step->velocityY += step->velocityZ;
@@ -498,8 +490,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -546,7 +538,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
   }
   /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing. */
   Nothing();
-  BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
+  BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 7, 7, flags, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   // Load both crescents and set the blend.
@@ -640,7 +632,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -651,25 +643,26 @@ void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   s32 half;
 
-  BattleEffect_LoadBlitter(188, 19);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   half = size / 2;
   ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y - size,
                                             half, size);
-  HeapSlot_Release(188);
-  BattleEffect_LoadBlitter(188, 23);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y - size, half,
                                             size);
-  HeapSlot_Release(188);
-  BattleEffect_LoadBlitter(188, 27);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y, half,
                                             size);
-  HeapSlot_Release(188);
-  BattleEffect_LoadBlitter(188, 31);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                      BLITTER_MAX);
   ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y, half, size);
-  HeapSlot_Release(188);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 }
 #undef HEAP_SLOT_BLITTER
-#undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef BLITTER
-#undef HI
 #undef JAW_TEXTURE

@@ -94,14 +94,12 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     EffectPosition_ProjectScaledBattler(effect->actor, &user);
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
       if (effect->side == 0)
-        BattleEffect_LoadBlitter(
-            HEAP_BLITTER,
-            BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                            BLITTER_ADDITIVE);
       else
-        BattleEffect_LoadBlitter(HEAP_BLITTER,
-                                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                            COMPOSITE_CLIP_Y |
-                                                            COMPOSITE_FLIP_X));
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                            BLITTER_ADDITIVE);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       if (effect->side == 0)
         draw[0](canvas,
@@ -111,7 +109,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
         draw[0](canvas,
                 work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
                 user.x / 2, user.y - 24, 48, 72);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
 
     // The burst on the target; the stronger variant has its own pictures.
@@ -119,8 +117,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       s32 step = (frame - BURST_FRAME) / 2;
       s32 strip;
 
-      BattleEffect_LoadBlitter(
-          HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       if (step > 2)
         step = 2;
@@ -131,7 +128,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_PICTURE_BYTES,
               origin.x / 2 - 20, origin.y - 48, 40, 80);
       BattleEffect_CallDoNothing(10000);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     if (frame == HIT_FRAME)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
@@ -158,8 +155,8 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
           shard->variant--;
         }
       }
-      HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-      HeapSlot_Release(HEAP_BLITTER);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
 
     // The hit's knock-back, and the target's flashes.

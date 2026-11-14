@@ -12,9 +12,7 @@ struct Model;
 
 // The Lost Age's blitter modes run the other way from The Broken Seal's:
 // additive 0, max 1, transparent 2, copy 3.
-#define BLITTER_MAX 1
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define CLIP_XY 3
 
 #define BURST_FRAMES 48
 #define BURST_DRAW_FRAMES 28
@@ -89,7 +87,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   EffectPosition_ProjectBattler(effect->actors[0], &target);
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = (64 - target.x) << 8;
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 2) {
@@ -149,7 +147,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -313,8 +311,6 @@ struct SystemWork__f17e698 {
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
 
-#define ALCHEMY_TYPES_H
-
 void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s16 targets[14];
   Vec3 pos;
@@ -355,7 +351,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   RagingHeat_FillGradientCanvas();
-  BattleEffect_LoadBlitter(104, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit[0] = SYSTEM->blit;
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -562,7 +558,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     s32 *ringX;
     void *pixels;
 
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Iwram_Clear(dest, 0x3c00);
     Iwram_Clear((void *)BG_CHAR_BLOCK(1), 0x4000);
     *(vu16 *)0x0400000c = 0x786;
@@ -1412,8 +1408,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     for (i = 0; i != 16; i++)
       Sprite_DestroyFar(work->sprites[i]);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(188);
-    HeapSlot_Release(104);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     BattleEffect_EndCanvasLayer();
   }
 }
@@ -1452,9 +1448,6 @@ extern const struct PlacementSource__f17e698
 #define STRIKE_SPARKS ((struct EffectStep *)gData_02014000)
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
-#define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
-#define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
-#define HI(v) (((s16 *)&(v))[1])
 #define DAEDALUS_FRAMES 108
 #define DAEDALUS_SPARKS 64
 
@@ -1505,7 +1498,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleEffect_SpawnObjects(1, 0x296, 3);
   BattleEffect_SelectLivingTargets(work->effect);
-  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = BLITTER;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
@@ -1587,7 +1580,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         for (i = 0, mote = sparks; i != DAEDALUS_SPARKS; i++, mote++) {
           if ((u32)mote->variant <= 17) {
             draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
-                    HI(mote->x) - 16, HI(mote->y) - 48, 32, 64);
+                    Q_16_16_UPPER_HALF(mote->x) - 16,
+                    Q_16_16_UPPER_HALF(mote->y) - 48, 32, 64);
             BattleEffectKernels_IntegrateVector2(mote, 62, -0x800);
             mote->variant++;
           }
@@ -1699,14 +1693,12 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != DAEDALUS_FRAMES);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Sprite_DestroyFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();
 }
 #undef HEAP_SLOT_BLITTER
-#undef BLITTER_MAX
 #undef BLITTER
-#undef CLIP_XY
 #undef BURST_FRAMES
 #undef BURST_DRAW_FRAMES
 #undef CEL_SIZE
@@ -1717,9 +1709,5 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
 #undef Iwram_Clear
 #undef DECODE_BUFFER
 #undef PARTICLES
-#undef ALCHEMY_TYPES_H
-#undef BLIT_MODE
-#undef BLIT_CLIP
-#undef HI
 #undef DAEDALUS_FRAMES
 #undef DAEDALUS_SPARKS

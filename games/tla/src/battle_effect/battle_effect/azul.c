@@ -17,7 +17,6 @@ struct StripQuad;
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 struct AzulPoint {
   s32 x;
@@ -103,7 +102,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(3);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   blit = Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
@@ -244,7 +243,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
 
           blit(canvas, work->sheet + 0x2df8, ((p->x + (s << 4)) >> 16) - 6,
-               HI(p->y) - 12, 12, 24);
+               Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
           BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);
         }
         p->variant++;
@@ -587,7 +586,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         s32 width;
         s32 height;
 
-        BattleEffect_LoadBlitter(SLOT_ALT, 7);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                            EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                            BLITTER_ADDITIVE);
         blit2 = Ram_HeapSlots->unkb8[1];
         i = 0;
         y = (base.y >> 16) - 32;
@@ -600,7 +601,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           blit(canvas, cells, 30, y, width, height);
           blit2(canvas, cells, 46, y, width, height);
         }
-        HeapSlot_Release(SLOT_ALT);
+        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
       if (frame > 185) {
         goto spray;
@@ -693,8 +694,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       p = (struct EffectStep *)gMapCellBuffer;
       for (i = 0; i != 256; i++, p++) {
         if (p->variant >= 0) {
-          blit(canvas, work->sheet + 0x2df8, HI(p->x) - 6, HI(p->y) - 12, 12,
-               24);
+          blit(canvas, work->sheet + 0x2df8, Q_16_16_UPPER_HALF(p->x) - 6,
+               Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
           BattleEffectKernels_IntegrateVector2(p, 63, 0x10000);
           if (p->y > 0x600000) {
             p->velocityY = -p->velocityY / 2;
@@ -731,7 +732,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
-  HeapSlot_Release(SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   for (i = 0; i != 28; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }
@@ -811,6 +812,5 @@ void BattleEffect_GetTargetsMidpoint(struct EffectPosition *position) {
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef SLOT_ALT
 #undef CLAMP_Y

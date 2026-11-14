@@ -15,8 +15,6 @@
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
-#define HI(v) (((s16 *)&(v))[1])
-
 // The sparks live in the map cell buffer's second 16 KB, 128 for each sword.
 #define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 #define SPARK_COUNT 512
@@ -70,14 +68,12 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(
-        HEAP_SLOT_BLITTER,
-        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                        BLITTER_ADDITIVE);
   else
-    BattleEffect_LoadBlitter(
-        HEAP_SLOT_BLITTER,
-        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                BLIT_ADDITIVE));
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
+                        EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
+                        BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, cells, 1, 1);
   Picture_MirrorIntoQuadrants(cells, work->sheet, 64, 64);
@@ -145,8 +141,8 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       // From frame 50 plus its delay the sword falls, faster each frame,
       // until it sticks in the ground 12 frames later.
       if (frame >= i * 16 + 50) {
-        s32 x = HI(step->x) - 20;
-        s32 y = HI(step->y) - 50;
+        s32 x = Q_16_16_UPPER_HALF(step->x) - 20;
+        s32 y = Q_16_16_UPPER_HALF(step->y) - 50;
         s32 height = 80;
 
         if (y > 24)
@@ -169,7 +165,8 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         s32 size = (step->variant >> 2) + 1;
 
         draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
+                Q_16_16_UPPER_HALF(step->x) - size / 2,
+                Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
         if (step->y > px(104)) {
           step->y = px(104);
           step->velocityY = -step->velocityY / 2;
@@ -287,7 +284,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -354,9 +351,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
   // card's picture and its extras.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(
-      HEAP_SLOT_BLITTER,
-      BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   scale = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
@@ -473,8 +468,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
             s32 cell = i % 5 * 3 + step->variant / 96 % 3;
 
             draw[0](canvas, work->sheet + gPrism_ShardPictures[cell] + 0x1000,
-                    HI(step->x) - gPrism_ShardWidths[cell] / 2,
-                    HI(step->y) - gPrism_ShardHeights[cell] / 2,
+                    Q_16_16_UPPER_HALF(step->x) - gPrism_ShardWidths[cell] / 2,
+                    Q_16_16_UPPER_HALF(step->y) - gPrism_ShardHeights[cell] / 2,
                     gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
             if (step->y > px(96))
@@ -492,7 +487,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
           if (step->variant >= 0) {
             if (step->variant > 1)
               draw[0](canvas, work->sheet + 0x800 + step->variant / 4 * 0x480,
-                      HI(step->x) - 12, HI(step->y) - 24, 24, 48);
+                      Q_16_16_UPPER_HALF(step->x) - 12,
+                      Q_16_16_UPPER_HALF(step->y) - 24, 24, 48);
             step->x += step->velocityX;
             step->y += step->velocityY;
             if (step->y > px(96)) {
@@ -699,7 +695,8 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
           size += 3;
         for (j = 0; j != gElementCards_SparkMotions[mode].steps; j++) {
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
+                  Q_16_16_UPPER_HALF(step->x) - size / 2,
+                  Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
           if (step->y > px(104)) {
             step->y = px(104);
             step->velocityY = -step->velocityY / 2;
@@ -716,7 +713,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -733,6 +730,5 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, BattleEffect_RunCards, 2)
 DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, BattleEffect_RunCards, 3)
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef SPARKS
 #undef SPARK_COUNT

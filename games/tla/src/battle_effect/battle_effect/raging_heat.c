@@ -14,7 +14,6 @@ struct StripQuad;
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 #define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
 #define EMBERS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
@@ -51,13 +50,10 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 10);
-  BattleEffect_LoadBlitter(
-      SLOT_BLITTER,
-      BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(188, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
-                                                           COMPOSITE_CLIP_Y |
-                                                           COMPOSITE_FLIP_X));
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   for (i = 0; i != effect->count; i++) {
     EffectPosition_ProjectScaledBattler(effect->actors[i], &targets[i]);
@@ -139,7 +135,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
             if (particle->variant > 1) {
               draw[0](canvas,
                       work->sheet + 0x4000 + ((particle->variant / 4) << 11),
-                      HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+                      Q_16_16_UPPER_HALF(particle->x) - 16,
+                      Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
             }
             BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
           }
@@ -154,8 +151,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
             s32 size = (particle->variant >> 3) + 1;
 
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                    HI(particle->x) - size / 2, HI(particle->y) - size, size,
-                    size * 2);
+                    Q_16_16_UPPER_HALF(particle->x) - size / 2,
+                    Q_16_16_UPPER_HALF(particle->y) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
             particle->variant--;
           }
@@ -233,13 +230,12 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(188);
-  HeapSlot_Release(104);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
-#define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
-#define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
+#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
 #define RING_FRAMES 122
 #define RING_CUE_FRAME 16
@@ -408,9 +404,10 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        blitters[i & 1](
-            canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
-            HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+        blitters[i & 1](canvas,
+                        sparkCels + gBattleEffect_MotePictures[size - 1],
+                        Q_16_16_UPPER_HALF(spark->x) - size / 2,
+                        Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
         spark->variant--;
       }
@@ -420,8 +417,8 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -455,12 +452,10 @@ void RagingHeat_FillGradientCanvas(void) {
 }
 #undef SLOT_BLITTER
 #undef BLITTER
-#undef HI
 #undef TEXTURE_PIXELS
 #undef EMBERS
 #undef RAGING_HEAT_FRAMES
 #undef HEAP_SLOT_BLITTER
-#undef HEAP_SLOT_BLITTER_ALTERNATE
 #undef RING_FRAMES
 #undef RING_CUE_FRAME
 #undef RING_RISE_FRAME

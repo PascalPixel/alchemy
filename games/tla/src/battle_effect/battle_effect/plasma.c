@@ -38,13 +38,10 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
-                                             COMPOSITE_CLIP_X |
-                                             COMPOSITE_CLIP_Y);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                           BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
-                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
@@ -168,8 +165,8 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -340,11 +337,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
           s32 y;
 
           point = &work->particles[i * FLASH_POINTS + j];
-          y = HI(point->y) + originY;
+          y = Q_16_16_UPPER_HALF(point->y) + originY;
           if (effect->side == 1)
-            x = HI(point->x) + originX - GROUP_X(i) + 28;
+            x = Q_16_16_UPPER_HALF(point->x) + originX - GROUP_X(i) + 28;
           else
-            x = HI(point->x) + originX + GROUP_X(i) - 28;
+            x = Q_16_16_UPPER_HALF(point->x) + originX + GROUP_X(i) - 28;
           if (point->variant >= 0 && point->variant < FLASH_FRAMES)
             draw[0](canvas,
                     work->sheet +
@@ -401,7 +398,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
 
   // Tear down.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
-  HeapSlot_Release(HEAP_BLITTER);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();
 }

@@ -109,7 +109,7 @@ struct MainRoutineWork {
   // XXX: what the counted answers share; reading every site's question and
   // the Ancient Lemuria event that tests the count would settle it.
   u8 countedAnswers;
-  u8 unk275;         ///< not named by ⚓️ code
+  u8 unk275; ///< not named by ⚓️ code
   /// Nonzero makes actor 8, not currentOwner, the one events control.
   s16 ownerOverride;
   s32 savedX;      ///< the world map leader's x, kept on leaving

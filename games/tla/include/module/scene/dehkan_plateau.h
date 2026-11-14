@@ -124,8 +124,6 @@ void DehkanPlateau_HideRoom3Actors(void);
 
 void DehkanPlateau_InitializeRopes(void);
 
-
-
 void DehkanPlateau_HideRoom4Actors(void);
 
 void DehkanPlateau_LandFromFall(void);

@@ -7,6 +7,6 @@
 const char Flash_Version[] = "FLASH_V123";
 
 const struct FlashSetupInfo *const gFlash_Chips[] = {
-    &Flash_ChipSst,       &gFlash_ChipAtmel,  &Flash_ChipMacronix,
+    &Flash_ChipSst,       &gFlash_ChipAtmel,   &Flash_ChipMacronix,
     &Flash_ChipPanasonic, &gFlash_ChipDefault,
 };

@@ -8,12 +8,14 @@
 
 /// The Atmel chip's waits by timing: milliseconds, the timer's reload value
 /// and its control.
+// clang-format off
 const u16 Flash_MaxTimeAtmel[] = {
-    10, 0xffbd, 0xc2, //
-    40, 0xffbd, 0xc2, //
-    0, 0, 0, //
+    10, 0xffbd, 0xc2,
+    40, 0xffbd, 0xc2,
+    0, 0,      0,
     40, 0xffbd, 0xc2,
 };
+// clang-format on
 
 const struct FlashSetupInfo gFlash_ChipAtmel = {
     .program = ProgramAtmelFlashBlock,
@@ -30,7 +32,7 @@ const struct FlashSetupInfo gFlash_ChipAtmel = {
 const struct FlashSetupInfo gFlash_ChipAtmelLayout = {
     // ProgramAtmelFlashSector takes its sector as a word and its source as
     // const, unlike the slot's type.
-    .program = (u16(*)(u16, u8 *))ProgramAtmelFlashSector,
+    .program = (u16 (*)(u16, u8 *))ProgramAtmelFlashSector,
     .eraseChip = EraseAtmelFlashChip,
     .eraseSector = EraseAtmelFlashSector,
     .wait = WaitForFlashWrite,

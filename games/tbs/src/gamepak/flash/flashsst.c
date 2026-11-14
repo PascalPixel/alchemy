@@ -7,12 +7,14 @@
 
 /// The SST chip's waits by timing: milliseconds, the timer's reload value and
 /// its control.
+// clang-format off
 const u16 Flash_MaxTimeSst[] = {
-    10, 0xffbd, 0xc2, //
-    10, 0xffbd, 0xc2, //
-    40, 0xffbd, 0xc2, //
+    10, 0xffbd, 0xc2,
+    10, 0xffbd, 0xc2,
+    40, 0xffbd, 0xc2,
     200, 0xffbd, 0xc2,
 };
+// clang-format on
 
 const struct FlashSetupInfo gFlash_ChipDefault = {
     .program = ProgramFlashSectorWithEraseRetry,

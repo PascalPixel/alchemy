@@ -173,22 +173,6 @@ struct SummaryCursor {
   s32 row;
 };
 
-struct SummaryWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
-
-struct SummaryWindowWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
-  u8 textColor;
-};
-
 struct SummaryStatCursor {
   u8 entry;
   u8 column;
@@ -251,15 +235,6 @@ struct BarPatternRow {
 union NameCursor {
   struct WindowSprite *sprite;
   struct NameCursorMotion cursor;
-};
-
-struct UiWindowBounds {
-  s32 handle;
-  u16 left;
-  u16 top;
-  u16 right;
-  u16 height;
-  u16 flags;
 };
 
 struct SaveGameWords {
@@ -476,14 +451,6 @@ extern u8 gWorkspace_RangeDash[];
 extern s8 gMenu_SaveSlotActionByPosition[];
 
 extern struct LinkCountdownState *gLinkCountdownWork;
-
-struct TargetWindow {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-};
 
 // The parts, in ROM order.
 #include "window/battle_targets.c"

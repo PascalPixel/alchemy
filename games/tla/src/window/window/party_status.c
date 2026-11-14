@@ -8,15 +8,18 @@
 #include "module/window/screens.h"
 #include "module/window/window.h"
 
+/// Sizes the party status window by the party: a column of six tiles a party
+/// member (four at most outside battle), one more row with flag 1 and five more
+/// columns with flag 2, against the screen's right edge.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
-  struct UiWindowBounds *state = Ram_HeapSlots->windowLayout;
-  u8 *base = Ram_HeapSlots->windowTiles;
+  struct PartyStatusWindow *state = Ram_HeapSlots->windowLayout;
+  struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 height = 4;
   s32 n;
-  s32 right;
-  s32 left;
+  s32 width;
+  s32 x;
 
-  if (base[5] != 0) {
+  if (work->menuState != 0) {
     n = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
@@ -30,33 +33,35 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
     flags &= -3;
 
   n *= 6;
-  right = n + 1;
+  width = n + 1;
   if (flags & 2)
-    right = n + 6;
+    width = n + 6;
 
-  left = 30;
-  left -= right;
-  state->left = left;
-  state->top = 0;
-  state->right = right;
+  x = 30;
+  x -= width;
+  state->x = x;
+  state->y = 0;
+  state->width = width;
   state->height = height;
   state->flags = flags;
 }
 
+/// Opens the party status window, sized by PartyStatus_BuildLayoutBounds, and
+/// draws it, holding the tilemap upload meanwhile.
 void PartyStatus_CreateWindow(s32 flags) {
   s32 zero;
-  struct UiWindowBounds *window;
-  u8 *tiles;
+  struct PartyStatusWindow *window;
+  struct WindowWork *work;
 
-  window = HeapSlot_AllocEwram(64, sizeof(struct UiWindowBounds));
-  tiles = Ram_HeapSlots->windowTiles;
+  window = HeapSlot_AllocEwram(64, sizeof(struct PartyStatusWindow));
+  work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   zero = 0;
-  tiles[6] = 1;
+  work->menuBusy = 1;
   PartyStatus_BuildLayoutBounds(flags);
-  window->handle = (s32)Window_Create(window->left, window->top, window->right,
-                                      window->height, 6);
+  window->window = (struct Window *)Window_Create(
+      window->x, window->y, window->width, window->height, 6);
   PartyStatus_Draw(flags);
-  tiles[6] = zero;
+  work->menuBusy = zero;
 }
 
 /// Draws the vertical lines between the party members' columns of the party

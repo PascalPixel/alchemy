@@ -2,44 +2,44 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.space 0x00000002
-	.global Data_02002958
-Data_02002958:
+	.global gApojiiIslands_FallsColors
+gApojiiIslands_FallsColors:
 	.space 0x00000020
-	.global Data_02002978
-Data_02002978:
+	.global gApojiiIslands_FallsCycled
+gApojiiIslands_FallsCycled:
 	.space 0x00000020
-	.global gData_02002998
-gData_02002998:
+	.global gApojiiIslands_SprayColors
+gApojiiIslands_SprayColors:
 	.space 0x00000020
-	.global gData_020029b8
-gData_020029b8:
+	.global gApojiiIslands_SprayCycled
+gApojiiIslands_SprayCycled:
 	.space 0x00000020
-	.global Data_020029d8
-Data_020029d8:
+	.global gApojiiIslands_SeaColors
+gApojiiIslands_SeaColors:
 	.space 0x00000020
-	.global Data_020029f8
-Data_020029f8:
+	.global gApojiiIslands_SeaCycled
+gApojiiIslands_SeaCycled:
 	.space 0x00000020
-	.global Data_02002a18
-Data_02002a18:
+	.global gApojiiIslands_ShoreColors
+gApojiiIslands_ShoreColors:
 	.space 0x00000020
-	.global Data_02002a38
-Data_02002a38:
+	.global gApojiiIslands_ShoreCycled
+gApojiiIslands_ShoreCycled:
 	.space 0x00000020
-	.global gData_02002a58
-gData_02002a58:
+	.global gApojiiIslands_StoneColors
+gApojiiIslands_StoneColors:
 	.space 0x00000020
-	.global gData_02002a78
-gData_02002a78:
+	.global gApojiiIslands_StoneCycled
+gApojiiIslands_StoneCycled:
 	.space 0x00000020
-	.global gData_02002a98
-gData_02002a98:
+	.global gApojiiIslands_SplitLine
+gApojiiIslands_SplitLine:
 	.space 0x00000004
-	.global gData_02002a9c
-gData_02002a9c:
+	.global gApojiiIslands_UpperScrollX
+gApojiiIslands_UpperScrollX:
 	.space 0x00000002
-	.global gData_02002a9e
-gData_02002a9e:
+	.global gApojiiIslands_LowerScrollX
+gApojiiIslands_LowerScrollX:
 	.space 0x00000002
-	.global gData_02002aa0
-gData_02002aa0:
+	.global gApojiiIslands_CellMarkers
+gApojiiIslands_CellMarkers:

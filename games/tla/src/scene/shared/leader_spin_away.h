@@ -20,7 +20,7 @@ void Leader_SpinAway(s32 entrance) {
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
-      Func_020010d8(Actor_Get(15));
+      ApojiiIslands_SpawnSplash(Actor_Get(15));
     System_Wait(1);
   }
   Event_End();

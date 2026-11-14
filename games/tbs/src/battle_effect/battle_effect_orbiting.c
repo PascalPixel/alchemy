@@ -113,7 +113,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   skulls = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
+  Iwram_CopyWords(BG_PLTT, skulls, 128);
   Decompress_TaggedLz(skulls + 128, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
@@ -205,7 +205,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_TARGET_BURST_IMAGE,
                              work->sheet + TARGET_BURST_PICTURES, 0, 0);
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   drawBurst = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);

@@ -309,8 +309,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress(RESOURCE_VIOLET_MOTE_SHEET,
                              work->sheet + THOR_MOTE_PICTURE, 1, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET), 128);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {

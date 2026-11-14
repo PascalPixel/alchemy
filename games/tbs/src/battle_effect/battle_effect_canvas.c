@@ -81,10 +81,10 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     source = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
     switch (work->transferMode) {
     case CANVAS_COPY:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
+      Iwram_CopyWords(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       break;
     case CANVAS_COPY_AND_CLEAR:
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
+      Iwram_CopyWords(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
       Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
     case CANVAS_COPY_AND_FADE:
@@ -130,10 +130,10 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
   transferMode = work->transferMode;
   switch (transferMode) {
   case CANVAS_COPY:
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
+    Iwram_CopyWords(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
     break;
   case CANVAS_COPY_AND_CLEAR:
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
+    Iwram_CopyWords(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
     Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
     break;
   case CANVAS_COPY_AND_FADE:

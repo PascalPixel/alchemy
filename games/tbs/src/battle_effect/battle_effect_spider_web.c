@@ -54,7 +54,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
                              1, 0);
   if (mode == SWIRL_SWIPE_POISON_BEAT) {
     void *palette = Resource_GetTableEntry(RESOURCE_LIME_PALETTE);
-    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+    Iwram_CopyWords(BG_PLTT, palette, 128);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   actor = GetBattleObjectSlotFar(work->args->targets[0])->actor;

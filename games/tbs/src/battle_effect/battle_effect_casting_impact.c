@@ -37,7 +37,7 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
       blue--;
     target[i] = RGB(red, green, blue);
   }
-  Iwram_CopyWords((u16 *)BG_PLTT, target, 128);
+  Iwram_CopyWords(BG_PLTT, target, 128);
 }
 
 /// Clears the prelude image, stops its tasks and releases its blitters

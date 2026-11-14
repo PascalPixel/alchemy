@@ -535,7 +535,7 @@ UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   struct BattleCamera *camera = gBattleCamera;
   Transform_Reset();
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS) != 0) {
-    Iwram_TransformMatrix((s32 *)gBattleCamera_CommandMatrix);
+    Iwram_TransformMatrix(gBattleCamera_CommandMatrix);
     Transform_ApplyLookAt(camera->eye, camera->focus);
   } else {
     Transform_SetLookAt(camera->eye, camera->focus);

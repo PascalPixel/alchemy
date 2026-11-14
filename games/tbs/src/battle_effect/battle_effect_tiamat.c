@@ -71,7 +71,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   palette = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
@@ -80,7 +80,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       sheet);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER)
-    Iwram_CopyWords((void *)BG_PLTT,
+    Iwram_CopyWords(BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -149,7 +149,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     if (frame == 176) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
       palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
-      Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+      Iwram_CopyWords(BG_PLTT, palette, 128);
     } else if (frame >= 160 && frame <= 175) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
       if (frame > 173)

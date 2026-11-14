@@ -154,8 +154,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
   }
 
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry(RESOURCE_BLUE_CRESCENT_SHEET), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_BLUE_CRESCENT_SHEET),
+                  128);
 
   for (i = 0; i != 128; i++) {
     PARTICLES[i].x = (Random16() & 15) + 72;

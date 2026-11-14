@@ -94,8 +94,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
   BattleEffect_SpawnObjects(9, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress(RESOURCE_SLASH_SHEET, work->sheet, 1, 1);
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry(RESOURCE_LIME_PALETTE), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_LIME_PALETTE), 128);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   path = Resource_GetTableEntry(RESOURCE_STAGED_PARTICLE_PATH);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

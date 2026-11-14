@@ -155,7 +155,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         paletteId = RESOURCE_MARS_DJINN_SHEET;
         break;
       }
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+      Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
     }
   }
 

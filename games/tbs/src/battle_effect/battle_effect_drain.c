@@ -28,8 +28,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET),
+                  128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -140,7 +140,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  Iwram_CopyWords(BG_PLTT,
                   Resource_GetTableEntry(alternate == 0
                                              ? RESOURCE_ICE_BLOCK_SHEET
                                              : RESOURCE_BLAST_SHEET),

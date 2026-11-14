@@ -267,7 +267,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
   u8 *data = Resource_GetTableEntry(id);
 
   if (copyPalette != 0)
-    Iwram_CopyWords((void *)BG_PLTT, data, 128);
+    Iwram_CopyWords(BG_PLTT, data, 128);
   if (skipPalette != 0)
     data += 128;
   Decompress_TaggedLz(data, dst);
@@ -460,7 +460,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       blitters[0](canvas, work->sheet + MARS_GLOW_ORB + (frame / 4) * (40 * 40),
                   40, 20, 40, 40);
     if (frame == 20)
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWords(BG_PLTT,
                       Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
                       128);
     if (frame >= 20 && frame <= 31) {

@@ -104,12 +104,11 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     }
   }
   if (work->args->user > PIERS)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
-                    128);
+    Iwram_CopyWords(
+        BG_PLTT, Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET), 128);
   else
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET), 128);
+    Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET),
+                    128);
   wait(1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapGridCellBuffer,
@@ -305,9 +304,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_CRESCENT_SHEET, Ram_MapGridCellBuffer, 1,
                              1);
   if (work->args->user > PIERS)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
-                    128);
+    Iwram_CopyWords(
+        BG_PLTT, Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET), 128);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);

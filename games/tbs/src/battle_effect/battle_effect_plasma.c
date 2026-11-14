@@ -52,7 +52,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   if (work->args->variant != EFFECT_VARIANT_STRONGEST) {
     void *palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_B);
-    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+    Iwram_CopyWords(BG_PLTT, palette, 128);
   }
 
   life = &((struct Particle *)PARTICLES)->variant;
@@ -225,10 +225,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B), 128);
+    Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+                    128);
   } else if (mode == SPARK_GROUPS_RISING) {
-    Iwram_CopyWords((void *)BG_PLTT,
+    Iwram_CopyWords(BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
   }
   sparks = PARTICLES;

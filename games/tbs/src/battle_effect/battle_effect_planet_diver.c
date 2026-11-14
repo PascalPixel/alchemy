@@ -47,7 +47,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       sprites);
   palette = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -104,7 +104,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     }
     if (frame == 16) {
       palette = Resource_GetTableEntry(RESOURCE_FLAMEBALL_SHEET);
-      Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+      Iwram_CopyWords(BG_PLTT, palette, 128);
       palette += 128;
       Decompress_TaggedLz(palette, work->sheet);
       actor->gravity = 0;
@@ -209,11 +209,11 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   palette = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -320,7 +320,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry(RESOURCE_SPIRAL_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   Decompress_TaggedLz((u8 *)palette + 128, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);

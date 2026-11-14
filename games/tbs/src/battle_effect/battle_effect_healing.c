@@ -143,7 +143,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   } else {
     resource = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
   }
-  Iwram_CopyWords((void *)BG_PLTT, resource, 128);
+  Iwram_CopyWords(BG_PLTT, resource, 128);
 
   if (doubleWidth == 0) {
     if (mode == HEALING_MODE_PSY_CRYSTAL)

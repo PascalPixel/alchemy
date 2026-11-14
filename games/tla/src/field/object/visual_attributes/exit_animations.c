@@ -1,10 +1,13 @@
 /// @file
-/// An actor's screen position, and the backdrop faded from white.
+/// An actor's screen position, the encounter transition, and the context
+/// effects of leaving through an exit and arriving.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
 #include "sounds.h"
 #include "module/field/field.h"
+#include "fixed_math.h"
+#include "flags.h"
 
 /// Writes the object's position on screen, in pixels, to position[0] and
 /// position[1]; an animated object is raised by its frame box. Returns -1 when
@@ -112,4 +115,126 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   object->targetZ = TARGET_UNSET;
   Actor_SelectAnimationFar(object, mode);
   wait(18);
+}
+
+/// Starts the leader's animation for leaving through an exit: centres it on
+/// its tile, at the tile's south edge, stops it and gives it the animation's
+/// mode, then waits 18 frames. The leader's sprite gains a second part
+/// (metadata 267) for it.
+// As ☀️'s function of the same name.
+void Exit_PrepareAnimation(s32 animation) {
+  u32 zero;
+  u8 param;
+  struct Actor *object;
+  struct ContextAnimation *context;
+  struct ContextEffect *effect;
+  struct MainRoutineWork *party;
+  s32 mode;
+
+  party = &gMainRoutineWork;
+  mode = animation;
+  object = ObjectTable_Get(party->currentOwner);
+  context = object->sprite;
+  effect = ResourceMetadata_RegisterFar(context, 267);
+  zero = 0;
+  context->flags = zero;
+  /* FAKEMATCH(dead): an empty once-only loop. */
+  do {
+  } while (0);
+  param = 15;
+  effect->param = param;
+  object->x = (object->x & 0xFFF00000) + 0x80000;
+  object->z = (object->z & 0xFFF00000) + 0x100000;
+  object->velocityX = zero;
+  object->velocityZ = zero;
+  object->targetX = TARGET_UNSET;
+  object->targetZ = TARGET_UNSET;
+  Actor_SelectAnimationFar(object, mode);
+  wait(18);
+}
+
+void Exit_StartStairsUp(void) {
+  Exit_PrepareAnimation(0x1A);
+  GameFlag_Set(FLAG_ARRIVAL_STAIRS_UP);
+}
+
+void Exit_StartStairsDown(void) {
+  Exit_PrepareAnimation(0x19);
+  GameFlag_Set(FLAG_ARRIVAL_STAIRS_DOWN);
+}
+
+void Entrance_EndArrivalAnimation(s32 mode) {
+  s32 zero;
+  struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  struct ContextSprite *ctx = obj->sprite;
+  struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar(ctx, 0x10b);
+
+  zero = 0;
+  ctx->flags = zero;
+  eff->param = 15;
+  obj->x = (obj->x & 0xfff00000) + 0x80000;
+  obj->z &= 0xfff00000;
+  Actor_SelectAnimationFar(obj, mode);
+  wait(30);
+  ctx->count = 1;
+  SpriteAnimation_ClearFar(ctx->entries[1]);
+  {
+    /* FAKEMATCH(pin): the sprite copied into r1 for its two stores. */
+    register struct ContextSprite *pinnedCtx asm("r1") = ctx;
+
+    pinnedCtx->flags = 1;
+    pinnedCtx->entries[1] = (void *)zero;
+  }
+  obj->acceleration = px(1);
+  obj->speedLimit = px(1);
+  Actor_SetMoveTargetFar(obj, obj->x, obj->y, obj->z + 0x80000);
+  Actor_WaitForMoveFar(obj);
+}
+
+s32 Entrance_PlayArrival(void) {
+  s32 result = 0;
+  s32 flag = 0x120;
+
+  if (GameFlag_Get(flag) != 0) {
+    Entrance_EndArrivalAnimation(24);
+    GameFlag_Clear(flag);
+    result = 1;
+  } else {
+    flag = 0x121;
+    if (GameFlag_Get(flag) != 0) {
+      Entrance_EndArrivalAnimation(23);
+      GameFlag_Clear(flag);
+      result = 2;
+    } else {
+      flag = 0x122;
+      if (GameFlag_Get(flag) != 0) {
+        s32 id;
+        struct Actor *object;
+
+        GameFlag_Clear(flag);
+        id = gMainRoutineWork.currentOwner;
+        object = ObjectTable_Get(id);
+        object->y += px(160);
+        FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
+        while (object->y + object->velocityY > object->terrainHeight) {
+          wait(1);
+        }
+        Sound_PlayFar(SE_DOOR_CLOSE);
+        object->y = object->terrainHeight;
+        Actor_SelectAnimationFar(object, 22);
+        Event_Wait(15);
+        FieldCamera_FollowActor(id, 1);
+        result = 3;
+      }
+    }
+  }
+  return result;
+}
+
+void Func_080d5fd4(void) {
+  struct Actor *object = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  u8 *metadata =
+      ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
+
+  metadata[5] = 15;
 }

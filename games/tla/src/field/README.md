@@ -218,7 +218,7 @@ those few routines into the console's fast memory and runs them there.
 - [`object/visual_attributes.c`](object/visual_attributes.c) is the actors'
   stock behaviours and field Psynergy, its parts in
   [`object/visual_attributes/`](object/visual_attributes): the ropes,
-  tightropes and hanging vines (`chains.c`), each element's casts and the
+  tightropes and hanging vines (`ropes.c`), each element's casts and the
   choice of which plays (`psynergy_dispatch.c`). The rest of `object/` is
   the placement, its scripts and tables.
 - A scene's work is one struct, `FieldWork`, in
@@ -232,7 +232,8 @@ those few routines into the console's fast memory and runs them there.
   commands' tables are the assembly rows beside it. The parts share one
   effect scene, `FxScene` in
   [`radial_internal.h`](event_commands/radial_internal.h): the caster, the
-  target and where the Psynergy takes place.
+  target and where the Psynergy takes place. Each part is one Psynergy
+  or one family of its helpers, named for it.
 - `field_effect/` is the field's small effects: particles, sparkles and
   the like.
 - Some small field routines are compiled again into each scene that uses

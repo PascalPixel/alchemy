@@ -4,8 +4,88 @@
 
 #include "../visual_attributes_internal.h"
 #include "fixed_math.h"
+#include "flags.h"
 #include "sounds.h"
 #include "module/field/field.h"
+
+/* VIEW(visual_attributes): tag struct GroundParticle as struct
+ * GroundParticle__visual_attributes; ground_mask.h has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/field/object/visual_attributes/line_scroll.c:348: field
+ * `particles' has incomplete type. */
+struct GroundParticle__visual_attributes {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 attr0 : 6;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 attr1 : 5;
+  u16 size : 2;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[2];
+  s32 posX;
+  s32 posY;
+  s32 posZ;
+  u8 unk18[4];
+  u16 timer;
+  u8 unk1e[2];
+};
+
+struct GroundParticleWork {
+  u8 unk00[4];
+  s32 tile;
+  struct GroundParticle__visual_attributes particles[64];
+};
+
+/// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept
+/// whole. Each particle plays its 16 frames of
+/// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
+/// while flag 358 is set.
+void GroundParticles_Update(void) {
+  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
+  s32 *origin = (s32 *)(map + 228);
+  s32 originX = origin[0];
+  s32 originZ = origin[1];
+  struct GroundParticle__visual_attributes *particle = work->particles;
+  u32 i;
+
+  for (i = 0; i < 64; i++, particle++) {
+    const s16 *frame;
+    s32 x;
+    s32 y;
+
+    if (--particle->timer == 0xffff)
+      continue;
+    if (GameFlag_Get(358))
+      particle->timer++;
+    frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
+    x = (particle->posX - originX) / Q16_ONE + *frame++;
+    y = (particle->posZ - particle->posY - originZ) / Q16_ONE + *frame++;
+    if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
+      particle->priority = 1;
+      particle->x = x;
+      particle->y = y;
+      particle->tile = work->tile + *(u16 *)frame;
+      frame++;
+      particle->shape = *(u8 *)frame;
+      particle->size = *(u8 *)(frame + 1);
+      Oam_AddSpriteAtDepthClamped(particle, 240);
+    }
+    if (particle->timer == 0) {
+      s32 *focus = *(s32 **)map;
+
+      x = focus[0] + (Random16() << 8) - 0x800000;
+      y = focus[2] + (Random16() << 8) - 0x800000;
+      particle->posX = x;
+      particle->posZ = y;
+      particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
+      particle->timer = 16;
+    }
+  }
+}
 
 /* VIEW(f0d6674): tag struct GroundParticleWork as struct
  * GroundParticleWork__f0d6674; visual_attributes.c has another definition;

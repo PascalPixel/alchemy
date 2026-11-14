@@ -21,9 +21,8 @@
 #include "visual_attributes/jupiter.c"
 #include "visual_attributes/mars.c"
 #include "visual_attributes/venus.c"
-#include "visual_attributes/djinni_2.c"
 #include "visual_attributes/mercury.c"
-#include "visual_attributes/chains.c"
+#include "visual_attributes/ropes.c"
 #include "visual_attributes/psynergy_dispatch.c"
 #include "visual_attributes/field_psynergy.c"
 
@@ -37,7 +36,7 @@
 #undef FieldPsynergy_DouseOnTarget
 #undef Actor_ReleaseFar
 
-#include "visual_attributes/scene.c"
+#include "visual_attributes/field_psynergy_work.c"
 #include "visual_attributes/mind_read.c"
 
 #undef CLOAK_FLICKER_PALETTE

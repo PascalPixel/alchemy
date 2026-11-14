@@ -58,11 +58,8 @@ void Actor_SetHorizontalPositionWithTerrain__event_commands(
 #include "game/game_flags.h"
 
 // The object's functions its parts call before their definitions.
-s32 FieldYesNo_Ask(s32 a);
-struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
 void Actor_MoveToObject(u32 objectId, u32 otherId);
-void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames);
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

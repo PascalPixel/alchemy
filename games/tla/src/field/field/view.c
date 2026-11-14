@@ -13,8 +13,6 @@
 #include "system/ram_code.h"
 #include "module/field/resource_slot.h"
 
-extern u32 Data_02018000[];
-
 u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
                                  s32 *terrainKind) {
   s32 selector = WorldMap_GetCollision(position);

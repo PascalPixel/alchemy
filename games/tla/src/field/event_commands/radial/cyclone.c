@@ -8,19 +8,35 @@
 #include "../radial_internal.h"
 #include "sounds.h"
 #include "macros.h"
+#include "effect_sprite.h"
+#include "graphics/resource.h"
+#include "system/task.h"
+#include "fixed_math.h"
+#include "actor.h"
+#include "battle/battle.h"
+#include "debug.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "battle/motobj.h"
+#include "canvas_sprite.h"
+#include "actor_view.h"
+#include "system/frame.h"
 
-void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 /* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
  * *position); module/field/event_commands.h has void
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
  * definition's void Camera_WorldToScreen(struct EffectVector *position), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/sand_sinking.c:24: conflicting
+ * games/tla/src/field/event_commands/radial/sand.c: conflicting
  * types for `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");
 #define Camera_WorldToScreen Camera_WorldToScreen__psynergy
-#include "effect_sprite.h"
 
 /// The 96-particle burst's task (heap slot 0x5c work, started by
 /// ParticleBurst_Start). Each particle whose delay counter is between 0 and 63
@@ -65,18 +81,12 @@ void ParticleBurst_Update(void) {
   work->frame++;
 }
 
-#include "graphics/resource.h"
-#include "system/task.h"
-
 void BattleEffect_EndX(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
 
   Task_Remove((u32)ParticleBurst_Update);
   VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
 }
-
-#include "fixed_math.h"
-#include "actor.h"
 
 struct CarryWork {
   u8 unk0000[0x1b0c];
@@ -169,25 +179,11 @@ void Cyclone_LiftLeader(void) {
   work->follower->z = owner->z;
 }
 
-#include "battle/battle.h"
-#include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "battle/motobj.h"
-
 void BattleEffect_SpinObject(struct MotionObject *object) {
   object->angle += TRIG_TURN / 16;
 }
 
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
-
-#include "canvas_sprite.h"
-#include "actor_view.h"
 
 struct WhirlWork {
   u8 unk0000[0x1b08];
@@ -202,14 +198,6 @@ struct WhirlWork {
   s32 to[3];
   s8 kind;
 };
-
-void FieldPsynergy_GatherNearbyCells(void);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels);
-void ParticleBurst_Start(void);
-void FieldPsynergy_RunTouchedEvents(void);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void FieldPsynergy_Cyclone(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
@@ -421,12 +409,6 @@ void FieldPsynergy_Cyclone(void) {
   HeapSlot_Release(92);
 }
 
-struct Actor *Actor_GetById(u32 objectId);
-void Event_Start(void);
-void Event_ResolvePendingActions(s32 skip);
-void Event_StartScreenTransition(void);
-void Event_Wait(s32 frames);
-
 void Actor_DepartInRing(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
   s32 angle = object->facing;
@@ -472,8 +454,6 @@ void Actor_DepartInRing(s32 actor) {
   wait(1);
   FieldCamera_FollowActor(actor, 1);
 }
-
-void Event_WaitTransitionFrames(void);
 
 /// An event command, the arrival counterpart of Actor_DepartInRing. The actor
 /// spins (BattleEffect_SpinObject) at zero width and its sprite is hidden while
@@ -521,8 +501,6 @@ void Actor_ArriveInRing(s32 actor) {
 
 // The spray's drops and smoke puffs, moved and drawn each frame.
 
-#include "system/frame.h"
-
 struct SprayParticle {
   s32 x;
   s32 y;
@@ -563,10 +541,7 @@ struct SprayScene {
   struct Actor *otherObject;
 };
 
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
 #define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
-s32 MapGrid_CheckCollisionFar(struct Actor *object, s32 *position);
-s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
 /// it is emitting, a free one of sixteen drops starts at the origin with the
@@ -709,15 +684,7 @@ struct ControlEvent {
   u16 cue;
 };
 
-void FieldPsynergy_Blaze(void);
-void FieldPsynergy_Sand(void);
-void FieldPsynergy_Burst(void);
-void FieldPsynergy_Pound(void);
-void FieldPsynergy_Scoop(void);
-void FieldPsynergy_Parch(void);
-void FieldPsynergy_Hover(void);
 void Teleport_PlaySparks(void);
-s32 Party_GetLeaderActor(void);
 
 /// Effect 26 cast on a target: runs the effect, ignoring the target.
 void FieldPsynergy_BlazeOnTarget(void) { FieldPsynergy_Blaze(); }

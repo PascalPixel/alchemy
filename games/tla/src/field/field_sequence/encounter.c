@@ -94,7 +94,6 @@ void Encounter_SelectMapZones(s32 search) {
 /// none) and chooses the battle backdrop for that terrain. There are no
 /// encounters in render mode 8, render mode 7 reads the second rule table,
 /// and a rule's flag must be set for it to apply.
-// As ☀️'s function of the same name.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   struct TerrainRule *rule = gData_080eedbc;
   s32 behavior;
@@ -440,14 +439,13 @@ s32 Party_IsInFrontRow(s32 owner) {
 }
 
 /// Chooses the battle music for slot of zone (gMainRoutineWork.sceneCue): a key
-/// takes the song listed last before it in Data_080efd1c, and flag 0x16c's
-/// battles always use music 79. With no song found, it is 56 while
+/// takes the song listed last before it in gEncounter_BattleMusic, and flag
+/// 0x16c's battles always use music 79. With no song found, it is 56 while
 /// ownerOverride is set and flag 0x8df clear, else 50 when owner 4 is active,
 /// 750 when owner 0 is, 49 when owner 5 is, or 50.
-// As ☀️'s function of the same name.
 void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   s16 key = (zone << 4) + slot;
-  const s16 *table = Data_080efd1c;
+  const s16 *table = gEncounter_BattleMusic;
   u16 music;
   u16 value;
 

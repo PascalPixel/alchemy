@@ -50,9 +50,9 @@ extern const u8 gAnimationFacing_FrontBackSwapped[8];
 extern const u8 gAnimationFacing_FrontBack[8];
 extern const u8 gAnimationFacing_ThreePictures[16];
 extern const u8 gAnimationFacing_SixPictures[64];
-extern const u8 gData_0802eb44[8];
+extern const u8 gAnimationFacing_EightPictures[8];
 
-extern const struct ActorPlacement gData_080f21d4[];
+extern const struct ActorPlacement gField_DefaultPlacements[];
 
 void BattleEffect_InitializeBuffers(void);
 
@@ -174,14 +174,14 @@ void Weather_UpdateRain(void);
 void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames);
 
-extern const s32 gData_0802eb90[2];
+extern const s32 gActorSprite_FullScale[2];
 extern const s32 gCamera_FixedViewMatrix[12];
-extern const s32 gData_0802ec7c[];
+extern const s32 gActor_FootprintScript[];
 extern const s32 gWorldMap_KeyYaws[16];
-extern const s32 gData_0802ec94[];
-extern const s32 gData_0802ed28[];
-extern const s32 gData_0802ece0[];
-extern const s32 gData_0802ec88[];
+extern const s32 gActor_RippleScript[];
+extern const s32 gSand_GrainScript[];
+extern const s32 gActor_WakeScript[];
+extern const s32 gActor_SplashScript[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 

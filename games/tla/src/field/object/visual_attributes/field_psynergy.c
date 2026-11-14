@@ -29,7 +29,7 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cells;
 
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     cells = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
                                                (((z / 0x200000) & 31) << 5)];
   } else {
@@ -48,7 +48,7 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return MapGrid_IsSandCell(x, z, layer);
   if (MapGrid_GetCycloneCellKind(x, z, layer) != 0 ||
       MapGrid_IsWaterCell(x, z, layer) != 0 ||
@@ -79,7 +79,7 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z) {
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 column = x;
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 position[3];
 
     SET_VECTOR(position, column, 0, z);
@@ -107,7 +107,7 @@ u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 position[3];
     s32 collision;
 
@@ -277,8 +277,6 @@ struct ResourceSprite {
   u8 flags;
 };
 
-extern u8 gResourceBlockOwners[];
-
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;
   s32 freeCount;
@@ -397,7 +395,6 @@ void Field_StartPaletteTransition(s32 frames) {
 /// counter (so each cast looks a little different), fixed for some
 /// animations, and forced by the tint flags; then fades towards it over eight
 /// frames. The palettes are copied by Field_StartColorTransition.
-// ☀️'s function of the same name also copies the palettes.
 void FieldPsynergy_FadeToCastColor(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   s32 tint;

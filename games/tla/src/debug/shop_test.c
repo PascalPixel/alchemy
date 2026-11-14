@@ -1,6 +1,9 @@
 /// @file
-/// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM
-/// order.
+/// The debug room Shop test, whose people each run a test when talked to: the
+/// inn, the sanctum and four shops, Sunshine's forge, the shop and sanctum
+/// messages, the party's names, items, Djinn and levels, and the icon and
+/// portrait browsers. The ROM places its code up to
+/// ShopTest_DamageAndAfflictParty before its tables, and the rest after.
 
 #include "flags.h"
 #include "battle/battle.h"
@@ -21,6 +24,40 @@
 #include "system/main_routine_work.h"
 
 #include "inventory.h"
+#include "item_ids.h"
+#include "owner_state.h"
+#include "version.h"
+#include "system/ram_buffer.h"
+#include "field/field_sequence_event.h"
+#include "system/dma.h"
+#include "actor.h"
+#include "fixed_math.h"
+
+/// The room's people, numbered in the order of gActorPlacements.
+enum ShopTestActorId {
+  ACTOR_INNKEEPER = ACTOR_FIRST_PLACED,
+  ACTOR_SANCTUM_PRIEST,
+  ACTOR_WEAPON_SHOPKEEPER,
+  ACTOR_ARMOR_SHOPKEEPER,
+  ACTOR_ITEM_SHOPKEEPER,
+  ACTOR_GENERAL_STOREKEEPER,
+  ACTOR_SUNSHINE,
+  ACTOR_SUNSHINES_WIFE,
+  ACTOR_SANCTUM_MESSAGES,
+  ACTOR_WEAPON_SHOP_MESSAGES,
+  ACTOR_ARMOR_SHOP_MESSAGES,
+  ACTOR_ITEM_SHOP_MESSAGES,
+  ACTOR_ITEM_PICKER,
+  ACTOR_NAME_ENTRY,
+  ACTOR_MURAMASA_AND_SUMMON,
+  ACTOR_ICON_BROWSER,
+  ACTOR_PORTRAIT_BROWSER,
+  ACTOR_LEVEL_EDITOR,
+  ACTOR_ITEM_SELECTOR,
+  ACTOR_EQUIPMENT,
+  ACTOR_DJINN,
+  ACTOR_AFFLICTIONS ///< then four more who do nothing
+};
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -37,8 +74,12 @@ void MessageArgument_Push(s32, s32);
 void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
 s32 Message_AllTyped(void);
+void Window_Close(void *window, s32 mode);
 
-void Test_ReceiveFlint(s32 message, s32 count) {
+/// Browses `count` messages from `message`, each typed out at once: A for the
+/// next, B to close; each moves on by itself after 10 frames held, or 60
+/// frames before it is typed out.
+void ShopTest_BrowseMessageRange(s32 message, s32 count) {
   s32 i;
   s32 frames;
   void *window;
@@ -51,7 +92,7 @@ void Test_ReceiveFlint(s32 message, s32 count) {
 loop:
   MessageArgument_Push(1, 1);
   MessageArgument_Push(5, 2);
-  MessageArgument_Push(0x1e240, 5);
+  MessageArgument_Push(123456, 5);
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   frames = 0;
@@ -107,50 +148,54 @@ void Summon_ShowLearnedMessage(s32 value);
 void Class_GetSeries(s32 value);
 void DebugBrowser_Icons(void);
 void DebugBrowser_Portraits(void);
-void Test_ReceiveFlint(s32 message, s32 count);
 
-void Func_0200012c(void) {
-  Test_ReceiveFlint((s32)MsgWeaponShopWelcome,
-                    MsgArmorShopWelcome - MsgWeaponShopWelcome);
+// The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
+// the three after it.
+void ShopTest_BrowseWeaponShopMessages(void) {
+  ShopTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void MenuTest_BrowseWeaponShopMessages(void) {
-  Test_ReceiveFlint((s32)MsgArmorShopWelcome,
-                    MsgArmorShopWelcome - MsgWeaponShopWelcome);
+void ShopTest_BrowseArmorShopMessages(void) {
+  ShopTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void Func_0200015c(void) {
-  Test_ReceiveFlint((s32)MsgItemShopWelcome,
-                    MsgArmorShopWelcome - MsgWeaponShopWelcome);
+void ShopTest_BrowseItemShopMessages(void) {
+  ShopTest_BrowseMessageRange((s32)MsgItemShopWelcome,
+                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void Func_02000178(void) {
-  Test_ReceiveFlint((s32)MsgWelcomeWearyWanderers,
-                    MsgRightWhenI - MsgWelcomeWearyWanderers);
+void ShopTest_BrowseSanctumMessages(void) {
+  ShopTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
+                              MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
-void Func_02000190(s32 value) { Shop_Run(1, value); }
+// The shops and the inn, each passed the keeper's actor id.
+void ShopTest_OpenWeaponShop(s32 keeper) { Shop_Run(1, keeper); }
 
-void Func_0200019c(s32 value) { Shop_Run(2, value); }
+void ShopTest_OpenArmorShop(s32 keeper) { Shop_Run(2, keeper); }
 
-void Func_020001a8(s32 value) { Shop_Run(3, value); }
+void ShopTest_OpenItemShop(s32 keeper) { Shop_Run(3, keeper); }
 
-void Func_020001b4(s32 value) { Shop_Run(24, value); }
+void ShopTest_OpenGeneralStore(s32 keeper) { Shop_Run(24, keeper); }
 
-void Func_020001c0(s32 value) { Inn_CheckIn(0, value); }
+void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
 
-void Func_020001cc(void) { Sanctum_Run(); }
+void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
 
 void Party_AdjustCoins(s32 amount);
-void MessageArgument_Push(s32 value, s32 slot);
-u16 *ShopTest_GetItem(s32 item);
+struct ItemDefinition *ShopTest_GetItem(s32 item);
 s32 PartyInventory_FindRoom(s32 item);
 void ItemDisplay_ShowItem(s32 item, s32 mode);
 void Forge_Run(s32 actor);
 void Forge_SetItem(s32 value);
 s32 Forge_GetItem(void);
 
-void Func_020001d4(s32 actor) {
+/// Sunshine, as in Yallam (YallamInteriors_TalkToSunshine) without his walk to
+/// the anvil: flag 0x10f says the party has forge material, and he forges
+/// with it.
+void ShopTest_TalkToSunshine(s32 actor) {
   s32 message;
 
   if (!Event_GetFlag(0x10f)) {
@@ -188,7 +233,9 @@ void Func_020001d4(s32 actor) {
   }
 }
 
-void Func_020002a8(s32 actor) {
+/// Sunshine's wife, as in Yallam (YallamInteriors_TalkToSunshinesWife): she
+/// hands over what Sunshine made and takes the payment.
+void ShopTest_TalkToSunshinesWife(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessageAndWait(actor, 0);
@@ -197,7 +244,7 @@ void Func_020002a8(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
-    u32 price = *ShopTest_GetItem(item);
+    u32 price = (u16)ShopTest_GetItem(item)->price;
     s32 message;
 
     MessageArgument_Push(item, 2);
@@ -228,13 +275,15 @@ void Func_020002a8(s32 actor) {
   }
 }
 
-void Func_02000394(void) {
+/// Opens the picker a full party drops an item with, and discards the choice.
+void ShopTest_TestItemSelection(void) {
   s32 pos[2];
 
   ItemPicker_RunMode1(&pos[1], &pos[0]);
 }
 
-void Func_020003a4(void) {
+/// The name entry screen for each of the eight characters in turn.
+void ShopTest_EditPartyNames(void) {
   s32 i;
 
   for (i = 0; i < 8; i++)
@@ -249,91 +298,73 @@ static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
   Inventory_AddItem(owner, item);
 }
 
-/// Coins and equipment for owners 4 to 7, then owners 0 to 3 leave the party.
-void Func_020003b8(void) {
+/// Gives 777,777 coins, ten each of Game Tickets and Lucky Medals and test
+/// equipment to Felix, Jenna, Sheba and Piers; then Isaac, Garet, Ivan and Mia
+/// leave the party. Talking to ACTOR_EQUIPMENT.
+void ShopTest_GiveEquipmentTestStock(void) {
   s32 i;
 
   FieldMessage_Show((s32)MsgYouGotTreasure, 1);
   gMainRoutineWork.coins = 777777;
   for (i = 9; i >= 0; i--) {
-    Inventory_AddItem(4, 228);
-    Inventory_AddItem(4, 229);
+    Inventory_AddItem(FELIX, ITEM_GAME_TICKET);
+    Inventory_AddItem(FELIX, ITEM_LUCKY_MEDAL);
   }
-  Inventory_AddItem(4, 184);
-  Inventory_AddItem(4, 204);
-  Inventory_AddItem(4, 224);
-  Inventory_AddItem(4, 11);
-  Inventory_AddItem(4, 267);
-  Inventory_AddItem(4, 223);
-  Inventory_AddItem(5, 226);
-  Inventory_AddItem(5, 227);
-  Inventory_AddItem(5, 230);
-  Inventory_AddItem(5, 232);
-  Inventory_AddItem(5, 231);
-  Inventory_AddItem(5, 237);
-  Inventory_AddItem(5, 265);
-  Inventory_AddItem(6, 242);
-  Inventory_AddItem(6, 258);
-  Inventory_AddItem(6, 252);
-  Inventory_AddItemAgain(6, 429);
-  Inventory_AddItemAgain(6, 429);
-  Inventory_AddItem(6, 429);
-  Inventory_AddItem(6, 433);
-  Inventory_AddItem(6, 435);
-  Inventory_AddItemAgain(6, 417);
-  Inventory_AddItem(6, 417);
-  Inventory_AddItem(6, 418);
-  Inventory_AddItem(6, 419);
-  Inventory_AddItem(7, 189);
-  Inventory_AddItem(7, 200);
-  Inventory_AddItem(7, 201);
-  Inventory_AddItem(7, 202);
-  Inventory_AddItem(7, 203);
-  Inventory_AddItem(7, 204);
-  Inventory_AddItem(7, 207);
-  Party_RemoveMember(0);
-  Party_RemoveMember(1);
-  Party_RemoveMember(2);
-  Party_RemoveMember(3);
+  Inventory_AddItem(FELIX, ITEM_HERMES_WATER);
+  Inventory_AddItem(FELIX, ITEM_HALT_GEM);
+  Inventory_AddItem(FELIX, ITEM_MYTHRIL_BAG);
+  Inventory_AddItem(FELIX, ITEM_MURAMASA);
+  Inventory_AddItem(FELIX, ITEM_FAIRY_RING);
+  Inventory_AddItem(FELIX, ITEM_MYTHRIL_BAG_JUPITER_STAR);
+  Inventory_AddItem(JENNA, ITEM_SMOKE_BOMB);
+  Inventory_AddItem(JENNA, ITEM_SLEEP_BOMB);
+  Inventory_AddItem(JENNA, ITEM_DRAGONS_EYE);
+  Inventory_AddItem(JENNA, ITEM_ANCHOR_CHARM);
+  Inventory_AddItem(JENNA, ITEM_BONE);
+  Inventory_AddItem(JENNA, ITEM_MYSTIC_DRAUGHT);
+  Inventory_AddItem(JENNA, ITEM_HEALING_RING);
+  Inventory_AddItem(SHEBA, ITEM_BLACK_CRYSTAL);
+  Inventory_AddItem(SHEBA, ITEM_FUR_BOOTS);
+  Inventory_AddItem(SHEBA, ITEM_RUNNING_SHIRT);
+  Inventory_AddItemAgain(SHEBA, ITEM_TEAR_STONE);
+  Inventory_AddItemAgain(SHEBA, ITEM_TEAR_STONE);
+  Inventory_AddItem(SHEBA, ITEM_TEAR_STONE);
+  Inventory_AddItem(SHEBA, ITEM_SALAMANDER_TAIL);
+  Inventory_AddItem(SHEBA, ITEM_MYTHRIL_SILVER);
+  Inventory_AddItemAgain(SHEBA, ITEM_RUSTY_SWORD);
+  Inventory_AddItem(SHEBA, ITEM_RUSTY_SWORD);
+  Inventory_AddItem(SHEBA, ITEM_418);
+  Inventory_AddItem(SHEBA, ITEM_419);
+  Inventory_AddItem(PIERS, ITEM_WATER_OF_LIFE);
+  Inventory_AddItem(PIERS, ITEM_ORB_OF_FORCE);
+  Inventory_AddItem(PIERS, ITEM_DOUSE_DROP);
+  Inventory_AddItem(PIERS, ITEM_FROST_JEWEL);
+  Inventory_AddItem(PIERS, ITEM_LIFTING_GEM);
+  Inventory_AddItem(PIERS, ITEM_HALT_GEM);
+  Inventory_AddItem(PIERS, ITEM_CATCH_BEADS);
+  Party_RemoveMember(ISAAC);
+  Party_RemoveMember(GARET);
+  Party_RemoveMember(IVAN);
+  Party_RemoveMember(MIA);
 }
 
-void Func_0200012c(void);
-void MenuTest_BrowseWeaponShopMessages(void);
-void Func_0200015c(void);
-void Func_02000178(void);
-void Func_020001cc(void);
-void Func_02000394(void);
-void Func_020003a4(void);
-void Func_020003b8(void);
-void Func_02000520(void);
-void Func_02000638(void);
-void Func_02000668(void);
-void Func_02000748(void);
-void Func_02000848(void);
-void Func_02000aac(void);
-void Func_02000ab4(void);
+void ShopTest_DamageAndAfflictParty(void);
+void ShopTest_GivePartyDjinn(void);
+void ShopTest_GiveMuramasaAndSummon(void);
+void ShopTest_RunLevelEditor(void);
+void ShopTest_SelectItem(void);
+void ShopTest_OpenIconBrowser(void);
+void ShopTest_OpenPortraitBrowser(void);
 
-void Func_02000664(void);
+void ShopTest_NoOp(void);
 
-u32 gData_02000e80[] = {
-    0x764c,
-};
+char gShopTest_LvLabel[4] = "Lv";
 
-u32 gData_02000e84[] = {
-    0x6d657449,
-    0x3a6f4e20,
-    0,
-};
+char gShopTest_ItemPrompt[12] = "Item No:";
 
-// clang-format off
-u32 gData_02000e90[] = {
-    0x65473a41, 0x74492074, 0x20206d65, 0x65523a42, 0x6e727574, 0,
-};
+char gShopTest_ItemHelp[24] = "A:Get Item  B:Return";
 
-u32 gData_02000ea8[] = {
-    0x4d455449, 0x4c554620, 0x2e2e2e4c, 0x2e2e2e2e, 46,
-};
-// clang-format on
+char gShopTest_ItemFull[20] = "ITEM FULL........";
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 408, 0, 312, FACING_NORTH, 0, 280, 0, 780, 464, 0},
@@ -382,102 +413,108 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_02000190)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200019c)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Func_020001a8)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_020001b4)},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_020001c0)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_020001cc)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_020001d4)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_020002a8)},
-    {0, 17, CONDITION_ALWAYS, EVENT(Func_0200012c)},
-    {0, 18, CONDITION_ALWAYS, EVENT(MenuTest_BrowseWeaponShopMessages)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_0200015c)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_02000178)},
-    {0, 20, CONDITION_ALWAYS, EVENT(Func_02000394)},
-    {0, 21, CONDITION_ALWAYS, EVENT(Func_020003a4)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_02000668)},
-    {0, 23, CONDITION_ALWAYS, EVENT(Func_02000aac)},
-    {0, 24, CONDITION_ALWAYS, EVENT(Func_02000ab4)},
-    {0, 25, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {0, 26, CONDITION_ALWAYS, EVENT(Func_02000848)},
-    {0, 29, CONDITION_ALWAYS, EVENT(Func_02000520)},
-    {0, 27, CONDITION_ALWAYS, EVENT(Func_020003b8)},
-    {0, 28, CONDITION_ALWAYS, EVENT(Func_02000638)},
-    {0, 30, CONDITION_ALWAYS, (u32)(Func_02000664)},
-    {0, 31, CONDITION_ALWAYS, (u32)(Func_02000664)},
-    {0, 32, CONDITION_ALWAYS, (u32)(Func_02000664)},
-    {0, 33, CONDITION_ALWAYS, (u32)(Func_02000664)},
+    {TRIGGER_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(ShopTest_OpenWeaponShop)},
+    {TRIGGER_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(ShopTest_OpenArmorShop)},
+    {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(ShopTest_OpenItemShop)},
+    {TRIGGER_TALK, ACTOR_GENERAL_STOREKEEPER, CONDITION_ALWAYS,
+     EVENT(ShopTest_OpenGeneralStore)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(ShopTest_OpenInn)},
+    {TRIGGER_TALK, ACTOR_SANCTUM_PRIEST, CONDITION_ALWAYS,
+     EVENT(ShopTest_OpenSanctum)},
+    {TRIGGER_TALK, ACTOR_SUNSHINE, CONDITION_ALWAYS,
+     EVENT(ShopTest_TalkToSunshine)},
+    {TRIGGER_TALK, ACTOR_SUNSHINES_WIFE, CONDITION_ALWAYS,
+     EVENT(ShopTest_TalkToSunshinesWife)},
+    {TRIGGER_TALK, ACTOR_WEAPON_SHOP_MESSAGES, CONDITION_ALWAYS,
+     EVENT(ShopTest_BrowseWeaponShopMessages)},
+    {TRIGGER_TALK, ACTOR_ARMOR_SHOP_MESSAGES, CONDITION_ALWAYS,
+     EVENT(ShopTest_BrowseArmorShopMessages)},
+    {TRIGGER_TALK, ACTOR_ITEM_SHOP_MESSAGES, CONDITION_ALWAYS,
+     EVENT(ShopTest_BrowseItemShopMessages)},
+    {TRIGGER_TALK, ACTOR_SANCTUM_MESSAGES, CONDITION_ALWAYS,
+     EVENT(ShopTest_BrowseSanctumMessages)},
+    {TRIGGER_TALK, ACTOR_ITEM_PICKER, CONDITION_ALWAYS,
+     EVENT(ShopTest_TestItemSelection)},
+    {TRIGGER_TALK, ACTOR_NAME_ENTRY, CONDITION_ALWAYS,
+     EVENT(ShopTest_EditPartyNames)},
+    {TRIGGER_TALK, ACTOR_MURAMASA_AND_SUMMON, CONDITION_ALWAYS,
+     EVENT(ShopTest_GiveMuramasaAndSummon)},
+    {TRIGGER_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
+     EVENT(ShopTest_OpenIconBrowser)},
+    {TRIGGER_TALK, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT(ShopTest_OpenPortraitBrowser)},
+    {TRIGGER_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
+     EVENT(ShopTest_RunLevelEditor)},
+    {TRIGGER_TALK, ACTOR_ITEM_SELECTOR, CONDITION_ALWAYS,
+     EVENT(ShopTest_SelectItem)},
+    {TRIGGER_TALK, ACTOR_AFFLICTIONS, CONDITION_ALWAYS,
+     EVENT(ShopTest_DamageAndAfflictParty)},
+    {TRIGGER_TALK, ACTOR_EQUIPMENT, CONDITION_ALWAYS,
+     EVENT(ShopTest_GiveEquipmentTestStock)},
+    {TRIGGER_TALK, ACTOR_DJINN, CONDITION_ALWAYS,
+     EVENT(ShopTest_GivePartyDjinn)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, 32, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, 33, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
     {TRIGGER_TABLE_END},
 };
 
-// Overlay 0x6ba's code from Func_02000520 on, in ROM order.
-
-#include "owner_state.h"
-#include "version.h"
-#include "system/ram_buffer.h"
-#include "field/field_sequence_event.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "actor.h"
-
-#include "fixed_math.h"
+// Overlay 0x6ba's code from ShopTest_DamageAndAfflictParty on, in ROM order.
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
-/* VIEW(s0520): routine ShopTest_GetItem as struct ItemDefinition
- * *ShopTest_GetItem(s32 item); shop_test has u16 *ShopTest_GetItem(s32 item);
- * tried as the definition's void ShopTest_GetItem(struct Actor *shot), it does
- * not compile in tla-ja: games/tla/src/debug/shop_test.c:427: conflicting types
- * for `ShopTest_GetItem'. */
-extern struct ItemDefinition *
-Func_02000d48__s0520(s32 item) __asm__("ShopTest_GetItem");
 void GameFlag_RefreshLureCap(void);
 
-void Func_02000520(void) {
-  u8 *unit;
-  u8 *item;
+/// Takes HP and PP from Felix, Jenna and Sheba, poisons and haunts Felix,
+/// curses and envenoms Jenna, and breaks the first item of use type 2 each of
+/// Felix and Jenna holds. Talking to ACTOR_AFFLICTIONS.
+void ShopTest_DamageAndAfflictParty(void) {
+  struct BattleUnit *unit;
+  struct ItemDefinition *item;
   s32 i;
 
   FieldMessage_Show(MsgTheBodyIs, 1);
-  FieldUnit_AddHp(4, -100);
-  FieldUnit_AddHp(5, -100);
-  FieldUnit_AddHp(6, -33);
-  Unit_AddPp(4, -50);
-  Unit_AddPp(5, -40);
-  Unit_AddPp(6, -35);
-  unit = Unit_Get(4);
-  unit[0x131] = 1;
-  unit[0x140] = 1;
-  unit = Unit_Get(5);
-  unit[0x130] = 1;
-  unit[0x131] = 2;
-  unit = Unit_Get(4);
+  FieldUnit_AddHp(FELIX, -100);
+  FieldUnit_AddHp(JENNA, -100);
+  FieldUnit_AddHp(SHEBA, -33);
+  Unit_AddPp(FELIX, -50);
+  Unit_AddPp(JENNA, -40);
+  Unit_AddPp(SHEBA, -35);
+  unit = Unit_Get(FELIX);
+  unit->poison = 1;
+  unit->haunt = 1;
+  unit = Unit_Get(JENNA);
+  unit->restraint = 1;
+  unit->poison = 2;
+  unit = Unit_Get(FELIX);
   for (i = 0; i <= 14; i++) {
-    item = Func_02000d48__s0520(
-        ((struct OwnerInventoryState *)unit)->inventory[i]);
-    if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)
+    item = ShopTest_GetItem(unit->inventory[i]);
+    if (unit->inventory[i] == 0)
       break;
-    if (item[12] == 2) {
-      Inventory_Break(4, i);
+    if (item->useType == 2) {
+      Inventory_Break(FELIX, i);
       break;
     }
   }
-  unit = Unit_Get(5);
+  unit = Unit_Get(JENNA);
   for (i = 0; i <= 14; i++) {
-    item = Func_02000d48__s0520(
-        ((struct OwnerInventoryState *)unit)->inventory[i]);
-    if (((struct OwnerInventoryState *)unit)->inventory[i] == 0)
+    item = ShopTest_GetItem(unit->inventory[i]);
+    if (unit->inventory[i] == 0)
       break;
-    if (item[12] == 2) {
-      Inventory_Break(5, i);
+    if (item->useType == 2) {
+      Inventory_Break(JENNA, i);
       break;
     }
   }
   GameFlag_RefreshLureCap();
 }
 
-void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
+/// Gives an owner one Djinni, marks it found and sets it if `activate` is 1.
+void ShopTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
   GameFlag_Set(element * 20 + djinn + 48);
   Djinn_Give(owner, element, djinn);
   if (activate == 1)
@@ -485,28 +522,30 @@ void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
 }
 
 #if !TLA_PATCH_1
-/// Gives each of four characters a set of Djinn from 7, until patch 1.
-void Func_02000638(void) {
+/// Gives and sets Djinn from the eighth of each element: Felix Venus, Jenna
+/// Mars, Sheba Jupiter and Piers Mercury. Talking to ACTOR_DJINN.
+void ShopTest_GivePartyDjinn(void) {
   s32 djinn;
 
   FieldMessage_Show((s32)MsgYouGotA, 1);
   for (djinn = 7; djinn < 13; djinn++)
-    Func_020005fc(4, 0, djinn, 1);
+    ShopTest_GiveDjinni(FELIX, ELEMENT_VENUS, djinn, 1);
   for (djinn = 7; djinn < 14; djinn++)
-    Func_020005fc(5, 2, djinn, 1);
+    ShopTest_GiveDjinni(JENNA, ELEMENT_MARS, djinn, 1);
   for (djinn = 7; djinn < 13; djinn++)
-    Func_020005fc(6, 3, djinn, 1);
+    ShopTest_GiveDjinni(SHEBA, ELEMENT_JUPITER, djinn, 1);
   for (djinn = 7; djinn < 14; djinn++)
-    Func_020005fc(7, 1, djinn, 1);
+    ShopTest_GiveDjinni(PIERS, ELEMENT_MERCURY, djinn, 1);
   GameFlag_RefreshLureCap();
 }
 #else
-void Func_02000638(void) {
+/// Gives the party every Djinni.
+void ShopTest_GivePartyDjinn(void) {
   s32 element;
   s32 djinn;
 
   FieldMessage_Show((s32)MsgYouGotA, 1);
-  for (element = 0; element < 4; element++) {
+  for (element = 0; element < ELEMENT_COUNT; element++) {
     for (djinn = 0; djinn < 18; djinn++)
       Djinn_GiveToParty(element, djinn);
   }
@@ -514,20 +553,13 @@ void Func_02000638(void) {
 }
 #endif
 
-void Func_02000664(void) {}
+/// The event for talking to actors 30 to 33.
+void ShopTest_NoOp(void) {}
 
-void Shop_Run(s32 kind, s32 value);
-void Sanctum_Run(void);
-void Inn_CheckIn(s32 kind, s32 value);
-void ItemPicker_RunMode1(s32 *a, s32 *b);
-void NameEntry_EditMemberName(s32 index);
-void Summon_ShowLearnedMessage(s32 value);
-void Class_GetSeries(s32 value);
-void DebugBrowser_Icons(void);
-void DebugBrowser_Portraits(void);
-
-void Func_02000668(void) {
-  PartyInventory_GiveItem(11, 0);
+/// Gives a Muramasa, then announces and unlocks summon 22. Talking to
+/// ACTOR_MURAMASA_AND_SUMMON.
+void ShopTest_GiveMuramasaAndSummon(void) {
+  PartyInventory_GiveItem(ITEM_MURAMASA, 0);
   Summon_ShowLearnedMessage(22);
   Class_GetSeries(22);
 }
@@ -536,20 +568,20 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Party_AddIsaacsParty(void);
 
-/// The scene's first entry: sets screen effect 256 and event mode 2, puts
-/// objects 16 to 19 in mode 5 and 30 to 33 in mode 6, and runs
-/// Party_AddIsaacsParty when the party came in by entrance 99.
-s32 Func_02000688(void) {
+/// Sets screen transition 256 and event mode 2, puts the message browsers in
+/// mode 5 and actors 30 to 33 in mode 6, and brings Isaac's party in when the
+/// party came in by entrance 99.
+s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 *effect = &work->transition;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   *effect = 256;
   party->eventMode = 2;
-  Actor_SetModeById(16, 5);
-  Actor_SetModeById(17, 5);
-  Actor_SetModeById(18, 5);
-  Actor_SetModeById(19, 5);
+  Actor_SetModeById(ACTOR_SANCTUM_MESSAGES, 5);
+  Actor_SetModeById(ACTOR_WEAPON_SHOP_MESSAGES, 5);
+  Actor_SetModeById(ACTOR_ARMOR_SHOP_MESSAGES, 5);
+  Actor_SetModeById(ACTOR_ITEM_SHOP_MESSAGES, 5);
   Actor_SetModeById(30, 6);
   Actor_SetModeById(31, 6);
   Actor_SetModeById(32, 6);
@@ -563,7 +595,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Unit_Calculate(s32 owner);
 
-void Func_02000704(s32 levels) {
+/// Raises every party member `levels` levels.
+void ShopTest_AdjustPartyLevels(s32 levels) {
   s16 owners[16];
   s32 count = FieldParty_ListMembers(owners);
   s32 i;
@@ -577,21 +610,18 @@ void Func_02000704(s32 levels) {
   }
 }
 
-extern u32 gData_02000e80[];
-
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 void Text_DrawStringAtOffset(const void *text, void *window, s32 x, s32 y);
 void Text_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
 void Text_DrawNumberInWindow(s32 value, s32 a, void *window, s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(void *window);
-void Window_Close(void *window, s32 mode);
 
-/// The level-raising window: shows the current member's name and level,
-/// raises every active member 5 levels on Start or Select and 1 on A, and
-/// closes on B.
-// ☀️'s debug EV11_TALK.
-void Func_02000748(void) {
+/// The level-raising window, as Increase item and level's
+/// (IncreaseItemAndLevel_RunLevelEditor): shows the leader's name and level,
+/// raises every party member 5 levels on Start or Select and 1 on A, and
+/// closes on B. Talking to ACTOR_LEVEL_EDITOR.
+void ShopTest_RunLevelEditor(void) {
   u8 *unit = Unit_Get(gMainRoutineWork.currentOwner);
   void *window = Window_Create(0, 0, 30, 9, 2);
   const u8 *message = MsgRaiseEveryoneS;
@@ -605,18 +635,18 @@ void Func_02000748(void) {
     if (redraw) {
       WindowSprite_RedrawSavedRect(window);
       Text_DrawStringAtOffset(unit, window, 0, 48);
-      Text_DrawStringInWindow(gData_02000e80, window, 48, 48);
+      Text_DrawStringInWindow(gShopTest_LvLabel, window, 48, 48);
       redraw = 0;
       Text_DrawNumberInWindow(unit[15], 0, window, 72, 48);
     }
     wait(1);
     if ((gInput.pressed & KEY_START) || (gInput.pressed & KEY_SELECT)) {
-      Func_02000704(5);
+      ShopTest_AdjustPartyLevels(5);
       Sound_Play(MUS_093);
       redraw = 1;
     }
     if (gInput.pressed & KEY_A) {
-      Func_02000704(1);
+      ShopTest_AdjustPartyLevels(1);
       Sound_Play(MUS_091);
       redraw = 1;
     }
@@ -627,15 +657,6 @@ void Func_02000748(void) {
   Window_Close(window, 2);
 }
 
-extern u32 gData_02000e84[];
-extern u32 gData_02000e90[];
-extern u32 gData_02000ea8[];
-
-struct ItemSummary {
-  u8 unk00[6];
-  u16 icon;
-};
-
 void WindowSprite_PrepareForRedraw(void *window);
 void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x, s32 y);
 void Text_DrawMessageAsTiles(s32 message, void *window, s32 x, s32 y);
@@ -645,7 +666,11 @@ void ItemMenu_DrawItemDetails(void *window, s32 item);
 
 #define ITEM_COUNT 500
 
-void Func_02000848(void) {
+/// The item selector, as Increase item and level's
+/// (IncreaseItemAndLevel_SelectItem): Up and Down move one item, Right and Left
+/// ten, R and L thirty, skipping items with no icon; A gives the item, B
+/// closes. Talking to ACTOR_ITEM_SELECTOR.
+void ShopTest_SelectItem(void) {
   void *window;
   void *details;
   s32 item;
@@ -670,15 +695,15 @@ void Func_02000848(void) {
       redraw = 0;
       WindowSprite_PrepareForRedraw(window);
       WindowSprite_PrepareForRedraw(details);
-      Text_DrawStringInWindow(gData_02000e84, window, 0, 0);
+      Text_DrawStringInWindow(gShopTest_ItemPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(item, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        Text_DrawStringInWindow(gData_02000e90, window, 0, 32);
+        Text_DrawStringInWindow(gShopTest_ItemHelp, window, 0, 32);
         Text_DrawMessageAsTiles((s32)(item + MsgItemName), window, 120, 0);
         Text_DrawMessage((s32)(item + MsgItemPlainName), window, 0, 16);
         ItemMenu_DrawItemDetails(details, item);
       } else {
-        Text_DrawStringInWindow(gData_02000ea8, window, 0, 32);
+        Text_DrawStringInWindow(gShopTest_ItemFull, window, 0, 32);
       }
     }
     wait(1);
@@ -731,13 +756,13 @@ void Func_02000848(void) {
     }
     if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           Func_02000d48__s0520(item & 0x1ff)->icon == 0;
+           ShopTest_GetItem(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT - 1) % entryCount)
         ;
     }
     if (step == 1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           Func_02000d48__s0520(item & 0x1ff)->icon == 0;
+           ShopTest_GetItem(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT + 1) % entryCount)
         ;
     }
@@ -747,16 +772,17 @@ void Func_02000848(void) {
   Window_Close(details, 2);
 }
 
-void Func_02000aac(void) { DebugBrowser_Icons(); }
+void ShopTest_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 
-void Func_02000ab4(void) { DebugBrowser_Portraits(); }
+void ShopTest_OpenPortraitBrowser(void) { DebugBrowser_Portraits(); }
 
-void Func_02000abc(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
+UNUSED void ShopTest_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,
+                              s32 f) {
   if (mode == 1)
     Map_CopyCellsRect(a, b, c, d, e, f);
 }
 
-void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
   s32 scale;
 
@@ -779,7 +805,7 @@ void Func_02000ae0(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-void Func_02000b50(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
 
   object = Actor_GetById(id);
@@ -798,7 +824,8 @@ void Field_RequestBattleFromEncounterTable(s32 scene, s32 entrance);
 /// kind 252 there from 0x6666 to full size while it turns, then turns it
 /// opposite the leader's facing and passes scene and entrance on to
 /// Field_RequestBattleFromEncounterTable.
-void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
+UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
+                                  s32 entrance) {
   struct Actor *object;
 
   if (mode == 1) {

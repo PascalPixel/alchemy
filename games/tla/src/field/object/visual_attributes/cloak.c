@@ -6,6 +6,33 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
+#include "types.h"
+#include "system/ram_buffer.h"
+#include "field/field_psynergy_work.h"
+#include "system/main_routine_work.h"
+#include "actor.h"
+#include "field/sprite.h"
+#include "system/task.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/system/system.h"
+#include "system/system.h"
+#include "module/field/object.h"
+#include "battle/battle.h"
+#include "debug.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "lib.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "field/objdisp.h"
+#include "battle/object_effect_scripts.h"
+#include "field/field_sequence_event.h"
+#include "actor_view.h"
+#include "system/input.h"
+#include "battle/battle_effect.h"
+#include "system/frame.h"
 
 /* VIEW(cloak): routine BattleEffect_GetCycledTableWord as s32
  * BattleEffect_GetCycledTableWord(), called with no declaration in scope; the
@@ -19,19 +46,6 @@ s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
 #define BattleEffect_GetCycledTableWord BattleEffect_GetCycledTableWord__cloak
 
 /// The end of Cloak, and Douse.
-
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "field/field_psynergy_work.h"
-#include "system/main_routine_work.h"
-#include "actor.h"
-#include "field/sprite.h"
-#include "system/task.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/system/system.h"
-#include "system/system.h"
-#include "module/field/object.h"
 
 // The caster's palette while it flickers.
 #define CLOAK_FLICKER_PALETTE 7
@@ -81,18 +95,6 @@ void FieldPsynergy_StartCloak(void) {
   }
 }
 
-#include "battle/battle.h"
-#include "debug.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/objdisp.h"
-#include "battle/object_effect_scripts.h"
-
 void BattleEffect_LandFallingObject(struct FallingObject *object) {
   if (object->y <= object->floor) {
     object->dispatchState = 2;
@@ -115,8 +117,6 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
 }
 
 void FieldPsynergy_DouseOnTarget(void) { FieldPsynergy_Douse(); }
-
-#include "field/field_sequence_event.h"
 
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
@@ -306,11 +306,6 @@ void FieldEffect_SpawnFallingParticles(void) {
                          gBattleEffect_SharedParticleScript);
   }
 }
-
-#include "actor_view.h"
-#include "system/input.h"
-#include "battle/battle_effect.h"
-#include "system/frame.h"
 
 /* VIEW(f0decb8): tag struct EffectWork as struct EffectWork__f0decb8;
  * module/tla.h has another definition; tried with the definition the rest of

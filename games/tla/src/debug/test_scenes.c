@@ -12,12 +12,11 @@
 #include "system/system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "field/event_inline.h"
 
 void Test_ReceiveFizz(void);
 
 void Test_ReceiveForge(void);
-
-#include "field/event_inline.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -51,12 +50,9 @@ void Test_ReceiveGust(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_020000ac(void) { return 0; }
+s32 Scene_Initialize(void) { return 0; }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-void Test_ReceiveFlint(void);
-void Test_ReceiveGust(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -81,8 +77,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-// clang-format off
-s32 gData_0200015c[] = {
-    0x2000200, 0x3600400, -1, -1,
+/// Unused: four halfwords (512, 512, 1024, 864) and an end of -1s after the
+/// room's tables; nothing reads them.
+s32 gTestScenes_UnusedRow[] = {
+    0x2000200,
+    0x3600400,
+    -1,
+    -1,
 };
-// clang-format on

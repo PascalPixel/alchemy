@@ -131,7 +131,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
-    if (event->mode == 2) {
+    if (event->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < work->view.count; i++) {
         struct TremorSprite *sprite = work->view.objects[i]->sprite;
         s32 offset = work->view.spriteOffsets[i];
@@ -248,7 +248,7 @@ void FieldPsynergy_Tremor(void) {
       Sound_PlayFar(SE_JUMP);
 
     // Shake the gathered objects' sprites with the view.
-    if (event->mode == 2) {
+    if (event->mode == ACTOR_SYSTEM_MAP) {
       for (i = 0; i < work->count; i++) {
         struct TremorSprite *sprite = work->objects[i]->sprite;
         s32 offset = work->spriteOffsets[i];

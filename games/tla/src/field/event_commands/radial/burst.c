@@ -1,18 +1,321 @@
 /// @file
-/// Two routines not yet understood.
+/// Burst: its glow and sparks, and its explosions on the target.
 // Part of radial.c.
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
+#include "field/field_psynergy_work.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
 
-extern const u8 Data_080f3984[];
+struct GlowParticle {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 timer;
+};
+
+struct GlowWork {
+  u8 tiles[0x400];
+  struct GlowParticle sparks[32];
+  struct EffectSprite sparkSprites[32];
+  struct EffectSprite burstSprites[32];
+  struct GlowParticle bursts[32];
+  s16 phase;
+  s16 timer;
+  s16 shake;
+  u16 burstTile;
+  s16 nextBurst;
+  s16 newBursts;
+  s8 paletteMode;
+};
+
+extern const u16 Data_080f0fa0[];
+
+void Camera_WorldToScreen(s32 *position);
+
+#define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
+
+/// Task of the Burst: cycles its particles' colours and draws them.
+void FieldPsynergy_UpdateBurst(void) {
+  struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleFxWork[0];
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
+  struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
+  struct GlowParticle *particle;
+  struct EffectSprite *sprite;
+  volatile u16 *palette;
+  s32 pos[3];
+  s32 i;
+  s32 *frames;
+  s32 red;
+  s32 blue;
+
+  work->shake = 0;
+  if (work->paletteMode == 1) {
+    palette = (volatile u16 *)(OBJ_PLTT + 14 * 16);
+    i = 0;
+    frames = &canvas->drawnFrames;
+    red = 31;
+    blue = 31 << 10;
+    for (; i <= 31; i++) {
+      s32 green =
+          (((Trig_Sin((((u32)*frames >> 1) + i << 16) + 0x90000 >> 5) * 12) >>
+            16) +
+           16)
+          << 5;
+
+      /* FAKEMATCH(dead): an empty once-only loop. */
+      do {
+      } while (0);
+      *palette++ = green | blue | red;
+      /* FAKEMATCH(dead): an empty once-only loop. */
+      do {
+      } while (0);
+    }
+  } else if (work->paletteMode == 2) {
+    Dma_Set(Data_080f0fa0, (void *)(OBJ_PLTT + 15 * 16),
+            DMA_ENABLE << 16 | 0x10, REG_DMA3);
+    work->paletteMode = 0;
+  }
+  pos[0] = scene->x;
+  pos[1] = scene->y;
+  pos[2] = scene->z;
+  Camera_WorldToScreen(pos);
+  canvas->x = (s16)(pos[0] >> 16);
+  canvas->y = (s16)(pos[2] >> 16);
+
+  if (scene->enabled == 0) {
+    particle = work->sparks;
+    for (i = 0; i < 32; i++) {
+      if ((u32)particle->timer <= 29) {
+        sprite = &work->sparkSprites[i];
+        sprite->x = particle->x + (canvas->x << 16);
+        sprite->y = particle->y + (canvas->y << 16);
+        EffectSprite_Draw(sprite);
+        BattleEffect_IntegrateVector2(&particle->x, 60, 0);
+      }
+      particle->timer++;
+      particle++;
+    }
+    for (i = 0; i < work->newBursts; i++) {
+      particle = &work->bursts[work->nextBurst];
+      particle->timer = 0;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
+      Vector_AddPolarOffset(Random16() * 12 + 0x40000, Random16(),
+                            &particle->x);
+      work->nextBurst = ++work->nextBurst % 32;
+    }
+    work->newBursts = 0;
+    i = 0;
+    particle = work->bursts;
+    for (; i <= 31; i++, particle++) {
+      if ((u32)particle->timer > 71)
+        continue;
+      sprite = &work->burstSprites[i];
+      switch (particle->timer) {
+      case 6:
+        sprite->oam.index = work->burstTile + 4;
+        break;
+      case 12:
+        sprite->oam.index = work->burstTile + 8;
+        break;
+      case 22:
+        sprite->oam.index = work->burstTile + 12;
+        break;
+      case 32:
+        sprite->oam.index = work->burstTile + 16;
+        break;
+      case 42:
+        sprite->oam.index = work->burstTile + 20;
+        break;
+      case 52:
+        sprite->oam.index = work->burstTile + 24;
+        break;
+      case 62:
+        sprite->oam.index = work->burstTile + 28;
+        break;
+      }
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
+      particle->timer++;
+    }
+    switch (work->phase) {
+    case 0:
+      if (work->timer == 0)
+        Sound_PlayFar(SE_SPIN);
+      if (work->timer == 10)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 1:
+      canvas->scaleX += 0x300;
+      canvas->scaleY = canvas->scaleX;
+      if (canvas->scaleX >= Q16_ONE / 2) {
+        work->phase++;
+        work->timer = 0;
+      }
+      break;
+    case 2:
+      if (work->timer == 40)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 3:
+      if (work->timer == 0)
+        work->paletteMode = 2;
+      if (work->timer == 0)
+        Sound_PlayFar(SE_CLATTER);
+      if ((work->timer & 7) == 0) {
+        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
+        work->newBursts = 1;
+        work->shake = 2;
+      }
+      canvas->command = CANVAS_UPLOAD_AND_FADE3;
+      if (work->timer == 16)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 4:
+      if ((work->timer & 15) == 0)
+        Sound_PlayFar(SE_CLATTER);
+      if ((work->timer & 7) == 0) {
+        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
+        work->newBursts = 1;
+        work->shake = 2;
+      }
+      if (work->timer == 128)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 5:
+      if (work->timer == 35)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 6:
+      if (work->timer == 0)
+        work->newBursts = 10;
+      if (work->timer == 4)
+        work->newBursts = 10;
+      if (work->timer == 0) {
+        MapGrid_SetScreenShakeFar(px(12), px(12), 0xe666);
+        Sound_PlayFar(SE_CRASH);
+        if (work->timer == 0)
+          work->shake = 3;
+      }
+      if (work->timer == 20)
+        work->shake = 1;
+      if (work->timer == 72) {
+        work->phase = 999;
+        work->timer = -1;
+      }
+      break;
+    }
+  } else {
+    particle = work->sparks;
+    for (i = 0; i < 12; i++) {
+      if ((u32)particle->timer <= 29) {
+        sprite = &work->sparkSprites[i];
+        sprite->x = particle->x + (canvas->x << 16);
+        sprite->y = particle->y + (canvas->y << 16);
+        EffectSprite_Draw(sprite);
+        BattleEffect_IntegrateVector2(&particle->x, 60, 0);
+      }
+      particle->timer++;
+      particle++;
+    }
+    for (i = 0; i < work->newBursts; i++) {
+      particle = &work->bursts[work->nextBurst];
+      particle->timer = 0;
+      SET_POSITION(particle, scene->x, scene->y, scene->z);
+      work->nextBurst = ++work->nextBurst % 32;
+    }
+    work->newBursts = 0;
+    i = 0;
+    particle = work->bursts;
+    for (; i <= 31; i++, particle++) {
+      if ((u32)particle->timer > 47)
+        continue;
+      sprite = &work->burstSprites[i];
+      switch (particle->timer) {
+      case 4:
+        sprite->oam.index = work->burstTile + 4;
+        break;
+      case 8:
+        sprite->oam.index = work->burstTile + 8;
+        break;
+      case 14:
+        sprite->oam.index = work->burstTile + 12;
+        break;
+      case 22:
+        sprite->oam.index = work->burstTile + 16;
+        break;
+      case 28:
+        sprite->oam.index = work->burstTile + 20;
+        break;
+      case 35:
+        sprite->oam.index = work->burstTile + 24;
+        break;
+      case 41:
+        sprite->oam.index = work->burstTile + 28;
+        break;
+      }
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
+      particle->timer++;
+    }
+    switch (work->phase) {
+    case 0:
+      if (work->timer == 0)
+        Sound_PlayFar(SE_SPIN);
+      if (work->timer == 10)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 1:
+      canvas->scaleX += 0x500;
+      canvas->scaleY = canvas->scaleX;
+      if (canvas->scaleX > 0x4ccb) {
+        work->phase++;
+        work->timer = 0;
+      }
+      break;
+    case 2:
+      if (work->timer == 16)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 3:
+      if (work->timer == 0) {
+        work->paletteMode = 2;
+        if (work->timer == 0) {
+          MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
+          work->newBursts = 1;
+          Sound_PlayFar(SE_CLATTER);
+        }
+      }
+      canvas->command = CANVAS_UPLOAD_AND_FADE3;
+      if (work->timer == 16)
+        GLOW_NEXT_PHASE(work);
+      break;
+    case 4:
+      if (work->timer == 5)
+        BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+      if (work->timer == 20) {
+        work->phase = 999;
+        work->timer = -1;
+      }
+      break;
+    }
+  }
+  work->timer++;
+}
+
+/// Runs field Psynergy animation 21 for the dispatcher's targeted path.
+void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
+#undef GLOW_NEXT_PHASE
+
+extern const u8 gBurst_GlowTiles[];
 extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
 void Camera_WorldToScreen(s32 *position);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
-void FieldPsynergy_UpdateBurst(void);
 
 void FieldPsynergy_Burst(void) {
   struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
@@ -54,7 +357,7 @@ void FieldPsynergy_Burst(void) {
     canvas->depth -= 4;
 
   sparkEntry = VramCache_FindFreeEntry();
-  sparkTile = VramCache_Load(sparkEntry, 64, Data_080f3984);
+  sparkTile = VramCache_Load(sparkEntry, 64, gBurst_GlowTiles);
   for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
       sprite = work->sparkSprites;
        i < 32;) {
@@ -123,140 +426,4 @@ void FieldPsynergy_Burst(void) {
   FieldPsynergy_FadeFromCastColor();
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(92);
-}
-
-struct ShineParticle {
-  s32 x;
-  s32 y;
-  u8 unk08[16];
-  s32 timer;
-};
-
-struct ShineSprite {
-  u8 unk00[12];
-  s32 x;
-  s32 y;
-  u8 unk14[20];
-};
-
-struct ShineWork {
-  u8 unk0000[0x1000];
-  struct ShineParticle particles[12];
-  u8 unk1150[0x230];
-  struct ShineSprite sprites[12];
-  u8 unk1560[0x348];
-  struct Actor *object;
-  s16 state;
-  s16 timer;
-  s8 sparkles;
-  u8 fading;
-};
-
-struct BlendWork {
-  u8 unk00[160];
-  u32 phase;
-  u8 unka4[12];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unkb8[9];
-  u8 mode;
-};
-
-void MapGrid_SetScreenShakeFar(s32 a, s32 b, s32 c);
-
-/// Task of the Pound: its shine's colours and particles, each frame.
-void FieldPsynergy_UpdatePound(void) {
-  struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
-  struct BlendWork *blend = Ram_HeapSlots->unkec[1];
-  struct ShineParticle *particle;
-  struct ShineSprite *sprite;
-  s32 i;
-  s32 base, blue;
-  s32 color;
-  s32 red, green;
-  u32 *phase;
-
-  work->fading = 0;
-  if (work->state == 1) {
-    i = 0;
-    /* FAKEMATCH(temporary): the phase read through a pointer kept across the
-     * loop. */
-    phase = &blend->phase;
-    base = 9;
-    base <<= 16;
-    blue = 0x7c00;
-  palette:
-    red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
-    green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
-    red = (red >> 16) + 16;
-    green = (green >> 16) + 16;
-    /* FAKEMATCH(dead): the colour in a once-only block. */
-    do {
-      color = (green << 5) | blue | red;
-      *(u16 *)(0x050003c0 + i * 2) = color;
-    } while (0);
-    if (++i < 32)
-      goto palette;
-  }
-  if (work->sparkles) {
-    particle = work->particles;
-    sprite = work->sprites;
-    for (i = 0; i < 12; i++, sprite++, particle++) {
-      if (particle->timer >= 0 && particle->timer < 16) {
-        sprite->x = particle->x;
-        sprite->y = particle->y;
-        EffectSprite_Draw(sprite);
-        BattleEffect_IntegrateVector2(particle, 64, 0);
-      }
-      particle->timer++;
-    }
-  }
-  switch (work->state) {
-  case 0:
-    work->object->y -= px(7) / 2;
-    if (work->timer == 8) {
-      blend->scaleX = Q16_ONE / 8;
-      blend->scaleY = Q16_ONE / 8;
-      MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
-      Sound_PlayFar(SE_567);
-      work->sparkles = 1;
-      work->fading = 1;
-    }
-    if (work->timer == 8) {
-      work->state++;
-      work->timer = -1;
-    }
-    break;
-  case 1:
-    blend->scaleX += Q16_ONE / 16;
-    blend->scaleY = blend->scaleX;
-    if (blend->scaleX > 0xcccb) {
-      blend->scaleX = 0xcccc;
-      blend->scaleY = 0xcccc;
-      work->state++;
-      work->timer = -1;
-    }
-    break;
-  case 2:
-    blend->mode = 3;
-    if (work->timer == 32) {
-      work->state++;
-      work->timer = -1;
-    }
-    break;
-  case 3:
-    if (work->timer == 0)
-      MapGrid_SetScreenShakeFar(1, 1, 1);
-    if (work->timer == 10) {
-      work->state++;
-      work->timer = -1;
-    }
-    break;
-  case 4:
-    work->object->y += px(3) / 2;
-    if (work->timer == 13)
-      work->state = 999;
-    break;
-  }
-  work->timer++;
 }

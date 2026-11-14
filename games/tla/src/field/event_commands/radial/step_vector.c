@@ -5,6 +5,10 @@
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
+#include "system/dma.h"
+#include "window.h"
+#include "macros.h"
+#include "field_sprite.h"
 
 void BattleEffect_StepVector2(s32 *vector, s32 damping, s32 gravity) {
   BattleEffect_IntegrateVector2(vector, damping, gravity);
@@ -170,8 +174,6 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
   }
 }
 
-#include "system/dma.h"
-
 #define OBJ_TILES ((u8 *)OBJ_VRAM0)
 #define BG_VRAM ((void *)BG_CHAR_BLOCK(0))
 #define TILE_SIZE 32
@@ -281,8 +283,6 @@ void BattleEffect_DrawCanvasSprite(void) {
 
 // The canvas sprite of the field Psynergy scenes.
 
-#include "window.h"
-
 /// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
 /// 64x64 canvas copied into the sprite's tiles, and a map from each canvas
 /// pixel (row by row) to its place in the tiles. BattleEffect_DrawCanvasSprite
@@ -348,15 +348,9 @@ struct Spark {
   s32 age;
 };
 
-// The heap block of the effect: the picture, then the sparks and their
-// sprites.
-/* VIEW(step_vector): tag struct SparkWork as struct SparkWork__step_vector;
- * field/event_commands/psynergy has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/step_vector.c:353: redefinition of
- * `struct SparkWork'. */
-#define SparkWork SparkWork__step_vector
-struct SparkWork {
+/// Actor_VanishInSparks' work, in heap slot 92: the sparks' picture, then the
+/// sparks and their sprites.
+struct VanishSparksWork {
   u8 picture[0x400];
   struct Spark sparks[64];
   struct EffectSprite sprites[64];
@@ -372,8 +366,8 @@ struct SparkWork {
 /// full width over 64 frames, when its sprite and its child flags come back;
 /// 74 frames later it ends.
 void Actor_VanishInSparks(s32 objectId) {
-  struct SparkWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
+  struct VanishSparksWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct VanishSparksWork));
   s32 phase;
   s32 entry;
   s32 tiles;
@@ -496,8 +490,6 @@ void Actor_VanishInSparks(s32 objectId) {
   HeapSlot_Release(HEAP_SLOT_SPARKS);
 }
 
-#include "macros.h"
-
 void FieldParticle_Update(struct FieldParticle *effect) {
   if (effect->active != 0) {
     effect->age++;
@@ -597,8 +589,6 @@ u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
   return ((0u - value) | value) >> 31;
 }
 
-#include "field_sprite.h"
-
 void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->targetX = EFFECT_NO_TARGET;
   effect->targetZ = EFFECT_NO_TARGET;
@@ -658,5 +648,3 @@ void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
     Sprite_DestroyFar((struct ResourceObjectWork *)slot->object);
   Dma_Fill32(0, slot, sizeof *slot);
 }
-
-#undef SparkWork

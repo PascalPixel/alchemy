@@ -28,16 +28,31 @@ struct Window;
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_RAISED_TRIGGER_PARTY_FELL = -1,
-  /// R on the world map: the picture of the whole world (WorldPicture_Show).
-  FIELD_RAISED_TRIGGER_WORLD_PICTURE = -887,
-  /// R while the world picture is offered by an arrival.
-  FIELD_RAISED_TRIGGER_WORLD_PICTURE_LOOP = -888,
+  /// Teleport: the picture of the whole world, shown once to choose where to
+  /// go (FieldPsynergy_Teleport).
+  FIELD_RAISED_TRIGGER_TELEPORT = -887,
+  /// R on the world map: the picture of the whole world (WorldPicture_Show),
+  /// as The Broken Seal's.
+  FIELD_RAISED_TRIGGER_WORLD_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held.
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889,
   FIELD_RAISED_TRIGGER_ROPE_OFF = -890,
   FIELD_RAISED_TRIGGER_ROPE_ON = -891,
   FIELD_RAISED_TRIGGER_TIGHTROPE_OFF = -892,
   FIELD_RAISED_TRIGGER_TIGHTROPE_ON = -893
+};
+
+/// The raised trigger the menu keys pass to the scene while
+/// FLAG_MENUS_RAISE_TRIGGER is set, as The Broken Seal's.
+#define FIELD_RAISED_TRIGGER_MENUS 250
+
+/// How the actors are moved and drawn (FieldWork.mode, ActorSystem_Initialize).
+enum ActorSystemMode {
+  /// A town, a dungeon or the sprite viewer: the scrolling camera.
+  ACTOR_SYSTEM_MAP = 2,
+  /// The world map: the fixed camera, which projects 3D points onto the
+  /// screen.
+  ACTOR_SYSTEM_WORLD_MAP = 3
 };
 
 /// A field scene's work: FieldSequence_Run allocates it in heap slot 108,
@@ -80,7 +95,7 @@ struct FieldWork {
   s16 blockedSteps;
   u16 heldKeys; ///< the keys held when a rope or tightrope was raised
   u8 unk188[2];
-  s8 mode; ///< 2 on a map, 3 on the world map (ActorSystem_InitializeFar)
+  s8 mode; ///< an enum ActorSystemMode
   s8 unk18b;
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles

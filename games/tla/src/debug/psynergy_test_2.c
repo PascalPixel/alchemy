@@ -1,5 +1,7 @@
 /// @file
-/// Overlay 0x6b9's scene: its code, then its tables, in ROM order.
+/// The second debug room of Psynergy tests: Douse and Pound take an actor away,
+/// Grind and Tremor are tried on another, which scatters rocks when talked to,
+/// Burst breaks a wall, a rope is coiled, and one step starts a battle.
 
 #include "battle/battle.h"
 #include "field/field.h"
@@ -18,29 +20,41 @@
 #include "field/field_sequence_event.h"
 #include "call.h"
 #include "item_icon.h"
-
-struct EventFlags {
-  u8 unk000[0xd36];
-  u8 unkd36;
-  u8 unkd37;
-};
+#include "effect_sprite.h"
+#include "flags.h"
+#include "field/particle.h"
 
 #include "module/scene/kibombo.h"
 #include "module/tla.h"
 #include "field/particle.h"
 #include "graphics/resource.h"
 #include "gamepak/far_call/system.h"
+#include "system/task.h"
+#include "fixed_math.h"
 
-struct Particle;
+// The battle the step on cell 30 starts, once.
+#define FLAG_BATTLE_FOUGHT FLAG_SCENE_TEMP_20
 
-void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
+/// The rocks a talk scatters, in heap slot 220: their tiles, 64 rocks and their
+/// sprites, the next rock to use, and where the tiles are in VRAM.
+struct RockWork {
+  u8 tiles[0x500];
+  struct Particle rocks[64];
+  struct EffectSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  s16 resource;
+};
 
-void Func_0200029c(void);
-void Func_02000358(void);
+void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count);
+
+void PsynergyTest2_StartRocks(void);
+void PsynergyTest2_EndRocks(void);
 
 void Rope_Coil(s32 a, s32 b, s32 c);
 
-void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
+                              s32 gravity);
 
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
@@ -54,81 +68,86 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Test_ReceiveFlint(void) {
+/// Douse on actor 8 takes it off the map.
+void PsynergyTest2_DouseTarget(void) {
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
 }
 
-void Func_02000064(s32 mode) {
+/// So does Pound, as it acts.
+void PsynergyTest2_PoundTarget(s32 mode) {
   if (mode == 1)
     Actor_SetPosition(8, 0, 0);
 }
 
-void Func_02000078(void) {}
+/// The event for Tremor on actor 9, which does nothing.
+void PsynergyTest2_IgnoreTremor(void) {}
 
-void Test_ReceiveForge(void) { Actor_SetModeById(9, 3); }
+/// Grind on actor 9 puts it in mode 3.
+void PsynergyTest2_GrindActor(void) { Actor_SetModeById(9, 3); }
 
-void Func_02000088(s32 mode) {
+/// Burst on cell 50 copies in the broken wall, a 1 by 2 block from (49, 1),
+/// cell behaviors and all.
+void PsynergyTest2_BurstWall(s32 mode) {
   if (mode == 1) {
     MapGrid_CopyCellsLayered(49, 1, 1, 2, 34, mode);
     MapGrid_CopyCellAttributes(49, 1, 1, 2, 34, 3);
   }
 }
 
-void Func_020000b8(void) {
-  if (!Event_GetFlag(0x220)) {
-    Event_SetFlag(0x220);
+/// Stepping onto cell 30 starts a battle, the first time only.
+void PsynergyTest2_StepIntoBattle(void) {
+  if (!Event_GetFlag(FLAG_BATTLE_FOUGHT)) {
+    Event_SetFlag(FLAG_BATTLE_FOUGHT);
     Field_RequestBattleFromEncounterTable(14, 0);
   }
 }
 
-void Func_020000d8(s32 id) {
+/// Talking to actor 9: twenty rocks burst out around it and fall for 20
+/// frames.
+void PsynergyTest2_ScatterRocks(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_0200029c();
-  Func_020001e0(object->x, object->y, object->z, 20);
+  PsynergyTest2_StartRocks();
+  PsynergyTest2_SpawnRocks(object->x, object->y, object->z, 20);
   System_Wait(20);
-  Func_02000358();
+  PsynergyTest2_EndRocks();
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Func_02000104(void) {
+/// Sets screen transition 256 and event mode 2, and coils the rope.
+s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->transition = 256;
-  ((struct EventFlags *)work)->unkd37 = 0;
-  ((struct EventFlags *)work)->unkd36 = 0;
+  work->sceneAttributeHigh = 0;
+  work->sceneAttributeLow = 0;
   gMainRoutineWork.eventMode = 2;
   Rope_Initialize();
+  // Coils rope 0 between actors 10 and 11.
   Value3((s32 (*)())Rope_Coil, 0, 10, 11);
   Actor_SetAnimation(9, 4);
   return 0;
 }
 
-// XXX: what this room tests that the first Psynergy test room does not; its
-// scene tables and a render of it would settle it.
-
 s32 Scene_PrepareMap(void) { return 0; }
 
-void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct Particle *particle);
 
-void Func_0200015c(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
-  struct Particle *particle = work->particles;
-  struct ParticleSprite *sprite = work->sprites;
+/// Each frame of the rocks: each of the 64 younger than 20 frames is drawn,
+/// its picture one of eight as it ages, and falls.
+void PsynergyTest2_UpdateRocks(void) {
+  struct RockWork *work = Ram_HeapSlots->menuRuntime;
+  struct Particle *particle = work->rocks;
+  struct EffectSprite *sprite = work->sprites;
   s32 i;
   s32 step = -0x8000;
 
   i = 63;
   do {
     if ((u32)particle->age <= 19) {
-      u16 *base = &work->tile;
-      s32 mask = 7;
-      s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
-      s32 attr = sprite->attr;
-
-      sprite->attr = (attr & ~0x3ff) | tile;
+      sprite->oam.index = work->tileBase + ((particle->age >> 2) & 7) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, particle);
       BattleEffect_StepVector3(particle, 63, step);
       particle->age++;
@@ -153,47 +172,39 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {306, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(104), FACING_SOUTH, 2, 0},
-    {406, CONDITION_ALWAYS, 1, PIXELS(504), 0, PIXELS(248), FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(104), FACING_SOUTH, 2, 0},
-    {407, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(136), FACING_SOUTH, 2, 1},
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 104,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 248,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 104,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 136,
+                    FACING_SOUTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
 struct Trigger gSceneEvents[] = {
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_020000d8)},
-    {2, 30, CONDITION_ALWAYS, EVENT(Func_020000b8)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(PsynergyTest2_ScatterRocks)},
+    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(PsynergyTest2_StepIntoBattle)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, CONDITION_ALWAYS,
-     EVENT(Test_ReceiveFlint)},
+     EVENT(PsynergyTest2_DouseTarget)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8,
-     CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {0x8715, 9, CONDITION_ALWAYS, (u32)(Func_02000078)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest2_PoundTarget)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 9, CONDITION_ALWAYS,
+     EVENT(PsynergyTest2_IgnoreTremor)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 9, CONDITION_ALWAYS,
-     EVENT(Test_ReceiveForge)},
-    {0x8515, 10, CONDITION_ALWAYS, 0},
+     EVENT(PsynergyTest2_GrindActor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
-     CONDITION_ALWAYS, EVENT(Func_02000088)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest2_BurstWall)},
     {TRIGGER_TABLE_END},
 };
 
-struct Spark {
-  s32 position[3];
-  s32 velocity[3];
-  s32 timer;
-};
-
-struct SparkWork {
-  u8 unk0000[0x500];
-  struct Spark sparks[64];
-  struct SparkSprite sprites[64];
-  s16 next;
-  u16 tileBase;
-  s16 resource;
-};
-
-void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
-  struct Spark *spark;
+/// Throws `count` rocks out of (x, y, z): each starts 8 pixels or more away
+/// at a random angle and flies up and outward.
+void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
+  struct RockWork *work = Ram_HeapSlots->menuRuntime;
+  struct Particle *rock;
   s32 angle;
   s32 i;
 
@@ -201,18 +212,17 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
     i = count;
   loop:
     angle = Random16();
-    spark = &work->sparks[work->next];
-    spark->timer = 0;
-    spark->position[0] = x;
-    spark->position[1] = y;
-    spark->position[2] = z;
-    FieldVector_AddPolarOffset((Random16() << 3) + 0x80000, angle,
-                               spark->position);
-    spark->velocity[0] = 0;
-    spark->velocity[1] = 0x50000;
-    spark->velocity[2] = 0;
-    FieldVector_AddPolarOffset((Random16() << 1) + 0x20000, angle,
-                               spark->velocity);
+    rock = &work->rocks[work->next];
+    rock->age = 0;
+    rock->x = x;
+    rock->y = y;
+    rock->z = z;
+    FieldVector_AddPolarOffset((Random16() << 3) + px(8), angle, &rock->x);
+    rock->velocityX = 0;
+    rock->velocityY = px(5);
+    rock->velocityZ = 0;
+    FieldVector_AddPolarOffset((Random16() << 1) + px(2), angle,
+                               &rock->velocityX);
     work->next++;
     work->next &= 63;
     i--;
@@ -221,27 +231,14 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
   }
 }
 
-#include "system/task.h"
-
-struct RockWork {
-  u8 tiles[0x500];
-  struct Rock rocks[64];
-  struct RockSprite sprites[64];
-  s16 next;
-  u16 tileBase;
-  u16 resource;
-};
-
-void EffectSprite_Init(struct RockSprite *sprite, s32 width, s32 height,
-                       u32 attributes, s32 tile);
-
-void Func_0200029c(void) {
+/// Loads the rocks' tiles, hides all 64 and starts PsynergyTest2_UpdateRocks.
+void PsynergyTest2_StartRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
   s32 i;
-  struct Rock *rock;
-  struct RockSprite *sprite;
+  struct Particle *rock;
+  struct EffectSprite *sprite;
 
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
                       work);
@@ -253,36 +250,36 @@ void Func_0200029c(void) {
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
     EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05_5 = 1;
-    sprite->palette = 0;
-    sprite->priority = 0;
-    sprite->unk1e = 240;
-    rock->timer = -1;
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = 0;
+    sprite->depth = 240;
+    rock->age = -1;
   }
   {
     s32 zero = 0;
 
     work->next = zero;
   }
-  FieldTask_AddFrame(Func_0200015c, 0x480);
+  FieldTask_AddFrame(PsynergyTest2_UpdateRocks, 0x480);
 }
 
-#include "fixed_math.h"
+/// Stops the rocks and frees their tiles and work.
+void PsynergyTest2_EndRocks(void) {
+  struct RockWork *work = Ram_HeapSlots->menuRuntime;
 
-void Func_02000358(void) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
-
-  FieldTask_Remove(Func_0200015c);
+  FieldTask_Remove(PsynergyTest2_UpdateRocks);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(220);
 }
 
-void Func_02000384(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
+UNUSED void PsynergyTest2_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,
+                                   s32 f) {
   if (mode == 1)
     MapGrid_CopyCells(a, b, c, d, e, f);
 }
 
-void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
   s32 scale;
 
@@ -305,7 +302,7 @@ void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
+UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
 
   object = Actor_Get(id);
@@ -318,11 +315,10 @@ void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-/// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
-/// kind 252 there from 0x6666 to full size while it turns, then turns it
-/// opposite the leader's facing and passes scene and entrance on to
-/// Field_RequestBattleFromEncounterTable.
-void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
+// Unused: the Psynergy test's Scoop helpers (PsynergyTest_DigCells and the
+// rest), copied here with nothing calling them.
+UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
+                                       s32 column) {
   struct Actor *object;
 
   if (mode == 1) {
@@ -357,7 +353,7 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleY = Q16_ONE;
       object->facing =
           Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
-      Field_RequestBattleFromEncounterTable(scene, entrance);
+      Field_RequestBattleFromEncounterTable(row, column);
     }
   }
 }

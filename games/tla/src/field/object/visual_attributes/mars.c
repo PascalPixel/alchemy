@@ -14,8 +14,6 @@
 #include "scene_call.h"
 #include "macros.h"
 
-struct Actor *Actor_GetById(u32 objectId);
-
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
 /// (FieldEffect_UpdateMarsSpark). The leader turns to the camera
@@ -163,7 +161,6 @@ struct BattleFxScene;
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define Actor_ReleaseFar Actor_ReleaseFar
-#define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the

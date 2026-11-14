@@ -10,6 +10,7 @@
 #include "types.h"
 #include "system/scene.h"
 #include "field/sprite.h"
+#include "field/perspective.h"
 #include "system/ram_buffer.h"
 #include "system/io_reg.h"
 #include "system/dma.h"
@@ -32,6 +33,13 @@
 
 struct Actor;
 struct FieldPosition;
+
+/// The collision at an actor's probe point (tile_animation.c): 2 for a cell
+/// with no tile, 1 a rise of more than 8 pixels, -1 a drop of more than 12,
+/// else 0.
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
+                                struct FieldPosition *position);
 
 typedef void (*ConvertFn)(void *destination, void *source, void *saved);
 
@@ -199,51 +207,8 @@ struct MapScrollWork {
   struct MapLayerScroll layers[3];
 };
 
-struct WorldView {
-  s32 *origin;
-  s32 shakeX, shakeY, shakeDecay;
-  u8 *script;  ///< NULL at load, as The Broken Seal's WorldMapView
-  u16 fade;    ///< REG_DISPCNT bits, BG0 to BG3 and the sprites at load
-  u8 fadeStep; ///< 0x80 at load
-  u8 unk017[0xcd];
-  s32 viewX;
-  s32 viewY;
-  s32 scaleX; ///< 32 in 16.16 at load, as The Broken Seal's WorldMapView
-  s32 scaleY; ///< 64 in 16.16 at load
-  s32 limitX; ///< 16352 in 16.16 at load
-  s32 limitY; ///< 16352 in 16.16 at load
-  u8 unk0fc[8];
-  u16 windowTop;
-  u16 windowBottom;
-  u8 unk108[0xc];
-  /// The world map's tile offsets (ResourceId_PerspectiveDataA).
-  void *tiles;
-  u8 unk118[4];
-  u16 pitch;
-  u16 yaw;
-  u8 unk120[0x28];
-  u16 tileIds[1024]; ///< the world map tile in each cell
-  u8 unk948[0x14];
-  s32 farPlane;
-  s32 distance;
-  u8 unk964[4];
-  s32 unk968;
-  u16 unk96c;
-  u8 unk96e[3];
-  s8 flat;
-  s8 paused;
-  u8 unk973[3];
-  s8 fixedEye;
-};
-
 struct EyeOffset {
   s32 x, y, z;
-};
-
-struct MapTileWindow_08010d48 {
-  s32 *position;
-  u8 unk004[0x144];
-  u16 tiles[32][32];
 };
 
 struct Unk_WakeActor {
@@ -293,37 +258,9 @@ struct MapHeader {
   s32 shapes;
 };
 
-struct PerspectiveTiles {
-  u8 unk000[0x114];
-  u32 *tiles;
-  u8 unk118[0x830];
-  u16 quarterTiles[8];
-};
-
 struct SpriteAngle {
   u8 unk00[18];
   u16 angle;
-};
-
-struct LeaderUnit {
-  u8 unk00[0x38];
-  s16 hp;
-};
-
-/// The requests the configured keys raise.
-// Named as in ☀️'s FieldWork.
-struct EventPrompt {
-  u8 unk000[0x15a];
-  u16 menu;
-  u16 examine;
-  u16 start;
-  u8 unk160[6];
-  u16 choice[2];
-  u16 result;
-  u8 unk16c[30];
-  s8 mode;
-  u8 unk18b[0xb21];
-  s8 pendingSecond;
 };
 
 struct Child {
@@ -359,11 +296,6 @@ struct ScriptObject {
   s32 value;
 };
 
-struct UnitHp {
-  u8 unk00[0x38];
-  s16 hp;
-};
-
 enum { RESOURCE_SLOT_COUNT = 8 };
 
 struct ResourceSlotNumber {
@@ -382,15 +314,6 @@ struct MapAffinePair {
 struct MapAffineWork {
   struct MapScanline scanlines[160];
   struct MapAffinePair pages[2][160];
-};
-
-struct PerspectiveWindow {
-  u8 unk000[0x104];
-  u16 windowTop;
-  u16 windowBottom;
-  u16 shownTop;
-  u16 shownBottom;
-  u16 windowPending;
 };
 
 extern char ResourceId_Data199;

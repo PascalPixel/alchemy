@@ -19,19 +19,18 @@
 
 #include "radial/cyclone.c"
 #include "radial/blaze.c"
-#include "radial/sand_sinking.c"
-#include "radial/growing_particle.c"
 #include "radial/sand.c"
 #include "radial/burst.c"
-#include "radial/sinking_object.c"
 #include "radial/pound.c"
 #include "radial/growing_sprite.c"
 #include "radial/scoop.c"
+#include "radial/teleport.c"
+#include "radial/parch.c"
 #include "radial/unnamed_28.c"
 #include "radial/tremor.c"
 #include "radial/grind.c"
 #include "radial/hover.c"
-#include "radial/mote_trail.c"
+#include "radial/summon_tablet.c"
 #include "radial/collision_tags.c"
 
 #undef Camera_WorldToScreen

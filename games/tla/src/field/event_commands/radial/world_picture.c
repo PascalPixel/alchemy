@@ -7,6 +7,7 @@
 #include "fixed_math.h"
 
 #include "field/world_map.h"
+#include "version.h"
 
 void WorldPicture_Initialize(void) {
   u32 *markerTiles;
@@ -115,8 +116,6 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
     camera[2] = object->z;
   }
 }
-
-#include "version.h"
 
 /// The leader's point on the world map picture: its world map position scaled
 /// by 853 and 640 in 16384, a far corner of the map folded in (flag 286 set

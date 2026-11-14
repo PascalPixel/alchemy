@@ -7,6 +7,19 @@
 #include "module/field/resource_slot.h"
 #include "module/system/system.h"
 #include "module/tla.h"
+#include "system/system.h"
+#include "types.h"
+#include "graphics/resource.h"
+#include "field/sprite.h"
+#include "system/sprite_metadata.h"
+#include "system/ram_buffer.h"
+#include "debug.h"
+#include "system/heap_release.h"
+#include "system/io_reg.h"
+#include "system/dma.h"
+#include "edition.h"
+#include "graphics/vram_tab.h"
+#include "system/scene.h"
 
 struct ChildObject {
   u8 unk00[2];
@@ -39,13 +52,7 @@ struct ResourceSprite {
   struct AnimationEntry *entries[4];
 };
 
-#include "system/system.h"
 #undef SpriteAnimation_Alloc
-#include "types.h"
-#include "graphics/resource.h"
-#include "field/sprite.h"
-#include "system/sprite_metadata.h"
-#include "system/ram_buffer.h"
 
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
@@ -214,8 +221,6 @@ s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
 
   return 0;
 }
-
-#include "debug.h"
 
 void SpriteAnimation_Reset(struct AnimationEntry *work) {
   s32 value;
@@ -458,16 +463,11 @@ void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
   }
 }
 
-#include "system/heap_release.h"
-#include "system/io_reg.h"
-#include "system/dma.h"
-
 #define ANIMATION_OBJECT_COUNT 64
 
 /// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
 /// entry 93 and copies the strided tile copier into RAM.
-// As ☀️'s function of the same name.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
@@ -568,16 +568,11 @@ void SpriteAnimation_Clear(void *dst) {
 // Resources: create/release animated sprite objects and calculate frame
 // durations.
 
-#include "edition.h"
-
 typedef char
     ResourceObjectWork_size[sizeof(struct ResourceObjectWork) == 56 ? 1 : -1];
 
-#include "graphics/vram_tab.h"
-
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
-// As ☀️'s function of the same name.
 struct ResourceObject *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct ResourceSprite *sprite;
@@ -687,8 +682,6 @@ void Sprite_Destroy(struct ResourceObjectWork *work) {
             REG_DMA3);
   }
 }
-
-#include "system/scene.h"
 
 /// Sums the first cnt frame durations of animation id's entry number `no`.
 /// Commands are two bytes (command, value); 254, 241, 253 and 239 end the

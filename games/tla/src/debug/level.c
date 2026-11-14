@@ -25,6 +25,13 @@
 #include "system/dma.h"
 #include "battle/battle_unit.h"
 #include "game/character_ids.h"
+#include "edition.h"
+#include "field/field_sequence_event.h"
+#include "module/game/game.h"
+#include "module/window/screens.h"
+#include "module/window/window.h"
+#include "graphics/text_render.h"
+#include "graphics/uiflow.h"
 
 extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
 extern struct ActorPlacement gIncreaseItemAndLevel_FirstNamePlacements[];
@@ -41,9 +48,6 @@ void IncreaseItemAndLevel_RunMotionTest(void);
 void IncreaseItemAndLevel_EnableEffectChildMode(void);
 void IncreaseItemAndLevel_OpenIconBrowser(void);
 void IncreaseItemAndLevel_OpenPortraitBrowser(void);
-
-#include "edition.h"
-#include "field/field_sequence_event.h"
 
 /// The entrances that open a room of names in place of the debug room: each
 /// has its own actor placements and the triggers of
@@ -67,13 +71,6 @@ enum IncreaseItemAndLevelActorId {
   ACTOR_LEVEL_EDITOR
 };
 
-#include "scene_tables.h"
-#include "module/game/game.h"
-#include "module/window/screens.h"
-#include "module/window/window.h"
-#include "graphics/text_render.h"
-#include "graphics/uiflow.h"
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -82,7 +79,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /// The scene's actor placements: a room of names for its entrance, else the
 /// debug room's.
-const struct ActorPlacement *IncreaseItemAndLevel_GetActorPlacements(void) {
+const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FIRST)
     return gIncreaseItemAndLevel_FirstNamePlacements;
   if (gMainRoutineWork.entrance == ENTRANCE_NAMES_SECOND)
@@ -130,7 +127,7 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
 
 /// The scene's triggers: the rooms of names' for any entrance above 94, else
 /// the debug room's.
-const struct Trigger *IncreaseItemAndLevel_GetTriggers(void) {
+const struct Trigger *Scene_GetEvents(void) {
   if (gMainRoutineWork.entrance > 94)
     return gIncreaseItemAndLevel_NameTriggers;
   return gIncreaseItemAndLevel_Triggers;
@@ -476,13 +473,6 @@ struct ActorPlacement gIncreaseItemAndLevel_FourthNamePlacements[] = {
 };
 // clang-format on
 
-// The control words of the trigger rows: 0 a talk; FORCE_ON_ACTOR Force cast
-// at an actor (kind 5, on an actor, ability 142), and with
-// PSYNERGY_PHASE_BEFORE_CAST the row run at phase 1, before the cast.
-#define TRIGGER_TALK 0
-#define FORCE_ON_ACTOR 0x8e15
-#define PSYNERGY_PHASE_BEFORE_CAST 0x10000000
-
 /// Talking to each tester runs its tool, as The Broken Seal's Japanese
 /// edition has it: Force cast at the portrait browser runs a motion test, and
 /// a second row on the same person, run before the cast, sets the effect's
@@ -496,10 +486,11 @@ struct Trigger gIncreaseItemAndLevel_Triggers[] = {
      EVENT(IncreaseItemAndLevel_OpenPortraitBrowser)},
     {TRIGGER_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_RunLevelEditor)},
-    {FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_RunMotionTest)},
-    {PSYNERGY_PHASE_BEFORE_CAST | FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER,
-     CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
     {TRIGGER_TABLE_END},
 };
 
@@ -546,18 +537,16 @@ struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
     {TRIGGER_TALK, 32, CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_ShowName)},
-    {FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT(IncreaseItemAndLevel_RunMotionTest)},
-    {PSYNERGY_PHASE_BEFORE_CAST | FORCE_ON_ACTOR, ACTOR_PORTRAIT_BROWSER,
-     CONDITION_ALWAYS, EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT(IncreaseItemAndLevel_EnableEffectChildMode)},
     {TRIGGER_TABLE_END},
 };
 
 /// Unused: requests an exit through a window transition over 24 frames; no
 /// trigger row names it.
-// XXX: what the event work's words at 428 and 436 are; The Broken Seal's
-// FieldWork has transition and transitionFrames there, which a shared
-// declaration here would settle.
 void IncreaseItemAndLevel_RequestExit(s32 countdown) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -569,7 +558,7 @@ void IncreaseItemAndLevel_RequestExit(s32 countdown) {
 /// The scene's initialize entry: starts the window transition, and in the
 /// debug room (entrances up to 89) draws ACTOR_LEVEL_EDITOR 1.7 times its
 /// size, as The Broken Seal's Japanese edition does.
-s32 IncreaseItemAndLevel_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->transition = 516;

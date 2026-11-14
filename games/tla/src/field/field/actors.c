@@ -9,6 +9,23 @@
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 #include "module/system/system.h"
+#include "system/task.h"
+#include "field/objdisp.h"
+#include "actor.h"
+#include "actor_view.h"
+#include "system/ram_code.h"
+#include "battle/battle_system.h"
+#include "system/transform.h"
+#include "macros.h"
+#include "system/main_routine_work.h"
+#include "field_sprite.h"
+#include "graphics/render_input.h"
+#include "fixed_math.h"
+#include "map.h"
+#include "system/iwram_call.h"
+#include "field/sprite.h"
+#include "field/field.h"
+#include "field/script.h"
 
 void Animation_WaitForTrackEnd(struct AnimObject *object) {
   u8 frame = object->frame;
@@ -136,13 +153,10 @@ s32 MapGrid_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
   return -1;
 }
 
-#include "system/task.h"
-
 /// Sets up the map animation work for map mode: its 92-byte work and an 8 KB
 /// buffer, both cleared by DMA from one zero word, and the animation callbacks
 /// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
 /// 0x480, the others ActorSystem_PlaceSprites).
-// No ☀️ twin found; ☀️'s field.c starts its map animations the same way.
 void ActorSystem_Initialize(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;
@@ -175,8 +189,6 @@ void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
 
-#include "field/objdisp.h"
-#include "actor.h"
 struct ActorSpriteView;
 #define Animation_ApplyChildArgument Animation_ApplyChildArgument
 struct ActorSpriteView;
@@ -185,15 +197,10 @@ struct ActorSpriteView;
 #define InitializeAnimationObjects InitializeAnimationObjects
 struct ActorSpriteView;
 #define ResourceMetadata_Register ResourceMetadata_Register
-#include "actor_view.h"
 #undef ResourceMetadata_Register
 #undef InitializeAnimationObjects
 #undef Animation_ApplyChildValue
 #undef Animation_ApplyChildArgument
-#include "system/ram_code.h"
-#include "battle/battle_system.h"
-#include "system/transform.h"
-#include "macros.h"
 
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
@@ -427,8 +434,6 @@ void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
   }
 }
 
-#include "system/main_routine_work.h"
-
 /// Starts an actor on the script that approaches its watched actor
 /// (SC_APPROACH_WATCHED), watching watched.
 void Actor_StartApproachWatched(struct Actor *actor, struct Actor *watched) {
@@ -534,8 +539,6 @@ void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
     ((struct ActorSpriteView *)object->sprite)->displayFlag = value;
 }
 
-#include "field_sprite.h"
-
 void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
   if (object != NULL && object->animationKind == 1)
     Animation_ApplyChildValuesToRecord(
@@ -553,9 +556,6 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
   sprite->partPriority = priority;
   object->priorityFlags &= ~1;
 }
-
-#include "graphics/render_input.h"
-#include "fixed_math.h"
 
 /* VIEW(resource_slot): tag struct IconSprite as struct
  * IconSprite__resource_slot; item_icon.h has another definition; tried with the
@@ -581,7 +581,6 @@ struct IconSprite__resource_slot {
 /// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
-// No ☀️ twin found.
 void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
   struct IconSprite__resource_slot *sprite;
   u8 *buffer;
@@ -648,11 +647,6 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
 }
 
 s32 Actor_ReturnTrue(void) { return 1; }
-
-#include "map.h"
-#include "system/iwram_call.h"
-#include "field/sprite.h"
-#include "field/field.h"
 
 #define Render_ApplyProjectedPlacementAtDepth                                  \
   Render_ApplyProjectedPlacementAtDepth
@@ -882,9 +876,8 @@ void ActorSystem_PlaceSprites(void) {
 }
 
 // The fixed camera: each frame it places every object's sprites, facing them
-// by the angle from the eye to the target. The Lost Age places each object in
-// a function of its own, the body of ☀️'s ObjectSystem_UpdateCameraFixed
-// loop.
+// by the angle from the eye to the target, each object in a function of its
+// own.
 
 s32 ActorCamera_ReturnTrue(void) { return 1; }
 
@@ -899,7 +892,7 @@ void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
   s32 remaining;
 
   if (GameFlag_Get(363))
-    scale = gData_0802eb90;
+    scale = gActorSprite_FullScale;
   switch (object->kind & 15) {
   case 1:
     point = object->position;
@@ -971,8 +964,6 @@ void ObjectSystem_UpdateCameraFixed(void) {
   HeapSlot_Release(80);
 }
 
-#include "field/script.h"
-
 /// Jumps to the script the next word points to and returns 1 to continue
 /// with its first command.
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc) {
@@ -985,16 +976,16 @@ s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc) {
   return 1;
 }
 
-/// Clears byte54 and advances to the next command.
+/// Hides the sprites (spriteStorageKind 0) and advances to the next command.
 s32 ActorScript_HideSprites(struct ScriptInterpreter *sc) {
-  sc->byte54 = 0;
+  sc->spriteStorageKind = 0;
   sc->cursor++;
   return 1;
 }
 
-/// Sets byte54 to 1 and advances to the next command.
+/// Shows one sprite (spriteStorageKind 1) and advances to the next command.
 s32 ActorScript_ShowSprite(struct ScriptInterpreter *sc) {
-  sc->byte54 = 1;
+  sc->spriteStorageKind = 1;
   sc->cursor++;
   return 1;
 }

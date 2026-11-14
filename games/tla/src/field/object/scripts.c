@@ -148,12 +148,12 @@ const s32 gMovementType_StandScript[] = {
 };
 
 /// Clears the actor's child and collision flags.
-const s32 gData_080f34e8[] = {
+const s32 gMovementType_ClearCollisionScript[] = {
     SC_CALL(Actor_ClearChildAndCollisionFlags),
     SC_END,
 };
 
-const s32 gData_080f34f4[] = {
+const s32 gMovementType_ClearChildScript[] = {
     SC_CALL(Actor_ClearChildFlags),
     SC_END,
 };
@@ -201,7 +201,7 @@ const s32 gMovementType_WanderCloseScript[] = {
 };
 
 /// Squash and stretch, twice in each round, for ever.
-const s32 gData_080f3614[] = {
+const s32 gMovementType_SquashScript[] = {
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, Q16_ONE),
     SC_SET(SW_SCALE_Y, Q16_ONE),
@@ -247,7 +247,7 @@ const s32 gMovementType_FaceLeaderScript[] = {
 /// Keep the leader's display layer.
 // The Spanish and Italian scaffolds name the function by the far-call slot
 // that reaches it in the other editions.
-const s32 gData_080f3764[] = {
+const s32 gMovementType_TakeLeaderLayerScript[] = {
     SC_CALL(Actor_TakeLeaderLayer),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),

@@ -68,7 +68,7 @@ struct ParticleTimer {
   u16 timer;
 };
 
-// ⚓️'s composite sprite (as field.h's CompositeAnimation).
+/// A composite sprite, as field.h's CompositeAnimation.
 struct CloakSprite {
   u8 unk00[0x19];
   u8 dirty; // redraw the parts
@@ -501,7 +501,7 @@ struct CleanupWork {
 
 void FieldEffect_CheckCloakTile(void);
 
-void Func_080dc954(void);
+void FieldPsynergy_MarkWorldMapTilesUsed(void);
 
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
@@ -621,7 +621,7 @@ struct BurstParticleVisual {
   } attributes;
 };
 
-// ⚓️'s sprite keeps its second part 28 bytes in.
+/// A sprite whose second part is 28 bytes in.
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
   u8 reserved0c[16];
@@ -763,10 +763,10 @@ struct OwnerObject {
   u8 layer;
 };
 
-extern const u8 gData_080f0ef8[];
+extern const u8 gBattleEffect_HeavyImpactScript[];
 
 extern const u8 gData_080f0e58[];
-extern u8 gData_080f0e9c[];
+extern u8 gAnim_ChildPaletteCycle[];
 
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
                                                   struct Vec3 *position);

@@ -16,6 +16,7 @@
 #include "battle/battle_system.h"
 #include "field/event.h"
 #include "field/field.h"
+#include "field/perspective.h"
 #include "flag_call.h"
 #include "gamepak/far_call/window.h"
 #include "system/heap_release.h"
@@ -24,6 +25,17 @@
 #include "module/field/object.h"
 #include "text/msg_ids.h"
 #include "module/system/system.h"
+#include "map.h"
+#include "system/main_routine_work.h"
+#include "scene_ids.h"
+#include "system/iwram_call.h"
+#include "battle/battle_unit.h"
+#include "field/sprite.h"
+#include "actor.h"
+#include "system/frame.h"
+#include "actor_view.h"
+#include "field_sprite.h"
+#include "system/dma.h"
 
 /// Fades the palettes back to the saved ones over the given frames.
 void BattleEffect_FadeToSavedPalettes(s32 frames) {
@@ -79,12 +91,6 @@ void BattleEffect_UpdateAllEffectSlots(void) {
     slot++;
   } while (remainingSlots >= 0);
 }
-
-#include "map.h"
-#include "system/main_routine_work.h"
-#include "scene_ids.h"
-#include "system/iwram_call.h"
-#include "battle/battle_unit.h"
 
 struct EffectWork {
   u8 unk000[0x1c];
@@ -173,9 +179,6 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   Task_Add(BattleEffect_UpdateAllEffectSlots, 0x480);
 }
 
-#include "field/sprite.h"
-#include "actor.h"
-
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
@@ -261,17 +264,12 @@ void EventObject_Initialize(void) {
   event->castStarted = 1;
 }
 
-#include "system/frame.h"
-#include "actor_view.h"
-
 void BattleEffect_StopMainActor(void) {
   struct EffectSceneWork *work = Ram_HeapSlots->effectWork;
 
   BattleEffect_SetObjectUpdateMode(work->mainObject, 0);
   wait(1);
 }
-
-#include "field_sprite.h"
 
 void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
@@ -290,12 +288,12 @@ void BattleEffect_CleanupSceneObjects(void) {
   first = 17;
   if (work->animation >= first &&
       (work->animation <= 27 || work->animation == 30))
-    Func_080dc954();
+    FieldPsynergy_MarkWorldMapTilesUsed();
   if (event->psynergyActing != 0)
     return;
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  if (event->mode == 3 && block != NULL) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP && block != NULL) {
     i = 0;
     if (block[0x2a01] != 0) {
       do {
@@ -323,25 +321,23 @@ void BattleEffect_CleanupSceneObjects(void) {
   HeapSlot_Release(224);
 }
 
-/// When the event work's mode byte at 0x18a is 3, copies it to the map
-/// work's byte at 0x970.
-void Func_080dc954(void) {
+/// On the World Map, notes that the field Psynergy has used the second half of
+/// the BG tile buffer, so the next still picture decodes it again.
+void FieldPsynergy_MarkWorldMapTilesUsed(void) {
   struct HeapSlots *slots = Ram_HeapSlots;
   s32 mode = ((struct FieldWork *)slots->fieldWork)->mode;
 
-  if (mode == 3)
-    *((u8 *)slots->mapWork + 0x970) = mode;
+  if (mode == ACTOR_SYSTEM_WORLD_MAP)
+    ((struct WorldMapView *)slots->mapWork)->tileBufferUsed = mode;
 }
-
-#include "system/dma.h"
 
 #define WAVE_FX_SLOT 88
 
 /* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
  * module/field/event_commands.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/object/visual_attributes/scene.c:351: structure has no
- * member named `id'. */
+ * games/tla/src/field/object/visual_attributes/field_psynergy_work.c: structure
+ * has no member named `id'. */
 struct WaveFxWork__scene {
   u8 unk000[0x28b];
   s8 red;

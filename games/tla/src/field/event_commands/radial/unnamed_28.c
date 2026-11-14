@@ -1,12 +1,139 @@
 /// @file
-/// The burst of sparkles an effect ends with, and moving the view: opening the
-/// whole map to it, swinging it and giving the bounds back.
+/// Field Psynergy kind 28, of the two abilities whose names are question marks:
+/// its task, its burst of sparkles, and moving the view (opening the whole map
+/// to it, swinging it and giving the bounds back).
 // Part of radial.c.
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
+#include "field/field_work.h"
+#include "battle/battle_unit.h"
+#include "window.h"
+#include "bg_scroll.h"
+#include "map.h"
+#include "view_move.h"
+#include "version.h"
+
+struct Unk_080e807cEntry {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 unk0c;
+  s32 unk10;
+  s32 unk14;
+  s32 timer;
+};
+
+struct Unk_080e807cWork {
+  u8 unk0000[0x2100];
+  struct EffectSprite sprites[16];
+  u8 unk2380[0x280];
+  struct Unk_080e807cEntry entries[16];
+  u8 unk27c0[0x1c2];
+  u16 tile;
+  s8 unk2984;
+  s8 unk2985;
+  s8 unk2986;
+  u8 unk2987;
+  u16 phase;
+};
+
+/// Task of field Psynergy 28 (its name is question marks): its motes and
+/// colours each frame.
+void FieldPsynergy_UpdateUnnamed28(void) {
+  struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  s32 *pos = position;
+  struct Unk_080e807cEntry *entry;
+  struct EffectSprite *sprite;
+  s32 x;
+  s32 y;
+  s32 i;
+  s32 timer;
+  u16 *phase;
+  u16 *tile;
+  s32 red;
+
+  pos[0] = actor->x;
+  pos[1] = actor->y + 0x100000;
+  pos[2] = actor->z;
+  if (work->unk2985 != 0)
+    Vector_AddPolarOffset(px(2), -(event->unkcae << 11), pos);
+  Camera_WorldToScreen(pos);
+  x = pos[0] >> 16;
+  gBgScroll[0].x = 64 - x;
+  y = pos[2] >> 16;
+  gBgScroll[0].y = 64 - y;
+  BgMap_DrawClipped16x16(x - 64, y - 64);
+
+  if (work->unk2986 != 0) {
+    i = 0;
+    phase = &work->phase;
+    red = 28;
+  cycle:
+    {
+      /* FAKEMATCH(pin): green pinned to r5. */
+      register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
+      s32 blue;
+      s32 color;
+
+      blue = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
+      green = (green >> 16) + 23;
+      blue = ((blue >> 16) + 12) << 10;
+      green <<= 5;
+      /* FAKEMATCH(dead): an empty once-only loop. */
+      do {
+      } while (0);
+      color = blue | green | red;
+
+      ((u16 *)(BG_PLTT + 15 * 16))[i] = color;
+      ((u16 *)(OBJ_PLTT + 15 * 16))[i] = color;
+    }
+    if (++i < 16)
+      goto cycle;
+    work->phase++;
+  }
+
+  if (work->unk2984 != 0) {
+    entry = work->entries;
+    sprite = work->sprites;
+    tile = &work->tile;
+    for (i = 15; i >= 0; i--, sprite++, entry++) {
+      timer = entry->timer;
+      if (timer == 0) {
+        sprite->angle = Random16();
+        pos[2] = timer;
+        pos[1] = timer;
+        pos[0] = timer;
+        Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
+        SET_POSITION(entry, pos[0], pos[1] + 0x100000, pos[2]);
+        timer = entry->timer;
+      }
+      if (timer >= 0) {
+        sprite->oam.index = *tile + ((timer >> 2) & 3) * 4;
+        pos[0] = actor->x + entry->x;
+        pos[1] = actor->y + entry->y;
+        pos[2] = actor->z + entry->z;
+        EffectSprite_DrawAtWorldPosition(sprite, pos);
+        timer = entry->timer;
+      }
+      if ((entry->timer = timer + 1) == 16)
+        entry->timer = 0;
+    }
+  }
+
+  if (event->unkcad != 0 && event->unkcae != 0)
+    event->unkcae--;
+  if (event->unkcae == 0)
+    event->psynergy = 0x209b;
+}
+#undef NEXT_PHASE
+#undef WHIRL_COUNT
+#undef SPARK_COUNT
 
 struct RingMote {
   s32 x;
@@ -36,8 +163,6 @@ struct RingWork {
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
 void Camera_WorldToScreen(s32 *position);
-void FieldPsynergy_UpdateUnnamed28(void);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 
 void FieldPsynergy_Unnamed28(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
@@ -268,10 +393,6 @@ struct SparkleBurstWork {
   s16 resource;
 };
 
-struct Actor *Actor_GetById(u32 objectId);
-void Window_LoadGraphics(void);
-extern char ResourceId_SparkleFade;
-
 /// The burst of 64 sparkles that FieldPsynergy_UpdateUnnamed28's effect ends
 /// with: once the event work asks for it, it plays sound 167, fills the tiles
 /// at 0x06002000, reloads the window graphics, loads the sparkle picture
@@ -368,10 +489,6 @@ void FieldPsynergy_EndUnnamed28(void) {
   HeapSlot_Release(92);
 }
 
-#include "map.h"
-#include "view_move.h"
-#include "version.h"
-
 // How far the view stays from the edge it is beside, in pixels.
 #define VIEW_EDGE_MARGIN 12
 
@@ -384,7 +501,6 @@ struct MapBounds {
 };
 
 void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
-void MapGrid_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 
 // Opens the whole map to the view: keeps the view centre's position and the
 // map's view bounds for ViewMove_End to restore, notes which edges the view
@@ -421,7 +537,7 @@ void ViewMove_Start(s32 direction) {
     }
   }
 #endif
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (direction & VIEW_MOVE_X) {
       MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
       return;
@@ -493,7 +609,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (*(s32 *)Ram_HeapSlots->mapWork->unk0fc != 0)
     return;
 #endif
-  if (event->mode == 3)
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return;
 
   if (direction & VIEW_MOVE_X) {
@@ -539,9 +655,9 @@ void ViewMove_End(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
 #if TLA_PATCH_1
-  if (*(s32 *)map->unk0fc != 0 || event->mode == 3) {
+  if (*(s32 *)map->unk0fc != 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #else
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 #endif
     MapGrid_SetScreenShakeFar(0, 0, 0);
   } else {

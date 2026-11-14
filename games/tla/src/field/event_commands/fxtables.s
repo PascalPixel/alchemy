@@ -1,5 +1,5 @@
 	.section .rodata
-@ Effect tables and object scripts after gBattleEffect_CyclePatternWords, in
+@ Effect tables and object scripts after gFieldEffect_CyclePatternWords, in
 @ the order of The Broken Seal's field_sequence_tables.c. Object scripts are words
 @ in this game's command numbers: 0x00 wait, 0x01 sync, 0x0d loop,
 @ 0x16 set, 0x17 add, 0x26 free, 0x2e call; a label is 0x80000000 | n << 16
@@ -31,8 +31,8 @@ gFieldEffect_HeavyImpactScript:
 
 @ The Broken Seal's gBattleEffect_HeavyImpactScript: sync, call SpawnHeavyImpactEffect,
 @ free
-	.global gData_080f0ef8
-gData_080f0ef8:
+	.global gBattleEffect_HeavyImpactScript
+gBattleEffect_HeavyImpactScript:
 	.4byte 0x01
 	.4byte 0x2e, SpawnHeavyImpactEffect
 	.4byte 0x26
@@ -63,8 +63,8 @@ Data_080f0f54:
 
 @ Read by FieldPsynergy_GatherNearbyCells: 21 {x, y} cell offsets within two of a centre,
 @ the corners left out
-	.global Data_080f0f64
-Data_080f0f64:
+	.global gFieldPsynergy_NearbyCellOffsets
+gFieldPsynergy_NearbyCellOffsets:
 	.byte -1, -2, 0, -2, 1, -2
 	.byte -2, -1, -1, -1, 0, -1, 1, -1, 2, -1
 	.byte -2, 0, -1, 0, 0, 0, 1, 0, 2, 0

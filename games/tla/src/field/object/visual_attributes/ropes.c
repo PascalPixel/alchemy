@@ -1,14 +1,279 @@
 /// @file
-/// The chain works: a slot's chain of nodes laid along a line between two
-/// points or built around a point, the states of its slots, a second chain
-/// work with its per-frame callback, finding a slot, and a field effect that
-/// animates sixteen tiles of its own.
+/// Ropes, tightropes and hanging vines: chains of nodes laid between two
+/// points or round one, drawn and updated each frame, and the leader crossing
+/// them.
 // Part of visual_attributes.c.
 
 #include "../visual_attributes_internal.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "gamepak/far_call/shop.h"
+#include "module/field/event_commands.h"
 #include "module/field/field.h"
+#include "module/field/field_sequence.h"
 #include "module/field/object.h"
+#include "module/system/system.h"
+#include "scene_call.h"
 #include "macros.h"
+#include "item_icon.h"
+
+// The ropes Lash ties (heap slot 156): eight slots, each a chain of nodes
+// between two posts, coiled at the first post until tied. A tied rope can be
+// walked (render mode 3) and swings when stepped on. XXX: the swing and the
+// prompts 0xfc85 and 0xfc86 are read from the code; a render of a lashed rope
+// being crossed would confirm them.
+
+/// Allocates the ropes' work, loads their node picture and starts Rope_Draw
+/// and Rope_Update. A scene with ropes to lash calls it first.
+void Rope_Initialize(void) {
+  struct RopeWork *work = HeapSlot_AllocEwram(156, sizeof(struct RopeWork));
+  void *buffer = Heap_Alloc(0x100);
+
+  Dma_Fill32(0, work, sizeof(struct RopeWork));
+  work->vramEntry = VramCache_FindFreeEntry();
+  Decompress_TaggedLz(gRope_Tiles, buffer);
+  VramCache_Load(work->vramEntry, 0x100, buffer);
+  Task_Add(Rope_Draw, TASK_PASS_VBLANK);
+  Task_Add(Rope_Update, TASK_PASS_VBLANK + 15);
+  Heap_Release(buffer);
+}
+
+/// The heap slot 0x9c work's per-frame callback (Rope_Initialize schedules it).
+/// For each of the eight slots it draws a sprite at the midpoint of each pair
+/// of neighbouring nodes in the slot's chain, 4 pixels up, turned along the
+/// pair and given the slot's priority, culled to the screen and sorted into the
+/// OAM buckets by depth; the chain's first node takes the last angle.
+void Rope_Draw(void) {
+  struct RopeWork *work = ROPE_WORK;
+  struct RopeSlot *slot = work->slots;
+  s32 i;
+  s32 prevX = 0;
+  s32 prevY = 0;
+  u32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  s32 prevZ = 0;
+  s32 started = 0;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 *view = &map->viewX;
+  s32 viewX = view[0] & 0xffff0000;
+  s32 viewZ = view[1] & 0xffff0000;
+  s32 originY = map->origin[1];
+  struct AffineTransform transform;
+  struct RopeNode *node;
+  u32 angle;
+
+  for (i = 7; i >= 0; i--, slot++) {
+    for (node = slot->head; node != NULL; node = node->next) {
+      s32 priority = slot->priority;
+      s32 y = node->y;
+      s32 x = node->x;
+      s32 z = node->z;
+
+      y += 0xfffc0000;
+
+      if (started) {
+        s32 screenX;
+        s32 depth;
+        s32 screenY;
+
+        angle = ((u16)ArcTan2(prevX - x, (z - prevZ) + (prevY - y)) +
+                 TRIG_TURN / 4) &
+                0xffff;
+        screenX = (prevX + x) / 2 - viewX;
+        // prevY is reused for the midpoint's height, then its depth key; a
+        // local of its own differs.
+        prevY = (prevY + y) / 2 - originY;
+        depth = (prevZ + z) / 2 - viewZ - originY;
+        screenY = depth - prevY;
+        if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
+            screenY <= 0xdfffff) {
+          s32 spriteX = ((screenX >> 16) - 4) & 0x1ff;
+          s32 spriteY = ((screenY >> 16) - 4) & 0xff;
+          struct AnimationSpritePart *sprite;
+
+          prevY = ((prevY + depth) >> 16) + 58;
+          sprite = &node->sprite;
+
+          ((u32 *)sprite)[0] = 0;
+          ((u32 *)&node->sprite)[1] = spriteY | (spriteX << 16) | 0x2000;
+          ((u32 *)&node->sprite)[2] = 0x800 | tile;
+          if (angle != 0) {
+            transform.angle = angle;
+            transform.scaleX = 0x100;
+            transform.scaleY = 0x100;
+            node->sprite.affine = 1;
+            node->sprite.affineIndex = OamMatrix_AllocFromTransform(&transform);
+          }
+          node->sprite.priority = priority;
+          node->angle = angle;
+          Oam_AddSpriteAtDepthClamped(sprite, prevY);
+        }
+      }
+      prevX = x;
+      prevY = y;
+      prevZ = z;
+      started = 1;
+    }
+    prevX = 0;
+    prevY = 0;
+    prevZ = 0;
+    started = 0;
+    if (slot->head != NULL)
+      slot->head->angle = angle;
+  }
+}
+
+/// The ropes' per-frame task: unless flag 260 is set, prompts to step onto a
+/// tied rope when the leader stands at one of its ends (0xfc85), or while on
+/// one (render mode 3, 0xfc86); then swings each swinging rope, its amplitude
+/// decaying by 0.95 a frame until it settles.
+void Rope_Update(void) {
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct RopeWork *work = ROPE_WORK;
+  struct RopeSlot *slot;
+  s32 i = 0;
+
+  if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
+    if (gMainRoutineWork.renderMode == 0) {
+      s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
+
+      if (target != -1) {
+        for (i = 0; i < 8; i++)
+          if (work->slots[i].first == target || work->slots[i].second == target)
+            break;
+        if (i < 8 &&
+            Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
+          event->raisedTrigger = 0xfc85;
+      }
+    } else if (gMainRoutineWork.renderMode == 3) {
+      event->raisedTrigger = 0xfc86;
+    }
+  }
+  slot = work->slots;
+  for (i = 0; i < 8; i++, slot++) {
+    if (slot->swinging != 0) {
+      s32 swing = Iwram_MulQ16(Trig_Sin(slot->phase), slot->amplitude);
+
+      slot->phase += 0x1000;
+      slot->amplitude = Iwram_MulQ16(slot->amplitude, 0xf333);
+      if (slot->amplitude <= 0x1998) {
+        slot->amplitude = 0;
+        slot->swinging = 0;
+      }
+      Rope_SwingBetween(i, slot->first, slot->second, swing);
+    }
+  }
+}
+
+/// Returns the first unused of the ropes' 128 nodes, or NULL.
+struct RopeNode *Rope_AllocNode(void) {
+  struct RopeWork *work = ROPE_WORK;
+  struct RopeNode *node = work->nodes;
+  s32 index;
+
+  for (index = 0; index <= 127; index++) {
+    if (node->kind == 0)
+      return node;
+    node++;
+  }
+  return NULL;
+}
+
+/// Lays rope index tied between posts id and other and shows both posts tied
+/// (animation 2).
+void Rope_Tie(s32 index, s32 id, s32 other) {
+  struct RopeWork *work = ROPE_WORK;
+  s32 priority = 2;
+  struct Actor *first = ObjectTable_Get(id);
+  struct Actor *second = ObjectTable_Get(other);
+
+  if (first != NULL && second != NULL) {
+    struct RopeSlot *slot;
+    s32 lift;
+
+    if (first->animationKind == 1)
+      priority = ((struct FieldSprite *)first->sprite)->priority;
+    slot = &work->slots[index];
+    slot->first = id;
+    slot->second = other;
+    slot->priority = priority;
+    lift = 128;
+    lift <<= 12;
+    Rope_LayTied(index, first->x, first->y + lift, first->z, second->x,
+                 second->y + lift, second->z);
+  }
+  Actor_SelectAnimationFar(first, 2);
+  Actor_SelectAnimationFar(second, 2);
+}
+
+/// Builds rope index's nodes on the line between two points, one for each 6
+/// pixels, bowed by a half sine; marks it tied and swinging and sets its flag.
+s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
+  struct RopeWork *work = ROPE_WORK;
+  s32 result = 0;
+  s32 dx = x2 - x1;
+  s32 sx = dx >> 8;
+  s32 dy = y2 - y1;
+  s32 sy = dy >> 8;
+  s32 dz = z2 - z1;
+  s32 sz = dz >> 8;
+  s32 count;
+  struct RopeSlot *slot;
+  struct RopeNode **link;
+  struct RopeNode *node;
+  u16 angle;
+  s32 sin;
+  s32 cos;
+  s32 i;
+
+  count = Iwram_Sqrt(Iwram_MulQ16(sx, sx) + Iwram_MulQ16(sy, sy) +
+                     Iwram_MulQ16(sz, sz)) /
+              6 +
+          1;
+  slot = &work->slots[index];
+  link = &slot->head;
+  angle = ArcTan2(sx, sy);
+  sin = Trig_Sin(angle);
+  cos = Trig_Cos(angle);
+  slot->segments = count;
+  for (i = 0; i <= count; i++) {
+    s32 bow;
+
+    node = Rope_AllocNode();
+    if (node == NULL) {
+      result = -1;
+      break;
+    }
+    bow = Iwram_MulQ16(Trig_Sin((i << 16) / count), TRIG_TURN);
+    SET_POSITION(node, x1 + i * dx / count + Iwram_MulQ16(bow, cos),
+                 y1 + i * dy / count + Iwram_MulQ16(bow, sin),
+                 z1 + i * dz / count);
+    node->slot = index + 1;
+    if (i == count)
+      node->kind = 2;
+    else
+      node->kind = 1;
+    *link = node;
+    link = &node->next;
+  }
+  *link = NULL;
+  slot->state = 1;
+  slot->swinging = 1;
+  slot->amplitude = 0x10000;
+  slot->phase = 0x4000;
+  if (slot->flag != 0)
+    GameFlag_Set(slot->flag);
+  return result;
+}
+
+/// Redraws rope index between posts from and to, bowed by mode.
+void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
+  struct Actor *a = ObjectTable_Get(from);
+  struct Actor *b = ObjectTable_Get(to);
+
+  if (a != NULL && b != NULL)
+    Rope_LayBowed(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000, b->z,
+                  mode);
+}
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
  * ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y),
@@ -128,8 +393,6 @@ void Rope_GetEndNodePosition(s32 index, s32 *position) {
   SET_VECTOR(position, node->x, node->y, node->z);
 }
 
-#include "module/field/field.h"
-
 extern s32 gRope_LashPhase;
 
 /// Lash: throws rope index from post fromId to post toId and ties it (both
@@ -182,8 +445,6 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     }
   }
 }
-
-#include "module/system/system.h"
 
 /// Throws rope index from one point to another over twice its node count in
 /// frames: the end flies on an arc and each node follows its neighbour at 6
@@ -288,10 +549,6 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   }
 }
 
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
-
 /// Pulls a thrown rope back into its coil at the first point, one node a frame,
 /// clearing its flag; both posts take animation 3 first.
 s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
@@ -394,8 +651,6 @@ void Rope_DebugSwing(struct Actor *object) {
     Rope_SwingBetween(0, 12, 13, 0);
 }
 
-struct Actor *Actor_GetById(u32 objectId);
-
 /// Returns 1 when the leader stands on the cell of post firstId or secondId, or
 /// a cell beside it along an axis, at the same height.
 s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
@@ -497,11 +752,6 @@ void Tightrope_Initialize(void) {
   Task_Add(Tightrope_Update, TASK_PASS_VBLANK + 15);
   Heap_Release(buffer);
 }
-
-#include "module/field/field.h"
-#include "module/field/field_sequence.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
 
 void Tightrope_Draw(void) {
   struct TightropeWork *work = TIGHTROPE_WORK;
@@ -813,11 +1063,6 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   }
 }
 
-#include "item_icon.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/system/system.h"
-
 /// Rope_Throw for a tightrope.
 s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct TightropeWork *work = TIGHTROPE_WORK;
@@ -1031,8 +1276,10 @@ void Tightrope_DebugSwing(struct Actor *object) {
 }
 
 // The four 256-byte pictures of each set (type-01 compressed).
-extern const u8 Data_080f0c1c[], Data_080f0c63[], Data_080f0cb8[];
-extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
+extern const u8 gHangingVine_VineTopPicture[], gHangingVine_VineUpperPicture[],
+    gHangingVine_VineLowerPicture[];
+extern const u8 gHangingVine_VineBottomPicture[],
+    gHangingVine_ChainTopPicture[], gHangingVine_ChainMiddlePicture[];
 
 #define TILE_EFFECT_SLOT 164
 #define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first picture set
@@ -1060,16 +1307,21 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
   Dma_Fill32(0, work, sizeof(struct HangingVineWork));
   work->vramEntry = VramCache_FindFreeEntry();
   if (kind == TILE_EFFECT_KIND_ALT) {
-    Decompress_TaggedLz(Data_080f0c1c, pictures);
-    Decompress_TaggedLz(Data_080f0c63, pictures + PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_VineTopPicture, pictures);
+    Decompress_TaggedLz(gHangingVine_VineUpperPicture, pictures + PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_VineLowerPicture,
+                        pictures + 2 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_VineBottomPicture,
+                        pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
   } else {
-    Decompress_TaggedLz(Data_080f0d5e, pictures);
-    Decompress_TaggedLz(Data_080f0dbb, pictures + PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_ChainTopPicture, pictures);
+    Decompress_TaggedLz(gHangingVine_ChainMiddlePicture,
+                        pictures + PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_ChainMiddlePicture,
+                        pictures + 2 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_ChainBottomPicture,
+                        pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
   }
   {
@@ -1157,8 +1409,6 @@ void HangingVine_Draw(void) {
 #undef TILE_EFFECT_SLOT
 #undef TILE_EFFECT_KIND_ALT
 #undef PICTURE_SIZE
-
-struct Actor *Actor_GetById(u32 objectId);
 
 /// The vines' second per-frame task: sways each active vine's links below
 /// its anchor.
@@ -1267,4 +1517,286 @@ struct HangingVineLink *HangingVine_AllocLink(void) {
     link++;
   }
   return NULL;
+}
+
+#define CELL_MASK 0xfff00000 // 16-pixel cells
+
+/// Hangs a vine of seven links from the anchor object objectId, clearing the
+/// five cells it hangs over, starting the vines first if they are not running;
+/// with grow set, the vine drops into place over 28 frames.
+void HangingVine_Hang(s32 objectId, s32 grow) {
+  struct ChainObject *object;
+  struct MapWork *map;
+  struct HangingVineSlot *slot;
+  struct HangingVineLink *link;
+  struct HangingVineLink **tail;
+  struct MapCell *cells;
+  struct MapCell *cell;
+  s32 i;
+  s32 x;
+  s32 top;
+  s32 z;
+  s32 y;
+  s32 frame;
+  s32 last;
+  s32 kind;
+  s32 running;
+
+  object = Actor_GetById(objectId);
+  running = Ram_HeapSlots->unk84[8];
+  kind = 372;
+  map = Ram_HeapSlots->mapWork;
+  if (running == 0) {
+    if (object->sprite != 0 && object->sprite->entries[0] != 0)
+      kind = *object->sprite->entries[0];
+    HangingVine_Initialize(kind);
+  }
+  if (HangingVine_FindSlot(objectId) != 0)
+    return;
+  slot = HangingVine_FindFreeSlot();
+  if (slot == 0)
+    return;
+
+  // Clear the collision codes of the five cells above the object.
+  x = object->x >> 20;
+  z = (object->z - object->y) >> 20;
+  cells = map->layers[2].cells;
+  for (i = 0; i < 5; i++) {
+    z++;
+    cell = cells;
+    cell += x + z * 128;
+    cell->collisionCode = 0;
+  }
+
+  x = (object->x & CELL_MASK) + px(8);
+  y = object->y & CELL_MASK;
+  top = y + px(8);
+  z = (object->z & CELL_MASK) + px(16);
+  Actor_SelectAnimationFar((struct Actor *)object, 0);
+  object->motionFlags = 0;
+  object->collisionFlags = 0;
+  object->z += px(16);
+  object->y -= px(64);
+  Actor_SetSpriteFlagsFar(object, 0);
+
+  // Hang the links.
+  last = 6;
+  tail = &slot->root;
+  for (i = 0; i <= last && (link = HangingVine_AllocLink()) != 0; i++) {
+    SET_POSITION(link, x, y + px(15) - i * px(14), z);
+    if (i == 0)
+      link->kind = 1;
+    else if (i == 1)
+      link->kind = 2;
+    else if (i == last)
+      link->kind = 5;
+    else
+      link->kind = i % 2 + 3;
+    *tail = link;
+    tail = &link->next;
+  }
+
+  if (grow == 0) {
+    for (i = 0, link = slot->root; i <= last && link != 0; i++)
+      link = link->next;
+  } else {
+    for (frame = 1; frame <= 28; frame++) {
+      i = 0;
+      link = slot->root;
+      if (i <= last && link != 0) {
+        s32 drop = -(frame << 15);
+
+        do {
+          SET_POSITION(link, x, top - drop / 2, z);
+          drop += frame << 16;
+          i++;
+          link = link->next;
+        } while (i <= last && link != 0);
+      }
+      wait(1);
+    }
+  }
+  slot->active = 1;
+  slot->phase = 0;
+  slot->swing = 0x100;
+  slot->id = objectId;
+  slot->spacing = px(14);
+}
+
+// The half turn on the leader's side of the anchor: 0 on its right, 1 on its
+// left.
+#define SIDE_TURN(side) ((side) * (TRIG_TURN / 2))
+
+/// Swings the leader across on the vine hanging from object id.
+void HangingVine_Swing(s32 id) {
+  s32 rootX, rootY;
+  s32 motionFlags;
+  struct Unk_080db0b0Sprite *heldSprite;
+  s32 side = 0;
+  struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
+  struct Actor *anchor = Actor_GetById(id);
+  /* FAKEMATCH(wrapper): the slot read through a one-member union. */
+  union {
+    struct HangingVineSlot s;
+  } *slot;
+  struct Unk_080db0b0Sprite *sprite;
+  s32 swing;
+  s32 start;
+  s32 dir;
+  u16 letGo;
+  s32 radius;
+  s32 steps;
+  s32 angle;
+  s32 sine;
+  s32 i;
+
+  if (leader == NULL || anchor == NULL)
+    return;
+  motionFlags = leader->motionFlags;
+  heldSprite = leader->sprite;
+  if (leader->x < anchor->x)
+    side = 1;
+  slot = (void *)HangingVine_FindSlot(id);
+  if (slot == NULL)
+    return;
+
+  start = slot->s.swing;
+  if ((slot->s.phase ^ SIDE_TURN(side)) & (TRIG_TURN / 2)) {
+    for (swing = start; swing >= 0; swing -= 64) {
+      slot->s.swing = swing;
+      wait(1);
+    }
+    start = 0;
+  }
+  for (swing = start; swing <= 1536; swing += 64) {
+    slot->s.swing = swing;
+    slot->s.phase = SIDE_TURN(side) + TRIG_TURN / 4;
+    wait(1);
+  }
+  while ((slot->s.phase & 0xff00) != SIDE_TURN(side ^ 1) + TRIG_TURN / 4) {
+    slot->s.swing = 1536;
+    wait(1);
+  }
+
+  sprite = leader->sprite;
+  dir = 1;
+  if (side) {
+    letGo = KEY_DOWN | KEY_LEFT | KEY_B;
+    dir -= 2;
+  } else
+    letGo = KEY_DOWN | KEY_RIGHT | KEY_B;
+  slot->s.active = 1;
+  Actor_SelectAnimationFar(leader, 32);
+  while (1) {
+    slot->s.phase = SIDE_TURN(side ^ 1) + TRIG_TURN / 4;
+    switch (gFrameCount & 63) {
+    case 0:
+    case 16:
+      slot->s.swing = 1568;
+      slot->s.spacing = Q16_ONE * 29 / 2;
+      sprite->unk12 = dir << 10;
+      break;
+    case 1:
+    case 2:
+    case 17:
+    case 18:
+      slot->s.swing += 16;
+      slot->s.spacing += Q16_ONE / 4;
+      sprite->unk12 += dir << 9;
+      break;
+    default:
+      if (slot->s.swing > 1536)
+        slot->s.swing -= 32;
+      else
+        slot->s.swing = 1536;
+      if (slot->s.spacing > Q16_ONE * 14)
+        slot->s.spacing -= Q16_ONE / 32;
+      if (sprite->unk12 != 0)
+        sprite->unk12 -= dir << 7;
+      break;
+    }
+    if (gInput.pressed & letGo) {
+      sprite->unk12 = 0;
+      slot->s.active = 1;
+      return;
+    }
+    if (gInput.pressed != 0)
+      break;
+    wait(1);
+  }
+
+  sprite->unk12 = 0;
+  slot->s.active = 0;
+  Actor_SelectAnimationFar(leader, 6);
+  wait(6);
+  Sound_PlayFar(SE_JUMP);
+  Actor_SelectAnimationFar(leader, 7);
+  leader->speedLimit = Q16_ONE * 3;
+  leader->acceleration = Q16_ONE * 2;
+  leader->velocityY = Q16_ONE * 4;
+  leader->motionFlags &= 0x7e;
+  Actor_SetSpriteFlagsFar(leader, 0);
+  wait(5);
+  Actor_SelectAnimationFar(leader, 16);
+  leader->motionFlags = 0;
+  rootX = slot->s.root->next->x;
+  rootY = slot->s.root->next->y;
+  radius = Q16_ONE * 65;
+  steps = 8;
+  while ((slot->s.phase & 0xff00) != SIDE_TURN(side) + TRIG_TURN * 7 / 32) {
+    if (steps != 0) {
+      radius += Q16_ONE * 5 / 16;
+      slot->s.spacing += Q16_ONE / 16;
+      steps--;
+    }
+    slot->s.swing = 2048;
+    slot->s.active = 1;
+    // A once-only block: the sine is taken before Iwram_MulQ16 is loaded.
+    do {
+      sine = Trig_Sin(slot->s.phase - 4000);
+    } while (0);
+    angle = Iwram_MulQ16(sine, slot->s.swing + slot->s.swing * 5 / 2);
+    leader->x = rootX - Iwram_MulQ16(Trig_Sin(angle), radius);
+    leader->y = rootY - Iwram_MulQ16(Trig_Cos(angle), radius);
+    leader->targetX = leader->x;
+    leader->targetY = leader->y;
+    heldSprite->unk12 = angle;
+    wait(1);
+  }
+  slot->s.active = 1;
+  Actor_SelectAnimationFar(leader, 7);
+  leader->motionFlags = motionFlags & ~1;
+  leader->velocityY = Q16_ONE * 4;
+  for (i = 7; i >= 0; i--) {
+    slot->s.spacing -= Q16_ONE / 16;
+    wait(1);
+  }
+  slot->s.spacing = Q16_ONE * 14;
+  heldSprite->unk12 = 0;
+  Actor_SelectAnimationFar(leader, 6);
+  Actor_SetSpriteFlagsFar(leader, 1);
+  leader->motionFlags = motionFlags;
+  wait(6);
+  slot->s.active = 1;
+}
+
+/// Hangs a vine from object id (HangingVine_Hang). An object with no motion
+/// flags is first moved -16 pixels in z and 64 pixels in y; one with motion
+/// flags starts it only when force is set.
+void HangingVine_Place(s32 id, s32 force) {
+  struct Actor *object = Actor_GetById(id);
+  s32 y;
+  s32 zero;
+
+  if (object != NULL) {
+    if (object->motionFlags == 0) {
+      zero = 0;
+      object->z += 0xfff00000;
+      y = object->y;
+      object->y = y + 0x400000;
+      HangingVine_Hang(id, zero);
+    } else if (force) {
+      HangingVine_Hang(id, 0);
+    }
+  }
 }

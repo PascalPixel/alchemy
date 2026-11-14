@@ -296,8 +296,9 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
 /// speaker nods (animation 3) at yes and shakes its head (4) at no. It waits
 /// (2 - event mode) * 3 frames, passes the name and its width and a third value
 /// to the menu, and skips the animation wait in event mode 2.
-// As ☀️'s Event_AskYesNoWithActorAnimation
-// (games/tbs/src/object/psynergy_effects.c), less its wait for released keys.
+/// The event command "choose yes or no": once the message on screen has been
+/// read, asks yes or no below it, or above it when the message windows reach
+/// past row 15 or forceBottom is set.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   u8 *work = Ram_HeapSlots->fieldWork;
   s32 sprite = *(s16 *)Scene_FindActorPlacement(*(s32 *)(work + 0x1e0));

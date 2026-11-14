@@ -6,7 +6,7 @@
 #include "types.h"
 
 // clang-format off
-const u8 Data_080c89cc[10][256] = {
+const u8 gSpriteColorTablesCopy[10][256] = {
     { // Conversion table 0
         0, 1, 5, 33, 4, 2, 45, 186, 8, 135, 106, 21, 50, 13, 14, 15,
         32, 27, 181, 31, 125, 11, 22, 28, 34, 44, 96, 17, 23, 29, 35, 19,

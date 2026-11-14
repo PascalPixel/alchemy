@@ -40,6 +40,7 @@
 #include "system/task.h"
 #include "text/msg_ids.h"
 #include "system/transform.h"
+#include "../graphics/lucky_dice/tables.h"
 
 extern const u8 gLuckyDice_LabelCounts[];
 extern const u8 gLuckyDice_LabelTiles[];
@@ -895,4 +896,3 @@ void LuckyDice_Run(void) {
 }
 
 // The tables, after LuckyDice_Run in both games.
-#include "../graphics/lucky_dice/tables.h"

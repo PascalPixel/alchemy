@@ -8,6 +8,7 @@
 #include "module/field/field.h"
 #include "curve.h"
 #include "field/script.h"
+#include "objcmd.h"
 
 //--------------------------------------------------------------------------
 // Map terrain: the height curve of each cell kind, the world map's
@@ -68,14 +69,14 @@ const u8 gWorldMap_TerrainBehaviorTable[80] = {
 };
 
 /// Eight colours (BGR555).
-const u16 gData_0802f054[8] = {
+const u16 gSpriteViewer_BackdropColors[8] = {
     0x0000, 0x7c00, 0x03e0, 0x001f, 0x1ce7, 0x3def, 0x7fff, 0x000f,
 };
 
 /// Stops for a number from 0 to 715 that steps by one or skips: a skip
 /// forward goes to the next stop above it, back to the last stop below.
 /// 0xffff ends the list.
-const u16 gData_0802f064[10] = {
+const u16 gSpriteViewer_SkipStops[10] = {
     0, 16, 243, 247, 250, 490, 526, 642, 671, 0xffff,
 };
 // clang-format on
@@ -97,8 +98,6 @@ const s32 gBattle_FormationPlacementScale[2] = {
     0x10000,
     0x10000,
 };
-
-#include "objcmd.h"
 
 //--------------------------------------------------------------------------
 // Field object scripts: the ones the field starts by itself, the command
@@ -252,7 +251,7 @@ const s32 gActorScript_EndScript[] = {
 };
 
 /// The handler of each command. 0x31 to 0x35 repeat SC_END's.
-const ScriptCommandFn gData_0802f204[54] = {
+const ScriptCommandFn gActorScript_CommandTable[54] = {
     ActorScript_Wait,                         // 0x00 SC_WAIT
     Script_WaitForArrival,                    // 0x01 SC_SYNC
     ActorScript_SetPositionAndResetMotion,    // 0x02 SC_POSITION

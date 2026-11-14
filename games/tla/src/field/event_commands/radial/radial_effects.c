@@ -12,6 +12,15 @@
 #include "macros.h"
 
 #include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/field/radial.h"
+#include "field/event.h"
+#include "field/field_sequence_event.h"
+#include "scene_call.h"
+#include "flag_call.h"
+#include "gamepak/far_call/window.h"
+#include "text/msg_ids.h"
 
 extern const s32 gBattleEffect_SharedParticleScript[];
 
@@ -126,9 +135,6 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
 
 void FieldPsynergy_WhirlwindOnTarget(void) { FieldPsynergy_Whirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/radial.h"
 
 // An orbiting mote: radial.c's OrbitEffect.
 
@@ -138,7 +144,7 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 #define ORB_OBJECT 280
 #define MOTE_OBJECT 308
 
-// The two targets ⚓️ treats apart, by their first animation.
+// The two targets Whirlwind treats apart, by their first animation.
 #define TARGET_ANIMATION_A 372
 #define TARGET_ANIMATION_B 373
 
@@ -785,7 +791,6 @@ void FieldEffect_UpdateSpinAngle(struct Actor *object) {
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
 /// frame; released once its scale falls below 0x3000.
-// As ☀️'s FieldEffect_UpdateDescendingObject.
 void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   u32 scale;
   u32 scaleX;
@@ -845,9 +850,6 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
       FieldEffect_ClearOwnedSlot(slot);
   }
 }
-#include "field/event.h"
-#include "field/field_sequence_event.h"
-#include "scene_call.h"
 
 #define SLOT_MAX 24
 
@@ -1027,13 +1029,9 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
       (void *)FieldEffect_UpdateDescendingParticlePositiveArc;
   objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }
-#include "flag_call.h"
-#include "gamepak/far_call/window.h"
-#include "text/msg_ids.h"
 
 /// The caster during Avoid (FieldPsynergy_Avoid): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Clear), and spins in phase 1.
-// As ☀️'s function of the same name.
 void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   s16 phase;
   s32 elapsedFrames;
@@ -1688,12 +1686,12 @@ void FieldPsynergy_Unnamed29(void) {
 }
 
 /// Looks at 21 map cells around the effect owner, at the tile offsets of
-/// Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell of
-/// kind 1, 2 or 3 that Field_MeasurePsynergyHeight accepts for the effect's id
-/// is listed as a tile in the event work's point list at 0xcc0, which ends with
-/// -1, -1; a kind-1 cell also stores its kind in the heap slot 0x5c work's byte
-/// 0x1b34, and the last kind-2 and kind-3 cells are kept in pixels, centred on
-/// their tile, at 0xd3c and 0xd40.
+/// gFieldPsynergy_NearbyCellOffsets (signed x, z byte pairs), on the owner's
+/// layer. Each cell of kind 1, 2 or 3 that Field_MeasurePsynergyHeight accepts
+/// for the effect's id is listed as a tile in the event work's point list at
+/// 0xcc0, which ends with -1, -1; a kind-1 cell also stores its kind in the
+/// heap slot 0x5c work's byte 0x1b34, and the last kind-2 and kind-3 cells are
+/// kept in pixels, centred on their tile, at 0xd3c and 0xd40.
 void FieldPsynergy_GatherNearbyCells(void) {
   struct FxScene *effect = Ram_HeapSlots->effectWork;
   struct PointWork *event = Ram_HeapSlots->fieldWork;
@@ -1712,8 +1710,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
   event->unk_d40 = -1;
   event->unk_d42 = -1;
   for (i = 0; i <= 20; i++) {
-    x = owner->x + (Data_080f0f64[i * 2] << 20);
-    z = owner->z + (Data_080f0f64[i * 2 + 1] << 20);
+    x = owner->x + (gFieldPsynergy_NearbyCellOffsets[i * 2] << 20);
+    z = owner->z + (gFieldPsynergy_NearbyCellOffsets[i * 2 + 1] << 20);
     kind = MapGrid_GetCycloneCellKind(x, z, owner->terrainId);
     // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;

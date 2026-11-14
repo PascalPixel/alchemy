@@ -4,11 +4,6 @@
 
 #include "../radial_internal.h"
 
-struct Actor *Actor_GetById(u32 objectId);
-s32 Actor_GetCellIndex(struct Actor *object);
-s32 GameFlag_Get(s32 flag);
-void GameFlag_Clear(s32 flag);
-void FlagBlock_ApplyFlags(struct ActorFlag *list);
 /* VIEW(f0ea8d4): routine MapGrid_MarkRaisedIfOpen as void
  * MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer, s32 height); the definition
  * has void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer); tried as the
@@ -87,12 +82,6 @@ struct RestoreMap {
   u8 unk000[0x108];
   struct RestoreLayer layers[1];
 };
-
-extern u8 gMapShapeGrid[];
-
-void GameFlag_Set(s32 flag);
-u32 MapGrid_GetTerrainKindFar(s32 terrain, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 /// For each flag block whose picture disagrees with its flag: with the flag
 /// set its cell is lowered 32 pixels and the flag cleared, with it clear the

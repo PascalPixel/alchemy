@@ -13,23 +13,22 @@
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 #include "macros.h"
+#include "version.h"
 
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
-
-s32 MapGrid_CheckCollision__resource_slot(
-    struct Actor *object,
-    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
-/* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
- * offset has void *Unit_Get(s32 owner); tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field/player_control.c:244: request for member
- * `hp' in something not a structure or union. */
-extern struct LeaderUnit *Unit_Get__f0267bc(s32 owner) __asm__("Unit_Get");
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
+
+/// What a shortcut key's assignment requests, bits 15..14
+/// (Field_RequestShortcut), as The Broken Seal's.
+enum FieldShortcutKind {
+  FIELD_SHORTCUT_PSYNERGY = 0, ///< FieldWork.psynergy, an ability
+  FIELD_SHORTCUT_ITEM = 1      ///< FieldWork.item
+};
+
+/// A shortcut assignment's request, bits 13..0.
+#define FIELD_SHORTCUT_ID_MASK 0x3fff
 
 /// Script command 0x24 (control mode 11): the player control at one pace,
 /// a pixel a frame whatever the keys. Unused: no code sets control mode 11.
@@ -247,7 +246,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (Unit_Get__f0267bc(gMainRoutineWork.currentOwner)->hp == 0)
+    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.currentOwner))->hp == 0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {
@@ -280,61 +279,65 @@ counted:
   return 1;
 }
 
-s32 Field_RequestShortcut(u32 value) {
-  struct EventPrompt *event = Ram_HeapSlots->fieldWork;
-  u32 kind = value >> 14;
-  s32 code = value & 0x3fff;
+/// Passes on a shortcut key's assignment, as The Broken Seal's: bits 15..14 say
+/// whether the request is a field Psynergy or an item, bits 13..0 which. On the
+/// world map R and L raise the world picture and the zoom instead, and while
+/// FLAG_MENUS_RAISE_TRIGGER is set the scene's raised trigger. Returns the
+/// request.
+s32 Field_RequestShortcut(u32 assignment) {
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  u32 kind = assignment >> 14;
+  s32 request = assignment & FIELD_SHORTCUT_ID_MASK;
 
   if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER) != 0) {
-    event->result = 250;
-  } else if (event->mode == 3) {
+    work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
+  } else if (work->mode == 3) {
     if (gInput.held & KEY_R)
-      event->result = 0xfc88;
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
     else if (gInput.held & KEY_L)
-      event->result = 0xfc87;
+      work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM;
   } else {
     switch (kind) {
-    case 0:
-      event->choice[0] = code;
+    case FIELD_SHORTCUT_PSYNERGY:
+      work->psynergy = request;
       break;
-    case 1:
-      event->choice[1] = code;
+    case FIELD_SHORTCUT_ITEM:
+      work->item = request;
       break;
     }
   }
-  return code;
+  return request;
 }
 
 /// Checks the keys the player has configured: the menu, examine and start
 /// keys set their request and return 1, the two shortcut keys pass on their
 /// assignment (Field_RequestShortcut). While a second event is pending, any of
 /// the five requests command 0x209b instead. Returns 0 when none is pressed.
-// As ☀️'s function of the same name.
 s32 Field_CheckConfiguredKeys(void) {
-  struct EventPrompt *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 result = 0;
 
   if (work == NULL)
     return 0;
-  if (work->pendingSecond != 0) {
+  if (work->unkcac != 0) {
     if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
         (gInput.pressed & gMainRoutineWork.aKeys) ||
         (gInput.pressed & gMainRoutineWork.startKeys) ||
         (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
         (gInput.pressed & gMainRoutineWork.secondShortcutKeys)) {
-      work->choice[0] = 0x209b;
+      work->psynergy = 0x209b;
       return 1;
     }
     return 0;
   } else {
     if (gInput.pressed & gMainRoutineWork.selectKeys) {
-      work->menu = 1;
+      work->fieldMenu = 1;
       result = 1;
     } else if (gInput.pressed & gMainRoutineWork.aKeys) {
-      work->examine = 1;
+      work->aButton = 1;
       result = 1;
     } else if (gInput.pressed & gMainRoutineWork.startKeys) {
-      work->start = 1;
+      work->pauseMenu = 1;
       result = 1;
     } else if (gInput.pressed & gMainRoutineWork.firstShortcutKeys) {
       result = Field_RequestShortcut(gMainRoutineWork.packedEvents[0]);
@@ -372,7 +375,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
     struct Child *child = created->sprite;
 
     created->terrainHeight = object->terrainHeight;
-    Actor_StartScript(created, gData_0802ec88);
+    Actor_StartScript(created, gActor_SplashScript);
     created->motionFlags = 0;
     if (child != NULL) {
       Animation_ApplyChildArgument((struct ActorSpriteView *)child, 1);
@@ -387,26 +390,8 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 }
 #undef SAME_CELL
 
-#include "version.h"
-#include "system/frame.h"
-#include "module/field/field.h"
-#include "module/field/object.h"
-#include "module/field/resource_slot.h"
-
 extern struct MapCell gMapCellBuffer[];
 // The heading of each direction-pad combination, -1 for none.
-extern const s16 gWorldMap_KeyHeadings[16];
-
-s32 MapGrid_CheckCollision__resource_slot(
-    struct Actor *object,
-    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
-/* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner);
- * offset has void *Unit_Get(s32 owner); tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/field/field/player_control.c:629: request for member
- * `hp' in something not a structure or union. */
-extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -632,7 +617,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (Unit_Get__f027064(gMainRoutineWork.currentOwner)->hp == 0)
+    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.currentOwner))->hp == 0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {
@@ -716,7 +701,7 @@ counted:
 
       effect->terrainHeight = object->terrainHeight;
       effectSprite = effect->sprite;
-      Actor_StartScript(effect, gData_0802ec7c);
+      Actor_StartScript(effect, gActor_FootprintScript);
       effect->priorityFlags = 2;
       effect->motionFlags = collision;
       if (effectSprite != NULL) {

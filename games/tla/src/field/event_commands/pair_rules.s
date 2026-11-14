@@ -95,8 +95,8 @@ gScene_BattleBackgroundRules:
 	.macro encounter_key zone:req, slot:req
 	.2byte (\zone << 4) + \slot
 	.endm
-	.global Data_080efd1c
-Data_080efd1c:
+	.global gEncounter_BattleMusic
+gEncounter_BattleMusic:
 	battle_music 754
 	encounter_key 103, 3
 	battle_music 753

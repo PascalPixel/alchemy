@@ -188,19 +188,17 @@ s32 Actor_TakeLeaderLayer(struct Actor *object) {
   return 0;
 }
 
-struct Actor *Actor_GetById(u32 objectId);
-
 extern const u8 gMovementType_StandScript[];
 extern const u8 gMovementType_WanderScript[];
 extern const u8 gMovementType_WanderNearScript[];
 extern const u8 gMovementType_WanderCloseScript[];
 extern const u8 gMovementType_FollowWatchedScript[];
 extern const u8 gMovementType_FaceLeaderScript[];
-extern const u8 gData_080f34e8[];
-extern const u8 gData_080f3614[];
-extern const u8 gData_080f3764[];
+extern const u8 gMovementType_ClearCollisionScript[];
+extern const u8 gMovementType_SquashScript[];
+extern const u8 gMovementType_TakeLeaderLayerScript[];
 extern const u8 gMovementType_ResetActionScript[];
-extern const u8 gData_080f34f4[];
+extern const u8 gMovementType_ClearChildScript[];
 
 void Actor_SetActionCallback(struct Actor *object, s32 kind) {
   switch (kind) {
@@ -224,19 +222,19 @@ void Actor_SetActionCallback(struct Actor *object, s32 kind) {
     kind = (s32)gMovementType_FaceLeaderScript;
     break;
   case 7:
-    kind = (s32)gData_080f34e8;
+    kind = (s32)gMovementType_ClearCollisionScript;
     break;
   case 8:
-    kind = (s32)gData_080f3614;
+    kind = (s32)gMovementType_SquashScript;
     break;
   case 9:
-    kind = (s32)gData_080f3764;
+    kind = (s32)gMovementType_TakeLeaderLayerScript;
     break;
   case 10:
     kind = (s32)gMovementType_ResetActionScript;
     break;
   case 11:
-    kind = (s32)gData_080f34f4;
+    kind = (s32)gMovementType_ClearChildScript;
     break;
   }
   Actor_StartScriptFar(object, (const void *)kind);
@@ -303,7 +301,7 @@ s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (map == 0 || event->mode == 3 ||
+  if (map == 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP ||
       MapGrid_GetTerrainKindFar(object->terrainId, position[0], position[2]) <=
           2)
     return 0;
@@ -768,7 +766,7 @@ s32 Leader_StepOffRope(void) {
   u32 angle;
 
   gFieldWork->blockedSteps = 0;
-  angle = Data_080f0890[(gInput.held >> 4) & 15];
+  angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
   leader->x = (leader->x & 0xfff00000) + 0x80000;
@@ -873,7 +871,7 @@ s32 Leader_StepOffTightrope(void) {
   u32 angle;
 
   gFieldWork->blockedSteps = 0;
-  angle = Data_080f0890[(gInput.held >> 4) & 15];
+  angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
   leader->x = (leader->x & 0xfff00000) + 0x80000;

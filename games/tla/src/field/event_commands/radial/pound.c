@@ -1,10 +1,185 @@
 /// @file
-/// Two routines not yet understood.
+/// Pound: its shine, the object it drives into the ground, and a picture's
+/// columns shifted by a wave.
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "fixed_math.h"
 #include "sounds.h"
 #include "macros.h"
+
+struct ShineParticle {
+  s32 x;
+  s32 y;
+  u8 unk08[16];
+  s32 timer;
+};
+
+struct ShineSprite {
+  u8 unk00[12];
+  s32 x;
+  s32 y;
+  u8 unk14[20];
+};
+
+struct ShineWork {
+  u8 unk0000[0x1000];
+  struct ShineParticle particles[12];
+  u8 unk1150[0x230];
+  struct ShineSprite sprites[12];
+  u8 unk1560[0x348];
+  struct Actor *object;
+  s16 state;
+  s16 timer;
+  s8 sparkles;
+  u8 fading;
+};
+
+struct BlendWork {
+  u8 unk00[160];
+  u32 phase;
+  u8 unka4[12];
+  s32 scaleX;
+  s32 scaleY;
+  u8 unkb8[9];
+  u8 mode;
+};
+
+/// Task of the Pound: its shine's colours and particles, each frame.
+void FieldPsynergy_UpdatePound(void) {
+  struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BlendWork *blend = Ram_HeapSlots->unkec[1];
+  struct ShineParticle *particle;
+  struct ShineSprite *sprite;
+  s32 i;
+  s32 base, blue;
+  s32 color;
+  s32 red, green;
+  u32 *phase;
+
+  work->fading = 0;
+  if (work->state == 1) {
+    i = 0;
+    /* FAKEMATCH(temporary): the phase read through a pointer kept across the
+     * loop. */
+    phase = &blend->phase;
+    base = 9;
+    base <<= 16;
+    blue = 0x7c00;
+  palette:
+    red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    red = (red >> 16) + 16;
+    green = (green >> 16) + 16;
+    /* FAKEMATCH(dead): the colour in a once-only block. */
+    do {
+      color = (green << 5) | blue | red;
+      *(u16 *)(0x050003c0 + i * 2) = color;
+    } while (0);
+    if (++i < 32)
+      goto palette;
+  }
+  if (work->sparkles) {
+    particle = work->particles;
+    sprite = work->sprites;
+    for (i = 0; i < 12; i++, sprite++, particle++) {
+      if (particle->timer >= 0 && particle->timer < 16) {
+        sprite->x = particle->x;
+        sprite->y = particle->y;
+        EffectSprite_Draw(sprite);
+        BattleEffect_IntegrateVector2(particle, 64, 0);
+      }
+      particle->timer++;
+    }
+  }
+  switch (work->state) {
+  case 0:
+    work->object->y -= px(7) / 2;
+    if (work->timer == 8) {
+      blend->scaleX = Q16_ONE / 8;
+      blend->scaleY = Q16_ONE / 8;
+      MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
+      Sound_PlayFar(SE_567);
+      work->sparkles = 1;
+      work->fading = 1;
+    }
+    if (work->timer == 8) {
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 1:
+    blend->scaleX += Q16_ONE / 16;
+    blend->scaleY = blend->scaleX;
+    if (blend->scaleX > 0xcccb) {
+      blend->scaleX = 0xcccc;
+      blend->scaleY = 0xcccc;
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 2:
+    blend->mode = 3;
+    if (work->timer == 32) {
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 3:
+    if (work->timer == 0)
+      MapGrid_SetScreenShakeFar(1, 1, 1);
+    if (work->timer == 10) {
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 4:
+    work->object->y += px(3) / 2;
+    if (work->timer == 13)
+      work->state = 999;
+    break;
+  }
+  work->timer++;
+}
+
+struct RiseWork {
+  u8 unk0000[0x18a8];
+  struct Actor *object;
+  s16 done;
+  s16 timer;
+};
+
+struct AnchorWork {
+  u8 unk0000[0x1930];
+  struct Actor *anchor;
+};
+
+struct ModeEvent {
+  u8 unk000[352];
+  u16 cue;
+};
+
+void Camera_WorldToScreen(s32 *position);
+
+/// Per-frame callback: until done, moves the effect object down 2.5 pixels
+/// and shrinks it by 1/64 each frame, marking done at frame 8.
+void BattleEffect_SinkAndShrinkObject(void) {
+  struct RiseWork *work = Ram_HeapSlots->battleFxWork[0];
+
+  if (work->done == 0) {
+    struct Actor *object = work->object;
+
+    object->y += -(px(5) / 2);
+    object->scaleX += -0x400;
+    object->scaleY += -0x400;
+    if (work->timer == 8)
+      work->done = 999;
+  }
+  work->timer++;
+}
+
+/// Runs field effect 18 (FieldPsynergy_Pound) for the request dispatcher.
+void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }
 
 struct PoundParticle {
   s32 x;
@@ -30,18 +205,9 @@ struct PoundWork {
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *object, s32 *position);
-s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Func_080dba5c(void);
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
-void BattleEffect_SinkAndShrinkObject(void);
-struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
-void FieldPsynergy_UpdatePound(void);
 
 void FieldPsynergy_Pound(void) {
   struct PoundWork *work = HeapSlot_Alloc(92, 0x18b4);

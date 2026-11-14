@@ -1,6 +1,10 @@
 /// @file
-/// Overlay 0x6b8's scene: its code up to Func_02000c4c, then its tables, in ROM
-/// order.
+/// The debug room Psynergy test: the shops, an inn and a sanctum to try, the
+/// party's levels, items and Djinn to set, and spots for the field Psynergy
+/// The Lost Age adds, each answered by a small event: Scoop digs up a hole, a
+/// growing actor, a falling one and a monster; Cyclone clears leaves and sends
+/// the leader away and back in a ring of light; Pound and Parch change the
+/// floor; Blaze startles a practising man; Sand drops Felix to the sand layer.
 
 #include "battle/battle.h"
 #include "flags.h"
@@ -15,6 +19,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "system/input.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 #include "field/event_inline.h"
@@ -28,59 +33,69 @@
 #include "inventory.h"
 #include "graphics/uiflow.h"
 #include "macros.h"
-
-struct Actor;
-struct SparkleSprite;
-
-extern s16 gData_02001300[];
-
-void ItemPicker_RunToDrop(s32 *, s32 *);
-
-void Inn_CheckIn(s32, s32);
-
-void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
-void Func_02000950(s32, s32, s32, s32);
-void Func_020009c0(s32, s32, s32, s32);
-void Func_02000a10(s32, s32, s32, s32, s32);
-void Func_02000d4c(struct Actor *);
-
-void Actor_FallOverWithAnimationById(s32 actor, s32 angle, s32 frames);
-
-void Actor_ArriveInRing(s32 actor);
-
-void EffectSprite_Draw(struct SparkleSprite *sprite);
-
-extern s32 gData_02000f44[];
-
-s32 BattleEffect_GetObjectPriority(struct Actor *object);
-
 #include "edition.h"
 #include "item_icon.h"
-
-struct Actor;
-
-struct Vector3;
-
-void Event_SetDestination(s32 scene, s32 entrance);
-
-extern u8 gData_02001860[];
-
-void Field_RequestBattleFromEncounterTable(s32, s32);
-
-void Event_PickUpItem(s32, s32, s32);
-
-void Camera_WorldToScreen(struct Vector3 *v);
-
-s32 BattleEffect_GetObjectDepth(struct Actor *object);
-
+#include "item_ids.h"
+#include "game/character_ids.h"
 #include "module/game/game.h"
 #include "module/tla.h"
 #include "module/window/window.h"
 
+// The room's flags: the four Scoop spots dug, the falling actor's item taken,
+// and which of his two spots the
+// practising man stands at.
+#define FLAG_HOLE_DUG FLAG_AREA_TEMP_00
+#define FLAG_GROWING_ACTOR_DUG FLAG_AREA_TEMP_01
+#define FLAG_FALLING_ACTOR_DUG FLAG_AREA_TEMP_02
+#define FLAG_MONSTER_DUG FLAG_AREA_TEMP_03
+#define FLAG_ITEM_TAKEN FLAG_AREA_TEMP_10
+#define FLAG_PRACTICE_AT_DOOR FLAG_SCENE_TEMP_00
+
+/// The room's actors that run its tests, numbered in the order of
+/// gActorPlacements after the party's four rows.
+enum PsynergyTestActorId {
+  ACTOR_SHOPKEEPER = 8,       ///< the four shops, one for each side talked from
+  ACTOR_INNKEEPER = 10,       ///< the inn from the south, the sanctum otherwise
+  ACTOR_MESSAGE_BROWSER = 11, ///< the shop and sanctum messages
+  ACTOR_ICON_BROWSER = 13,
+  /// Isaac's name entry from the north, the item picker from elsewhere; it
+  /// ignores Force, Whirlwind, Catch, Tremor and Grind.
+  ACTOR_MENU_TESTER = 15,
+  ACTOR_PRACTISING_MAN = 17, ///< startled by Blaze
+  ACTOR_GROWING = 18,        ///< grows out of the second Scoop spot
+  ACTOR_FALLING = 19,        ///< drops onto the third, holding an item
+  ACTOR_PILLAR = 21          ///< Pound lowers the floor beside it
+};
+
+void ItemPicker_RunToDrop(s32 *, s32 *);
+void Inn_CheckIn(s32, s32);
+void PsynergyTest_DigCells(s32, s32, s32, s32, s32, s32, s32);
+void PsynergyTest_GrowActor(s32, s32, s32, s32);
+void PsynergyTest_DropActor(s32, s32, s32, s32);
+void PsynergyTest_RaiseMonster(s32, s32, s32, s32, s32);
+void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work);
+void PsynergyTest_StopRings(struct Actor *);
+void Actor_FallOverWithAnimationById(s32 actor, s32 angle, s32 frames);
+void Actor_FallOverById(s32 actor, s32 angle);
+void Actor_DepartInRing(s32 actor);
+void DebugBrowser_Icons();
+void Sanctum_Run();
+void Actor_SetSpriteColorMode(struct Actor *, u32);
+void Actor_ArriveInRing(s32 actor);
+void EffectSprite_Draw(struct SparkleSprite *sprite);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
+void Field_RequestBattleFromEncounterTable(s32, s32);
+void Event_PickUpItem(s32, s32, s32);
+void Camera_WorldToScreen(struct Vector3 *v);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void NameEntry_EditMemberName(s32);
 void Shop_Run(s32, s32);
 void TileCopies_CopyTouchedCells(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
+
+extern s32 gPsynergyTest_RingTiles[];
+extern struct SparkleWork gPsynergyTest_TargetRings;
+extern struct SparkleWork gPsynergyTest_LeaderRings;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -88,21 +103,28 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void *Func_0200004c(void) { return gData_02001300; }
+const struct ActorPlacement *Scene_GetPlacements(void) {
+  return gActorPlacements;
+}
 
-void Test_ReceiveFlint(void) {}
+/// The event for actors and Psynergy the room leaves alone.
+void PsynergyTest_NoOp(void) {}
 
-void Func_02000058(void) {
+/// Opens the picker a full party drops an item with, and discards the choice.
+void PsynergyTest_TestItemSelection(void) {
   s32 pos[2];
 
   ItemPicker_RunToDrop(&pos[1], &pos[0]);
 }
 
-void Test_ReceiveFizz(void) { NameEntry_EditMemberName(0); }
+/// The name entry screen for Isaac.
+void PsynergyTest_EditIsaacName(void) { NameEntry_EditMemberName(ISAAC); }
 
-void Func_02000074(void) {}
+/// The event for Force, Whirlwind and Catch cast at the menu tester.
+void PsynergyTest_IgnorePsynergy(void) {}
 
-void MenuTest_ShowMessageAndWait(s32 message) {
+/// Finishes pending windows, shows a message and waits until it is typed out.
+void PsynergyTest_ShowMessageAndWait(s32 message) {
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   while (Message_AllTyped() == 0)
@@ -110,7 +132,9 @@ void MenuTest_ShowMessageAndWait(s32 message) {
   System_Wait(1);
 }
 
-void MenuTest_BrowseMessageRange(s32 message, s32 count) {
+/// Browses `count` messages from `message`: A or Down for the next, Up for the
+/// one before, B to close.
+void PsynergyTest_BrowseMessageRange(s32 message, s32 count) {
   s32 i;
   void *window;
 
@@ -118,21 +142,21 @@ void MenuTest_BrowseMessageRange(s32 message, s32 count) {
   for (i = 0; i < count; i++) {
     MessageArgument_Push(1, 1);
     MessageArgument_Push(5, 2);
-    MessageArgument_Push(0x1e240, 5);
-    MenuTest_ShowMessageAndWait(message);
+    MessageArgument_Push(123456, 5);
+    PsynergyTest_ShowMessageAndWait(message);
     goto check;
   wait:
     if (gInput.held != 0)
       goto next;
     System_Wait(1);
   check:
-    if (gInput.held & 2)
+    if (gInput.held & KEY_B)
       goto done;
-    if ((gInput.held & 1) || (gInput.held & 0x80)) {
+    if ((gInput.held & KEY_A) || (gInput.held & KEY_DOWN)) {
       message++;
       goto next;
     }
-    if (!(gInput.held & 0x40))
+    if (!(gInput.held & KEY_UP))
       goto wait;
     message--;
   next:;
@@ -142,144 +166,162 @@ done:
   Window_Close(window, 2);
 }
 
-void Func_02000140(void) {
-  MenuTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
-                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
+// The shop and sanctum message browsers: talking to ACTOR_MESSAGE_BROWSER
+// from each side.
+void PsynergyTest_BrowseWeaponShopMessages(void) {
+  PsynergyTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
+                                  MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void Func_02000158(void) {
-  MenuTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
-                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
+void PsynergyTest_BrowseArmorShopMessages(void) {
+  PsynergyTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
+                                  MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void Func_02000170(void) {
-  MenuTest_BrowseMessageRange((s32)MsgItemShopWelcome,
-                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
+void PsynergyTest_BrowseItemShopMessages(void) {
+  PsynergyTest_BrowseMessageRange((s32)MsgItemShopWelcome,
+                                  MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-void Func_0200018c(void) {
-  MenuTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
-                              MsgRightWhenI - MsgWelcomeWearyWanderers);
+void PsynergyTest_BrowseSanctumMessages(void) {
+  PsynergyTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
+                                  MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
-void Func_020001a4(s32 value) { Shop_Run(1, value); }
+// The shops: talking to ACTOR_SHOPKEEPER from each side. Each passes on the
+// keeper's actor id.
+void PsynergyTest_OpenWeaponShop(s32 keeper) { Shop_Run(1, keeper); }
 
-void Func_020001b0(s32 value) { Shop_Run(2, value); }
+void PsynergyTest_OpenArmorShop(s32 keeper) { Shop_Run(2, keeper); }
 
-void Func_020001bc(s32 value) { Shop_Run(3, value); }
+void PsynergyTest_OpenItemShop(s32 keeper) { Shop_Run(3, keeper); }
 
-void Func_020001c8(s32 value) { Shop_Run(24, value); }
+void PsynergyTest_OpenGeneralStore(s32 keeper) { Shop_Run(24, keeper); }
 
-void Func_020001d4(s32 value) { Inn_CheckIn(0, value); }
+void PsynergyTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
 
-void Func_020001e0(void) {}
+/// The event for talking to actor 9, which does nothing.
+void PsynergyTest_IgnoreTalk(void) {}
 
-void Func_020001e4(void) {
+/// Raises Felix, Jenna and Sheba ten levels. Examining cell 11.
+void PsynergyTest_RaisePartyLevels(void) {
   Message_ShowCentered((s32)MsgYouWentUp, 1);
-  Unit_LevelUpTo(4, ((u8 *)Unit_Get(4))[15] + 10);
-  Unit_LevelUpTo(5, ((u8 *)Unit_Get(5))[15] + 10);
-  Unit_LevelUpTo(6, ((u8 *)Unit_Get(6))[15] + 10);
+  Unit_LevelUpTo(FELIX, ((struct BattleUnit *)Unit_Get(FELIX))->level + 10);
+  Unit_LevelUpTo(JENNA, ((struct BattleUnit *)Unit_Get(JENNA))->level + 10);
+  Unit_LevelUpTo(SHEBA, ((struct BattleUnit *)Unit_Get(SHEBA))->level + 10);
 }
 
-void Func_02000224(void) {
+/// Gives 777,777 coins and ten each of Game Tickets and Lucky Medals.
+/// Examining cell 12.
+void PsynergyTest_GiveTreasureTestStock(void) {
   s32 i;
 
   Message_ShowCentered((s32)MsgYouGotTreasure, 1);
   gMainRoutineWork.coins = 777777;
   for (i = 9; i >= 0; i--) {
-    Inventory_AddItem(4, 228);
-    Inventory_AddItem(4, 229);
+    Inventory_AddItem(FELIX, ITEM_GAME_TICKET);
+    Inventory_AddItem(FELIX, ITEM_LUCKY_MEDAL);
   }
-  Unit_Calculate(4);
-  Unit_Calculate(5);
-  Unit_Calculate(6);
+  Unit_Calculate(FELIX);
+  Unit_Calculate(JENNA);
+  Unit_Calculate(SHEBA);
 }
 
-void Func_0200026c(void) {
+/// Takes HP and PP from Felix, Jenna and Sheba, then poisons and haunts Felix
+/// and curses and envenoms Jenna. Examining cell 10.
+void PsynergyTest_DamageAndAfflictParty(void) {
   u8 *state;
 
   Message_ShowCentered((s32)MsgTheBodyIs, 1);
-  FieldUnit_AddHp(4, -100);
-  FieldUnit_AddHp(5, -100);
-  FieldUnit_AddHp(6, -33);
-  Unit_AddPp(4, -50);
-  Unit_AddPp(5, -40);
-  Unit_AddPp(6, -35);
-  state = Unit_Get(4);
-  state[0x131] = 1;
-  state += 0x140;
+  FieldUnit_AddHp(FELIX, -100);
+  FieldUnit_AddHp(JENNA, -100);
+  FieldUnit_AddHp(SHEBA, -33);
+  Unit_AddPp(FELIX, -50);
+  Unit_AddPp(JENNA, -40);
+  Unit_AddPp(SHEBA, -35);
+  state = Unit_Get(FELIX);
+  state[offsetof(struct BattleUnit, poison)] = 1;
+  state += offsetof(struct BattleUnit, haunt);
   *state = 1;
-  state = Unit_Get(5);
-  state[0x130] = 1;
-  state[0x131] = 2;
-  Unit_Calculate(4);
-  Unit_Calculate(5);
-  Unit_Calculate(6);
+  state = Unit_Get(JENNA);
+  state[offsetof(struct BattleUnit, restraint)] = 1;
+  state[offsetof(struct BattleUnit, poison)] = 2;
+  Unit_Calculate(FELIX);
+  Unit_Calculate(JENNA);
+  Unit_Calculate(SHEBA);
 }
 
-void Func_020002f4(s32 owner, s32 element, s32 djinn, s32 activate) {
+void PsynergyTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
   Event_SetFlag(element * 20 + djinn + 48);
   Djinn_Give(owner, element, djinn);
   if (activate == 1)
     Djinn_Set(owner, element, djinn);
 }
 
-void Func_02000330(void) {
+/// Gives and sets Djinn: Felix seven of Venus, Jenna seven of Mars and Sheba
+/// six of Mercury. Examining cell 13.
+void PsynergyTest_GivePartyDjinn(void) {
   Message_ShowCentered((s32)MsgYouGotA, 1);
-  Func_020002f4(4, 0, 0, 1);
-  Func_020002f4(4, 0, 1, 1);
-  Func_020002f4(4, 0, 2, 1);
-  Func_020002f4(4, 0, 3, 1);
-  Func_020002f4(4, 0, 4, 1);
-  Func_020002f4(4, 0, 5, 1);
-  Func_020002f4(4, 0, 6, 1);
-  Func_020002f4(5, 2, 0, 1);
-  Func_020002f4(5, 2, 1, 1);
-  Func_020002f4(5, 2, 2, 1);
-  Func_020002f4(5, 2, 3, 1);
-  Func_020002f4(5, 2, 4, 1);
-  Func_020002f4(5, 2, 5, 1);
-  Func_020002f4(5, 2, 6, 1);
-  Func_020002f4(6, 1, 0, 1);
-  Func_020002f4(6, 1, 1, 1);
-  Func_020002f4(6, 1, 2, 1);
-  Func_020002f4(6, 1, 3, 1);
-  Func_020002f4(6, 1, 4, 1);
-  Func_020002f4(6, 1, 5, 1);
-  Unit_Calculate(4);
-  Unit_Calculate(5);
-  Unit_Calculate(6);
+  PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 0, 1);
+  PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 1, 1);
+  PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 2, 1);
+  PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 3, 1);
+  PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 4, 1);
+  PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 5, 1);
+  PsynergyTest_GiveDjinni(FELIX, ELEMENT_VENUS, 6, 1);
+  PsynergyTest_GiveDjinni(JENNA, ELEMENT_MARS, 0, 1);
+  PsynergyTest_GiveDjinni(JENNA, ELEMENT_MARS, 1, 1);
+  PsynergyTest_GiveDjinni(JENNA, ELEMENT_MARS, 2, 1);
+  PsynergyTest_GiveDjinni(JENNA, ELEMENT_MARS, 3, 1);
+  PsynergyTest_GiveDjinni(JENNA, ELEMENT_MARS, 4, 1);
+  PsynergyTest_GiveDjinni(JENNA, ELEMENT_MARS, 5, 1);
+  PsynergyTest_GiveDjinni(JENNA, ELEMENT_MARS, 6, 1);
+  PsynergyTest_GiveDjinni(SHEBA, ELEMENT_MERCURY, 0, 1);
+  PsynergyTest_GiveDjinni(SHEBA, ELEMENT_MERCURY, 1, 1);
+  PsynergyTest_GiveDjinni(SHEBA, ELEMENT_MERCURY, 2, 1);
+  PsynergyTest_GiveDjinni(SHEBA, ELEMENT_MERCURY, 3, 1);
+  PsynergyTest_GiveDjinni(SHEBA, ELEMENT_MERCURY, 4, 1);
+  PsynergyTest_GiveDjinni(SHEBA, ELEMENT_MERCURY, 5, 1);
+  Unit_Calculate(FELIX);
+  Unit_Calculate(JENNA);
+  Unit_Calculate(SHEBA);
 }
 
-void Func_02000444(void) { Actor_GetById(4)->terrainId = 2; }
+// While Felix is Sand he reads his ground height from layer 2, and from
+// layer 0 again once Sand fades.
+void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->terrainId = 2; }
 
-void Func_02000454(void) { Actor_GetById(4)->terrainId = 0; }
+void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->terrainId = 0; }
 
-void Func_02000464(s32 unused, s32 actor) {
-  Actor_ShowEmote(actor, 0x100, 50);
+/// As Blaze reaches him, the practising man shouts and jumps to the other of
+/// his two spots, as he does in Daila (DailaInteriors_PracticeShout).
+void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
+  Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
-  if (Event_GetFlag(0x200) == 0) {
+  if (Event_GetFlag(FLAG_PRACTICE_AT_DOOR) == 0) {
     FieldEvent_SetMessageId((s32)MsgDailaInteriorsGah);
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
-    Actor_FaceDirection(actor, 0x4000, 0);
-    Event_SetFlag(0x200);
+    Actor_FaceDirection(actor, FACING_SOUTH, 0);
+    Event_SetFlag(FLAG_PRACTICE_AT_DOOR);
   } else {
     FieldEvent_SetMessageId((s32)MsgDailaInteriorsYarg);
     Event_ShowMessage(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
-    Actor_FaceDirection(actor, 0x8000, 0);
-    Event_ClearFlag(0x200);
+    Actor_FaceDirection(actor, FACING_WEST, 0);
+    Event_ClearFlag(FLAG_PRACTICE_AT_DOOR);
   }
   FieldEvent_Wait(20);
 }
 
-void Func_02000508(s32 unused, s32 actor) {
-  Actor_FaceActor(actor, 4, 0);
+/// Once Blaze has ended, the practising man turns to Felix, startled, as in
+/// Daila (DailaInteriors_StartleAtTheLeader).
+void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
+  Actor_FaceActor(actor, FELIX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(actor, 0x103, 50);
+  FieldActor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
@@ -288,10 +330,11 @@ void Func_02000508(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
 }
 
-void Func_0200055c(s32 unused, s32 actor) {
-  Actor_FaceActor(actor, 4, 0);
+/// The same, once ability 157 ("A??" in the game's text) has ended.
+void PsynergyTest_StartleAgain(s32 unused, s32 actor) {
+  Actor_FaceActor(actor, FELIX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(actor, 0x103, 50);
+  FieldActor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   FieldActor_Jump(actor, 6, 15);
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
@@ -300,30 +343,35 @@ void Func_0200055c(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
 }
 
-void Func_020005b0(void) {
+/// Once ability 157 has ended at the pillar, it animates and the floor beside
+/// it is copied in from (57, 16).
+void PsynergyTest_LowerPillar(void) {
   s32 frames;
   s32 flags;
 
-  Actor_SetAnimation(21, 2);
+  Actor_SetAnimation(ACTOR_PILLAR, 2);
   FieldEvent_Wait(10);
   frames = 25;
   flags = 0;
   MapGrid_CopyCells(57, 16, 4, 6, frames, flags);
 }
 
-void Func_020005dc(s32 value) {
+/// Pound on the pillar does the same, without the wait.
+void PsynergyTest_PoundPillar(s32 mode) {
   s32 frames;
   s32 flags;
 
-  if (value == 1) {
-    Actor_SetAnimation(21, 2);
+  if (mode == 1) {
+    Actor_SetAnimation(ACTOR_PILLAR, 2);
     frames = 25;
     flags = 0;
     MapGrid_CopyCells(57, 16, 4, 6, frames, flags);
   }
 }
 
-void Func_02000604(void) {
+/// Cyclone on cell 55 blows the leaves away: the cells it touched in the
+/// 5 by 4 block at (34, 26) are copied in from (2, 10).
+void PsynergyTest_BlowAwayLeaves(void) {
   s32 a;
   s32 b;
   s32 c;
@@ -339,51 +387,58 @@ static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
-void Func_02000624(void) {
+/// Cyclone on cell 56 blows the leaves away too, then comes back in by
+/// entrance 6, where the leader leaves in a ring of light (Scene_Initialize).
+void PsynergyTest_DepartInRing(void) {
   Map_CopyCells(34, 26, 5, 4, 2, 10, 0);
   Event_SetDestination((s32)&SceneId_PsynergyTest, 6);
 }
 
-void Func_02000650(void) {
+/// Cyclone on cell 13 comes back in by entrance 8, where the leader arrives
+/// in a ring of light.
+void PsynergyTest_ArriveInRing(void) {
   Event_SetDestination((s32)&SceneId_PsynergyTest, 8);
 }
 
-/* VIEW(psynergy_test): variable gData_020017b0 as u8 gData_020017b0[];
- * module/tla.h has s32 gData_020017b0; tried as the rest of the object declares
- * it, Func_02000748 moves: 2 of 22 instructions in tla-ja. */
-extern u8 gData_020017b0__psynergy_test[] __asm__("gData_020017b0");
-
-void Func_02000660(void) {
+/// Cyclone on cell 57: the Mad Plant leaps, and its battle starts with no
+/// escape.
+void PsynergyTest_FightMadPlant(void) {
   Import_DebugMadPlantLeap(249, 40, 168);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(14, 0);
 }
 
-void Func_02000688(s32 actor) {
-  Event_SetFlag(FLAG_DAILA_PSY_CRYSTAL_DUG);
-  Func_0200092c(actor, 36, 28, 1, 1, 10, 10);
+// The four Scoop spots, cells 50 to 53, each run while their flag is clear.
+// Each passes on the stage of the dig.
+void PsynergyTest_DigUpHole(s32 mode) {
+  Event_SetFlag(FLAG_HOLE_DUG);
+  PsynergyTest_DigCells(mode, 36, 28, 1, 1, 10, 10);
 }
 
-void Func_020006b0(s32 actor) {
-  Event_SetFlag(0x301);
-  Func_02000950(actor, 18, 184, 184);
+void PsynergyTest_DigUpGrowingActor(s32 mode) {
+  Event_SetFlag(FLAG_GROWING_ACTOR_DUG);
+  PsynergyTest_GrowActor(mode, ACTOR_GROWING, 184, 184);
 }
 
-void Func_020006cc(s32 actor) {
-  Event_SetFlag(0x302);
-  Func_020009c0(actor, 19, 200, 200);
+void PsynergyTest_DigUpFallingActor(s32 mode) {
+  Event_SetFlag(FLAG_FALLING_ACTOR_DUG);
+  PsynergyTest_DropActor(mode, ACTOR_FALLING, 200, 200);
 }
 
-void Func_020006e8(s32 actor) {
-  Event_SetFlag(0x303);
-  Func_02000a10(actor, 216, 216, 14, 0);
+void PsynergyTest_DigUpMonster(s32 mode) {
+  Event_SetFlag(FLAG_MONSTER_DUG);
+  PsynergyTest_RaiseMonster(mode, 216, 216, 14, 0);
 }
 
-void Func_0200070c(void) {
-  Event_PickUpItem(19, ((u8 *)Actor_Get(19))[0x62], 0x310);
+/// Talking to the actor that fell takes the item it holds (its icon).
+void PsynergyTest_PickUpItem(void) {
+  Event_PickUpItem(ACTOR_FALLING, ((u8 *)Actor_Get(ACTOR_FALLING))[0x62],
+                   FLAG_ITEM_TAKEN);
 }
 
-void Func_02000724(void) {
+/// Parch on cell 60 dries the 2 by 4 block at (48, 26), copied in from
+/// (16, 10).
+void PsynergyTest_ParchCells(void) {
   s32 frames;
   s32 flags;
 
@@ -392,58 +447,62 @@ void Func_02000724(void) {
   MapGrid_CopyCells(48, 26, 2, 4, frames, flags);
 }
 
-void Func_02000740(void) {}
+void PsynergyTest_IgnoreTremor(void) {}
 
-void Func_02000744(void) {}
+void PsynergyTest_IgnoreGrind(void) {}
 
-void Func_02000748(s32 actor) {
-  Func_02000c4c(Actor_Get(actor), gData_02001860);
-  Func_02000c4c(Actor_Get(gMainRoutineWork.currentOwner),
-                gData_020017b0__psynergy_test);
+/// Talking to Mia: rings of light rise around her and the leader for 100
+/// frames.
+void PsynergyTest_ShowRings(s32 actor) {
+  PsynergyTest_StartRings(Actor_Get(actor), &gPsynergyTest_TargetRings);
+  PsynergyTest_StartRings(Actor_Get(gMainRoutineWork.currentOwner),
+                          &gPsynergyTest_LeaderRings);
   System_Wait(100);
-  Func_02000d4c(Actor_Get(actor));
-  Func_02000d4c(Actor_Get(gMainRoutineWork.currentOwner));
+  PsynergyTest_StopRings(Actor_Get(actor));
+  PsynergyTest_StopRings(Actor_Get(gMainRoutineWork.currentOwner));
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Actor_FallOverById(s32 actor, s32 angle);
-void Actor_DepartInRing(s32 actor);
-
-s32 Func_0200079c(void) {
+/// Sets the shops' rare stock, lays the fallen actors down, puts back what
+/// the Scoop spots and the item have already done, and sends the leader away
+/// or brings it in by ring at entrances 6 and 8.
+s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->transition = 0x100;
   work->sceneAttributeHigh = 0;
   work->sceneAttributeLow = 0;
-  Item_AdjustCounter(5, 1);
-  Item_AdjustCounter(5, 1);
-  Item_AdjustCounter(5, 1);
-  Item_AdjustCounter(6, 1);
-  Item_AdjustCounter(6, 1);
-  Item_AdjustCounter(7, 1);
-  Item_AdjustCounter(106, 1);
-  Item_AdjustCounter(108, 1);
-  Item_AdjustCounter(109, 1);
-  Item_AdjustCounter(113, 1);
-  Item_AdjustCounter(123, 1);
-  Item_AdjustCounter(130, 1);
-  Item_AdjustCounter(140, 1);
-  Item_AdjustCounter(151, 1);
+  // How many of each rare item the shops may sell, as in The Broken Seal's
+  // Menu test, with a Fire Brand where it had a Masamune.
+  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
+  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
+  Item_AdjustCounter(ITEM_SHAMSHIR, 1);
+  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
+  Item_AdjustCounter(ITEM_SILVER_BLADE, 1);
+  Item_AdjustCounter(ITEM_FIRE_BRAND, 1);
+  Item_AdjustCounter(ITEM_CHINA_DRESS, 1);
+  Item_AdjustCounter(ITEM_COCKTAIL_DRESS, 1);
+  Item_AdjustCounter(ITEM_BLESSED_ROBE, 1);
+  Item_AdjustCounter(ITEM_ORACLES_ROBE, 1);
+  Item_AdjustCounter(ITEM_DRAGON_SHIELD, 1);
+  Item_AdjustCounter(ITEM_VAMBRACE, 1);
+  Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
+  Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
   gMainRoutineWork.eventMode = 2;
-  Actor_SetAnimation(15, 2);
+  Actor_SetAnimation(ACTOR_MENU_TESTER, 2);
   Actor_SetAnimation(16, 2);
   // Call3 and Call2 build each call's constants afresh (call.h).
-  Call3((void (*)())Actor_FallOverWithAnimationById, 9, 0x8000, 0);
-  Call2((void (*)())Actor_FallOverById, 10, 0x8000);
+  Call3((void (*)())Actor_FallOverWithAnimationById, 9, FACING_WEST, 0);
+  Call2((void (*)())Actor_FallOverById, ACTOR_INNKEEPER, FACING_WEST);
   Actor_FallOverById(12, 0);
-  if (Event_GetFlag(FLAG_DAILA_PSY_CRYSTAL_DUG))
+  if (Event_GetFlag(FLAG_HOLE_DUG))
     MapGrid_CopyCells(36, 28, 1, 1, 10, 10);
-  if (Event_GetFlag(0x301))
-    Actor_SetPosition(18, 184, 184);
-  if (Event_GetFlag(0x302) && !Event_GetFlag(FLAG_GAROH_NIGHT))
-    Actor_SetPosition(19, 200, 200);
-  Actor_SetItemIcon(Actor_Get(19), 50);
+  if (Event_GetFlag(FLAG_GROWING_ACTOR_DUG))
+    Actor_SetPosition(ACTOR_GROWING, 184, 184);
+  if (Event_GetFlag(FLAG_FALLING_ACTOR_DUG) && !Event_GetFlag(FLAG_ITEM_TAKEN))
+    Actor_SetPosition(ACTOR_FALLING, 200, 200);
+  Actor_SetItemIcon(Actor_Get(ACTOR_FALLING), ITEM_WICKED_MACE);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -455,27 +514,23 @@ s32 Func_0200079c(void) {
   return 0;
 }
 
-void DebugBrowser_Icons();
-void Sanctum_Run();
-
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_0200091c(void) {
-  DebugBrowser_Icons();
-  return;
-}
+void PsynergyTest_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 
-void Func_02000924(void) {
-  Sanctum_Run();
-  return;
-}
+void PsynergyTest_OpenSanctum(void) { Sanctum_Run(); }
 
-void Func_0200092c(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
+/// At the first stage of a dig, copies the cells of the hole in.
+void PsynergyTest_DigCells(s32 mode, s32 sourceX, s32 sourceY, s32 width,
+                           s32 height, s32 destinationX, s32 destinationY) {
   if (mode == 1)
-    MapGrid_CopyCells(a, b, c, d, e, f);
+    MapGrid_CopyCells(sourceX, sourceY, width, height, destinationX,
+                      destinationY);
 }
 
-void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
+/// At the first stage of a dig, places the actor at (x, z) in pixels with no
+/// size; at the second, grows it to full size.
+void PsynergyTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
   struct Actor *object;
   s32 scale;
 
@@ -498,26 +553,26 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-  struct Actor *object0;
+/// At the second stage of a dig, drops the actor onto (x, z) in pixels from 32
+/// pixels up.
+void PsynergyTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
+  struct Actor *object;
 
-  object0 = Actor_Get(arg1);
-  if (arg0 != 2)
-    goto L_02008a06;
-  Actor_SetPositionFixed(arg1, px(arg2), px(arg3));
-  object0->y = px(32);
-  object0->motionFlags = 3;
-  object0->gravity = 0x170a;
-  System_Wait(50);
-L_02008a06:
-  return;
+  object = Actor_Get(id);
+  if (mode == 2) {
+    Actor_SetPositionFixed(id, px(x), px(z));
+    object->y = px(32);
+    object->motionFlags = 3;
+    object->gravity = 0x170a;
+    System_Wait(50);
+  }
 }
 
-/// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
-/// kind 252 there from 0x6666 to full size while it turns, then turns it
-/// opposite the leader's facing and passes scene and entrance on to
-/// Field_RequestBattleFromEncounterTable.
-void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
+/// At the first stage of a dig, places actor kind 354 at (x, z) in pixels; at
+/// the second, grows actor kind 252 there from two fifths to full size while it
+/// turns, faces it away from the leader and starts the battle of row and
+/// column of the encounter table.
+void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
   struct Actor *object;
 
   if (mode == 1) {
@@ -552,14 +607,15 @@ void Func_02000a10(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleY = Q16_ONE;
       object->facing =
           Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
-      Field_RequestBattleFromEncounterTable(scene, entrance);
+      Field_RequestBattleFromEncounterTable(row, column);
     }
   }
 }
 
-void Actor_SetSpriteColorMode(struct Actor *, u32);
-
-void Func_02000ad0(struct Actor *object) {
+/// Each frame of an actor's rings: two rings of four sprites climb 32 pixels
+/// up the actor, a new one every 16 frames with a chime, its colour cycling;
+/// once stopped, the rings climb out and the actor's colours come back.
+void PsynergyTest_UpdateRings(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;
   s32 i, j;
@@ -620,7 +676,7 @@ void Func_02000ad0(struct Actor *object) {
 }
 
 // clang-format off
-s32 gData_02000f44[] = {
+s32 gPsynergyTest_RingTiles[] = {
     0, 0, 0, 0, 0, 0,
     0x70000000, (s32)0xf7700000, 0, 0, 0, 0,
     0x77770000, (s32)0xffff7770, -9, 0x7777ffff, 0, 0,
@@ -672,137 +728,176 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-s16 gData_02001300[] = {
-    1, -1, 1, 0, 0, 40, 0, 0,
-    0, 40, 0x4000, 0, 5, -1, 1, 0,
-    0, 40, 0, 0, 0, 72, 0x4000, 0,
-    2, -1, 1, 0, 0, 40, 0, 0,
-    0, 104, 0x4000, 0, 3, -1, 1, 0,
-    0, 40, 0, 0, 0, 136, 0x4000, 0,
-    205, -1, 1, 0, 0, 88, 0, 0,
-    0, 40, 0x4000, 0, 71, -1, 1, 0,
-    0, 82, 0, 0, 0, 72, 0x4000, 0,
-    202, -1, 1, 0, 0, 88, 0, 0,
-    0, 104, 0x4000, 0, 206, -1, 1, 0,
-    0, 88, 0, 0, 0, 136, 0x4000, 0,
-    245, -1, 1, 0, 0, 136, 0, 0,
-    0, 40, 0x4000, 0, 307, -1, 1, 0,
-    0, 136, 0, 0, 0, 72, 0x4000, 0,
-    299, -1, 1, 0, 0, 136, 0, 0,
-    0, 104, 0x4000, 0, 290, -1, 1, 0,
-    0, 136, 0, 0, 0, 136, 0x4000, 0,
-    364, -1, 1, 0, 0, 360, 0, 0,
-    0, 104, 0x4000, 0, 56, -1, 1, 0,
-    0, 392, 0, 0, 0, 104, 0x4000, 0,
-    290, -1, 1, 0, 0, -64, 0, 0,
-    0, -64, 0x4000, 0, 489, -1, 1, 0,
-    0, -64, 0, 0, 0, -64, 0x4000, 2,
-    252, -1, 1, 0, 0, -64, 0, 0,
-    0, -64, 0x4000, 2, 305, -1, 1, 0,
-    0, 456, 0, 0, 0, 104, 0x4000, 0,
-    365, -1, 1, 0, 0, 392, 0, 0,
-    0, 168, 0x4000, 0, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-};
 // clang-format on
 
+struct ActorPlacement gActorPlacements[] = {
+    ACTOR_PLACEMENT(GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 40,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 72,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 136,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(205, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 40,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 82, 0, 72,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(206, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 136,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(245, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 40,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 72,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(299, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 136,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(364, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -64, 0, -64,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -64, 0, -64,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(252, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -64, 0, -64,
+                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(305, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 104,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(365, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 168,
+                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    {SCENE_TABLE_END},
+};
+
 struct Trigger gSceneEvents[] = {
-    {0, 5, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {0, 2, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {0, 3, CONDITION_ALWAYS, EVENT(Func_02000748)},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_020001a4)},
-    {0x8400, 8, CONDITION_ALWAYS, EVENT(Func_020001b0)},
-    {0x400, 8, CONDITION_ALWAYS, EVENT(Func_020001bc)},
-    {0x4400, 8, CONDITION_ALWAYS, EVENT(Func_020001c8)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_020001e0)},
-    {0x4400, 10, CONDITION_ALWAYS, EVENT(Func_020001d4)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_02000924)},
-    {0xc400, 11, CONDITION_ALWAYS, EVENT(Func_02000140)},
-    {0x8400, 11, CONDITION_ALWAYS, EVENT(Func_02000158)},
-    {0x400, 11, CONDITION_ALWAYS, EVENT(Func_02000170)},
-    {0x4400, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
-    {0, 12, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200091c)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {0xc400, 15, CONDITION_ALWAYS, EVENT(Test_ReceiveFizz)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000058)},
-    {0, 19, CONDITION_ALWAYS, EVENT(Func_0200070c)},
+    {TRIGGER_TALK, JENNA, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
+    {TRIGGER_TALK, IVAN, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
+    {TRIGGER_TALK, MIA, CONDITION_ALWAYS, EVENT(PsynergyTest_ShowRings)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_OpenWeaponShop)},
+    {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_OpenArmorShop)},
+    {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_OpenItemShop)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_OpenGeneralStore)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(PsynergyTest_IgnoreTalk)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_INNKEEPER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_OpenInn)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_OpenSanctum)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_BrowseWeaponShopMessages)},
+    {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_BrowseArmorShopMessages)},
+    {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_BrowseItemShopMessages)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_BrowseSanctumMessages)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_OpenIconBrowser)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_EditIsaacName)},
+    {TRIGGER_TALK, ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_TestItemSelection)},
+    {TRIGGER_TALK, ACTOR_FALLING, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_PickUpItem)},
 #if (LANGUAGE ==                                                               \
      LANGUAGE_JAPANESE) /* Rows exclusive to the Japanese edition. */
-    {0x8d15, 10, CONDITION_ALWAYS, 5618},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
+     5618},
 #endif
-    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgOooogOw2)},
-    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgWhyDoThese)},
-    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgStupidBriggs2)},
-    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
-    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
-    {1, 20, CONDITION_ALWAYS, 20},
-    {3, 10, CONDITION_ALWAYS, EVENT(Func_0200026c)},
-    {3, 11, CONDITION_ALWAYS, EVENT(Func_020001e4)},
-    {3, 12, CONDITION_ALWAYS, EVENT(Func_02000224)},
-    {3, 13, CONDITION_ALWAYS, EVENT(Func_02000330)},
-    {19, 100, CONDITION_ALWAYS, 0x20014d},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS,
+     MSGNO(MsgOooogOw2)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+     MSGNO(MsgWhyDoThese)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
+     MSGNO(MsgStupidBriggs2)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSAGE_BROWSER,
+     CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+     MSGNO(MsgIJustCame)},
+    {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 10, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_DamageAndAfflictParty)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 11, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_RaisePartyLevels)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 12, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_GiveTreasureTestStock)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), 13, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_GivePartyDjinn)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, CONDITION_ALWAYS, 0x20014d},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 14, CONDITION_ALWAYS,
-     EVENT(Func_02000074)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000074)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000074)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000074)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, CONDITION_ALWAYS,
-     EVENT(Test_ReceiveFlint)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Func_020005dc)},
+     EVENT(PsynergyTest_IgnorePsynergy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_IgnorePsynergy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_IgnorePsynergy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_IgnorePsynergy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GROWING, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_NoOp)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_PILLAR,
+     CONDITION_ALWAYS, EVENT(PsynergyTest_PoundPillar)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
-     CONDITION_ALWAYS, EVENT(Func_02000444)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest_SetSandLayer)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Func_02000454)},
+     EVENT(PsynergyTest_ClearSandLayer)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 16,
-     CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {0x60009a15, 17, CONDITION_ALWAYS, EVENT(Func_02000464)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), 17,
-     CONDITION_ALWAYS, EVENT(Func_02000508)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 17,
-     CONDITION_ALWAYS, EVENT(Test_ReceiveFlint)},
-    {0x20009d15, 17, CONDITION_ALWAYS, EVENT(Func_0200055c)},
-    {0x20009d15, 21, CONDITION_ALWAYS, EVENT(Func_020005b0)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x300,
-     EVENT(Func_02000688)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, 0x301,
-     EVENT(Func_020006b0)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52, 0x302,
-     EVENT(Func_020006cc)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 53, 0x303,
-     EVENT(Func_020006e8)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
+     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS, EVENT(PsynergyTest_PracticeShout)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
+     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_StartleAfterBlaze)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS, EVENT(PsynergyTest_NoOp)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_157, PSYNERGY_PHASE_AFTER_END),
+     ACTOR_PRACTISING_MAN, CONDITION_ALWAYS, EVENT(PsynergyTest_StartleAgain)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_157, PSYNERGY_PHASE_AFTER_END),
+     ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(PsynergyTest_LowerPillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50,
+     FLAG_HOLE_DUG, EVENT(PsynergyTest_DigUpHole)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51,
+     FLAG_GROWING_ACTOR_DUG, EVENT(PsynergyTest_DigUpGrowingActor)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52,
+     FLAG_FALLING_ACTOR_DUG, EVENT(PsynergyTest_DigUpFallingActor)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 53,
+     FLAG_MONSTER_DUG, EVENT(PsynergyTest_DigUpMonster)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60,
-     CONDITION_ALWAYS, EVENT(Func_02000724)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest_ParchCells)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 55,
-     CONDITION_ALWAYS, EVENT(Func_02000604)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest_BlowAwayLeaves)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 56,
-     CONDITION_ALWAYS, EVENT(Func_02000624)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest_DepartInRing)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 13,
-     CONDITION_ALWAYS, EVENT(Func_02000650)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest_ArriveInRing)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 57,
-     CONDITION_ALWAYS, EVENT(Func_02000660)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 13, CONDITION_ALWAYS,
-     EVENT(Func_02000740)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000740)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 11, CONDITION_ALWAYS,
-     EVENT(Func_02000744)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 15, CONDITION_ALWAYS,
-     EVENT(Func_02000744)},
+     CONDITION_ALWAYS, EVENT(PsynergyTest_FightMadPlant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_IgnoreTremor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_IgnoreTremor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_MESSAGE_BROWSER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_IgnoreGrind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_MENU_TESTER, CONDITION_ALWAYS,
+     EVENT(PsynergyTest_IgnoreGrind)},
     {TRIGGER_TABLE_END},
 };
-#undef gInput.held
 
-// Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
+// The rings' start and stop, which the ROM places after the tables.
 
 void EffectSprite_Init(struct SparkleSprite *sprite, s32 width, s32 height,
                        u32 attributes, s32 tile);
 
-void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
+/// Starts an actor's rings, kept in `work`: loads their tiles and hooks
+/// PsynergyTest_UpdateRings to the actor.
+void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
   struct SparkleSprite *sprite;
   s32 tile;
   s32 row;
@@ -810,14 +905,14 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
   s32 offset;
 
   work->vramEntry = VramCache_FindFreeEntry();
-  Vram_Load(work->vramEntry, 256, gData_02000f44);
+  Vram_Load(work->vramEntry, 256, gPsynergyTest_RingTiles);
   work->unka6 = 0;
   work->unka0[0] = 999;
   work->unka0[1] = 999;
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
-  object->update = Func_02000ad0;
+  object->update = PsynergyTest_UpdateRings;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
@@ -834,4 +929,5 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
   }
 }
 
-void Func_02000d4c(struct Actor *object) { ((u8 *)object)[98] = 1; }
+/// Lets an actor's rings climb out.
+void PsynergyTest_StopRings(struct Actor *object) { ((u8 *)object)[98] = 1; }

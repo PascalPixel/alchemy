@@ -5,7 +5,7 @@
 // Word-aligned, as an array of structures is: the two bytes before it are
 // the alignment's fill.
 // 243 rows searched by ID by Speaker_FindDefinition, followed by one more row.
-const s16 gData_080f0308[][2] ALIGNED(4) = {
+const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
     { 0, 16 },
     { 1, 16 },
     { 2, 16 },

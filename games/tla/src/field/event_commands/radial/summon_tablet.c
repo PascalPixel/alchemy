@@ -1,21 +1,193 @@
 /// @file
-/// A summon tablet's runes flying as it is read, and placing the flag blocks.
+/// A summon tablet read: its pictures cycling, its motes and runes flying, and
+/// placing the flag blocks.
 // Part of radial.c.
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "field_event.h"
+#include "field/field.h"
+
+struct SpritePictures {
+  u8 unk00[5];
+  u8 picture;
+};
+
+struct AnimatedSprite {
+  u8 unk00[0x12];
+  s16 rotation;
+  u8 unk14[5];
+  u8 picture;
+  u8 nextPicture;
+  u8 unk1b[0xd];
+  struct SpritePictures *pictures;
+};
+
+/// The summon tablet's update while its runes fly: steps the sprite through
+/// a four-picture cycle on the actor's timer, as
+/// overlay 68c's Func_02001398 does, but leaves the next picture alone on the
+/// fourth step.
+void SummonTablet_CyclePictures(struct Actor *object) {
+  struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
+  struct SpritePictures *pictures = sprite->pictures;
+
+  switch (object->timer & 3) {
+  case 0:
+    pictures->picture = 7;
+    sprite->picture = 1;
+    sprite->nextPicture = 2;
+    break;
+  case 1:
+    sprite->picture = 1;
+    sprite->nextPicture = 0;
+    break;
+  case 2:
+    pictures->picture = 7;
+    sprite->picture = 1;
+    sprite->nextPicture = 0;
+    break;
+  case 3:
+    pictures->picture = 0;
+    sprite->picture = 1;
+    break;
+  }
+  object->timer++;
+}
+
+struct Chase {
+  s32 x;
+  s32 z;
+  s32 unk08;
+  s32 targetX;
+  s32 targetZ;
+};
+
+/// Moves toward the target by speed, stopping on it on overshoot.
+void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
+  s32 dx = chase->targetX - chase->x;
+  s32 dz = chase->targetZ - chase->z;
+  u16 angle = ArcTan2(dz, dx);
+
+  chase->x += Iwram_MulQ16(Trig_Cos(angle), speed);
+  chase->z += Iwram_MulQ16(Trig_Sin(angle), speed);
+  {
+    s32 nextDx = chase->targetX - chase->x;
+    s32 nextDz = chase->targetZ - chase->z;
+
+    if ((nextDx ^ dx) & 0x80000000)
+      chase->x = chase->targetX;
+    if ((dz ^ nextDz) & 0x80000000)
+      chase->z = chase->targetZ;
+  }
+}
+
+// One mote: a position chasing its target (Motion_StepTowardTarget's struct
+// Chase) and a frame count, negative before it starts.
+struct ChasingMote {
+  s32 x;
+  s32 z;
+  s32 unk08;
+  s32 targetX;
+  s32 targetZ;
+  s32 unk14;
+  s32 timer;
+};
+
+struct MoteWork {
+  u8 unk0000[0x800];
+  struct ChasingMote sparks[32];
+  struct EffectSprite sparkSprites[32];
+  struct ChasingMote motes[48];
+  struct EffectSprite moteSprites[48];
+  s32 originX;
+  s32 originZ;
+  s32 angle;
+  s32 radius;
+  s32 spacing;
+  s8 state;
+  s8 moving;
+  u16 sparkTile;
+  s32 targetX;
+  s32 targetZ;
+};
+
+/// Task of SummonTablet_PlayRunes: moves and draws the motes.
+void SummonTablet_UpdateMotes(void) {
+  struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
+  s32 position[3];
+  struct ChasingMote *mote;
+  struct EffectSprite *sprite;
+  s32 i;
+  u16 *tile;
+
+  if (work->moving != 0) {
+    position[0] = work->originX;
+    position[2] = work->originZ;
+    Vector_AddPolarOffset(work->radius, work->angle, position);
+    mote = work->motes;
+    mote->targetX = position[0];
+    mote->targetZ = position[2];
+    work->angle += 0x600;
+    for (i = 0; i < 48; i++, mote++) {
+      if (mote->timer >= 0) {
+        if (i != 0) {
+          mote->targetX = position[0];
+          mote->targetZ = position[2];
+        }
+        position[0] = mote->x;
+        position[2] = mote->z;
+        Vector_AddPolarOffset(work->spacing, 0, position);
+      }
+      mote->timer++;
+    }
+  }
+
+  mote = work->motes;
+  sprite = work->moteSprites;
+  for (i = 47; i >= 0; i--, sprite++, mote++) {
+    if (work->state == 0) {
+      if (mote->timer >= 0) {
+        Motion_StepTowardTarget(mote, 0x40000);
+        sprite->x = mote->x;
+        sprite->y = mote->z;
+        EffectSprite_Draw(sprite);
+      }
+      mote->timer++;
+    } else if (work->state == 2) {
+      Motion_StepTowardTarget(mote, 0x60000);
+      sprite->x = mote->x;
+      sprite->y = mote->z;
+      EffectSprite_Draw(sprite);
+    } else if (work->state == 3) {
+      if (mote->x != work->targetX || mote->z != work->targetZ) {
+        Motion_StepTowardTarget(mote, 0x60000);
+        sprite->x = mote->x;
+        sprite->y = mote->z;
+        EffectSprite_Draw(sprite);
+      }
+    }
+  }
+
+  mote = work->sparks;
+  tile = &work->sparkTile;
+  sprite = work->sparkSprites;
+  for (i = 31; i >= 0; i--, sprite++, mote++) {
+    if ((u32)mote->timer < 20) {
+      sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
+      EffectSprite_DrawAtWorldPosition(sprite, mote);
+      BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
+      mote->timer++;
+    }
+  }
+}
 
 extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
-extern const u8 gData_080f3614[];
+extern const u8 gMovementType_SquashScript[];
 extern char ResourceId_Runes, ResourceId_Pebbles;
 
-void Field_StartColorTransition(s32 frames, s32 color);
 void Camera_WorldToScreen(s32 *position);
-void Actor_ArmCallback(s32 id, s32 value, s32 flags);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-void SummonTablet_UpdateMotes(void);
 
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the
 /// stone tablet"): the tablet's runes and pebbles fly as motes between it
@@ -228,7 +400,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 7:
       if (timer == 0)
-        Actor_StartScriptFar(owner, gData_080f3614);
+        Actor_StartScriptFar(owner, gMovementType_SquashScript);
       if ((timer & 3) == 0)
         Sound_PlayFar(SE_MAP_TRANSITION);
       work->state = 3;
@@ -266,17 +438,11 @@ void SummonTablet_PlayRunes(s32 targetId) {
   HeapSlot_Release(92);
 }
 
-#include "field/field.h"
-
 struct ActorFlag {
   u16 actor;
   s16 flag;
 };
 
-struct Actor *Actor_GetById(u32 objectId);
-s32 Actor_GetCellIndex(struct Actor *object);
-s32 GameFlag_Get(s32 flag);
-void GameFlag_Clear(s32 flag);
 void FlagBlock_ApplyFlags(struct ActorFlag *list);
 
 /// Sets up a scene's flag blocks (pairs of actor and game flag, ended by
@@ -327,16 +493,12 @@ struct DescriptorEntry {
   u8 unk02[6];
 };
 
-extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_RunDrainMotes(void *effect, s32 mode);
 void PartyStatus_CreateWindow(s32 flags);
-s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);

@@ -4,6 +4,7 @@
 // Part of radial.c.
 
 #include "../radial_internal.h"
+#include "stddef.h"
 
 /* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h
  * has another definition; tried with the definition the rest of the object has,
@@ -15,10 +16,6 @@ struct SwitchCell__f0eabd0 {
   u8 block;
   u8 flags;
 };
-
-extern u8 gMapShapeGrid[];
-
-struct Actor *Actor_GetById(u32 objectId);
 
 /// Makes each listed actor (ids, ended by 0xffff) a block in the map: its
 /// cell's shape is tagged 32 pixels above the ground, so the party can stand
@@ -118,8 +115,6 @@ void Actor_LiftTargetBlock(u16 *actors) {
     }
   }
 }
-
-#include "stddef.h"
 
 // Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
 static inline s32 ActorX(struct Actor *actor) { return actor->x; }

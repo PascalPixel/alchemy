@@ -7,6 +7,22 @@
 #include "flags.h"
 
 #include "text/msg_ids.h"
+#include "graphics/render_input.h"
+#include "system/input.h"
+#include "system/io_write_queue.h"
+#include "edition.h"
+#include "system/dma.h"
+#include "graphics/resource.h"
+#include "bg_scroll.h"
+#include "field/world_map.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "scene_ids.h"
+#include "field/field_sequence_event.h"
+#include "actor.h"
+#include "map.h"
+#include "field/sprite.h"
+#include "flag_call.h"
 
 // The world map screen's work, laid out as field/world_map.h has it.
 
@@ -97,8 +113,6 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
 
 // Moves a list of window sprites.
 
-#include "graphics/render_input.h"
-
 /// Moves every window sprite of a list by dx, dy: the output's position and its
 /// queued sprite's OAM x and y.
 void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
@@ -120,10 +134,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #undef PLACE_SCREEN_X
 #undef PLACE_SCREEN_Y
 
-#include "system/input.h"
-#include "system/io_write_queue.h"
-#include "edition.h"
-
 // The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN
 #define WORLD_MAP_NAME_LEFT 3
@@ -136,8 +146,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define NAME_BOX_Y Ram_WorldMapNameBox[1]
 #define NAME_BOX_WIDTH Ram_WorldMapNameBox[2]
 #define NAME_BOX_HEIGHT Ram_WorldMapNameBox[3]
-
-void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
@@ -449,11 +457,6 @@ void WorldPicture_UpdateMarkers(void) {
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 
-#include "system/dma.h"
-#include "graphics/resource.h"
-#include "bg_scroll.h"
-#include "field/world_map.h"
-
 extern char ResourceId_Data023, ResourceId_Data024;
 
 /// Draws the world map picture on BG1, scrolled to the cursor in gWorldMapWork
@@ -540,11 +543,8 @@ void WorldMapPicture_Draw(void) {
   }
 }
 
-#include "system/io_reg.h"
-
 /// Set while the world map shows its alternative picture, which does not
 /// scroll.
-extern s16 Data_0202a640;
 
 #define BG_VRAM 0x06000000
 
@@ -702,31 +702,12 @@ void WorldMapPicture_UpdateScroll(void) {
   SCROLL_Y = y;
 }
 
-#include "system/io_write.h"
-#include "scene_ids.h"
-#include "field/field_sequence_event.h"
-#include "actor.h"
-#include "map.h"
-#include "field/sprite.h"
-#include "flag_call.h"
-#include "text/msg_ids.h"
-
-extern s32 Data_0202a644;
-extern s32 Data_0202a648;
 extern s32 Data_0202a64c;
 extern s32 Data_0202a650;
 extern s32 Data_0202a630;
 extern s32 Data_0202a634;
 
-void ObjectTable_Snapshot(void);
-void Task_ResetAll(void);
-void wait(s32 frames);
-void WorldPicture_Initialize(void);
-void WorldPicture_UpdateMarkers(void);
-void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step);
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
-void WorldPicture_Release(void);
-void WorldMap_LoadAreaGraphicsFar(void);
 
 s32 WorldPicture_Show(s32 mode) {
   s32 savedDelay;
@@ -764,9 +745,9 @@ s32 WorldPicture_Show(s32 mode) {
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   world->mode = mode;
-  if (mode != 0 || event->mode != 3)
+  if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP)
     ObjectTable_Snapshot();
-  if (event->mode == 3) {
+  if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     savedDelay = event->transitionFrames;
     event->transitionFrames = 6;
     Event_FinishScreenTransition();
@@ -779,7 +760,7 @@ s32 WorldPicture_Show(s32 mode) {
     }
     objects->suspended = 1;
     wait(1);
-    ((struct MapViewWork *)map)->picturePending = 1;
+    ((struct WorldMapView *)map)->viewHeld = 1;
     do {
       /* FAKEMATCH(dead): the statement in a once-only block. */
       blend = REG_BLDALPHA;
@@ -951,7 +932,7 @@ s32 WorldPicture_Show(s32 mode) {
 done:
   WorldPicture_Release();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
-  if (mode != 0 || event->mode != 3) {
+  if (mode != 0 || event->mode != ACTOR_SYSTEM_WORLD_MAP) {
     event->exit = 999;
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   } else {
@@ -965,7 +946,7 @@ done:
     objects->suspended = 0;
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 0;
-    ((struct MapViewWork *)map)->picturePending = 0;
+    ((struct WorldMapView *)map)->viewHeld = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     event->transitionFrames = savedDelay;
@@ -974,9 +955,7 @@ done:
   return 0;
 }
 
-extern const struct FlagEntry gData_080f1140[];
-
-void WorldMap_StartZoom(s32 scale, s32 frames);
+extern const struct FlagEntry gFlagEntries[];
 
 /// On the world map, zooms the view out to eight thirteenths while L is held,
 /// then back, six frames each way. FieldSequence_Run runs it for event -889.
@@ -998,7 +977,7 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 }
 
 /// Returns the flag entry table, 20-byte entries ended by a zero flag.
-const struct FlagEntry *FlagEntries_GetTable(void) { return gData_080f1140; }
+const struct FlagEntry *FlagEntries_GetTable(void) { return gFlagEntries; }
 #undef BG_VRAM
 #undef SCROLL_X
 #undef SCROLL_Y

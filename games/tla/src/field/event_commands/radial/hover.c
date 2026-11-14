@@ -1,11 +1,160 @@
 /// @file
-/// Field Psynergy kind 24's work, a sprite's four-picture cycle and a step
-/// toward a target, with routines not yet understood.
+/// Hover: its glow, the cast and its end.
 // Part of radial.c.
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "macros.h"
+#include "field_event.h"
+
+/// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
+/// read a third of a turn apart for red, green and blue.
+extern const u8 gData_080f0fe0[];
+
+/// The colour of field Psynergy kind 24's glow (HoverGlow_Update) for a step of
+/// its 24-step cycle and a brightness level (7 is neutral): three channels of
+/// the wave, each raised or lowered by the level and held to 0..31, packed as
+/// RGB555.
+s32 HoverGlow_GetColor(s32 counter, s32 level) {
+  s16 phase;
+  s16 bias;
+  s16 red;
+  s16 green;
+  s16 blue;
+  s16 redLevel;
+  s32 step;
+  const u8 *wave;
+
+  step = (counter + 12) % 24;
+  wave = gData_080f0fe0;
+  phase = step * 4;
+  redLevel = wave[(s16)(phase % 96)];
+  bias = level - 7;
+  red = redLevel + bias;
+  green = wave[(phase + 32) % 96] + bias;
+  blue = wave[(phase + 64) % 96] + bias;
+  if (red < 0)
+    red = 0;
+  if (red > 31)
+    red = 31;
+  if (green < 0)
+    green = 0;
+  if (green > 31)
+    green = 31;
+  if (blue < 0)
+    blue = 0;
+  if (blue > 31)
+    blue = 31;
+  return (blue << 10) | (green << 5) | red;
+}
+
+#define OBJ_PALETTE_14 ((u16 *)(OBJ_PLTT + 14 * 16))
+
+// The glow's strength, in frames: full at 112, and it fades out a frame at a
+// time once the player leaves the place that feeds it.
+#define GLOW_FULL 112
+#define GLOW_SPENT_CUE 0x2099
+
+// Kind 24's work (battle_fx_work[0]).
+struct HoverGlowWork {
+  u8 unk0000[0x1000];
+  struct EffectSprite sprite;
+  s32 scale;
+  s16 resource;
+  u16 tile;
+  u16 unk1030;
+  u16 phase;
+  s16 fading;
+};
+
+struct GlowEvent {
+  u8 unk000[0x166];
+  u16 cue;
+  u8 unk168[0xbdc];
+  s16 glow;
+  s16 glowHeld;
+};
+
+s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
+void Camera_WorldToScreen(s32 *position);
+
+// Kind 24's frame callback: keeps the glow's strength full while the player
+// stands where MapGrid_IsHoverCell allows, and runs it down otherwise (once it
+// is fading, the glow shrinks with it and the event takes its cue when it is
+// spent). It cycles OBJ palette 14 through HoverGlow_GetColor's colours,
+// flickers between two pictures every other frame, and draws the glow under the
+// player, flattened to three quarters of its height.
+void HoverGlow_Update(void) {
+  struct HoverGlowWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  u16 *palette;
+  s32 position[3];
+  s32 level;
+  s32 i;
+  s32 scaleX;
+  s32 scaleY;
+  struct EffectSprite *sprite;
+
+  // The glow's strength.
+  if (MapGrid_IsHoverCell(player->x, player->z, player->terrainId) == 0) {
+    if (event->glowHeld != 0)
+      event->glow--;
+  } else {
+    event->glow = GLOW_FULL;
+  }
+
+  if (work->fading == 1) {
+    level = event->glow;
+    if (level > GLOW_FULL)
+      level = GLOW_FULL;
+    if (level < 0)
+      level = 0;
+    work->scale = (level << 15) / GLOW_FULL + Q16_ONE / 2;
+    if (level == 0)
+      event->psynergy = GLOW_SPENT_CUE;
+  }
+
+  // Cycle the glow's colours; the last takes the 15th's level.
+  palette = OBJ_PALETTE_14;
+  for (i = 0; i < 16; i++) {
+    /* FAKEMATCH(dead): the colour's store in a once-only block. */
+    do {
+      *palette++ = HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
+                                      i == 15 ? 14 : i);
+    } while (0);
+  }
+  work->phase++;
+
+  // Draw it under the player.
+  scaleX = work->scale;
+  scaleY = scaleX * 6 / 8;
+  sprite = &work->sprite;
+  sprite->oam.index = work->tile + ((gFrameCount >> 1) & 1) * 32;
+  sprite->oam.priority = BattleEffect_GetObjectPriority(player);
+  sprite->depth = BattleEffect_GetObjectDepth(player) - 1;
+  position[0] = player->x;
+  position[1] = player->y;
+  position[2] = player->z;
+  Camera_WorldToScreen(position);
+  sprite->x = position[0];
+  sprite->y = position[2];
+  sprite->scaleX = scaleX;
+  sprite->scaleY = scaleY;
+  EffectSprite_Draw(sprite);
+}
+
+/// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
+void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
+#undef VIEW_MOVE_WORK_SIZE
+#undef SWAY_START
+#undef SWAY_PEAK
+#undef SWAY_RAMP
+#undef SWAY_HOLD_FRAMES
+#undef OBJ_PALETTE_14
+#undef GLOW_FULL
+#undef GLOW_SPENT_CUE
 
 struct GlowScene {
   u8 unk00[0x10];
@@ -18,10 +167,6 @@ struct GlowScene {
 };
 
 extern char ResourceId_RingOrb;
-
-s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer);
-s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void HoverGlow_Update(void);
 
 void FieldPsynergy_Hover(void) {
   struct HoverGlowWork *work = HeapSlot_Alloc(92, 0x1038);
@@ -124,8 +269,6 @@ void FieldPsynergy_Hover(void) {
 
 // Kind 24's work (battle_fx_work[0]).
 
-struct Actor *Actor_GetById(u32 objectId);
-
 void FieldPsynergy_EndHover(void) {
   struct HoverGlowWork *work =
       (struct HoverGlowWork *)Ram_HeapSlots->battleFxWork[0];
@@ -161,183 +304,4 @@ void FieldPsynergy_EndHover(void) {
   object->gravity = px(1);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(92);
-}
-
-#include "field_event.h"
-
-struct SpritePictures {
-  u8 unk00[5];
-  u8 picture;
-};
-
-struct AnimatedSprite {
-  u8 unk00[0x12];
-  s16 rotation;
-  u8 unk14[5];
-  u8 picture;
-  u8 nextPicture;
-  u8 unk1b[0xd];
-  struct SpritePictures *pictures;
-};
-
-/// The summon tablet's update while its runes fly: steps the sprite through
-/// a four-picture cycle on the actor's timer, as
-/// overlay 68c's Func_02001398 does, but leaves the next picture alone on the
-/// fourth step.
-void SummonTablet_CyclePictures(struct Actor *object) {
-  struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
-  struct SpritePictures *pictures = sprite->pictures;
-
-  switch (object->timer & 3) {
-  case 0:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 2;
-    break;
-  case 1:
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  case 2:
-    pictures->picture = 7;
-    sprite->picture = 1;
-    sprite->nextPicture = 0;
-    break;
-  case 3:
-    pictures->picture = 0;
-    sprite->picture = 1;
-    break;
-  }
-  object->timer++;
-}
-
-struct Chase {
-  s32 x;
-  s32 z;
-  s32 unk08;
-  s32 targetX;
-  s32 targetZ;
-};
-
-s32 ArcTan2(s32 y, s32 x);
-
-/// Moves toward the target by speed, stopping on it on overshoot.
-void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
-  s32 dx = chase->targetX - chase->x;
-  s32 dz = chase->targetZ - chase->z;
-  u16 angle = ArcTan2(dz, dx);
-
-  chase->x += Iwram_MulQ16(Trig_Cos(angle), speed);
-  chase->z += Iwram_MulQ16(Trig_Sin(angle), speed);
-  {
-    s32 nextDx = chase->targetX - chase->x;
-    s32 nextDz = chase->targetZ - chase->z;
-
-    if ((nextDx ^ dx) & 0x80000000)
-      chase->x = chase->targetX;
-    if ((dz ^ nextDz) & 0x80000000)
-      chase->z = chase->targetZ;
-  }
-}
-
-// One mote: a position chasing its target (Motion_StepTowardTarget's struct
-// Chase) and a frame count, negative before it starts.
-struct ChasingMote {
-  s32 x;
-  s32 z;
-  s32 unk08;
-  s32 targetX;
-  s32 targetZ;
-  s32 unk14;
-  s32 timer;
-};
-
-struct MoteWork {
-  u8 unk0000[0x800];
-  struct ChasingMote sparks[32];
-  struct EffectSprite sparkSprites[32];
-  struct ChasingMote motes[48];
-  struct EffectSprite moteSprites[48];
-  s32 originX;
-  s32 originZ;
-  s32 angle;
-  s32 radius;
-  s32 spacing;
-  s8 state;
-  s8 moving;
-  u16 sparkTile;
-  s32 targetX;
-  s32 targetZ;
-};
-
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-
-/// Task of SummonTablet_PlayRunes: moves and draws the motes.
-void SummonTablet_UpdateMotes(void) {
-  struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
-  s32 position[3];
-  struct ChasingMote *mote;
-  struct EffectSprite *sprite;
-  s32 i;
-  u16 *tile;
-
-  if (work->moving != 0) {
-    position[0] = work->originX;
-    position[2] = work->originZ;
-    Vector_AddPolarOffset(work->radius, work->angle, position);
-    mote = work->motes;
-    mote->targetX = position[0];
-    mote->targetZ = position[2];
-    work->angle += 0x600;
-    for (i = 0; i < 48; i++, mote++) {
-      if (mote->timer >= 0) {
-        if (i != 0) {
-          mote->targetX = position[0];
-          mote->targetZ = position[2];
-        }
-        position[0] = mote->x;
-        position[2] = mote->z;
-        Vector_AddPolarOffset(work->spacing, 0, position);
-      }
-      mote->timer++;
-    }
-  }
-
-  mote = work->motes;
-  sprite = work->moteSprites;
-  for (i = 47; i >= 0; i--, sprite++, mote++) {
-    if (work->state == 0) {
-      if (mote->timer >= 0) {
-        Motion_StepTowardTarget(mote, 0x40000);
-        sprite->x = mote->x;
-        sprite->y = mote->z;
-        EffectSprite_Draw(sprite);
-      }
-      mote->timer++;
-    } else if (work->state == 2) {
-      Motion_StepTowardTarget(mote, 0x60000);
-      sprite->x = mote->x;
-      sprite->y = mote->z;
-      EffectSprite_Draw(sprite);
-    } else if (work->state == 3) {
-      if (mote->x != work->targetX || mote->z != work->targetZ) {
-        Motion_StepTowardTarget(mote, 0x60000);
-        sprite->x = mote->x;
-        sprite->y = mote->z;
-        EffectSprite_Draw(sprite);
-      }
-    }
-  }
-
-  mote = work->sparks;
-  tile = &work->sparkTile;
-  sprite = work->sparkSprites;
-  for (i = 31; i >= 0; i--, sprite++, mote++) {
-    if ((u32)mote->timer < 20) {
-      sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
-      EffectSprite_DrawAtWorldPosition(sprite, mote);
-      BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
-      mote->timer++;
-    }
-  }
 }

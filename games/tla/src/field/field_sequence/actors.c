@@ -17,7 +17,6 @@
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
 /// set.
-// As ☀️'s function of the same name.
 s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
@@ -204,8 +203,8 @@ void Actor_ResetForLeader(s32 table) {
   placements = (struct EventWorkPlacements *)work;
   leader = gMainRoutineWork.currentOwner;
   entry = placements->leader;
-  entry[0] = gData_080f21d4[0];
-  entry[1] = gData_080f21d4[1];
+  entry[0] = gField_DefaultPlacements[0];
+  entry[1] = gField_DefaultPlacements[1];
   for (i = 0; i < 4; i++)
     placements->tables[i] = 0;
   ObjectTable_Clear();

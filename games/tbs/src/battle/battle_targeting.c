@@ -51,7 +51,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   // The party's standing places, else the enemies' places in use.
   if (requireLivingUnit != 0) {
     index = 0;
-    slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
+    slot = offsetof(struct BattleWork, partyUnits) / sizeof(s16);
     if (order->items[slot] != BATTLE_UNIT_LIST_END) {
       entry = order->items;
       // The walk leaves by a break, so its loop's end note lies just before
@@ -72,8 +72,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     }
   } else {
     index = 0;
-    slot = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
-    tail = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
+    slot = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
+    tail = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
     offset = tail * 2;
     entry = (order->items + 1);
     if (*(s16 *)((char *)entry + offset) != BATTLE_UNIT_LIST_END) {

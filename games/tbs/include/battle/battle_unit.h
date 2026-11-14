@@ -408,7 +408,7 @@ struct Unit {
   /// (7 when cast). Psynergy is sealed while any bit is set.
   u8 psySeal;
   u8 regenerate; ///< Regenerate's turns left, 7 when cast
-  s8 reflect;    ///< Reflect's turns left, 7 when cast
+  u8 reflect;    ///< Reflect's turns left, 7 when cast
   u8 haunt;      ///< set while an evil spirit grips the unit
   /// The Grim Reaper's countdown: 7 when cursed, down one at the end of each
   /// of the unit's own actions (BattleUnit_ProcessActionEnd); at 0 it falls.

@@ -160,7 +160,7 @@ s32 BattleUnit_CountDownRegenerate(s32 unitId) {
 /// Counts down Reflect and returns 1 when it runs out; it never ends early.
 /// Battle_ProcessTurnEnd then shows `MsgReflectEnd`.
 s32 BattleUnit_CountDownReflect(s32 unitId) {
-  u8 *turns = (u8 *)&Unit_GetFar(unitId)->reflect;
+  u8 *turns = &Unit_GetFar(unitId)->reflect;
   if (*turns != 0) {
     (*turns)--;
     if (*turns == 0) {

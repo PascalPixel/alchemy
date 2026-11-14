@@ -67,14 +67,6 @@ extern struct ActorPlacement gMcCoyPalaceGroundsActorPlacements[];
 extern struct Trigger gMcCoyPalaceGroundsNoTriggers[];
 extern struct Trigger gMcCoyPalaceGroundsTriggers[];
 
-// UB: this calls a void function through an s32 function type, the call the
-// bytes show; UBFIX calls it as declared.
-#ifdef UBFIX
-#define MCCOY_GARDEN_SET_ACTOR_POSITION Import_ActorSetPosition
-#else
-#define MCCOY_GARDEN_SET_ACTOR_POSITION ((s32 (*)())Import_ActorSetPosition)
-#endif
-
 /// The placed actors, numbered in the order of
 /// gMcCoyPalaceGroundsActorPlacements.
 enum McCoyPalaceGroundsActorId {
@@ -227,7 +219,9 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Event_SetMessageId(MsgBilibinLordMccoyDifficult);
       // "Lord McCoy is a very difficult man. Be careful how you act..."
       Event_ShowMessage(ACTOR_EAST_GUARD, 0);
-      goto guard;
+      FieldActor_WatchAndStartScript(
+          ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
+          gGuardWatchesParty);
     }
   } else {
     // On the first visit, the guards confer before opening the gate.
@@ -273,12 +267,8 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
       McCoyPalaceGrounds_OpenGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
-      MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
+      Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
       GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
-    guard:
       FieldActor_WatchAndStartScript(
           ACTOR_EAST_GUARD, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
           gGuardWatchesParty);

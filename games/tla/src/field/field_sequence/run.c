@@ -20,7 +20,12 @@
 extern u8 gMapCellBuffer[];
 
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
+// UB: declared returning s32; the definition (main_routine.c) returns s16.
+#ifdef UBFIX
+s16 Field_GetSceneAttributes(s32 scene);
+#else
 s32 Field_GetSceneAttributes(s32 scene);
+#endif
 /* VIEW(field_sequence): routine PartyInventory_GiveItem as s32
  * PartyInventory_GiveItem(s32 item); field/event.h has s32
  * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
@@ -128,8 +133,6 @@ s32 FieldSequence_Run(void) {
     gMainRoutineWork.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
-  /* FAKEMATCH(signature): field_GetSceneAttributes declared returning s32,
-   * though it returns s16. */
   value = Field_GetSceneAttributes(gMainRoutineWork.scene);
   work->sceneAttributeHigh = (value >> 4) & 15;
   work->sceneAttributeLow = value & 15;

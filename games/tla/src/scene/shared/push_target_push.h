@@ -29,7 +29,7 @@ void PushTarget_Push(struct PushTarget target) {
   height = (ABS(gPushFootprints[footprint][1]) +
             ABS(gPushFootprints[footprint][3])) >>
            4;
-  Func_02003790(0, cell[0], cell[2], width, height, 0);
+  Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
   System_Wait(15);
@@ -74,13 +74,13 @@ void PushTarget_Push(struct PushTarget target) {
   originZ = *(s32 *)(map + 332) >> 20;
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
-  Func_02003790(0, target.x, target.z, width, height, 255);
-  Func_02003790(2, target.x, target.z, width, height, 255);
+  Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
+  Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
   cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
   cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
-  Func_02003790(2, cell[0], cell[2], width, height, 0);
+  Map_FillCellRectByte2(2, cell[0], cell[2], width, height, 0);
   Event_NoOp();
 }

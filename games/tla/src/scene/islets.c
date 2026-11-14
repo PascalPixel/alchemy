@@ -1,4 +1,14 @@
 /// @file
+/// The five islets of the Eastern Sea, one scene each in this overlay, and the
+/// trade from one to the next: West Indra Islet (SceneId_Islets1), whose dog
+/// trades the Li'l Turtle for Milk (Islets_TradeWithDog); E Tundaria Islet
+/// (Islets2), where the log pushed into the water brings Pengulina back to
+/// Pengus for a Pretty Stone (Islets_PengusGivesPrettyStone); N Osenia Islet
+/// (Islets3), whose cow trades Milk for the Red Cloth (Islets_TradeWithCow);
+/// SE Angara Islet (Islets4), whose bird trades the Red Cloth for the Pretty
+/// Stone (Islets_TradeWithBird); and the Sea of Time Islet (Islets5), where
+/// Lonesome George takes the Li'l Turtle and carries the party to his secret
+/// spot (Islets_GiveTurtle, Islets_ArriveAtSecretSpot).
 #include "flags.h"
 #include "item_ids.h"
 #include "battle/battle.h"
@@ -32,58 +42,59 @@
 
 struct Actor;
 
-void Func_020000d8(void);
+void Islets_PushLogIntoWater(void);
 
-void Func_02000210(void);
-void Func_020002ac(void);
-void Func_02000380(void);
-void Func_02000440(void);
+void Islets_TalkToPengus(void);
+void Islets_MindReadPengus(void);
+void Islets_MindReadPengulina(void);
+void Islets_TalkToTreasureHunters(void);
 
-void Func_02000568(void);
+void Islets_TradeWithBird(void);
 
-void Func_020014e0(void);
-void Func_02001a68(void);
+void Islets_GiveTurtle(void);
+void Islets_RideBackToIsland(void);
 
-void Func_02001bf4(void);
+void Islets_TalkToSailorsSon(void);
 
-void Func_02001c38(void);
-void Func_0200208c(void);
+void Islets_IgnoreTalk(void);
+void Islets_JumpDownLedge(void);
 void Leader_SetLayer(void);
-void Func_020020d0(void);
-void Func_02002144(void);
-void Func_020024c8(void);
-void Func_020024f0(void);
+void Islets_StepOntoGround(void);
+void Islets_StartPushingCrate(void);
+void Islets_FreezePuddle(void);
+void Islets_StepUpOntoIceberg(void);
 
-void Func_0200253c(void);
+void Islets_StepDownFromIceberg(void);
 
-void Func_020025a4(void);
-void Func_020025b0(void);
+void Islets_StartReveal(void);
+void Islets_EndReveal(void);
 
-void Func_020025bc(void);
-void Func_020025dc(void);
-void Func_0200261c(void);
-void Func_0200265c(void);
+void Islets_ClearFirstPatch(void);
+void Islets_ClearSecondPatch(void);
+void Islets_ClearFourthPatch(void);
+void Islets_ClearSixthPatch(void);
 
-void Func_0200267c(void);
-void Func_0200274c(void);
+void Islets_OpenDoorAndEnter(void);
+void Islets_LeaveByStep(void);
 
-void Func_02003620(void);
-void Func_0200367c(void);
+void Islets_DropThroughHole(void);
+void Islets_JumpForward(void);
 
-extern u32 gData_020040d4[];
-extern u32 gData_02004198[];
-extern u32 gData_02004640[];
-extern s16 gData_020046a4[];
-extern s16 gData_020046ba[];
+extern u32 gIslets_Room1WanderScript[];
+extern u32 gIslets_GullScript[];
+extern u32 gIslets_Room4PaceScript[];
+extern s16 gIslets_DoorFrames[];
+extern s16 gIslets_NoDoorFrames[];
 
-void Func_020034fc(void);
+void Islets_ShimmerWater(void);
 
 void Field_TryJumpForward();
 
-void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
-struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind);
+void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
+                           s32 value);
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *number, s32 *kind);
 
-void Func_02001c4c(void);
+void Islets_SetLedgeBlocksByHeight(void);
 
 struct Actor;
 
@@ -103,7 +114,7 @@ void FieldPsynergy_RestoreMindReadPalette(void);
 void FieldCamera_WaitForArrival(void);
 void TileCopies_CopyTouchedCells();
 
-s32 Func_02003684(s32 id);
+s32 PushTarget_FillFootprint(s32 id);
 
 void Actor_DisableById(s32 actor);
 
@@ -130,10 +141,10 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
-void Func_020034ec(void);
+void Islets_StopWaterShimmer(void);
 
-void Func_02001cac(void);
-void Func_02001cfc(void);
+void Islets_StartWaveDma(void);
+void Islets_FillWaveLines(void);
 
 extern u32 gSmokeScript[];
 extern struct Trigger gIslets_Triggers[];
@@ -184,33 +195,32 @@ extern struct ActorPlacement gIslets_Room2Placements[];
 extern struct ActorPlacement gIslets_Room3Placements[];
 extern struct ActorPlacement gIslets_Room4Placements[];
 extern struct ActorPlacement gIslets_Room5Placements[];
-extern s32 gData_02005190;
-extern s32 gData_02005194;
-extern s32 gData_02005198;
-extern s32 gData_0200519c;
-extern s32 gData_02004028[];
-/* VIEW(first): routine gData_020046bc as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_020046bc[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:1568: `gData_020046bc'
+extern s32 gIslets_SecondCrateZ;
+extern s32 gIslets_FirstCrateZ;
+extern s32 gIslets_SecondCrateX;
+extern s32 gIslets_FirstCrateX;
+extern s32 gIslets_EnterDoorScript[];
+/* VIEW(first): routine gIslets_Doors as this part declared it; the joined file
+ * has another; tried as the definition's extern s32 gIslets_Doors[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:1568: `gIslets_Doors'
  * undeclared (first use in this function). */
-extern const struct IsletsExit
-    gData_020046bc__first[] __asm__("gData_020046bc");
-#define gData_020046bc gData_020046bc__first
-extern u16 gData_02004070[];
+extern const struct IsletsExit gIslets_Doors__first[] __asm__("gIslets_Doors");
+#define gIslets_Doors gIslets_Doors__first
+extern u16 gPushKinds[];
 
-void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
-void Func_020021d0(void);
-void Func_02002bd8(void);
+void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value);
+void Islets_FinishPushingCrate(void);
+void Islets_SetDockBlocksByHeight(void);
 void Leader_PushObjectAhead(void);
 s32 MapGrid_CheckCollision(struct Actor *object, struct Vector3 *position);
 struct Actor *Actor_FindAtCell(struct Vector3 *position, s32 mode);
-s32 Func_020037d8(struct PushTarget *target);
+s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_Push(struct PushTarget target);
 
-void Func_02001f58(void);
-void Func_02001278(struct Actor *object);
+void Islets_PlayFootsteps(void);
+void Islets_RideOnLonesomeGeorge(struct Actor *object);
 void Actor_EmitSmoke(struct Actor *object);
-void Func_020034d8(void);
+void Islets_StartWaterShimmer(void);
 void Actor_MoveToObject(s32 actor, s32 target);
 void FieldPsynergy_StopMindReadWave(void);
 
@@ -235,11 +245,13 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gIslets_Placements;
 }
 
-void Func_020000d8(void) {
+// Pushing the log off the ice: it falls into the water and makes a way back for
+// Pengulina.
+void Islets_PushLogIntoWater(void) {
   struct PushTarget target;
   struct Actor *object = Actor_Get(10);
 
-  if (Func_020037d8(&target)) {
+  if (PushTarget_FindSlide(&target)) {
     PushTarget_Push(target);
     System_Wait(5);
     object->gravity = px(1) / 2;
@@ -278,7 +290,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 #include "text/msg_ids.h"
 
-void Func_02000210(void) {
+void Islets_TalkToPengus(void) {
   s32 result0;
   s32 result1;
 
@@ -306,7 +318,7 @@ void Func_02000210(void) {
   return;
 }
 
-void Func_020002ac(void) {
+void Islets_MindReadPengus(void) {
   s32 result0;
   s32 result1;
 
@@ -329,7 +341,7 @@ void Func_020002ac(void) {
   return;
 }
 
-void Func_0200030c(void) {
+void Islets_TalkToPengulina(void) {
   s32 result0;
   s32 result1;
 
@@ -353,7 +365,7 @@ void Func_0200030c(void) {
   return;
 }
 
-void Func_02000380(void) {
+void Islets_MindReadPengulina(void) {
   s32 result0;
   s32 result1;
 
@@ -393,7 +405,7 @@ void Islets_TalkToHealer(void) {
   return;
 }
 
-void Func_02000440(void) {
+void Islets_TalkToTreasureHunters(void) {
   s32 result0;
 
   Event_Start();
@@ -420,7 +432,7 @@ void Func_02000440(void) {
   return;
 }
 
-void Func_020004f4(void) {
+void Islets_TalkToSailor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgTheEasternSea);
@@ -430,7 +442,7 @@ void Func_020004f4(void) {
   return;
 }
 
-void Func_02000520(void) {
+void Islets_TalkToBird(void) {
   s32 result0;
 
   Event_Start();
@@ -446,7 +458,7 @@ void Func_02000520(void) {
 }
 
 /// Object 10's talk, and its exchange of the party's item 0x1c4 for item 0x1c5.
-void Func_02000568(void) {
+void Islets_TradeWithBird(void) {
   struct Actor *leader;
   struct Actor *object;
   struct Actor *spawned;
@@ -551,7 +563,7 @@ void Func_02000568(void) {
 /// leader's head), sets flag 0xaa3 and counts the answer in the event work's
 /// halfword 0x1c4 the first time; a no sets flag 513. Without the item, object
 /// 10 says MsgYupANice after the trade or MsgIVeBeenFeeling before it.
-void Func_020006f4(void) {
+void Islets_TradeWithCow(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;
   /* FAKEMATCH(temporary): zero wrapped in a struct of one u16. */
@@ -680,7 +692,7 @@ void Func_020006f4(void) {
 }
 #undef STEP
 
-struct Actor *Func_02000da0(struct Actor *object, s32 value) {
+struct Actor *Islets_ShowItemAbove(struct Actor *object, s32 value) {
   struct Actor *spawned;
 
   spawned = FieldActor_Create(489, object->x, object->y + px(24), object->z);
@@ -707,14 +719,15 @@ void Actor_EmitSmoke(struct Actor *object) {
   }
 }
 
-extern s32 gData_020043f8[];
-extern s32 gData_02004300[];
+extern s32 gIslets_BirdFliesOffScript[];
+extern s32 gIslets_BirdFliesBackScript[];
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
    FieldEvent_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
 
-void Func_02000e38(void) {
+// "Sniff! Sniff! I smell fresh milk!" The dog trades the Li'l Turtle for Milk.
+void Islets_TradeWithDog(void) {
   struct Actor *leader, *trader, *item, *gift;
   s32 right;
   s32 giftItem;
@@ -741,17 +754,17 @@ void Func_02000e38(void) {
       Actor_FaceDirection(11, FACING_EAST, 0);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 856);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
-      item = (struct Actor *)Func_02000da0((s32)leader, 454);
+      item = (struct Actor *)Islets_ShowItemAbove((s32)leader, 454);
       trader->update = Actor_EmitSmoke;
-      Actor_RunScriptAndWait(11, gData_020043f8);
+      Actor_RunScriptAndWait(11, gIslets_BirdFliesOffScript);
       trader->update = 0;
     } else {
       Actor_FaceDirection(11, FACING_WEST, 0);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 856);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
-      item = (struct Actor *)Func_02000da0((s32)leader, 454);
+      item = (struct Actor *)Islets_ShowItemAbove((s32)leader, 454);
       trader->update = Actor_EmitSmoke;
-      Actor_RunScriptAndWait(11, gData_02004300);
+      Actor_RunScriptAndWait(11, gIslets_BirdFliesBackScript);
       trader->update = 0;
     }
     Event_ShowMessage(11, 0);
@@ -792,7 +805,7 @@ void Func_02000e38(void) {
       }
     }
     giftItem = 455;
-    gift = (struct Actor *)Func_02000da0((s32)leader, giftItem);
+    gift = (struct Actor *)Islets_ShowItemAbove((s32)leader, giftItem);
     STEP(11, 280, 856);
     trader->update = 0;
     FieldPsynergy_RestoreMindReadPalette();
@@ -823,7 +836,7 @@ void Func_02000e38(void) {
   Event_End();
 }
 
-void Func_02001278(struct Actor *object) {
+void Islets_RideOnLonesomeGeorge(struct Actor *object) {
   struct Actor *source = Actor_Get(9);
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y + px(16),
@@ -837,17 +850,19 @@ void Func_02001278(struct Actor *object) {
 #define ISLETS_GIFT_TRANSITION 513
 #endif
 
-/* VIEW(first): routine gData_02004004 as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gData_02004004[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:844: `gData_02004004'
- * undeclared (first use in this function). */
-extern struct ActionScript gData_02004004__first __asm__("gData_02004004");
-#define gData_02004004 gData_02004004__first
+/* VIEW(first): routine gIslets_SpinScript as this part declared it; the joined
+ * file has another; tried as the definition's extern s32 gIslets_SpinScript[],
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:844:
+ * `gIslets_SpinScript' undeclared (first use in this function). */
+extern struct ActionScript
+    gIslets_SpinScript__first __asm__("gIslets_SpinScript");
+#define gIslets_SpinScript gIslets_SpinScript__first
 
-void Func_0200129c(struct Actor *gift) {
+// "At long last, I have a friend! Lonesome George I am no more!"
+void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *guide = Actor_Get(9);
-  struct ActionScript script = gData_02004004;
+  struct ActionScript script = gIslets_SpinScript;
 
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_GreyMindReadPalette();
@@ -882,7 +897,7 @@ void Func_0200129c(struct Actor *gift) {
   leader->update = 0;
   FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
   Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 296, 452);
-  leader->update = Func_02001278;
+  leader->update = Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetAnimation(9, 3);
   FieldEvent_Wait(20);
@@ -894,7 +909,7 @@ void Func_0200129c(struct Actor *gift) {
   Actor_SetDestination(9, 288, 538);
   FieldEvent_Wait(20);
   FieldPsynergy_RestoreMindReadPalette();
-  Func_020034ec();
+  Islets_StopWaterShimmer();
   gift->update = Actor_EmitSmoke;
   Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 288, 0, 538);
@@ -930,7 +945,8 @@ void Func_0200129c(struct Actor *gift) {
     }                                                                          \
   }
 
-void Func_020014e0(void) {
+// "Oh! You're really going to let me take care of your li'l turtle?"
+void Islets_GiveTurtle(void) {
   struct Actor *leader, *a, *b, *other;
   const u8 *message;
   s32 answer;
@@ -963,7 +979,7 @@ void Func_020014e0(void) {
         STEP(gMainRoutineWork.currentOwner, 318, 424);
         leader->update = 0;
         Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
-        Func_0200129c(a);
+        Islets_LonesomeGeorgeThanks(a);
       } else {
         FieldPsynergy_GreyMindReadPalette();
         Event_SetMessageId(message - 1);
@@ -1000,7 +1016,7 @@ void Func_020014e0(void) {
       FieldPsynergy_RestoreMindReadPalette();
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
-        Func_0200129c(a);
+        Islets_LonesomeGeorgeThanks(a);
       } else {
         FieldPsynergy_GreyMindReadPalette();
         Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
@@ -1032,7 +1048,7 @@ void Func_020014e0(void) {
       Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
       FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
       Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 296, 452);
-      leader->update = Func_02001278;
+      leader->update = Islets_RideOnLonesomeGeorge;
       FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner),
                                 15);
       Actor_SetAnimation(9, 3);
@@ -1045,7 +1061,7 @@ void Func_020014e0(void) {
       Actor_SetDestination(9, 288, 538);
       FieldEvent_Wait(40);
       FieldPsynergy_RestoreMindReadPalette();
-      Func_020034ec();
+      Islets_StopWaterShimmer();
       Actor_GetById(10)->update = Actor_EmitSmoke;
       Actor_WalkTo(10, 288, 538);
       FieldEvent_Wait(20);
@@ -1067,10 +1083,12 @@ void Func_020014e0(void) {
   Event_End();
 }
 
-extern u32 gData_020045a4[];
-extern u32 gData_020045f0[];
+extern u32 gIslets_GeorgeWalksScript[];
+extern u32 gIslets_TurtleWalksScript[];
 
-void Func_02001a68(void) {
+// "You all set to go back to the island?" Lonesome George carries the party
+// back.
+void Islets_RideBackToIsland(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_Get(9);
   void (*update)(void);
@@ -1097,7 +1115,7 @@ void Func_02001a68(void) {
     FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 768);
-    leader->update = (void (*)(void))Func_02001278;
+    leader->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
     Actor_SetAnimation(9, 3);
     FieldEvent_Wait(20);
@@ -1108,14 +1126,14 @@ void Func_02001a68(void) {
     done = (u8 *)object + 99;
     *done = 0;
     object->update = update;
-    Actor_SetScript(9, gData_020045a4);
+    Actor_SetScript(9, gIslets_GeorgeWalksScript);
     FieldEvent_Wait(30);
     Actor_Get(10)->update = update;
-    Actor_SetScript(10, gData_020045f0);
+    Actor_SetScript(10, gIslets_TurtleWalksScript);
     do {
       System_Wait(1);
     } while (*done == 0);
-    Func_020034ec();
+    Islets_StopWaterShimmer();
     System_Wait(1);
     gFieldWork->transition = 0x201;
     Event_FinishScreenTransition();
@@ -1131,7 +1149,7 @@ void Func_02001a68(void) {
   Event_End();
 }
 
-void Func_02001bf4(void) {
+void Islets_TalkToSailorsSon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
@@ -1141,13 +1159,13 @@ void Func_02001bf4(void) {
   Event_End();
 }
 
-void Func_02001c38(void) {
+void Islets_IgnoreTalk(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->fieldMenu = 1;
 }
 
-void Func_02001c4c(void) {
+void Islets_SetLedgeBlocksByHeight(void) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y < px(40)) {
     Actor_Get(11)->collisionFlags |= 8;
     Actor_Get(12)->collisionFlags |= 8;
@@ -1157,12 +1175,12 @@ void Func_02001c4c(void) {
   }
 }
 
-extern u8 gData_02004f04;
-extern s16 gData_02004f10[2][160];
+extern u8 gIslets_WaveTableIndex;
+extern s16 gIslets_WaveLines[2][160];
 
 /// Applies BG1 horizontal line scrolling with HBlank DMA.
-void Func_02001cac(void) {
-  s16 *lines = gData_02004f10[gData_02004f04];
+void Islets_StartWaveDma(void) {
+  s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex];
   s32 first = lines[0];
   volatile u16 *scroll;
   volatile u16 *dma;
@@ -1182,9 +1200,9 @@ void Func_02001cac(void) {
           (volatile u32 *)dma);
 }
 
-void Func_02001cfc(void) {
+void Islets_FillWaveLines(void) {
   s16 *layer = (s16 *)&Ram_HeapSlots->mapWork->layers[2];
-  s16 *lines = gData_02004f10[gData_02004f04 ^ 1];
+  s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
   s32 v[2];
   s32 *count = &v[1];
   s32 value;
@@ -1200,17 +1218,18 @@ void Func_02001cfc(void) {
     value += *count % 3;
     *lines++ = value - 1;
   }
-  gData_02004f04 ^= 1;
+  gIslets_WaveTableIndex ^= 1;
 }
 
-void Func_02001d90(void) {
-  Task_AddFrame(Func_02001cfc, 0x480);
-  Task_AddFrame(Func_02001cac, 0xc80);
+// The water ripples by an HBlank wave on BG1.
+void Islets_StartWave(void) {
+  Task_AddFrame(Islets_FillWaveLines, 0x480);
+  Task_AddFrame(Islets_StartWaveDma, 0xc80);
 }
 
 /// When object 19 stands in its target area, actor 9 and the leader react and
 /// the party is given item 0x1c4.
-void Func_02001db0(void) {
+void Islets_PengusGivesPrettyStone(void) {
   struct Actor *object = Actor_GetById(19);
   struct Actor *leader;
   struct Actor *item;
@@ -1262,12 +1281,13 @@ void Func_02001db0(void) {
   Event_End();
 }
 
-void Func_02001f58(void) {
+void Islets_PlayFootsteps(void) {
   if ((gFrameCount & 15) == 0)
     Event_PlaySound(SE_FOOTSTEP);
 }
 
-void Func_02001f74(void) {
+// Coming near the nest, the bird flies back onto it.
+void Islets_BirdReturnsToNest(void) {
   struct Actor *object = Actor_Get(10);
 
   Event_Start();
@@ -1282,10 +1302,10 @@ void Func_02001f74(void) {
   System_Wait(1);
   object->y = px(160);
   System_Wait(1);
-  FieldTask_AddFrame(Func_02001f58, 0x480);
+  FieldTask_AddFrame(Islets_PlayFootsteps, 0x480);
   FieldActor_SetMoveTarget(object, 132, 128, 320);
   FieldActor_WaitForMove(object);
-  FieldTask_Remove(Func_02001f58);
+  FieldTask_Remove(Islets_PlayFootsteps);
   Actor_SetAnimation(10, 5);
   object->motionFlags = 3;
   FieldActor_SetSpritePriority(10, 2);
@@ -1301,7 +1321,7 @@ void Func_02001f74(void) {
   Event_End();
 }
 
-void Func_0200208c(void) {
+void Islets_JumpDownLedge(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 1);
@@ -1317,7 +1337,7 @@ void Leader_SetLayer(void) {
   return;
 }
 
-void Func_020020d0(void) {
+void Islets_StepOntoGround(void) {
   struct Actor *object0;
 
   object0 = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1325,7 +1345,7 @@ void Func_020020d0(void) {
   return;
 }
 
-void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
+void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cells0 = map->layers[0].cells;
   struct MapCell *cells2 = map->layers[2].cells;
@@ -1344,7 +1364,7 @@ void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
 /// Records objects 12 and 13's positions; with them on cells (7, 29) and
 /// (7, 28), clears layer 2's collision under object 12, and with them on
 /// (12, 25) and (12, 26), under object 13.
-void Func_02002144(void) {
+void Islets_StartPushingCrate(void) {
   struct Actor *object;
   s32 *x0;
   s32 *z0;
@@ -1352,28 +1372,28 @@ void Func_02002144(void) {
   s32 z1;
 
   object = Actor_Get(12);
-  x0 = &gData_0200519c;
-  z0 = &gData_02005194;
+  x0 = &gIslets_FirstCrateX;
+  z0 = &gIslets_FirstCrateZ;
   *x0 = object->x;
   *z0 = object->z;
   object = Actor_Get(13);
-  gData_02005198 = x1 = object->x;
+  gIslets_SecondCrateX = x1 = object->x;
   {
     /* FAKEMATCH(pin): object 13's z in r2. */
     register s32 z asm("r2");
 
     z = object->z;
-    gData_02005190 = z;
+    gIslets_SecondCrateZ = z;
     z1 = z;
   }
   if (*x0 >> 20 == 7 && *z0 >> 20 == 29 && x1 >> 20 == 7 && z1 >> 20 == 28)
-    Func_020020ec(*x0, *z0, 2, 0);
-  if (gData_0200519c >> 20 == 12 && gData_02005194 >> 20 == 25 &&
-      gData_02005198 >> 20 == 12 && gData_02005190 >> 20 == 26)
-    Func_020020ec(gData_02005198, gData_02005190, 2, 0);
+    Islets_SetCellCollision(*x0, *z0, 2, 0);
+  if (gIslets_FirstCrateX >> 20 == 12 && gIslets_FirstCrateZ >> 20 == 25 &&
+      gIslets_SecondCrateX >> 20 == 12 && gIslets_SecondCrateZ >> 20 == 26)
+    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 2, 0);
 }
 
-void Func_020021d0(void) {
+void Islets_FinishPushingCrate(void) {
   struct Actor *first = Actor_Get(12);
   struct Actor *second = Actor_Get(13);
   s32 firstX = first->x >> 20;
@@ -1382,24 +1402,24 @@ void Func_020021d0(void) {
   s32 secondZ = second->z >> 20;
   s32 both;
 
-  if (gData_0200519c >> 20 == 12 && gData_02005194 >> 20 == 24) {
-    Func_020020ec(gData_0200519c, gData_02005194, 1, 21);
-    Func_020020ec(gData_0200519c, gData_02005194, 2, 0);
+  if (gIslets_FirstCrateX >> 20 == 12 && gIslets_FirstCrateZ >> 20 == 24) {
+    Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ, 1, 21);
+    Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ, 2, 0);
   } else {
-    s32 *z = &gData_02005194;
+    s32 *z = &gIslets_FirstCrateZ;
 
-    Func_020020ec(gData_0200519c, *z, 3, 0);
+    Islets_SetCellCollision(gIslets_FirstCrateX, *z, 3, 0);
   }
-  if (gData_02005198 >> 20 == 7 && gData_02005190 >> 20 == 27) {
-    Func_020020ec(gData_02005198, gData_02005190, 1, 21);
-    Func_020020ec(gData_02005198, gData_02005190, 2, 0);
+  if (gIslets_SecondCrateX >> 20 == 7 && gIslets_SecondCrateZ >> 20 == 27) {
+    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 1, 21);
+    Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 2, 0);
   } else {
-    s32 *z = &gData_02005190;
+    s32 *z = &gIslets_SecondCrateZ;
 
-    Func_020020ec(gData_02005198, *z, 3, 0);
+    Islets_SetCellCollision(gIslets_SecondCrateX, *z, 3, 0);
   }
-  Func_020020ec(first->x, first->z, 3, 255);
-  Func_020020ec(second->x, second->z, 3, 255);
+  Islets_SetCellCollision(first->x, first->z, 3, 255);
+  Islets_SetCellCollision(second->x, second->z, 3, 255);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_10) && firstX == 12 && firstZ == 26) {
     both = 0;
     Event_Start();
@@ -1415,8 +1435,8 @@ void Func_020021d0(void) {
     first->motionFlags = 0;
     Event_SetFlag(FLAG_SCENE_TEMP_10);
     if (both) {
-      Func_020020ec(first->x, first->z, 3, 0);
-      Func_020020ec(second->x, second->z, 3, 0);
+      Islets_SetCellCollision(first->x, first->z, 3, 0);
+      Islets_SetCellCollision(second->x, second->z, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
       Event_SetFlag(FLAG_SCENE_TEMP_12);
       ((u8 *)first)[0x62] = 1;
@@ -1439,8 +1459,8 @@ void Func_020021d0(void) {
     second->motionFlags = 0;
     Event_SetFlag(FLAG_SCENE_TEMP_11);
     if (both) {
-      Func_020020ec(first->x, first->z, 3, 0);
-      Func_020020ec(second->x, second->z, 3, 0);
+      Islets_SetCellCollision(first->x, first->z, 3, 0);
+      Islets_SetCellCollision(second->x, second->z, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
       Event_SetFlag(FLAG_SCENE_TEMP_12);
       ((u8 *)first)[0x62] = 1;
@@ -1450,32 +1470,33 @@ void Func_020021d0(void) {
   }
 }
 
-void Func_02002430(void) {
+void Islets_SaveCratePositions(void) {
   struct Actor *first = Actor_Get(12);
   struct Actor *second = Actor_Get(13);
 
-  gData_0200519c = first->x;
-  gData_02005194 = first->z;
-  gData_02005198 = second->x;
-  gData_02005190 = second->z;
+  gIslets_FirstCrateX = first->x;
+  gIslets_FirstCrateZ = first->z;
+  gIslets_SecondCrateX = second->x;
+  gIslets_SecondCrateZ = second->z;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (gData_0200519c >> 20 == 7 && gData_02005194 >> 20 == 29 &&
-      gData_02005198 >> 20 == 7 && gData_02005190 >> 20 == 28) {
+  if (gIslets_FirstCrateX >> 20 == 7 && gIslets_FirstCrateZ >> 20 == 29 &&
+      gIslets_SecondCrateX >> 20 == 7 && gIslets_SecondCrateZ >> 20 == 28) {
     ((u8 *)first)[0x62] = 0;
-    ((void (*)())Func_020020ec)(gData_0200519c, gData_02005194, 2);
+    ((void (*)())Islets_SetCellCollision)(gIslets_FirstCrateX,
+                                          gIslets_FirstCrateZ, 2);
   }
   Leader_PushObjectAhead();
-  Func_020021d0();
+  Islets_FinishPushingCrate();
   Event_End();
 }
 
-void Func_020024c8(void) {
+void Islets_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
   Event_SetFlag(FLAG_SCENE_TEMP_13);
 }
 
-void Func_020024f0(void) {
+void Islets_StepUpOntoIceberg(void) {
   struct Actor *object;
 
   if (gInput.held & KEY_UP) {
@@ -1489,7 +1510,7 @@ void Func_020024f0(void) {
   }
 }
 
-void Func_0200253c(void) {
+void Islets_StepDownFromIceberg(void) {
   struct Actor *object;
   u16 *state;
 
@@ -1507,50 +1528,50 @@ void Func_0200253c(void) {
   }
 }
 
-void Func_020025a4(void) {
+void Islets_StartReveal(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_18);
   return;
 }
 
-void Func_020025b0(void) {
+void Islets_EndReveal(void) {
   Event_ClearFlag(FLAG_SCENE_TEMP_18);
   return;
 }
 
 // The following six are from patch 1.
 #if TLA_PATCH_1
-void Func_020025bc(void) {
+void Islets_ClearFirstPatch(void) {
   Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 4, 4, 65, 10, 1);
   return;
 }
 
-void Func_020025dc(void) {
+void Islets_ClearSecondPatch(void) {
   Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 2, 2, 71, 10, 1);
   return;
 }
 
-void Func_020025fc(void) {
+void Islets_ClearThirdPatch(void) {
   Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 1, 1, 68, 15, 1);
   return;
 }
 
-void Func_0200261c(void) {
+void Islets_ClearFourthPatch(void) {
   Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 2, 3, 75, 20, 1);
   return;
 }
 
-void Func_0200263c(void) {
+void Islets_ClearFifthPatch(void) {
   Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 4, 1, 78, 22, 1);
   return;
 }
 
-void Func_0200265c(void) {
+void Islets_ClearSixthPatch(void) {
   Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 1, 1, 79, 23, 1);
   return;
 }
 #endif
 
-void Func_0200267c(void) {
+void Islets_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
@@ -1572,10 +1593,10 @@ void Func_0200267c(void) {
   index = *exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
-  MapGrid_AnimateCells(gData_020046bc[index].value,
-                       gData_020046bc[index].pair.first,
-                       gData_020046bc[index].pair.second);
-  Actor_SetScript(party->currentOwner, gData_02004028);
+  MapGrid_AnimateCells(gIslets_Doors[index].value,
+                       gIslets_Doors[index].pair.first,
+                       gIslets_Doors[index].pair.second);
+  Actor_SetScript(party->currentOwner, gIslets_EnterDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -1583,19 +1604,19 @@ void Func_0200267c(void) {
   FieldEvent_SetExitRequest(*exit);
 }
 
-void Func_0200274c(void) {
+void Islets_LeaveByStep(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Func_020034ec();
+  Islets_StopWaterShimmer();
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-void Func_02002780(void) {
+void Islets_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
@@ -1611,7 +1632,7 @@ void Func_02002780(void) {
       object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
-  Actor_SetScript(party->currentOwner, gData_02004028);
+  Actor_SetScript(party->currentOwner, gIslets_EnterDoorScript);
   System_Wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -1619,7 +1640,8 @@ void Func_02002780(void) {
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-void Func_02002830(void) {
+// "Here we are!" Lonesome George's secret spot.
+void Islets_ArriveAtSecretSpot(void) {
   struct FieldWork *work;
   struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_Get(9);
@@ -1628,7 +1650,7 @@ void Func_02002830(void) {
   Actor_SetPosition(10, 273, 520);
   System_Wait(1);
   object->facing = FACING_NORTH;
-  owner->update = (void (*)(void))Func_02001278;
+  owner->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetAnimation(9, 3);
   System_Wait(1);
@@ -1660,22 +1682,22 @@ void Func_02002830(void) {
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   work = Ram_HeapSlots->fieldWork;
   work->transition = 0x100;
-  Func_020034d8();
+  Islets_StartWaterShimmer();
 }
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 #define OBJECT(id) ((struct Actor *)((s32)Actor_Get((id))))
 
-extern u32 gData_02004508[];
-extern u32 gData_02004554[];
+extern u32 gIslets_TurtleSwimsScript[];
+extern u32 gIslets_TurtleTurnsScript[];
 
 /// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
 /// is placed, the screen fades in, both run their action scripts
 /// (Actor_EmitSmoke updates) until actor 9's byte 0x63 is set, then actor 9
 /// speaks (MsgWellHereWe) and the leader is launched up to (152, 742) and
-/// turned; ends with Func_020034d8. The Japanese edition does not set the
-/// event work's transition word 0x1ac.
-void Func_020029c4(void) {
+/// turned; ends with Islets_StartWaterShimmer. The Japanese edition does not
+/// set the event work's transition word 0x1ac.
+void Islets_ArriveBackAtIsland(void) {
   struct Actor *leader = OBJECT(gMainRoutineWork.currentOwner);
   struct Actor *guide = OBJECT(9);
   u8 *done;
@@ -1684,7 +1706,7 @@ void Func_020029c4(void) {
   Actor_SetPosition(10, 240, 540);
   System_Wait(1);
   guide->facing = FACING_SOUTH;
-  leader->update = Func_02001278;
+  leader->update = Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
                             15);
   Actor_SetAnimation(9, 3);
@@ -1700,8 +1722,8 @@ void Func_020029c4(void) {
   guide->update = Actor_EmitSmoke;
   done = (u8 *)guide + 0x63;
   *done = 0;
-  Actor_StartScript((s32)guide, gData_02004508);
-  Actor_SetScript(10, gData_02004554);
+  Actor_StartScript((s32)guide, gIslets_TurtleSwimsScript);
+  Actor_SetScript(10, gIslets_TurtleTurnsScript);
   do
     System_Wait(1);
   while (*done == 0);
@@ -1721,7 +1743,7 @@ void Func_020029c4(void) {
   Event_ShowMessage(9, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
-  Func_020034d8();
+  Islets_StartWaterShimmer();
 #if TLA_PATCH_1
   ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
 #endif
@@ -1746,7 +1768,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Func_02002bd8(void) {
+void Islets_SetDockBlocksByHeight(void) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y > px(8)) {
     Actor_Get(9)->collisionFlags &= ~8;
     Actor_Get(10)->collisionFlags &= ~8;
@@ -1779,10 +1801,10 @@ void Islets_InitializeRoom1(void) {
   } else {
     Actor_SetAnimation(11, 5);
   }
-  Task_AddFrame(Func_02002bd8, 0x480);
+  Task_AddFrame(Islets_SetDockBlocksByHeight, 0x480);
 }
 
-void Func_02002d0c(s32 id) {
+void Islets_StartIceberg(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SetSpriteFlags(object, 0);
@@ -1793,7 +1815,7 @@ void Func_02002d0c(s32 id) {
   object->speedLimit = 0x4ccc;
 }
 
-void Func_02002d48(s32 id, s32 column, s32 row) {
+void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   struct Actor *object = Actor_Get(id);
   s32 x = (column * 32 + object->timer) << 16;
   s32 z = (row * 32 + (s16)object->unk66) << 16;
@@ -1806,8 +1828,8 @@ void Func_02002d48(s32 id, s32 column, s32 row) {
 // below height -12 they stand and the event work's counter 0x16a becomes 200;
 // otherwise, for each frame owed (gSceneState's halfword 2) while no event
 // runs, a 260-frame routine sets them walking with their facing steps
-// (Func_02002d48) at 0, still at 100 and 220, and walking in place at 130.
-void Func_02002d7c(void) {
+// (Islets_MoveIceberg) at 0, still at 100 and 220, and walking in place at 130.
+void Islets_DriftIcebergs(void) {
   u16 *step = (u16 *)((u8 *)gSceneState);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u16 *owed = (u16 *)(((u8 *)gSceneState) + 2);
@@ -1842,14 +1864,14 @@ void Func_02002d7c(void) {
     case 0:
       for (i = 11; i <= 18; i++)
         Actor_SetAnimation(i, 2);
-      Func_02002d48(11, 0, 1);
-      Func_02002d48(12, 0, -1);
-      Func_02002d48(13, 0, 1);
-      Func_02002d48(14, 0, 1);
-      Func_02002d48(15, -1, 0);
-      Func_02002d48(16, 0, 1);
-      Func_02002d48(17, 1, 0);
-      Func_02002d48(18, 0, -1);
+      Islets_MoveIceberg(11, 0, 1);
+      Islets_MoveIceberg(12, 0, -1);
+      Islets_MoveIceberg(13, 0, 1);
+      Islets_MoveIceberg(14, 0, 1);
+      Islets_MoveIceberg(15, -1, 0);
+      Islets_MoveIceberg(16, 0, 1);
+      Islets_MoveIceberg(17, 1, 0);
+      Islets_MoveIceberg(18, 0, -1);
       break;
     case 100:
     case 220:
@@ -1859,7 +1881,7 @@ void Func_02002d7c(void) {
     case 130:
       for (i = 11; i <= 18; i++) {
         Actor_SetAnimation(i, 2);
-        Func_02002d48(i, 0, 0);
+        Islets_MoveIceberg(i, 0, 0);
       }
       break;
     }
@@ -1868,7 +1890,7 @@ void Func_02002d7c(void) {
   } while (--*owed != 0);
 }
 
-extern u32 gData_02004274[];
+extern u32 gIslets_PenguinsHopScript[];
 
 /// The room's setup: flags, the objects' places and the scene state.
 void Islets_InitializeRoom2(void) {
@@ -1883,7 +1905,7 @@ void Islets_InitializeRoom2(void) {
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   i = 11;
   do {
-    Func_02002d0c(i++);
+    Islets_StartIceberg(i++);
   } while (i <= 18);
   state = gSceneState;
   next = &gSceneState[1];
@@ -1891,7 +1913,7 @@ void Islets_InitializeRoom2(void) {
     *state = 0;
     *next = 0;
   }
-  FieldTask_AddFrame(Func_02002d7c, 0x480);
+  FieldTask_AddFrame(Islets_DriftIcebergs, 0x480);
   if (Event_GetFlag(0xa2c)) {
     object = Actor_Get(10);
     Actor_SetPosition(10, 176, 168);
@@ -1903,7 +1925,7 @@ void Islets_InitializeRoom2(void) {
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
   } else {
-    Func_02003684(10);
+    PushTarget_FillFootprint(10);
   }
   if (!Event_GetFlag(0xaa2)) {
     FieldActor_WatchAndSetScript(9, 19);
@@ -1921,8 +1943,8 @@ void Islets_InitializeRoom2(void) {
     Actor_Get(19)->collisionFlags |= 0x80;
     Actor_SetSpeed(9, 2);
     Actor_SetSpeed(19, 1.6);
-    Actor_SetScript(9, gData_02004274);
-    Actor_SetScript(19, gData_02004274);
+    Actor_SetScript(9, gIslets_PenguinsHopScript);
+    Actor_SetScript(19, gIslets_PenguinsHopScript);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
@@ -1990,8 +2012,8 @@ void Islets_InitializeRoom4(void) {
 
     first->motionFlags = 0;
     second->motionFlags = 0;
-    Func_020020ec(first->x, first->z, 3, 255);
-    Func_020020ec(second->x, second->z, 3, 255);
+    Islets_SetCellCollision(first->x, first->z, 3, 255);
+    Islets_SetCellCollision(second->x, second->z, 3, 255);
   }
   Actor_DisableById(14);
   last = Actor_Get(14);
@@ -2001,7 +2023,7 @@ void Islets_InitializeRoom4(void) {
     ((u8 *)last)[0x62] = 1;
     last->motionFlags = still;
   }
-  Func_020020ec(last->x, last->z, 1, 255);
+  Islets_SetCellCollision(last->x, last->z, 1, 255);
   if (Event_GetFlag(FLAG_SCENE_TEMP_13))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
@@ -2015,7 +2037,7 @@ struct MapLayerBits {
   u8 unk17High : 4;
 };
 
-void Func_02003410(void);
+void Islets_StartPaletteCycle(void);
 /* VIEW(islets): routine PaletteCycle_Add as void PaletteCycle_Add(s32 a, s32 b,
  * s32 c, s32 d); graphics/palette_snapshots.h has s32 PaletteCycle_Add(s16
  * bank, s16 index, s16 delay, s16 count); tried as the definition's s32
@@ -2034,7 +2056,7 @@ void Islets_InitializeRoom5(void) {
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  Func_02003410();
+  Islets_StartPaletteCycle();
   {
     s32 a1 = 12;
     s32 a2 = 5;
@@ -2059,7 +2081,7 @@ void Islets_InitializeRoom5(void) {
   Actor_SetSpriteFlags(Actor_Get(9), 0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Func_02001c4c, 0x480);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2076,18 +2098,18 @@ void Islets_InitializeRoom5(void) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 3) {
-      Func_02002830();
+      Islets_ArriveAtSecretSpot();
     } else if (entrance == 4) {
-      Func_020029c4();
+      Islets_ArriveBackAtIsland();
     } else if (entrance != 5) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Func_020034d8();
+      Islets_StartWaterShimmer();
     }
   } else {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Func_020034d8();
+    Islets_StartWaterShimmer();
   }
   Event_End();
 }
@@ -2103,7 +2125,7 @@ struct MapLayerBits {
   u8 unk17High : 4;
 };
 
-void Func_02003410(void);
+void Islets_StartPaletteCycle(void);
 s32 PaletteCycle_Add__islets(s16 bank, s16 index, s16 delay,
                              s16 count) __asm__("PaletteCycle_Add");
 
@@ -2116,7 +2138,7 @@ void Islets_InitializeRoom5(void) {
   ((struct MapLayerBits *)map)->priority = 1;
   if (gMainRoutineWork.entrance == 2)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  Func_02003410();
+  Islets_StartPaletteCycle();
   PaletteCycle_Add__islets(3, 12, 5, 4);
   PaletteCycle_Add__islets(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) &&
@@ -2132,7 +2154,7 @@ void Islets_InitializeRoom5(void) {
   Actor_SetSpriteFlags(Actor_Get(9), 0);
   Actor_SetSpriteFlags(Actor_Get(11), 0);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Func_02001c4c, 0x480);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
@@ -2149,18 +2171,18 @@ void Islets_InitializeRoom5(void) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 3) {
-      Func_02002830();
+      Islets_ArriveAtSecretSpot();
     } else if (entrance == 4) {
-      Func_020029c4();
+      Islets_ArriveBackAtIsland();
     } else {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Func_020034d8();
+      Islets_StartWaterShimmer();
     }
   } else {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Func_020034d8();
+    Islets_StartWaterShimmer();
   }
   Event_End();
 }
@@ -2169,7 +2191,7 @@ void Islets_InitializeRoom5(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02003410(void) {
+void Islets_StartPaletteCycle(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
   s16 i, j;
@@ -2211,13 +2233,13 @@ inner:
 
 #include "text/msg_ids.h"
 
-void Func_020034d8(void) {
-  Task_AddFrame(&Func_020034fc, 0x480);
+void Islets_StartWaterShimmer(void) {
+  Task_AddFrame(&Islets_ShimmerWater, 0x480);
   return;
 }
 
-void Func_020034ec(void) {
-  FieldTask_Remove(Func_020034fc);
+void Islets_StopWaterShimmer(void) {
+  FieldTask_Remove(Islets_ShimmerWater);
   return;
 }
 
@@ -2233,7 +2255,7 @@ struct PaletteCycleWork__s3410 {
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->unk70[0])
 #define EVENT_S16(offset) (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
 
-void Func_020034fc(void) {
+void Islets_ShimmerWater(void) {
   if (EVENT_S16(0x166) == 0 && EVENT_S16(0x15a) == 0 && EVENT_S16(0x15e) == 0) {
     struct PaletteCycleWork__s3410 *work = gPaletteWork;
     u8 i;
@@ -2265,7 +2287,7 @@ void Func_020034fc(void) {
   }
 }
 
-void Func_02003620(void) {
+void Islets_DropThroughHole(void) {
   s32 v5;
   struct Actor *object0;
 
@@ -2285,7 +2307,7 @@ void Func_02003620(void) {
   return;
 }
 
-void Func_0200367c(void) {
+void Islets_JumpForward(void) {
   Field_TryJumpForward();
   return;
 }
@@ -2294,8 +2316,8 @@ void Func_0200367c(void) {
 // shape picks one of the six footprints in gPushFootprints (four signed bytes
 // each, in sixteenths of a cell); the cells under it are copied from the
 // map's spare area (Map_CopyCellAttributeRect) and byte 2 of both collision
-// layers there is filled with 255 (Func_02003790). Returns 1, or 0 for a shape
-// with no footprint. The twin of overlay 668's Func_020040ec.
+// layers there is filled with 255 (Map_FillCellRectByte2). Returns 1, or 0 for
+// a shape with no footprint.
 
 extern s8 gPushFootprints[][4];
 
@@ -2305,9 +2327,9 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 /// picks one of the six footprints in gPushFootprints (four signed bytes each,
 /// in sixteenths of a cell); the cells under it are copied from the map's spare
 /// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
-/// is filled with 255 (Func_02003790). Returns 1, or 0 for a shape with no
-/// footprint. The twin of overlay 668's Func_020040ec.
-s32 Func_02003684(s32 id) {
+/// is filled with 255 (Map_FillCellRectByte2). Returns 1, or 0 for a shape with
+/// no footprint.
+s32 PushTarget_FillFootprint(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *actor = Actor_GetById(id);
   s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
@@ -2318,12 +2340,12 @@ s32 Func_02003684(s32 id) {
   s32 fromX, fromZ;
   s32 width, height, x, z;
 
-  if ((u16)kind != gData_02004070[(u16)i]) {
+  if ((u16)kind != gPushKinds[(u16)i]) {
   again:
     next = (i + 1) * 65536;
     index = (u32)next >> 16;
     i = next >> 16;
-    if (index <= 5 && (u16)kind != gData_02004070[index])
+    if (index <= 5 && (u16)kind != gPushKinds[index])
       goto again;
   }
   // fromX and b are reused for the next values they hold.
@@ -2342,12 +2364,13 @@ s32 Func_02003684(s32 id) {
   fromZ = *(s32 *)(map + 0x14c) >> 20;
   fromX = (u16)b;
   Map_CopyCellAttributeRect(x, z, width, height, x + fromX, z + (u16)fromZ);
-  Func_02003790(0, x, z, width, height, 255);
-  Func_02003790(2, x, z, width, height, 255);
+  Map_FillCellRectByte2(0, x, z, width, height, 255);
+  Map_FillCellRectByte2(2, x, z, width, height, 255);
   return 1;
 }
 
-void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
+void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
+                           s32 value) {
   struct MapCell *cells = Ram_HeapSlots->mapWork->layers[layer].cells;
   struct MapCell *cell;
   u32 i;
@@ -2378,13 +2401,13 @@ static __inline__ s32 CallFunc_02003e2c(struct Actor *object,
   return MapGrid_CheckCollision(object, cell);
 }
 
-s32 Func_020037d8(struct PushTarget *push) {
+s32 PushTarget_FindSlide(struct PushTarget *push) {
   struct Actor *object;
   struct Vector3 cell;
   s32 direction, kind;
   s32 dx, dz, steps, i, j, offset, result;
 
-  object = Func_02003940(&direction, &push->id, &push->footprint);
+  object = PushTarget_FindAhead(&direction, &push->id, &push->footprint);
   if (object != 0) {
     kind = push->footprint;
     /* FAKEMATCH(dead): the address of kind taken and dropped. */
@@ -2443,7 +2466,7 @@ s32 Func_020037d8(struct PushTarget *push) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define HI(v) (((s16 *)&(v))[1])
 
-struct Actor *Func_02003940(s32 *direction, s32 *slot, s32 *kind) {
+struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor **entry;
@@ -2459,7 +2482,7 @@ outer:
   k = 0;
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
-      gData_02004070[k]) {
+      gPushKinds[k]) {
     x = (HI(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
     z = (HI(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
     left = (HI(object->x) + gPushFootprints[k][0]) >> 4;
@@ -2512,8 +2535,7 @@ void Actor_StopAtPushTarget(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
-        gData_02004070[i])
+    if (*((struct ObjectAnimationState *)hit->sprite)->value28 == gPushKinds[i])
       return;
     i++;
     if (i <= 5)
@@ -2541,29 +2563,29 @@ void Actor_StopAtPushTarget(struct Actor *object) {
 #undef EVENT_S16
 #undef HI
 #undef ABS
-#undef gData_020046bc
-#undef gData_02004004
+#undef gIslets_Doors
+#undef gIslets_SpinScript
 #include "text/msg_ids.h"
 
-void Func_0200030c(void);
+void Islets_TalkToPengulina(void);
 void Islets_TalkToHealer(void);
-void Func_020004f4(void);
-void Func_02000520(void);
-void Func_020006f4(void);
-void Func_02001db0(void);
-void Func_02001f74(void);
-void Func_020021d0(void);
-void Func_02002780(void);
+void Islets_TalkToSailor(void);
+void Islets_TalkToBird(void);
+void Islets_TradeWithCow(void);
+void Islets_PengusGivesPrettyStone(void);
+void Islets_BirdReturnsToNest(void);
+void Islets_FinishPushingCrate(void);
+void Islets_EnterDoor(void);
 
 // clang-format off
-u32 gData_02004004[] = {
+u32 gIslets_SpinScript[] = {
     SC_ADD(SW_FACING, FACING_STEP),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
     SC_END,
 };
 
-s32 gData_02004028[] = {                                                               
+s32 gIslets_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
       SC_ADD(SW_SCALE_X, -1024),                                               
@@ -2573,7 +2595,7 @@ s32 gData_02004028[] = {
       SC_END,                                                                  
   };
 
-u16 gData_02004070[] = {
+u16 gPushKinds[] = {
     258, 259, 293, 294, 332, 331,
 };
 
@@ -2591,7 +2613,7 @@ s32 gPushLeaderSteps[] = {
       PUSH_STEP(16, 0),                                                        
   };
 
-u32 gData_020040d4[] = {
+u32 gIslets_Room1WanderScript[] = {
 #if !TLA_PATCH_1
     22, 30, 131, 22, 16, 0x6666,
 #else
@@ -2607,7 +2629,7 @@ u32 gData_020040d4[] = {
     0,
 };
 
-u32 gData_02004198[] = {
+u32 gIslets_GullScript[] = {
     SC_ARG(4),
     SC_SET(SW_SPEED, 0xcccc),
     SC_SET(SW_ACCEL, 0x3333),
@@ -2632,7 +2654,7 @@ u32 gData_02004198[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-u32 gData_02004274[] = {
+u32 gIslets_PenguinsHopScript[] = {
     SC_ARG(2),
     SC_MOVE(px(234), 0, px(240)),
     SC_SYNC,
@@ -2649,7 +2671,7 @@ u32 gData_02004274[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gData_02004300[] = {
+s32 gIslets_BirdFliesBackScript[] = {
     SC_ARG(3),
     SC_SE(152),
     SC_SET(SW_VELOCITY_Y, px(4)),
@@ -2678,7 +2700,7 @@ s32 gData_02004300[] = {
     SC_END,
 };
 
-s32 gData_020043f8[] = {
+s32 gIslets_BirdFliesOffScript[] = {
     SC_ARG(3),
     SC_SE(152),
     SC_SET(SW_VELOCITY_Y, px(4)),
@@ -2711,7 +2733,7 @@ u32 gSmokeScript[] = {
     0, 15, 3, 0, 1, 38,
 };
 
-u32 gData_02004508[] = {                                                               
+u32 gIslets_TurtleSwimsScript[] = {                                                               
       SC_MOVE(px(248), 0, px(686)),                                     
       SC_SYNC,                                                                 
       SC_MOVE(px(248), 0, px(768)),                                     
@@ -2722,7 +2744,7 @@ u32 gData_02004508[] = {
       SC_END,                                                                  
   };
 
-u32 gData_02004554[] = {                                                               
+u32 gIslets_TurtleTurnsScript[] = {                                                               
       SC_ARG(2), SC_MOVE(px(248), 0, px(686)),                           
       SC_SYNC,   SC_MOVE(px(248), 0, px(768)),                           
       SC_SYNC,   SC_MOVE(px(176), 0, px(777)),                           
@@ -2730,7 +2752,7 @@ u32 gData_02004554[] = {
       SC_END,                                                                  
   };
 
-u32 gData_020045a4[] = {                                                               
+u32 gIslets_GeorgeWalksScript[] = {                                                               
       SC_MOVE(px(248), 0, px(768)),                                     
       SC_SYNC,                                                                 
       SC_MOVE(px(248), 0, px(686)),                                     
@@ -2741,7 +2763,7 @@ u32 gData_020045a4[] = {
       SC_END,                                                                  
   };
 
-u32 gData_020045f0[] = {                                                               
+u32 gIslets_TurtleWalksScript[] = {                                                               
       SC_ARG(2), SC_MOVE(px(248), 0, px(768)),                           
       SC_SYNC,   SC_MOVE(px(248), 0, px(686)),                           
       SC_SYNC,   SC_MOVE(px(240), 0, px(600)),                           
@@ -2749,7 +2771,7 @@ u32 gData_020045f0[] = {
       SC_END,                                                                  
   };
 
-u32 gData_02004640[] = {
+u32 gIslets_Room4PaceScript[] = {
     39, 2, 4, 0xb80000, 0, 0x3a80000,
     1, 39, 1, 1, 80, 39,
     2, 4, 0x580000, 0, 0x3a80000, 1,
@@ -2757,19 +2779,19 @@ u32 gData_02004640[] = {
     0,
 };
 
-s16 gData_020046a4[] = {
+s16 gIslets_DoorFrames[] = {
     92, 10, 1, 2, 6, 92, 8, 1,
     2, 6, -1,
 };
 
-s16 gData_020046ba[] = {
+s16 gIslets_NoDoorFrames[] = {
     -1,
 };
 
-s32 gData_020046bc[] = {                                                               
-      (s32)gData_020046ba,                                                              
+s32 gIslets_Doors[] = {                                                               
+      (s32)gIslets_NoDoorFrames,                                                              
       0x400040,                                                                      
-      (s32)gData_020046a4,                                                              
+      (s32)gIslets_DoorFrames,                                                              
       0xa0052,                                                                      
   };
 
@@ -2810,13 +2832,13 @@ struct ActorPlacement gIslets_Placements[] = {
 struct ActorPlacement gIslets_Room1Placements[] = {
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 744, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 920, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, (s32)gData_02004640, 88, 0, 936, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, (s32)gIslets_Room4PaceScript, 88, 0, 936, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(189, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 856, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gIslets_Room2Placements[] = {
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, (s32)gData_020040d4, 376, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, (s32)gIslets_Room1WanderScript, 376, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(399, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(258, CONDITION_ALWAYS, 7, 176, 0, 140, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(402, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2844,7 +2866,7 @@ struct ActorPlacement gIslets_Room3Placements[] = {
 struct ActorPlacement gIslets_Room4Placements[] = {
     ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 296, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(405, CONDITION_ALWAYS, (s32)gData_02004198, 360, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(405, CONDITION_ALWAYS, (s32)gIslets_GullScript, 360, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2869,11 +2891,11 @@ struct Trigger gIslets_Triggers[] = {
 struct Trigger gIslets_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
-     EVENT(Func_02002780)},
+     EVENT(Islets_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 16, CONDITION_ALWAYS,
-     EVENT(Func_0200367c)},
+     EVENT(Islets_JumpForward)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgEverSinceThe)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02001bf4)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Islets_TalkToSailorsSon)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYouReLucky)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgArffArff2)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
@@ -2883,39 +2905,40 @@ struct Trigger gIslets_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgICanTWaitUntilThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     EVENT(Func_02000e38)},
+     EVENT(Islets_TradeWithDog)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIslets_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
-     EVENT(Func_0200267c)},
+     EVENT(Islets_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
-     EVENT(Func_0200208c)},
+     EVENT(Islets_JumpDownLedge)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS,
-     EVENT(Func_0200367c)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, 0xa2c, EVENT(Func_020000d8)},
-    {TRIGGER_STEP, 20, 0xaa2, EVENT(Func_02001db0)},
-    {TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Func_020024f0)},
-    {TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Func_0200253c)},
+     EVENT(Islets_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, 0xa2c,
+     EVENT(Islets_PushLogIntoWater)},
+    {TRIGGER_STEP, 20, 0xaa2, EVENT(Islets_PengusGivesPrettyStone)},
+    {TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Islets_StepUpOntoIceberg)},
+    {TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Islets_StepDownFromIceberg)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgMyMomSays)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_02000210)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_0200030c)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_02003620)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Islets_TalkToPengus)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Islets_TalkToPengulina)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Islets_DropThroughHole)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgWhoInWeyard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     EVENT(Func_020002ac)},
+     EVENT(Islets_MindReadPengus)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     EVENT(Func_02000380)},
+     EVENT(Islets_MindReadPengulina)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(Islets_TalkToHealer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgMayTheseTravelers)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_020025a4)},
+     CONDITION_ALWAYS, EVENT(Islets_StartReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_020025b0)},
+     CONDITION_ALWAYS, EVENT(Islets_EndReveal)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2932,24 +2955,24 @@ struct Trigger gIslets_Room3Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgIRememberOnce)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     EVENT(Func_020006f4)},
+     EVENT(Islets_TradeWithCow)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(Leader_SetLayer)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Func_020020d0)},
+     EVENT(Islets_StepOntoGround)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10,
-     CONDITION_ALWAYS, EVENT(Func_020025bc)},
+     CONDITION_ALWAYS, EVENT(Islets_ClearFirstPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11,
-     CONDITION_ALWAYS, EVENT(Func_020025dc)},
+     CONDITION_ALWAYS, EVENT(Islets_ClearSecondPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 12,
-     CONDITION_ALWAYS, EVENT(Func_020025fc)},
+     CONDITION_ALWAYS, EVENT(Islets_ClearThirdPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 13,
-     CONDITION_ALWAYS, EVENT(Func_0200261c)},
+     CONDITION_ALWAYS, EVENT(Islets_ClearFourthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 14,
-     CONDITION_ALWAYS, EVENT(Func_0200263c)},
+     CONDITION_ALWAYS, EVENT(Islets_ClearFifthPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 15,
-     CONDITION_ALWAYS, EVENT(Func_0200265c)},
+     CONDITION_ALWAYS, EVENT(Islets_ClearSixthPatch)},
 #endif
     {TRIGGER_TABLE_END},
 };
@@ -2959,46 +2982,49 @@ struct Trigger gIslets_Room4Triggers[] = {
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
      11, CONDITION_ALWAYS, 11},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, 0x212, EVENT(Func_02002430)},
-    {TRIGGER_PUSH, 0, 0x212, EVENT(Func_02002144)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, 0x212,
+     EVENT(Islets_SaveCratePositions)},
+    {TRIGGER_PUSH, 0, 0x212, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
-     0x212, EVENT(Func_02002144)},
+     0x212, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     0x212, EVENT(Func_02002144)},
-    {TRIGGER_PUSHED, 0, 0x212, EVENT(Func_020021d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x212, EVENT(Func_020021d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x212, EVENT(Func_020021d0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x213, EVENT(Func_020024c8)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000440)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Func_020004f4)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000520)},
+     0x212, EVENT(Islets_StartPushingCrate)},
+    {TRIGGER_PUSHED, 0, 0x212, EVENT(Islets_FinishPushingCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x212,
+     EVENT(Islets_FinishPushingCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x212,
+     EVENT(Islets_FinishPushingCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x213, EVENT(Islets_FreezePuddle)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Islets_TalkToTreasureHunters)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(Islets_TalkToSailor)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Islets_TalkToBird)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgIfWeRe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgSureThereAre)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     EVENT(Func_02000568)},
-    {TRIGGER_STEP, 20, 0x215, EVENT(Func_02001f74)},
+     EVENT(Islets_TradeWithBird)},
+    {TRIGGER_STEP, 20, 0x215, EVENT(Islets_BirdReturnsToNest)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIslets_Room5Triggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Func_0200274c)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Func_0200274c)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Islets_LeaveByStep)},
+    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Islets_LeaveByStep)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgYouUsedTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgIRememberHow)},
     {TRIGGER_TALK, 9, 0xaa5, MSGNO(MsgBlank3)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgYup2)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x217, EVENT(Func_020014e0)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x217, EVENT(Islets_GiveTurtle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     EVENT(Func_02001a68)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02001c38)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_02001c38)},
+     EVENT(Islets_RideBackToIsland)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Islets_IgnoreTalk)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Islets_IgnoreTalk)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(Leader_SetLayer)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Func_020020d0)},
+     EVENT(Islets_StepOntoGround)},
     {TRIGGER_TABLE_END},
 };

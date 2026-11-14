@@ -9,6 +9,7 @@
 #include "game/game.h"
 #include "sound/sound_driver.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "system/system.h"
 
 enum {
@@ -164,10 +165,7 @@ void SoundTest_Run(void) {
 
   row = 0;
   reverbCode = SOUND_REVERB_NORMAL;
-  /* FAKEMATCH(dead): a once-only block. */
-  do {
-    gBuildStamp[0] = 0;
-  } while (0);
+  Io_Write32(0, &gBuildStamp[0]);
   clipTimer = 20;
 
   for (;;) {

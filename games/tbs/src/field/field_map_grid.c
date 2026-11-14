@@ -345,11 +345,7 @@ s32 MapGrid_LoadMap(s32 index) {
   REG_MOSAIC = control;
   REG_BLDCNT = control;
   control = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  /* FAKEMATCH(dead): a once-only block around the store, as at The Lost Age's
-   * twin; as a plain store, 4 of 349 instructions differ in tbs-en. */
-  do {
-    REG_DISPCNT = control;
-  } while (0);
+  Io_Write16(control, &REG_DISPCNT);
   Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_FRAME + 5);
   return 2;
 }

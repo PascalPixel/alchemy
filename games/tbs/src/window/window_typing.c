@@ -331,7 +331,7 @@ s32 Message_Type(struct Message *message) {
 #endif
       nextEntryIndex = (nextEntryIndex + 1) & TEXT_BUFFER_MASK;
       nextCode = work->textBuffer[nextEntryIndex];
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
       // A kana mark after the character is drawn with it.
       if (nextCode == TEXT_MARK_VOICED) {
         code |= TEXT_CODE_VOICED;
@@ -341,12 +341,12 @@ s32 Message_Type(struct Message *message) {
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
       }
 #endif
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       // Two narrow characters that fit in one 16-pixel cell together are drawn
       // as one pair, the second in the code's high byte: 15 pixels of glyph
       // widths at most, and in Spanish 14 with an outline (style 1), which
       // widens each glyph by one.
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
       if (!(message->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE) {
         s16 pair = gFont_Glyphs[code - TEXT_SPACE].width +
@@ -390,7 +390,7 @@ s32 Message_Type(struct Message *message) {
           }
         }
         glyphAdvance = glyphWidth << 8;
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
         if (code == TEXT_SPACE)
           glyphAdvance += message->spacing[message->line];
 #else
@@ -401,7 +401,7 @@ s32 Message_Type(struct Message *message) {
       // In Japanese a character that advances nothing (Glyph_Draw
       // returns 0, as it does when no window sprite is free) closes the
       // window.
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
       else
         return CHANNEL_STEP_CLOSE;
 #endif

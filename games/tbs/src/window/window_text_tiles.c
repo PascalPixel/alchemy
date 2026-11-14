@@ -153,7 +153,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case 11:
         case 12:
         case 17:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
         case 29:
 #endif
           text++;
@@ -163,7 +163,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         // A tilemap code (such as WINDOW_TILE_HP_LABEL) draws window tile
         // glyphCode & 0xff.
         glyphCode &= 0xFF;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
         if (glyphCode == TEXT_MARK_VOICED ||
             glyphCode == TEXT_MARK_SEMIVOICED) {
           x -= 3;
@@ -195,8 +195,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         // pixels; a character its font width, and any other tile below 32 one.
         if (code == WINDOW_TILE_HP_LABEL || code == WINDOW_TILE_PP_LABEL)
           x += 8;
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
         else if (code == WINDOW_TILE_HP_LABEL_END ||
                  code == WINDOW_TILE_PP_LABEL_END)
 #else
@@ -204,7 +204,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 #endif
           x += 3;
         else {
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
           if (glyphCode > 128) {
             if (glyphCode == 254 || glyphCode == 255)
               glyphWidth = 3;

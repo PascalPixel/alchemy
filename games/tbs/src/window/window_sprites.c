@@ -6,7 +6,7 @@
 
 // Pixels added to the page arrow's and the sprite glyphs' screen y, which
 // differ by language.
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define PAGE_ARROW_Y_OFFSET 1
 #define GLYPH_SPRITE_Y_OFFSET 0
 #else
@@ -33,7 +33,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     u8 *font;
     GlyphRoutine draw;
     s32 result;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
     s32 mark;
 
     font = NULL;
@@ -60,7 +60,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     if (character != ' ') {
       RamCode_Load(draw, Glyph_DrawArm, Glyph_DrawCodeSize);
       result = draw(window, character, x, y, font);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
       if ((u16)mark != 0)
         result += draw(window, (u16)mark, x + result, y, font);
 #endif
@@ -106,7 +106,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
         windowSprite->animationStep = 0;
         break;
       }
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
       width = Text_DrawGlyphPair(character, tiles);
 #else
       {
@@ -181,7 +181,7 @@ STATIC_ASSERT(offsetof(struct WindowSpriteCellView, index) ==
 STATIC_ASSERT(offsetof(struct WindowSpriteCellView, attr) ==
               offsetof(struct WindowSprite, link));
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
 /// interior.

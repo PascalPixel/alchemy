@@ -520,24 +520,24 @@ char gIncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
 
 char gIncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_PsyPrompt[8] = "Psy No:";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_PsyHelp[12] = "B:Return";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// The glyph captions' first row; it has no I.
 char gIncreaseItemAndLevel_GlyphsUpper[28] = "A B C D E F G H J K L M N O";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_GlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 char gIncreaseItemAndLevel_GlyphsMarks[12] = "! ? # $ %";
 #endif
 

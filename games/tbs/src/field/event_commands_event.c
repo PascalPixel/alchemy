@@ -7,7 +7,7 @@
 // When a gift goes to another party member, `<leader> gave <item> to <member>.`
 // follows `<leader> got <item>.`; it is MsgGaveItemToMember, the next
 // message, in every edition.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
 #else
 #define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
@@ -23,7 +23,7 @@
 
 /// Shows the message for an item the party has just received.
 static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
   if (item == ITEM_BLACK_ORB) {
     FieldMessage_ShowFar(MsgGotBlackOrb, flags);
     return;

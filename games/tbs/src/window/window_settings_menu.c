@@ -346,7 +346,7 @@ struct Window *SettingsMenu_Open(void) {
   Text_DrawMessageAsTiles(labelMessage, window, 8, 0);
   labelMessage++;
   Text_DrawMessageAsTiles(labelMessage, window, 8, 16);
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
   labelMessage = MsgMessageSpeedLabel;
   Text_DrawMessageAsTiles(labelMessage, window, 8, 32);
   labelMessage++;

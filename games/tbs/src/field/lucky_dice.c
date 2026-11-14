@@ -98,12 +98,12 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings
 // window at the bottom, and the result lettering's x in sprite coordinates.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH
 #define DICE_COIN_X 17
 #define DICE_COIN_W 13
 #define DICE_WIN_W 13
-#elif (LANGUAGE != LANGUAGE_JAPANESE)
+#elif LANGUAGE != LANGUAGE_JAPANESE
 #define DICE_COIN_X 18
 #define DICE_COIN_W 12
 #define DICE_WIN_W 12
@@ -113,21 +113,21 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 #define DICE_WIN_W 10
 #endif
 
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
 #define DICE_LABEL_X 56
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define DICE_LABEL_X 53
 #else
 #define DICE_LABEL_X 48
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH
 #define DICE_HELP_X 20
 #define DICE_HELP_W 10
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define DICE_HELP_X 21
 #define DICE_HELP_W 9
-#elif (LANGUAGE != LANGUAGE_JAPANESE)
+#elif LANGUAGE != LANGUAGE_JAPANESE
 #define DICE_HELP_X 22
 #define DICE_HELP_W 8
 #else
@@ -135,7 +135,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 #define DICE_HELP_W 7
 #endif
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define DICE_WIN_X 9
 #define DICE_WIN_NUMBER_X 48
 #define DICE_WIN_LABEL_X DICE_LABEL_X
@@ -170,7 +170,7 @@ const u8 gLuckyDice_LabelCounts[] = {5, 4, 3, 3};
 /// The first tile of each kind of result's lettering.
 const u8 gLuckyDice_LabelTiles[] = {
     28,  48,  64, 76,
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
     28,  248, 64,
     248, // never read
 #endif

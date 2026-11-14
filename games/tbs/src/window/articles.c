@@ -6,7 +6,7 @@
 
 // Articles and possessives, by edition.
 
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 
 const s8 gArticle_Empty[] = "";
 
@@ -45,7 +45,7 @@ const s8 *const gLocalizedWord_ItemPossessives[4] = {
     gArticle_Empty,
 };
 
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 
 const s8 gArticle_Empty[] = "";
 
@@ -78,7 +78,7 @@ const s8 *const gLocalizedWord_ItemPossessives[2] = {
     sPossessiveTus,
 };
 
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 
 const s8 gArticle_Empty[] = "";
 
@@ -98,7 +98,7 @@ const s8 *const gArticle_Table[8] = {
 
 const s8 gLocalizedWord_ItemPronoun[] = "vous ";
 
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
 
 const s8 gArticle_Empty[] = "";
 
@@ -131,7 +131,7 @@ const s8 *const gLocalizedWord_ItemPossessives[4] = {
     gArticle_Empty,
 };
 
-#elif (LANGUAGE != LANGUAGE_JAPANESE)
+#elif LANGUAGE != LANGUAGE_JAPANESE
 
 const s8 gArticle_Empty[] = "";
 
@@ -148,7 +148,7 @@ const s8 *const gArticle_Table[8] = {
 
 #endif
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
 /// The glyph drawn over a kana for the mark in its code's top two bits: none,
 /// the voiced mark (dakuten) or the semi-voiced mark (handakuten).
 // clang-format off

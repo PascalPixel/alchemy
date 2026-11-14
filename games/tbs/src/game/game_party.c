@@ -6,7 +6,7 @@
 
 // The letter that tells apart enemies of one kind: digits from 1 abroad, the
 // alphabet in Japan.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ENEMY_SUFFIX_FIRST '1' ///< suffix 0's character
 #define ENEMY_SUFFIX_LAST 8    ///< the last suffix shown, '9'
 #else

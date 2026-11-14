@@ -114,12 +114,12 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u16 lineWidths[4];
   s32 gap;
   u32 style;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
   s32 trailing;
 #endif
 
   work = WINDOW_WORK;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
   trailing = 0;
 #endif
   width = 0;
@@ -132,7 +132,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     // A character adds its width.
     if (code > 31) {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       if (code == 32) {
         lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
         count++;
@@ -180,7 +180,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_NEWLINE:
       // Outside Japanese, count is the line's spaces plus one, its words: the
       // gap is spread over the spaces.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       count++;
 #else
       lineWidth += trailing;
@@ -220,7 +220,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     }
   }
 done:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
   count++;
 #else
   lineWidth += trailing;
@@ -252,7 +252,7 @@ done:
         if (gap < 0)
           gap = 0;
         gap = ((gap << 8) / (lineSpacingCounts[lineIndex] - 1));
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
         if (gap < 0 || gap > (12 << 8))
           gap = 2 << 8;
 #else
@@ -288,7 +288,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 pageIndex;
   u32 lineIndex;
   s32 gap;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
   s32 trailing;
 
   trailing = 0;
@@ -319,7 +319,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     if (code >= 32) {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       if (code == 32) {
         width += WINDOW_SPRITE_SPACE_WIDTH;
         count++;
@@ -359,7 +359,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     }
     switch (code) {
     case TEXT_NEWLINE:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       lineSpacingCounts[line] = ++count;
 #else
       width += trailing;
@@ -375,7 +375,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       pageHeights[page] += 15;
       break;
     case TEXT_END:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       lineSpacingCounts[line] = ++count;
 #else
       width += trailing;
@@ -387,7 +387,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       page++;
       goto done;
     case TEXT_PAGE:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       lineSpacingCounts[line] = ++count;
 #else
       width += trailing;
@@ -447,7 +447,7 @@ done:
         if (gap < 0)
           gap = 0;
         gap = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
         if (gap < 0 || gap > (8 << 8))
           gap = 0;
         if (gap < 0 || gap > (1 << 8))

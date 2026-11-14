@@ -8,7 +8,7 @@
 // (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 16
 // bytes apart, then packs its top 16 rows into 4bpp tiles.
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
 /// over a shadow, or with an outline when WindowWork.outline is 1.
@@ -244,7 +244,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   u8 *base;
   struct WindowWork *work;
   u32 code;
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
   u32 nextCode;
 #endif
   s16 lineStartX;
@@ -258,13 +258,13 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
     work->textBuffer[work->textBufferEnd] = code;
     work->textBufferEnd = (work->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
   for (;;)
 #else
   while ((code = *text++) != 0)
 #endif
   {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
     // Codes above TEXT_LAST_FONT_CODE become code 64, as the decoder makes
     // them.
     code = *text++;
@@ -306,19 +306,19 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
       case 11:
       case 12:
       case 17:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       case 29:
 #endif
         text++;
         break;
       }
     } else {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
       // Pair two narrow characters into one cell, as Message_Type
       // does.
       if ((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
         nextCode = *text;
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
         if (code > 32 && nextCode > 32) {
           s16 width =
               gFont_Glyphs[code - 32].width + gFont_Glyphs[nextCode - 32].width;
@@ -426,7 +426,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
         case 11:
         case 12:
         case 17:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
         case 29:
 #endif
           text++;
@@ -434,8 +434,8 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
         }
       } else {
         Window_PutGlyph(window, code, x, y, GLYPH_DRAW_CHARACTER);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
         x++;
 #else
         // The kana marks share a tile.

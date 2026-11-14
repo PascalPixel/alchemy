@@ -267,21 +267,21 @@ void Title_LoadIntroBackgrounds(void) {
 
 // The "Press Start" prompt: its tile count, rows and sprites, and where it
 // stands, by edition.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define PROMPT_TILES 8
 #else
 #define PROMPT_TILES 5
 #endif
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define PROMPT_ROWS 2
 #define PROMPT_SPRITES 3
 #define PROMPT_X 80
 #define PROMPT_Y 116
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#elif LANGUAGE == LANGUAGE_JAPANESE
 #define PROMPT_SPRITES 5
 #define PROMPT_X 56
 #define PROMPT_Y 126
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define PROMPT_SPRITES 5
 #define PROMPT_X 56
 #define PROMPT_Y 124
@@ -463,7 +463,7 @@ s32 Title_ShowIntro(s32 prompt) {
       struct IntroSprite *sprite = work->area.prompt.sprites;
       u32 level;
       s32 x;
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
       u32 row;
       s32 y;
 

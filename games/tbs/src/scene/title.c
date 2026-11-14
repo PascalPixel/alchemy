@@ -154,8 +154,8 @@ s32 Title_Run(void) {
 static void Title_LoadSprites(s32 unused) {
   u8 *decodedSprites;
   volatile u32 *dma3;
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
   u8 *encodedGraphics;
 
   decodedSprites = Heap_AllocEwram(240 * 160);
@@ -199,11 +199,11 @@ static void Title_UpdateSpriteReveal(void) {
   s32 column;
   s32 revealAge;
   s32 screenY;
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
   s32 screenX;
 #endif
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
   s32 row;
 
   // Four rows of 30 8-by-8 sprites across the screen at y 128 to 152:

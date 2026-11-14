@@ -59,7 +59,7 @@ u8 gMenu_ListOrderEquippedThenItems[20] = {
     LIST_ORDER_END,
 };
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// The x in pixels of the item command cursor, three columns on each of two
 /// rows (ItemMenu_CommandCursorX; the Japanese edition has neither).
 s32 gItemMenu_CommandColumnXTable[6] = {
@@ -71,9 +71,9 @@ s32 gItemMenu_CommandColumnXTable[6] = {
 
 // The width in tiles of the Status screen's highlight on each status row
 // (Down, Poison, Venom, Curse and Haunt).
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
 u8 gStatusScreen_CursorWidths[5] = {9, 4, 6, 5, 7};
-#elif (LANGUAGE == LANGUAGE_GERMAN)
+#elif LANGUAGE == LANGUAGE_GERMAN
 u8 gStatusScreen_CursorWidths[5] = {7, 5, 7, 6, 5};
 #else
 u8 gStatusScreen_CursorWidths[5] = {6, 7, 7, 6, 6};

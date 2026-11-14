@@ -851,7 +851,7 @@ void LuckyWheels_Update(void) {
     for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
       struct Particle *p = &fx->particles[i];
 
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
       if (i == 0)
         work->oam[sprite].attr01 =
             ((((s16)(p->x >> 16) + 0x1f0) & 0x1ff) << 16) | objMode |

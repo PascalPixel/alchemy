@@ -330,7 +330,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             anchor = selectedPosition.x / 8;
             helpColumn = anchor - 4;
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
             if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
               if (anchor + 6 > 29)
                 helpColumn = 20;
@@ -344,11 +344,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 helpColumn = 21;
               conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
             }
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
             if (anchor + 5 > 29)
               helpColumn = 21;
             conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#elif LANGUAGE == LANGUAGE_JAPANESE
             if (anchor + 4 > 29)
               helpColumn = 22;
             conditionWindow = Window_Create(helpColumn, 8, 8, 3, 6);
@@ -371,7 +371,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               helpColumn = 17;
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
               Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_KpString,
@@ -463,7 +463,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
               anchor = selectedPosition.x / 8;
               helpColumn = anchor - 7;
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
               if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
@@ -475,7 +475,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 conditionWindow =
                     Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#elif LANGUAGE == LANGUAGE_JAPANESE
               if (anchor + 7 > 29)
                 helpColumn = 16;
               conditionWindow =
@@ -544,7 +544,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
               anchor = selectedPosition.x / 8;
               helpColumn = anchor - 7;
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
               if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
@@ -556,7 +556,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                 conditionWindow =
                     Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
-#elif (LANGUAGE == LANGUAGE_JAPANESE)
+#elif LANGUAGE == LANGUAGE_JAPANESE
               if (anchor + 7 > 29)
                 helpColumn = 16;
               conditionWindow =

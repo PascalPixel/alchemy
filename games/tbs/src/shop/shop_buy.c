@@ -301,7 +301,7 @@ void Shop_DrawMoney(void) {
   shop = gMenuWork;
   window = shop->moneyWindow;
   if (window != 0) {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
     Text_DrawMessageAsTilesFar(MsgYourCoins, window, 0, 0);
     Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, window, 32, 8);
 #else
@@ -565,10 +565,10 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
 // The quantity window's count and the coins word after its total, in pixels:
 // German and French move both 8 left, Spanish the coins word 8 right.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_QUANTITY_NUMBER_X 64
 #define SHOP_QUANTITY_COIN_LABEL_X 128
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define SHOP_QUANTITY_NUMBER_X 72
 #define SHOP_QUANTITY_COIN_LABEL_X 144
 #else
@@ -586,7 +586,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   s32 quantityIndex;
   s32 selectedQuantity;
   struct WindowSprite *quantitySprite;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
   s32 unitMessageBase;
 #endif
 
@@ -641,7 +641,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           QuantityBar_Fill(minimum, 2, tileBuffer);
           VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
           selectedQuantity = quantityIndex + 1;
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
           Text_DrawNumberInWindowFar(selectedQuantity, 2, window,
                                      SHOP_QUANTITY_NUMBER_X, 0);
           Text_DrawNumberInWindowFar(price * selectedQuantity, 6, window,

@@ -521,7 +521,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     sBlankCreditLine,
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
     "Coordination",
     sBlankCreditLine,
     "Masaaki Uno",
@@ -533,7 +533,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
 #endif
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
     "Public Relations",
     sBlankCreditLine,
     "Mitsuaki Hagishima",
@@ -646,7 +646,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     0
-#elif (LANGUAGE == LANGUAGE_ENGLISH)
+#elif LANGUAGE == LANGUAGE_ENGLISH
     sBlankCreditLine,
     "North American",
     " Localization",
@@ -800,22 +800,22 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     sBlankCreditLine,
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
     "German Translation",
     sBlankCreditLine,
     "Micky Auer",
     "Martina Deimel",
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
     "Spanish Translation",
     sBlankCreditLine,
     "Carlos Montilla",
     "Miguel Lopez",
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
     "French Translation",
     sBlankCreditLine,
     "Daniel Charbit",
     "Steven Arhan",
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
     "Italian Translation",
     sBlankCreditLine,
     "Andrea Salvi",
@@ -824,7 +824,7 @@ const void *gCredits_Lines[] = {
     sBlankCreditLine,
     sBlankCreditLine,
     sBlankCreditLine,
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
     "German Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -833,7 +833,7 @@ const void *gCredits_Lines[] = {
     "Wolfgang Weber",
     "Frank Heuchle",
     "Zoran Tasevski",
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
     "Spanish Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -842,7 +842,7 @@ const void *gCredits_Lines[] = {
     "Jose Ramon Diaz",
     "Ana Paris",
     "Monica Gomez",
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
     "French Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -852,7 +852,7 @@ const void *gCredits_Lines[] = {
     "Kamel Chelirem",
     "Sebastien Aubre",
     "Michael Troger",
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
     "Italian Testing",
     sBlankCreditLine,
     "Maurice Tisdale",
@@ -900,7 +900,7 @@ const void *gCredits_Lines[] = {
     "Copyrights of all characters",
     "and music reserved by",
     sBlankCreditLine,
-#if (LANGUAGE != LANGUAGE_FRENCH)
+#if LANGUAGE != LANGUAGE_FRENCH
     "NINTENDO.",
 #endif
     sBlankCreditLine,

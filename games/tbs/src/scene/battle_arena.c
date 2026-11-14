@@ -193,24 +193,24 @@ enum LinkTally {
 /// that console as an opponent. Each return to linking writes the signature
 /// back.
 const s32 gBattleArena_SlotValues[] = {
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
     PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),
     PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
     PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'G', 'S', 'C')
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
     PEER_TAG('C', 'S', 'S', 'G'), PEER_TAG('3', '0', '1', '2'),
     PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
     PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('G', 'S', 'S', 'C')
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
     PEER_TAG('C', 'S', 'G', 'M'), PEER_TAG('3', '0', '1', '2'),
     PEER_TAG('1', 'A', 'B', 'C'), PEER_TAG('2', 'C', 'D', 'E'),
     PEER_TAG('3', 'E', 'F', 'G'), PEER_TAG('C', 'S', 'G', 'M')
-#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_ITALIAN
     PEER_TAG('S', 'G', 'I', 'C'), PEER_TAG('0', '1', '2', '3'),
     PEER_TAG('A', 'B', 'C', '1'), PEER_TAG('C', 'D', 'E', '2'),
     PEER_TAG('E', 'F', 'G', '3'), PEER_TAG('C', 'I', 'G', 'S')
 #else
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
     PEER_TAG('S', 'G', 'M', 'C'),
 #else
     PEER_TAG('C', 'M', 'G', 'S'),
@@ -512,8 +512,8 @@ recordTest:
     } while (namePrefix[i] != 0);
   }
   // German, Spanish, French and Italian put a space after the prefix.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
   namePrefix[i] = ' ';
   prefixLength = i + 1;
 #else

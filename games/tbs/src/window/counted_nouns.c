@@ -4,7 +4,7 @@
 #include "window/articles.h"
 #include "types.h"
 
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 /// {singular, plural}: window.c reads [(kind & 7) * 2 + plural].
 // clang-format off
 const u8 *const gLocalizedWord_CountedNouns[16] = {

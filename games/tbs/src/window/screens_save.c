@@ -725,11 +725,11 @@ void FileList_DrawDjinnCounts(struct Window *window,
 }
 
 // Where each edition draws the "Lv" label and the coin label, in pixels.
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
 #define SUMMARY_DRAW_LEVEL Text_DrawStringAtOffset
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define SUMMARY_LEVEL_X 59
 #define SUMMARY_COINS_X 56
 #define SUMMARY_DRAW_LEVEL Text_DrawStringAtOffset
@@ -772,7 +772,7 @@ void FileList_DrawSummary(struct Window *window,
         40);
     y = 48;
     Text_DrawNumberInWindow(summary->coins, 6, window, 0, y);
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_FRENCH
     // French takes the singular "Pièce" for one coin or none.
     if (summary->coins > 1)
       Text_DrawMessageAsTiles(MsgCoins, window, SUMMARY_COINS_X, 48);

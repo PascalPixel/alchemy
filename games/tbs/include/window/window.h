@@ -321,8 +321,8 @@ enum {
 
 /// The PP label's second tile: the HP label's in English, German and
 /// Japanese, a tile of its own in Spanish, French and Italian.
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
 #define WINDOW_TILE_PP_LABEL_END WINDOW_TILE(5)
 #else
 #define WINDOW_TILE_PP_LABEL_END WINDOW_TILE_HP_LABEL_END

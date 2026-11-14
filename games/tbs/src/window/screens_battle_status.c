@@ -12,7 +12,7 @@
 #define OWNER_STATUS_VALUE_X 176
 #endif
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 #define OWNER_STATUS_LABEL(row) (MsgOwnerStatusAttack + (row))
 #else
 #define OWNER_STATUS_LABEL(row)                                                \
@@ -407,7 +407,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                                   helpWindow->width, helpWindow->height, 0);
         Window_DrawDividerLine(statusWindow, 0, 14, 29, 14);
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
         switch (System_GetLanguage()) {
         case CARTRIDGE_LANGUAGE_FRENCH:
           Text_DrawStringAtOffset((u8 *)unit->name, statusWindow, 0, 0);
@@ -437,7 +437,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Text_DrawMessageAsTiles(MsgOwnerStatusExp, statusWindow, 0, 8);
         Text_DrawNumberInWindow(unit->experience, 8, statusWindow, 40, 8);
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
         switch (System_GetLanguage()) {
         case CARTRIDGE_LANGUAGE_GERMAN:
           Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_KpString,

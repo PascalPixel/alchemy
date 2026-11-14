@@ -4,11 +4,11 @@
 
 #include "window_internal.h"
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-#if (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE != LANGUAGE_JAPANESE
+#if LANGUAGE == LANGUAGE_ITALIAN
 #define ARTICLE_KINDS 11
 #define ARTICLE_KIND_MASK 15
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define ARTICLE_KINDS 5
 #define ARTICLE_KIND_MASK 15
 #else
@@ -77,8 +77,8 @@ enum {
 // Message_AppendArticleName copies a name into the decoded text at pos and
 // returns the position after it.
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 /// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
 /// the others the class's article (in Spanish, form bit 3 asks for the
 /// indefinite article), capitalised at the start of a sentence.
@@ -86,7 +86,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                               u16 *entries, s32 articleForm, s32 plural,
                               s32 *suffix) {
   struct ArticleTable table;
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
   struct ArticleTable indefiniteTable;
   u16 count;
   s16 indefinite;
@@ -98,7 +98,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   s8 letter;
   s32 cnt;
 
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
   count = articleForm & 7;
   indefinite = articleForm & 8;
 #endif
@@ -109,7 +109,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   }
   // A name's leading article class (MESSAGE_ARTICLE_CLASS and its
   // operand) is never copied.
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
   if (count == 0 || count == 4) {
 #else
   if (articleForm == 0 || articleForm == 4) {
@@ -120,14 +120,14 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   } else {
     kind = 0;
     table = gArticle_Table;
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
     indefiniteTable = gArticle_Indefinite;
 #endif
     if (name[0] == MESSAGE_ARTICLE_CLASS) {
       kind = name[1];
       name += 2;
     }
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
     if (indefinite == 0)
       p = table.text[kind & ARTICLE_KIND_MASK];
     else
@@ -148,12 +148,12 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   while (*name != 0) {
     code = *name++;
     TEXT_APPEND(entries, writePosition, code);
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
     if (code == 's' || code == 'S' || code == 'z' || code == 'Z')
       *suffix = 1;
     else
       *suffix = 0;
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
     if (code == 's' || code == 'S')
       *suffix = 1;
     else
@@ -169,7 +169,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 }
 #endif
 
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
 /// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
 /// name's first letter unless its class says otherwise), and form 2 (or 3 with
 /// several) adds the plural "s" or "es".
@@ -246,13 +246,13 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 /// comma and middle dot, unless the code after it is a kana mark.
 #define ENTRY_WIDE_GAP TEXT_MARK_VOICED
 
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
-    (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
+    LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
 
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
+#if LANGUAGE == LANGUAGE_FRENCH
 extern s8 gLocalizedWord_ItemPronoun[];
 #else
 /// The possessive written before an item's name, chosen by the item's gender
@@ -272,27 +272,27 @@ extern u8 *gLocalizedWord_CountedNouns[];
 s32 Message_Decode(s32 script, s32 clear) {
   struct WindowWork *work = WINDOW_WORK;
   u32 code = 0;
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
   s32 lineStart = 1;
 #endif
   s32 quote = 0;
   u32 start = work->textBufferEnd;
   u32 decodedCount = 0;
   s32 plural = 0;
-#if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE != LANGUAGE_GERMAN && LANGUAGE != LANGUAGE_ITALIAN
   s32 running = 1;
 #endif
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
   u32 writePosition = start;
   u32 previousCode;
   s32 suffix = 0;
 #else
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
   struct ItemPossessiveTable possessives;
   s32 form;
 #endif
   s32 suffix = 2;
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
   s32 running = 1;
 #endif
   s8 *word;
@@ -308,7 +308,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   u32 i;
   s32 value;
   s32 argument;
-#if (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ITALIAN
   s32 ending;
 #endif
 #ifdef UBFIX
@@ -324,7 +324,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct MessageReader reader;
   struct MessageReader *messageReader;
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
   struct ItemPossessiveTable possessives;
   s32 kind;
 #endif
@@ -343,7 +343,7 @@ s32 Message_Decode(s32 script, s32 clear) {
     messageReader = &reader;
 
     do {
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
       previousCode = code;
 #endif
       code = (u32)decode(messageReader);
@@ -408,7 +408,7 @@ s32 Message_Decode(s32 script, s32 clear) {
       } else {
         // Halting speech pauses before each code.
         if (work->haltingSpeech != 0
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
             && lineStart == 0 && code != TEXT_MARK_VOICED &&
             code != TEXT_MARK_SEMIVOICED
 #endif
@@ -416,7 +416,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
         if (work->spacingAfter != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
@@ -447,11 +447,11 @@ s32 Message_Decode(s32 script, s32 clear) {
               code = TEXT_OPENING_QUOTE;
           }
           TEXT_APPEND(entry, writePosition, (u16)code);
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
           lineStart = 0;
 #else
           if (code != ' '
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
               && code != TEXT_INVERTED_EXCLAMATION_MARK &&
               code != TEXT_INVERTED_QUESTION_MARK
 #endif
@@ -460,7 +460,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             if (code == '.' || code == '!' || code == '?')
               suffix = 2;
             if (code == 's' || code == 'S'
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
                 || code == 'z' || code == 'Z'
 #endif
             )
@@ -513,15 +513,15 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
             no = decode(messageReader) - 1;
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
             form = no & 7;
 #endif
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             // The argument is an inventory code, the item in its low bits.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
             argument &= INVENTORY_ITEM_ID_MASK;
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
             if (form == 2 || (form == 3 && plural != 0) || form == 4)
 #else
             if (no == 2 || (no == 3 && plural != 0) || no == 4)
@@ -619,12 +619,12 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_EM_DASH:
             TEXT_APPEND(entry, writePosition, TEXT_ARGUMENT_SPACE);
             TEXT_APPEND(entry, writePosition, '-');
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
             TEXT_APPEND(entry, writePosition, ' ');
 #endif
             break;
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
           case MESSAGE_LOCALIZED_WORD:
             no = decode(messageReader) - 1;
             nameBytes = gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
@@ -633,7 +633,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
 #endif
-#if (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ITALIAN
           case MESSAGE_LOCALIZED_WORD:
             ending = decode(messageReader) - 1;
             if (ending == 0) {
@@ -647,12 +647,12 @@ s32 Message_Decode(s32 script, s32 clear) {
               entry[writePosition] = 'e';
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             break;
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
           case MESSAGE_LOCALIZED_WORD:
-#elif (LANGUAGE == LANGUAGE_ENGLISH)
+#elif LANGUAGE == LANGUAGE_ENGLISH
           case MESSAGE_PLURAL_SUFFIX:
 #endif
-#if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE != LANGUAGE_GERMAN && LANGUAGE != LANGUAGE_ITALIAN
             if (plural != 0) {
               if (suffix != 0) {
                 TEXT_APPEND(entry, writePosition, 'e');
@@ -661,11 +661,11 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
 #endif
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
           case MESSAGE_PLURAL_SUFFIX:
             // The item argument is only looked at (clear 0), so the item's
             // name code after the possessive still takes it.
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
             MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
             possessives = gLocalizedWord_ItemPossessives;
             word = possessives.text[plural];
@@ -685,9 +685,9 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
 #endif
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
           case MESSAGE_PLURAL_SUFFIX:
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
             argument &= INVENTORY_ITEM_ID_MASK;
             possessives = gLocalizedWord_ItemPossessives;
@@ -708,13 +708,13 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
 #endif
           case MESSAGE_POSSESSIVE_SUFFIX:
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
             if (suffix == 1)
               entry[writePosition] = '\'';
             else
               entry[writePosition] = 's';
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-#elif (LANGUAGE == LANGUAGE_ENGLISH)
+#elif LANGUAGE == LANGUAGE_ENGLISH
             TEXT_APPEND(entry, writePosition, '\'');
             if (suffix == 0) {
               TEXT_APPEND(entry, writePosition, 's');
@@ -725,14 +725,14 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_PAGE_BREAK:
           case MESSAGE_LINE_BREAK:
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
             lineStart = 1;
 #endif
             // Keep the break in the decoded text.
             // Fall through.
           default:
             TEXT_APPEND(entry, writePosition, (u16)code);
-#if (LANGUAGE == LANGUAGE_ENGLISH)
+#if LANGUAGE == LANGUAGE_ENGLISH
             if (code == 's' || code == 'S')
               suffix = 1;
             else
@@ -764,7 +764,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #endif
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
 
 /// The Japanese form: Japanese has no articles, so the name is copied as it is.
 extern __inline__ u32 Message_AppendArticleName(s32 mode, u16 *name,

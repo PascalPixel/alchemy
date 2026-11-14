@@ -9,7 +9,7 @@
 
 // How many name letters tell the enemies of one class apart: 26 in Japanese,
 // 9 in the localizations.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 #define ENEMY_NAME_SUFFIX_COUNT 9
 #else
 #define ENEMY_NAME_SUFFIX_COUNT 26

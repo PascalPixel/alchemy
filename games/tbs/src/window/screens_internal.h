@@ -82,7 +82,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PSYNERGY_COST_SECOND_TILE WINDOW_TILE_PP_LABEL_END
 
 // The Status screen's level label, after the party member's name, in pixels.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_FRENCH
 #define OWNER_STATUS_LEVEL_X 51
 #else
 #define OWNER_STATUS_LEVEL_X 56
@@ -106,7 +106,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #endif
 
 // Where "Attack" is written in its window once chosen, in pixels.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_FRENCH
 #define BATTLE_COMMAND_NAME_X 14
 #else
 #define BATTLE_COMMAND_NAME_X 16
@@ -152,8 +152,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
   } while (0)
 
 // The chosen item's window.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define BATTLE_ITEM_WINDOW_WIDTH 16
 #else
 #define BATTLE_ITEM_WINDOW_WIDTH 15
@@ -162,14 +162,14 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 // The password level menu (IconMenu_ChooseSendOption,
 // RESOURCE_LAYOUT_PASSWORD_LEVEL): its heading window ("Password Selection")
 // and, outside the Japanese edition, the explanation window under it.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
 #define PASSWORD_LEVEL_WINDOW_X 7
 #define PASSWORD_LEVEL_WINDOW_WIDTH 17
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define PASSWORD_LEVEL_WINDOW_X 5
 #define PASSWORD_LEVEL_WINDOW_WIDTH 21
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define PASSWORD_LEVEL_WINDOW_X 5
 #define PASSWORD_LEVEL_WINDOW_WIDTH 22
 #else
@@ -177,7 +177,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define PASSWORD_LEVEL_WINDOW_WIDTH 13
 #endif
 
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define PASSWORD_HELP_WINDOW_X 1
 #define PASSWORD_HELP_WINDOW_WIDTH 28
 #else
@@ -188,13 +188,13 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 // The transfer method menu (IconMenu_ChooseSendOption,
 // RESOURCE_LAYOUT_TRANSFER_METHOD): its heading window ("Transfer Method"), the
 // heading's x in it in pixels, and the help window.
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_METHOD_WINDOW_X 6
 #define TRANSFER_METHOD_WINDOW_WIDTH 18
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define TRANSFER_METHOD_WINDOW_X 4
 #define TRANSFER_METHOD_WINDOW_WIDTH 21
-#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TRANSFER_METHOD_WINDOW_X 5
 #define TRANSFER_METHOD_WINDOW_WIDTH 20
 #else
@@ -208,11 +208,11 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_METHOD_LABEL_X 0
 #endif
 
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_SPANISH) ||        \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_SPANISH ||            \
+    LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define TRANSFER_HELP_WINDOW_X 1
 #define TRANSFER_HELP_WINDOW_WIDTH 28
-#elif (LANGUAGE == LANGUAGE_GERMAN)
+#elif LANGUAGE == LANGUAGE_GERMAN
 #define TRANSFER_HELP_WINDOW_X 0
 #define TRANSFER_HELP_WINDOW_WIDTH 30
 #else
@@ -222,7 +222,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 
 // The width inside the border of the name window under the shop's commands
 // and the Sanctum's services.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_COMMAND_LABEL_WIDTH 8
 #elif LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_COMMAND_LABEL_WIDTH 7

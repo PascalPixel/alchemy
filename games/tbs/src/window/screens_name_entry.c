@@ -4,7 +4,7 @@
 
 #include "screens_internal.h"
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// The international name entry screen has no voicing marks: where the Japanese
 /// edition checks a mark against the letter before it, this edition keeps a
 /// function that accepts every character. Nothing calls it.
@@ -203,7 +203,7 @@ void NameEntry_DrawName(struct Window *window, u8 *name) {
 }
 
 // The width of the window showing the name, in tiles.
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 #define NAME_LABEL_WIDTH 9
 #else
 #define NAME_LABEL_WIDTH 8
@@ -211,13 +211,13 @@ void NameEntry_DrawName(struct Window *window, u8 *name) {
 
 // Whether the edition draws the Delete and End key labels as text over the
 // keyboard, and how wide its End key is, in tiles.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
-    (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_FRENCH
 #define NAME_KEY_LABELS 1
 #else
 #define NAME_KEY_LABELS 0
 #endif
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define NAME_END_KEY_WIDTH 4
 #else
 #define NAME_END_KEY_WIDTH 3

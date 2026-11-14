@@ -548,7 +548,7 @@ void Menu_DrawModeLabel(void) {
 // French alone redraws the transfer help its own way: it releases the help's
 // window sprites instead of preparing them for a redraw, and draws Cable's help
 // only when coming from Password.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_FRENCH
 
 /// Redraws password/cable transfer help when the chosen method changes. A
 /// task of the transfer method menu: Password or Cable.
@@ -617,15 +617,15 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
     IconMenu_AddIcon(COMMAND_ICON_GOLD);
     IconMenu_AddIcon(COMMAND_ICON_SILVER);
     IconMenu_AddIcon(COMMAND_ICON_BRONZE);
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
     IconMenu_Center(17, 5, 0);
 #endif
   }
-#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
-    (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_GERMAN ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
   IconMenu_Center(17, 7, 0);
-#elif (LANGUAGE == LANGUAGE_SPANISH)
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_SPANISH
+#elif LANGUAGE == LANGUAGE_FRENCH
   IconMenu_Center(17, 9, 0);
 #else
   IconMenu_Center(17, 5, 0);
@@ -763,7 +763,7 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
 // Name window width for each edition
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAIR_WIDTH 7
-#elif (LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN)
+#elif LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 #define PAIR_WIDTH 10
 #else
 #define PAIR_WIDTH 9

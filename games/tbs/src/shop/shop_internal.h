@@ -122,7 +122,7 @@ enum {
 // are in tiles, text positions in pixels.
 
 // The shop's Yes/No menu (shop_run.c): one column further left in German.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define SHOP_CONFIRM_MENU_X 6
 #else
 #define SHOP_CONFIRM_MENU_X 7
@@ -131,10 +131,10 @@ enum {
 // An item's price and the word after it in the price window that the buy,
 // sell and repair lists share (Shop_DrawItemPrice, shop_buy.c), in pixels:
 // French moves both 8 left, Spanish the word 8 right.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_PRICE_NUMBER_X 24
 #define SHOP_PRICE_LABEL_X 64
-#elif (LANGUAGE == LANGUAGE_SPANISH)
+#elif LANGUAGE == LANGUAGE_SPANISH
 #define SHOP_PRICE_NUMBER_X 32
 #define SHOP_PRICE_LABEL_X 80
 #else
@@ -145,7 +145,7 @@ enum {
 // Where the item grid (Shop_DrawMemberItems, shop_sell.c), shared by the sell,
 // repair and drop screens and the equip prompt, writes MsgNoItems for a party
 // member with no items, in pixels.
-#if (LANGUAGE == LANGUAGE_ITALIAN)
+#if LANGUAGE == LANGUAGE_ITALIAN
 #define SHOP_EMPTY_GRID_X 20
 #define SHOP_EMPTY_GRID_Y 12
 #else
@@ -166,10 +166,10 @@ enum {
 
 // The sanctum's fee window (shop_sanctum.c), wider for the German and French
 // text.
-#if (LANGUAGE == LANGUAGE_GERMAN)
+#if LANGUAGE == LANGUAGE_GERMAN
 #define SANCTUM_PRICE_WINDOW_X 0
 #define SANCTUM_PRICE_WINDOW_WIDTH 30
-#elif (LANGUAGE == LANGUAGE_FRENCH)
+#elif LANGUAGE == LANGUAGE_FRENCH
 #define SANCTUM_PRICE_WINDOW_X 1
 #define SANCTUM_PRICE_WINDOW_WIDTH 25
 #else
@@ -196,7 +196,7 @@ enum {
 #endif
 
 // The quantity cursor's x, in pixels: shop_buy.c and shop_sell.c both place it.
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_QUANTITY_CURSOR_X 120
 #else
 #define SHOP_QUANTITY_CURSOR_X 128

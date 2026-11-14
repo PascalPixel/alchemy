@@ -882,7 +882,7 @@ void Func_02001710(void) {
     ((struct FieldWork *)heap->fieldWork)->message++;
     Actor_FaceDirectionAndWait(7, angleC);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
-    Func_02001f08();
+    GabombaStatueChamber_CountAnswer();
   }
   Actor_FaceDirection(6, FACING_WEST, 0);
   Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

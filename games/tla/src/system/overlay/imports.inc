@@ -302,7 +302,7 @@
 	export Import_EventSetExitRequest, Event_SetExitRequestFar
 	export Field_RequestBattleFromEncounterTable, Field_RequestBattleFromEncounterTableFar
 	export RisingParticles_Start, RisingParticles_StartFar
-	export Func_02000db0, Event_SetExitRequestFar
+	export Izumo_SetExitRequest, Event_SetExitRequestFar
 	export Field_RequestDjinnBattle, Field_RequestDjinnBattleFar
 	export Event_SetAfterBattleDestination, Event_SetAfterBattleDestinationFar
 	export Event_LeaveFor, Event_LeaveForFar
@@ -374,7 +374,7 @@
 	export WorldMap_StartZoom, WorldMap_StartZoomFar
 	export Func_02004604, EffectSprite_InitFar
 	export Func_02003d90, Rope_InitializeFar
-	export Func_02003320, Func_080c8930
+	export Idejima_CountAnswer, Func_080c8930
 	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
 	export Actor_Spawn, Actor_SpawnFar
 	export Actor_SetActionCallback, Actor_SetActionCallbackFar
@@ -398,7 +398,6 @@
 	export Func_02003bfc, Rope_PlaceFar
 	export FlagBlock_ApplyFlags, FlagBlock_ApplyFlagsFar
 	export Actor_GetCellIndex, Actor_GetCellIndexFar
-	export Func_02001588, Actor_GetCellIndexFar
 	export Actor_PlaceBlocks, Actor_PlaceBlocksFar
 	export Actor_LiftTargetBlock, Actor_LiftTargetBlockFar
 	export Actor_PlaceMovedBlock, Actor_PlaceMovedBlockFar
@@ -416,12 +415,12 @@
 	export Actor_FallOverById, Actor_FallOverByIdFar
 	export Func_02004f10, EffectSprite_InitFar
 	export Func_020029a0, Func_080c8898
-	export Func_02001f08, Func_080c8930
+	export GabombaStatueChamber_CountAnswer, Func_080c8930
 	export Exit_PrepareActorAnimation, Exit_PrepareActorAnimationFar
 	export ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
 	export Actor_VanishInSparks, Actor_VanishInSparksFar
 	export Actor_SetSpriteRotationById, Actor_SetSpriteRotationByIdFar
-	export Func_02005c7c, Func_080c8930
+	export Kibombo_CountAnswer, Func_080c8930
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
 	export Func_02005a50, Cyclone_CopyTouchedCellsFar
 	export Func_02001ef8, Func_080c8930
@@ -457,7 +456,7 @@
 	export MapGrid_SetCellBehavior, MapGrid_SetCellBehaviorFar
 	export BattleEffect_PackTargetBuffer, BattleEffect_PackTargetBufferFar
 	export SceneEvent_FindActiveRecord, Scene_FindTriggerFar
-	export Func_020032a0, Func_080c8930
+	export EasternAlhafraShip_CountAnswer, Func_080c8930
 	export Actor_WatchActor, Actor_WatchActorFar
 	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
 	export Func_020020ac, Resource_FarCall00A+1
@@ -469,7 +468,7 @@
 	export MapGrid_SetAttributeBBitsAt, MapGrid_SetAttributeBBitsAtFar
 	export MapGrid_ClearAttributeBBitsAt, MapGrid_ClearAttributeBBitsAtFar
 	export Teleport_PlaySparksAndFade, Teleport_PlaySparksAndFadeFar
-	export Func_020015f0, Func_080c8930
+	export AlhafraManor_CountAnswer, Func_080c8930
 	export BattleEffect_FillOverlayTiles, BattleEffect_FillOverlayTilesFar
 	export Cyclone_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
 	export Func_02000f14, FieldItem_JumpToLeaderFar

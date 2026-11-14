@@ -112,19 +112,23 @@ static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
   Actor_SetSpriteFlags(object, flags);
 }
 
-static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y, s32 z) {
+static __inline__ struct Actor *KandoreanTemple_CreateActor(s32 type, s32 x,
+                                                            s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
-static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void KandoreanTemple_PlaceRope(s32 a, s32 b, s32 c, s32 d) {
+  /* FAKEMATCH(wrapper): the call through this inline. */
+  Rope_Place(a, b, c, d);
+}
+
+static __inline__ void KandoreanTemple_CopyTouchedCells(s32 a, s32 b, s32 c,
+                                                        s32 d, s32 e, s32 f,
+                                                        s32 g) {
   /* FAKEMATCH(wrapper): the call through this inline. */
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
-static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
-  Rope_Place(a, b, c, d);
-}
 #include "field/field.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -437,7 +441,8 @@ void KandoreanTemple_TrailSteam(struct Actor *object, s32 step) {
 }
 
 void KandoreanTemple_PuffSteam(struct Actor *object) {
-  struct Actor *steam = Func_02005140_(0x10d, object->x, object->y, object->z);
+  struct Actor *steam =
+      KandoreanTemple_CreateActor(0x10d, object->x, object->y, object->z);
   struct FieldSprite *sprite;
 
   if (steam) {
@@ -560,8 +565,8 @@ void KandoreanTemple_InitializeSteam(struct Actor *object, s32 priority) {
 }
 
 void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
-  struct Actor *object =
-      Func_02005140_(0x11d, position[0], position[1], position[2] - 0x20000);
+  struct Actor *object = KandoreanTemple_CreateActor(
+      0x11d, position[0], position[1], position[2] - 0x20000);
 
   if (object) {
     s32 timer;
@@ -1680,23 +1685,23 @@ void KandoreanTemple_FightChestbeaters(void) {
 }
 
 void KandoreanTemple_CycloneFirstPatch(void) {
-  Func_020053d0_(76, 0, 2, 2, 73, 14, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 2, 2, 73, 14, 1);
 }
 
 void KandoreanTemple_CycloneSecondPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 75, 16, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 75, 16, 1);
 }
 
 void KandoreanTemple_CycloneThirdPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 74, 18, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 74, 18, 1);
 }
 
 void KandoreanTemple_CycloneFourthPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 80, 18, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 80, 18, 1);
 }
 
 void KandoreanTemple_CycloneFifthPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 87, 15, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 87, 15, 1);
 }
 
 s32 Scene_Initialize(void) {
@@ -2367,7 +2372,7 @@ void KandoreanTemple_StartGate(void) {
 void KandoreanTemple_PlaceTheLevitator(void) {
   if (Event_GetFlag(FLAG_SCENE_TEMP_10) == 0) {
     Event_SetFlag(FLAG_SCENE_TEMP_10);
-    Func_020053a8_(1, 0x210, 10, 11);
+    KandoreanTemple_PlaceRope(1, 0x210, 10, 11);
   }
   {
     s32 angle = 0x3000;
@@ -2381,7 +2386,7 @@ void KandoreanTemple_MatchLiftPriority(void);
 void KandoreanTemple_StartPoisHall(void) {
   gFieldWork->transition = 521;
   Rope_Initialize();
-  Func_020053a8_(0, 527, 8, 9);
+  KandoreanTemple_PlaceRope(0, 527, 8, 9);
   Rope_Place(1, 528, 10, 11);
   if (Event_GetFlag(0x849) == 0) {
     Actor_SetModeById(13, 5);

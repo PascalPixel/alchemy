@@ -102,7 +102,13 @@ struct MainRoutineWork {
   s8 cloaked;        ///< Cloak: the leader is hidden
   u8 unk26e[2];      ///< not named by ⚓️ code
   u32 savedCallback; ///< the paused object's update, restored on resuming
-  u8 counter274;     ///< 0 on a new game; counted up by Func_080d2d70
+  /// The answers events count: telling Kraden on Idejima that the Western
+  /// Sea is not where they go, agreeing with Alhafra's mayor that the party
+  /// owes him, and others; Ancient Lemuria asks its question only while this
+  /// is 4 or less. 0 on a new game, counted up by Func_080d2d70.
+  // XXX: what the counted answers share; reading every site's question and
+  // the Ancient Lemuria event that tests the count would settle it.
+  u8 countedAnswers;
   u8 unk275;         ///< not named by ⚓️ code
   /// Nonzero makes actor 8, not currentOwner, the one events control.
   s16 ownerOverride;

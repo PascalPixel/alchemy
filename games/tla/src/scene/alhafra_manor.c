@@ -254,7 +254,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #define EVENT_WORD(offset) (*(s32 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
 
-void Func_020015f0(void);
+void AlhafraManor_CountAnswer(void);
 
 /// Walks actor `id` to the controlled character's cell, when it has one.
 #define WALK_TO_LEADER(id)                                                     \
@@ -592,7 +592,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(20);
   FieldMessage_ShowAtActor(SPEAKER_PORTRAIT_RIGHT | 5, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Func_020015f0();
+    AlhafraManor_CountAnswer();
     Event_Wait(30);
     Motion_SetModeAndWaitAnimation(6, 4);
     Event_ShowMessageThenWait(6, 0, 10);

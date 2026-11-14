@@ -651,7 +651,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Motion_SetVarCbAndRefresh(9, 2);
   Event_Wait(10);
   FieldMessage_ShowAtActor(9, 0);
-  if ((s8)gMainRoutineWork.counter274 <= 4) {
+  if ((s8)gMainRoutineWork.countedAnswers <= 4) {
     result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
     if (result == 0) {
       Event_Wait(25);

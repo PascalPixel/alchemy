@@ -685,7 +685,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.coins = 200;
   *(u32 *)&gMainRoutineWork.unk284[8] = 0;
   gMainRoutineWork.forgeItem = 0;
-  gMainRoutineWork.counter274 = 0;
+  gMainRoutineWork.countedAnswers = 0;
   gMainRoutineWork.eventMode = 1;
   gMainRoutineWork.battleFxEnabled = 1;
   gMainRoutineWork.unk22b = 1;

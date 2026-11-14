@@ -141,5 +141,5 @@ void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
   Sound_PlayFar(cue);
 }
 
-/// Counts up the main routine's counter274.
-void Func_080d2d70(void) { gMainRoutineWork.counter274++; }
+/// Counts up the main routine's countedAnswers.
+void Func_080d2d70(void) { gMainRoutineWork.countedAnswers++; }

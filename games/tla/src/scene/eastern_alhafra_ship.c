@@ -434,7 +434,7 @@ void EasternAlhafraShip_MayorArrives(void) {
     Event_ShowMessageThenWait(5, 0, 10);
     gFieldWork->message++;
   } else {
-    Func_020032a0();
+    EasternAlhafraShip_CountAnswer();
     Event_Wait(20);
     Actor_ArmCallback(5, FACING_WEST, 0);
     Event_Wait(20);
@@ -1330,7 +1330,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     gFieldWork->message += 1;
   } else {
     Event_Wait(40);
-    Func_020032a0();
+    EasternAlhafraShip_CountAnswer();
     Actor_ArmCallback(25, 0xb000, 0);
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(17, 3);

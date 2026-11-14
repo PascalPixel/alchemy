@@ -100,7 +100,6 @@ void Actor_ApplyRandomChildValues(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FlagBlock_ApplyFlags(const void *data);
-s32 Func_02001588(void);
 void Actor_TakeLeaderLayer(void);
 void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
                                             s32 z);

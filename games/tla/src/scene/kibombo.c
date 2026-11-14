@@ -545,7 +545,7 @@ void Kibombo_PiersThanksParty(void) {
   Event_End();
 }
 
-void Func_02005c7c(void);
+void Kibombo_CountAnswer(void);
 void Func_02002eb0(void);
 void Func_020032b0(void);
 void Func_020032c8(void);
@@ -669,7 +669,7 @@ void Func_02000d74(void) {
     gFieldWork->message++;
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 26,
                              0);
-    Func_02005c7c();
+    Kibombo_CountAnswer();
   }
 }
 
@@ -1004,7 +1004,7 @@ void Kibombo_PiersJoinsParty(void) {
     FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    Func_02005c7c();
+    Kibombo_CountAnswer();
   }
   Actor_ShowEmoteById(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 7, 0);

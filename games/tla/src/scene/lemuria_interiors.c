@@ -131,11 +131,11 @@ void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0) {
   if (result1 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors13 + 1));
+  Event_SetMessageId((s32)MsgLemuriaInteriors13 + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors13 + 2));
+  Event_SetMessageId((s32)MsgLemuriaInteriors13 + 2);
 answered:
   Event_ShowMessage(arg0, 0);
   return;
@@ -155,11 +155,11 @@ void LemuriaInteriors_AskAboutDraughts(s32 arg0) {
   if (result1 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors18 + 1));
+  Event_SetMessageId((s32)MsgLemuriaInteriors18 + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors18 + 2));
+  Event_SetMessageId((s32)MsgLemuriaInteriors18 + 2);
 answered:
   Event_ShowMessage(arg0, 0);
   return;
@@ -187,11 +187,11 @@ void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
   if (result3 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors19 + 1));
+  Event_SetMessageId((s32)MsgLemuriaInteriors19 + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors19 + 2));
+  Event_SetMessageId((s32)MsgLemuriaInteriors19 + 2);
 answered:
   Event_ShowMessage(arg1, 0);
   Actor_FaceDirection(arg1, value1, 0);

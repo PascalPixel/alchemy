@@ -2596,8 +2596,10 @@ void Kibombo_GabombaStillNotPleased(void) {
     }
   }
   Motion_SetModeAndWaitAnimation(17, 4);
+  // "No! This time, he seemed almost like he might..."
   Event_ShowMessageAndWait(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTH_SOUTHEAST);
+  // "We must continue! Drums! More drums!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 17, 0);
   GameFlag_Set(0x8fc);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);

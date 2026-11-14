@@ -118,11 +118,14 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
     Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActorById(18, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  // "Darn that mayor..."
   Event_ShowMessageThenWait(18, 0, 10);
   Motion_SetVarCbAndRefresh(18, 2);
   Event_Wait(10);
+  // "I thought he'd get that mast fixed up for us right away..."
   Event_ShowMessageThenWait(18, 0, 10);
   Motion_SetModeAndWaitAnimation(18, 4);
+  // "I'm starting to think the mayor of Alhafra never planned on..."
   Event_ShowMessageThenWait(18, 0, 10);
   Event_End();
 }
@@ -143,22 +146,28 @@ void AlhafraManor_DefendTheMayor(void) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
+  // "I'm sure the mayor has his reasons for halting repairs on the..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
+  // "The mayor feels that Madra should only get back what was stolen from..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
+  // "But now, it seems the Madrans are getting the better end of the deal..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Actor_ArmCallback(8, FACING_NORTHEAST, 0);
   Event_Wait(50);
   Actor_ArmCallback(8, FACING_EAST, 0);
   Event_Wait(10);
+  // "The mayor thinks it unfair that Madra should benefit while Alhafra..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(10);
+  // "That's why he's keeping the pirates' money and using it to repair..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 4);
+  // "If Madra wants their boat fixed, then they can just pay us to have..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Event_End();
 }

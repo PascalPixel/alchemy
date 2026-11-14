@@ -1233,6 +1233,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_WaitForMoveById(17);
   Actor_SetPosition(17, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
+  // "On the count of three, the challenge begins!"
   Event_ShowMessage(15, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
@@ -1300,6 +1301,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_WaitForMoveById(16);
   Actor_SetPosition(16, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
+  // "On the count of three, the challenge begins!"
   Event_ShowMessage(15, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
@@ -1499,16 +1501,21 @@ void ShamanVillage_ShowShamansRod(void) {
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
   Actor_SetSpeed(17, 1.2);
   Actor_WalkToAndWait(17, 136, 232);
+  // "We thought it was lost forever... It once belonged to the great Hoabna."
   Event_ShowMessage(17, 0);
   Actor_SetSpeed(16, 1.2);
   Actor_WalkToAndWait(16, 104, 232);
+  // "Hoabna's staff was a gift from his great friend in Contigo, Yegelos...."
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(15, 3);
+  // "He vowed to care for the sacred treasure of Contigo, the Hover..."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20)
+  // "Have you outlanders come to claim the Hover Jade?"
   Event_ShowMessage(15, 0);
   Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "I suppose we have, yes."
   Event_ShowMessage(18, 0);
   Actor_SetSpeed(15, 0.8);
   Actor_WalkToAndWait(15, 120, 252);
@@ -1530,6 +1537,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WalkToAndWait(15, 120, 242);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimation(15, 4);
+  // "That's a shame. We'll never give the Hover Jade to you!"
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
@@ -1537,9 +1545,11 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_Jump(18, 4, 0);
+  // "But...we brought you the Shaman's Rod... What's stopping you from..."
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  // "Hoabna handed the Hover Jade down from generation to generation for..."
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -1547,26 +1557,34 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimationAndWait(15, 4);
+  // "We are to return it to the descendants of Yegelos. And you are..."
   Event_ShowMessage(15, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  // "That's preposterous! We returned your rod! We've come so far already!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
   SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
+  // "What difference does it make if we're from Contigo or not!?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(15, 3);
   SHAMAN_VILLAGE_EMOTE(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  // "Make no mistake about it. We are the intended recipients of the..."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Is there some way we can get our hands on the Hover Jade?"
   Event_ShowMessage(18, 0);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "No. You ask the impossible."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20)
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
+  // "What about...the test? Would that be a bad idea, Moapa?"
   Event_ShowMessage(17, 0);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 20);
   Actor_SetAnimation(17, 3);
+  // "You know, Trial Road? Only Yegelos could walk that path."
   Event_ShowMessage(17, 0);
   {
     s32 y = 0x500000;

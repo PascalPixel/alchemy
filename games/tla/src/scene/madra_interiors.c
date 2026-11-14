@@ -544,38 +544,49 @@ void MadraInteriors_InterrogatePiers(void) {
   object1->actionFlags |= 1;
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Look at me when I'm talking to you! Are you trying to mock me!?"
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
+  // "I implore you, do not anger me."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Oh, do you? So what's going to happen if I make you angry?"
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   Actor_FaceActor(ACTOR_ACCUSING_INTERROGATOR, ACTOR_STERN_INTERROGATOR, 0);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_ACCUSING_INTERROGATOR, 2);
+  // "Hey, Shin... Maybe you should go easy on him..."
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
   Actor_FaceActor(ACTOR_STERN_INTERROGATOR, ACTOR_ACCUSING_INTERROGATOR, 0);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_STERN_INTERROGATOR, 2);
+  // "Hey, it wasn't your girlfriend who got hurt!"
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "I'm sorry she was injured, but I cannot°"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldActor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_SCOWL,
                        20);
   Actor_FaceDirectionAndWait(ACTOR_STERN_INTERROGATOR, FACING_NORTH);
+  // "I don't want your sympathy, freak! I want you to get angry for me!"
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
+  // "Stop, please... Even my patience has its limits."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_STERN_INTERROGATOR, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
+  // "Hey, don't you want to see what he'll do?"
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   Actor_ShowEmote(ACTOR_ACCUSING_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_WINCE,
                   30);
+  // "I think we should just stop..."
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
+  // "If my words will not cool your temper, then..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_PIERS, 0, 16);
@@ -592,6 +603,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   BattleEffect_CleanupSceneObjects();
+  // "Oh! That was Psynergy!"
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
   FieldActor_Stop(ACTOR_STERN_INTERROGATOR);
   object3 = Actor_Get(ACTOR_STERN_INTERROGATOR);
@@ -648,26 +660,32 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetScript(ACTOR_STERN_INTERROGATOR, gMadraInteriors_InterrogatorsLeave);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_STERN_INTERROGATOR);
   FieldActor_WatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_STERN_INTERROGATOR);
+  // "Waaaaaaaaaahh!"
   FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_ACCUSING_INTERROGATOR, 2);
   FieldEvent_Wait(20);
   Actor_FaceActor(ACTOR_ACCUSING_INTERROGATOR, ACTOR_PIERS, 0);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_ACCUSING_INTERROGATOR);
   FieldActor_WatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_ACCUSING_INTERROGATOR);
+  // "Did you do that?"
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "What did your friend expect?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_ACCUSING_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_WINCE,
                   30);
   Actor_WalkByAndWait(ACTOR_ACCUSING_INTERROGATOR, -16, 16);
+  // "You monster!"
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 1);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "I... I am no monster."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_ACCUSING_INTERROGATOR, -16, 8);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_ACCUSING_INTERROGATOR, 2);
   FieldEvent_Wait(20);
+  // "Help!!!"
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
   object12 = Actor_Get(ACTOR_ACCUSING_INTERROGATOR);
   object12->actionFlags |= 1;
@@ -688,6 +706,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_FaceEachOther(ACTOR_JAIL_KRADEN, ACTOR_FELIX, 0);
   Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
   FieldEvent_Wait(20);
+  // "This man... He must be an Adept!"
   Event_OpenMessage(ACTOR_JAIL_KRADEN, 0);
   result13 = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
   if (result13 != 0)

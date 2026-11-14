@@ -1703,6 +1703,7 @@ void KandoreanTemple_ReceiveLash(void) {
   if (gKandoreanTemple_LashPebble != 0)
     Actor_Release(gKandoreanTemple_LashPebble);
   Actor_SetAnimation(ACTOR_POI, ANIM_SHAKE_HEAD);
+  // "I hope that someday, my students will be worthy of this honor, too."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(424, 0, 400, 1);

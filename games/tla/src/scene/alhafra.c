@@ -529,6 +529,7 @@ void Alhafra_MadransArrive(s32 a0) {
   }
   Actor_SetPosition(31, 408, 872);
   Actor_SetPosition(32, 392, 888);
+  // "Finally! We made it!"
   Event_ShowMessageThenWait(31, 0, 10);
   if (a0 == 0x14) {
     Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
@@ -557,6 +558,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(31, FACING_EAST, 0);
   Actor_SetPosition(33, 392, 872);
   Actor_SetPosition(35, 408, 872);
+  // "We-We're here?"
   FieldEvent_ShowMessageThenWait(33, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
@@ -568,6 +570,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(31, 2);
   Event_Wait(10);
+  // "Where's the Elder?"
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirection(33, FACING_SOUTH_SOUTHEAST, 0);
@@ -576,6 +579,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_FaceDirection(33, FACING_NORTH, 0);
   Event_Wait(20);
+  // "He's coming now..."
   FieldEvent_ShowMessageThenWait(33, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(32, FACING_NORTHEAST, 0);
@@ -591,6 +595,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetSpritePriority(35, 3);
   Event_Wait(20);
   Actor_SetPosition(34, 400, 872);
+  // "Haaa hoo hooo... Are we...here? I feel like I just walked 500 miles."
   FieldEvent_ShowMessageThenWait(34, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_FaceDirection(32, FACING_SOUTH_SOUTHEAST, 0);
@@ -602,6 +607,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(90);
   Motion_SetVarCbAndRefresh(34, 2);
   Event_Wait(20);
+  // "I'm fine... I feel like I could walk 500 more!"
   FieldEvent_ShowMessageThenWait(34, 0, 10);
   Actor_WalkByAndWaitById(34, 0, -16);
   Event_Wait(1);
@@ -634,6 +640,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldActor_Jump(30, 6, 15);
   FieldActor_Jump(30, 6, 23);
   Actor_SetAnimation(34, 1);
+  // "So...is this Alhafra?"
   FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetMovementTypeById(29, (s32)gAlhafra_OfficialStepsBackScript);
   Event_Wait(20);
@@ -642,25 +649,30 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
+  // "Madra's a pretty big place, but this town is huge!"
   FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetAnimationAndWait(29, 4);
+  // "We didn't come to Alhafra to shop, Mister Mayor."
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_ArmCallback(30, FACING_EAST, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(20);
+  // "We're here to bring in Briggs the Champa."
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_SetAnimation(29, 5);
   Actor_WalkByAndWait(30, 64, 0);
   Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(30, FACING_NORTHEAST, 0);
   Event_Wait(20);
+  // "I know that!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Actor_SetModeById(29, 1);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(10);
+  // "Then we should go straight to speak with Alhafra's mayor."
   Event_ShowMessageThenWait(29, 0, 10);
   Actor_Stop(31);
   Actor_Stop(32);
@@ -678,6 +690,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetMovementTypeById(14, (s32)gAlhafra_PasserbyWalksOffScript);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
+  // "We're in no shape to go present ourselves to the mayor right now!"
   Event_ShowMessageThenWait(31, 0, 10);
   Event_Wait(10);
   Actor_ArmCallback(32, FACING_NORTH, 0);
@@ -690,12 +703,14 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_ArmCallback(32, FACING_EAST_SOUTHEAST, 0);
   Event_Wait(20);
+  // "Look, Briggs is obviously not here, and besides, we already know..."
   FieldEvent_ShowMessageThenWait(32, 0, 10);
   Actor_SetModeById(29, 1);
   Event_Wait(10);
   Actor_ShowEmoteById(29, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
+  // "Silence!"
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   EventCamera_FollowActor(29, 1);
   FieldCamera_WaitForArrival();
@@ -713,6 +728,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldCamera_MoveTo(648, CAMERA_KEEP, 536, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
+  // "It seems Alhafra has felt the effects of the tidal wave as well..."
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 808, 1);
   FieldCamera_WaitForArrival();
@@ -730,53 +746,65 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(33, 3);
   Event_Wait(10);
+  // "It looks like they suffered a good deal of damage..."
   FieldEvent_ShowMessageThenWait(33, 0, 10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(20);
   Actor_ArmCallback(29, FACING_EAST, 0);
   Event_Wait(20);
+  // "That would explain why Alhafra doesn't seem to have any boats for..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 29, 0, 10);
   Actor_ShowEmoteById(34, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  // "You know, just looking around, I get the impression they only had..."
   FieldEvent_ShowMessageThenWait(34, 0, 10);
   Actor_FaceDirection(29, FACING_WEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(29, 3);
   Event_Wait(10);
+  // "So if you really needed a boat, the only way to get one would be to..."
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetVarCbAndRefresh(30, 2);
   Event_Wait(10);
+  // "...Which means the pirates must still be here, trying to get a boat!"
   FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_FaceDirection(31, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ArmCallback(32, FACING_NORTHEAST, 0);
   Event_Wait(30);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
+  // "So, you think we've actually caught up with Briggs?"
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Motion_SetModeAndWaitAnimation(32, 3);
   Event_Wait(10);
+  // "No doubt about it!"
   FieldEvent_ShowMessageThenWait(32, 0, 10);
   Motion_SetVarCbAndRefresh(29, 2);
   Event_Wait(10);
   Actor_FaceDirection(31, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(32, FACING_SOUTHEAST, 0);
+  // "That's why I want to meet the mayor of Alhafra before the Champa..."
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(10);
+  // "Oh yeah... I get it now. In that case, let's go see Alhafra's mayor..."
   FieldEvent_ShowMessageThenWait(30, 0, 10);
   Actor_SetPosition(17, 408, 696);
   Actor_WalkToAndWait(17, 408, 760);
   Actor_WalkToAndWait(17, 448, 792);
   Actor_WalkToAndWait(17, 448, 808);
   Actor_WalkByAndWait(30, 8, 0);
+  // "Um... Say, excuse me..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Actor_ShowEmoteById(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(17, FACING_WEST, 0);
   Event_Wait(20);
   Actor_ShowEmoteById(30, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Where would we find the mayor of Alhafra?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 30, 0, 10);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
   gFieldWork->fastForward = 0;
+  // "Uh... The mayor?"
   FieldEvent_ShowMessageThenWait(17, 0, 10);
   Motion_SetModeAndWaitAnimation(30, 3);
   Event_Wait(20);
@@ -860,6 +888,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(50);
   FieldCamera_MoveTo(248, CAMERA_KEEP, 664, 1);
   FieldCamera_WaitForArrival();
+  // "Just keep going down this road. It's the last house. You can't miss it."
   FieldEvent_ShowMessageThenWait(17, 0, 10);
   Actor_ArmCallback(17, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
@@ -930,14 +959,18 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   }
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Ooo... This ain't good!"
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_NOD);
   FieldEvent_Wait(10);
+  // "That guy looked like the mayor of Madra..."
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_SHAKE_HEAD);
+  // "He must have come here looking for Briggs."
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
   FieldEvent_Wait(20);
+  // "I'd better go tell the others!"
   FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   if (a0 != 1) {
   } else {

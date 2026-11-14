@@ -779,6 +779,7 @@ void Islets_TradeWithDog(void) {
       Actor_RunScriptAndWait(11, gIslets_BirdFliesBackScript);
       trader->update = 0;
     }
+    // "Hah hah hah! Are you going to give me that milk? Are you? Huh? Huh!?..."
     Event_ShowMessage(11, 0);
     FieldActor_WatchAndSetScript(11, gMainRoutineWork.currentOwner);
     if (item != 0) {

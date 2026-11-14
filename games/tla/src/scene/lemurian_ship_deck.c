@@ -843,8 +843,10 @@ void LemurianShipDeck_ReturnToShip(void) {
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
+  // "To set sail, we must go down to the power chamber belowdecks."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  // "Let's head down."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.currentOwner);

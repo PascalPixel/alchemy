@@ -878,24 +878,29 @@ void GaiaRockInside_MeetSusa(void) {
   Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
+  // "Who are you? How did you get here?"
   Event_ShowMessage(10, 0);
   Actor_WalkTo(10, 496, 456);
   FieldActor_WaitForMoveById(10);
   Actor_FaceDirection(10, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(10);
+  // "Only Uzume, Kushinada, and I possess the ability to come here."
   Event_ShowMessage(10, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldEvent_Wait(45);
+  // "Never mind. I don't have time to talk. I have my hands full getting..."
   Event_ShowMessage(10, 0);
   Actor_FaceDirection(10, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
+  // "Once it's groggy, that's when I'll strike..."
   Event_ShowMessage(10, 0);
   EventCamera_FollowActor(10, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(10, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(10);
+  // "If you understand, then get out of my way. Stand over there."
   Event_ShowMessage(10, 0);
   Actor_SetAnimationAndWait(10, 3);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);

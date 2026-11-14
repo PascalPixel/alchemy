@@ -1447,6 +1447,7 @@ void Yallam_ShowSongGame(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Event_PlaySound(MUS_017);
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
+  // "If you want to go to the stars, if you want to go to the stars."
   Event_ShowMessage(8, 0);
   EventCamera_FollowActor(8, 1);
   Actor_SetScript(8, gYallam_SongGameStart8);
@@ -1463,6 +1464,7 @@ void Yallam_ShowSongGame(void) {
     s32 priority = 0x480;
     Task_AddFrame(Yallam_UpdateSongGame, priority);
   }
+  // "Go north past the twins, passing two swirls, run deasil twice 'round..."
   Event_ShowMessage(8, 0);
   actor->unk66 = 1;
 wait1:

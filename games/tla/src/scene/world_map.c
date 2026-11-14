@@ -1815,10 +1815,15 @@ void WorldMap_DriftNorthOfContinent(void) {
   }
   WorldMap_Freeze();
   Event_SetFlag(FLAG_SCENE_TEMP_00);
+  // "What...is it?"
   Event_ShowMessage(ACTOR_JENNA, 0);
+  // "It's...a tidal wave."
   Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "A tidal wave?"
   Event_ShowMessage(ACTOR_JENNA, 0);
+  // "The earthquake must have caused it!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "Oh... Oh my... It's coming right at us!"
   Event_ShowMessage(8, 0);
   MapGrid_SetShake(1, 2, 1);
   WorldMap_ReloadPendingAreaGraphics();
@@ -1840,14 +1845,18 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "Alex... How can you stay so calm at a time like this?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(9, 4);
+  // "At times like this, where would be the good in panicking?"
   Event_ShowMessage(9, 0);
   FieldActor_Jump(ACTOR_SHEBA, 6, 15);
   FieldActor_Jump(ACTOR_SHEBA, 6, 23);
   Actor_FaceActor(ACTOR_SHEBA, ACTOR_FELIX, 0);
+  // "We'll be washed away!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  // "Help!!!"
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 1);
   Actor_WalkTo(8, 3608, 7695);

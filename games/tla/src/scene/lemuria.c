@@ -735,10 +735,12 @@ void Lemuria_AdmirePalace(s32 id) {
   Actor_FaceDirectionAndWait(12, a);
   FieldEvent_Wait(10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Oh!"
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_FaceDirectionAndWait(12, b);
   FieldEvent_Wait(10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Goodness!"
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   Actor_WalkToAndWait(12, 464, 784);
   FieldEvent_Wait(10);
@@ -748,6 +750,7 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(12, c);
   FieldEvent_Wait(10);
+  // "Felix! Look over here! This palace is magnificient!"
   FieldEvent_ShowMessageThenWait(12, 0, 5);
   FieldEvent_Wait(20);
   FieldActor_SetSpritePriority(ACTOR_FELIX, 1);

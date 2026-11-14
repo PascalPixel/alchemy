@@ -984,18 +984,21 @@ void Garoh_WerewolfProwls(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(9);
   FieldEvent_Wait(20);
+  // "Aow-aow-oooo!!!"
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
   FieldEvent_Wait(25);
+  // "What was that!?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  // "Awoooooo!!!"
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)))
     FieldActor_StartRepeatedMotion(ACTOR_PIERS, 2);
@@ -1324,11 +1327,12 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Event_SetFlag(FLAG_GAROH_FOLLOWED_WEREWOLF);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId(((s32)MsgGaroh13));
+  FieldEvent_SetMessageId((s32)MsgGaroh13);
   Actor_SetPosition(8, 144, 752);
   Actor_WalkToAndWait(ACTOR_FELIX, 280, 776);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
+  // "Haowooo!!!"
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   FieldActor_LaunchFromLeader(9, 16, 0, FACING_NORTH_NORTHWEST);
   FieldActor_WaitForMoveById(9);
@@ -1342,6 +1346,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(45);
+  // "Aow-aow-oooo!!!"
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
@@ -1360,6 +1365,7 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_SetSpeed(8, 0.8);
   Actor_WalkToAndWait(8, 216, 712);
   Actor_WalkToAndWait(8, 320, 712);
+  // "Look! It's that werewolf!"
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_RunRepeatedMotion(8, 2);
   FieldEvent_Wait(10);
@@ -1401,11 +1407,13 @@ void Garoh_FollowWerewolfIntoCave(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "He was right there!"
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(9, FACING_WEST, 0);
   FieldEvent_Wait(20);
+  // "Let's go find him, Felix!"
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1449,7 +1457,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Event_SetFlag(FLAG_GAROH_MET_WEREWOLVES);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId(((s32)MsgGaroh14));
+  FieldEvent_SetMessageId((s32)MsgGaroh14);
   Actor_SetPosition(10, 328, 40);
   Actor_SetPosition(8, 328, 40);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
@@ -1457,6 +1465,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Actor_WalkToAndWait(ACTOR_FELIX, 320, 224);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
+  // "Felix, wait..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 9, 0, 0);
   FieldActor_LaunchFromLeader(9, -16, -8, FACING_NORTH);
   FieldActor_WaitForMoveById(9);
@@ -1471,6 +1480,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldEvent_Wait(25);
   Actor_FaceDirection(9, FACING_NORTH, 0);
   FieldEvent_Wait(25);
+  // "Where could that werewolf have gone?"
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   {
@@ -1483,6 +1493,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   FieldCamera_MoveToActorById(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1.5);
+  // "Do you think we lost him somewhere?"
   Event_OpenMessage(9, 0);
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(20);
@@ -2155,9 +2166,10 @@ void Garoh_MahaTellsTheLegend(void) {
   Event_SetFlag(FLAG_GAROH_HEARD_MAHA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId(((s32)MsgGaroh28));
+  FieldEvent_SetMessageId((s32)MsgGaroh28);
   Actor_SetPosition(10, 328, 40);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
+  // "Ah, you came..."
   FieldEvent_ShowMessageThenWait(10, 0, 0);
   Actor_SetSpeed(ACTOR_FELIX, 0.8);
   Actor_WalkToAndWait(ACTOR_FELIX, 320, 224);
@@ -2200,6 +2212,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(10);
   ACTOR_MODE_THEN_WAIT(10, 3, 20);
   FieldEvent_Wait(10);
+  // "I've been waiting for you."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 10, 0, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);

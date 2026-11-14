@@ -628,6 +628,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_Wait(60);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_ShowEmote(8, 0x101, 60);
+  // "That's funny... Nothing happened."
   FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
   Event_Wait(20);
   Sound_Play(SE_SHIMMER);
@@ -650,6 +651,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_StartRepeatedMotion(8, 3);
   FieldEffect_SetAttached(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(30);
+  // "What's going on?"
   FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
   MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
   ChampaCliffCaves_StartSparks(glow);
@@ -659,6 +661,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_Jump(8, 6, 23);
   Sound_Play(SE_194);
   Event_Wait(10);
+  // "Something's happening! Is that...the legendary trident?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   FieldActor_ShowItemIconById(10, 0x146);
   Actor_SetPositionFixed(10, 0x2980000, 0xe80000);
@@ -682,9 +685,11 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   Event_Wait(5);
+  // "After all these years, the trident is complete again. But what's..."
   FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
   Actor_FaceDirectionById(8, FACING_WEST);
   Event_Wait(10);
+  // "Regardless, the trident has been fixed. It belongs to you now..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
   Actor_FaceDirectionById(8, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);

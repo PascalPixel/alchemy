@@ -972,22 +972,27 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(26, 3);
   FieldEvent_Wait(10);
+  // "You do plan to help with the mast, right?"
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Not even Briggs and his pirates could fix that mast. How are we..."
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   FieldEvent_Wait(10);
+  // "They need our help... We at least have to try..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   FieldEvent_Wait(10);
+  // "Isn't that right, Felix?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  // "Well then, we'd better get right to it, hadn't we?"
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   result3 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
   if (result3 != 0) {
@@ -1059,6 +1064,7 @@ void EasternAlhafra_AskIfFinished(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(26, 2);
   FieldEvent_Wait(10);
+  // "Are you finished here, Felix?"
   Event_OpenMessage(26, 0);
   result1 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result1 == 0) {

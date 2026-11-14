@@ -382,9 +382,11 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Actor_FaceActor(20, *(s32 *)owner, 0);
+  // "Who are you?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   FieldEvent_Wait(30);
+  // "This is my home, and I am having a private conversation. Leave at once!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldActor_Jump(22, 4, 0);
   Actor_SetAttachedEffect(22,
@@ -392,19 +394,24 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_FaceDirection(20, FACING_SOUTH, 30);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What is it?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_FaceActor(22, 20, 0);
   Actor_SetAttachedEffect(22,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  // "There can be no doubt... These are the heroes who appeared on Mt...."
   Event_ShowMessage(22, 0);
   FieldEvent_Wait(30);
   FieldEvent_Wait(30);
+  // "Are you the ones who defeated the serpent?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldActor_StartRepeatedMotion(20, 2);
   FieldEvent_Wait(30);
   Actor_FaceActor(20, *(s32 *)owner, 0);
+  // "So it was you..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "My apologies... You are welcome here."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_WalkTo(15, 144, 520);
   FieldActor_WaitForMoveById(15);
@@ -433,9 +440,11 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldActor_LaunchFromLeader(ACTOR_PIERS, -8, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(23, -24, 24, FACING_NORTH);
   FieldEvent_Wait(60);
+  // "Who are you?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
+  // "I'm Kraden, and this is Felix."
   Event_ShowMessage(23, 0);
   Actor_SetAnimation(*(s32 *)owner, 3);
   FieldEvent_Wait(30);
@@ -444,15 +453,18 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_FaceActor(23, ACTOR_PIERS, 0);
   FieldEvent_Wait(30);
+  // "Behind him is Piers."
   Event_ShowMessage(23, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(30);
+  // "Pleased to meet you."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(15, 3);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(30);
+  // "I'm Jenna, and this is Sheba."
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(30);
@@ -462,14 +474,18 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActor(ACTOR_JENNA, 23, 0);
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
+  // "We're on a quest. Our travels across the Great Eastern Sea brought..."
   Event_ShowMessage(23, 0);
   Actor_SetAnimation(20, 3);
   FieldEvent_Wait(30);
+  // "You were seen coming down from Mt. Mikage. What brought you to such..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(30);
+  // "To complete our quest, we need many types of Psynergy."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Psynergy?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_FaceEachOther(15, 20, 0);
   FieldEvent_Wait(60);
@@ -478,6 +494,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_SetAnimation(20, 4);
   FieldEvent_Wait(30);
+  // "What is Psynergy?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_FaceActor(*(s32 *)owner, 23, 0);
   Actor_FaceActor(ACTOR_JENNA, 23, 0);
@@ -488,10 +505,12 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_FaceActor(23, 15, 0);
   FieldEvent_Wait(30);
+  // "Psynergy is many things... The power to move things with one's mind..."
   Event_ShowMessage(23, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
+  // "All with one's mind?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_FaceActor(*(s32 *)owner, 15, 0);
   Actor_FaceActor(ACTOR_JENNA, 15, 0);
@@ -505,6 +524,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimation(23, 3);
   FieldEvent_Wait(30);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Tell me, is it something like...this?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   FieldEvent_Wait(60);
   Actor_FaceDirection(15, FACING_EAST, 0);
@@ -513,6 +533,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
+  // "Is that the power you're talking about?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_ShowEmote(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -522,14 +543,17 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(30);
   FieldActor_StartRepeatedMotion(ACTOR_JENNA, 1);
   FieldEvent_Wait(15);
+  // "That power? Lady Uzume?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceActor(15, 20, 0);
   FieldEvent_Wait(30);
   Actor_FaceActor(15, *(s32 *)owner, 0);
   FieldEvent_Wait(30);
+  // "It's not mine alone. Kushinada and Susa possess it as well."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(30);
+  // "This is the power we possess. I assume you have something like it..."
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | 20, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 1) {
@@ -708,22 +732,27 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_ArmCallback(23, FACING_NORTH, 0);
   Event_Wait(15);
+  // "Susa..."
   Event_ShowMessageAndWait(20, 0);
   Event_Wait(15);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "So, you lived after all, Susa..."
   Event_ShowMessageAndWait(20, 0);
   Actor_FaceActorById(21, 20, 0);
   Event_Wait(30);
+  // "Yes, I've survived, and I've made it home to you both."
   Event_ShowMessageAndWait(21, 0);
   Actor_FaceActorById(21, *(s32 *)owner, 0);
   Event_Wait(60);
   Actor_FaceActorById(21, 20, 0);
   Event_Wait(30);
+  // "Thanks to them, actually..."
   Event_ShowMessageAndWait(21, 0);
   Actor_TurnToFaceEachOther(15, 20, 0);
   Event_Wait(30);
   Actor_FaceActorById(15, *(s32 *)owner, 0);
   Actor_FaceActorById(20, *(s32 *)owner, 0);
+  // "Felix, our gratitude to you and your friends grows deeper each..."
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(15, 3);
   Actor_SetModeById(20, 3);
@@ -735,8 +764,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(23, 3);
   Event_Wait(30);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Susa, you spoke of different types of power. Tell me, what did you mean?"
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceActorById(21, *(s32 *)owner, 0);
+  // "I can only describe what I saw, my sister. Ask Felix here about it."
   Event_ShowMessageAndWait(21, 0);
   Actor_FaceActorById(15, *(s32 *)owner, 0);
   Actor_FaceActorById(20, *(s32 *)owner, 0);
@@ -744,11 +775,13 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmoteById(*(s32 *)owner, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
+  // "Ah, yes. Psynergy... I have dedicated most of my life to its study..."
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(15, 3);
   Actor_SetModeById(20, 3);
   Event_Wait(30);
   Actor_SetModeById(23, 3);
+  // "The power of Psynergy comes from the four basic forces of earth..."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -756,23 +789,31 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(30);
   Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "You don't know Alchemy? The four elements? Why, they're the very..."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "All existing matter comes from Alchemy and this Psynergy?"
   Event_ShowMessageAndWait(21, 0);
   Actor_FaceActorById(23, 21, 0);
   Event_Wait(30);
+  // "Yes, that's right. Everything you see around you is some combination..."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmoteById(20, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  // "Does this mean that there are as many types of Psynergy as there are..."
   Event_ShowMessageAndWait(20, 0);
   Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "That's right, Kushinada. You're a smart lass."
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
   Event_Wait(30);
+  // "Mt. Mikage was a place of great earth powers. I'd imagine your..."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "That's right, but how did you know this?"
   Event_ShowMessageAndWait(15, 0);
   Actor_FaceActorById(ACTOR_PIERS, 23, 0);
   Event_Wait(30);
+  // "Kraden... Mt. Mikage is Gaia Rock, isn't it?"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceActorById(23, ACTOR_PIERS, 0);
   Actor_SetModeById(23, 3);
@@ -781,16 +822,21 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceActorById(23, 15, 0);
   Actor_FaceActorById(ACTOR_PIERS, 15, 0);
   Event_Wait(30);
+  // "...Gaia Rock? Mt. Mikage is the sacred mount of our people!"
   Event_ShowMessageAndWait(15, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Yes, but there are many mountains like your Mt. Mikage all across..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_ShowEmoteById(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "You have seen other mountains like our Mt. Mikage?"
   Event_ShowMessageAndWait(21, 0);
   Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(30);
+  // "Yes! In fact, it seems that each of these rocks contains a different..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_SetModeById(20, 3);
   Event_Wait(30);
+  // "And now, you are questing to gather the power of these elements, yes?"
   Event_ShowMessageAndWait(20, 0);
   Actor_SetModeById(*(s32 *)owner, 3);
   Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
@@ -799,6 +845,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(23, 3);
   Event_Wait(90);
   Actor_SetModeById(15, 3);
+  // "And you only defeated the Great Serpent of Mikage to accomplish this..."
   Event_OpenMessage(15, 0);
   answer = Event_AskYesNoWithActorAnimation(*(s32 *)owner, 0);
   if (answer == 0) {
@@ -1103,10 +1150,12 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   // "Ah... Could it be? Is this the dancing doll of Mt. Mikage?"
   Event_OpenMessage(15, 0);
   if (!Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0)) {
-    Event_SetMessageId(((s32)&MsgAhCouldIt + 1));
+    Event_SetMessageId((s32)&MsgAhCouldIt + 1);
+    // "You found this at the peak of Mt. Mikage?"
     Event_ShowMessageAndWait(15, 0);
   } else {
-    Event_SetMessageId(((s32)&MsgAhCouldIt + 2));
+    Event_SetMessageId((s32)&MsgAhCouldIt + 2);
+    // "Don't lie to me. The style, the craftsmanship... You must have found..."
     Event_ShowMessageAndWait(15, 0);
   }
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);

@@ -2,9 +2,9 @@
 @ r4 is saved through ip.
 .syntax unified
 	.thumb
-	.global SoundDriver_ClearBuffer
+	.global SoundMainBTM
 	.thumb_func
-SoundDriver_ClearBuffer:
+SoundMainBTM:
 	mov	ip, r4
 	movs	r1, #0
 	movs	r2, #0

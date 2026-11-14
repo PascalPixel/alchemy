@@ -58,23 +58,23 @@ m4aSoundInitWorkCopy:
 	pop	{r0}
 	bx	r0
 .L_081c0520:
-	.4byte	0	@ Sound_Mixer
+	.4byte	0	@ SoundMainRAM_Rom
 .L_081c0524:
 	.4byte	0	@ Ram_SoundMixer
 .L_081c0528:
 	.4byte	0x04000100	@ the block copy's control word: 256 words
 .L_081c052c:
-	.4byte	0	@ gSound_Work
+	.4byte	0	@ gSoundInfo
 .L_081c0530:
-	.4byte	0	@ gSound_CgbNotes
+	.4byte	0	@ gCgbChans
 .L_081c0534:
 	.4byte	0	@ the initial sound mode
 .L_081c0538:
 	.4byte	0	@ the player count
 .L_081c053c:
-	.4byte	0	@ gSound_PlayerSlots
+	.4byte	0	@ gMPlayTable
 .L_081c0540:
-	.4byte	0	@ gSound_WorkBytes
+	.4byte	0	@ gMPlayMemAccArea
 
 @ Unused: the copy of m4aSoundMain.
 	.global m4aSoundMainWorkCopy
@@ -108,7 +108,7 @@ m4aSongNumStartWorkCopy:
 	pop	{r0}
 	bx	r0
 .L_081c0574:
-	.4byte	0	@ gSound_PlayerSlots
+	.4byte	0	@ gMPlayTable
 .L_081c0578:
 	.4byte	0	@ gSongTable
 
@@ -138,7 +138,7 @@ m4aSongNumStartOrChangeWorkCopy:
 	b	.L_081c05c4
 	.2byte	0
 .L_081c05a8:
-	.4byte	0	@ gSound_PlayerSlots
+	.4byte	0	@ gMPlayTable
 .L_081c05ac:
 	.4byte	0	@ gSongTable
 .L_081c05b0:

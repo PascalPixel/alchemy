@@ -1,5 +1,5 @@
-@ Why Sound_LoadCommandTable to ply_patt are assembly:
-@ Sound_LoadCommandTable keeps the return address with mov ip, lr across a
+@ Why MPlayJumpTableCopy to ply_patt are assembly:
+@ MPlayJumpTableCopy keeps the return address with mov ip, lr across a
 @ bl and returns with bx ip, never saving lr; the helper after it returns
 @ its byte in r3 and preserves r0 with push {r0} / pop {r0}, and ply_goto
 @ calls it there (bl .L_081c1734), a linkage no procedure-call standard
@@ -14,9 +14,9 @@
 @ (b.n .L_081c175e).
 .syntax unified
 	.thumb
-	.global Sound_LoadCommandTable
+	.global MPlayJumpTableCopy
 	.thumb_func
-Sound_LoadCommandTable:
+MPlayJumpTableCopy:
 	mov	ip, lr
 	movs	r1, #36
 	ldr	r2, [pc, #40]

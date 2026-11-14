@@ -1,12 +1,37 @@
 #ifndef ALCHEMY_SOUND_DRIVER_TYPES_H
 #define ALCHEMY_SOUND_DRIVER_TYPES_H
 
+/// @file
+/// The sound driver's types, registers and work: MusicPlayer2000, the library
+/// pret calls m4a, under the names pret gives it (include/gba/m4a_internal.h).
+
+#include "static_assert.h"
 #include "types.h"
-#include "../static_assert.h"
 
-#define SOUND_LOCK 0x68736D53
+/// SoundInfo.ident and MusicPlayerInfo.ident when free; its bytes spell `Smsh`
+/// in memory order.
+#define ID_NUMBER 0x68736D53
 
-#define SOUND_WORK (*(struct SoundWork **)0x03007FF0)
+#define SOUND_INFO_PTR (*(struct SoundInfo **)0x03007FF0)
+
+/// The PCM buffer's size in samples, one byte each; pret calls it
+/// PCM_DMA_BUF_SIZE.
+#define SOUND_PCM_BUFFER_SIZE 1584
+
+// A sound mode word, as m4aSoundMode and a song header's mode byte take it,
+// under pret's names (include/gba/m4a_internal.h); a zero field leaves its
+// setting unchanged.
+#define SOUND_MODE_REVERB_VAL 0x0000007F ///< the reverb level
+#define SOUND_MODE_REVERB_SET 0x00000080 ///< sets the reverb level
+#define SOUND_MODE_MAXCHN 0x00000F00     ///< PCM notes in use
+#define SOUND_MODE_MAXCHN_SHIFT 8
+#define SOUND_MODE_MASVOL 0x0000F000 ///< PCM volume
+#define SOUND_MODE_MASVOL_SHIFT 12
+#define SOUND_MODE_FREQ_13379 0x00040000 ///< rate 4: 13379 samples a second
+#define SOUND_MODE_FREQ_31536 0x00090000 ///< rate 9: 31536 samples a second
+#define SOUND_MODE_FREQ 0x000F0000       ///< the rate
+#define SOUND_MODE_FREQ_SHIFT 16
+#define SOUND_MODE_DA_BIT 0x00B00000 ///< the sound bias's resolution
 
 #define REG_NR10 (*(volatile u8 *)0x04000060)
 #define REG_NR11 (*(volatile u8 *)0x04000062)
@@ -36,59 +61,68 @@
 #define REG_SOUNDBIAS_H (*(volatile u8 *)0x04000089)
 #define REG_WAVE_RAM ((volatile u32 *)0x04000090)
 
-struct SoundNote;
-struct CgbNote;
-struct SoundPlayer;
-struct SoundTrack;
+struct SoundChannel;
+struct CgbChannel;
+struct MusicPlayerInfo;
+struct MusicPlayerTrack;
 
-typedef void (*SoundCommand)(struct SoundPlayer *player,
-                             struct SoundTrack *track);
+/// A jump table entry: the driver calls it with the music player and the
+/// track.
+typedef void (*MPlayFunc)(struct MusicPlayerInfo *player,
+                          struct MusicPlayerTrack *track);
+/// Converts between MPlayFunc and a table entry that takes other
+/// parameters, through the generic function type so neither cast warns.
+#define MPLAY_FUNC_CAST(type, routine) ((type)(void (*)(void))(routine))
 
-/// Entries of gSound_CommandTable, in gMPlayJumpTableTemplate's order. A
-/// song byte from 0xB1 to 0xCE runs entry (byte - 0xB1) for its track; bytes
-/// from 0xCF up start notes through the work's noteOn instead, so entries 30
-/// to 35 are the driver's helper tail, reached only by its own calls. Unused
-/// entries hold ply_fine.
+/// Entries of gMPlayJumpTable, in gMPlayJumpTableTemplate's order.
 ///@{
 /// Byte 0xB1: ends the track, releasing and unlinking its notes.
-#define SOUND_COMMAND_FINISH 0
-#define SOUND_COMMAND_GOTO 1 ///< Byte 0xB2: jumps to the address after it.
+#define MPLAY_JUMP_FINE 0
+#define MPLAY_JUMP_GOTO 1 ///< Byte 0xB2: jumps to the address after it.
 /// Byte 0xB9, installed by MPlayExtender: an operation, a work byte and
 /// an operand; sets, adds to or compares a byte of the player's workBytes
-/// (SoundTrackWorkOperation), jumping like GOTO when a comparison holds.
-#define SOUND_COMMAND_WORK_BYTE 8
+/// (MemAccOp), jumping like GOTO when a comparison holds.
+#define MPLAY_JUMP_MEMACC 8
 /// Byte 0xC2: sets lfoSpeed from the next byte; 0 clears the modulation.
-#define SOUND_COMMAND_LFO_SPEED 17
+#define MPLAY_JUMP_LFOS 17
 /// Byte 0xC4: sets modDepth from the next byte; 0 clears the modulation.
-#define SOUND_COMMAND_MODULATION 19
+#define MPLAY_JUMP_MOD 19
 /// Byte 0xCD, installed by MPlayExtender: runs the entry of
 /// gXcmdTable the next byte names (voice fields, tail level
 /// and length).
-#define SOUND_COMMAND_EXTENDED 28
+#define MPLAY_JUMP_XCMD 28
 /// Byte 0xCE: releases the track's sounding note of the key given (or of its
 /// last key when no key byte follows).
-#define SOUND_COMMAND_RELEASE_KEY 29
-#define SOUND_COMMAND_PCM_RATE 30 ///< SampleFreqSet.
+#define MPLAY_JUMP_EOT 29
+#define MPLAY_JUMP_SAMPLE_FREQ_SET 30
 /// TrackStop: silences the track's notes and empties its list.
-#define SOUND_COMMAND_STOP_TRACK 31
-#define SOUND_COMMAND_FADE 32 ///< FadeOutBody: a fade's step a VBlank.
-#define SOUND_COMMAND_CALCULATE_OUTPUT 33 ///< TrkVolPitSet.
-/// SoundNote_Detach: unlinks a note from its track's list
+#define MPLAY_JUMP_TRACK_STOP 31
+#define MPLAY_JUMP_FADE_OUT_BODY 32 ///< FadeOutBody: a fade's step a VBlank.
+#define MPLAY_JUMP_TRK_VOL_PIT_SET 33
+/// RealClearChain: unlinks a note from its track's list
 /// (ClearChain).
-#define SOUND_COMMAND_DETACH_NOTE 34
-/// SoundDriver_ClearBuffer: zeroes the first 64 bytes of a player or track
+#define MPLAY_JUMP_CLEAR_CHAIN 34
+/// SoundMainBTM: zeroes the first 64 bytes of a player or track
 /// (Clear64byte).
-#define SOUND_COMMAND_CLEAR_WORK 35
+#define MPLAY_JUMP_CLEAR_64BYTE 35
 ///@}
 
 enum SoundDriverLimit {
-  /// The PCM notes in SoundWork.pcmNotes; mode changes and
+  /// The PCM notes in SoundInfo.pcmNotes; mode changes and
   /// SoundClear clear all 12, though only pcmNoteCount play.
-  SOUND_PCM_NOTE_CAPACITY = 12,
-  SOUND_CGB_CHANNEL_COUNT = 4, ///< CGB channels, numbered 1 to 4.
+  MAX_DIRECTSOUND_CHANNELS = 12,
+  SOUND_CGB_CHANNEL_COUNT = 4, ///< CGB channels, one per enum CgbChannelId
   /// Most tracks a player takes; MPlayOpen caps its count here,
-  /// and the track masks of the MusicPlayer_Set routines are 16 bits.
-  SOUND_PLAYER_TRACK_LIMIT = 16
+  /// and the track masks of the m4aMPlay control routines are 16 bits.
+  MAX_MUSICPLAYER_TRACKS = 16
+};
+
+/// The four CGB channels, numbered as the hardware's NR registers are.
+enum CgbChannelId {
+  CGB_CHANNEL_SQUARE_1 = 1, ///< a square wave with a sweep (NR10 to NR14)
+  CGB_CHANNEL_SQUARE_2 = 2, ///< a square wave (NR21 to NR24)
+  CGB_CHANNEL_WAVE = 3,     ///< a pattern from wave RAM (NR30 to NR34)
+  CGB_CHANNEL_NOISE = 4     ///< noise (NR41 to NR44)
 };
 
 enum SoundModulationTarget {
@@ -97,25 +131,21 @@ enum SoundModulationTarget {
   SOUND_MODULATION_PAN
 };
 
-enum SoundFadeFlag { SOUND_FADE_PAUSE = 1, SOUND_FADE_IN = 2 };
+enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
-#define SOUND_FADE_FULL_VOLUME 0x100
+#define SOUND_FADE_FULL_VOLUME 256
 #define SOUND_FADE_STEP 16
 
 /// A voice a track plays its notes with: its kind and base key, the sample or
 /// wave it plays, and its attack, decay, sustain and release.
-struct SoundVoice {
-  /// bits: 7 rhythm | 6 key split | 3 fixed rate for PCM, bias rounding for
-  /// CGB | 2..0 CGB channel (0 PCM).
-  /// A rhythm or split voice plays an entry of the voice table at target,
-  /// chosen by the key (rhythm) or through the key map that attack's four
-  /// bytes point to (split).
+struct ToneData {
+  /// bits: 7 rhythm | 6 key split | 3 fixed rate for PCM, bias rounding for CGB
+  /// | 2..0 CGB channel (0 PCM).
   u8 kind;
   u8 baseKey; ///< Key a rhythm entry plays every note at.
   u8 length;  ///< CGB sound length (NRx1); 0 plays until released.
-  /// CGB channel 1's sweep (NR10) when bit 7 is clear and bits 6..4 are not;
-  /// else no sweep. In a rhythm entry with bit 7 set, the note's pan is
-  /// (value - 192) * 2.
+  /// CGB_CHANNEL_SQUARE_1's sweep (NR10) when bit 7 is clear and bits 6..4 are
+  /// not; else no sweep.
   u8 panOrSweep;
   /// The PCM sample, the CGB wave pattern, duty or noise width, or for a
   /// rhythm or split voice its voice table.
@@ -128,56 +158,86 @@ struct SoundVoice {
   u8 release; ///< PCM: envelope * release / 256 a VBlank. CGB: VBlanks a step.
 };
 
-/// A PCM note, one of 12 the mixer renders: its state and envelope, its
-/// output levels, and its links to the other notes of its track. A track's
-/// note list holds CGB notes through this type too; the names from 0x0a to
-/// 0x1c come from the CGB layout (CgbNote).
-struct SoundNote {
+/// A PCM sample's header, before its bytes.
+struct WaveData {
+  u16 type;
+  u16 status;
+  u32 freq; ///< The rate it plays at for its base key.
+  u32 loopStart;
+  u32 size;
+  s8 data[1];
+};
+
+/// A PCM note, one of 12 the mixer renders: its state and envelope, its output
+/// levels, and its links to the other notes of its track.
+struct SoundChannel {
   /// 0 when free. bits: 7 start | 6 released | 4 looping | 2 echo |
   /// 1..0 phase (3 attack, 2 decay, 1 sustain, 0 release).
   u8 state;
   u8 kind;     ///< The voice's kind; bits 2..0 nonzero for a CGB note.
   u8 outRight; ///< Velocity and track volume to the right, 0 to 255.
   u8 outLeft;  ///< Velocity and track volume to the left, 0 to 255.
-  u8 unk04[2]; ///< The voice's attack (0x04) and decay (0x05).
+  u8 attack;   ///< The voice's attack.
+  u8 decay;    ///< The voice's decay.
   u8 sustain;  ///< The voice's sustain level.
-  /// The voice's release (0x07), the key played (0x08) and the envelope level,
-  /// 0 to 255 (0x09).
-  u8 unk07[3];
+  u8 release;  ///< The voice's release.
+  u8 key;      ///< The key played.
+  u8 level;    ///< The envelope level, 0 to 255.
   /// For a PCM note, the mixer writes the envelope's right level here each
-  /// VBlank; the name comes from CgbNote.peak.
+  /// VBlank; the name comes from CgbChannel.peak.
   u8 peak;
-  /// 0x0b left level, 0x0c echo level, 0x0d echo VBlanks, 0x10 gate in ticks,
-  /// 0x11 the song's key, 0x12 velocity, 0x13 priority, 0x14 rhythm pan;
-  /// the mixer keeps a PCM note's samples left in the word at 0x18.
-  u8 unk0b[0x0e];
-  /// CgbNote.sustainLevel; inside the samples-left word for a PCM note.
+  u8 levelLeft;  ///< The envelope's left level, written by the mixer.
+  u8 echoLevel;  ///< After release, the level held.
+  u8 echoLength; ///< VBlanks the echo lasts.
+  u8 dummy1;     ///< Unused by this driver, as in pret's.
+  u8 dummy2;     ///< Unused by this driver, as in pret's.
+  u8 gate;       ///< Ticks until the note is released.
+  u8 songKey;    ///< The key as the song wrote it.
+  u8 velocity;   ///< 0 to 127, from the note command.
+  u8 priority;   ///< A new note of higher priority takes this one's place.
+  u8 rhythmPan;  ///< A rhythm voice's pan.
+  u8 dummy3[3];  ///< Unused by this driver, as in pret's.
+  /// The low byte of the word at 0x18 in which the mixer keeps a PCM note's
+  /// samples left.
+  u8 samplesLeftLow;
+  /// CgbChannel.sustainLevel; inside the samples-left word for a PCM note.
   u8 sustainLevel;
-  u8 unk1a;   ///< Inside the samples-left word for a PCM note.
-  u8 panBits; ///< CgbNote.panBits; inside the samples-left word for a PCM note.
-  /// CgbNote.channelBits; for a PCM note, the mixer's fractional sample
+  u8 trigger; ///< CgbChannel.trigger; inside the samples-left word for a PCM
+              ///< note.
+  u8 panBits; ///< CgbChannel.panBits; inside the samples-left word for a PCM
+              ///< note.
+  /// CgbChannel.channelBits; for a PCM note, the mixer's fractional sample
   /// position is the word at 0x1c.
   u8 channelBits;
-  /// 0x1d CGB update bits, 0x1e CGB length, 0x1f CGB sweep, 0x20 the word
-  /// frequency, 0x24 the voice's target (the sample), 0x28 the next sample
-  /// byte (mixer).
-  u8 unk1d[0x0f];
+  u8 modified;          ///< CgbChannel.modified.
+  u8 length;            ///< CgbChannel.length.
+  u8 sweep;             ///< CgbChannel.sweep.
+  u32 frequency;        ///< The note's frequency, as in CgbChannel.
+  const void *sample;   ///< The voice's target: the sample it plays.
+  const s8 *nextSample; ///< The next sample byte the mixer reads.
   /// The track whose list holds this note; NULL once detached.
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
   /// The note started after this one in the track's list (nearer its head);
   /// NULL at the head.
-  struct SoundNote *prev;
+  struct SoundChannel *previous;
   /// The note started before this one in the track's list; NULL at the end.
-  struct SoundNote *next;
-  u8 unk38[8]; ///< Not named by TLA code.
+  struct SoundChannel *next;
+  u32 dummy4; ///< Unused by this driver, as in pret's.
+  /// pret's later mixer keeps the index of the compressed-sample block it last
+  /// decoded here; this driver plays no compressed samples and never touches
+  /// it.
+  u16 xpi;
+  u16 xpc; ///< Unused by this driver, as in pret's.
 };
 
 /// A note on one of the four CGB channels of the hardware: its state and
 /// envelope, its levels and pan, its frequency and its wave.
-struct CgbNote {
-  u8 state; ///< CgbNoteState and CgbNotePhase; 0 when the channel is free.
-  /// Channel number 1 to 4 at setup, then the voice's kind; bit 3 rounds
-  /// the frequency to the sound bias's resolution on channels 1 to 3.
+struct CgbChannel {
+  u8 state; ///< SoundChannelFlag and SoundChannelEnvelope; 0 when the channel
+            ///< is free.
+  /// Its enum CgbChannelId at setup, then the voice's kind; bit 3 rounds the
+  /// frequency to the sound bias's resolution on every channel but
+  /// CGB_CHANNEL_NOISE.
   u8 kind;
   u8 outRight; ///< Velocity and track volume to the right, 0 to 255.
   u8 outLeft;  ///< Velocity and track volume to the left, 0 to 255.
@@ -190,90 +250,106 @@ struct CgbNote {
   /// Top of the envelope: (outRight + outLeft) / 16, at most 15 when one
   /// side plays.
   u8 peak;
-  u8 counter;    ///< VBlanks left in the current envelope step.
-  u8 echoLevel;  ///< After release, the level held is peak * echoLevel / 256.
-  u8 echoLength; ///< VBlanks the echo lasts.
-  /// 0x10 gate in ticks, 0x11 the song's key, 0x12 velocity, 0x13 priority
-  /// (a new note of higher priority takes the channel), 0x14 rhythm pan.
-  u8 unk0e[0x0b];
+  u8 counter;      ///< VBlanks left in the current envelope step.
+  u8 echoLevel;    ///< After release, the level held is peak * echoLevel / 256.
+  u8 echoLength;   ///< VBlanks the echo lasts.
+  u8 dummy1;       ///< Unused by this driver, as in pret's.
+  u8 dummy2;       ///< Unused by this driver, as in pret's.
+  u8 gate;         ///< Ticks until the note is released.
+  u8 songKey;      ///< The key as the song wrote it.
+  u8 velocity;     ///< 0 to 127, from the note command.
+  u8 priority;     ///< A new note of higher priority takes the channel.
+  u8 rhythmPan;    ///< A rhythm voice's pan.
+  u8 dummy3[3];    ///< Unused by this driver, as in pret's.
+  u8 dummy5;       ///< Unused by this driver, as in pret's.
   u8 sustainLevel; ///< (peak * sustain + 15) / 16.
   u8 trigger;      ///< Value for NRx4: 7 restart, 6 length on, 2..0 frequency.
   u8 panBits;      ///< NR51 bits this note sets: one side or both.
   u8 channelBits;  ///< This channel's NR51 bits: 0x11, 0x22, 0x44, 0x88.
-  u8 modified;     ///< CgbNoteModified: what to write to the channel.
+  u8 modified;     ///< CgbChannelModify: what to write to the channel.
   u8 length;       ///< The voice's length.
-  u8 sweep;        ///< Channel 1's NR10 sweep; 8 when none.
-  /// Tone frequency from MidiKeyToCgbFreq (2048 added), or channel 4's
-  /// NR43 value.
+  u8 sweep;        ///< CGB_CHANNEL_SQUARE_1's NR10 sweep; 8 when none.
+  /// Tone frequency from MidiKeyToCgbFreq (2048 added), or
+  /// CGB_CHANNEL_NOISE's NR43 value.
   u32 frequency;
-  /// Channel 3: the 16-byte wave pattern. Channels 1 and 2: the duty, into
-  /// NRx1's bits 7..6. Channel 4: the width, into NR43's bit 3.
+  /// CGB_CHANNEL_WAVE: the 16-byte wave pattern. The square channels: the duty,
+  /// into NRx1's bits 7..6. CGB_CHANNEL_NOISE: the width, into NR43's bit 3.
   u32 *wave;
-  u32 *loadedWave; ///< Channel 3: the pattern last copied into wave RAM.
-  /// 0x2c track, 0x30 prev and 0x34 next, as in SoundNote.
-  u8 unk2c[0x14];
+  u32 *loadedWave; ///< CGB_CHANNEL_WAVE: the pattern last copied into wave RAM.
+  struct MusicPlayerTrack *track; ///< As in SoundChannel.
+  struct SoundChannel *previous;  ///< As in SoundChannel.
+  struct SoundChannel *next;      ///< As in SoundChannel.
+  u8 dummy4[8];                   ///< Unused by this driver, as in pret's.
 };
 
-enum CgbNoteState {
-  CGB_NOTE_PHASE = 0x03,
-  CGB_NOTE_ECHO = 0x04,
-  CGB_NOTE_STOP = 0x40,
-  CGB_NOTE_START = 0x80,
-  CGB_NOTE_ON = CGB_NOTE_START | CGB_NOTE_STOP | CGB_NOTE_ECHO | CGB_NOTE_PHASE
+enum SoundChannelFlag {
+  SOUND_CHANNEL_SF_ENV = 0x03,
+  SOUND_CHANNEL_SF_IEC = 0x04,
+  SOUND_CHANNEL_SF_STOP = 0x40,
+  SOUND_CHANNEL_SF_START = 0x80,
+  SOUND_CHANNEL_SF_ON = SOUND_CHANNEL_SF_START | SOUND_CHANNEL_SF_STOP |
+      SOUND_CHANNEL_SF_IEC | SOUND_CHANNEL_SF_ENV
 };
 
-enum CgbNotePhase {
-  CGB_PHASE_RELEASE,
-  CGB_PHASE_SUSTAIN,
-  CGB_PHASE_DECAY,
-  CGB_PHASE_ATTACK
+enum SoundChannelEnvelope {
+  SOUND_CHANNEL_SF_ENV_RELEASE,
+  SOUND_CHANNEL_SF_ENV_SUSTAIN,
+  SOUND_CHANNEL_SF_ENV_DECAY,
+  SOUND_CHANNEL_SF_ENV_ATTACK
 };
 
-enum CgbNoteModified { CGB_NOTE_VOLUME_DIRTY = 1, CGB_NOTE_PITCH_DIRTY = 2 };
+enum CgbChannelModify { CGB_CHANNEL_MO_VOL = 1, CGB_CHANNEL_MO_PIT = 2 };
 
-enum SoundTrackFlag {
-  SOUND_TRACK_VOLUME_DIRTY = 1,
-  SOUND_TRACK_UPDATE_VOLUME = 3,
-  SOUND_TRACK_PITCH_DIRTY = 4,
-  SOUND_TRACK_UPDATE_PITCH = 12,
-  SOUND_TRACK_RESET = 0x40,
-  SOUND_TRACK_ACTIVE = 0x80
+enum MusicPlayerTrackFlag {
+  MPT_FLG_VOLSET = 1,
+  MPT_FLG_VOLCHG = 3,
+  MPT_FLG_PITSET = 4,
+  MPT_FLG_PITCHG = 12,
+  MPT_FLG_START = 0x40,
+  MPT_FLG_EXIST = 0x80
 };
 
-enum SoundPlayerFlag { SOUND_PLAYER_PAUSED = 0x80000000 };
+enum MusicPlayerStatus {
+  MUSICPLAYER_STATUS_TRACK =
+      0x0000ffff, ///< the tracks active after the last tick
+  MUSICPLAYER_STATUS_PAUSE = 0x80000000
+};
 
-enum SoundTrackWorkOperation {
-  SOUND_WORK_SET = 0,
-  SOUND_WORK_ADD,
-  SOUND_WORK_SUBTRACT,
-  SOUND_WORK_COPY,
-  SOUND_WORK_ADD_BYTE,
-  SOUND_WORK_SUBTRACT_BYTE,
-  SOUND_WORK_EQUAL,
-  SOUND_WORK_NOT_EQUAL,
-  SOUND_WORK_GREATER,
-  SOUND_WORK_GREATER_EQUAL,
-  SOUND_WORK_LESS_EQUAL,
-  SOUND_WORK_LESS,
-  SOUND_WORK_EQUAL_BYTE,
-  SOUND_WORK_NOT_EQUAL_BYTE,
-  SOUND_WORK_GREATER_BYTE,
-  SOUND_WORK_GREATER_EQUAL_BYTE,
-  SOUND_WORK_LESS_EQUAL_BYTE,
-  SOUND_WORK_LESS_BYTE
+enum MemAccOp {
+  MEMACC_SET = 0,
+  MEMACC_ADD,
+  MEMACC_SUB,
+  MEMACC_MEM_SET,
+  MEMACC_MEM_ADD,
+  MEMACC_MEM_SUB,
+  MEMACC_BEQ,
+  MEMACC_BNE,
+  MEMACC_BHI,
+  MEMACC_BHS,
+  MEMACC_BLS,
+  MEMACC_BLO,
+  MEMACC_MEM_BEQ,
+  MEMACC_MEM_BNE,
+  MEMACC_MEM_BHI,
+  MEMACC_MEM_BHS,
+  MEMACC_MEM_BLS,
+  MEMACC_MEM_BLO
 };
 
 /// A track of a playing song: the song commands it runs, its voice and notes,
 /// and the pitch, volume, pan and modulation it gives them.
-struct SoundTrack {
-  /// SoundTrackFlag. bits: 7 active | 6 reset | 3..2 pitch to update |
+struct MusicPlayerTrack {
+  /// MusicPlayerTrackFlag. bits: 7 active | 6 reset | 3..2 pitch to update |
   /// 1..0 volume to update.
   u8 flags;
-  /// 0x01 ticks until the next command, 0x02 pattern depth (0 to 3), 0x03
-  /// repeat count, 0x04 gate of the last note in ticks, 0x05 its key, 0x06
-  /// its velocity, 0x07 the last command byte from 0xBD up, which a byte
-  /// below 0x80 repeats.
-  u8 unk01[7];
+  u8 wait;         ///< Ticks until the next command.
+  u8 patternDepth; ///< Patterns entered and not yet left, 0 to 3.
+  u8 repeatCount;  ///< Times the current repeat has run.
+  u8 gate;         ///< The last note's gate in ticks.
+  u8 key;          ///< The last note's key.
+  u8 velocity;     ///< The last note's velocity.
+  /// The last command byte from 0xBD up, which a byte below 0x80 repeats.
+  u8 lastCommand;
   /// Whole semitones of the track's pitch, read as signed and added to each
   /// note's key (a sum below 0 plays key 0).
   u8 pitchHi;
@@ -290,7 +366,7 @@ struct SoundTrack {
   u8 outVolumeB; ///< Left volume: (127 - pan) * scaled volume / 256.
   u8 volume;     ///< The song's volume command, scaled by volumeScale / 32.
   /// 0 to 64 (full, the reset value): a player volume or fade level of 0 to
-  /// 0x100 divided by 4.
+  /// 256 divided by 4.
   u8 volumeScale;
   s8 pan;       ///< The pan command's byte - 64, -64 to 63; doubled for output.
   s8 panOffset; ///< Added to the doubled pan, from m4aMPlayPanpotControl.
@@ -306,56 +382,62 @@ struct SoundTrack {
   /// 0 to 255, wrapping; the wave is phase over 0 to 63, 128 - phase over 64
   /// to 191 and phase - 256 over 192 to 255, so -64 to 64.
   u8 lfoPhase;
-  /// 0x1b LFO delay in ticks (song command), 0x1c its countdown, reloaded by
-  /// each note, 0x1d track priority added to the player's for its notes.
-  u8 unk1b[3];
-  u8 tailLevel;  ///< Each new note's echo level.
-  u8 tailLength; ///< Each new note's echo length in VBlanks.
+  u8 lfoDelay;        ///< Ticks before the LFO starts, from the song.
+  u8 lfoDelayCounter; ///< lfoDelay's countdown, reloaded by each note.
+  u8 priority;        ///< Added to the player's priority for its notes.
+  u8 tailLevel;       ///< Each new note's echo level.
+  u8 tailLength;      ///< Each new note's echo length in VBlanks.
   /// The notes this track started, newest first, linked through
-  /// SoundNote.next; PCM notes from SoundWork.pcmNotes and CGB notes. NULL
-  /// ends the list or leaves it empty.
-  struct SoundNote *notes;
+  /// SoundChannel.next; PCM notes from SoundInfo.pcmNotes and CGB notes.
+  struct SoundChannel *notes;
   /// Copied from the player's voice table by the voice command, or set a field
   /// at a time by extended commands.
-  struct SoundVoice voice;
-  /// Not named by TLA code; zeroed with the first 64 bytes at reset.
-  u8 unk30[0x10];
+  struct ToneData voice;
+  /// Unused by this driver, as in pret's; the track's reset clears it with the
+  /// rest of its first 64 bytes.
+  ///@{
+  u8 gap[10];
+  u16 timer;
+  /// pret's later ply_note copies it into a new note's samples left; this
+  /// driver's never reads it.
+  u32 unk_3C;
+  ///@}
   /// The next command byte in the song's data, from the header's track
   /// pointer; a track's commands end at a finish command (0xB1).
   const u8 *cursor;
   /// Cursors to return to after each of up to three nested patterns.
-  u8 unk44[0x0c];
+  const u8 *patternReturns[3];
 };
 
 /// A song's header: its track count, priority and mode, its voices, and where
 /// each track's commands start.
 struct SongHeader {
   u8 trackCount; ///< At most 16; 0 in the empty songs.
-  u8 unk01;      ///< 0 in every song; ags-music refuses another block count.
+  u8 blockCount; ///< 0 in every song; ags-music refuses another.
   u8 priority;   ///< Becomes the player's priority.
   /// With bit 7 set, passed to m4aSoundMode (bits 6..0 the reverb);
   /// ags-music's reverb field.
   u8 mode;
-  const struct SoundVoice *voices; ///< The voice table its tracks choose from.
+  const struct ToneData *voices; ///< The voice table its tracks choose from.
   const u8 *tracks[1]; ///< Each track's first command, trackCount of them.
 };
 
-/// A player, which plays one song: its header and status, its tracks, its
-/// tempo and fade.
-struct SoundPlayer {
+/// A music player, which plays one song: its header and status, its tracks,
+/// its tempo and fade.
+struct MusicPlayerInfo {
   const struct SongHeader *header; ///< The song playing or last played.
   /// bits: 31 paused | 15..0 tracks active after the last tick. Set to
-  /// SOUND_PLAYER_PAUSED alone when no track is left.
+  /// MUSICPLAYER_STATUS_PAUSE alone when no track is left.
   u32 status;
-  u8 trackCount; ///< Tracks this player owns, at most 16.
-  u8 priority;   ///< The song's priority.
-  u8 unk0a;      ///< The last command run: its byte - 0xB1.
+  u8 trackCount;  ///< Tracks this player owns, at most 16.
+  u8 priority;    ///< The song's priority.
+  u8 lastCommand; ///< The last command run: its byte - 0xB1.
   /// Nonzero: a song of lower priority does not replace a playing one. From
-  /// gSound_PlayerSlots, 0 for every player.
+  /// gMPlayTable, 0 for every player.
   u8 checkPriority;
   u32 clock;      ///< Song ticks played since the song started.
-  u8 unk10[8];    ///< Not named by TLA code.
-  u8 *workBytes;  ///< gSound_WorkBytes, which the work-byte command uses.
+  u8 gap[8];      ///< Unused by this driver, as in pret's.
+  u8 *workBytes;  ///< gMPlayMemAccArea, which the work-byte command uses.
   u16 tempo;      ///< Twice the tempo command's byte; 150 at start.
   u16 tempoScale; ///< 256 plays at the song's tempo.
   /// tempo * tempoScale / 256, added to tempoCount each VBlank.
@@ -364,24 +446,24 @@ struct SoundPlayer {
   u16 tempoCount;
   u16 fadePeriod;  ///< VBlanks between fade steps; 0 when not fading.
   u16 fadeCounter; ///< VBlanks left until the next fade step.
-  /// bits: 8..4 level, 0 to 0x100 in steps of 16 | 1 fade in | 0 pause at the
-  /// end (SoundFadeFlag).
+  /// bits: 8..4 level, 0 to 256 in steps of 16 | 1 fade in | 0 pause at the
+  /// end (MusicPlayerFadeFlag).
   u16 fadeVolume;
-  u8 unk2a[2];                     ///< Not named by TLA code.
-  struct SoundTrack *tracks;       ///< trackCount tracks.
-  const struct SoundVoice *voices; ///< The song's voice table.
-  /// SOUND_LOCK when free; raised while the player is changed or run.
-  u32 lock;
+  u8 padding[2]; ///< Up to the word tracks starts on; implicit in pret's.
+  struct MusicPlayerTrack *tracks; ///< trackCount tracks.
+  const struct ToneData *voices;   ///< The song's voice table.
+  /// ID_NUMBER when free; raised while the music player is changed or run.
+  u32 ident;
   /// The MPlayMain routine and player that were first in the chain before this
   /// player was added; this player's MPlayMain runs them first.
-  void (*MPlayMainNext)(struct SoundPlayer *player);
-  struct SoundPlayer *musicPlayerNext; ///< Passed to MPlayMainNext.
+  void (*MPlayMainNext)(struct MusicPlayerInfo *player);
+  struct MusicPlayerInfo *musicPlayerNext; ///< Passed to MPlayMainNext.
 };
 
-/// The sound driver's work: its lock, the mixer's rate and buffers, the PCM
+/// The sound driver's work: its ident, the mixer's rate and buffers, the PCM
 /// and CGB notes, and the routines the driver calls.
-struct SoundWork {
-  u32 lock; ///< SOUND_LOCK when free; raised while the driver changes it.
+struct SoundInfo {
+  u32 ident; ///< ID_NUMBER when free; raised while the driver changes it.
   /// VBlanks until the DMA restart, which reloads it from
   /// transferPeriod; also picks which VBlank's part of the buffers is mixed.
   // volatile, as pret's pcmDmaCounter is: m4aSoundVSyncOn clears it while the
@@ -390,96 +472,100 @@ struct SoundWork {
   u8 reverb;       ///< 0 to 127 (mode bits 6..0); 0 skips the reverb pass.
   u8 pcmNoteCount; ///< PCM notes in use, 8 at start (mode bits 11..8).
   u8 volume;       ///< PCM volume 0 to 15, 15 at start (mode bits 15..12).
-  u8 rate;  ///< 1 to 12, indexes gPcmSamplesPerVBlankTable (mode bits 19..16).
-  u8 unk09; ///< Not named by TLA code.
+  u8 rate; ///< 1 to 12, indexes gPcmSamplesPerVBlankTable (mode bits 19..16).
+  u8 mode; ///< Unused by this driver, as in pret's.
   /// Counts 14 down to 0 once a CGB update; at 0 the envelopes take an extra
   /// step.
   u8 c15;
-  u8 transferPeriod; ///< VBlanks the buffers hold: 0x630 / pcmSamplesPerVBlank.
+  u8 transferPeriod; ///< VBlanks the buffers hold: SOUND_PCM_BUFFER_SIZE /
+                     ///< pcmSamplesPerVBlank.
   /// Nonzero: the mixer stops taking notes once the scanline passes this
-  /// many lines after its start. Sound_MaxLines, 0.
-  u8 maxLines;
-  u8 unk0d[3];             ///< Not named by TLA code.
+  /// many lines after its start. gMaxLines, 0.
+  u8 lineLimit;
+  u8 gap[3];               ///< Unused by this driver, as in pret's.
   u32 pcmSamplesPerVBlank; ///< Samples mixed a VBlank, from
                            ///< gPcmSamplesPerVBlankTable.
   u32 outputRate; ///< Samples a second: pcmSamplesPerVBlank * 59.7275, rounded.
   /// 2^23 / outputRate, rounded; a note's frequency times it is its step a
   /// sample.
   u32 rateStep;
-  struct CgbNote *cgbNotes; ///< gSound_CgbNotes; NULL before CGB setup.
+  struct CgbChannel *cgbNotes; ///< gCgbChans; NULL before CGB setup.
   /// First of the chain of MPlayMain routines run each VBlank; NULL for none.
-  void (*MPlayMainHead)(struct SoundPlayer *player);
-  struct SoundPlayer *musicPlayerHead;           ///< Passed to MPlayMainHead.
-  void (*cgbUpdate)(void);                       ///< Run each VBlank: CgbSound.
-  void (*cgbMute)(u8 channel);                   ///< CgbOscOff, channel 1 to 4.
+  void (*MPlayMainHead)(struct MusicPlayerInfo *player);
+  struct MusicPlayerInfo *musicPlayerHead; ///< Passed to MPlayMainHead.
+  void (*cgbUpdate)(void);                 ///< Run each VBlank: CgbSound.
+  void (*cgbMute)(u8 channel);             ///< CgbOscOff, by enum CgbChannelId.
   s32 (*cgbFrequency)(u8 kind, u8 key, u8 fine); ///< MidiKeyToCgbFreq.
-  SoundCommand *commands;                        ///< gSound_CommandTable.
+  MPlayFunc *commands;                           ///< gMPlayJumpTable.
   /// ply_note, run for song bytes from 0xCF up with the byte
   /// - 0xCF.
-  void (*noteOn)(u32 command, struct SoundPlayer *player,
-                 struct SoundTrack *track);
-  /// Set to DummyFunc by SoundInit; no TLA code reads
-  /// it by name.
-  void (*unk3c)(void);
-  u8 unk40[0x10];                ///< Not named by TLA code.
-  struct SoundNote pcmNotes[12]; ///< pcmNoteCount of them play.
+  void (*noteOn)(u32 command, struct MusicPlayerInfo *player,
+                 struct MusicPlayerTrack *track);
+  /// The hook pret's MusicPlayer2000 calls ExtVolPit; set to
+  /// DummyFunc by SoundInit, and no code calls it.
+  void (*externalVolumePitch)(void);
+  u8 gap2[16];                      ///< Unused by this driver, as in pret's.
+  struct SoundChannel pcmNotes[12]; ///< pcmNoteCount of them play.
   /// Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
   /// transferPeriod VBlanks of pcmSamplesPerVBlank each.
-  s8 buffers[2][0x630];
+  s8 buffers[2][SOUND_PCM_BUFFER_SIZE];
 };
 
-/// An entry of the player table: a player, its tracks and track count, and
-/// its priority check.
-struct PlayerSlot {
-  struct SoundPlayer *player;
-  struct SoundTrack *tracks; ///< trackCount tracks for the player.
-  u8 trackCount;
-  u8 unk09;          ///< 0 in every entry; not named by TLA code.
+/// An entry of the music player table: a music player, its tracks and track
+/// count, and its priority check.
+struct MusicPlayer {
+  struct MusicPlayerInfo *info;
+  struct MusicPlayerTrack *track; ///< numTracks tracks for the music player.
+  u8 numTracks;
+  u8 padding;        ///< 0 in every entry, before the halfword.
   u16 checkPriority; ///< Copied to the player's checkPriority; 0 everywhere.
 };
 
-/// An entry of the song table: a song's header and the player table entry
-/// that plays it.
-struct SongEntry {
+/// An entry of the song table: a song's header and the music player that
+/// plays it.
+struct Song {
   const struct SongHeader *header;
-  /// Index into gSound_PlayerSlots; Sound_Play gives slot 7's songs
-  /// the first player from 7 down to 4 with no active track, else 7.
-  u16 slot;
-  u16 unk06; ///< The same value as slot in every entry; not named by TLA code.
+  /// The row of gMPlayTable that plays it (enum MusicPlayerId); Sound_Play
+  /// gives a song on MUSIC_PLAYER_SE_LAST the first music player from 7 down
+  /// to 4 with no active track, else 7.
+  u16 ms;
+  u16 me; ///< The same value as ms in every entry; nothing reads it.
 };
 
-STATIC_ASSERT(sizeof(struct SoundVoice) == 12);
-STATIC_ASSERT(sizeof(struct SoundNote) == 64);
-STATIC_ASSERT(sizeof(struct CgbNote) == 64);
-STATIC_ASSERT(offsetof(struct CgbNote, frequency) == 0x20);
-STATIC_ASSERT(offsetof(struct CgbNote, wave) == 0x24);
-STATIC_ASSERT(sizeof(struct SoundTrack) == 80);
-STATIC_ASSERT(offsetof(struct SoundTrack, voice) == 0x24);
-STATIC_ASSERT(offsetof(struct SoundTrack, cursor) == 0x40);
-STATIC_ASSERT(sizeof(struct SoundPlayer) == 64);
-STATIC_ASSERT(offsetof(struct SoundWork, cgbNotes) == 0x1c);
-STATIC_ASSERT(sizeof(struct SoundWork) == 0xfb0);
+STATIC_ASSERT(sizeof(struct ToneData) == 12);
+STATIC_ASSERT(sizeof(struct SoundChannel) == 64);
+STATIC_ASSERT(sizeof(struct CgbChannel) == 64);
+STATIC_ASSERT(offsetof(struct CgbChannel, frequency) == 0x20);
+STATIC_ASSERT(offsetof(struct CgbChannel, wave) == 0x24);
+STATIC_ASSERT(sizeof(struct MusicPlayerTrack) == 80);
+STATIC_ASSERT(offsetof(struct MusicPlayerTrack, voice) == 0x24);
+STATIC_ASSERT(offsetof(struct MusicPlayerTrack, cursor) == 0x40);
+STATIC_ASSERT(sizeof(struct MusicPlayerInfo) == 64);
+STATIC_ASSERT(offsetof(struct SoundInfo, cgbNotes) == 0x1c);
+STATIC_ASSERT(sizeof(struct SoundInfo) == 0xfb0);
 
-void MPlayExtender(struct CgbNote *notes);
-void CgbModVol(struct CgbNote *note);
-void ply_xwave(struct SoundPlayer *player, struct SoundTrack *track);
-void ply_xcmd(struct SoundPlayer *player, struct SoundTrack *track);
-void ClearChain(struct SoundNote *note);
+void MPlayExtender(struct CgbChannel *notes);
+void CgbModVol(struct CgbChannel *note);
+void ply_xwave(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ply_xcmd(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void ClearChain(struct SoundChannel *note);
 void Clear64byte(void *block);
 
-void MPlayStart(struct SoundPlayer *player, const struct SongHeader *header);
-void m4aMPlayFadeOut(struct SoundPlayer *player, u16 speed);
-void m4aMPlayTempoControl(struct SoundPlayer *player, u16 scale);
-void m4aMPlayVolumeControl(struct SoundPlayer *player, u16 mask, u16 volume);
-void m4aMPlayPitchControl(struct SoundPlayer *player, u16 mask, s16 pitch);
-void m4aMPlayPanpotControl(struct SoundPlayer *player, u16 mask, s8 pan);
-void m4aMPlayModDepthSet(struct SoundPlayer *player, s32 mask, s32 value);
-void m4aMPlayLFOSpeedSet(struct SoundPlayer *player, u32 mask, u32 value);
-void ClearModM(struct SoundTrack *track);
+void MPlayStart(struct MusicPlayerInfo *player,
+                const struct SongHeader *header);
+void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 speed);
+void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale);
+void m4aMPlayVolumeControl(struct MusicPlayerInfo *player, u16 mask,
+                           u16 volume);
+void m4aMPlayPitchControl(struct MusicPlayerInfo *player, u16 mask, s16 pitch);
+void m4aMPlayPanpotControl(struct MusicPlayerInfo *player, u16 mask, s8 pan);
+void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 mask, s32 value);
+void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 mask, u32 value);
+void ClearModM(struct MusicPlayerTrack *track);
 
-extern const struct PlayerSlot gSound_PlayerSlots[];
-extern const struct SongEntry gSongTable[];
-extern SoundCommand gSound_CommandTable[36];
-extern const SoundCommand gXcmdTable[];
+extern const struct MusicPlayer gMPlayTable[];
+extern const struct Song gSongTable[];
+extern MPlayFunc gMPlayJumpTable[36];
+extern const MPlayFunc gXcmdTable[];
 
 #endif

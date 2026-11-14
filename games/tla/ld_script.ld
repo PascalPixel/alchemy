@@ -362,7 +362,7 @@ SECTIONS
         "*/games/tla/src/sound/driver/leftover_command_byte_reader.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/leftover_command_byte_setters.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/midi_key_to_freq_work_copy.o"(.text .rodata .data .padding)
-        "*/games/tla/src/sound/noop_stub_work_copy.o"(.text)
+        "*/games/tla/src/sound/dummy_func_work_copy.o"(.text)
         "*/games/tla/src/sound/player_work_copy.o"(.text)
         "*/games/tla/src/sound/sound_work_copy.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/midi_key_to_frequency.o"(.text .rodata .data .padding)
@@ -370,9 +370,9 @@ SECTIONS
         "*/games/tla/src/sound/driver/channel_unlink.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/handle_note.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/mplay_main.o"(.text .rodata .data .padding)
-        "*/games/tla/src/sound/sound_stub.o"(.text)
+        "*/games/tla/src/sound/sound_play.o"(.text)
         "*/games/tla/src/sound/bios_sound_driver_mode.o"(.text .rodata .data .padding)
-        "*/games/tla/src/sound/noop_stub.o"(.text)
+        "*/games/tla/src/sound/sound_test.o"(.text)
         "*/games/tla/src/sound/driver/umul_high.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver/mixer_entry.o"(.text .rodata .data .padding)
     } > ROM
@@ -401,7 +401,7 @@ SECTIONS
         "*/games/tla/src/sound/sound_get_jump_list.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/driver.o"(.text)
         "*/games/tla/src/sound/empty_callback.o"(.text)
-        "*/games/tla/src/sound/noop_stub.o"(.rodata)
+        "*/games/tla/src/sound/sound_test.o"(.rodata)
         "*/games/tla/src/sound/tables.o"(.rodata)
         "*/games/tla/sound/voice_groups.o"(.rodata)
         "*/games/tla/sound/programmable_wave_samples.o"(.rodata)
@@ -879,7 +879,7 @@ SECTIONS
         "*/games/tla/src/system/overlay/overlays.o"(.overlays)
     } > ROM
     IwramResident_Rom = LOADADDR(.iwram_resident);
-    Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
+    SoundMainRAM_Rom = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

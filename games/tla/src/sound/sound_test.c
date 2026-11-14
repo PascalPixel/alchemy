@@ -1,18 +1,22 @@
-#include "types.h"
-#include "sounds.h"
-#include "field/event.h"
-#include "module/sound/sound.h"
-#include "system/system.h"
+/// @file
+/// The sound test, which nothing in the game calls; the heard-sound flags the
+/// link lobby offers its tunes by; and the fixed 31536 Hz output rate the game
+/// sets at start-up. Linked after Sound_Play's object, with the BIOS sound
+/// call between them.
+
 #include "sound/sound.h"
+#include "sounds.h"
+#include "types.h"
+#include "module/sound/sound.h"
+#include "sound_driver.h"
+#include "system/input.h"
+#include "system/io_reg.h"
+#include "system/iwram_call.h"
+#include "system/system.h"
 
 /// An empty function in the sound driver.
 // As ☀️'s UnusedDummyFunc (games/tbs/src/sound/audio.c).
 void UnusedDummyFunc2(void) {}
-
-#include "system/io_reg.h"
-#include "system/input.h"
-
-#include "sound_driver_symbols.h"
 
 void Sound_LoadReverbCode(s32 preset);
 
@@ -83,8 +87,6 @@ void SoundTest_Run(void) {
   }
 }
 
-#include "sound_driver.h"
-
 void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
@@ -94,15 +96,6 @@ void Sound_UpdateCommandMask(u32 command) {
   else
     gSoundCommandMask = command;
 }
-
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "lib.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
 
 u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
@@ -142,15 +135,13 @@ void SoundFlag_Clear(s32 sound) {
   bytes[sound] = (u8)(bytes[sound] & ~mask);
 }
 
-#include "system/iwram_call.h"
-
 s32 __divsi3(s32 numerator, s32 denominator);
 
 /// Sets direct sound to a fixed 31536 Hz output with 528 samples a VBlank,
 /// keeping mode's rate nibble, clears the two PCM buffers and points DMA 1
 /// and 2 at them, then restarts timer 0 at line 159.
 void Sound_SetFixedSampleFreq(u32 mode) {
-  struct SoundWork *work = SOUND_WORK;
+  struct SoundInfo *work = SOUND_INFO_PTR;
   u32 samples;
   u8 *buffer;
   u32 control;

@@ -1,5 +1,5 @@
 @ Why assembly: a copy the ROM keeps of a routine it also links, stopping
-@ short of its end: its 232 bytes are SoundDriver_Update's from .L_081c1a9c
+@ short of its end: its 232 bytes are m4aSoundVSync's from .L_081c1a9c
 @ (update.s) up to its final bx r3, and its bl and branches keep that
 @ routine's offsets. It keeps r11 as an ordinary register (mov r4, r11) and
 @ restores its callee saves by popping them into the low registers, as

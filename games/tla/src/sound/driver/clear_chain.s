@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global SoundNote_Detach
+	.global RealClearChain
 	.thumb_func
-SoundNote_Detach:
+RealClearChain:
 	ldr	r3, [r0, #44]
 	cmp	r3, #0
 	beq.n	.L_081c16ea
@@ -41,7 +41,7 @@ ply_fine:
 	strb	r1, [r4, #0]
 .L_081c1704:
 	adds	r0, r4, #0
-	bl	SoundNote_Detach
+	bl	RealClearChain
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
 	bne.n	.L_081c16f6

@@ -1,15 +1,17 @@
-#include "types.h"
-#include "sound_driver.h"
-#include "system/ram_buffer.h"
-#include "system/io_reg.h"
+/// @file
+/// The sound driver's entry points: its start-up (m4aSoundInit,
+/// MPlayExtender), the work it does each VBlank, PCM pitch, and the commands
+/// that start, stop, resume and fade a music player's song.
 
-u32 umul3232H32(u32 left, u32 right);
-extern u8 gScaleTable[];
-extern u32 gFreqTable[];
+#include "types.h"
+#include "sound/sound.h"
+#include "sound_driver.h"
+#include "system/io_reg.h"
+#include "system/ram_buffer.h"
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
 /// frequency.
-s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
+s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
   u32 lowerFrequency;
@@ -22,205 +24,203 @@ s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
     pitchScale = 255U << 24;
   }
 
+  // A key's code: the low four bits pick the semitone's step (2^31 times
+  // 2^(n / 12)), the high four bits the octaves to shift it down, 9 for key 60.
   lowerFrequency = gScaleTable[keyIndex];
   lowerFrequency = gFreqTable[lowerFrequency & 15] >> (lowerFrequency >> 4);
   upperFrequency = gScaleTable[keyIndex + 1];
   upperFrequency = gFreqTable[upperFrequency & 15] >> (upperFrequency >> 4);
 
   return umul3232H32(
-      *(s32 *)((u8 *)wave + 4),
-      lowerFrequency +
-          umul3232H32(upperFrequency - lowerFrequency, pitchScale));
+      wave->freq, lowerFrequency +
+                      umul3232H32(upperFrequency - lowerFrequency, pitchScale));
 }
 
-/// Provides the empty callback retained by the sound driver.
+/// Does nothing; nothing in the game refers to it. The driver's empty callback
+/// is DummyFunc (empty_callback.c).
 void UnusedDummyFunc(void) {}
 
-// The sound data's symbols supply the player count and maximum track count.
-extern char Sound_PlayerCount[];
-extern char Sound_MaxLines[];
-#define SOUND_PLAYER_COUNT ((u16)(u32)Sound_PlayerCount)
-#define SOUND_MAX_LINES ((u32)Sound_MaxLines)
+/// The music player count and the mixer's line limit, as the music player
+/// table supplies them.
+#define NUM_MUSIC_PLAYERS ((u16)(u32)gNumMusicPlayers)
+#define MAX_LINES ((u32)gMaxLines)
 
-void Sound_Mixer(void);
-void SoundInit(struct SoundWork *work);
-void m4aSoundMode(u32 mode);
-void SoundMain(void);
-void MPlayOpen(struct SoundPlayer *player, struct SoundTrack *tracks, u8 count);
-void m4aMPlayStop(struct SoundPlayer *player);
-void MPlayFadeOut(struct SoundPlayer *player, u16 speed);
-void MPlayContinue(struct SoundPlayer *player);
-extern struct SoundWork gSound_Work;
-extern struct CgbNote gSound_CgbNotes[4];
-extern u8 gSound_WorkBytes[];
-
-void ply_memacc(struct SoundPlayer *player, struct SoundTrack *track);
-void ply_lfos(struct SoundPlayer *player, struct SoundTrack *track);
-void ply_mod(struct SoundPlayer *player, struct SoundTrack *track);
-void ply_endtie(struct SoundPlayer *player, struct SoundTrack *track);
-void SampleFreqSet(u32 mode);
-void TrackStop(struct SoundPlayer *player, struct SoundTrack *track);
-void FadeOutBody(struct SoundPlayer *player);
-void TrkVolPitSet(struct SoundPlayer *player, struct SoundTrack *track);
-void CgbSound(void);
-void CgbOscOff(u8 channel);
-s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine);
-
-/// Clears the paused flag while holding the player lock.
-void MPlayContinue(struct SoundPlayer *player) {
-  if (player->lock == SOUND_LOCK) {
-    player->lock++;
-    player->status &= ~SOUND_PLAYER_PAUSED;
-    player->lock = SOUND_LOCK;
+/// Clears the music player's paused flag, raising its ident while it works.
+void MPlayContinue(struct MusicPlayerInfo *player) {
+  if (player->ident == ID_NUMBER) {
+    player->ident++;
+    player->status &= ~MUSICPLAYER_STATUS_PAUSE;
+    player->ident = ID_NUMBER;
   }
 }
 
-/// Starts a fade under the player lock, resuming the player for fade-ins.
-static __inline__ void MPlayStartFade(struct SoundPlayer *player, u16 period,
-                                      u16 volume) {
-  if (player->lock == SOUND_LOCK) {
-    player->lock++;
+/// Starts a fade with the music player's ident raised, resuming the music
+/// player for fade-ins: FadeOutBody moves the level 16 of 256 every `period`
+/// VBlanks, so a whole fade takes 16 * period VBlanks.
+static __inline__ void MPlayStartFade(struct MusicPlayerInfo *player,
+                                      u16 period, u16 volume) {
+  if (player->ident == ID_NUMBER) {
+    player->ident++;
     player->fadeCounter = period;
     player->fadePeriod = period;
     player->fadeVolume = volume;
-    if (volume & SOUND_FADE_IN)
-      player->status &= ~SOUND_PLAYER_PAUSED;
-    player->lock = SOUND_LOCK;
+    if (volume & FADE_IN)
+      player->status &= ~MUSICPLAYER_STATUS_PAUSE;
+    player->ident = ID_NUMBER;
   }
 }
 
 /// Begins a fade that stops and clears tracks when its volume reaches zero.
-void MPlayFadeOut(struct SoundPlayer *player, u16 speed) {
+/// Called by m4aMPlayFadeOut.
+void MPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
   MPlayStartFade(player, speed, SOUND_FADE_FULL_VOLUME);
 }
 
-/// Copies the RAM mixer, initializes both audio paths and configures every
-/// player.
+/// The bytes of mixer code m4aSoundInit copies to IWRAM.
+#define SOUND_MIXER_CODE_SIZE 1024
+
+/// Copies the RAM mixer to IWRAM, initializes the PCM and CGB paths and
+/// configures every music player from gMPlayTable.
 void m4aSoundInit(void) {
   s32 playerIndex;
 
-  // Copy the mixer's executable block to its RAM buffer.
-  Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer,
-              CPU_SET_32BIT | 256);
-  SoundInit(&gSound_Work);
-  MPlayExtender(gSound_CgbNotes);
+  // SoundMainRAM_Rom is a Thumb symbol: its address has bit 0 set
+  Bios_CpuSet((void *)((u32)SoundMainRAM_Rom & ~1), Ram_SoundMixer,
+              CPU_SET_32BIT | (SOUND_MIXER_CODE_SIZE / 4));
+  SoundInit(&gSoundInfo);
+  MPlayExtender(gCgbChans);
   m4aSoundMode(AUDIO_INITIAL_MODE);
-  // Each configured player owns its tracks but shares the work-byte area.
-  for (playerIndex = 0; playerIndex < SOUND_PLAYER_COUNT; playerIndex++) {
-    struct SoundPlayer *player = gSound_PlayerSlots[playerIndex].player;
+  // Each music player owns its tracks but shares the memacc area.
+  for (playerIndex = 0; playerIndex < NUM_MUSIC_PLAYERS; playerIndex++) {
+    struct MusicPlayerInfo *player = gMPlayTable[playerIndex].info;
 
-    MPlayOpen(player, gSound_PlayerSlots[playerIndex].tracks,
-              gSound_PlayerSlots[playerIndex].trackCount);
-    player->checkPriority = gSound_PlayerSlots[playerIndex].checkPriority;
-    player->workBytes = gSound_WorkBytes;
+    MPlayOpen(player, gMPlayTable[playerIndex].track,
+              gMPlayTable[playerIndex].numTracks);
+    player->checkPriority = gMPlayTable[playerIndex].checkPriority;
+    player->workBytes = gMPlayMemAccArea;
   }
 }
 
+/// Runs the sound driver for one VBlank through SoundMain.
 void m4aSoundMain(void) { SoundMain(); }
 
-/// Starts the song on the player selected by its song-table entry.
+/// Starts the song on the music player its song-table entry names.
 void m4aSongNumStart(u16 songId) {
-  const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSongTable;
-  const struct SongEntry *song = &songs[songId];
+  const struct MusicPlayer *mplayTable = gMPlayTable;
+  const struct Song *songTable = gSongTable;
+  const struct Song *song = &songTable[songId];
 
-  MPlayStart(slots[song->slot].player, song->header);
+  MPlayStart(mplayTable[song->ms].info, song->header);
 }
 
-/// Starts the song unless its selected player is already playing it.
-void m4aSongNumStartOrChange(u16 songId) {
-  const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSongTable;
-  const struct SongEntry *song = &songs[songId];
-  struct SoundPlayer *player = slots[song->slot].player;
+/// Unused: starts the song unless its music player is already playing it.
+UNUSED void m4aSongNumStartOrChange(u16 songId) {
+  const struct MusicPlayer *mplayTable = gMPlayTable;
+  const struct Song *songTable = gSongTable;
+  const struct Song *song = &songTable[songId];
+  struct MusicPlayerInfo *player = mplayTable[song->ms].info;
 
   if (player->header != song->header)
     MPlayStart(player, song->header);
-  else if ((player->status & 0xFFFF) == 0 ||
-           (player->status & SOUND_PLAYER_PAUSED))
+  else if ((player->status & MUSICPLAYER_STATUS_TRACK) == 0 ||
+           (player->status & MUSICPLAYER_STATUS_PAUSE))
     MPlayStart(player, song->header);
 }
 
-/// Starts a different or finished song, or resumes the same paused song.
-void m4aSongNumStartOrContinue(u16 songId) {
-  const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSongTable;
-  const struct SongEntry *song = &songs[songId];
-  struct SoundPlayer *player = slots[song->slot].player;
+/// Unused: starts a different or finished song, or resumes the same paused
+/// song.
+UNUSED void m4aSongNumStartOrContinue(u16 songId) {
+  const struct MusicPlayer *mplayTable = gMPlayTable;
+  const struct Song *songTable = gSongTable;
+  const struct Song *song = &songTable[songId];
+  struct MusicPlayerInfo *player = mplayTable[song->ms].info;
 
   if (player->header != song->header)
     MPlayStart(player, song->header);
-  else if ((player->status & 0xFFFF) == 0)
+  else if ((player->status & MUSICPLAYER_STATUS_TRACK) == 0)
     MPlayStart(player, song->header);
-  else if (player->status & SOUND_PLAYER_PAUSED)
+  else if (player->status & MUSICPLAYER_STATUS_PAUSE)
     MPlayContinue(player);
 }
 
-/// Stops the selected player only when it holds this song.
-void m4aSongNumStop(u16 songId) {
-  const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSongTable;
-  const struct SongEntry *song = &songs[songId];
-  struct SoundPlayer *player = slots[song->slot].player;
+/// Unused: stops the song's music player only when it holds this song.
+UNUSED void m4aSongNumStop(u16 songId) {
+  const struct MusicPlayer *mplayTable = gMPlayTable;
+  const struct Song *songTable = gSongTable;
+  const struct Song *song = &songTable[songId];
+  struct MusicPlayerInfo *player = mplayTable[song->ms].info;
 
   if (player->header == song->header)
     m4aMPlayStop(player);
 }
 
-/// Resumes the selected player only when it holds this song.
-void m4aSongNumContinue(u16 songId) {
-  const struct PlayerSlot *slots = gSound_PlayerSlots;
-  const struct SongEntry *songs = gSongTable;
-  const struct SongEntry *song = &songs[songId];
-  struct SoundPlayer *player = slots[song->slot].player;
+/// Unused: resumes the song's music player only when it holds this song.
+UNUSED void m4aSongNumContinue(u16 songId) {
+  const struct MusicPlayer *mplayTable = gMPlayTable;
+  const struct Song *songTable = gSongTable;
+  const struct Song *song = &songTable[songId];
+  struct MusicPlayerInfo *player = mplayTable[song->ms].info;
 
   if (player->header == song->header)
     MPlayContinue(player);
 }
 
-void m4aMPlayAllStop(void) {
+/// Unused: stops every music player. Only Sound_StopAllMusicPlayers calls it,
+/// and only a bare far-call veneer, which no code in the game names, leads
+/// there.
+UNUSED void m4aMPlayAllStop(void) {
   s32 playerIndex;
 
-  for (playerIndex = 0; playerIndex < SOUND_PLAYER_COUNT; playerIndex++)
-    m4aMPlayStop(gSound_PlayerSlots[playerIndex].player);
+  for (playerIndex = 0; playerIndex < NUM_MUSIC_PLAYERS; playerIndex++)
+    m4aMPlayStop(gMPlayTable[playerIndex].info);
 }
 
-void m4aMPlayContinue(struct SoundPlayer *player) { MPlayContinue(player); }
+/// Unused: resumes `player`.
+UNUSED void m4aMPlayContinue(struct MusicPlayerInfo *player) {
+  MPlayContinue(player);
+}
 
-void m4aMPlayAllContinue(void) {
+/// Unused: resumes every music player. Only Sound_ResumeAllMusicPlayers calls
+/// it, and only a bare far-call veneer, which no code in the game names, leads
+/// there.
+UNUSED void m4aMPlayAllContinue(void) {
   s32 playerIndex;
 
-  for (playerIndex = 0; playerIndex < SOUND_PLAYER_COUNT; playerIndex++)
-    MPlayContinue(gSound_PlayerSlots[playerIndex].player);
+  for (playerIndex = 0; playerIndex < NUM_MUSIC_PLAYERS; playerIndex++)
+    MPlayContinue(gMPlayTable[playerIndex].info);
 }
 
-void m4aMPlayFadeOut(struct SoundPlayer *player, u16 speed) {
+/// Begins the standard stop-and-clear fade.
+void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
   MPlayFadeOut(player, speed);
 }
 
-/// Begins a fade that preserves track state for later resumption.
-void m4aMPlayFadeOutTemporarily(struct SoundPlayer *player, u16 speed) {
-  MPlayStartFade(player, speed, SOUND_FADE_FULL_VOLUME | SOUND_FADE_PAUSE);
+/// Unused: begins a fade that pauses the music player at zero volume, keeping
+/// its tracks' state for a later resume.
+UNUSED void m4aMPlayFadeOutTemporarily(struct MusicPlayerInfo *player,
+                                       u16 speed) {
+  MPlayStartFade(player, speed, SOUND_FADE_FULL_VOLUME | TEMPORARY_FADE);
 }
 
-/// Starts a fade from zero volume and resumes the player.
-void m4aMPlayFadeIn(struct SoundPlayer *player, u16 speed) {
-  MPlayStartFade(player, speed, SOUND_FADE_IN);
+/// Unused: starts a fade from zero volume and resumes the music player.
+UNUSED void m4aMPlayFadeIn(struct MusicPlayerInfo *player, u16 speed) {
+  MPlayStartFade(player, speed, FADE_IN);
 }
 
-/// Initializes active tracks still carrying their reset flag.
-void m4aMPlayImmInit(struct SoundPlayer *player) {
+/// Unused: initializes active tracks still carrying their reset flag: clears
+/// their settings and gives them the default bend range, volume and LFO speed.
+UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
   s32 count = player->trackCount;
-  struct SoundTrack *track = player->tracks;
+  struct MusicPlayerTrack *track = player->tracks;
 
   while (count > 0) {
-    if (track->flags & SOUND_TRACK_ACTIVE) {
-      if (track->flags & SOUND_TRACK_RESET) {
+    if (track->flags & MPT_FLG_EXIST) {
+      if (track->flags & MPT_FLG_START) {
         // Clear the 64-byte settings prefix, retaining the sequence cursor.
         Clear64byte(track);
-        track->flags = SOUND_TRACK_ACTIVE;
+        track->flags = MPT_FLG_EXIST;
         track->bendRange = 2;
-        track->volumeScale = 0x40;
+        track->volumeScale = 64;
         track->lfoSpeed = 22;
         track->voice.kind = 1;
       }
@@ -230,14 +230,16 @@ void m4aMPlayImmInit(struct SoundPlayer *player) {
   }
 }
 
-/// Resets CGB hardware, installs its command handlers and clears four channel
-/// records.
-void MPlayExtender(struct CgbNote *notes) {
-  struct SoundWork *work;
-  u32 lock;
+/// Resets the CGB sound hardware, installs the CGB-aware command handlers and
+/// callbacks in the sound work, and clears the four channels' `notes`.
+void MPlayExtender(struct CgbChannel *notes) {
+  struct SoundInfo *work;
+  u32 ident;
 
   REG_SOUNDCNT_X = SOUNDCNT_X_ENABLE | SOUNDCNT_X_ALL_TONES_ON;
   REG_SOUNDCNT_L = 0;
+  // The square and noise channels silent with a rising envelope, restarted;
+  // the wave channel off; the master volume full on both sides
   REG_NR12 = 8;
   REG_NR22 = 8;
   REG_NR42 = 8;
@@ -247,36 +249,39 @@ void MPlayExtender(struct CgbNote *notes) {
   REG_NR30 = 0;
   REG_NR50 = 0x77;
 
-  work = SOUND_WORK;
-  lock = work->lock;
-  if (lock != SOUND_LOCK)
+  work = SOUND_INFO_PTR;
+  ident = work->ident;
+  if (ident != ID_NUMBER)
     return;
-  work->lock = lock + 1;
+  work->ident = ident + 1;
 
   // Replace generic commands with the CGB-capable handlers.
-  gSound_CommandTable[SOUND_COMMAND_WORK_BYTE] = ply_memacc;
-  gSound_CommandTable[SOUND_COMMAND_LFO_SPEED] = ply_lfos;
-  gSound_CommandTable[SOUND_COMMAND_MODULATION] = ply_mod;
-  gSound_CommandTable[SOUND_COMMAND_EXTENDED] = ply_xcmd;
-  gSound_CommandTable[SOUND_COMMAND_RELEASE_KEY] = ply_endtie;
-  gSound_CommandTable[SOUND_COMMAND_PCM_RATE] = (SoundCommand)SampleFreqSet;
-  gSound_CommandTable[SOUND_COMMAND_STOP_TRACK] = TrackStop;
-  gSound_CommandTable[SOUND_COMMAND_FADE] = (SoundCommand)FadeOutBody;
-  gSound_CommandTable[SOUND_COMMAND_CALCULATE_OUTPUT] = TrkVolPitSet;
+  gMPlayJumpTable[MPLAY_JUMP_MEMACC] = ply_memacc;
+  gMPlayJumpTable[MPLAY_JUMP_LFOS] = ply_lfos;
+  gMPlayJumpTable[MPLAY_JUMP_MOD] = ply_mod;
+  gMPlayJumpTable[MPLAY_JUMP_XCMD] = ply_xcmd;
+  gMPlayJumpTable[MPLAY_JUMP_EOT] = ply_endtie;
+  gMPlayJumpTable[MPLAY_JUMP_SAMPLE_FREQ_SET] =
+      MPLAY_FUNC_CAST(MPlayFunc, SampleFreqSet);
+  gMPlayJumpTable[MPLAY_JUMP_TRACK_STOP] = TrackStop;
+  gMPlayJumpTable[MPLAY_JUMP_FADE_OUT_BODY] =
+      MPLAY_FUNC_CAST(MPlayFunc, FadeOutBody);
+  gMPlayJumpTable[MPLAY_JUMP_TRK_VOL_PIT_SET] = TrkVolPitSet;
 
   work->cgbNotes = notes;
   work->cgbUpdate = CgbSound;
   work->cgbMute = CgbOscOff;
   work->cgbFrequency = MidiKeyToCgbFreq;
-  work->maxLines = SOUND_MAX_LINES;
+  work->lineLimit = MAX_LINES;
 
-  // Clear note state, then assign the four hardware routing masks.
+  // Clear note state, then assign the four hardware routing masks: channel
+  // n's NR51 bits, n - 1 for the right speaker and n + 3 for the left.
   {
     u32 zero = 0;
 
     Bios_CpuSet((void *)&zero, notes,
-                CPU_SET_32BIT | CPU_SET_SRC_FIXED |
-                    (sizeof(struct CgbNote) * 4 / 4));
+                CPU_SET_SRC_FIXED | CPU_SET_32BIT |
+                    (sizeof(struct CgbChannel) * 4 / 4));
   }
   notes[0].kind = 1;
   notes[0].channelBits = 0x11;
@@ -287,5 +292,5 @@ void MPlayExtender(struct CgbNote *notes) {
   notes[3].kind = 4;
   notes[3].channelBits = 0x88;
 
-  work->lock = lock;
+  work->ident = ident;
 }

@@ -103,7 +103,7 @@ MPlayMain:
 Func_081c0a68:
 	bcc .L_081c0ad8
 	adds r0, r5, #0
-	bl SoundDriver_ClearBuffer
+	bl SoundMainBTM
 	movs r0, #128
 	strb r0, [r5]
 	movs r0, #2

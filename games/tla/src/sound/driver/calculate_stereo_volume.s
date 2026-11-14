@@ -3,9 +3,9 @@
 @ or save, a linkage no procedure-call standard produces.
 .syntax unified
 	.thumb
-	.global SoundDriver_CalculateStereoVolumeTwin
+	.global ChnVolSetAsm
 	.thumb_func
-SoundDriver_CalculateStereoVolumeTwin:
+ChnVolSetAsm:
 	ldrb	r1, [r4, #18]
 	movs	r0, #20
 	ldrsb	r2, [r4, r0]

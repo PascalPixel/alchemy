@@ -222,7 +222,7 @@ MusicTrack_HandleNoteUnreferenced:
 	str	r0, [r4, #4]
 	ldrh	r0, [r5, #30]
 	strh	r0, [r4, #12]
-	bl	SoundDriver_CalculateStereoVolumeTwin
+	bl	ChnVolSetAsm
 	ldrb	r1, [r4, #8]
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]
@@ -252,7 +252,7 @@ MusicTrack_HandleNoteUnreferenced:
 	ldr	r0, [sp, #12]
 	ldr	r3, [sp, #4]
 	ldr	r3, [r3, #48]
-	bl	SoundDriver_CallViaR3
+	bl	call_r3
 	b.n	.L_081c1de0
 .L_081c1dd6:
 	ldrb	r2, [r5, #9]

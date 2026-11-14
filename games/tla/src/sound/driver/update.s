@@ -1,16 +1,16 @@
-@ Why SoundDriver_Update to SoundDriver_CallViaR3 are assembly:
+@ Why m4aSoundVSync to call_r3 are assembly:
 @ DMA timer branches on carry from lsls: each bcc consumes the carry of
 @ lsls r1, r1, #7, a DMA channel's repeat bit. The player after it saves
 @ with push {r4, r5, r6, r7} without lr, after pop {r0} has taken back the r0
 @ pushed with lr; r11 (fp) is an ordinary register, the mask of the tracks
 @ still playing (mov fp, r4), not a frame pointer; it returns through
-@ pop {r3} into SoundDriver_CallViaR3's bx r3, which its callback call also
+@ pop {r3} into call_r3's bx r3, which its callback call also
 @ enters with bl.
 .syntax unified
 	.thumb
-	.global SoundDriver_Update
+	.global m4aSoundVSync
 	.thumb_func
-SoundDriver_Update:
+m4aSoundVSync:
 	ldr	r0, [pc, #680]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #680]
@@ -315,7 +315,7 @@ AlchemyUncreditedEnd_081c1922:
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L_081c1b1c
-	bl	SoundDriver_CalculateStereoVolumeTwin
+	bl	ChnVolSetAsm
 	cmp	r6, #0
 	beq.n	.L_081c1b1c
 	ldrb	r0, [r4, #29]
@@ -380,8 +380,8 @@ AlchemyUncreditedEnd_081c1922:
 	mov	fp, r3
 	pop	{r3}
 .L_081c1b84:
-	.global SoundDriver_CallViaR3
-SoundDriver_CallViaR3:
+	.global call_r3
+call_r3:
 	bx	r3
 AlchemyUncredited_081c1b86:
 	.2byte	0x0000

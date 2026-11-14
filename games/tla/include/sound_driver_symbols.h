@@ -4,8 +4,8 @@
 #include "sounds.h"
 #include "types.h"
 
-struct SoundPlayer;
-extern struct SoundPlayer gMPlayInfo_BGM;
+struct MusicPlayerInfo;
+extern struct MusicPlayerInfo gMPlayInfo_BGM;
 
 enum AudioCommandMask {
   AUDIO_COMMAND_TOGGLE = 0x80,
@@ -31,9 +31,9 @@ enum SoundControl {
   SOUND_SE_END = MUS_700 ///< sounds from here on are music again
 };
 
-/// The music players by their row in gSound_PlayerSlots
+/// The music players by their row in gMPlayTable
 /// (sound/music_player_table.s), as a song table row names them
-/// (SongEntry.slot).
+/// (Song.slot).
 enum MusicPlayerId {
   MUSIC_PLAYER_JINGLE = 0,    ///< gMPlayInfo_Jingle
   MUSIC_PLAYER_BGM = 1,       ///< gMPlayInfo_BGM
@@ -62,7 +62,7 @@ enum SoundReverbCode {
 /// so that it runs once a VBlank, from whichever reaches it first.
 struct SoundVBlankState {
   u8 lastVBlank; ///< The low byte of gVBlankCount when the update last ran.
-  /// SoundWork.transferCountdown as the update last left it: the VBlank
+  /// SoundInfo.transferCountdown as the update last left it: the VBlank
   /// handler copies it, the frame wait counts it a VBlank ahead.
   u8 transferCountdown;
   /// Set while the sound test runs: the frame wait then leaves the update to

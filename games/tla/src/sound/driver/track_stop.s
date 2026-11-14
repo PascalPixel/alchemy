@@ -24,7 +24,7 @@ TrackStop:
 	ldr	r3, [pc, #28]
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #44]
-	bl	SoundDriver_CallViaR3
+	bl	call_r3
 .L_081c1bc0:
 	strb	r6, [r4, #0]
 .L_081c1bc2:

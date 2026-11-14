@@ -188,11 +188,11 @@ gBgmTempoPitch:
 	.global gSoundCommandMask
 gSoundCommandMask:
 	.space 0x00000010
-	.global gSound_Work
-gSound_Work:
+	.global gSoundInfo
+gSoundInfo:
 	.space 0x00000fb0
-	.global gSound_CommandTable
-gSound_CommandTable:
+	.global gMPlayJumpTable
+gMPlayJumpTable:
 	.space 0x00000004
 	.global gSound_JumpCommand
 gSound_JumpCommand:
@@ -203,8 +203,8 @@ Data_02006888:
 	.global Data_0200688c
 Data_0200688c:
 	.space 0x00000004
-	.global gSound_CgbNotes
-gSound_CgbNotes:
+	.global gCgbChans
+gCgbChans:
 	.space 0x00000100
 	.global gMPlayInfo_SE5
 gMPlayInfo_SE5:
@@ -227,8 +227,8 @@ gMPlayInfo_MenuSE:
 	.global gMPlayInfo_SE4
 gMPlayInfo_SE4:
 	.space 0x00000040
-	.global gSound_WorkBytes
-gSound_WorkBytes:
+	.global gMPlayMemAccArea
+gMPlayMemAccArea:
 	.space 0x00000010
 	.global gMPlayInfo_ActionSE
 gMPlayInfo_ActionSE:

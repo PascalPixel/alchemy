@@ -35,12 +35,10 @@ extern u16 gMusicPlayerLastSound[MUSIC_PLAYER_COUNT];
 
 void Sound_SetFixedSampleFreq(u32 mode);
 
-extern struct SoundPlayer gMPlayInfo_ActionSE;
-extern struct SoundPlayer gMPlayInfo_SE5;
-extern struct SoundPlayer gMPlayInfo_Jingle;
+extern struct MusicPlayerInfo gMPlayInfo_ActionSE;
+extern struct MusicPlayerInfo gMPlayInfo_SE5;
+extern struct MusicPlayerInfo gMPlayInfo_Jingle;
 
 void SoundFlag_Set(s32 sound);
-
-void SoundDriver_Update(void);
 
 #endif

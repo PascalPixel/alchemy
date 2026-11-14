@@ -94,8 +94,8 @@ void JupiterLighthouse_CircleBeacon(struct Actor *self) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-/// Circles object 36, wider across than deep, by the actor's speed and its
-/// byte at 98.
+/// Circles Alex (actor 36, sprite 57 as in room 5), wider across than deep, by
+/// the actor's speed.
 // As ☀️'s SceneEffect_UpdateCounterDrivenOrbit does.
 void JupiterLighthouse_CircleBeaconWide(struct Actor *self) {
   struct Actor *centre = Actor_Get(36);

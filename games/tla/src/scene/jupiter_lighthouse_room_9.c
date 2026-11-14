@@ -196,9 +196,8 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
-/// actor 8 held still, then CrackedTiles_Find and CrackedTile_PlaceLanding by
-/// the entrance.
+/// Sets up the hall: its cracked tiles, and the landing of a leader who fell
+/// through one from the floor above.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 

@@ -56,6 +56,13 @@ void Leader_CenterInCell(void);
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+
+/// The energy path block pushed into its gap at (63, 15), outside the aerie:
+/// the hover tile beyond it lights.
+#define FLAG_ENERGY_BLOCK_IN_GAP 0xa0c
+/// The grey block pushed over the opened floor has dropped through, a
+/// shortcut to the rooms below.
+#define FLAG_GREY_BLOCK_DROPPED 0xa0d
 #include "macros.h"
 
 struct CellTarget;
@@ -280,7 +287,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   s32 i;
 
   if (object->x >> 20 == 63 && object->z >> 20 == 15) {
-    Event_SetFlag(2572);
+    Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
     object->motionFlags = 3;
     System_Wait(2);
     i = 0;
@@ -353,10 +360,9 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   JupiterLighthouse_SetCellHeight(object->x, object->z, 0, -6);
 }
 
-/// Opens the floor under (49, 103) and (49, 106) once (flag 514, until 2591).
-/// Object 23, standing on the ground at x cell 49 to 52 with flag 2573 clear,
-/// falls through and sets 2573: from cells 50 and 51 it drops, lands with the
-/// screen shaken and slides off sideways; from 49 and 52 it simply drops.
+/// Standing on the button opens the floor by the aerie, until the lid is off;
+/// the grey block pushed over the opening drops through, once, landing with a
+/// shake and sliding off sideways when it was over the middle.
 void JupiterLighthouse_OpenFloor(void) {
   struct Actor *object = Actor_GetById(23);
   s32 spot = 0;
@@ -388,10 +394,10 @@ void JupiterLighthouse_OpenFloor(void) {
     spot = 4;
   if (object->y != 0)
     spot = 0;
-  if (Event_GetFlag(2573))
+  if (Event_GetFlag(FLAG_GREY_BLOCK_DROPPED))
     spot = 0;
   if (spot != 0)
-    GameFlag_Set(2573);
+    GameFlag_Set(FLAG_GREY_BLOCK_DROPPED);
   if ((u32)(spot - 2) <= 1) {
     FieldCamera_SetSpeed(4);
     EventCamera_FollowActor(23, 1);
@@ -617,8 +623,9 @@ static __inline__ struct Actor *I_Func_020048cc(s32 actor, s32 emote,
   return (struct Actor *)Actor_ShowEmoteById(actor, emote, frames);
 }
 
-/// The scene in which actor 4 meets 5, 6, 7 and 28 and the group is placed for
-/// the arrival; arg selects one of its two layouts.
+/// Felix comes out by the aerie to find Jenna, Sheba, Piers and Kraden
+/// watching the fight, and the party is placed to watch with them; arg chooses
+/// between the two ways of arriving.
 void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   struct Actor *object;
   s32 angle;
@@ -1568,10 +1575,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Event_End();
 }
 
-/// Sets up Jupiter Lighthouse room M: objects 8 to 15 take mode 1, objects 24
-/// and 25 stand at heights 0 and 32, the cells flags 514 and 2591 opened are
-/// stamped again, and with 2591 set the arrival is chosen by flags 2595, 2593
-/// and 2596 and the entrance.
+/// Sets up the outside of the aerie: the hanging vines and rope, the floor as
+/// it was left open, and once the lid is off the reunion as far as it has
+/// gone: the fight to watch, the fight itself, Isaac and Ivan fallen, or the
+/// hurt left behind once they have gone up to the aerie.
 s32 Scene_Initialize(void) {
   struct Actor *object;
 
@@ -1629,7 +1636,7 @@ s32 Scene_Initialize(void) {
     }
   }
   Actor_Get(23)->motionFlags = 0;
-  if (Event_GetFlag(2573))
+  if (Event_GetFlag(FLAG_GREY_BLOCK_DROPPED))
     Actor_SetPosition(23, 0, 0);
   if (gMainRoutineWork.entrance == 99)
     JupiterLighthouse_IsaacAndIvanFall();
@@ -1648,7 +1655,7 @@ s32 Scene_PrepareMap(void) {
   LightSprites_InitC();
   LightSprites_Add(20, 0);
   object = Actor_Get(20);
-  if (Event_GetFlag(0xa0c)) {
+  if (Event_GetFlag(FLAG_ENERGY_BLOCK_IN_GAP)) {
     Actor_SetPosition(20, 1016, 248);
     MapGrid_CopyCellsLayered(104, 42, 5, 11, 61, 42);
     MapGrid_CopyCellsLayered(106, 52, 1, 1, 63, 84);

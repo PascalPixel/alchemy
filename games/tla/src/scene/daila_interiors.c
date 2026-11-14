@@ -10,6 +10,7 @@
 
 #include "shared/tables.h"
 #include "field/emote.h"
+#include "field/event.h"
 #include "sounds.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -39,35 +40,10 @@
 #include "text/msg_ids.h"
 
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-void Actor_ShowEmoteById(s32 actor, s32 jump, s32 frames);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                        s32 height);
 
 static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
-
-static inline void Daila_ObjWalk(s32 actor, s32 x, s32 z) {
-  Actor_WalkToAndWaitById(actor, x, z);
-}
-
-static inline void Daila_ObjPlace(s32 actor, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
-static inline void Daila_Jump(s32 actor, s32 height, s32 frames) {
-  s32 h = height;
-  s32 f = frames;
-  s32 a = actor;
-
-  /* FAKEMATCH(barrier): an empty asm over the three copies finishes height and
-   * frames before the actor. */
-  __asm__("" : "+l"(h), "+l"(f), "+l"(a));
-  Actor_ShowEmoteById(a, h, f);
-}
-
-static inline void Daila_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                   s32 width, s32 height) {
-  Map_CopyCellsRect(srcX, srcY, destX, destY, width, height);
-}
 
 /// The sanctuary's actors, numbering the rows of gDailaInteriors2Placements.
 enum DailaSanctuaryActorId {
@@ -142,20 +118,20 @@ void DailaInteriors_EmptyHook(void) {}
 
 /// Unused: the practising man shouts and jumps to the other of his two spots.
 UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
-  Daila_Jump(actor, 256, 50);
+  FieldActor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   if (!Daila_FlagCheck(FLAG_DAILA_PRACTICE_AT_DOOR)) {
     Event_SetMessageId((s32)MsgDailaInteriorsGah);
     Event_ShowMessageAndWait(actor, 0);
-    Daila_ObjWalk(actor, 360, 72);
+    Actor_WalkToAndWait(actor, 360, 72);
     Actor_ArmCallback(actor, FACING_SOUTH, 0);
     GameFlag_Set(FLAG_DAILA_PRACTICE_AT_DOOR);
   } else {
     Event_SetMessageId((s32)MsgDailaInteriorsYarg);
     Event_ShowMessageAndWait(actor, 0);
-    Daila_ObjWalk(actor, 392, 104);
+    Actor_WalkToAndWait(actor, 392, 104);
     Actor_ArmCallback(actor, FACING_WEST, 0);
     GameFlag_Clear(FLAG_DAILA_PRACTICE_AT_DOOR);
   }
@@ -166,7 +142,7 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
 UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
   Actor_FaceActorById(actor, 4, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmoteById(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
+  FieldActor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
@@ -464,7 +440,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = 0x13333;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = 0x13333;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
-      Daila_ObjPlace(ACTOR_SEA_GODS_TEAR, 232 << 16, 196 << 16);
+      Actor_SetPositionFixed(ACTOR_SEA_GODS_TEAR, 232 << 16, 196 << 16);
     }
   }
   Event_End();
@@ -612,7 +588,7 @@ s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2 &&
       GameFlag_Get(FLAG_TAVI_RESCUED)) {
     Map_SetLayerEntryFlag(0);
-    Daila_CopyCells(29, 33, 10, 6, 10, 12);
+    MapGrid_CopyCells(29, 33, 10, 6, 10, 12);
   }
   return 0;
 }

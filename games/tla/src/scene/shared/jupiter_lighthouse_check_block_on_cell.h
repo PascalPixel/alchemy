@@ -1,10 +1,10 @@
-/// Opens the door for good, setting 0xa1b, once the block 16 stands on
-/// its button, cell (8, 37).
+/// Opens the door for good once the pillar stands on its button, cell (8, 37).
 void JupiterLighthouse_CheckBlockOnCell(void) {
-  struct Actor *object = Actor_Get(16);
+  struct Actor *object = Actor_Get(ACTOR_BUTTON_PILLAR);
 
-  if (!Event_GetFlag(0xa1b) && object->x >> 20 == 8 && object->z >> 20 == 37) {
-    Event_SetFlag(0xa1b);
+  if (!Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED) && object->x >> 20 == 8 &&
+      object->z >> 20 == 37) {
+    Event_SetFlag(FLAG_BUTTON_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
 }

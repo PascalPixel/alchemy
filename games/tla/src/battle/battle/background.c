@@ -566,13 +566,6 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 
 // Steps the battle highlight's blend.
 
-// The battle work block, as this function reads it.
-struct HighlightWork {
-  u8 unk000[0x676];
-  u16 highlightStep;
-  u16 highlightMode;
-};
-
 extern s8 gBattleHighlight_BlendRamp[];
 
 /// Steps the highlight's blend: HIGHLIGHT_FADE_IN and HIGHLIGHT_FADE_OUT fade
@@ -580,8 +573,7 @@ extern s8 gBattleHighlight_BlendRamp[];
 /// the ramp, and HIGHLIGHT_SELECTED lightens them by it: the first sixteen
 /// steps once, then the second sixteen over and over.
 void BattleBackground_StepHighlightBlend(void) {
-  struct HighlightWork *battle =
-      (struct HighlightWork *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
   if (battle != NULL) {
     if (battle->highlightMode == HIGHLIGHT_FADE_IN) {

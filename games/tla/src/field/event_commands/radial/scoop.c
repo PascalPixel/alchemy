@@ -743,13 +743,7 @@ void Teleport_PlayWhirl(void) {
 
 #define SPARK_COUNT 100
 
-/* VIEW(psynergy): tag struct SparkParticle as struct SparkParticle__psynergy;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/scoop.c:781: redefinition of
- * `struct SparkParticle'. */
-#define SparkParticle SparkParticle__psynergy
-struct SparkParticle {
+struct TeleportSpark {
   s32 x;
   s32 y;
   s32 z;
@@ -762,7 +756,7 @@ struct SparkParticle {
 // Heap block 92: the decoded picture, then the sparks and their sprites.
 struct SparkWork {
   u8 picture[0x400];
-  struct SparkParticle particles[SPARK_COUNT];
+  struct TeleportSpark particles[SPARK_COUNT];
   struct EffectSprite sprites[SPARK_COUNT];
 };
 
@@ -774,7 +768,7 @@ void Teleport_PlaySparks(void) {
   struct SparkWork *work = HeapSlot_Alloc(92, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
   struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
-  struct SparkParticle *particle;
+  struct TeleportSpark *particle;
   struct EffectSprite *sprite;
   s32 state;
   s32 entry;

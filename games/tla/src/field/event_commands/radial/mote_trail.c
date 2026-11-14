@@ -36,7 +36,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 nextSpark = 0;
   s32 pos[3];
   struct EffectSprite *sprite;
-  struct Mote *mote;
+  struct ChasingMote *mote;
   s32 moteTile;
   s32 sparkTile;
   s32 timer;

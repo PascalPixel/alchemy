@@ -38,9 +38,6 @@
 #undef EffectSprite_DrawAtWorldPosition
 #undef Resource_GetMetadataRecordFarFar
 #undef BattleEffect_DropObjectAtAnchor
-#undef SparkParticle
-#undef ObjectSprite
-#undef Mote
 
 #include "radial/actor_cells.c"
 #include "radial/step_vector.c"

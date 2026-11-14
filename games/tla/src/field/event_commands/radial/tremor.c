@@ -46,13 +46,7 @@ struct ShakeWork {
 };
 
 // An object's sprite; the sway shakes it sideways by its offset.
-/* VIEW(psynergy): tag struct ObjectSprite as struct ObjectSprite__psynergy;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/tremor.c:49: redefinition of
- * `struct ObjectSprite'. */
-#define ObjectSprite ObjectSprite__psynergy
-struct ObjectSprite {
+struct TremorSprite {
   u8 unk00[0x12];
   u16 offsetX;
   u8 width;
@@ -80,7 +74,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct Actor *target = scene->child;
-  struct ObjectSprite *targetSprite = target->sprite;
+  struct TremorSprite *targetSprite = target->sprite;
   s32 tiles;
   s32 shown;
   s32 width;
@@ -139,7 +133,7 @@ void FieldPsynergy_TremorOnTarget(void) {
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
       for (i = 0; i < work->view.count; i++) {
-        struct ObjectSprite *sprite = work->view.objects[i]->sprite;
+        struct TremorSprite *sprite = work->view.objects[i]->sprite;
         s32 offset = work->view.spriteOffsets[i];
 
         if (amplitude > SWAY_SHAKE)
@@ -197,7 +191,7 @@ void FieldPsynergy_TremorOnTarget(void) {
 
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 16);
-    ((struct ObjectSprite *)target->sprite)->unk19 = 1;
+    ((struct TremorSprite *)target->sprite)->unk19 = 1;
   }
   ViewMove_End();
   ViewMove_RestoreNearbySprites();
@@ -256,7 +250,7 @@ void FieldPsynergy_Tremor(void) {
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
       for (i = 0; i < work->count; i++) {
-        struct ObjectSprite *sprite = work->objects[i]->sprite;
+        struct TremorSprite *sprite = work->objects[i]->sprite;
         s32 offset = work->spriteOffsets[i];
 
         if (amplitude > 0)

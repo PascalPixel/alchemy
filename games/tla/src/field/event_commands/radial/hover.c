@@ -255,13 +255,7 @@ void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
 
 // One mote: a position chasing its target (Motion_StepTowardTarget's struct
 // Chase) and a frame count, negative before it starts.
-/* VIEW(psynergy): tag struct Mote as struct Mote__psynergy;
- * module/field/field.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/hover.c:275: redefinition of
- * `struct Mote'. */
-#define Mote Mote__psynergy
-struct Mote {
+struct ChasingMote {
   s32 x;
   s32 z;
   s32 unk08;
@@ -273,9 +267,9 @@ struct Mote {
 
 struct MoteWork {
   u8 unk0000[0x800];
-  struct Mote sparks[32];
+  struct ChasingMote sparks[32];
   struct EffectSprite sparkSprites[32];
-  struct Mote motes[48];
+  struct ChasingMote motes[48];
   struct EffectSprite moteSprites[48];
   s32 originX;
   s32 originZ;
@@ -295,7 +289,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void SummonTablet_UpdateMotes(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
   s32 position[3];
-  struct Mote *mote;
+  struct ChasingMote *mote;
   struct EffectSprite *sprite;
   s32 i;
   u16 *tile;

@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "menu/djinn_menu.h"
 #include "sounds.h"
 #include "version.h"
 #include "module/window/screens.h"
@@ -30,18 +31,6 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-/* VIEW(screens): tag struct DjinnMenuWork as struct DjinnMenuWork__screens;
- * djinn_menu.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/window/window/battle_djinn_menu.c:158: dereferencing pointer to
- * incomplete type. */
-struct DjinnMenuWork__screens {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
-};
-
 #define NAVIGATION ((struct DjinnMenuNavigation *)Ram_HeapSlots->unke4[0])
 
 // A statement macro, as The Broken Seal's BATTLE_MENU_GET_CURSOR: the three
@@ -67,7 +56,7 @@ struct DjinnMenuWork__screens {
 s32 BattleDjinnMenu_Run(s32 member) {
   struct DjinnMenuOam cursorSprite;
   u16 messageText[64];
-  struct DjinnMenuWork__screens *work;
+  struct DjinnMenuWork *work;
   struct DjinnMenuWindow *previewWindow;
   s32 drawnRow;
   s32 cursorSlot;
@@ -108,7 +97,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   s32 i;
   s32 j;
 
-  work = (struct DjinnMenuWork__screens *)Ram_HeapSlots->windowTiles;
+  work = (struct DjinnMenuWork *)Ram_HeapSlots->windowTiles;
   previewWindow = NULL;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);

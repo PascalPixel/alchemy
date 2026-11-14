@@ -56,7 +56,7 @@ void TileMap_DecodeStagedBuffer(s32 size) {
   dst = (u16 *)gMapBlocks;
   n = (size - 1) / 2;
   if (size & 1) {
-    switch (((u8 *)gMapCellBuffer)[1]) {
+    switch (((u8 *)gMapGridCellBuffer)[1]) {
     case 0:
       for (i = 0; i < n; i++)
         *dst++ = *src++;
@@ -89,7 +89,7 @@ void TileMap_DecodeStagedBuffer(s32 size) {
 
 /// Converts the map cell buffer's 32 KB in place with the ARM routine copied
 /// to RAM, keeping a copy of the buffer for it to read.
-void Tilemap_ConvertBuffer(void) {
+void TileMap_ConvertBuffer(void) {
   u8 *saved;
   ConvertFn routine;
   u32 size;
@@ -98,7 +98,7 @@ void Tilemap_ConvertBuffer(void) {
   saved = Heap_AllocEwram(size);
   Iwram_CopyWords(saved, Ram_MapCellBuffer, size);
   RamCode_Load(routine, Render_ConvertMapCode, Render_ConvertMapCodeSize);
-  routine(((u8 *)gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
+  routine(((u8 *)gMapGridCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
   Heap_Release(routine);
   Heap_Release(saved);
 }
@@ -106,7 +106,7 @@ void Tilemap_ConvertBuffer(void) {
 /// Decodes the palette resource of a map's header row (its second halfword)
 /// and copies its 224 colors to destination, keeping the current backdrop
 /// color in the first entry.
-void TileMap_ConvertBuffer(s32 map, void *destination) {
+void Map_CopyPalette(s32 map, void *destination) {
   const u16 *entry;
   u16 *buffer;
   s16 backdrop;
@@ -158,7 +158,7 @@ s32 MapGrid_LoadMap(s32 index) {
   Decompress_TaggedLz(encodedData, Ram_MapCollision);
   encodedData = (u8 *)sceneHeader + sceneHeader->tilemap;
   Decompress_TaggedLz(encodedData, Ram_MapCellBuffer);
-  Tilemap_ConvertBuffer();
+  TileMap_ConvertBuffer();
   encodedData = (u8 *)sceneHeader + sceneHeader->shapes;
   Decompress_TaggedLz(encodedData, gMapShapeGrid);
   if (sceneHeader->animation != 0) {
@@ -806,8 +806,8 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
 void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 dstX, s32 dstY) {
   s32 y;
-  u32 *src = (u32 *)gMapCellBuffer + (srcY * 128 + srcX);
-  u32 *dst = &((u32 *)gMapCellBuffer)[dstY * 128 + dstX];
+  u32 *src = (u32 *)gMapGridCellBuffer + (srcY * 128 + srcX);
+  u32 *dst = &((u32 *)gMapGridCellBuffer)[dstY * 128 + dstX];
   struct MapLayer *layer = Ram_HeapSlots->mapWork->layers;
   struct TilePos views[3];
   s32 i;
@@ -1016,12 +1016,12 @@ void Map_GetHeaderSize(s32 map, s32 *size) {
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
   struct MapHeader *header = Resource_GetTableEntry(
-      *(const u16 *)(gMainRoutineWork.map * 12 + (u32)gMaps) +
+      *(const u16 *)(gMainRoutineWork.mapId * 12 + (u32)gMaps) +
       (u32)&ResourceId_Map000);
 
   source = (u8 *)header + header->cells;
   Decompress_TaggedLz(source, Ram_MapCellBuffer);
-  Tilemap_ConvertBuffer();
+  TileMap_ConvertBuffer();
   source = (u8 *)header + header->shapes;
   Decompress_TaggedLz(source, gMapShapeGrid);
 }

@@ -1,7 +1,7 @@
 /// On landing below a cracked tile, puts the leader on the cell the flag bytes
 /// saved, offset from (x, z), and starts the screen effect.
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 dx = FieldGameFlag_GetByte(gCrackedTiles.flagByte);
   s32 dz = FieldGameFlag_GetByte(gCrackedTiles.flagByte + 8);

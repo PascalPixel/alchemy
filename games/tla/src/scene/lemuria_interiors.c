@@ -44,13 +44,13 @@ void Event_End();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   return (const struct SceneRegion *)gSceneRegions;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -200,7 +200,7 @@ answered:
   return;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -464,7 +464,7 @@ answered:
   Event_Wait(20);
   Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
-  object3 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object3 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object3 == 0)
     goto noLeader;
   Actor_SetDestination(12, *(s16 *)((u8 *)object3 + 10),
@@ -1296,14 +1296,14 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_JENNA, ((s16 *)&leader->x)[1],
                          ((s16 *)&leader->z)[1]);
@@ -1311,7 +1311,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(ACTOR_SHEBA, ((s16 *)&leader->x)[1],
                          ((s16 *)&leader->z)[1]);

@@ -86,7 +86,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     Message_Start(window, text, 36, 2, zero);
 #endif
 
-    Sound_PlayFar(MUS_081);
+    Sound_PlayFar(MUS_JOINED);
 
     do {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
@@ -143,7 +143,7 @@ void Party_ShowJoinedMessage(s32 member) {
 #else
     Message_Start(window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, 0);
 #endif
-    Sound_PlayFar(MUS_081);
+    Sound_PlayFar(MUS_JOINED);
     do {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
       // function; UBFIX calls it through its declared type.
@@ -214,7 +214,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
                   0);
 #endif
 
-    Sound_PlayFar(MUS_081);
+    Sound_PlayFar(MUS_JOINED);
 
     do {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
@@ -283,7 +283,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
 #else
   Message_Start(window, entries, 0, 2, 0);
 #endif
-  Sound_PlayFar(MUS_081);
+  Sound_PlayFar(MUS_JOINED);
   do
     wait(1);
   while (Sound_GetBgmRestoreDelayFar() != 0 &&

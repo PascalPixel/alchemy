@@ -48,11 +48,11 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_WhirlBeamSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_BlueFlameSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u16 gBattleEffect_MoteCells[];
 extern const s32 Data_081994a8[4]; // the early drops' drags
 extern u8 gData_02014000[];        // the spray sheet
-// The drops' lives: gMapCellBuffer's EffectSteps from their variant on.
+// The drops' lives: gMapGridCellBuffer's EffectSteps from their variant on.
 extern s32 Data_02010018[];
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
@@ -77,7 +77,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
   u8 *sprites;
   DrawRectangle blitters[2];
   struct EffectPosition target;
-  struct EffectStep *drops = (struct EffectStep *)gMapCellBuffer;
+  struct EffectStep *drops = (struct EffectStep *)gMapGridCellBuffer;
   struct EffectStep *drop;
   struct EffectStep *spray;
   s32 frame;

@@ -60,7 +60,7 @@ enum AlhafraJailActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -122,8 +122,8 @@ static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellBehavior(x, z, a, b);
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s32 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AlhafranCave)
     return gAlhafranCave_CaveActorPlacements;
@@ -185,8 +185,8 @@ void AlhafranCave_CastSand(void) {
   work->unkd4a = 2;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s32 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AlhafranCave)
     return gAlhafranCave_CaveTriggers;
@@ -196,7 +196,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 void AlhafranCave_TrackLeadersLevel(void) {
-  s32 y = Actor_Get(gMainRoutineWork.currentOwner)->y;
+  s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y;
 
   if (y < 0x80000)
     gMainRoutineWork.unk2c3 = 0;
@@ -215,13 +215,13 @@ s32 AlhafranCave_DrawCrateSprite(void) {
 s32 Scene_Initialize(void) {
 #if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
   gFieldWork->transition = 0x201;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AlhafranCave)
+  if (gMainRoutineWork.next == (s32)&SceneId_AlhafranCave)
     AlhafranCave_SetUpCave();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_AlhafraJail)
+  else if (gMainRoutineWork.next == (s32)&SceneId_AlhafraJail)
     AlhafranCave_SetUpJail();
   return 0;
 #else
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AlhafranCave) {
     gFieldWork->transition = 0x201;
@@ -244,7 +244,7 @@ void AlhafranCave_SetUpCave(void) {
       (struct AlhafranCaveMapWork *)Ram_HeapSlots->mapWork;
   struct Actor *object;
 
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   map->mode17 = 1;
   Task_AddFrame(AlhafranCave_TrackLeadersLevel, TASK_PASS_VBLANK);
   if (Event_GetFlag(FLAG_WAY_TO_JAIL_OPEN))
@@ -315,7 +315,7 @@ void AlhafranCave_SetUpJail(void) {
   const void *data;
   struct FieldWork *work;
 
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   Actor_Get(8)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   data = gAlhafranCave_CrateSprite;
@@ -392,7 +392,7 @@ void AlhafranCave_SetUpJail(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AlhafraJail &&
+  if (gMainRoutineWork.next == (s32)&SceneId_AlhafraJail &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCellsLayered(23, 46, 4, 5, 21, 14);
     MapGrid_CopyCellsLayered(86, 44, 5, 6, 84, 12);
@@ -722,7 +722,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
   Actor_SetPosition(ACTOR_EOLEO, 0, 0);
   Actor_SetActionCallback(Actor_Get(ACTOR_JAILER), 9);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
 }
 

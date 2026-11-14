@@ -111,15 +111,15 @@ s32 Party_AddMember(s32 unitId) {
 
   GameFlag_Set(FLAG_IN_PARTY(unitId));
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    if (gMainRoutineWork.activeOwners[partyIndex] == unitId)
+    if (gMainRoutineWork.party[partyIndex] == unitId)
       return partySize;
   }
-  gMainRoutineWork.activeOwners[partyIndex] = unitId;
+  gMainRoutineWork.party[partyIndex] = unitId;
   return partySize + 1;
 }
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
-/// the gap it leaves in gMainRoutineWork.activeOwners. Returns the party size.
+/// the gap it leaves in gMainRoutineWork.party. Returns the party size.
 s32 Party_RemoveMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 removedIndex;
@@ -127,12 +127,11 @@ s32 Party_RemoveMember(s32 unitId) {
 
   GameFlag_Clear(FLAG_IN_PARTY(unitId));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
-    if (gMainRoutineWork.activeOwners[removedIndex] == unitId)
+    if (gMainRoutineWork.party[removedIndex] == unitId)
       break;
   }
   for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
-    gMainRoutineWork.activeOwners[partyIndex] =
-        gMainRoutineWork.activeOwners[partyIndex + 1];
+    gMainRoutineWork.party[partyIndex] = gMainRoutineWork.party[partyIndex + 1];
   return Party_CountMembers();
 }
 
@@ -149,7 +148,7 @@ s32 Party_ListMembers(s16 *owners) {
     index = 0;
     if (count != 0) {
       do {
-        *owners++ = gMainRoutineWork.activeOwners[index];
+        *owners++ = gMainRoutineWork.party[index];
         index++;
       } while (index != count);
     }
@@ -180,26 +179,26 @@ s32 Party_AdjustCoins(s32 amount) {
 s32 Party_AdjustShopCredit(s32 amount) {
   s32 value;
 
-  value = gMainRoutineWork.counterB;
+  value = gMainRoutineWork.shopCredit;
   value += amount;
   if (value > 0xf423f)
     value = 0xf423f;
   if (value < 0)
     value = 0;
-  gMainRoutineWork.counterB = value;
+  gMainRoutineWork.shopCredit = value;
   return value;
 }
 
 s32 Party_AdjustShopGifts(s32 amount) {
   s32 value;
 
-  value = gMainRoutineWork.counterC;
+  value = gMainRoutineWork.shopGifts;
   value += amount;
   if (value > 28)
     value = 28;
   if (value < 0)
     value = 0;
-  gMainRoutineWork.counterC = value;
+  gMainRoutineWork.shopGifts = value;
   return value;
 }
 

@@ -84,7 +84,7 @@ extern char ResourceId_GlowOrbSheet;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_PetalSheet;
 extern char ResourceId_FlashBurstSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
 extern const u8
@@ -121,7 +121,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
 
   mesh = gData_02014000;
   projected = Data_02012000;
-  cells = gMapCellBuffer;
+  cells = gMapGridCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;

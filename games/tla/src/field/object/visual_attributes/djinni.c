@@ -61,7 +61,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *copies[8];
 
   djinni = Actor_GetById(djinniId);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   dir = (leader->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   Event_Start();
   wait(10);
@@ -71,7 +71,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Motion_SetVarCbAndRefresh(djinniId, 1);
   wait(10);
   back = dir + 0x8000;
-  Actor_ArmCallback(djinniId, back, 0);
+  Actor_FaceDirectionById(djinniId, back, 0);
   wait(10);
   djinni->facing = back;
   Actor_ShowEmoteById(djinniId, 0x103, 50);
@@ -158,7 +158,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Event_End();
 }
 
-extern s8 gData_02001000[];
+extern s8 gSceneLocalState[];
 
 /// A Djinni joins. Djinni 19 means the one recorded for the element in the
 /// save (none: nothing happens). With flag 366 set it joins the current owner
@@ -170,14 +170,14 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   s32 owner;
 
   if (djinni == 19) {
-    s32 recorded = gData_02001000[element + 0x1950];
+    s32 recorded = gSceneLocalState[element + 0x1950];
 
     if (recorded == 0)
       return;
     djinni = recorded - 1;
   }
   if (GameFlag_Get(FLAG_DJINN_LESSON)) {
-    owner = gMainRoutineWork.currentOwner;
+    owner = gMainRoutineWork.leaderActorId;
     GameFlag_Set(element * 20 + djinni + 48);
   } else {
     owner = Djinn_GiveToPartyFar(element, djinni);
@@ -227,7 +227,7 @@ void Djinn_RestoreActorAfterBattle(void) {
     if (scene - 300 <= 80 && party->sequenceResult > 0) {
       s32 *owner;
 
-      for (id = 8, owner = &party->currentOwner; id <= 79; id++) {
+      for (id = 8, owner = &party->leaderActorId; id <= 79; id++) {
         struct ActorDescriptor *desc = Scene_FindActorPlacement(id);
         struct Actor *obj;
 
@@ -367,7 +367,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *owner;
   struct EffectVector position;
 
-  owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (particle->state == 0) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

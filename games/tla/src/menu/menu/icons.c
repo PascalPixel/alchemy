@@ -332,13 +332,13 @@ void Menu_ReleaseEntryObjects(void) {
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 }
 
-void Menu_SetEntryObjectsHidden(s32 hidden) {
+void DjinnFigures_SetShown(s32 hidden) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
   menu->figuresShown = hidden;
 }
 
-void MenuIcon_UpdateTransforms(void) {
+void DjinnFigures_UpdateTopRow(void) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   struct SpriteScale scale;
   struct SpritePlacement position;
@@ -401,7 +401,7 @@ void DjinnFigures_InitializeTopRow(void) {
     menu->figureDepths[i] = 0x4000;
   }
   menu->figuresShown = 1;
-  Task_Add(MenuIcon_UpdateTransforms, TASK_PASS_VBLANK);
+  Task_Add(DjinnFigures_UpdateTopRow, TASK_PASS_VBLANK);
 }
 
 void DjinnFigures_ReleaseTopRow(void) {
@@ -414,10 +414,10 @@ void DjinnFigures_ReleaseTopRow(void) {
       menu->figures[i] = NULL;
     }
   }
-  Task_Remove(MenuIcon_UpdateTransforms);
+  Task_Remove(DjinnFigures_UpdateTopRow);
 }
 
-void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation) {
+void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s8 *object;
 
@@ -433,7 +433,7 @@ void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation) {
   menu->figures[index] = object;
 }
 
-void MenuIcon_SetPosition(s32 index, s32 x, s32 y) {
+void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
   if (menu->figures[index] != NULL) {
@@ -442,7 +442,7 @@ void MenuIcon_SetPosition(s32 index, s32 x, s32 y) {
   }
 }
 
-void MenuIcon_SetPicture(s32 index, s32 frame) {
+void DjinnFigures_SetSlotDepth(s32 index, s32 frame) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
   if (menu->figures[index] != NULL)
@@ -494,7 +494,7 @@ void MenuIcon_LoadSlots(void) {
       attributes = (u32 *)&slot->attr;
       *attributes++ = OUTPUT_SIZE_16X16;
       *attributes = 0;
-      slot->attr.tile = gResourceTableEntries[entry].offset >> 5;
+      slot->attr.tile = gVramCacheEntries[entry].offset >> 5;
     }
     *resource++ = entry;
     slot++;

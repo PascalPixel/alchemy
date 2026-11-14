@@ -297,7 +297,7 @@ extern char ResourceId_RuneSheet;
 extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_YellowOrbSheet;
 extern char ResourceId_EmberStreakSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 Data_02010200[];
 extern u16 gBattleEffect_FlarePictures[];
 extern u16 gBattleEffect_PuffArcCells[];
@@ -630,8 +630,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       for (i = 0; i != 96; i++) {
         q[i].variant = -1;
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C8, gMapCellBuffer, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C8, gMapGridCellBuffer,
+                                 0, 0);
     }
     if (frame == 76) {
       Sound_PlayFar(SE_ITEM_BREAK);
@@ -644,7 +644,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       void *verts;
       struct RenderModel__f15b3b0 *model;
       struct EffectStep *sparks;
-      u8 *portraits = gMapCellBuffer;
+      u8 *portraits = gMapGridCellBuffer;
       struct EffectStep *q;
       s32 shade;
       s32 j;

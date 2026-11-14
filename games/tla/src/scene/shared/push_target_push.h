@@ -2,7 +2,7 @@
 /// with it.
 void PushTarget_Push(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
   s32 from[3];
@@ -30,16 +30,16 @@ void PushTarget_Push(struct PushTarget target) {
             ABS(gPushFootprints[footprint][3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
   System_Wait(15);
   {
     s32 deltaX = (target.x - from[0]) >> 17;
     s32 deltaZ = (target.z - from[2]) >> 17;
 
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX, deltaZ);
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
   }
-  Actor_Get(gMainRoutineWork.currentOwner)->update = Actor_StopAtPushTarget;
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(object, 3);
@@ -48,21 +48,21 @@ void PushTarget_Push(struct PushTarget target) {
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
                              (gPushLeaderSteps[direction] << 16) >> 31,
                              (gPushLeaderSteps[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(SE_298);
+  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);

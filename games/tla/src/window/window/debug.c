@@ -121,7 +121,7 @@ UNUSED s32 DebugSoundTest_Run(void) {
     }
     if (gInput.pressed & KEY_START) {
       Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
-      Sound_PlayFar(MUS_000);
+      Sound_PlayFar(MUS_SILENCE);
     }
     if (gInput.repeat & KEY_R) {
       test.values[cursor] += 10;
@@ -640,7 +640,7 @@ done:
     ability = gDebugShortcut_Abilities[column][row];
     owner = Party_FindOwnerWithActionFar(ability);
     if (owner == -1)
-      owner = gMainRoutineWork.currentOwner;
+      owner = gMainRoutineWork.leaderActorId;
     if (ability == 0) {
       if (result == 0)
         events->psynergy = 0;

@@ -78,7 +78,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -195,8 +195,8 @@ extern s16 gGabombaStatue_Room3Regions[];
 extern u32 gGabombaStatue_Room4Regions[];
 extern u32 gGabombaStatue_Room5Regions[];
 
-const u8 *Scene_GetRegions(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u8 *Scene_GetExitRegions(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_GabombaStatue7)
     return gGabombaStatue_Room7Regions;
@@ -329,8 +329,8 @@ extern struct ActorPlacement gGabombaStatue_Room5Placements[];
 extern struct ActorPlacement gGabombaStatue_Room6Placements[];
 extern struct ActorPlacement gGabombaStatue_Room7Placements[];
 
-const u8 *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u8 *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Placements;
 
   if (scene == (s32)&SceneId_GabombaStatue1)
@@ -607,11 +607,11 @@ void GabombaStatue_EndRide(struct Actor *object) {
   object->z = 0xf741cf;
   object->facing = FACING_SOUTH;
   party = &gMainRoutineWork;
-  Actor_SetAttachedEffect(party->currentOwner,
+  Actor_SetAttachedEffect(party->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAnimation(party->currentOwner, 27);
+  Actor_SetAnimation(party->leaderActorId, 27);
   FieldEvent_Wait(30);
-  Actor_SetAnimation(party->currentOwner, 28);
+  Actor_SetAnimation(party->leaderActorId, 28);
   FieldEvent_Wait(10);
   for (i = 0; i <= 19; i++) {
     object->scaleX -= 0x300;
@@ -684,7 +684,7 @@ void GabombaStatue_RideRollingCog(void) {
     }
     GabombaStatue_HopOffCog(actor, 0, (sign * 3) << 18, 0x20000);
   }
-  if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue4)
+  if (gMainRoutineWork.next != (s32)&SceneId_GabombaStatue4)
     return;
   x = actor->x >> 20;
   if (actor->z >> 20 != 15)
@@ -747,10 +747,10 @@ void GabombaStatue_MouseShowsTheWay(struct Actor *object) {
   FieldCamera_SetSpeed(1);
   Actor_SetPosition(39, 328, 296);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(15);
-  FieldActor_WatchAndSetScript(gMainRoutineWork.currentOwner, 39);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  FieldActor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 39);
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   EventCamera_FollowActor(39, 1);
   FieldEvent_Wait(30);
@@ -761,7 +761,7 @@ void GabombaStatue_MouseShowsTheWay(struct Actor *object) {
   Actor_WalkToAndWait(39, 280, 216);
   Actor_WalkToAndWait(39, 280, 184);
   FieldEvent_Wait(20);
-  Actor_FaceActor(39, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(39, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(10);
   Event_PlaySound(SE_VOICE_GIRL_3);
   {
@@ -853,8 +853,8 @@ void GabombaStatue_HearTheOffering(void) {
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(40);
   System_Wait(80);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
   GabombaStatue_ReleaseCharges();
   System_Wait(1);
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -867,7 +867,7 @@ void GabombaStatue_HearTheOffering(void) {
   FieldActor_SetSpriteColor(Actor_Get(10), 3);
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
-  Event_PlaySound(MUS_011);
+  Event_PlaySound(MUS_KIBOMBO);
   result = GabombaStatue_RunCharges(11, 1);
   ObjectTable_Snapshot();
   gFieldWork->transition = 0x201;
@@ -898,8 +898,8 @@ extern struct Trigger gGabombaStatue_Room5Triggers[];
 extern struct Trigger gGabombaStatue_Room6Triggers[];
 extern struct Trigger gGabombaStatue_Room7Triggers[];
 
-const u8 *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u8 *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Triggers;
 
   if (scene == (s32)&SceneId_GabombaStatue1)
@@ -924,20 +924,20 @@ const u8 *Scene_GetEvents(void) {
 void GabombaStatue_DropIntoHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct GabombaStatueChamberObject *object =
-      Actor_Get(gMainRoutineWork.currentOwner);
+      Actor_Get(gMainRoutineWork.leaderActorId);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x, z);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, x, z);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  FieldActor_RefreshSelectorById(gMainRoutineWork.leaderActorId);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 13);
   FieldActor_SetMoveTargetFixed(object, x << 16, px(-12), z << 16);
   FieldActor_WaitForMove(object);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -946,7 +946,7 @@ void GabombaStatue_DropIntoHole(s32 x, s32 z) {
 
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(name, n1, n2, n3, n4, n5, n6, n7) \
   void name(void) {                                                            \
-    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);          \
     s32 x = leader->x >> 20;                                                   \
     s32 z = leader->z >> 20;                                                   \
                                                                                \
@@ -967,7 +967,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoRoom1Hole, 11, 18,
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(name, n1, n2, n3, n4, n5,    \
                                                   n6, n7, n8)                  \
   void name(void) {                                                            \
-    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);          \
     s32 x = leader->x >> 20;                                                   \
     s32 z = leader->z >> 20;                                                   \
                                                                                \
@@ -989,7 +989,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoRoom2Hole, 29,
                                           11, 13, 12, 28, 30, 472, 196)
 
 void GabombaStatue_StepIntoFirstRoom3Hole(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -1003,7 +1003,7 @@ void GabombaStatue_StepIntoFirstRoom3Hole(void) {
 }
 
 void GabombaStatue_StepIntoSecondRoom3Hole(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -1022,7 +1022,7 @@ void GabombaStatue_StepIntoSecondRoom3Hole(void) {
 }
 
 void GabombaStatue_StepIntoThirdRoom3Hole(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -1044,7 +1044,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoSecondRoom4Hole, 9,
                                      5, 7, 6, 10, 104, 146)
 
 void GabombaStatue_StepIntoThirdRoom4Hole(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -1060,7 +1060,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoRoom5Hole, 27,
 
 /// Jumps down the hole.
 void GabombaStatue_JumpDownHole(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct Actor *leader;
@@ -1071,19 +1071,19 @@ void GabombaStatue_JumpDownHole(void) {
   if (x == 29 && z == 10 && !(gInput.held & KEY_UP))
     return;
   work = Ram_HeapSlots->fieldWork;
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 472, 144);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  FieldActor_RefreshSelectorById(gMainRoutineWork.currentOwner);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 13);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 472, 144);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  FieldActor_RefreshSelectorById(gMainRoutineWork.leaderActorId);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 13);
   FieldActor_SetMoveTarget(leader, 472, 0, 156);
   FieldActor_WaitForMove(leader);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 10);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1095,8 +1095,8 @@ void GabombaStatue_JumpDownHole(void) {
     Event_Start();                                                             \
     FieldEvent_ResolvePendingActions(0);                                       \
     Event_PlaySound(SE_581);                                                   \
-    Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 1.6, 1.6);    \
-    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, n1, n2);                \
+    Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 1.6, 1.6);   \
+    Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, n1, n2);               \
     Event_End();                                                               \
   }
 
@@ -1105,7 +1105,7 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionCarriesLeader, 152,
 
 // A turning pinion carries the leader along and throws him down.
 void GabombaStatue_PinionThrowsLeader(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 speed;
 
   Event_Start();
@@ -1115,12 +1115,12 @@ void GabombaStatue_PinionThrowsLeader(void) {
   speed = 0x19999;
   /* FAKEMATCH(barrier): an empty asm on speed. */
   asm volatile("" : "+l"(speed));
-  Actor_SetSpeedFixed(gMainRoutineWork.currentOwner, speed, 0x19999);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 152, 488);
+  Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, speed, 0x19999);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 488);
   actor->motionFlags = 3;
   FieldEvent_Wait(8);
   Event_PlaySound(SE_RATTLE);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 22);
   FieldEvent_Wait(20);
   Event_End();
 }
@@ -1138,9 +1138,9 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionCarriesLeaderWest, 440,
                                      184)
 
 void GabombaStatue_SetActorsHidden(s32 show) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue1)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaStatue1)
     Actors_SetHidden(show, 8, 1);
-  else if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue2)
+  else if (gMainRoutineWork.next == (s32)&SceneId_GabombaStatue2)
     Actors_SetHidden(show, 29, 2);
 }
 
@@ -1431,7 +1431,7 @@ void GabombaStatue_TurnCogs(s32 direction) {
   s16 scene;
 
   gGabombaStatue_CogDirection = direction;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_GabombaStatue2) {
     GabombaStatue_SetCogTurn(14, direction, 0);
     GabombaStatue_SetCogTurn(21, direction, 1);
@@ -1517,7 +1517,7 @@ void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
 #define SceneState SceneState__s2394
 // The leader falls in from the cog above and lands with a thump beside Steel.
 void GabombaStatue_LandFromFall(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
 
@@ -1557,18 +1557,18 @@ void GabombaStatue_LandFromFall(void) {
     i++;
   } while (i <= 16);
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   actor->gravity = px(1);
   actor->bounce = Q16_ONE / 4;
   System_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = 0x209;
   Event_End();
 }
@@ -1602,19 +1602,19 @@ void GabombaStatue_FocusEnergies(void) {
   FieldEvent_SetMessageId(MsgGabombaFocusEnergies);
   // "Focus your energies!"
   Event_ShowMessage(24, 0);
-  Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(23, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   System_Wait(1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_SetSpeed(23, 0.8);
   Actor_SetScript(23, gGabombaStatue_KradenFocusScript);
   System_Wait(10);
-  Actor_SetScript(gMainRoutineWork.currentOwner,
+  Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gGabombaStatue_LeaderFocusScript);
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_JennaFocusScript);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_PiersFocusScript);
@@ -1634,18 +1634,18 @@ void GabombaStatue_FocusEnergies(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 40);
   Actor_Get(ACTOR_PIERS)->facing = FACING_SOUTH;
-  Actor_Get(gMainRoutineWork.currentOwner)->facing = FACING_SOUTH;
+  Actor_Get(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_SHEBA)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_JENNA)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_PIERS)->actionFlags &= 0xfe;
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
   Actor_Get(ACTOR_SHEBA)->actionFlags &= 0xfe;
   Actor_Get(ACTOR_JENNA)->actionFlags &= 0xfe;
   Actor_WalkTo(ACTOR_PIERS, 400, 272);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 420, 272);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 420, 272);
   Actor_WalkTo(ACTOR_SHEBA, 444, 272);
   Actor_WalkTo(ACTOR_JENNA, 468, 272);
   FieldEvent_Wait(20);
@@ -1665,7 +1665,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   speed = 0x4000;
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(348), px(312),
+  Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, px(348), px(312),
                              speed);
   Actor_SetPositionAndFacing(ACTOR_PIERS, px(330), px(312), speed);
   {
@@ -1691,13 +1691,13 @@ void GabombaStatue_WatchTheChargesStick(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(10);
   System_Wait(20);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   GabombaStatue_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   GabombaStatue_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   GabombaStatue_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
@@ -1709,7 +1709,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   FieldActor_SetSpriteColor(Actor_Get(10), 3);
   FieldActor_SetSpriteColor(Actor_Get(9), 0);
   System_Wait(8);
-  ((struct Wanderer *)Actor_Get(gMainRoutineWork.currentOwner))->timer =
+  ((struct Wanderer *)Actor_Get(gMainRoutineWork.leaderActorId))->timer =
       (Random16() * 40 >> 16) + 10;
   ((struct Wanderer *)Actor_Get(ACTOR_PIERS))->timer =
       (Random16() * 40 >> 16) + 10;
@@ -1718,12 +1718,13 @@ void GabombaStatue_WatchTheChargesStick(void) {
   ((struct Wanderer *)Actor_Get(ACTOR_SHEBA))->timer =
       (Random16() * 40 >> 16) + 10;
   ((struct Wanderer *)Actor_Get(23))->timer = (Random16() * 40 >> 16) + 10;
-  Actor_SetScript(gMainRoutineWork.currentOwner, gGabombaStatue_StepBackScript);
+  Actor_SetScript(gMainRoutineWork.leaderActorId,
+                  gGabombaStatue_StepBackScript);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_StepBackScript);
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_GirlsStepBackScript);
   Actor_SetScript(ACTOR_SHEBA, gGabombaStatue_GirlsStepBackScript);
   Actor_SetScript(23, gGabombaStatue_GirlsStepBackScript);
-  Event_PlaySound(MUS_011);
+  Event_PlaySound(MUS_KIBOMBO);
   GabombaStatue_RunCharges(11, 0);
   FieldEvent_Wait(80);
   Event_SetFlag(0x8f7);
@@ -1743,7 +1744,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   {
-    s32 leader = gMainRoutineWork.currentOwner;
+    s32 leader = gMainRoutineWork.leaderActorId;
 
     north = FACING_NORTH;
     Actor_SetPositionAndFacing(leader, 174 << 17, 156 << 17, north);
@@ -1769,7 +1770,7 @@ void GabombaStatue_SeeHowItWorks(void) {
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(392, CAMERA_KEEP, 292, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
@@ -1779,14 +1780,14 @@ void GabombaStatue_SeeHowItWorks(void) {
   // "Should we reconnect the conduit so he can complete the ceremony?"
   ((void *)Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 5,
                              0));
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+                                            0) == 0) {
     GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     Actor_SetSpeed(ACTOR_PIERS, 2);
     Actor_WalkToAndWait(ACTOR_PIERS, 340, 296);
     Actor_WalkToAndWait(ACTOR_PIERS, 354, 296);
     Actor_WalkToAndWait(ACTOR_PIERS, 364, 308);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
     // "I won't help them, Felix! They're the ones who stole my orb from the..."
     Event_ShowMessage(
@@ -1798,7 +1799,7 @@ void GabombaStatue_SeeHowItWorks(void) {
     Actor_WalkToAndWait(ACTOR_PIERS, 340, 296);
     Actor_WalkToAndWait(ACTOR_PIERS, 354, 296);
     Actor_WalkToAndWait(ACTOR_PIERS, 364, 308);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
     // "I agree, Felix! Why should we help this pack of thieves?"
@@ -1837,14 +1838,14 @@ void GabombaStatue_SeeHowItWorks(void) {
   GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 80);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 80);
   GabombaStatue_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
   // "You're right, Sheba. Let's see if we can't help him finish his..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(23, 3);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
@@ -1921,7 +1922,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   Actor_SetPosition(22, 0, 0);
   System_Wait(1);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 182, 0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
   south = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(472), px(216), south);
   facing = FACING_SOUTH_SOUTHEAST;
@@ -1975,7 +1976,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   FieldEvent_Wait(20);
   // "But...if you truly did this, then why? Why did you help me?"
   Event_ShowMessage(24, 0);
-  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(472), px(204),
+  Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, px(472), px(204),
                              south);
   Actor_SetPositionAndFacing(ACTOR_PIERS, px(440), px(204), south);
   Actor_SetPositionAndFacing(23, px(456), px(204), facing);
@@ -2009,7 +2010,7 @@ void GabombaStatue_SawEnergyFlow(void) {
 
 void GabombaStatue_FixTheChannel(void) {
   GabombaStatue_StopClock();
-  Actor_MoveToObject(23, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(23, gMainRoutineWork.leaderActorId);
   FieldActor_SetSpriteColor(Actor_Get(23), 15);
   System_Wait(10);
   FieldEvent_SetMessageId(MsgGabombaChannelTiming);
@@ -2026,7 +2027,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
 
   gFieldWork->transition = 521;
-  if (gMainRoutineWork.scene != (s32)&SceneId_GabombaStatue1) {
+  if (gMainRoutineWork.next != (s32)&SceneId_GabombaStatue1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       GabombaStatue_TurnCogs(0);
     else if (Event_GetFlag(FLAG_GABOMBA_COGS_TURNED_BACK))
@@ -2036,7 +2037,7 @@ s32 Scene_Initialize(void) {
     GabombaStatue_DrawCogCells();
   }
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_GabombaStatue1) {
     GabombaStatue_InitializeRoom1();
   } else if (scene == (s32)&SceneId_GabombaStatue2) {
@@ -2055,7 +2056,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaStatue7 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaStatue7 &&
       gMainRoutineWork.entrance == 1 &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(FLAG_GABOMBA_COGS_TURNED_BACK);
@@ -2107,7 +2108,7 @@ void GabombaStatue_InitializeRoom5(void) {
 
 // The channel's random seed, from the leader's stats.
 s32 GabombaStatue_GetPuzzleSeed(void) {
-  u8 *state = Unit_Get(gMainRoutineWork.currentOwner);
+  u8 *state = Unit_Get(gMainRoutineWork.leaderActorId);
   s32 sum = 0;
   u32 i;
 
@@ -2166,7 +2167,7 @@ L_0200b6f2:
   t29 = Event_GetFlag(0x8fc);
   if (t29 == 0)
     goto L_0200b762;
-  t30 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  t30 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   v_r5 = t30;
   Actor_SetPosition(11, 0, 0);
   Actor_SetPosition(12, 0, 0);
@@ -2267,7 +2268,7 @@ extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
 #define gSceneState gSceneState__s2394
 
 void GabombaStatue_InitializeRoom7(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   if (gMainRoutineWork.entrance == 1) {
     Event_SetFlag(0xa27);
     Event_ClearFlag(0xa28);
@@ -2383,7 +2384,7 @@ s32 GabombaStatue_LayChannel(s32 value) {
   }
 retry:
   state->count += 1;
-  gRandomState = state->count;
+  gRandomSeed = state->count;
   Iwram_ClearWordsEntry(state, sizeof(state->cells));
   state->cells[3 * 11 + 5].kind = 10;
   state->cells[7 * 11 + 1].kind = 10;
@@ -2983,7 +2984,7 @@ void GabombaStatue_DrawFloatingTiles(void) {
   struct Sprite *oam = state->oam;
   s32 scrollX = scroll[0] & 0xffff0000;
   s32 scrollZ = scroll[1] & 0xffff0000;
-  u16 tile = gResourceTableEntries[state->tileEntry].offset >> 5;
+  u16 tile = gVramCacheEntries[state->tileEntry].offset >> 5;
   struct AffineTransform effect;
   s32 id;
 
@@ -3424,7 +3425,7 @@ void GabombaStatue_DrawClock(void) {
   u8 *digit = clock->digit;
   u8 *old = clock->tiles;
   u8 *now = clock->digits;
-  u32 tile = gResourceTableEntries[clock->tileEntry].offset >> 5;
+  u32 tile = gVramCacheEntries[clock->tileEntry].offset >> 5;
   struct Sprite *oam = clock->oam;
   s32 *timer = &clock->timer;
   struct AffineTransform effect;

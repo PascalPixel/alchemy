@@ -57,8 +57,8 @@ void Field_StartEncounterTransition(s32 unused) {
   s32 c;
 
   work = Ram_HeapSlots->fieldWork;
-  Sound_PlayFar(gMainRoutineWork.sceneCue);
-  Sound_PlayFar(SE_298);
+  Sound_PlayFar(gMainRoutineWork.battleMusic);
+  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   Sound_PlayFar(SE_BEAST_CRY);
   if (work->mode == 3) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
@@ -132,7 +132,7 @@ void Exit_PrepareAnimation(s32 animation) {
 
   party = &gMainRoutineWork;
   mode = animation;
-  object = ObjectTable_Get(party->currentOwner);
+  object = ObjectTable_Get(party->leaderActorId);
   context = object->sprite;
   effect = ResourceMetadata_RegisterFar(context, 267);
   zero = 0;
@@ -164,7 +164,7 @@ void Exit_StartStairsDown(void) {
 
 void Entrance_EndArrivalAnimation(s32 mode) {
   s32 zero;
-  struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  struct Actor *obj = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   struct ContextSprite *ctx = obj->sprite;
   struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar(ctx, 0x10b);
 
@@ -211,7 +211,7 @@ s32 Entrance_PlayArrival(void) {
         struct Actor *object;
 
         GameFlag_Clear(flag);
-        id = gMainRoutineWork.currentOwner;
+        id = gMainRoutineWork.leaderActorId;
         object = ObjectTable_Get(id);
         object->y += px(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
@@ -231,7 +231,7 @@ s32 Entrance_PlayArrival(void) {
 }
 
 void Func_080d5fd4(void) {
-  struct Actor *object = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   u8 *metadata =
       ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
 

@@ -36,7 +36,7 @@ extern u8 gAlhafraInteriors_SecondGuestSprite[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -79,7 +79,7 @@ extern struct Trigger gAlhafraInteriors_Triggers[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED))
     return gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
@@ -133,14 +133,14 @@ void AlhafraInteriors_MeetAlex(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_FaceDirection(31, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
 
 /// The merchant: across the counter, his shop; else what he says.
 void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(9, actor);
@@ -153,7 +153,7 @@ void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
 
 /// The innkeeper: across the counter, the inn; else what he says.
 void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(2, actor);
@@ -166,7 +166,7 @@ void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
 
 /// The healer: across the counter, the sanctum; else what he says.
 void AlhafraInteriors_TalkToHealer(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -191,8 +191,8 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   Event_SetFlag(FLAG_GUESTS_ASKED_FOR_TEA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 152, 328);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 152, 328);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors07);
   Actor_FaceDirection(14, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -240,7 +240,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
 
 /// The old houseguest, put out by the lady of the house.
 void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
-  Actor_FaceEachOther(a0, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceEachOther(a0, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
   // "Well! I say! It seems the lady of the house is no lady at all!"
   Event_ShowMessage(a0, 0);
@@ -249,7 +249,7 @@ void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
 
 /// Mind Read on Alex: he turns to the party and asks them to stop.
 void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
-  Actor_FaceEachOther(a1, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceEachOther(a1, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
   // "Really, I do wish you would quit using your Mind Read on me... Trust..."
   Event_ShowMessage(a1, 0);
@@ -286,7 +286,7 @@ void AlhafraInteriors_AlexHearsOfBriggs(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED))
     return gAlhafraInteriors_TriggersOnceTheMastIsCleared;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
@@ -333,7 +333,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
   Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (Actor_Get(gMainRoutineWork.currentOwner)->x >= px(512))
+    if (Actor_Get(gMainRoutineWork.leaderActorId)->x >= px(512))
       Event_SetFlag(FLAG_SCENE_TEMP_00);
     else
       Event_ClearFlag(FLAG_SCENE_TEMP_00);

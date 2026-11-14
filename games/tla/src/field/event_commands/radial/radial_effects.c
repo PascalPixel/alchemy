@@ -418,12 +418,12 @@ void FieldPsynergy_HaltActor(s32 id) {
 
   object = ObjectTable_Get(id);
   if (object != NULL) {
-    gMainRoutineWork.savedCallback = (u32)object->update;
-    gMainRoutineWork.savedByte = 0;
+    gMainRoutineWork.pausedUpdate = (u32)object->update;
+    gMainRoutineWork.pausedPose = 0;
     if (object->kind == 1) {
       entry = object->target.animation->entries[0];
       if (entry != NULL) {
-        gMainRoutineWork.savedByte = entry->param;
+        gMainRoutineWork.pausedPose = entry->param;
       }
     }
     object->update = FieldPsynergy_UpdateHaltedActor;
@@ -437,9 +437,9 @@ void FieldPsynergy_ResumeHaltedActor(s32 id) {
 
   if (object != NULL) {
     if (object->update == FieldPsynergy_UpdateHaltedActor) {
-      object->update = (void *)gMainRoutineWork.savedCallback;
-      gMainRoutineWork.savedCallback = 0;
-      Actor_SetSpriteColorModeFar(object, (s8)gMainRoutineWork.savedByte);
+      object->update = (void *)gMainRoutineWork.pausedUpdate;
+      gMainRoutineWork.pausedUpdate = 0;
+      Actor_SetSpriteColorModeFar(object, (s8)gMainRoutineWork.pausedPose);
     }
     object->value5b = 0;
     Actor_SetAnimationSpeedFar(object, 16);
@@ -763,7 +763,7 @@ void FieldPsynergy_Lash(void) {
       Task_Add(FieldPsynergy_UpdateLash, 0x480);
       while (work->phase != 999) {
         if (work->flash == 1) {
-          Sound_PlayFar(SE_512);
+          Sound_PlayFar(SE_LASH);
           Rope_Lash(event->targetX, event->targetY, event->targetZ);
           work->hit = 1;
           Sound_PlayFar(SOUND_FADE_OUT_SE5);
@@ -877,7 +877,7 @@ void FieldPsynergy_Retreat(void) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
-  Actor_ArmCallback(scene->firstObjectId, 0x4000, 0);
+  Actor_FaceDirectionById(scene->firstObjectId, 0x4000, 0);
   wait(30);
   obj->update = Actor_ApplyRandomChildValues;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
@@ -941,7 +941,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->map == (s32)&SceneId_Clear)
+  if (party->mapId == (s32)&SceneId_Clear)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -968,7 +968,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->map == (s32)&SceneId_Clear)
+  if (party->mapId == (s32)&SceneId_Clear)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -1015,8 +1015,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
     VramCache_FreeEntry(sprite->resource);
     sprite->resource = *(u16 *)(work + 0x710);
     sprite->active = 1;
-    sprite->attr.half.tile =
-        gResourceTableEntries[sprite->resource].offset >> 5;
+    sprite->attr.half.tile = gVramCacheEntries[sprite->resource].offset >> 5;
     sprite->flags05_5 = 0;
     sprite->layer = 1;
     sprite->size = 2;
@@ -1041,7 +1040,7 @@ void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   elapsedFrames = (s16)caster->step++;
   party = &gMainRoutineWork;
 
-  if (party->map == (s32)&SceneId_Clear) {
+  if (party->mapId == (s32)&SceneId_Clear) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -1191,7 +1190,7 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode) {
 /// switches to the other group.
 void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
   struct ArcWork *work = Ram_HeapSlots->block62;
-  s32 tiles = gResourceTableEntries[work->resource].offset >> 5;
+  s32 tiles = gVramCacheEntries[work->resource].offset >> 5;
   s32 group = work->group;
   struct EffectSprite *sprite;
   s32 i;
@@ -1813,7 +1812,7 @@ struct MapCell__f0e150c {
   u8 unk02;
 };
 
-extern struct TouchCopies gData_02001000;
+extern struct TouchCopies gSceneLocalState;
 
 struct MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 
@@ -1840,27 +1839,27 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
       MapGrid_CopyCellPictureCellsRectFar(toX + x, toZ + z, 1, 1, originX + x,
                                           originZ + z);
       MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->unk02 = 0;
-      n = gData_02001000.count;
+      n = gSceneLocalState.count;
       if (n < 64) {
-        gData_02001000.copies[n].toX = toX + x;
-        gData_02001000.copies[n].toZ = toZ + z;
-        gData_02001000.copies[n].fromX = originX + x;
-        gData_02001000.copies[n].fromZ = originZ + z;
-        gData_02001000.copies[n].cellX = cell[i].x;
-        gData_02001000.copies[n].cellZ = cell[i].z;
-        gData_02001000.count++;
+        gSceneLocalState.copies[n].toX = toX + x;
+        gSceneLocalState.copies[n].toZ = toZ + z;
+        gSceneLocalState.copies[n].fromX = originX + x;
+        gSceneLocalState.copies[n].fromZ = originZ + z;
+        gSceneLocalState.copies[n].cellX = cell[i].x;
+        gSceneLocalState.copies[n].cellZ = cell[i].z;
+        gSceneLocalState.count++;
       }
     }
   }
 }
 #undef BOW_NEXT_PHASE
 
-/* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c
- * has extern struct TouchCopies gData_02001000; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
+/* VIEW(f0e2718): variable gSceneLocalState as extern u8 gSceneLocalState[];
+ * f0e150c has extern struct TouchCopies gSceneLocalState; tried as the rest of
+ * the object declares it, it does not compile in tla-ja:
  * games/tla/src/field/event_commands/radial/radial_effects.c:1874: incompatible
  * types in initialization. */
-extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
+extern u8 gData_02001000__f0e2718[] __asm__("gSceneLocalState");
 /* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
  * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); f0e150c has struct
  * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the

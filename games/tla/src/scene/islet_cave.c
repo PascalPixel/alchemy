@@ -98,7 +98,7 @@ extern u16 gPaletteCycleLength;
 extern u16 gPaletteCycleIndex;
 void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
-void BattleEffect_PackTargetBuffer(void);
+void PaletteFade_PackTarget(void);
 
 extern u16 *gPaletteColors;
 extern u16 *gPaletteCycleSlots;
@@ -127,7 +127,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     IsletCave_TeleportIn();
 }
@@ -207,7 +207,7 @@ void IsletCave_TeleportIn(void) {
   s32 saved;
 
   saved = work->transition;
-  BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
+  PaletteFade_SetTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
@@ -216,7 +216,7 @@ void IsletCave_TeleportIn(void) {
   Teleport_PlayWhirl();
   wait(40);
   IsletCave_StopPaletteCycle();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+  PaletteFade_SetTarget(0x10000, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
   {
@@ -261,7 +261,7 @@ s32 IsletCave_BobOnWater(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -272,8 +272,8 @@ extern struct Trigger gIsletCave_Triggers[];
 extern struct Trigger gIsletCave_Room2Triggers[];
 extern struct Trigger gIsletCave_Room3Triggers[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_IsletCave1)
     return gIsletCave_Room1Placements;
@@ -282,8 +282,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gIsletCave_Placements;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_IsletCave2)
     return gIsletCave_Room2Triggers;
@@ -300,12 +300,12 @@ void IsletCave_FinishTeleport(void) {
   Teleport_PlayWhirl();
   wait(40);
   IsletCave_StopPaletteCycle();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+  PaletteFade_SetTarget(0x10000, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
 
   gMainRoutineWork.unk2c2 = 0;
-  Actor_ConfigureSpriteColor(gMainRoutineWork.currentOwner, 0);
+  Actor_ConfigureSpriteColor(gMainRoutineWork.leaderActorId, 0);
   work->transition = effect;
 }
 
@@ -316,7 +316,7 @@ void IsletCave_FinishTeleport(void) {
                                                                                \
     gMainRoutineWork.unk2c2 = 1;                                               \
     Event_Wait(40);                                                            \
-    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
+    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,     \
                                            px(n1), px(n2));                    \
     IsletCave_FinishTeleport();                                                \
   }
@@ -394,9 +394,9 @@ loop:
 
     MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, position[1]);
   }
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
   Event_Wait(6);
   Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
@@ -415,7 +415,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 521;
   FieldEffect_StartBlankOverlay(0);
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_IsletCave1) {
     IsletCave_PlaceLogs();
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
@@ -437,17 +437,17 @@ s32 Scene_Initialize(void) {
   } else {
     goto other;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_IsletCave2)
+  if (gMainRoutineWork.next == (s32)&SceneId_IsletCave2)
     goto fade;
 other:
-  if (gMainRoutineWork.scene == (s32)&SceneId_IsletCave3) {
+  if (gMainRoutineWork.next == (s32)&SceneId_IsletCave3) {
   fade:
-    if (gMainRoutineWork.scene == (s32)&SceneId_IsletCave2)
+    if (gMainRoutineWork.next == (s32)&SceneId_IsletCave2)
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
     IsletCave_DimPalette(0x400 - (dim << 7));
-    BattleEffect_PackTargetBuffer();
+    PaletteFade_PackTarget();
     PaletteFade_StartInterpolation(1);
     Event_WaitTransitionFrames();
   }
@@ -569,7 +569,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   s32 z;
 
   leader = ((struct FieldActor__islet_cave *)Actor_GetById(
-      gMainRoutineWork.currentOwner));
+      gMainRoutineWork.leaderActorId));
   actor = ((struct FieldActor__islet_cave *)Actor_GetById(actorId));
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -592,7 +592,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(leader);
   Actor_SelectAnimation(actor, 2);
-  Sound_Play(SE_298);
+  Sound_Play(SE_STOP_MUSIC_PLAYER_5);
   Event_End();
 }
 
@@ -764,14 +764,14 @@ void IsletCave_SentinelAwaits(void) {
   Actor_StartRepeatedMotion(8, 2);
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   EventMessage_ShowCentered((s32)MsgSummonGuardianOfWind, 0, 2);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != 0) {
     Actor_SetDestinationById(8, FIELD_AT((u8 *)object, s16, 10),
                              FIELD_AT((u8 *)object, s16, 18));
@@ -791,7 +791,7 @@ void IsletCave_SentinelAwaits(void) {
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
     struct Actor *object = Actor_GetById(9);
-    struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+    struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
     Actor_SetPosition(9, 296, 160);
@@ -800,7 +800,7 @@ void IsletCave_TremorRevealsSerac(void) {
     Actor_MoveToAndWait(9, 344, ((owner->z >> 19) << 3) + 24);
     Actor_Stop(8);
     object->speedLimit = px(1);
-    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 9, 0);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 9, 0);
   }
 }
 

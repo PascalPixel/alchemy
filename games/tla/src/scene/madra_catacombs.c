@@ -155,15 +155,15 @@ extern struct Trigger gMadraCatacombs_Triggers[];
 void MadraCatacombs_SetUpRoomBelowBookshelf(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs4)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs4)
     return gMadraCatacombs_Room4Entrances;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs5)
     return gMadraCatacombs_Room5Entrances;
   return gMadraCatacombs_Entrances;
 }
 
-const s16 *Scene_GetRegions(void) {
-  s16 scene = gMainRoutineWork.scene;
+const s16 *Scene_GetExitRegions(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MadraCatacombs2)
     return gMadraCatacombs_LadderRoomRegions;
@@ -172,30 +172,30 @@ const s16 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs1)
     return gMadraCatacombs_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs3)
     return gMadraCatacombs_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs5)
     return gMadraCatacombs_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs6)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs6)
     return gMadraCatacombs_Room6Placements;
   return gMadraCatacombs_Placements;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs1)
     return gMadraCatacombs_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs2)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs2)
     return gMadraCatacombs_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs3)
     return gMadraCatacombs_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs4)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs4)
     return gMadraCatacombs_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs5)
     return gMadraCatacombs_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs6)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs6)
     return gMadraCatacombs_Room6Triggers;
   return gMadraCatacombs_Triggers;
 }
@@ -277,19 +277,19 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(160, CAMERA_KEEP, 186, 1);
-  Event_PlaySound(SE_168);
+  Event_PlaySound(SE_UNLOCK);
   Actor_SetPosition(ACTOR_FIRST_WEST_FLARE + 4, 136, 258);
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE + 4, 184, 258);
   Actor_SetScript(ACTOR_FIRST_WEST_FLARE + 4, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(ACTOR_FIRST_EAST_FLARE + 4, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
-  Event_PlaySound(SE_168);
+  Event_PlaySound(SE_UNLOCK);
   Actor_SetPosition(ACTOR_FIRST_WEST_FLARE + 3, 120, 226);
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE + 3, 200, 226);
   Actor_SetScript(ACTOR_FIRST_WEST_FLARE + 3, gMadraCatacombs_FlameFlaresUp);
   Actor_SetScript(ACTOR_FIRST_EAST_FLARE + 3, gMadraCatacombs_FlameFlaresUp);
   Event_Wait(40);
-  Event_PlaySound(SE_168);
+  Event_PlaySound(SE_UNLOCK);
   Actor_SetPosition(ACTOR_FIRST_WEST_FLARE + 2, 120, 194);
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE + 2, 200, 194);
   Actor_SetScript(ACTOR_FIRST_WEST_FLARE + 2, gMadraCatacombs_FlameFlaresUp);
@@ -465,18 +465,18 @@ void MadraCatacombs_EnterDoorway(void) {
   struct Actor *object;
   s32 cell;
 
-  object = Actor_GetById(party->currentOwner);
+  object = Actor_GetById(party->leaderActorId);
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetAnimation(party->currentOwner, ANIM_WALK);
-  Actor_SetSpeed(party->currentOwner, 0.5);
+  Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(party->leaderActorId, 0.5);
   cell = object->x >> 16;
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                       object->z);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
-  Actor_SetScript(party->currentOwner, gMadraCatacombs_WalkIntoDoorway);
+  Actor_SetScript(party->leaderActorId, gMadraCatacombs_WalkIntoDoorway);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -498,16 +498,16 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
     Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(a, b, c, d, mode, f);
   Event_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (mode == 1) {
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.leaderActorId);
     cell = object->x >> 16;
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                         object->z);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
-  Actor_SetScript(gMainRoutineWork.currentOwner,
+  Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gMadraCatacombs_WalkIntoDoorway);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
@@ -539,8 +539,8 @@ void MadraCatacombs_OpenTabletRoomDoor(void) {
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);     \
-    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);    \
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);    \
+    Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);   \
     wait(1);                                                                   \
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
@@ -554,15 +554,15 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs1)
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs1)
     MadraCatacombs_SetUpVillage();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs3)
+  else if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs3)
     MadraCatacombs_SetUpChampaTunnel();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs4)
+  else if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs4)
     MadraCatacombs_SetUpRoomBelowBookshelf();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs5)
+  else if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs5)
     MadraCatacombs_SetUpBookshelfRoom();
-  else if (gMainRoutineWork.scene == (s32)&SceneId_MadraCatacombs6)
+  else if (gMainRoutineWork.next == (s32)&SceneId_MadraCatacombs6)
     MadraCatacombs_SetUpTabletRoom();
   return 0;
 }

@@ -35,7 +35,7 @@ void Pillars_Raise(u16 *list) {
     ((struct MapCell *)cells)->attributeB |= 64;
     list++;
   }
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;

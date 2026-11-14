@@ -29,7 +29,7 @@ s32 Shop_ListAvailableArtifacts(void) {
   s32 itemId;
 
   // Every 9-bit id is tried.
-  for (itemId = 0; itemId <= ITEM_ID_MASK; itemId++) {
+  for (itemId = 0; itemId <= INVENTORY_ITEM_ID_MASK; itemId++) {
     s32 shopType = shop->shopType;
 
     if (shopType != SHOP_TYPE_GENERAL_STORE) {
@@ -187,7 +187,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 /// sanctum. It opens the empty stock row 0.
 s32 Shop_OpenDebugShop(void) {
   gMainRoutineWork.coins = 200000;
-  gMainRoutineWork.counterC = 28;
+  gMainRoutineWork.shopGifts = 28;
   Inventory_EquipFar(
       GARET,
       Inventory_AddItemFar(GARET, INVENTORY_BROKEN | ITEM_VIRTUOUS_ARMLET));

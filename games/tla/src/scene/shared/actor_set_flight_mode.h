@@ -8,6 +8,6 @@ void Actor_SetFlightMode(struct Actor *object, s32 mode) {
     object->update = (void (*)(void))Func_02003b38;
   } else {
     object->update = (void (*)(void))Actor_CycleChildValues;
-    Event_PlaySound(SE_291);
+    Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }

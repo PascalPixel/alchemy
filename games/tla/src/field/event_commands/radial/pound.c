@@ -99,7 +99,7 @@ void FieldPsynergy_UpdatePound(void) {
       blend->scaleX = Q16_ONE / 8;
       blend->scaleY = Q16_ONE / 8;
       MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
-      Sound_PlayFar(SE_567);
+      Sound_PlayFar(SE_POUND);
       work->sparkles = 1;
       work->fading = 1;
     }

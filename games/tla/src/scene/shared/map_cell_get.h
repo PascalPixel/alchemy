@@ -8,7 +8,7 @@ s32 MapCell_Get(u32 layer, s32 x, s32 y) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += x + (y << 7);
   return (cell->collisionCode << 8) | cell->attributeB;
 }

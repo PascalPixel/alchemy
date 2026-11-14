@@ -7,7 +7,7 @@
 
 /// Returns an item's definition; an inventory entry's other bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
-  return &gItem_DefinitionTable[item & ITEM_ID_MASK];
+  return &gItem_DefinitionTable[item & INVENTORY_ITEM_ID_MASK];
 }
 
 /// Returns whether a character can equip the item: bit classId of its
@@ -61,7 +61,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   s32 item_id;
 
   owner = ((struct OwnerInventoryState *)Unit_Get(owner))->inventory[slot];
-  item_id = ITEM_ID_MASK;
+  item_id = INVENTORY_ITEM_ID_MASK;
   item_id &= owner;
   owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
   owner++;
@@ -93,7 +93,7 @@ s32 PartyInventory_HasSpace(void) {
   s16 *unitId;
   s32 i;
 
-  if (Inventory_Count(gMainRoutineWork.currentOwner) != INVENTORY_SLOTS)
+  if (Inventory_Count(gMainRoutineWork.leaderActorId) != INVENTORY_SLOTS)
     return 1;
   unitCount = Party_ListMembers(unitIds);
   unitId = unitIds;
@@ -124,12 +124,13 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id) {
 
   if ((item->flags & ITEM_STACKABLE) != 0) {
     slot = 0;
-    if (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0) {
+    if (((inv->inventory[slot] ^ item_id) & INVENTORY_ITEM_ID_MASK) != 0) {
       do {
         slot++;
         if (slot >= INVENTORY_SLOTS)
           break;
-      } while (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0);
+      } while (((inv->inventory[slot] ^ item_id) & INVENTORY_ITEM_ID_MASK) !=
+               0);
     }
     if (slot != INVENTORY_SLOTS) {
       s32 entry = inv->inventory[slot];
@@ -199,7 +200,7 @@ s32 Inventory_Find(s32 owner, s32 item_id) {
   s32 slot;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-    if ((inv->inventory[slot] & ITEM_ID_MASK) == item_id) {
+    if ((inv->inventory[slot] & INVENTORY_ITEM_ID_MASK) == item_id) {
       return slot;
     }
   }
@@ -213,8 +214,8 @@ s32 PartyInventory_FindMember(s32 itemId) {
   s16 *cursor;
   s32 i;
 
-  if (Inventory_Find(gMainRoutineWork.currentOwner, itemId) != -1)
-    return gMainRoutineWork.currentOwner;
+  if (Inventory_Find(gMainRoutineWork.leaderActorId, itemId) != -1)
+    return gMainRoutineWork.leaderActorId;
   unitCount = Party_ListMembers(unitIds);
   cursor = unitIds;
   for (i = 0; i < unitCount; i++) {
@@ -359,7 +360,7 @@ s32 Inventory_CheckUnequip(s32 owner, s32 slot) {
   s32 result;
 
   /* FAKEMATCH(temporary): the mask built in the local it masks into. */
-  item_id = ITEM_ID_MASK;
+  item_id = INVENTORY_ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
   result = 0;
@@ -380,7 +381,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   s32 result;
 
   /* FAKEMATCH(temporary): the mask built in the local it masks into. */
-  item_id = ITEM_ID_MASK;
+  item_id = INVENTORY_ITEM_ID_MASK;
   item_id &= raw;
   item = Item_GetDirect(item_id);
   result = 0;
@@ -436,7 +437,7 @@ s32 Inventory_Repair(s32 owner, s32 slot) {
 
 u8 Item_GetTargetMode(s32 itemId) {
   return ((struct BattleAct *)Ability_GetDirect(
-              Item_GetDirect(itemId)->actionId))
+              Item_GetDirect(itemId)->abilityId))
       ->targetMode;
 }
 
@@ -469,7 +470,7 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
 /// new count; ordinary items have none.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   s32 result;
-  s32 index = ITEM_ID_MASK;
+  s32 index = INVENTORY_ITEM_ID_MASK;
   const u16 *table = gItem_ArtifactSlotTable;
   u16 counter;
 
@@ -489,11 +490,11 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 s32 Inventory_CountItem(s32 owner, s32 item_id) {
   struct OwnerInventoryState *base = Unit_Get(owner);
   s32 count = 0;
-  s32 target = item_id & ITEM_ID_MASK;
+  s32 target = item_id & INVENTORY_ITEM_ID_MASK;
   s32 index = 0;
 
   do {
-    if ((base->inventory[index] & ITEM_ID_MASK) == target) {
+    if ((base->inventory[index] & INVENTORY_ITEM_ID_MASK) == target) {
       struct ItemDefinition *item = Item_GetDirect(target);
 
       if (item->flags & ITEM_STACKABLE) {

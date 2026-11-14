@@ -24,7 +24,7 @@ s32 Actor_PopUpSlow(struct Actor *object) {
     }
   } else {
     Actor_SelectAnimation(object->watchedObject, 1);
-    Event_PlaySound(SE_184);
+    Event_PlaySound(SE_POP_UP);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
     object->watchedObject = 0;
     return 0;

@@ -102,25 +102,25 @@ Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y) {
 /// frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
-  struct BattleEffectBuffers *paletteBuffers = Ram_HeapSlots->block32;
+  struct PaletteFade *paletteBuffers = Ram_HeapSlots->block32;
   u16 *savedPalette = paletteBuffers->target;
 
   Dma_Set(savedPalette, field->savedFadeTarget, DMA_COPY_WORDS(336), REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           DMA_COPY_WORDS(sizeof(paletteBuffers->current) / 4), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
+  PaletteFade_SetTargetFar(layer, 1);
   PaletteFade_StartInterpolationFar(16);
 }
 
 /// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
 /// frames.
 void Shop_RestoreFieldPalette(void) {
-  BattleEffect_ApplyColorToTargetBufferFar((s32)gFieldWork->savedFadeTarget, 1);
+  PaletteFade_SetTargetFar((s32)gFieldWork->savedFadeTarget, 1);
   PaletteFade_StartInterpolationFar(16);
 }
 
 /// Moves the cursor a frame along its straight line toward its target.
-void MenuCursor_Advance(struct ShopCursor *cursor) {
+void MenuCursor_Advance(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 durationFrames;
   s32 frame;
@@ -153,7 +153,7 @@ void MenuCursor_Advance(struct ShopCursor *cursor) {
 
 /// Moves each cursor axis one quarter of the remaining distance, with a minimum
 /// one-pixel step.
-void MenuCursor_MoveTowardTarget(struct ShopCursor *cursor) {
+void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 delta;
   s32 step;
@@ -200,7 +200,7 @@ void MenuCursor_MoveTowardTarget(struct ShopCursor *cursor) {
 
 /// Starts a glide of the cursor from where it is to (targetX, targetY) over
 /// `kind` frames, for MenuCursor_Advance to run.
-void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
+void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
                     s8 kind) {
   struct WindowSprite *anchor = cursor->anchor;
 
@@ -214,7 +214,7 @@ void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
 
 /// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
 /// that has already arrived.
-void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
+void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
   {
     struct WindowSprite *sprite = cursor->anchor;
 

@@ -181,7 +181,7 @@ extern s32 gSerialSendSource;
 // volatile: Serial_StartSend sets it while Serial_StepBlockTransfer, which the
 // VBlank handler runs, counts it down, so it is no device.
 extern volatile u16 gSerialSendSize;
-extern s32 gSerialReceiveDest;
+extern s32 gSerialReceiveDestination;
 // volatile: Serial_StepBlockTransfer, which the VBlank handler runs, counts it
 // up while the link code outside the interrupt polls it, so it is no device.
 extern volatile u16 gSerialReceivedSize;
@@ -220,7 +220,7 @@ static __inline__ void Serial_ResetTransferState(void) {
   state->status = SERIAL_STATUS_RUNNING;
   gSerialSendSource = zero;
   gSerialSendSize = zero;
-  gSerialReceiveDest = zero;
+  gSerialReceiveDestination = zero;
   *(u8 *)&state->peerFlags = zero;
   *(u8 *)&state->flags = zero;
   gSerialReceivedSize = zero;

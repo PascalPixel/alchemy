@@ -168,7 +168,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
       standbyElements = 0;
       // Spelt *&: a byte store that may alias the window it highlights next,
       // which keeps the work load before the entry index's add.
-      *&work->menuBusy = 1;
+      *&work->holdTilemapUpload = 1;
       Window_HighlightRect((s16)listWindow->x + 1,
                            (s16)listWindow->y + drawnRow * 2 + 1,
                            listWindow->width - 2, 1, 15);
@@ -239,15 +239,15 @@ s32 BattleDjinnMenu_Run(s32 member) {
         DJINN_MESSAGE_COPY((s32)MsgNoDjinn, messageText,
                            DJINN_MESSAGE_CAPACITY);
       }
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
       if (previewPage == 0) {
-        work->menuBusy = 1;
+        work->holdTilemapUpload = 1;
         Window_Close(messageWindow, 1);
         messageWindow =
             Window_Create(0, 4, 30, 4,
                           WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                               WINDOW_FLAG_BORDERED_CANVAS);
-        work->menuBusy = previewPage;
+        work->holdTilemapUpload = previewPage;
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -301,7 +301,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                            (s16)listWindow->y + selectedRow * 2 + 1,
                            listWindow->width - 2, 1, 14);
       work->dirty = 1;
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
     }
 
     if (djinnCount > 5) {

@@ -32,7 +32,7 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 void Serial_RemoveIrqHandlers(void);
 void Serial_Initialize(void);
@@ -52,7 +52,7 @@ void LinkLobby_InitializeSerial(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -333,7 +333,7 @@ s32 LinkLobby_CopyPartyOwnerIds(u16 *out) {
   party = &gMainRoutineWork;
 next:
   {
-    u8 owner = party->activeOwners[i];
+    u8 owner = party->party[i];
 
     if (out != NULL)
       *out++ = owner;
@@ -513,7 +513,7 @@ static __inline__ void Lobby_ResetTransferState(void) {
   gSerialSendSource = zero;
   *(u8 *)&state->flags = zero;
   gSerialSendSize = zero;
-  gSerialReceiveDest = zero;
+  gSerialReceiveDestination = zero;
   gSerialReceivedSize = zero;
   *ime = saved;
 }
@@ -638,7 +638,7 @@ s32 LinkLobby_EnterBattle(void) {
     wait(8);
     Map_SetLayerEntryFlag(5);
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
-      Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId((s32)MsgGoodLuck2);
       // "Good luck!"
       Event_OpenMessage(8, 0);
@@ -727,7 +727,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
   msg = (s32)MsgPleaseSpeakTo;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
   if (LinkLobby_PeerSlotMatches(0) == 0)
     wait(1);
   if (LinkLobby_PeerSlotMatches(0) == 0) {
@@ -821,7 +821,7 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if ((facing - 0xa001) <= 0x3ffe) {
     base = (s32)MsgItLooksLikeThisIs;
     count = &gMainRoutineWork.linkTallies[4];
@@ -865,7 +865,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(actorId, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
   Event_SetMessageId((s32)MsgChooseYourParameters);
   // "Choose your parameters here."
   Event_ShowMessage(actorId, 0);
@@ -945,9 +945,9 @@ s32 LinkLobby_PartyContains(s32 owner) {
   if (count > limit)
     count = limit;
   for (i = 0; i < count; i++) {
-    if (gMainRoutineWork.activeOwners[i] == 0xff)
+    if (gMainRoutineWork.party[i] == 0xff)
       return 0;
-    if (gMainRoutineWork.activeOwners[i] == owner)
+    if (gMainRoutineWork.party[i] == owner)
       return 1;
   }
   return 0;
@@ -983,7 +983,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   Event_SetMessageId((s32)MsgYouHaveA);
   // "You have a song request?"
   Event_ShowMessage(actor, 0);
@@ -1033,7 +1033,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   }
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   wait(120);
-  Event_PlaySound(MUS_709);
+  Event_PlaySound(MUS_LEMURIA_SPRING);
   /* FAKEMATCH(dead): the statement in a once-only block. */
   do {
     Event_SetMessageId((s32)MsgComeBackWhen);
@@ -1071,7 +1071,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if (Event_GetFlag(FLAG_AREA_TEMP_04)) {
     Event_GetFlag(FLAG_SCENE_TEMP_F4);
     base = Event_GetFlag(actor + 0x2f0);
@@ -1157,7 +1157,7 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
     Actor_StartRepeatedMotion(14, 1);
     Actor_SetAnimation(14, 4);
     Event_Wait(15);
-    Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(14, gMainRoutineWork.leaderActorId, 0);
     Event_Wait(5);
     Event_OpenMessage(14, 0);
   }
@@ -1169,7 +1169,7 @@ s32 LinkLobby_ExplainPartyOrder(s32 actor) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(actor, gMainRoutineWork.leaderActorId, 0);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_04)) {
     if (Party_CountMembers() == 8)
       message = (s32)MsgUpToThree;
@@ -1194,7 +1194,7 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   Event_Start();
   Event_ResolvePendingActions(0);
   gs = &gMainRoutineWork;
-  Actor_FaceActor(id, gs->currentOwner, 0);
+  Actor_FaceActor(id, gs->leaderActorId, 0);
   if (gs->linkTallies[2] != 0) {
     MessageArgument_Push(gs->linkTallies[2], 5);
     Event_SetMessageId((s32)MsgYouVeWon);
@@ -1206,7 +1206,7 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 LinkLobby_PartyContains(s32 id);
 void Map_CenterOnFollowedPoint(void);
@@ -1248,7 +1248,7 @@ void Event_End(void);
 extern s32 gLinkLobby_WaitFrames;
 extern s32 gLinkLobby_CallFrames;
 extern u16 gData_02003a74[];
-extern u8 gAutoSleepEnabled;
+extern u8 gIdleSleepEnabled;
 
 s32 LinkLobby_PollPeerReady(void);
 void LinkLobby_InitializeSerial(void);
@@ -1325,7 +1325,7 @@ s32 LinkLobby_Initialize(void) {
     } else {
       Flag_SetByte(1000, v + 1);
     }
-    Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
     Event_SetMessageId((s32)MsgNotBadWould + msg);
     Event_OpenMessage(8, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1360,7 +1360,7 @@ s32 LinkLobby_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(5);
-    Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
     // score holds the row's address, then the score read through it.
     score = (u32)&gMainRoutineWork.linkTallies[3];
     MessageArgument_Push(*(u16 *)score, 5);
@@ -1438,14 +1438,14 @@ s32 LinkLobby_Initialize(void) {
       Event_ResolvePendingActions(0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId((s32)MsgNoteYouCan);
       // "Note: you can't use the sleep function in battle stages!"
       Event_ShowMessage(8, 0);
       Event_End();
     }
     gMainRoutineWork.unk244[6] = 0;
-    gAutoSleepEnabled = 0;
+    gIdleSleepEnabled = 0;
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
   }

@@ -487,7 +487,7 @@ struct EffectSprite *EffectSprite_CreateWithTiles(s32 width, s32 height,
     *p = 0;
   }
   found->unk20 = 0x6000;
-  entries = gResourceTableEntries;
+  entries = gVramCacheEntries;
   found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;

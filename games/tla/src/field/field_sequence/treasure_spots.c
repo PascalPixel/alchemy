@@ -20,7 +20,7 @@ void Actor_SnapToTerrain(void *object) {
 /// after the first header for this scene whose flag is -1 or not yet set, or
 /// NULL.
 s16 *SceneItem_GetRows(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s16 *p = Data_080f2204;
   s16 *found = NULL;
   s32 header;
@@ -114,7 +114,7 @@ void Field_PlaceTreasureSpots(void) {
             map = Ram_HeapSlots->mapWork;
             x = object->x >> 20;
             z = object->z >> 20;
-            cells = (struct MapCell *)gMapCellBuffer;
+            cells = (struct MapCell *)gMapGridCellBuffer;
             if (map != NULL)
               cells = map->layers[0].cells;
             cells += x + (z << 7);

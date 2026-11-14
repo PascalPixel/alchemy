@@ -1,6 +1,6 @@
 /// Jitters the camera round the leader.
 void WorldMap_JitterTransitionCamera(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = *(s16 *)((u8 *)object + 10);
   s32 z = *(s16 *)((u8 *)object + 18);
 

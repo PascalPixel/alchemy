@@ -17,8 +17,8 @@ struct Scene {
   /// The area: entering a new one clears the FLAG_AREA_TEMP_xx flags
   /// and the step counters and moves Retreat's destination (Scene_Arrive).
   s8 area;
-  s8 sceneType; ///< an enum SceneType, copied to gMainRoutineWork.sceneVariant
-  u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineWork.map
+  s8 sceneType; ///< an enum SceneType, copied to gMainRoutineWork.sceneType
+  u16 mapIndex; ///< the map loaded for it, copied to gMainRoutineWork.mapId
   /// Two nibbles the field sequence reads on arrival
   /// (Field_GetSceneAttributes); The Broken Seal leaves this halfword 0.
   s16 attributes;

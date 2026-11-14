@@ -34,7 +34,7 @@ void CrackedTiles_Update(void) {
   if (table->current == -1)
     return;
   entry = &table->entries[table->current];
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if ((leader->x >> 20) != entry->x || (leader->z >> 20) != entry->z)
     table->current = -1;
   {
@@ -50,7 +50,7 @@ void CrackedTiles_Update(void) {
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   viewY = map->origin[1];
-  tile = gResourceTableEntries[table->tile].offset >> 5;
+  tile = gVramCacheEntries[table->tile].offset >> 5;
   x = (entry->x << 20) - viewX;
   height = Map_GetTerrainHeight(0, entry->x << 20, entry->z << 20) - viewY;
   z = (entry->z << 20) - viewZ - viewY;

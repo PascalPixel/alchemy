@@ -128,7 +128,7 @@ DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, 0x1000)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -137,11 +137,11 @@ extern struct ActorPlacement gChampaCliffCaves_Room4Placements[];
 extern s16 gChampaCliffCaves_Room4PlacementsBriggsHome[];
 extern s16 gChampaCliffCaves_Room4PlacementsAfterAvimander[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene;
 
   if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
-    scene = gMainRoutineWork.scene;
+    scene = gMainRoutineWork.next;
     if (scene == (s32)&SceneId_ChampaCliffCaves1)
       return gChampaCliffCaves_Room1PlacementsAfterAvimander;
     if (scene == (s32)&SceneId_ChampaCliffCaves2)
@@ -152,7 +152,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
       return gChampaCliffCaves_Room4PlacementsAfterAvimander;
   } else {
     if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
-      scene = gMainRoutineWork.scene;
+      scene = gMainRoutineWork.next;
       if (scene == (s32)&SceneId_ChampaCliffCaves1)
         return gChampaCliffCaves_Room1PlacementsBriggsHome;
       if (scene == (s32)&SceneId_ChampaCliffCaves2)
@@ -162,7 +162,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
       if (scene == (s32)&SceneId_ChampaCliffCaves4)
         return gChampaCliffCaves_Room4PlacementsBriggsHome;
     } else {
-      scene = gMainRoutineWork.scene;
+      scene = gMainRoutineWork.next;
       if (scene == (s32)&SceneId_ChampaCliffCaves1)
         return gChampaCliffCaves_Room1Placements;
       if (scene == (s32)&SceneId_ChampaCliffCaves2)
@@ -186,10 +186,10 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
-  id = gMainRoutineWork.currentOwner;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  id = gMainRoutineWork.leaderActorId;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
   else
@@ -219,15 +219,16 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   s32 msg;
 
   warp = &gChampaCliffCaves_FirstDoor;
-  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 168, 424);
-  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
+  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 168, 424);
+  Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+                                    FACING_EAST);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(warp->scene, warp->x, warp->z);
   Actor_GetById(8)->motionFlags = 0;
   Actor_SetPosition(8, 184, 408);
   Actor_SetSpeedFixed(8, 0x1cccc, 0xe666);
   Actor_WalkByAndWaitById(8, 0, 16);
-  Actor_FaceDirectionById(8, FACING_WEST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
   Event_SetMessageId(msg);
   // "Has my grandson returned? Has my Briggs come home?"
@@ -270,7 +271,7 @@ void ChampaCliffCaves_BriggsSurrenders(s32 actor) {
   // "All right, I surrender! I'll go back to Alhafra...but only if Briggs..."
   Event_ShowMessageAndWait(actor, 0);
   object = Actor_GetById(actor);
-  Actor_WatchActor(object, Actor_GetById(gMainRoutineWork.currentOwner));
+  Actor_WatchActor(object, Actor_GetById(gMainRoutineWork.leaderActorId));
 }
 
 void ChampaCliffCaves_TalkToBriggs(s32 actor) {
@@ -293,12 +294,12 @@ void ChampaCliffCaves_CloseWall(void) {
 
   MapGrid_CopyCellPictureCellsRect(50, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(46, 33, 1, 4, 41, 13);
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.leaderActorId);
   x = object->x >> 20;
   z = object->z >> 20;
-  if (gMainRoutineWork.scene == (s32)&SceneId_ChampaCliffCaves4 && x == 41 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_ChampaCliffCaves4 && x == 41 &&
       (u32)(z - 13) <= 4)
-    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
                                            px(664), px(280));
 }
 
@@ -306,8 +307,8 @@ extern struct Trigger gChampaCliffCaves_Room1Triggers[];
 
 void ChampaCliffCaves_PickUpTrident(s32 a) { Event_PickUpItem(a, 326, 0x978); }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s32 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_ChampaCliffCaves1)
     return gChampaCliffCaves_Room1Triggers;
@@ -328,14 +329,14 @@ s32 Scene_Initialize(void) {
 #else
   gFieldWork->transition = 513;
 #endif
-  if (party->scene != (s32)&SceneId_ChampaCliffCaves1)
-    Actor_GetById(party->currentOwner)->priorityFlags |= 32;
+  if (party->next != (s32)&SceneId_ChampaCliffCaves1)
+    Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (party->scene == (s32)&SceneId_ChampaCliffCaves4) {
+  if (party->next == (s32)&SceneId_ChampaCliffCaves4) {
     if (party->entrance == 98)
       ChampaCliffCaves_AskIfBriggsLearned();
     if (party->entrance == 99) {
-      party->secondary = 23;
+      party->returnEntrance = 23;
       party->entrance = 23;
       ChampaCliffCaves_BriggsMournsSalamander();
     }
@@ -346,7 +347,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(0x977))
       Actor_SetPosition(8, 664, 200);
-  } else if (party->scene == (s32)&SceneId_ChampaCliffCaves3) {
+  } else if (party->next == (s32)&SceneId_ChampaCliffCaves3) {
     if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
       Actor_SetModeById(8, 11);
       Actor_SetSpriteFlags(Actor_GetById(8), 0);
@@ -358,18 +359,20 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
-  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 648, 200);
-  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
+  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 648, 200);
+  Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+                                    FACING_EAST);
   Event_Wait(5);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 6);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.leaderActorId, 6);
   Event_Wait(7);
   Actor_ShowItemIconById(10, actor);
   Actor_SetHorizontalPositionWithTerrain(10, 648 << 16, 196 << 16);
-  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
-  Actor_WalkByAndWaitById(gMainRoutineWork.currentOwner, -16, -8);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, -16, -8);
   Event_Wait(1);
-  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+                                    FACING_EAST);
   Event_Wait(10);
 }
 
@@ -460,7 +463,7 @@ void ChampaCliffCaves_ObabaSeesAWeapon(s32 actor) {
   // "I'll hold on to this for you. It won't do you any good like this..."
   Event_ShowMessageThenWait(8, 0, 5);
   ChampaCliffCaves_ObabaStepsForward(0);
-  Actor_FaceDirectionById(8, FACING_WEST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
   Event_Wait(10);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   /* FAKEMATCH(signature): called through a type returning s32. */
@@ -506,7 +509,7 @@ void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
   // "It's magnificent!"
   Event_ShowMessageThenWait(8, 0, 5);
   ChampaCliffCaves_ObabaStepsForward(0);
-  Actor_FaceDirectionById(8, FACING_WEST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
   Event_Wait(10);
   // "I'll hold on to this as well. Wouldn't want it getting lost, now..."
   Event_ShowMessageThenWait(8, 0, 5);
@@ -581,7 +584,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     // "There's nothing to be afraid of, dear. Just leave it to me."
     Event_ShowMessageThenWait(8, 0, 5);
   }
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   FieldCamera_MoveWithinMapBounds(px(664), -1, px(232), 1);
@@ -615,14 +618,15 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     ChampaCliffCaves_FadeColours(dim, bright, 48);
     Event_Wait(10);
   }
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.leaderActorId);
   object->actionFlags &= ~1;
-  Actor_WalkByAndWaitById(gMainRoutineWork.currentOwner, 12, 12);
+  Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, 12, 12);
   Event_Wait(1);
-  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
-  Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_SOUTHEAST);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+                                    FACING_SOUTHEAST);
   Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 22);
   Event_Wait(20);
   Actor_SetModeById(8, 7);
   Event_Wait(60);
@@ -633,8 +637,8 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_Wait(20);
   Sound_Play(SE_SHIMMER);
   ChampaCliffCaves_FadeColours(bright, dim, 48);
-  Actor_StartRepeatedMotion(gMainRoutineWork.currentOwner, 3);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+  Actor_StartRepeatedMotion(gMainRoutineWork.leaderActorId, 3);
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId, 0x102);
   Event_Wait(50);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Call2((void (*)())Field_StartColorTransition, 16, 0x1090);
@@ -687,11 +691,11 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_Wait(5);
   // "After all these years, the trident is complete again. But what's..."
   FieldEvent_ShowMessageThenWait(0x2008, 0, 5);
-  Actor_FaceDirectionById(8, FACING_WEST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
   Event_Wait(10);
   // "Regardless, the trident has been fixed. It belongs to you now..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
-  Actor_FaceDirectionById(8, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_SOUTH_SOUTHWEST);
   Event_Wait(10);
   Actor_SetSpritePriority(10, 2);
   Event_End();
@@ -712,7 +716,7 @@ void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   /* FAKEMATCH(dead): each owner stored and never read. */
   s32 owner;
 
-  if ((Actor_GetById(gMainRoutineWork.currentOwner)->x >> 20) <= 41)
+  if ((Actor_GetById(gMainRoutineWork.leaderActorId)->x >> 20) <= 41)
     goto first;
   gFieldWork->fieldMenu = 1;
   return;
@@ -754,7 +758,7 @@ chosen:
       ChampaCliffCaves_PlaceThrown(164 << 18, 128 << 17, 0, 0);
     }
   } else {
-    Actor_FaceActorById(actor, gMainRoutineWork.currentOwner, 5);
+    Actor_FaceActorById(actor, gMainRoutineWork.leaderActorId, 5);
     if (!GameFlag_Test_(0x975))
       Event_SetMessageId((s32)MsgIMeanIt);
     else if (!GameFlag_Test_(0x976))
@@ -798,9 +802,9 @@ void ChampaCliffCaves_FightAvimander(void) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 584, 248);
+  Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 584, 248);
   if (Flag_IsSet(0x974)) {
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
     Event_SetMessageId((s32)MsgBackForMore);
     // "Back for more?"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
@@ -820,7 +824,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     // "Hold it right there!"
     FieldEvent_ShowMessageThenWait(11, 0, 5);
     Sound_Play(MUS_036);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     FieldCamera_MoveWithinMapBounds(664 << 16, -1, px(256), 1);
     FieldCamera_WaitForArrival();
     Event_Wait(5);
@@ -995,15 +999,15 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgHaveYouLearned);
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
                                          568 << 16, 248 << 16);
   Actor_SetPosition(8, 584, 224);
   Actor_SetPosition(13, 600, 240);
   Actor_SetPosition(11, 584, 264);
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 41);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 41);
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -1018,8 +1022,8 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   work->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_SetDestination((s16)gMainRoutineWork.savedScene,
-                       (s16)gMainRoutineWork.savedEntrance);
+  Event_SetDestination((s16)gMainRoutineWork.restartScene,
+                       (s16)gMainRoutineWork.restartEntrance);
 }
 
 extern u32 gChampaCliffCaves_BriggsFirstScript[];
@@ -1045,7 +1049,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_SetHorizontalPositionWithTerrain(*owner, px(568), px(256));
   Actor_SetPositionFixed(13, px(592), px(240));
   Actor_SetModeById(13, 3);
-  Actor_ArmCallback(*owner, FACING_EAST, 0);
+  Actor_FaceDirectionById(*owner, FACING_EAST, 0);
   FieldCamera_MoveToFixed(px(656), -1, px(248), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1069,7 +1073,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_WalkByAndWait(8, -16, 16);
   Actor_WalkByAndWait(8, -8, 16);
   Actor_WalkToAndWait(8, 608, 248);
-  Actor_FaceDirectionById(8, FACING_WEST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_WEST);
   Event_Wait(5);
   Motion_SetModeAndWaitAnimation(8, 4);
   // "How did you do that? What... What are you?"
@@ -1080,7 +1084,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_Wait(5);
   // "Grandma, what's going on!? I thought you were going to protect me!"
   Event_ShowMessageThenWait(11, 0, 5);
-  Actor_FaceDirectionById(8, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
   Event_Wait(5);
   // "What do you mean, what am I doing? I've done everything I can!"
   Event_ShowMessageThenWait(8, 0, 5);
@@ -1106,7 +1110,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Actor_FaceDirectionAndWait(8, 0x7ff6);
   Event_Wait(25);
-  Actor_FaceDirectionById(8, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
   Event_Wait(10);
   // "I know, dear, but there's nothing I can do to help. You don't want..."
   Event_ShowMessageThenWait(8, 0, 5);
@@ -1120,7 +1124,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_ShowMessageThenWait(8, 0, 0);
   // "Um. Excuse me... There seems to be a small misunderstanding."
   Event_ShowMessageThenWait(15, 0, 5);
-  Actor_FaceDirectionById(8, 0x7ff6);
+  Actor_FaceDirectionAndRefreshById(8, 0x7ff6);
   Event_Wait(10);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, 0, -16, FACING_EAST);
@@ -1145,7 +1149,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_Wait(10);
   // "He stole a ship from Alhafra and escaped from their jail! A ship we..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0, 5);
-  Actor_FaceDirectionById(8, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
   Event_Wait(5);
   // "Briggs, is this true?"
   Event_ShowMessageThenWait(8, 0, 5);
@@ -1157,7 +1161,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "We should tell you, we're not here to take Briggs back to Alhafra."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
-  Actor_FaceDirectionById(15, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndRefreshById(15, FACING_SOUTH_SOUTHWEST);
   Event_Wait(5);
   // "So you've decided you don't want to run errands for the mayor of..." Yes:
   // "Good. That greedy bag of hot air can do his..." No: "Felix, I know you
@@ -1165,7 +1169,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   FieldMessage_ShowAtActor(0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
-    Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTHEAST);
+    Actor_FaceDirectionAndRefreshById(ACTOR_SHEBA, FACING_SOUTHEAST);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
     Event_Wait(10);
@@ -1174,15 +1178,15 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
     gFieldWork->message++;
   } else {
     Event_Wait(35);
-    Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTHEAST);
+    Actor_FaceDirectionAndRefreshById(ACTOR_SHEBA, FACING_SOUTHEAST);
     Event_Wait(5);
     Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
     // "Felix, I know you can't mean that. We didn't come to Champa for that..."
     Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA, 0, 5);
   }
-  Actor_ArmCallback(15, FACING_EAST, 0);
-  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST);
+  Actor_FaceDirectionById(15, FACING_EAST, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_SHEBA, FACING_EAST);
   // "Briggs... Piracy? Why?"
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_SetSpeedFixed(8, 0x2cccc, 0x16666);
@@ -1262,7 +1266,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_SetPositionFixed(14, px(520), px(200));
   Actor_SetSpeedFixed(14, 0x10000, 0x8000);
   Actor_WalkByAndWaitById(14, 0, 16);
-  Actor_ArmCallback(14, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(14, FACING_SOUTH_SOUTHEAST, 0);
   // "Chaucha!"
   Event_ShowMessageThenWait(11, 0, 5);
   Actor_WatchAndSetScript(ACTOR_FELIX, 14);
@@ -1303,7 +1307,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   // "What did you mean, Briggs did it for Champa?"
   Event_ShowMessageThenWait(8, 0, 5);
   Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionById(14, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndRefreshById(14, FACING_NORTH_NORTHEAST);
   Event_Wait(15);
   Motion_SetModeAndWaitAnimation(8, 4);
   // "All of that food... Stolen goods?"
@@ -1326,7 +1330,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
     Event_Wait(5);
     // "Your story has the ring of truth to it."
     Event_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionById(11, FACING_WEST);
+    Actor_FaceDirectionAndRefreshById(11, FACING_WEST);
     Event_Wait(10);
     Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "Thank you, Felix. Your honesty speaks well of you."
@@ -1337,7 +1341,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
     gFieldWork->message += 2;
     // "So he's lying again?"
     Event_ShowMessageThenWait(8, 0, 5);
-    Actor_FaceDirectionById(11, FACING_WEST);
+    Actor_FaceDirectionAndRefreshById(11, FACING_WEST);
     Event_Wait(5);
     Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     // "Dang it, Felix, I'm not lying!"
@@ -1367,7 +1371,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_Wait(5);
   // "Those jewels we found are very valuable. We intend to repay each..."
   Event_ShowMessageThenWait(14, 0, 5);
-  Actor_FaceDirectionById(14, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(14, FACING_EAST);
   Event_Wait(5);
   // "Isn't that true?"
   Event_ShowMessageThenWait(14, 0, 5);
@@ -1386,7 +1390,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_ShowMessageThenWait(11, 0, 5);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
-  Actor_FaceDirectionById(14, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndRefreshById(14, FACING_NORTH_NORTHEAST);
   Event_Wait(10);
   // "That's the truth, Grandmother. Can you find it in your heart to..."
   Event_ShowMessageThenWait(14, 0, 5);
@@ -1401,7 +1405,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_FaceDirection(11, FACING_WEST, 0);
   Actor_FaceDirection(14, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH_SOUTHWEST);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -1425,7 +1429,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(15, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirectionById(14, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(14, FACING_EAST);
   Event_Wait(10);
   // "Do you hear that? They forgive you, too. That means you can leave..."
   Event_ShowMessageThenWait(14, 0, 10);
@@ -1469,7 +1473,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_WalkByAndWait(14, -56, 0);
   Actor_FaceDirectionAndWait(14, FACING_NORTH_NORTHWEST);
   FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceDirectionById(14, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(14, FACING_EAST);
   Event_Wait(10);
   // "Oh, for goodness' sake! You don't want to give them your cold, do..."
   Event_ShowMessageThenWait(14, 0, 5);
@@ -1497,7 +1501,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
   Actor_WaitForMoveById(11);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Event_Wait(60);
   Actor_WalkByAndWaitById(8, 0, 16);
@@ -1509,11 +1513,11 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmoteById(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirectionById(15, FACING_EAST);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirectionAndRefreshById(15, FACING_EAST);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
@@ -1525,11 +1529,11 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH_SOUTHWEST);
   Event_Wait(40);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirectionById(15, FACING_EAST);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirectionAndRefreshById(15, FACING_EAST);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(8, 4);
   // "Ah, well... To be young and foolish again. If you ever need to..."
@@ -1543,9 +1547,9 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionById(15, FACING_SOUTH_SOUTHWEST);
+  Actor_FaceDirectionAndRefreshById(15, FACING_SOUTH_SOUTHWEST);
   Event_Wait(20);
   Actor_SetSpritePriority(ACTOR_FELIX, 2);
   Actor_GetById(ACTOR_FELIX)->priorityFlags |= 1;

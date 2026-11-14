@@ -2288,7 +2288,7 @@ select_again:
   abilityId = halfwords->abilities[selection];
   request->command = COMMAND_ABILITY;
   if (useItem != 0 && retry != 0) {
-    if (!(ITEM_ID_MASK & unit->inventory[0])) {
+    if (!(INVENTORY_ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
       if (enemy->targetStrategy == 0) {
         request->command = COMMAND_ITEM;
@@ -2305,8 +2305,8 @@ select_again:
       if (item->useType != 1) {
         useItem = 0;
       } else {
-        Ability_Get(item->actionId);
-        abilityId = item->actionId;
+        Ability_Get(item->abilityId);
+        abilityId = item->abilityId;
         request->command = COMMAND_ITEM;
         request->parameter = 0;
       }

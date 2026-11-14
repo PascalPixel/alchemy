@@ -128,11 +128,11 @@ void FieldCamera_WaitForArrival(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadra_PlacementsOnReturn;
   return gMadra_Placements;
@@ -171,9 +171,9 @@ next:
 
     MapGrid_AnimateCells(gMadra_Doors[index].data, x, y);
   }
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(*trigger);
   Event_FinishScreenTransition();
@@ -184,7 +184,7 @@ next:
 /// Madra's weapon merchant sells across the counter (stock row 4). Spoken to
 /// from elsewhere, she talks of the raid, then of the Kibombo's weapons.
 void Madra_TalkToWeaponMerchant(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(4, arg);
     return;
@@ -202,7 +202,7 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
 /// Madra's armor merchant sells across the counter (stock row 5), and otherwise
 /// talks of the Champa and the Kibombo.
 void Madra_TalkToArmorMerchant(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(5, arg);
     return;
@@ -220,7 +220,7 @@ void Madra_TalkToArmorMerchant(s32 arg) {
 /// Madra's item merchant sells across the counter (stock row 6), and otherwise
 /// talks of her sister, hurt in the Champa's attack, and of Shin.
 void Madra_TalkToItemMerchant(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(6, arg);
     return;
@@ -429,7 +429,7 @@ void Madra_WorkerBlocksSealedHole(void) {
   }
 }
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadra_TriggersOnReturn;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
@@ -669,7 +669,7 @@ void Madra_InspectPartyAtGate(void) {
   Actor_WaitForMoveById(ACTOR_SECOND_GATE_GUARD);
   Actor_WalkToAndWait(ACTOR_FELIX, 472, 426);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, 16, 1, FACING_NORTH);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(ACTOR_KRADEN);
@@ -790,7 +790,7 @@ void Madra_InspectPartyAtGate(void) {
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != NULL)
     Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
                          ((s16 *)&object->z)[1]);
@@ -830,7 +830,7 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_WaitForMoveById(ACTOR_LADYS_GUARD);
   Actor_WalkTo(ACTOR_LADYS_GUARD, 124, 380);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_WaitForMoveById(ACTOR_LADY);
   Actor_WaitForMoveById(ACTOR_LADYS_GUARD);
   Actor_FaceDirection(ACTOR_LADY, FACING_NORTH, 0);
@@ -853,7 +853,7 @@ void Madra_GrantPassageToOsenia(void) {
   Actor_SetPosition(ACTOR_LADY, 4, 4);
   Actor_WaitForMoveById(ACTOR_LADYS_GUARD);
   Actor_SetPosition(ACTOR_LADYS_GUARD, 4, 4);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Event_Wait(40);
   FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_Wait(40);
@@ -892,7 +892,7 @@ void Madra_GrantPassageToOsenia(void) {
   // "What happened in there, I wonder?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   Actor_FaceDirection(ACTOR_LADY, FACING_NORTH, 0);
-  Actor_ArmCallback(ACTOR_LADYS_GUARD, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_LADYS_GUARD, FACING_NORTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(ACTOR_MAYOR, 2);
   Event_Wait(20);
@@ -903,7 +903,7 @@ void Madra_GrantPassageToOsenia(void) {
   // "Not the least of which being that boat he arrived in..."
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
   Event_Wait(20);
-  Actor_ArmCallback(ACTOR_LADY, FACING_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_LADY, FACING_WEST, 0);
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_LADY, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Oh, you there..."
@@ -1000,7 +1000,7 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_WalkByAndWait(ACTOR_GATE_GUARD, -3, 8);
   Actor_WalkToAndWait(ACTOR_FELIX, 472, 426);
   Event_Wait(10);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   Actor_LaunchFromLeader(ACTOR_KRADEN, 16, 1, FACING_NORTH);
   FieldCamera_WaitForArrival();
   Actor_WaitForMoveById(ACTOR_KRADEN);
@@ -1138,7 +1138,7 @@ void Madra_StopPartyAfterRaid(void) {
   Event_Wait(10);
   Event_SetFlag(FLAG_MADRA_RAID_QUESTIONING_DONE);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != NULL)
     Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
                          ((s16 *)&object->z)[1]);
@@ -1196,14 +1196,14 @@ void Madra_MeetKarst(void) {
   Actor_FaceActorById(ACTOR_JENNA, ACTOR_FELIX, 0);
   Actor_FaceActorById(ACTOR_PIERS, ACTOR_FELIX, 0);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_FELIX, 0);
-  Actor_ArmCallback(ACTOR_MAYOR, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
   Event_Wait(20);
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-    Actor_ArmCallback(ACTOR_MAYOR, FACING_SOUTH, 0);
+    Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
     SET_MODE(34, 4);
     Event_Wait(33);
@@ -1216,7 +1216,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-    Actor_ArmCallback(ACTOR_MAYOR, FACING_SOUTH, 0);
+    Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
     SET_MODE(34, 4);
     Event_Wait(33);
@@ -1255,7 +1255,7 @@ void Madra_MeetKarst(void) {
     ItemDisplay_ShowItem(ITEM_CYCLONE_CHIP, 3);
     PartyInventory_GiveItem(ITEM_CYCLONE_CHIP, 0);
     (gFieldWork->message)++;
-    Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
+    Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
     GameFlag_Set(FLAG_MADRA_CYCLONE_CHIP_GIVEN);
   } else {
     s32 count = gFieldWork->message + 1;
@@ -1330,7 +1330,7 @@ void Madra_MeetKarst(void) {
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_KARST, 0);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_WEST);
-  Actor_FaceDirectionById(ACTOR_KARST, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KARST, FACING_EAST);
   Event_Wait(20);
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1414,7 +1414,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "Is this Isaac the same one they've been speaking of? Is he pursuing you?"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  Actor_ArmCallback(ACTOR_KARST, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KARST, FACING_EAST, 0);
   Event_Wait(20);
   // "If that is the case, then this Isaac should show up here sooner or..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
@@ -1465,15 +1465,15 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Oh, didn't Menardi tell you?"
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  Actor_FaceDirectionById(ACTOR_KARST, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KARST, FACING_EAST);
   Event_Wait(20);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_WEST);
   Event_Wait(20);
-  Actor_FaceDirectionById(ACTOR_KARST, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KARST, FACING_EAST);
   Event_Wait(20);
   // "Regardless, Isaac won't be getting in my way."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  Actor_ArmCallback(ACTOR_KARST, FACING_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_KARST, FACING_WEST, 0);
   Event_Wait(20);
   // "You will have to find your own way to the Western Sea."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
@@ -1515,7 +1515,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "We're going to find that Isaac..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  Actor_ArmCallback(ACTOR_KARST, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KARST, FACING_EAST, 0);
   Event_Wait(20);
   // "I'm going to find this Isaac... And I swear that the last thing he..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
@@ -1643,7 +1643,7 @@ void Madra_MeetKarst(void) {
   SET_MODE(32, 3);
   Event_Wait(20);
   Event_Wait(20);
-  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_EAST);
   // "Then we should be going, right, Felix?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   SET_MODE(4, 3);
@@ -1760,7 +1760,7 @@ UNUSED void Madra_TurnAndClimbDownLadder(void) {
   id = 4;
   /* FAKEMATCH(barrier): the id held at an empty asm. */
   __asm__ volatile("" : "+r"(id));
-  Actor_ArmCallback(id, a << 8, 0);
+  Actor_FaceDirectionById(id, a << 8, 0);
   Madra_ClimbDownLadder();
 }
 

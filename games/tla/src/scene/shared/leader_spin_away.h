@@ -1,16 +1,16 @@
 /// The leader spins up and away to `entrance`.
 void Leader_SpinAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 i;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   leader->motionFlags = 0;
   leader->priorityFlags |= 0x20;
   Event_PlaySound(SE_SPLASH_SMALL);
   Actor_SelectAnimation(leader, 18);
-  Event_PlaySound(SE_612);
+  Event_PlaySound(SE_SPIN_AWAY);
   for (i = 0; i < 60; i++) {
     s32 angle;
 

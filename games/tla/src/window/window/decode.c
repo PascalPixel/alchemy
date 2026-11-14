@@ -50,7 +50,7 @@ enum {
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
-  /// The name of the unit gMainRoutineWork.currentOwner names.
+  /// The name of the unit gMainRoutineWork.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
   // The argument codes write out the next message argument of their kind
@@ -568,7 +568,7 @@ s32 Message_Decode(s32 script, s32 clear) {
               form = no;
 #endif
               argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear) &
-                         ITEM_ID_MASK;
+                         INVENTORY_ITEM_ID_MASK;
               if (form == 2 || (form == 3 && plural != 0) || form == 4)
                 Message_DecodeRaw(
                     argument + (s32)(MsgItemName + ITEM_PLURAL_NAME_OFFSET),
@@ -587,7 +587,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
 #else
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
-            Message_DecodeRaw((argument & ITEM_ID_MASK) + (s32)MsgItemName,
+            Message_DecodeRaw((argument & INVENTORY_ITEM_ID_MASK) +
+                                  (s32)MsgItemName,
                               name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
@@ -623,7 +624,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = nextPosition;
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_Get(gMainRoutineWork.currentOwner)->name;
+            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -746,7 +747,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             // The item's possessive, by its gender; c holds the gender
             // first.
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
-            argument &= ITEM_ID_MASK;
+            argument &= INVENTORY_ITEM_ID_MASK;
             possessives = gLocalizedWord_ItemPossessives;
             c = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[c & 3];
@@ -900,7 +901,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 running = 1;
   u32 writePosition = start;
   u16 *entry = work->entries;
-  u8 mode = work->menuState & WINDOW_BATTLE_MESSAGE;
+  u8 mode = work->battleMode & WINDOW_BATTLE_MESSAGE;
   s32 (*decode)(struct TextReader *);
   s32 overflow = 0;
   u32 previousCode;
@@ -1042,7 +1043,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
-            Message_DecodeRaw((argument & ITEM_ID_MASK) + (s32)MsgItemName,
+            Message_DecodeRaw((argument & INVENTORY_ITEM_ID_MASK) +
+                                  (s32)MsgItemName,
                               name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
@@ -1065,7 +1067,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_Get(gMainRoutineWork.currentOwner)->name;
+            nameBytes = Unit_Get(gMainRoutineWork.leaderActorId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1080,7 +1082,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             unit =
                 Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
-            if (work->menuState != 0 &&
+            if (work->battleMode != 0 &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {
               message = MSG_MYSTERY_MAN;

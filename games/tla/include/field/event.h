@@ -4,9 +4,9 @@
 /// @file
 /// The calls events are written in: the small inlines a scene's events share,
 /// over the main-image routines they call by those routines' own names
-/// (Actor_ArmCallback, Event_ShowMessageAndWait, Actor_SetSpeedParameters and
-/// the rest), whose declarations it holds. An overlay's import stub takes the
-/// name of the routine it reaches, except the few the overlays share under
+/// (Actor_FaceDirectionById, Event_ShowMessageAndWait, Actor_SetSpeedParameters
+/// and the rest), whose declarations it holds. An overlay's import stub takes
+/// the name of the routine it reaches, except the few the overlays share under
 /// another (Import_ActorCreate, Import_EventSetExitRequest).
 ///
 /// It is a habit of the whole game written once, as declarations and inlines,
@@ -62,7 +62,7 @@ void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 void Actor_SetDestinationOffsetById(s32 actorId, s32 dx, s32 dz);
 void Actor_WalkToById(s32 actorId, s32 x, s32 z);
 void Actor_WalkByById(u32 objectId, s32 x_offset, s32 z_offset);
-void Actor_ArmCallback(s32 actorId, s32 angle, s32 frames);
+void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames);
 void Actor_FaceActorById(s32 actorId, s32 target, s32 frames);
 s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actorId, s32 effect);
@@ -92,8 +92,8 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 dst_x,
 void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY,
                                       s32 destinationX, s32 destinationY,
                                       s32 width, s32 height);
-void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
-void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
+void PaletteFade_SetSource(s32 value, s32 mode);
+void PaletteFade_SetTarget(s32 value, s32 mode);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z);
 void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
@@ -120,7 +120,7 @@ s32 GameFlag_GetByte(s32 flag);
 s32 Party_ListMembers(s16 *owners);
 s32 Unit_AddHp(s32 owner, s32 delta);
 void wait(s32 frames);
-void Actor_FaceDirectionById(s32 actorId, s32 angle);
+void Actor_FaceDirectionAndRefreshById(s32 actorId, s32 angle);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
                                                     s32 angle);
 void Motion_SetModeAndWaitAnimation(s32 actorId, s32 animation);
@@ -149,7 +149,7 @@ s32 FieldYesNo_Ask(s32 atBottom);
 void WorldMap_StartZoom(s32 zoom, s32 frames);
 void WindowColor_Apply(s32 phase, s32 brightness);
 void Field_RequestDjinnBattle(s32 actorId, s32 djinni);
-void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce);
+void Event_AddPartyMember(s32 unit, s32 announce);
 void MapGrid_WaitForShakeToSettle(void);
 s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y);
 void Actor_SetActionById(s32 actorId, s32 steps);
@@ -237,7 +237,7 @@ static inline void Actor_WalkBy(s32 actorId, s32 dx, s32 dz) {
 
 /// Turns an actor to a direction and holds the event for a few frames.
 static inline void Actor_FaceDirection(s32 actorId, s32 facing, s32 frames) {
-  Actor_ArmCallback(actorId, facing, frames);
+  Actor_FaceDirectionById(actorId, facing, frames);
 }
 
 /// Has one actor look at another at once, then pauses the event.
@@ -434,12 +434,12 @@ static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
 
 /// Sets the colours the screen shows now, where an event's palette fade starts.
 static inline void PaletteFade_ApplySource(s32 value, s32 mode) {
-  BattleEffect_ApplyColorToSourceBuffer(value, mode);
+  PaletteFade_SetSource(value, mode);
 }
 
 /// Sets the colours an event's palette fade ends on.
 static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
-  BattleEffect_ApplyColorToTargetBuffer(value, mode);
+  PaletteFade_SetTarget(value, mode);
 }
 
 /// Moves an actor to a point in the pose it has and waits for it.

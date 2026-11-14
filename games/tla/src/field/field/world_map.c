@@ -60,7 +60,7 @@ void WorldMap_InitializePerspective(void) {
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
   REG_BLDY = 0;
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells),
-                      gMapCellBuffer);
+                      gMapGridCellBuffer);
   perspective->fade = DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON |
                       DISPCNT_BG3_ON | DISPCNT_OBJ_ON;
   perspective->fadeStep = 128;
@@ -264,7 +264,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  BattleEffect_LoadBufferPaletteFar(buffer);
+  PaletteFade_LoadPaletteFar(buffer);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[1]),
                       Ram_MapCollision + 0x1000);
   TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));

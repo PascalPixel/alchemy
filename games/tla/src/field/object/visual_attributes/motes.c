@@ -333,7 +333,7 @@ void FieldEffect_InitializeSparkles(void) {
 
 void Weather_StartLightning(void) {
   struct FieldBlendWork *work;
-  struct BattleEffectBuffers *buffers;
+  struct PaletteFade *buffers;
   volatile u32 zero;
 
   work = HeapSlot_AllocEwram(120, sizeof(struct FieldBlendWork));
@@ -342,10 +342,10 @@ void Weather_StartLightning(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
           REG_DMA3);
-  BattleEffect_BuildBuffer(0x10003, (u16 *)buffers, (u16 *)work, 1);
-  BattleEffect_BuildBuffer(0x10005, (u16 *)buffers, (u16 *)work->to, 1);
-  BattleEffect_InterpolateBuffers(work->to, work->from, work->delta, 12);
-  BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
+  PaletteFade_Build(0x10003, (u16 *)buffers, (u16 *)work, 1);
+  PaletteFade_Build(0x10005, (u16 *)buffers, (u16 *)work->to, 1);
+  PaletteFade_CalculateSteps(work->to, work->from, work->delta, 12);
+  PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
   Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);
@@ -374,7 +374,7 @@ void Weather_ResumeLightning(void) {
 
 void Weather_StartLightningFlash(s32 from, s32 to) {
   struct FieldBlendWork *work;
-  struct BattleEffectBuffers *buffers;
+  struct PaletteFade *buffers;
   volatile u32 zero;
   s16 *target;
 
@@ -384,11 +384,11 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
           REG_DMA3);
-  BattleEffect_BuildBuffer(from, (u16 *)buffers, (u16 *)work, 1);
+  PaletteFade_Build(from, (u16 *)buffers, (u16 *)work, 1);
   target = work->to;
-  BattleEffect_BuildBuffer(to, (u16 *)buffers, (u16 *)target, 1);
-  BattleEffect_InterpolateBuffers(target, work->from, work->delta, 12);
-  BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);
+  PaletteFade_Build(to, (u16 *)buffers, (u16 *)target, 1);
+  PaletteFade_CalculateSteps(target, work->from, work->delta, 12);
+  PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
   Task_Add(Weather_UpdateLightning, TASK_PASS_VBLANK);

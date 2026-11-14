@@ -56,8 +56,7 @@ void SpriteDissolve_Step(u8 *object, u32 position) {
   u32 indexMask;
   u8 offsetMask;
 
-  destination =
-      (u16 *)(0x06010000 + gResourceTableEntries[object[0x10]].offset);
+  destination = (u16 *)(0x06010000 + gVramCacheEntries[object[0x10]].offset);
   count = (object[0x14] * object[0x15]) / 64;
   row = 0;
 
@@ -447,7 +446,7 @@ void Actor_StartRenderModeScript(struct Actor *object) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  switch (party->renderMode) {
+  switch (party->movementMode) {
   case 0:
     script = gActor_PlayerScript;
     break;
@@ -630,7 +629,7 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
-  BattleEffect_ApplyColorToTargetBufferFar(0x10000, 1);
+  PaletteFade_SetTargetFar(0x10000, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
   dispcnt = REG_DISPCNT;

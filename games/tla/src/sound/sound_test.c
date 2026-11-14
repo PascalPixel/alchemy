@@ -77,7 +77,7 @@ void SoundTest_Run(void) {
     if (gInput.repeat & KEY_A)
       Sound_Play(cues.cue[row]);
     if (gInput.repeat & KEY_B)
-      Sound_Play(MUS_000);
+      Sound_Play(MUS_SILENCE);
     if (gInput.repeat & KEY_START)
       Sound_Play(SOUND_FADE_OUT_BGM);
     if (gInput.repeat & KEY_SELECT)

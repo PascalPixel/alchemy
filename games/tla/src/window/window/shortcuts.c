@@ -23,7 +23,7 @@ void AreaNameWindow_Show(void) {
   state = &gMainRoutineWork;
   x = 8;
   y = 8;
-  resource = Area_GetNameIndexFar(state->scene, state->entrance) +
+  resource = Area_GetNameIndexFar(state->next, state->entrance) +
              (s32)&MsgDebugAreaName;
   Text_GetMessageSize(resource, &x, &y, &width, &height);
   x = (30 - width) >> 1;

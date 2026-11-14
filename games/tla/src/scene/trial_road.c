@@ -50,7 +50,7 @@ void TrialRoad_FightGasp(void) { Field_RequestDjinnBattle(8, 75); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -71,16 +71,16 @@ s32 TrialRoad_SettleOnGround(struct Actor *object) {
   return 0;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad1)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad1)
     return gTrialRoad_Room1Placements[pattern & 7];
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad3)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad3)
     return gTrialRoad_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad4)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad4)
     return gTrialRoad_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad2)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad2)
     return gTrialRoad_Room2Placements;
   return gTrialRoad_Placements;
 }
@@ -107,7 +107,7 @@ void TrialRoad_TakeStairs(s32 direction) {
     if (state->stage[0] <= 0) {
       if (Event_GetFlag(2559)) {
         if (TrialRoad_OfferToGiveUp(0) == 0)
-          Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, -16);
+          Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, -16);
         return;
       }
       Import_EventSetExitRequest(direction + 4);
@@ -428,30 +428,30 @@ DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 
 /// A step at a stage's foot asks; giving up takes the party back to the start.
 s32 TrialRoad_OfferToGiveUp(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 message;
 
   if (Event_GetFlag(0x9ff)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId,
                         ((leader->x >> 20) << 4) + 8,
                         ((leader->z >> 20) << 4) + 8);
     Event_PlaySound(SE_SPLASH);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     message = (s32)&MsgTrialRoadGiveUpPrompt;
     FieldMessage_Show(message, 13);
     work->choiceMessage = message + 1;
     work->choiceWidth = 4;
     work->choiceSelection = 1;
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 1) ==
         0) {
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
       Event_Wait(10);
-      Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
+      Actor_SetAnimation(gMainRoutineWork.leaderActorId, 22);
       Event_Wait(10);
-      FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+      FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                            EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
       Event_Wait(30);
       InventorySnapshot_Restore();
@@ -469,13 +469,13 @@ void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(FLAG_SCENE_TEMP_81); }
 /// 645 and 646), the second only when the rival arrived first and twice the
 /// weight is due.
 void TrialRoad_OpenChests(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct TrialRoadState *state = gTrialRoadState;
   s32 found;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner,
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId,
                       ((leader->x >> 20) << 4) + 8,
                       ((leader->z >> 20) << 4) + 8);
   TrialRoad_Idle();
@@ -550,7 +550,8 @@ void TrialRoad_ExamineChest(s32 id) {
   } else {
     // "Place this item in the chest?"
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 1) ==
+        0)
       gFieldWork->fieldMenu = 1;
   }
 }
@@ -631,7 +632,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
     u8 mode;                                                                   \
                                                                                \
-    mode = party->renderMode;                                                  \
+    mode = party->movementMode;                                                \
                                                                                \
     if (mode == 0)                                                             \
       call1(id);                                                               \
@@ -658,7 +659,7 @@ void TrialRoad_OpenSpoutCell(s32 id) {
 }
 
 void TrialRoad_TrackLeaderOnPillars(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
+  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
 
   if (y == 0x200000)
     Event_SetFlag(FLAG_SCENE_TEMP_08);
@@ -670,7 +671,7 @@ void TrialRoad_JumpAcrossGap(void) {
   if (Actor_GetById(16)->z >> 20 == 23)
     Field_TryJumpForward();
   else
-    Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
+    Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
 }
 
 void TrialRoad_UnblockTorch(s32 a, s32 id) {
@@ -712,7 +713,7 @@ void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
 }
 
 void TrialRoad_JumpMeltedPuddle(void) {
-  if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) +
+  if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId) +
                     0x203))
     Field_TryJumpForward();
 }
@@ -804,7 +805,7 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
   s32 other = gTrialRoad_PoundPartners[(id - 18) & 3];
   struct Actor *object = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (frame <= 10)
     object->scaleY = Q16_ONE - (frame << 12);
@@ -900,7 +901,7 @@ void TrialRoad_StepOnPillar21(void) {
 }
 
 void TrialRoad_LandOnPillar(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
+  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
 
   if (y >= 0x100000) {
     Field_TryJumpForward();
@@ -990,7 +991,7 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
 
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *object = Actor_GetById(id);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 fromX = object->x >> 20;
   s32 fromZ = object->z >> 20;
   s32 toX = fromX;
@@ -1032,7 +1033,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 8);
   Event_Wait(6);
   object->speedLimit = px(1) / 2;
   object->acceleration = 0x3333;
@@ -1043,16 +1044,16 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SetMoveTarget(object, (toX << 20) + 0x80000, 0,
                       z = (toZ << 20) + 0x80000);
   Event_Wait(6);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.2);
-  Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, dx << 3,
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
+  Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, dx << 3,
                                  dz << 3);
   Event_Wait(24);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Actor_WaitForMove(object);
   if (toX <= 17) {
     Actor_SelectAnimation(object, 1);
-    Sound_Play(SE_298);
+    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
     Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(object, 3);
@@ -1067,7 +1068,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
 
       *flags = value;
     }
-    Sound_Play(SE_298);
+    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
     Sound_Play(SE_LOG_FALL);
     GameFlag_Set(id + 579);
   }
@@ -1091,7 +1092,7 @@ void TrialRoad_PushLog18South(void) { TrialRoad_PushLog(18, 0, 1, 1); }
 void TrialRoad_PushLog18SouthFromRow52(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->renderMode == 2)
+  if (party->movementMode == 2)
     Field_ClimbDown();
   else
     TrialRoad_PushLog(18, 0, 1, 1);
@@ -1125,7 +1126,7 @@ void TrialRoad_UncoverSpout18(s32 a, s32 b) {
 }
 
 void TrialRoad_StandOnBlock(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *block = Actor_GetById(15);
 
   if (block->x >> 20 == leader->x >> 20 && block->z >> 20 == leader->z >> 20) {
@@ -1137,11 +1138,11 @@ void TrialRoad_StandOnBlock(void) {
 }
 
 void TrialRoad_StartSand(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 2;
 }
 
 void TrialRoad_EndSand(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 0;
 }
 
 void TrialRoad_RevealVine(void) {
@@ -1167,7 +1168,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -1237,11 +1238,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "../field/field_effect/advance_motion_priority.c"
 
 void TrialRoad_DriftWithStream(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   s32 velocity[3];
 
-  if (gMainRoutineWork.renderMode == 4)
+  if (gMainRoutineWork.movementMode == 4)
     return;
   leader->z += px(1);
   if ((gFrameCount & 7) != 0)
@@ -1348,16 +1349,16 @@ extern struct Trigger gTrialRoad_Room4Triggers[];
 extern struct Trigger gTrialRoad_Room2Triggers[];
 extern s32 gTrialRoad_Room1Triggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad1)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad1)
     return gTrialRoad_Room1Triggers[pattern & 7];
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad3)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad3)
     return gTrialRoad_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad4)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad4)
     return gTrialRoad_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TrialRoad2)
+  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad2)
     return gTrialRoad_Room2Triggers;
   return gTrialRoad_Triggers;
 }
@@ -1583,7 +1584,7 @@ void TrialRoad_SetUpCave(void) {}
 
 void TrialRoad_GaspFlees(void) {
   struct Actor *partner = Actor_GetById(8);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 dx;
   s32 dz;
   s32 near;
@@ -1740,7 +1741,7 @@ void TrialRoad_SetUpPeak(void) {
     else
       TrialRoad_PlaceMoapaAtPeak();
   }
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
   TrialRoad_StartPaletteCycle(1);
   TrialRoad_AddPillarTop(10);
   if (Event_GetFlag(0x9fc))
@@ -1758,7 +1759,7 @@ extern s32 (*const gTrialRoad_StageSetUps__s1fc4[])(void) __asm__(
     "gTrialRoad_StageSetUps");
 
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
   s32 pattern = gTrialRoadState->pattern;
 
@@ -1767,7 +1768,7 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_TrialRoad1) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
-      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
       gTrialRoad_StageSetUps__s1fc4[pattern & 7]();
     } else if (entrance == 55) {
       TrialRoad_ShowTraps();
@@ -1917,7 +1918,7 @@ void TrialRoad_StartRival(s32 a);
   words[1] = Iwram_MulQ16(*viewZ, words[5]) + words[3]
 
 s32 Scene_PrepareMap(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
 
   if (scene == (s32)&SceneId_TrialRoad1) {
@@ -1932,7 +1933,7 @@ s32 Scene_PrepareMap(void) {
 
     if ((u32)(entrance - 31) <= 1) {
       if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
-        unit = Unit_Get(gMainRoutineWork.currentOwner);
+        unit = Unit_Get(gMainRoutineWork.leaderActorId);
         Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
@@ -1952,7 +1953,7 @@ s32 Scene_PrepareMap(void) {
       Event_SetDestination((s32)&SceneId_TrialRoad1, n);
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
-        unit = Unit_Get(gMainRoutineWork.currentOwner);
+        unit = Unit_Get(gMainRoutineWork.leaderActorId);
         Iwram_ClearWordsEntry(state, 32);
         value = 0;
         for (n = 0; n <= 13; n++)
@@ -1982,7 +1983,7 @@ s32 Scene_PrepareMap(void) {
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_TrialRoad1, n);
     } else if (entrance == 50) {
-      unit = Unit_Get(gMainRoutineWork.currentOwner);
+      unit = Unit_Get(gMainRoutineWork.leaderActorId);
       Iwram_ClearWordsEntry(state, 32);
       value = 0;
       for (n = 0; n <= 13; n++)
@@ -2090,7 +2091,7 @@ s32 Scene_PrepareMap(void) {
         if (i <= 9)
           goto hideUnused;
         Map_CenterOnFollowedPoint();
-        leader = Actor_GetById(gMainRoutineWork.currentOwner);
+        leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
           leader->y = leader->terrainHeight =
               Map_GetTerrainHeight(0, leader->x, leader->z);
@@ -2107,7 +2108,7 @@ s32 Scene_PrepareMap(void) {
           }
           if (road->stage[0] < road->rivalBest)
             TrialRoad_OpenRivalDoor(road->mirrored, road->stage[0]);
-          TrialRoad_ShowProgress(gMainRoutineWork.currentOwner, 8);
+          TrialRoad_ShowProgress(gMainRoutineWork.leaderActorId, 8);
           TrialRoad_StartRival((s16)(state->mirrored ^ 1));
           Task_Add(TrialRoad_UpdateRival, 0x480);
         } else {
@@ -2143,14 +2144,14 @@ extern s8 gTrialRoad_KeyStages[];
 // the random state is restored after.
 void TrialRoad_DealStageOrder(u32 seed) {
   s16 *order = (s16 *)gTrialRoadState;
-  u32 saved = gRandomState;
+  u32 saved = gRandomSeed;
   s32 counts[2];
   s32 i;
   s32 k;
   s32 offset;
   s8 value;
 
-  gRandomState = seed;
+  gRandomSeed = seed;
   do {
     for (i = 0; i <= 7; i++)
       order[i] = -1;
@@ -2170,7 +2171,7 @@ void TrialRoad_DealStageOrder(u32 seed) {
       }
     }
   } while (counts[0] == 0 || counts[1] == 0);
-  gRandomState = saved;
+  gRandomSeed = saved;
 }
 
 s32 TrialRoad_GetStage(s32 side) {
@@ -2535,7 +2536,7 @@ void TrialRoad_ShowTraps(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 1016);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 1016);
   Actor_SetPosition(8, 1016, 1016);
   for (i = 9; i < 80; i++) {
     struct Actor *object = Actor_GetById(i);
@@ -2589,7 +2590,7 @@ void TrialRoad_ShowTraps(void) {
   Event_Wait(1);
   ((struct ActorSolid *)Actor_GetById(13))->solid |= 1;
   Event_Wait(60);
-  Actor_ArmCallback(13, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(13, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(13, 4);
   // "The door is triggered only when the treasure chests are filled to..."
@@ -2632,7 +2633,7 @@ void TrialRoad_ShowTraps(void) {
   Event_Wait(10);
   Actor_SetSpeed(14, 1);
   Actor_WalkByAndWait(14, 16, -16);
-  Actor_ArmCallback(14, FACING_EAST, 0);
+  Actor_FaceDirectionById(14, FACING_EAST, 0);
   Sound_Play(SE_CHEST_OPEN);
   Actor_SetModeById(11, 6);
   Actor_SetModeById(12, 6);
@@ -2644,7 +2645,7 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetModeById(11, 5);
   Event_Wait(40);
   Actor_WalkToAndWait(14, 364, 168);
-  Actor_ArmCallback(14, FACING_NORTH, 0);
+  Actor_FaceDirectionById(14, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetModeById(12, 5);
@@ -2653,7 +2654,7 @@ void TrialRoad_ShowTraps(void) {
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 53, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 19, 8);
   Event_Wait(30);
-  Actor_ArmCallback(14, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(14, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
   // "If you are last to each of the four doors, you will lose eight items..."
@@ -2796,7 +2797,7 @@ void TrialRoad_DrawFountains(void) {
   s32 depth;
   s32 bob;
 
-  tile = gResourceTableEntries[base->vramEntry].offset >> 5;
+  tile = gVramCacheEntries[base->vramEntry].offset >> 5;
   entry = base->sprites;
   count = 0;
   rise = -0x20000;
@@ -3006,7 +3007,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   partner = Actor_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;
@@ -3110,7 +3111,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
 
   party = &gMainRoutineWork;
 
-  leader = Actor_GetById(party->currentOwner);
+  leader = Actor_GetById(party->leaderActorId);
   to = (struct EffectSpriteAttributes *)effect->sprite;
   from = (struct EffectSpriteAttributes *)leader->effect.sprite;
   source = from->bits;
@@ -3122,7 +3123,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
 extern s32 gTrialRoad_RubbleScript[];
 
 void MagmaRockInside_SpawnRubble(s32 spread) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
@@ -3164,7 +3165,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
 extern s32 gTrialRoad_DustScript[];
 
 void MagmaRockInside_SpawnDustRing(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame;
   u32 i;
@@ -3215,7 +3216,7 @@ void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
 }
 
 void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
-  TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.currentOwner);
+  TrialRoad_SetActorCellShape(a, b, gMainRoutineWork.leaderActorId);
 }
 
 extern u32 gTrialRoad_HexDigits[];
@@ -3268,7 +3269,7 @@ void TrialRoad_MoveRival(void) {
       *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
   struct TrialRoadReplay *state = &gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x, z, turn, dx, dz;
   u16 heading;
 
@@ -3492,7 +3493,7 @@ void TrialRoad_DrawProgress(void) {
   struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work;
   s16 *vramEntry = &work->vramEntry;
   u32 row, i;
-  s32 tile = gResourceTableEntries[*vramEntry].offset >> 5;
+  s32 tile = gVramCacheEntries[*vramEntry].offset >> 5;
   u32 flip, word;
   s32 y;
   // One constant for its whole life: the markers' OAM size bits (attribute 1
@@ -3578,7 +3579,7 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
 
   link->a = a;
   link->b = b;
-  owner = gMainRoutineWork.currentOwner;
+  owner = gMainRoutineWork.leaderActorId;
   height = &link->height;
   unkf0 = &link->unkf0;
   unkda = &link->unkda;

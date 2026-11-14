@@ -148,14 +148,13 @@ void Weather_UpdateRain(void) {
   }
 }
 
-void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
-#define BattleEffect_ApplyColorToTargetBuffer                                  \
-  BattleEffect_ApplyColorToTargetBuffer
+void PaletteFade_SetTarget(s32 value, s32 mode);
+#define PaletteFade_SetTarget PaletteFade_SetTarget
 
 // Lightning: selects the palette according to the remaining duration.
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = Ram_HeapSlots->unk70[2];
-  struct BattleEffectBuffers *target = Ram_HeapSlots->block32;
+  struct PaletteFade *target = Ram_HeapSlots->block32;
   s16 *timer = &work->timer;
 
   if (*timer < 0)
@@ -177,7 +176,7 @@ void Weather_UpdateLightning(void) {
     }
   case 5:
   case 10:
-    BattleEffect_ApplyColorToTargetBuffer(work, 1);
+    PaletteFade_SetTarget(work, 1);
     Dma_Set(work->delta, target->delta, 0x840002a0, REG_DMA3);
     target->duration = 12;
     target->step = 0;
@@ -185,7 +184,7 @@ void Weather_UpdateLightning(void) {
   case 1:
   case 6:
   case 11:
-    BattleEffect_ApplyColorToTargetBuffer(work->to, 1);
+    PaletteFade_SetTarget(work->to, 1);
     target->duration = 1;
     target->step = 0;
     break;

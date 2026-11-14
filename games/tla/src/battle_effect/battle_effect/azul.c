@@ -100,7 +100,7 @@ extern char ResourceId_WispSheet;
 extern char ResourceId_CornerRuneASheet;
 extern char ResourceId_Data0C2;
 extern char ResourceId_Data0B4;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 gData_02014000[];
 extern const u8 Data_081986f2[][2];
 extern const u8 Data_08198828[];
@@ -205,7 +205,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   sphere = work->sheet + 0x800;
   grid = work->sheet + 0xc00;
   {
-    u8 *cells = gMapCellBuffer;
+    u8 *cells = gMapGridCellBuffer;
 
     for (i = 0; i < 120; i++) {
       for (n = 0; n < 0x800; n += 64) {
@@ -237,7 +237,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     Iwram_CopyWordsEntry(obj, work->objects[5 + (i & 3)], 24);
     ((struct AzulObject *)work->objects[i])->priority = 1;
   }
-  mapCells = gMapCellBuffer;
+  mapCells = gMapGridCellBuffer;
   planes = gData_02014000;
   stripEnd = 0x3a08;
   for (frame = 0; frame != 228; frame++) {
@@ -656,7 +656,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
       Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
                                  gData_02014000, 1, 0);
-      Picture_MirrorIntoQuadrants(gData_02014000, gMapCellBuffer, 64, 64);
+      Picture_MirrorIntoQuadrants(gData_02014000, gMapGridCellBuffer, 64, 64);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
                                  0);
       work->transferMode = 2;
@@ -767,7 +767,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     if (frame > 185) {
     spray:
       if (frame == 186) {
-        struct EffectStep *drop = (struct EffectStep *)gMapCellBuffer;
+        struct EffectStep *drop = (struct EffectStep *)gMapGridCellBuffer;
 
         for (i = 0; i != 256; i++, drop++) {
           s32 angle = i << 8;
@@ -782,7 +782,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           drop->variant = (Random16() & 31) + 32;
         }
       }
-      p = (struct EffectStep *)gMapCellBuffer;
+      p = (struct EffectStep *)gMapGridCellBuffer;
       for (i = 0; i != 256; i++, p++) {
         if (p->variant >= 0) {
           blit(canvas, work->sheet + 0x2df8, HI(p->x) - 6, HI(p->y) - 12, 12,

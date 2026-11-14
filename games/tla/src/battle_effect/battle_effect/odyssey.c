@@ -54,7 +54,7 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data0E9;
 extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_Data101;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02016000[];
 extern u16 gBattleEffect_MoteCells[];
@@ -154,8 +154,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer,
+                                 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
                                  0);
       Graphics_LoadGreyRamp();
@@ -353,7 +353,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     projected = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    pixels = gMapCellBuffer;
+    pixels = gMapGridCellBuffer;
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = pixels;

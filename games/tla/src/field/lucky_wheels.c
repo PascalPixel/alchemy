@@ -40,8 +40,8 @@ extern const u8 gLuckyWheels_MachineSpriteY[];
 /// play time, starts Lucky Wheels' music and runs Lucky Wheels.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomState = gMainRoutineWork.playTime;
-  Sound_PlayFar(MUS_709);
+  gRandomSeed = gMainRoutineWork.playTime;
+  Sound_PlayFar(MUS_LEMURIA_SPRING);
   LuckyWheels_Run();
   return 0;
 }
@@ -586,7 +586,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->timer == 60) {
         work->state = 3;
-        Sound_PlayFar(MUS_093);
+        Sound_PlayFar(MUS_JINGLE_LARGE);
         work->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -1076,7 +1076,7 @@ void LuckyWheels_Run(void) {
   state->repeat = 0;
   state->bet = 1;
   Task_ResetAll();
-  gRenderOamEnabled = 0;
+  gOamCopyEnabled = 0;
 
   count = 0;
   j = 0;

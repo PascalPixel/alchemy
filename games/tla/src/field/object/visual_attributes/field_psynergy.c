@@ -278,7 +278,7 @@ struct ResourceSprite {
 };
 
 s32 ResourceTable_CountFreeBlocks(void) {
-  u8 *marker = gResourceBlockOwners;
+  u8 *marker = gVramCacheBlockOwners;
   s32 freeCount;
   s32 remaining;
 
@@ -359,18 +359,18 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
   } while (objectId <= 0x50);
 }
 
-void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode);
+void PaletteFade_SetTarget(s32 value, s32 mode);
 
 void Field_StartColorTransition(s32 frames, s32 color) {
   u8 *state = Ram_HeapSlots->fieldWork;
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->block32;
 
   Dma_Set(buffers->target + 0x2a0, state + 0x762, DMA_COPY_WORDS(0x150),
           REG_DMA3);
   if (*(s8 *)(state + 0xca4) == 0)
     Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer(0x200000 | color, 1);
+  PaletteFade_SetTarget(0x200000 | color, 1);
   GameFlag_Set(0x108);
   PaletteFade_StartInterpolation(frames);
 }
@@ -379,11 +379,11 @@ void Field_StartPaletteTransition(s32 frames) {
   u8 *state = Ram_HeapSlots->fieldWork;
   s32 colors = (s32)(state + 0x222);
 
-  BattleEffect_ApplyColorToTargetBuffer(colors, 2);
+  PaletteFade_SetTarget(colors, 2);
   if (*(s8 *)(state + 0xca4) != 0)
-    BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
+    PaletteFade_SetTarget(0x10001, 1);
   else
-    BattleEffect_ApplyColorToTargetBuffer(colors, 1);
+    PaletteFade_SetTarget(colors, 1);
   GameFlag_Clear(0x108);
   PaletteFade_StartInterpolation(frames);
 }

@@ -899,12 +899,12 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     wait(1);
     break;
   case 1:
-    BattleEffect_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
+    PaletteFade_SetSource(0x8000, PLTT_BACKDROP);
     PaletteFade_StartInterpolation(frames);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
-    BattleEffect_SetPrimaryBufferValue(0);
+    PaletteFade_SetBackdrop(0);
     return;
   case 2: {
     struct ScreenTransitionState *state =
@@ -984,7 +984,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     ScreenFade_ToBlack(frames);
     break;
   case 1:
-    BattleEffect_ApplyColorToTargetBuffer(0x8000, 0);
+    PaletteFade_SetTarget(0x8000, 0);
     PaletteFade_StartInterpolation(frames);
     break;
   case 2: {
@@ -1289,8 +1289,8 @@ void ScreenTransition_InitializeState(s32 value) {
   wait(0x78);
 }
 
-void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
-                                     s32 frames) {
+void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
+                                s32 frames) {
   s32 index;
   s32 first;
   s32 second;
@@ -1311,8 +1311,8 @@ void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
   }
 }
 
-void BattlePalette_UpdateBlend(void) {
-  struct BattleEffectBuffers *work = Ram_HeapSlots->block32;
+void PaletteFade_Update(void) {
+  struct PaletteFade *work = Ram_HeapSlots->block32;
   u16 *add = work->delta;
   s32 i;
 
@@ -1365,7 +1365,7 @@ void BattlePalette_UpdateBlend(void) {
 #define gFieldEffect_ChannelCurveLight gFieldEffect_ChannelCurveLight
 #define gFieldEffect_ChannelCurveContrast gFieldEffect_ChannelCurveContrast
 
-void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
+void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
   s32 red;
@@ -1672,9 +1672,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-void BattleEffect_InitializeBuffers(void) {
+void PaletteFade_Initialize(void) {
   volatile s32 zero;
-  struct BattleEffectBuffers *buffer;
+  struct PaletteFade *buffer;
 
   buffer = HeapSlot_AllocEwram(128, sizeof(*buffer));
   zero = 0;
@@ -1685,33 +1685,33 @@ void BattleEffect_InitializeBuffers(void) {
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, (u8 *)buffer->palette + 0x1c0, DMA_COPY_WORDS(112),
           REG_DMA3);
-  BattleEffect_BuildBuffer(0x10000, buffer, buffer->target, 0);
-  Task_Add((s32)BattlePalette_UpdateBlend, TASK_PASS_VBLANK + 15);
+  PaletteFade_Build(0x10000, buffer, buffer->target, 0);
+  Task_Add((s32)PaletteFade_Update, TASK_PASS_VBLANK + 15);
 }
 
-void BattlePalette_StopBlendAndReleaseBuffer(void) {
-  Task_Remove((s32)&BattlePalette_UpdateBlend);
+void PaletteFade_Release(void) {
+  Task_Remove((s32)&PaletteFade_Update);
   HeapSlot_Release(128);
 }
 
-void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode) {
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
+void PaletteFade_SetTarget(s32 value, s32 mode) {
+  struct PaletteFade *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
-    BattleEffect_BuildBuffer(value, buffers, buffers->target, mode);
+    PaletteFade_Build(value, buffers, buffers->target, mode);
   }
 }
 
-void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode) {
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
+void PaletteFade_SetSource(s32 value, s32 mode) {
+  struct PaletteFade *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
-    BattleEffect_BuildBuffer(value, buffers, buffers->current, mode);
+    PaletteFade_Build(value, buffers, buffers->current, mode);
   }
 }
 
-void BattleEffect_SetPrimaryBufferValue(u32 value) {
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
+void PaletteFade_SetBackdrop(u32 value) {
+  struct PaletteFade *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
     buffers->palette[0] = value;
@@ -1722,8 +1722,8 @@ void BattleEffect_SetPrimaryBufferValue(u32 value) {
 
 /// Packs the 448 target colours, three channels each, back into the effect's
 /// palette as RGB555.
-void BattleEffect_PackTargetBuffer(void) {
-  struct BattleEffectBuffers *work = Ram_HeapSlots->block32;
+void PaletteFade_PackTarget(void) {
+  struct PaletteFade *work = Ram_HeapSlots->block32;
   u16 *packed = work->palette;
   s32 blue = 0x7c00;
   u16 *current;
@@ -1740,26 +1740,25 @@ void BattleEffect_PackTargetBuffer(void) {
 }
 
 void PaletteFade_StartInterpolation(s32 mode) {
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
+  struct PaletteFade *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
     buffers->duration = mode;
     buffers->step = 0;
-    BattleEffect_InterpolateBuffers((s16 *)buffers->current,
-                                    (s16 *)buffers->target,
-                                    (s16 *)buffers->delta, mode);
+    PaletteFade_CalculateSteps((s16 *)buffers->current, (s16 *)buffers->target,
+                               (s16 *)buffers->delta, mode);
   }
 }
 
-void BattleEffect_LoadBufferPalette(const u16 *colours) {
-  struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;
+void PaletteFade_LoadPalette(const u16 *colours) {
+  struct PaletteFade *buffers = Ram_HeapSlots->block32;
 
   if (buffers != NULL) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
     copy(buffers->palette, colours, 0x1c0);
-    BattleEffect_BuildBuffer(0x10000, buffers, buffers->target, 1);
+    PaletteFade_Build(0x10000, buffers, buffers->target, 1);
   }
 }
 
@@ -1808,7 +1807,7 @@ void FadeOverlay_DrawMarks(void) {
   x = actor->x;
   terrainFloor = actor->floor;
   terrainLayer = actor->terrainId;
-  tile = gResourceTableEntries[94].offset >> 5;
+  tile = gVramCacheEntries[94].offset >> 5;
   x -= 0x80000;
   height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   secondHeight =
@@ -1867,7 +1866,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, 28);
   if (object == NULL)
-    object = ObjectTable_Get(gMainRoutineWork.currentOwner);
+    object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   work[6] = (u32)object;
 }
 
@@ -1900,7 +1899,7 @@ void BlankOverlay_DrawMarks(void) {
     return;
   x = ((s16 *)&actor->x)[1];
   row = (actor->z - actor->y) >> 16;
-  tile = gResourceTableEntries[94].offset >> 5;
+  tile = gVramCacheEntries[94].offset >> 5;
   cells = map->layers[2].cells;
   a = cells + (x + 8) / 16 + (row / 16 - 2) * 128;
   b = cells + (x - 8) / 16 + (row / 16 - 2) * 128;
@@ -1939,7 +1938,7 @@ void FieldEffect_StartBlankOverlay(s32 object) {
   Task_Add(BlankOverlay_DrawMarks, 0x480);
   HeapSlot_Release(56);
   if (object == 0)
-    object = ObjectTable_Get(gMainRoutineWork.currentOwner);
+    object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   *(s32 *)(work + 24) = object;
 }
 
@@ -1967,7 +1966,7 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
 /// priority 1 in palette 0.
 void EffectSprite_InitFromSlot94(struct EffectSprite *sprite, s32 a, s32 b,
                                  s32 c) {
-  EffectSprite_Init(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
+  EffectSprite_Init(sprite, a, b, c, gVramCacheEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->oam.priority = 1;
   sprite->oam.palette256 = 0;
@@ -1990,7 +1989,7 @@ void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
 /// The twin of EffectSprite_InitFromSlot94 with object mode 1 and priority 0.
 void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
                                         s32 b, s32 c) {
-  EffectSprite_Init(sprite, a, b, c, gResourceTableEntries[94].offset >> 5);
+  EffectSprite_Init(sprite, a, b, c, gVramCacheEntries[94].offset >> 5);
   sprite->depth = 0;
   sprite->oam.priority = 0;
   sprite->oam.palette256 = 0;
@@ -2038,14 +2037,13 @@ extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__(
 
 /// Returns the voice sound of sprite id's messages, its definition's value
 /// plus 0x100, or 0 for none (0xff) or with option 3
-/// (gMainRoutineWork.battleFxEnabled) off. Message_OpenWindowFar takes it in
+/// (gMainRoutineWork.speech) off. Message_OpenWindowFar takes it in
 /// the high half of its last argument.
 s32 Speaker_GetVoice(s32 id) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   u8 value;
 
-  if (party->battleFxEnabled == 0 ||
-      (value = Speaker_FindDefinition(id)->value) == 0xff)
+  if (party->speech == 0 || (value = Speaker_FindDefinition(id)->value) == 0xff)
     return 0;
   return value + 0x100;
 }
@@ -2119,8 +2117,8 @@ void Heading_Show(s32 heading) {
                WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR;
   REG_WIN0H = 0x7878;
   REG_WIN0V = 0x1848;
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10008, 0);
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x10008, 0);
   PaletteFade_StartInterpolation(24);
   REG_DISPCNT ^= 0x100;
   left = 120;
@@ -2189,7 +2187,7 @@ void Heading_Close(void) {
   u32 y;
   volatile u32 fill;
 
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(24);
   for (;;) {
     for (; gHeading_WipeSteps[step] >= 0; step++) {

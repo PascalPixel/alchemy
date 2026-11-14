@@ -168,14 +168,14 @@ extern s16 gMarsLighthouseRoomM_DoorwayBlend;
 extern s16 gMarsLighthouseRoomM_DoorwayBlendTarget;
 extern s16 gMarsLighthouseRoomM_Doorway;
 extern s16 gMarsLighthouseRoomM_DoorwayStep;
-void TileMap_ConvertBuffer(s32 scene, s32 a1);
+void Map_CopyPalette(s32 scene, s32 a1);
 u32 Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame);
 
 void FieldEffect_StartBlankOverlay(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -301,8 +301,8 @@ void Event_WaitTransitionFrames(void);
 
 #endif
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MarsLighthouseRoomM6)
     return gMarsLighthouseRoomM_Room6Placements;
@@ -653,8 +653,8 @@ void MarsLighthouseRoomM_TeleportToAerie(void) {
   FieldTask_Remove(MarsLighthouseRoomM_FadeDoorway);
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_MarsLighthouseRoomM6)
     return gMarsLighthouseRoomM_Room6Triggers;
@@ -686,7 +686,7 @@ s32 Scene_Initialize(void) {
   s32 entrance;
   s32 scene;
 
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   entrance = gMainRoutineWork.entrance;
 
   gFieldWork->transition = 0x100;
@@ -759,7 +759,7 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellAttributes(30, 12, 4, 3, 12, 12);
         FieldEvent_Wait(40);
         Event_SetFlag(FLAG_WAY_TO_AERIE_OPEN);
-        Event_PlaySound(MUS_080);
+        Event_PlaySound(MUS_PUZZLE_SOLVED);
         Sound_WaitForBgmRestore();
         Scene_PlayMusic();
         Event_End();
@@ -793,7 +793,7 @@ static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 }
 
 s32 Scene_PrepareMap(void) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
@@ -877,8 +877,8 @@ s32 Scene_PrepareMap(void) {
     extern char SceneId_MarsLighthouseRoomM3Second __asm__(
         "SceneId_MarsLighthouseRoomM3");
 
-    TileMap_ConvertBuffer(
-        gMainRoutineWork.map +
+    Map_CopyPalette(
+        gMainRoutineWork.mapId +
             ((s32)&SceneId_MarsLighthouseRoomM3Second - (s32)&SceneId_Prox2),
         0x5000000);
   }
@@ -892,13 +892,13 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered((s32)MsgMankindWithThe, 0, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -911,13 +911,13 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered((s32)MsgFishWithCold, 0, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -930,13 +930,13 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered((s32)MsgDragonsBurningWith, 0, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -949,13 +949,13 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered((s32)MsgBirdOnThe, 0, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -1018,13 +1018,13 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(20);
       PaletteFade_ApplySource(0x10000, 0);
-      BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+      PaletteFade_SetTarget(0x10003, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
       *color = 0x7fff;
       wait(1);
       EventMessage_ShowCentered((s32)MsgIfYouDo, 0, 4);
-      BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+      PaletteFade_SetTarget(0x10000, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
       Event_SetFlag(FLAG_TOLD_TO_BEGONE);
@@ -1045,7 +1045,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
     PaletteFade_ApplySource(0x10000, 0);
-    BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+    PaletteFade_SetTarget(0x10003, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
     *color = 0x7fff;
@@ -1059,7 +1059,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     Event_PlaySound(SE_560);
     MarsLighthouseRoomM_FlashDoorways();
     FieldEvent_Wait(20);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    PaletteFade_SetTarget(0x10000, 0);
     PaletteFade_StartInterpolation(20);
     wait(40);
     Event_SetFlag(FLAG_TOLD_TO_LIGHT_FLAMES);
@@ -1320,7 +1320,7 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
 }
 
 void Ride_UpdateDrift(struct Actor *object) {
-  struct Actor *target = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *target = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 vx;
   s32 vz;
   s32 rate;
@@ -1640,7 +1640,7 @@ s32 Fireball_CarryLeader(void) {
   event->encounter = 0;
   Party_TakeFallDamage(-10, 0);
   FieldCamera_SetSpeed(7);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();

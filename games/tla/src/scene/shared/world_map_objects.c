@@ -41,7 +41,7 @@ void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
      */
     register s32 thenValue asm("r7") = before;
 
-    owner = Actor_Get(gMainRoutineWork.currentOwner);
+    owner = Actor_Get(gMainRoutineWork.leaderActorId);
     work = Ram_HeapSlots->fieldWork;
     if (owner->x < target->x)
       work->exit = thenValue;
@@ -67,7 +67,7 @@ void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
      */
     register s32 thenValue asm("r7") = before;
 
-    owner = Actor_Get(gMainRoutineWork.currentOwner);
+    owner = Actor_Get(gMainRoutineWork.leaderActorId);
     work = Ram_HeapSlots->fieldWork;
     if (owner->z < target->z)
       work->exit = thenValue;
@@ -187,7 +187,7 @@ void WorldMap_UpdatePlacedActors(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Get(0x104) == 0) {
-              if (gMainRoutineWork.renderMode == 9)
+              if (gMainRoutineWork.movementMode == 9)
                 work->psynergy = 0x208b;
               else
                 work->stepTrigger = i + 100;

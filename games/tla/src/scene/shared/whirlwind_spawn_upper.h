@@ -4,7 +4,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(SE_222);
+  Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,

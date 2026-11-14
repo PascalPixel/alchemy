@@ -24,7 +24,7 @@ enum SoundControl {
   SOUND_FLAG_FADE_IN = 0x1000, ///< music fades in over 64 VBlanks
   /// Sounds from here to SOUND_SE_FIRST are jingles; those below are music,
   /// but for SOUND_FADE_OUT_BGM and SOUND_KEEP_BGM.
-  SOUND_JINGLE_FIRST = MUS_080,
+  SOUND_JINGLE_FIRST = MUS_PUZZLE_SOLVED,
   /// Sounds from here to SOUND_SE_END, but for the two fades, each play on the
   /// player gSongTable names for them.
   SOUND_SE_FIRST = SE_BELL,

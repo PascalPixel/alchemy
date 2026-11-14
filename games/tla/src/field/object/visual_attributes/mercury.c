@@ -130,9 +130,9 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   wait(10);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
   wait(20);
 
   SET_POSITION(&position, djinni->x, djinni->y, djinni->z);

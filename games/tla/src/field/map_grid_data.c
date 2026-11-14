@@ -157,7 +157,7 @@ s32 ActorScript_SetMoveTargetXZ();
 /// Each runs one control command every frame: the command, SC_WAIT(1),
 /// SC_LOOP(SC_FOREVER, SC_TOP).
 const s32 gActor_KeyCheckScript[] = {
-    SC_CMD_25,
+    SC_KEY_COUNT,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -169,31 +169,31 @@ const s32 gActor_KeysScript[] = {
 };
 
 const s32 gActor_RopeScript[] = {
-    SC_CMD_1C,
+    SC_ROPE,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_TightropeScript[] = {
-    SC_CMD_1D,
+    SC_TIGHTROPE,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_SandScript[] = {
-    SC_CMD_1E,
+    SC_SAND,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_HoverScript[] = {
-    SC_CMD_23,
+    SC_HOVER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_WalkingScript[] = {
-    SC_CMD_24,
+    SC_WALK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -205,31 +205,31 @@ const s32 gActor_PlayerScript[] = {
 };
 
 const s32 gActor_WorldMapScript[] = {
-    SC_CMD_1A,
+    SC_WORLD,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_SailOnMapScript[] = {
-    SC_CMD_1F,
+    SC_SAIL,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_SailScript[] = {
-    SC_CMD_20,
+    SC_WORLD_SAIL,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_FlyScript[] = {
-    SC_CMD_21,
+    SC_WORLD_FLY,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 const s32 gActor_SandOnWorldMapScript[] = {
-    SC_CMD_22,
+    SC_WORLD_SAND,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -278,28 +278,28 @@ const ScriptCommandFn gActorScript_CommandTable[54] = {
     ActorScript_ApplyOperandAdd,              // 0x17 SC_ADD
     ActorScript_ApplyOperandCompare,          // 0x18 SC_CMP
     Actor_UpdatePlayerControl,                // 0x19 SC_PLAYER
-    Actor_MoveOnWorldMap,                     // 0x1a SC_CMD_1A
+    Actor_MoveOnWorldMap,                     // 0x1a SC_WORLD
     Actor_MoveByKeys,                         // 0x1b SC_KEYS
-    Actor_CrossRope,                          // 0x1c SC_CMD_1C
-    Actor_CrossTightrope,                     // 0x1d SC_CMD_1D
-    Actor_MoveAsSand,                         // 0x1e SC_CMD_1E
-    Actor_SailOnMap,                          // 0x1f SC_CMD_1F
-    Actor_SailOnWorldMap,                     // 0x20 SC_CMD_20
-    Actor_FlyOnWorldMap,                      // 0x21 SC_CMD_21
-    Actor_MoveAsSandOnWorldMap,               // 0x22 SC_CMD_22
-    Actor_UpdateHoverControl,                 // 0x23 SC_CMD_23
-    Actor_UpdateWalkingControl,               // 0x24 SC_CMD_24
-    Field_CheckConfiguredKeysAndCount,        // 0x25 SC_CMD_25
+    Actor_CrossRope,                          // 0x1c SC_ROPE
+    Actor_CrossTightrope,                     // 0x1d SC_TIGHTROPE
+    Actor_MoveAsSand,                         // 0x1e SC_SAND
+    Actor_SailOnMap,                          // 0x1f SC_SAIL
+    Actor_SailOnWorldMap,                     // 0x20 SC_WORLD_SAIL
+    Actor_FlyOnWorldMap,                      // 0x21 SC_WORLD_FLY
+    Actor_MoveAsSandOnWorldMap,               // 0x22 SC_WORLD_SAND
+    Actor_UpdateHoverControl,                 // 0x23 SC_HOVER
+    Actor_UpdateWalkingControl,               // 0x24 SC_WALK
+    Field_CheckConfiguredKeysAndCount,        // 0x25 SC_KEY_COUNT
     Actor_ReleaseAndClear,                    // 0x26 SC_FREE
     ActorScript_SetAnimation,                 // 0x27 SC_ARG
     ActorScript_Nop,                          // 0x28 SC_NOP
     Script_PlaySound,                         // 0x29 SC_SE
-    Script_CallWithOperand,                   // 0x2a SC_CMD_2A
+    Script_CallWithOperand,                   // 0x2a SC_CALL_WITH
     Script_JumpToNextOperandPointer,          // 0x2b SC_GOTO
-    ActorScript_HideSprites,                  // 0x2c SC_B54_OFF
-    ActorScript_ShowSprite,                   // 0x2d SC_B54_ON
+    ActorScript_HideSprites,                  // 0x2c SC_HIDE_SPRITES
+    ActorScript_ShowSprite,                   // 0x2d SC_SHOW_SPRITE
     ActorScript_InvokeCallback,               // 0x2e SC_CALL
-    FieldCamera_FollowWatchedInBounds,        // 0x2f SC_CMD_2F
+    FieldCamera_FollowWatchedInBounds,        // 0x2f SC_CAMERA_IN_BOUNDS
     ActorScript_SetMoveTargetXZ,              // 0x30 SC_MOVE_XZ
     ActorScript_End,                          // 0x31
     ActorScript_End,                          // 0x32

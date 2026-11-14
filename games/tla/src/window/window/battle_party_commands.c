@@ -39,7 +39,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 
 /// Lets the player choose which reserve member takes a party slot in battle,
 /// previewing each choice in place: left and right cycle through the reserve,
-/// A confirms and swaps the two in gMainRoutineWork.activeOwners, and B puts
+/// A confirms and swaps the two in gMainRoutineWork.party, and B puts
 /// the slot's member back.
 s32 BattleParty_ChooseReserve(s32 slot) {
   u16 owners[6];
@@ -86,10 +86,10 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           reserve[65] = current;
           reserve[66] = slot;
           for (i = 0; i < 8; i++) {
-            if (gMainRoutineWork.activeOwners[i] == current)
-              gMainRoutineWork.activeOwners[i] = newId;
-            else if (gMainRoutineWork.activeOwners[i] == newId)
-              gMainRoutineWork.activeOwners[i] = current;
+            if (gMainRoutineWork.party[i] == current)
+              gMainRoutineWork.party[i] = newId;
+            else if (gMainRoutineWork.party[i] == newId)
+              gMainRoutineWork.party[i] = current;
           }
           goto done;
         }

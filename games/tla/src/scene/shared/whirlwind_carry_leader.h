@@ -2,7 +2,7 @@
 /// the camera follows again.
 void Whirlwind_CarryLeader(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   u8 *p;
@@ -64,8 +64,8 @@ void Whirlwind_CarryLeader(void) {
     } while (actor->velocityY != 0);
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;
   Event_End();

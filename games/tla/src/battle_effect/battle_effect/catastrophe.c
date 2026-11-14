@@ -105,7 +105,7 @@ extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 Data_02016000[];
@@ -178,8 +178,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 +                                                                \
-   gResourceTableEntries[((struct SpriteObject *)(obj))->slot].offset)
+  (0x06010000 + gVramCacheEntries[((struct SpriteObject *)(obj))->slot].offset)
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
 // Catastrophe: a black moon rises over a burning city, its towers crack and
@@ -826,7 +825,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             Sound_PlayFar(SE_FALLING_LIGHT);
             break;
           case 2:
-            Sound_PlayFar(SE_222);
+            Sound_PlayFar(SE_WHIRLWIND);
             break;
           }
           {

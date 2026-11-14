@@ -65,7 +65,7 @@ void Transform_Pop(void);
 
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern const u8 Data_0819928c[];  // the sword's mesh
 extern const u8 Data_081991c0[];  // its corners
 extern const u8 gData_08199340[]; // the axe's mesh
@@ -141,7 +141,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
 
       /* FAKEMATCH(dead): the store in a once-only block. */
       do {
-        chip = (struct EffectStep *)gMapCellBuffer;
+        chip = (struct EffectStep *)gMapGridCellBuffer;
       } while (0);
       EffectPosition_ProjectBattler(actor, at);
       for (i = 0; i != 256; i++, chip++) {
@@ -278,7 +278,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
       i = 0;
       if (i != Data_08198b98[mode]) {
         DrawRectangle blitter = blit[0];
-        struct EffectStep *chip = (struct EffectStep *)gMapCellBuffer;
+        struct EffectStep *chip = (struct EffectStep *)gMapGridCellBuffer;
 
         do {
           if (chip->variant >= 0) {

@@ -18,14 +18,14 @@ void GameFlag_Clear(s32 flag);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_SetSpriteColor(struct Actor *object, s32 value);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
 
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-void Actor_FaceDirectionById(s32 actor, s32 angle);
+void Actor_FaceDirectionAndRefreshById(s32 actor, s32 angle);
 void Actor_DisableById(s32 actor);
 void FlagBlock_ApplyFlags(const void *script);
 void Shop_Run(s32 shop, s32 keeper);
@@ -53,7 +53,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct Actor *object);
 
 static inline void Kibombo_ObjTurn(s32 actor, s32 angle) {
-  Actor_FaceDirectionById(actor, angle);
+  Actor_FaceDirectionAndRefreshById(actor, angle);
 }
 
 static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -66,7 +66,7 @@ static inline void Kibombo_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
 static inline s32 Kibombo_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
 static inline void Kibombo_ObjArm(s32 actor, s32 angle, s32 frames) {
-  Actor_ArmCallback(actor, angle, frames);
+  Actor_FaceDirectionById(actor, angle, frames);
 }
 
 static inline void Kibombo_ObjSetPos(struct Actor *object, s32 x, s32 y,
@@ -87,7 +87,7 @@ void FieldEffect_SetAttached(s32 actor, s32 emote);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Actor_WaitForMoveById(s32 actor);
-void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
+void Event_AddPartyMember(s32 actor, s32 value);
 
 static inline void Kibombo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -124,11 +124,9 @@ static inline void Kibombo_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 
 static inline void Kibombo_SePlay(s32 cue) { Sound_Play(cue); }
 
-void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void PaletteFade_SetTarget(s32 a, s32 b);
 
-static inline void Kibombo_FadeTo(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
+static inline void Kibombo_FadeTo(s32 a, s32 b) { PaletteFade_SetTarget(a, b); }
 
 #define KIBOMBO_TASK_ADD(func, priority)                                       \
   {                                                                            \

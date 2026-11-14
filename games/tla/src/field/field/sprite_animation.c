@@ -652,7 +652,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
   attribute = freeSprite->shadowAttributes;
   *attribute++ = 0;
   *attribute++ = 0x6000;
-  *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
+  *attribute = (gVramCacheEntries[93].offset >> 5) | 0x800;
   if (ResourceMetadata_Register(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;

@@ -74,7 +74,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           cell->collisionCode = 0;
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_573);
+          Event_PlaySound(SE_ICE_CRACK);
           Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                        actor->facing);
         }
@@ -98,7 +98,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
 
     work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
-    target = Actor_Get(gMainRoutineWork.currentOwner);
+    target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x - target->x) < 0x140000 &&
         (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z - target->z) < 0x140000) {

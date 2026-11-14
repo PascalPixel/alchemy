@@ -80,11 +80,11 @@ void MapGrid_SetCellHeight();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -93,13 +93,13 @@ void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0 &&
       CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 value) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0 &&
       CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(14);
 }
@@ -152,7 +152,7 @@ void JupiterLighthouse_FinishMovingBlock(void) {
   JupiterLighthouse_CheckBlockOnCell();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern s32 gPaletteCycleFrame;
 
@@ -234,7 +234,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(SE_222);
+  Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
@@ -401,7 +401,7 @@ void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

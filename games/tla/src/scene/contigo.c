@@ -191,7 +191,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   }
   Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     Contigo_TeleportIn();
 }
@@ -239,7 +239,7 @@ void Contigo_TeleportIn(void) {
   s32 saved;
 
   saved = work->transition;
-  BattleEffect_ApplyColorToTargetBuffer(0x202108, 1);
+  PaletteFade_SetTarget(0x202108, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
@@ -248,7 +248,7 @@ void Contigo_TeleportIn(void) {
   Teleport_PlayWhirl();
   wait(40);
   Contigo_StopPaletteCycle();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+  PaletteFade_SetTarget(0x10000, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
   {
@@ -280,7 +280,7 @@ void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -381,7 +381,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
 
   Actor_SetSpritePriorityDirect(
       self, BattleEffect_GetObjectPriority(
-                Actor_GetById(gMainRoutineWork.currentOwner)));
+                Actor_GetById(gMainRoutineWork.leaderActorId)));
   mode = 0x3ff & event->psynergy;
   state = &self->movementState;
   if (mode == 141) {
@@ -391,7 +391,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
   }
   if (BYTE_AT(self, 99) == 1)
     goto near;
-  other = Actor_GetById(gMainRoutineWork.currentOwner);
+  other = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Lemuria_Distance(&self->x, &other->x) <= 11)
     goto far;
   if (BYTE_AT(self, 98) == 1)
@@ -400,7 +400,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
     other = Actor_GetById(14);
   if (Actor_IsFacingNear(self, other, 18) != 0)
     goto near;
-  if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.currentOwner),
+  if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.leaderActorId),
                          26) != 0)
     goto near;
 far:
@@ -420,14 +420,14 @@ s32 Contigo_ShowSurprise(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gContigo_Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Contigo1)
     return gContigo_Room1Placements;
@@ -452,8 +452,8 @@ extern struct Trigger gContigo_Triggers[];
 extern struct Trigger gContigo_Room4Triggers[];
 extern struct Trigger gContigo_Room3Triggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Contigo1)
     return gContigo_Room1Triggers;
@@ -600,8 +600,8 @@ void Contigo_BabyThinks(void) {
     // "The baby's forehead is furrowed, like it's thinking."
     FieldMessage_Show((s32)MsgContigo64, 1);
   Actor_SetModeById(17, 3);
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x204084, 1);
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x204084, 1);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)),
@@ -641,7 +641,7 @@ void Contigo_BabyThinks(void) {
                                    0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+  PaletteFade_SetTarget(0x10000, 1);
   PaletteFade_StartInterpolation(16);
   if (GameFlag_Get(0x9b2))
     Event_SetMessageId((s32)MsgContigo164);
@@ -655,7 +655,7 @@ void Contigo_BabyThinks(void) {
   Actor_FaceDirection(14, FACING_WEST, 20);
   // "It sure is drafty in this shabby old house."
   Event_ShowMessageAndWait(14, 0);
-  Actor_FaceDirectionById(15, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(15, FACING_EAST);
   // "When the Wings of Anemos are complete, let's fix the house!"
   Event_ShowMessageAndWait(15, 0);
   Actor_SetModeById(14, 3);
@@ -877,7 +877,7 @@ void Contigo_TalkToWanderer(void) {
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->psynergy == 0) {
-    Actor_FaceActorById(14, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(14, gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo203);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
@@ -915,7 +915,7 @@ void Contigo_TalkAboutTheShip(void) {
   Event_ResolvePendingActions(0);
   object->unk63 = 1;
   if (event->psynergy == 0) {
-    Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(15, gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(0x9b2) != 0)
       Event_SetMessageId((s32)MsgContigo143);
     else
@@ -955,7 +955,7 @@ static __inline__ void Contigo_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d,
 }
 
 void Contigo_ClearBushesBySalt(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Get(0xfc7) == 0) {
@@ -963,11 +963,11 @@ void Contigo_ClearBushesBySalt(void) {
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Event_Start();
       Event_ResolvePendingActions(0);
-      FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+      FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
+      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
       leader->velocityY = px(6);
-      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
   }
@@ -1021,7 +1021,7 @@ void Contigo_ScoopForSalt(void) {
     Event_ResolvePendingActions(1);
     Actor_SetHorizontalPositionWithTerrain(16, 664 << 16, 952 << 16);
     wait(1);
-    Actor_FaceActorById(16, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActorById(16, gMainRoutineWork.leaderActorId, 0);
     work->raisedTrigger = 200;
     Event_End();
   }
@@ -1069,15 +1069,15 @@ void Contigo_ForceFreesDjinni(void) {
   object->velocityY = px(12);
   Actor_MoveToAndWait(17, 40, 680);
   Event_Wait(10);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
-    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 68, 680);
+    Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+    Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 68, 680);
   }
   MapGrid_SetScreenShake(0, 0, 0);
-  Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 17, 0);
+  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 17, 0);
   Event_Wait(10);
   GameFlag_Set(2535);
   Event_End();
@@ -1164,7 +1164,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
     Event_SetMessageId(message + 2);
     MessageArgument_Push(tickets, 5);
     FieldMessage_ShowAtActor(18, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         1) {
       Event_ShowMessageAndWait(18, 0);
       return;
@@ -1178,7 +1178,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
       FieldMessage_ShowAtActor(18, 0);
     }
     if (room <= 6 && Event_AskYesNoWithActorAnimation(
-                         gMainRoutineWork.currentOwner, 0) == 1) {
+                         gMainRoutineWork.leaderActorId, 0) == 1) {
       Event_SetMessageId((s32)MsgContigo12);
       // "Then get rid of some items and come again."
       Event_ShowMessageAndWait(18, 0);
@@ -1254,7 +1254,8 @@ void Contigo_SendToLuckyDice(void) {
   // "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes: "OK!
   // Then take the dice." No: "No? Oh, well. Who's next?"
   FieldMessage_ShowAtActor(14, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+      0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
@@ -1291,7 +1292,8 @@ void Contigo_SendToSuperLuckyDice(void) {
   // "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?"
   // Yes: "OK, then let 'em roll!" No: "Oh really? That's a shame!"
   FieldMessage_ShowAtActor(8, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+      0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3. */
     register u32 *state __asm__("r3") = (u32 *)gSceneState;
 
@@ -1332,8 +1334,8 @@ void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d) {
     MapGrid_CopyCellPictureIndicesRect(a, b + 2, c + 1, d, width, height);
   }
   Event_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetMovementTypeById(gMainRoutineWork.leaderActorId,
                             gContigo_EnterGameDoorScript);
   wait(12);
   Sound_Play(SE_MAP_EXIT);
@@ -1378,19 +1380,19 @@ void Contigo_TheReunion(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_WatchAndSetScript(ACTOR_ISAAC, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(ACTOR_GARET, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(ACTOR_MIA, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(ACTOR_IVAN, gMainRoutineWork.currentOwner);
-  Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(ACTOR_GARET, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(ACTOR_MIA, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
   Event_Wait(10);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 160, 382);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 160, 382);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
@@ -1400,13 +1402,13 @@ void Contigo_TheReunion(void) {
   Actor_SetMovementTypeById(9, gContigo_KradenReunionScript);
   Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_ShebaReunionScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_PiersReunionScript);
-  Actor_Stop(gMainRoutineWork.currentOwner);
+  Actor_Stop(gMainRoutineWork.leaderActorId);
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
   Actor_Stop(8);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Sound_Play(MUS_043);
+  Sound_Play(MUS_WORLD_MAP_REUNITED);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(ACTOR_ISAAC, ANIM_NOD);
   Event_SetMessageId((s32)MsgGladYouKeptYourPromise);
@@ -1469,8 +1471,8 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
   // "Our parents' lives were at stake! We had to help!"
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Parents? But...your parents died three years ago, in that storm..."
@@ -1484,8 +1486,8 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   // "Garet, you saw two strangers that night°Saturos and Menardi. They..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "They had failed to solve the mystery of Sol Sanctum. In doing so..."
@@ -1512,11 +1514,11 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTH);
   Motion_SetModeAndWaitAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
-  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "I'm not so sure now..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST);
   Motion_SetModeAndWaitAnimation(9, 3);
@@ -1530,8 +1532,8 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
-  answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  owner = gMainRoutineWork.currentOwner;
+  answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
+  owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
@@ -1546,10 +1548,10 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Motion_SetModeAndWaitAnimation(9, 4);
   Event_ShowMessageAndWait(9, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
-  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
@@ -1561,9 +1563,9 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   Actor_SetModeById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_IVAN, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_IVAN, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1591,11 +1593,11 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
-  answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  owner = gMainRoutineWork.currentOwner;
+  answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
+  owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAttachedEffect(ACTOR_GARET,
@@ -1609,7 +1611,7 @@ void Contigo_TheReunion(void) {
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
-  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
@@ -1619,13 +1621,13 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Sound_Play(MUS_000);
+  Sound_Play(MUS_SILENCE);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
   angle = FACING_NORTH_NORTHWEST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(8, px(160), px(466), angle);
   wait(1);
   Event_ShowMessageAndWait(8, 0);
-  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 8);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 8);
   Actor_WatchAndSetScript(ACTOR_JENNA, 8);
   Actor_WatchAndSetScript(ACTOR_PIERS, 8);
   Actor_WatchAndSetScript(ACTOR_SHEBA, 8);
@@ -1643,7 +1645,7 @@ void Contigo_TheReunion(void) {
   Actor_WalkToAndWait(8, 146, 406);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
-  Actor_Stop(gMainRoutineWork.currentOwner);
+  Actor_Stop(gMainRoutineWork.leaderActorId);
   Actor_Stop(ACTOR_JENNA);
   Actor_Stop(ACTOR_PIERS);
   Actor_Stop(ACTOR_SHEBA);
@@ -1651,10 +1653,10 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
-  Sound_Play(MUS_705);
+  Sound_Play(MUS_REUNION);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
@@ -1676,7 +1678,7 @@ void Contigo_TheReunion(void) {
                                     10);
 #endif
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1696,11 +1698,11 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-  Actor_FaceDirectionById(8, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 130, 400);
-  Actor_ArmCallback(ACTOR_IVAN, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_IVAN, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(8, FACING_WEST);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -1708,8 +1710,8 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
-  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 40);
@@ -1718,7 +1720,7 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
@@ -1745,7 +1747,7 @@ void Contigo_TheReunion(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1756,14 +1758,14 @@ void Contigo_TheReunion(void) {
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  Actor_FaceDirectionById(8, angle);
+  Actor_FaceDirectionAndRefreshById(8, angle);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
-  Actor_ArmCallback(ACTOR_ISAAC, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_MIA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
@@ -1773,7 +1775,7 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
   Actor_SetModeById(ACTOR_MIA, ANIM_NOD);
   Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetModeById(ACTOR_PIERS, ANIM_NOD);
@@ -1794,8 +1796,8 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
-  Actor_ArmCallback(ACTOR_GARET, FACING_EAST, 0);
-  Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST);
+  Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_ISAAC, FACING_EAST);
   Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(ACTOR_ISAAC, ANIM_NOD);
   Actor_Jump(ACTOR_JENNA, 2, 0);
@@ -1820,8 +1822,9 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
   FieldMessage_ShowAtActor(ACTOR_JENNA, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+      0) {
     Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0);
@@ -1834,7 +1837,7 @@ void Contigo_TheReunion(void) {
   }
   Actor_WalkToAndWait(9, 146, 368);
   Actor_FaceDirection(9, FACING_WEST, 40);
-  Actor_ArmCallback(9, FACING_EAST, 40);
+  Actor_FaceDirectionById(9, FACING_EAST, 40);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 9,
                            0);
@@ -1842,7 +1845,7 @@ void Contigo_TheReunion(void) {
   Actor_SetModeById(ACTOR_GARET, ANIM_NOD);
   Actor_SetModeById(ACTOR_MIA, ANIM_NOD);
   Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
@@ -1867,10 +1870,10 @@ void Contigo_ReturnToNewHome(void) {
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveWithinMapBounds(px(160), -1, px(368), 1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 158, 394);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 158, 394);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
-    Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
     wait(1);
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkToAndWaitById(ACTOR_IVAN, 144, 374);
@@ -1917,7 +1920,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Our world is falling into ruin..."
     Event_ShowMessageAndWait(8, 0);
-    Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
     wait(1);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_SetSpeed(ACTOR_ISAAC, 1.2);
@@ -1927,10 +1930,10 @@ void Contigo_ReturnToNewHome(void) {
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
     wait(1);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    Actor_SetMovementTypeById(gMainRoutineWork.leaderActorId,
                               gContigo_LeaderVisitsScript);
     Actor_SetSpeed(9, 0.8);
     Actor_WalkToAndWait(9, 182, 378);
@@ -1939,7 +1942,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Look, I don't want to interrupt your reunion or anything, but..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-    Actor_ArmCallback(8, FACING_EAST, 0);
+    Actor_FaceDirectionById(8, FACING_EAST, 0);
     Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "I couldn't help overhearing you say something about the world..."
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
@@ -1947,7 +1950,7 @@ void Contigo_ReturnToNewHome(void) {
     // "Our world requires a delicate balance of elemental forces. That..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
     FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+    FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -1956,11 +1959,11 @@ void Contigo_ReturnToNewHome(void) {
     Event_ShowMessageAndWait(8, 0);
     // "You're talking about Mars Lighthouse, right?"
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-    Actor_FaceDirectionById(8, FACING_EAST);
+    Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
     Motion_SetModeAndWaitAnimation(8, 3);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 40);
+    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
     // "Isn't Agatio taking care of Mars Lighthouse? Everything should be..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
@@ -1978,7 +1981,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
     // "No. A great power stands ready to oppose them."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+    FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1990,13 +1993,14 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 40);
+    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST,
+                            40);
     FieldEffect_SetAttached(0, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "But what will happen if Mars Lighthouse isn't lit quickly enough?"
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     Actor_FaceDirection(9, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
@@ -2011,10 +2015,10 @@ void Contigo_ReturnToNewHome(void) {
     Event_ShowMessageAndWait(8, 0);
     FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-    Actor_ArmCallback(8, FACING_EAST, 80);
+    Actor_FaceDirectionById(8, FACING_EAST, 80);
     FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+    FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
@@ -2035,7 +2039,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldMessage_ShowAtActor(9, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         0) {
       Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
       Actor_SetModeById(ACTOR_IVAN, ANIM_NOD);
@@ -2055,7 +2059,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldMessage_ShowAtActor(9, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         0) {
       Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
       Actor_SetModeById(ACTOR_ISAAC, ANIM_NOD);
@@ -2114,7 +2118,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetModeById(9, 3);
     // "All right, Felix! Let's head to Mars Lighthouse!"
     Event_ShowMessageAndWait(9, 0);
-    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
     Actor_SetSpeed(ACTOR_IVAN, 1.2);
     Actor_SetSpeed(ACTOR_ISAAC, 1.2);
     Actor_SetSpeed(9, 1.2);
@@ -2133,7 +2137,7 @@ struct SpriteAttributes {
 };
 
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Contigo1)
     Contigo_InitializeRoom1();
@@ -2150,7 +2154,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Contigo_KeepPriorityWithLeader(void) {
   if (Actor_GetById(65) != 0) {
-    struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+    struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
     Actor_SetSpritePriority(
         65, ((struct SpriteAttributes *)owner->sprite)->priority);
@@ -2208,7 +2212,7 @@ void Contigo_InitializeRoom1(void) {
   }
   if (GameFlag_Get(FLAG_SCENE_TEMP_00) != 0) {
     Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
     Map_CenterOnFollowedPoint();
     wait(1);
   }
@@ -2336,11 +2340,11 @@ void Contigo_InitializeRoom3(void) {
     Event_WaitTransitionFrames();
     if (diff > 0) {
       if (diff > 19999)
-        Sound_Play(MUS_093);
+        Sound_Play(MUS_JINGLE_LARGE);
       else if (diff > 4999)
-        Sound_Play(MUS_092);
+        Sound_Play(MUS_JINGLE_MEDIUM);
       else
-        Sound_Play(MUS_091);
+        Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
       MessageArgument_Push(diff, 5);
@@ -2360,11 +2364,11 @@ void Contigo_InitializeRoom3(void) {
     Event_WaitTransitionFrames();
     if (diff > 0) {
       if (diff > 19999)
-        Sound_Play(MUS_093);
+        Sound_Play(MUS_JINGLE_LARGE);
       else if (diff > 4999)
-        Sound_Play(MUS_092);
+        Sound_Play(MUS_JINGLE_MEDIUM);
       else
-        Sound_Play(MUS_091);
+        Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
       MessageArgument_Push(diff, 5);
@@ -2564,7 +2568,7 @@ void Contigo_StartSparkle(struct Actor *object,
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
   object->update = Contigo_RaiseSparkle;
-  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {

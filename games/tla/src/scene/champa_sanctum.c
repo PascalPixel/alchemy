@@ -20,11 +20,11 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -34,7 +34,7 @@ void Sanctum_Run(void);
 
 void ChampaSanctum_ServeAcrossTheCounter(void) { Sanctum_Run(); }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;

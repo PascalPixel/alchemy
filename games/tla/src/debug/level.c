@@ -73,13 +73,13 @@ enum IncreaseItemAndLevelActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /// The scene's actor placements: a room of names for its entrance, else the
 /// debug room's.
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == ENTRANCE_NAMES_FIRST)
     return gIncreaseItemAndLevel_FirstNamePlacements;
   if (gMainRoutineWork.entrance == ENTRANCE_NAMES_SECOND)
@@ -127,7 +127,7 @@ void IncreaseItemAndLevel_ShowCharacterName(s32 character) {
 
 /// The scene's triggers: the rooms of names' for any entrance above 94, else
 /// the debug room's.
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance > 94)
     return gIncreaseItemAndLevel_NameTriggers;
   return gIncreaseItemAndLevel_Triggers;
@@ -170,7 +170,7 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gMainRoutineWork.currentOwner);
+  unit = Unit_Get(gMainRoutineWork.leaderActorId);
   window = Window_Create(0, 0, 30, 9, 2);
 
   messageId = (s32)MsgRaiseEveryoneS;
@@ -192,13 +192,13 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
     if ((gInput.pressed & KEY_START) != 0 ||
         Input_PressedFenced(KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
-      Sound_Play(MUS_093);
+      Sound_Play(MUS_JINGLE_LARGE);
       redraw = 1;
     }
 
     if ((gInput.pressed & KEY_A) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(1);
-      Sound_Play(MUS_091);
+      Sound_Play(MUS_JINGLE_SMALL);
       redraw = 1;
     }
 
@@ -222,7 +222,7 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 #define ITEM_COUNT 512      ///< The browser's item numbers, 0 to 511, wrapping.
 #define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
-#define ITEM_ID_MASK 0x1ff
+#define INVENTORY_ITEM_ID_MASK 0x1ff
 
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 
@@ -270,7 +270,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
         Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
-        messageOrDefinitionId = selectedItemId & ITEM_ID_MASK;
+        messageOrDefinitionId = selectedItemId & INVENTORY_ITEM_ID_MASK;
         Item_GetDirect(messageOrDefinitionId);
         Text_DrawMessageAsTiles(messageOrDefinitionId + (s32)MsgItemName,
                                 window, 120, 0);
@@ -336,7 +336,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
     back:
       selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
     check_back:
-      if (Item_GetDirect(selectedItemId & ITEM_ID_MASK)->icon == 0)
+      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
         goto back;
     }
     if (seekDirection == 1) {
@@ -345,7 +345,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
     ahead:
       selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
     check_ahead:
-      if (Item_GetDirect(selectedItemId & ITEM_ID_MASK)->icon == 0)
+      if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
         goto ahead;
     }
     seekDirection = 0;

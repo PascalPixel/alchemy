@@ -124,18 +124,18 @@ extern u16 gPaletteCycleUnlitColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
 void JupiterLighthouse_SetLayerCellsByLeader(void) {
   struct Actor *object;
 
-  object = Actor_Get(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.leaderActorId);
   if (object->terrainId == 1) {
     FieldMapGrid_SetCellBehavior(px(144), px(576), 2, 0xea);
     FieldMapGrid_SetCellBehavior(px(256), px(560), 2, 0xea);
@@ -154,7 +154,7 @@ void JupiterLighthouse_DrawGlow(void) {
 /// Cyclone on a pad on a ledge (the trigger, 32 west or 33 east) whirls the
 /// leader down to the floor below, the pad glowing.
 void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
-  s32 owner = gMainRoutineWork.currentOwner;
+  s32 owner = gMainRoutineWork.leaderActorId;
   struct Actor *leader = Actor_Get(owner);
   struct Actor *effect;
   s32 i;
@@ -217,7 +217,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
 /// Cyclone on a pad below a ledge (the trigger, 30 west or 31 east) whirls the
 /// leader up onto the ledge, 144 pixels up, the pad glowing.
 void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
-  s32 owner = gMainRoutineWork.currentOwner;
+  s32 owner = gMainRoutineWork.leaderActorId;
   struct Actor *leader = Actor_Get(owner);
   struct Actor *effect;
   s32 *target;
@@ -322,16 +322,16 @@ void JupiterLighthouse_CycloneDownOnEastPad(void) {
 /// A leader who reaches the beam hovering, 32 pixels up or more, is drawn into
 /// it and carried up, spinning, to room 4.
 void JupiterLighthouse_RideTheBeam(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 i;
   s32 angle;
   s32 y;
 
   y = object->y;
   if (y >= 0x200000) {
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
-    FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-    Actor_WalkTo(gMainRoutineWork.currentOwner, 216, 680);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
+    FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+    Actor_WalkTo(gMainRoutineWork.leaderActorId, 216, 680);
     Actor_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
@@ -349,7 +349,7 @@ void JupiterLighthouse_PushEnergyBlock(s32 a0, s32 a1) {
 
   Actor_Get(a1)->motionFlags = 0;
   FieldActor_SetSpritePriority(a1, 1);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
 static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
@@ -369,7 +369,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   object->motionFlags = 3;
   Actor_Get(id)->priorityFlags |= 1;
   party = &gMainRoutineWork;
-  Actor_Get(party->currentOwner)->priorityFlags |= 1;
+  Actor_Get(party->leaderActorId)->priorityFlags |= 1;
   if (object->x >> 20 == 20 && object->z >> 20 == 39)
     FieldActor_SetSpritePriority(id, 3);
   if (object->terrainHeight !=
@@ -427,7 +427,7 @@ void JupiterLighthouse_RaiseBridgeBlock(s32 unused, s32 id) {
 void JupiterLighthouse_StartHover(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->renderMode == 10)
+  if (party->movementMode == 10)
     FieldMapGrid_SetCellBehavior(px(336), px(592), 0, 255);
 }
 
@@ -435,7 +435,7 @@ void JupiterLighthouse_EndHover(void) {
   MapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 4);
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// A mote's update: it circles the beam at its own speed, rising until it
 /// reaches the top and starts again from the floor, in front of the beam on
@@ -508,7 +508,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 6 ||
       gMainRoutineWork.entrance == 7)
-    Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_FIRST_HOVERING_BLOCK);
     Actor_RaiseFromCell(ACTOR_FIRST_HOVERING_BLOCK + 1);
@@ -654,7 +654,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

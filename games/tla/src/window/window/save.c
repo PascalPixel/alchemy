@@ -69,7 +69,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   Text_DrawMessage(message, (s32)window, 40, 88);
   Text_DrawMessage(message + 1, (s32)window, 40, 104);
   Sound_SetBgmVolumeTargetFar(0, 30);
-  Sound_PlayFar(SE_298);
+  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   wait(10);
   Heap_Release(tiles);
   return window;
@@ -323,7 +323,7 @@ s32 Save_ScanFileSummaries(void) {
       }
       if (work->summary[i].flagCount != 0)
         gData_020036d8 = 1;
-      if (work->summary[i].level != 0 && work->summary[i].hasFlag34 == 0)
+      if (work->summary[i].level != 0 && work->summary[i].reunited == 0)
         gData_02005350 = 1;
     }
   }
@@ -335,11 +335,12 @@ s32 Save_ScanFileSummaries(void) {
 
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gMainRoutineWork)
 
-/* VIEW(screens): variable gData_02001000 as u32 gData_02001000; module/tla.h
- * has s8 gData_02001000[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/window/window/save.c:353:
- * `gData_02001000__screens' undeclared (first use in this function). */
-extern u32 gData_02001000__screens __asm__("gData_02001000");
+/* VIEW(screens): variable gSceneLocalState as u32 gSceneLocalState;
+ * module/tla.h has s8 gSceneLocalState[]; tried as the rest of the object
+ * declares it, it does not compile in tla-ja:
+ * games/tla/src/window/window/save.c:353: `gData_02001000__screens' undeclared
+ * (first use in this function). */
+extern u32 gData_02001000__screens __asm__("gSceneLocalState");
 
 // Builds the save header.
 s32 Save_BuildFileSummary(void) {
@@ -354,10 +355,10 @@ s32 Save_BuildFileSummary(void) {
 
   summary = (struct SaveSummary *)(gSaveBuffer - 16);
   SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
-  SAVE_GAME_WORDS->playTime = gFrameWaitCount;
-  gData_02001000__screens = gFrameWaitCount;
-  gMainRoutineWork.unk244[6] = gAutoSleepEnabled;
-  owner = Unit_Get(gMainRoutineWork.currentOwner);
+  SAVE_GAME_WORDS->playTime = gPlayTimeFrames;
+  gData_02001000__screens = gPlayTimeFrames;
+  gMainRoutineWork.unk244[6] = gIdleSleepEnabled;
+  owner = Unit_Get(gMainRoutineWork.leaderActorId);
   destination = summary->name;
   source = owner->name;
   for (i = 11; i >= 0; i--)
@@ -365,7 +366,7 @@ s32 Save_BuildFileSummary(void) {
   summary->level = owner->level;
   summary->playTime = SAVE_GAME_WORDS->playTime;
   summary->area =
-      Area_GetNameIndexFar(gMainRoutineWork.scene, gMainRoutineWork.entrance);
+      Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
   summary->classId = owner->classIndex;
   summary->coins = gMainRoutineWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
@@ -376,15 +377,15 @@ s32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && owners[i] != 255; i++)
     summary->party[i] = owners[i];
   summary->party[i] = -1;
-  summary->paletteGlow = gMainRoutineWork.unk220[5];
-  summary->paletteGlowSub = gMainRoutineWork.unk220[6];
+  summary->paletteGlow = gMainRoutineWork.unusedAfterParty[5];
+  summary->paletteGlowSub = gMainRoutineWork.unusedAfterParty[6];
   summary->sendFlag = gMainRoutineWork.unk22d[2];
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
     if (GameFlag_Get(i))
       summary->flagCount++;
   }
-  summary->hasFlag34 = GameFlag_Get(34) != 0;
+  summary->reunited = GameFlag_Get(34) != 0;
   {
     s32 n;
     u32 frames;
@@ -478,7 +479,7 @@ s32 Save_ToFile(u32 slot) {
   } else {
     Save_LoadFileSummaries();
     gSaveSlot = slot;
-    Sound_PlayFar(MUS_085);
+    Sound_PlayFar(MUS_SAVED);
     FieldMessage_Show((s32)&MsgSaving, 13);
     Save_BuildFileSummary();
     ObjectTable_SnapshotFar();
@@ -563,9 +564,9 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
       FieldMessage_Show((s32)&MsgLoadFailed, 1);
       result = -2;
     } else {
-      gFrameWaitCount = SAVE_GAME_WORDS->playTime;
-      gAutoSleepEnabled = gMainRoutineWork.unk244[6];
-      gIdleFrameCount = 0;
+      gPlayTimeFrames = SAVE_GAME_WORDS->playTime;
+      gIdleSleepEnabled = gMainRoutineWork.unk244[6];
+      gIdleFrames = 0;
       gSaveSlot = file;
     }
   }
@@ -990,7 +991,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   } else if (menuMode == 6) {
     for (i = 0;
          i < SAVE_FILE_COUNT && (save->summary[selectedFile].level == 0 ||
-                                 save->summary[selectedFile].hasFlag34 != 0);
+                                 save->summary[selectedFile].reunited != 0);
          i++) {
       selectedFile++;
       if (selectedFile > 2)
@@ -1025,7 +1026,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage((s32)MsgSaveCorrupted, (s32)fileList, 10, i * 16);
     } else if (menuMode == 5 && save->summary[i].sendFlag == 0) {
       Text_DrawMessage((s32)MsgSaveNotCleared, (s32)fileList, 10, i * 16);
-    } else if (menuMode == 6 && save->summary[i].hasFlag34 != 0) {
+    } else if (menuMode == 6 && save->summary[i].reunited != 0) {
       Text_DrawMessage((s32)MsgSavePostReunion, (s32)fileList, 10, i * 16);
     } else {
       y = i * 16;
@@ -1038,8 +1039,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       MenuTitle_Create(menuMode, (struct RenderInput *)fileList, 72, -24);
   DjinnFigures_InitializeTopRowFar();
   for (i = 0, y = 144; i < 4; i++, y += 24)
-    MenuIcon_SetPositionFar(i, y, 128);
-  Menu_SetEntryObjectsHiddenFar(0);
+    DjinnFigures_SetSlotPositionFar(i, y, 128);
+  DjinnFigures_SetShownFar(0);
   wait(1);
 
   while (1) {
@@ -1069,16 +1070,16 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           FileList_DrawDjinnCounts(
               (struct RenderInput *)djinnWindow,
               (struct NumberRow *)&save->summary[selectedFile]);
-          Menu_SetEntryObjectsHiddenFar(1);
+          DjinnFigures_SetShownFar(1);
         } else {
-          Menu_SetEntryObjectsHiddenFar(0);
+          DjinnFigures_SetShownFar(0);
           Window_Close(djinnWindow, 2);
           djinnWindow = NULL;
         }
       } else {
-        WindowColor_Apply(gMainRoutineWork.unk220[5],
-                          gMainRoutineWork.unk220[6]);
-        Menu_SetEntryObjectsHiddenFar(0);
+        WindowColor_Apply(gMainRoutineWork.unusedAfterParty[5],
+                          gMainRoutineWork.unusedAfterParty[6]);
+        DjinnFigures_SetShownFar(0);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         Window_Close(djinnWindow, 2);
         Window_Close(partyWindow, 2);
@@ -1105,7 +1106,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 1 && save->summary[selectedFile].sendFlag != 0) ||
                (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
-               (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
+               (menuMode == 6 && save->summary[selectedFile].reunited != 0));
     } else if (gInput.repeat & KEY_DOWN) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
@@ -1117,7 +1118,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
                (menuMode == 1 && save->summary[selectedFile].sendFlag != 0) ||
                (menuMode == 4 && save->summary[selectedFile].flagCount == 0) ||
                (menuMode == 5 && save->summary[selectedFile].sendFlag == 0) ||
-               (menuMode == 6 && save->summary[selectedFile].hasFlag34 != 0));
+               (menuMode == 6 && save->summary[selectedFile].reunited != 0));
     } else if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
@@ -1136,7 +1137,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_Close(fileList, 2);
   FileList_StopPulse();
   HeapSlot_Release(220);
-  WindowColor_Apply(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
+  WindowColor_Apply(gMainRoutineWork.unusedAfterParty[5],
+                    gMainRoutineWork.unusedAfterParty[6]);
   wait(1);
 done:
   return result;

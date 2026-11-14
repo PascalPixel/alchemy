@@ -92,10 +92,10 @@ extern s32 gAnkohlRuins_SandRoom;
 extern u32 gAnkohlRuins_Room1Regions[];
 extern u32 gAnkohlRuins_Room2Regions[];
 
-const struct ActorPlacement *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
+const struct ActorPlacement *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins5)
     return (const struct ActorPlacement *)gAnkohlRuins_Room1Regions;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins8)
     return (const struct ActorPlacement *)gAnkohlRuins_Room2Regions;
   return 0;
 }
@@ -107,8 +107,8 @@ static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
 }
 
 void AnkohlRuins_JumpDownLedge(void) {
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-  Actor_Start(gMainRoutineWork.currentOwner, 6, 0x1000);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+  Actor_Start(gMainRoutineWork.leaderActorId, 6, 0x1000);
   Event_PlaySound(SE_310);
   Event_SetFlag(FLAG_ARRIVE_FALLING);
   FieldEvent_SetExitRequest(13);
@@ -128,7 +128,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #if TLA_PATCH_1
 
 void AnkohlRuins_LandFromFall(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   u32 i;
   s32 angle;
@@ -168,18 +168,18 @@ loop:
   if (i <= 16)
     goto loop;
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = 0x204;
   Event_End();
 }
@@ -204,43 +204,43 @@ extern struct ActorPlacement gAnkohlRuins_Room5Placements[];
 extern struct ActorPlacement gAnkohlRuins_Room6Placements[];
 extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins1)
     return gAnkohlRuins_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins2)
     return gAnkohlRuins_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins3)
     return gAnkohlRuins_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins4)
     return gAnkohlRuins_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins5)
     return gAnkohlRuins_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins6)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins6)
     return gAnkohlRuins_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins8)
     return gAnkohlRuins_Room8Placements;
   return gAnkohlRuins_Placements;
 }
 
 void AnkohlRuins_SinkIntoSand(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 2;
 }
 
 void AnkohlRuins_RiseFromSand(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 0;
 }
 
 // Copies the cells under the object with the given id in the rooms that have
 // them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
 // rows that flag 0x205 opens (always, in Japanese).
 void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins1) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 4, 69);
       MapGrid_CopyCellAttributes(3, 68, 1, 1, 3, 70);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins4) {
     if (id == 19) {
       MapGrid_CopyCellAttributes(35, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(36, 72, 1, 1, 37, 73);
@@ -250,13 +250,13 @@ void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
     if (id == 18)
       MapGrid_CopyCellAttributes(39, 93, 1, 1, 40, 93);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins3) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 32, 70);
       MapGrid_CopyCellAttributes(33, 69, 1, 1, 33, 71);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins5) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(17, 85, 1, 1, 17, 83);
       MapGrid_CopyCellAttributes(19, 84, 1, 1, 18, 82);
@@ -277,7 +277,7 @@ void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
 void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
+  if (id == 8 && gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins1) {
     if (object->x >> 20 == 4) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
       Event_SetFlag(0x9c6);
@@ -285,7 +285,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(3, 68, 1, 1, 4, 69);
     MapGrid_CopyCellAttributes(3, 69, 1, 1, 3, 70);
   }
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
+  if (id == 8 && gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins3) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     MapGrid_CopyCellAttributes(31, 70, 1, 1, 32, 70);
     if (object->x >> 20 == 32) {
@@ -293,7 +293,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
       Event_SetFlag(0x9c7);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins4) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(3, 114, 1, 1, 3, 113);
       if (object->x >> 20 == 2)
@@ -313,7 +313,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
       }
     }
   }
-  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5) {
+  if (id == 8 && gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins5) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
@@ -551,10 +551,10 @@ void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
   }
 }
 
-extern struct MapCell gMapCellBuffer[];
+extern struct MapCell gMapGridCellBuffer[];
 
 void AnkohlRuins_FlowWithSand(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
   struct Actor *companion = work->camera;
@@ -566,8 +566,8 @@ void AnkohlRuins_FlowWithSand(void) {
   if (Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS))
     return;
   if (map == NULL) {
-    upper = gMapCellBuffer;
-    ground = gMapCellBuffer;
+    upper = gMapGridCellBuffer;
+    ground = gMapGridCellBuffer;
   } else {
     ground = map->layers[0].cells;
     upper = map->layers[2].cells;
@@ -577,7 +577,7 @@ void AnkohlRuins_FlowWithSand(void) {
   upper += index;
   if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
     return;
-  if (gMainRoutineWork.renderMode == 5)
+  if (gMainRoutineWork.movementMode == 5)
     return;
   position[0] = leader->x;
   position[1] = leader->y;
@@ -589,12 +589,12 @@ void AnkohlRuins_FlowWithSand(void) {
 }
 
 void AnkohlRuins_PushedOffLedge(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STILL);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STILL);
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   object->motionFlags = 0;
   object->actionFlags = 0;
@@ -602,15 +602,15 @@ void AnkohlRuins_PushedOffLedge(void) {
     s32 zero;
 
     zero = 0;
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, zero, 8);
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, zero, 8);
   }
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(10);
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Event_PlaySound(SE_DUST_PUFF);
-  AnkohlRuins_SettleObject(gMainRoutineWork.currentOwner, 188);
+  AnkohlRuins_SettleObject(gMainRoutineWork.leaderActorId, 188);
   object->actionFlags = 1;
   Event_End();
 }
@@ -623,11 +623,11 @@ void AnkohlRuins_FinishPushing(s32 a, s32 id) {
 }
 
 void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins1)
     Event_SetFlag(id + 0x97f);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins2)
     Event_SetFlag(id + 0x995);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins4)
     Event_SetFlag(id + 0x996);
 }
 
@@ -645,7 +645,7 @@ void AnkohlRuins_DrawSand(void) {
   // Unused: gives the stack frame its 4 bytes; the original stores it there
   // and never reads it.
   volatile s32 kept = origin[1];
-  s32 tile = gResourceTableEntries[work->tile].offset >> 5;
+  s32 tile = gVramCacheEntries[work->tile].offset >> 5;
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
@@ -812,7 +812,7 @@ void AnkohlRuins_CountSandTime(void) {
 extern struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[];
 
 void AnkohlRuins_RaiseFirstSand(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s16 i;
@@ -821,7 +821,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   s32 row;
   s16 n;
 
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STILL);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STILL);
   m = work->level >> 19;
   leader->motionFlags = 0;
   MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
@@ -893,7 +893,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
 extern struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[];
 
 void AnkohlRuins_RaiseSecondSand(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   s32 level;
@@ -903,7 +903,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   s16 m;
   s16 n;
 
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STILL);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STILL);
   level = work->level >> 19;
   leader->motionFlags = 0;
   MapGrid_SetShakeFixed(0x50000, 0x50000, 0x10000);
@@ -977,7 +977,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(SE_584);
+    Event_PlaySound(SE_BUTTON_PRESS);
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
     MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
@@ -998,7 +998,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
       Event_SetFlag(n1);                                                       \
-      Event_PlaySound(SE_584);                                                 \
+      Event_PlaySound(SE_BUTTON_PRESS);                                        \
       Event_Start();                                                           \
       FieldEvent_ResolvePendingActions(0);                                     \
       MapGrid_CopyCells(26, 70, 1, 3, n2, n3);                                 \
@@ -1018,7 +1018,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
 
   if (done == 0) {
     FieldEvent_ResolvePendingActions(0);
-    Event_PlaySound(SE_584);
+    Event_PlaySound(SE_BUTTON_PRESS);
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
     MapGrid_CopyCells(18, 66, 3, 1, 7, 84);
@@ -1046,7 +1046,7 @@ DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor, 0x9e3, 2, 83, 1,
 void AnkohlRuins_RideRaftDown(void) {
   struct Actor *rider = gFieldWork->camera;
   struct Actor *raft = Actor_GetById(9);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 column;
   s32 row;
@@ -1055,7 +1055,7 @@ void AnkohlRuins_RideRaftDown(void) {
     return;
   raft->z += 0xcccc;
   column = leader->x >> 20;
-  if (gMainRoutineWork.renderMode != 5 && column > 12 && column <= 15) {
+  if (gMainRoutineWork.movementMode != 5 && column > 12 && column <= 15) {
     /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
      * before the leader's in the second test. */
     struct Actor *player = leader;
@@ -1105,7 +1105,7 @@ void AnkohlRuins_BoardRaft(void) {
       FieldCamera_WaitForArrival();
       Task_AddFrame(AnkohlRuins_RideRaftDown, TASK_PASS_VBLANK);
       FieldEvent_Wait(40);
-      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+      EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
       FieldCamera_WaitForArrival();
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
       MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
@@ -1179,20 +1179,20 @@ void AnkohlRuins_StartReveal(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
 
 void AnkohlRuins_EndReveal(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins1)
     return gAnkohlRuins_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins2)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins2)
     return gAnkohlRuins_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins3)
     return gAnkohlRuins_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins4)
     return gAnkohlRuins_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins5)
     return gAnkohlRuins_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins6)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins6)
     return gAnkohlRuins_Room6Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins8)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnkohlRuins8)
     return gAnkohlRuins_Room8Triggers;
   return gAnkohlRuins_Triggers;
 }
@@ -1257,7 +1257,7 @@ void Map_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
-  s32 scene = work->scene;
+  s32 scene = work->next;
   struct Actor *object;
 
   if (scene == (s32)&SceneId_AnkohlRuins1) {
@@ -1403,7 +1403,7 @@ s32 Scene_Initialize(s32 a0) {
         Event_Start();
         FieldEvent_ResolvePendingActions(0);
         FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-        Actor_SetPosition(late->currentOwner, 0, 0);
+        Actor_SetPosition(late->leaderActorId, 0, 0);
         Actor_SetPosition(10, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
@@ -1492,7 +1492,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
       }
-      object = Actor_GetById(work->currentOwner);
+      object = Actor_GetById(work->leaderActorId);
       object->terrainHeight = level;
       object->y = level;
       FieldEvent_Wait(1);
@@ -1530,7 +1530,7 @@ void Map_CenterOnFollowedPoint(void);
 
 s32 Scene_Initialize(s32 a0) {
   struct MainRoutineWork *work = &gMainRoutineWork;
-  s32 scene = work->scene;
+  s32 scene = work->next;
   struct Actor *object;
 
   if (scene == (s32)&SceneId_AnkohlRuins1) {
@@ -1669,7 +1669,7 @@ s32 Scene_Initialize(s32 a0) {
         Event_Start();
         FieldEvent_ResolvePendingActions(0);
         FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-        Actor_SetPosition(late->currentOwner, 0, 0);
+        Actor_SetPosition(late->leaderActorId, 0, 0);
         Actor_SetPosition(10, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
@@ -1758,7 +1758,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
       }
-      object = Actor_GetById(work->currentOwner);
+      object = Actor_GetById(work->leaderActorId);
       object->terrainHeight = level;
       object->y = level;
       FieldEvent_Wait(1);

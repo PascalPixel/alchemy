@@ -216,7 +216,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
 s32 Leader_CanPushObjectAhead(void) {
   s32 position[3];
   s32 above[3];
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *target;
   struct Actor *hit;
   s32 id;
@@ -237,7 +237,7 @@ s32 Leader_CanPushObjectAhead(void) {
   if (BYTE_AT(target, 98) != 0)
     return 0;
 #if TLA_PATCH_1
-  id = gMainRoutineWork.pausedObject;
+  id = gMainRoutineWork.haltedActor;
   if (id != 1 && target == Actor_GetById(id))
     return 0;
 #endif
@@ -269,7 +269,7 @@ s32 Leader_CanPushObjectAhead(void) {
 /// Leader_CanPushObjectAhead allowed.
 void Leader_PushObjectAhead(void) {
   s32 position[3];
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *target;
   s32 terrain;
   s32 result;

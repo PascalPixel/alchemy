@@ -526,7 +526,7 @@ void Shop_DrawEquipComparison(struct RenderInput *window, s32 unitId,
     }
     previewSlot = i;
   } else {
-    replacedItemId = unit->inventory[previewSlot] & ITEM_ID_MASK;
+    replacedItemId = unit->inventory[previewSlot] & INVENTORY_ITEM_ID_MASK;
   }
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
@@ -802,7 +802,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   s32 replacedSlot;
   struct RenderInput *window;
 
-  itemId = ITEM_ID_MASK;
+  itemId = INVENTORY_ITEM_ID_MASK;
   itemId &= inventoryEntry;
   item = Item_GetDirectFar(itemId);
 
@@ -860,7 +860,7 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   if (slot == -1)
     return 0;
   inventoryEntry = unit->inventory[slot];
-  itemId = ITEM_ID_MASK;
+  itemId = INVENTORY_ITEM_ID_MASK;
   itemId &= inventoryEntry;
   if (Item_GetDirectFar(itemId)->type == ITEM_TYPE_PSYNERGY)
     return 0;

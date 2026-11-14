@@ -391,7 +391,7 @@ void Message_SetVoiceFromActor(s32 key) {
     *(s16 *)&work->speakerVoiceCountdown = value;
   } else {
     id = Speaker_GetVoice(Actor_GetSpriteById(key));
-    value = gMessageSpeed_VoiceRates[gMainRoutineWork.eventMode];
+    value = gMessageSpeed_VoiceRates[gMainRoutineWork.messageSpeed];
     *(s16 *)&work->speakerVoiceSound = id;
     *(s16 *)&work->speakerVoiceCountdown = value;
   }

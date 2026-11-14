@@ -157,7 +157,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
               0x84000020, (volatile u32 *)0x040000d4);
       attr = (u16 *)&output->sprite.oam;
-      if (work->menuState & 4)
+      if (work->battleMode & 4)
         *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) | 0x400;
       else
         *attr++ = y + (spacingY >> 1) + window->y * 8 + GLYPH_Y;

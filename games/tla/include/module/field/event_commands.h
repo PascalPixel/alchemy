@@ -510,12 +510,12 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 
 extern const u16 gWorldMap_CursorDirectionAngles[];
 
-extern s32 Data_0202a644;
-extern s32 Data_0202a648;
-extern s16 Data_0202a640;
-extern s16 Data_0202a654[];
-extern s16 Data_0202a656[];
-extern struct WorldMapMarker Data_0202a620;
+extern s32 gWorldPicture_GlideTargetX;
+extern s32 gWorldPicture_GlideTargetY;
+extern s16 gWorldPicture_Zoomed;
+extern s16 gWorldPicture_NameRedrawPending[];
+extern s16 gWorldPicture_NameRedrawDelay[];
+extern struct WorldMapMarker gWorldPicture_CursorMarker;
 
 void FieldPsynergy_GreyMindReadPalette(void);
 

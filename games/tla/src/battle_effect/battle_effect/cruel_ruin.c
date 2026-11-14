@@ -745,7 +745,7 @@ extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
 extern char ResourceId_Data0CA, ResourceId_Data104, ResourceId_Data134;
 extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
 extern char ResourceId_SunbeamCloudsBackdrop, ResourceId_VioletSkyBackdrop;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 struct SpriteObject *EffectSprite_CreateWithTiles__battle_effect(
     s32 width, s32 height, u32 shape,
@@ -766,8 +766,7 @@ EffectSprite_Acquire__battle_effect(s32 width, s32 height, u32 shape,
 
 #define SLOT_ALT 188 // unkb8[1]
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])
-#define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
@@ -859,7 +858,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   draw[0] = Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, work->sheet, 1,
                              0);
   Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
@@ -899,7 +899,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   }
   {
     {
-      u8 *pixels = gMapCellBuffer;
+      u8 *pixels = gMapGridCellBuffer;
       for (frame = 0; frame != 180; frame++) {
         struct RenderModel *model;
         void *verts;
@@ -1224,7 +1224,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         }
         acc = 0;
         {
-          s8 *cells = (s8 *)gMapCellBuffer;
+          s8 *cells = (s8 *)gMapGridCellBuffer;
           s32 cell = k * 32 + k + c;
 
           v = cells + cell * 8;
@@ -1450,7 +1450,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         model->scrollU = 64;
       }
       {
-        u8 *cells = gMapCellBuffer;
+        u8 *cells = gMapGridCellBuffer;
         s32 mask;
 
         for (i = 0, mask = 127; i != 2; cells += 264, i++) {

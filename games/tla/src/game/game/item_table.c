@@ -409,7 +409,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 2}},
-        .actionId = ABILITY_PLY_WELL,
+        .abilityId = ABILITY_PLY_WELL,
     },
     [ITEM_WICKED_MACE] = {
         .price = 13800,
@@ -804,7 +804,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 19,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HEARTRENDER,
+        .abilityId = ABILITY_HEARTRENDER,
     },
     [ITEM_JERKIN] = {
         .price = 2400,
@@ -929,7 +929,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 39,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_DELUDE,
+        .abilityId = ABILITY_DELUDE,
     },
     [ITEM_DRAGON_SHIELD] = {
         .price = 2400,
@@ -951,7 +951,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 20}},
-        .actionId = ABILITY_CURE_WELL,
+        .abilityId = ABILITY_CURE_WELL,
     },
     [ITEM_125] = {0},
     [ITEM_126] = {0},
@@ -1033,7 +1033,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 36,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_WARD,
+        .abilityId = ABILITY_WARD,
     },
     [ITEM_135] = {0},
     [ITEM_LEATHER_ARMLET] = {
@@ -1081,7 +1081,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
             {.kind = EQUIP_EFFECT_ADD_VENUS_POWER, .amount = 10},
             {.kind = EQUIP_EFFECT_ADD_MERCURY_POWER, .amount = 10},
         },
-        .actionId = ABILITY_RESTORE,
+        .abilityId = ABILITY_RESTORE,
     },
     [ITEM_VIRTUOUS_ARMLET] = {
         .price = 7000,
@@ -1096,7 +1096,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
             {.kind = EQUIP_EFFECT_ADD_MARS_POWER, .amount = 10},
             {.kind = EQUIP_EFFECT_ADD_JUPITER_POWER, .amount = 10},
         },
-        .actionId = ABILITY_PLY,
+        .abilityId = ABILITY_PLY,
     },
     [ITEM_GUARDIAN_ARMLET] = {
         .price = 2600,
@@ -1107,7 +1107,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 27,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_GUARD,
+        .abilityId = ABILITY_GUARD,
     },
     [ITEM_143] = {0},
     [ITEM_144] = {0},
@@ -1261,7 +1261,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 30,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CURSE,
+        .abilityId = ABILITY_CURSE,
     },
     [ITEM_LURE_CAP] = {
         .price = 3000,
@@ -1325,7 +1325,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 27,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_DELUDE,
+        .abilityId = ABILITY_DELUDE,
     },
     [ITEM_172] = {0},
     [ITEM_173] = {0},
@@ -1341,7 +1341,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 117,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HERB,
+        .abilityId = ABILITY_HERB,
     },
     [ITEM_NUT] = {
         .price = 200,
@@ -1349,7 +1349,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 132,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_NUT,
+        .abilityId = ABILITY_NUT,
     },
     [ITEM_VIAL] = {
         .price = 500,
@@ -1357,7 +1357,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 133,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_VIAL,
+        .abilityId = ABILITY_VIAL,
     },
     [ITEM_POTION] = {
         .price = 1000,
@@ -1365,7 +1365,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 134,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_POTION,
+        .abilityId = ABILITY_POTION,
     },
     [ITEM_HERMES_WATER] = {
         .price = 2000,
@@ -1373,7 +1373,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 135,
         .useType = ITEM_USE_EMPTIES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_SOOTHING_WATER,
+        .abilityId = ABILITY_SOOTHING_WATER,
     },
     [ITEM_EMPTY_BOTTLE] = {
         .price = 1000,
@@ -1387,7 +1387,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 137,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_PSY_CRYSTAL,
+        .abilityId = ABILITY_PSY_CRYSTAL,
     },
     [ITEM_ANTIDOTE] = {
         .price = 20,
@@ -1395,7 +1395,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 118,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_ANTIDOTE,
+        .abilityId = ABILITY_ANTIDOTE,
     },
     [ITEM_ELIXIR] = {
         .price = 30,
@@ -1403,7 +1403,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 138,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_ELIXIR,
+        .abilityId = ABILITY_ELIXIR,
     },
     [ITEM_WATER_OF_LIFE] = {
         .price = 3000,
@@ -1411,7 +1411,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 139,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_WATER_OF_LIFE,
+        .abilityId = ABILITY_WATER_OF_LIFE,
     },
     [ITEM_MIST_POTION] = {
         .price = 9000,
@@ -1419,7 +1419,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 360,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_MIST_POTION,
+        .abilityId = ABILITY_MIST_POTION,
     },
     [ITEM_POWER_BREAD] = {
         .price = 500,
@@ -1427,7 +1427,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 140,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_POWER_BREAD,
+        .abilityId = ABILITY_POWER_BREAD,
     },
     [ITEM_COOKIE] = {
         .price = 500,
@@ -1435,7 +1435,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 141,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_COOKIE,
+        .abilityId = ABILITY_COOKIE,
     },
     [ITEM_APPLE] = {
         .price = 500,
@@ -1443,7 +1443,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 142,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_APPLE,
+        .abilityId = ABILITY_APPLE,
     },
     [ITEM_HARD_NUT] = {
         .price = 500,
@@ -1451,7 +1451,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 143,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HARD_NUT,
+        .abilityId = ABILITY_HARD_NUT,
     },
     [ITEM_MINT] = {
         .price = 500,
@@ -1459,7 +1459,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 144,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_MINT,
+        .abilityId = ABILITY_MINT,
     },
     [ITEM_LUCKY_PEPPER] = {
         .price = 500,
@@ -1467,7 +1467,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 145,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_LUCKY_PEPPER,
+        .abilityId = ABILITY_LUCKY_PEPPER,
     },
     [ITEM_197] = {0},
     [ITEM_LASH_PEBBLE] = {
@@ -1477,7 +1477,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 339,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_LASH,
+        .abilityId = ABILITY_LASH,
     },
     [ITEM_POUND_CUBE] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1486,7 +1486,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 340,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_POUND,
+        .abilityId = ABILITY_POUND,
     },
     [ITEM_ORB_OF_FORCE] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1495,7 +1495,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 124,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_FORCE,
+        .abilityId = ABILITY_FORCE,
     },
     [ITEM_DOUSE_DROP] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1504,7 +1504,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 125,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_DOUSE,
+        .abilityId = ABILITY_DOUSE,
     },
     [ITEM_FROST_JEWEL] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1513,7 +1513,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 126,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_FROST,
+        .abilityId = ABILITY_FROST,
     },
     [ITEM_LIFTING_GEM] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1522,7 +1522,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 127,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_LIFT,
+        .abilityId = ABILITY_LIFT,
     },
     [ITEM_HALT_GEM] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1531,7 +1531,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 128,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HALT,
+        .abilityId = ABILITY_HALT,
     },
     [ITEM_CLOAK_BALL] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1540,7 +1540,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 129,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CLOAK,
+        .abilityId = ABILITY_CLOAK,
     },
     [ITEM_CARRY_STONE] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1549,7 +1549,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 130,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CARRY,
+        .abilityId = ABILITY_CARRY,
     },
     [ITEM_CATCH_BEADS] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1558,7 +1558,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 131,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CATCH,
+        .abilityId = ABILITY_CATCH,
     },
     [ITEM_TREMOR_BIT] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1567,7 +1567,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 345,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_TREMOR,
+        .abilityId = ABILITY_TREMOR,
     },
     [ITEM_SCOOP_GEM] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1576,7 +1576,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 349,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_SCOOP,
+        .abilityId = ABILITY_SCOOP,
     },
     [ITEM_CYCLONE_CHIP] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1585,7 +1585,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 343,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CYCLONE,
+        .abilityId = ABILITY_CYCLONE,
     },
     [ITEM_211] = {0},
     [ITEM_212] = {0},
@@ -1596,7 +1596,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 346,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_BURST,
+        .abilityId = ABILITY_BURST,
     },
     [ITEM_GRINDSTONE] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1605,7 +1605,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 347,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_GRIND,
+        .abilityId = ABILITY_GRIND,
     },
     [ITEM_HOVER_JADE] = {
         .type = ITEM_TYPE_PSYNERGY,
@@ -1614,7 +1614,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 342,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HOVER,
+        .abilityId = ABILITY_HOVER,
     },
     [ITEM_216] = {0},
     [ITEM_TELEPORT_LAPIS] = {
@@ -1624,7 +1624,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 351,
         .useType = ITEM_USE_TEACHES,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_TELEPORT,
+        .abilityId = ABILITY_TELEPORT,
     },
     [ITEM_218] = {0},
     [ITEM_219] = {0},
@@ -1676,7 +1676,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 146,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_SMOKE_BOMB,
+        .abilityId = ABILITY_SMOKE_BOMB,
     },
     [ITEM_SLEEP_BOMB] = {
         .price = 60,
@@ -1684,7 +1684,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 147,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_SLEEP_BOMB,
+        .abilityId = ABILITY_SLEEP_BOMB,
     },
     [ITEM_GAME_TICKET] = {
         .price = 50,
@@ -1718,7 +1718,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 173,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CORN,
+        .abilityId = ABILITY_CORN,
     },
     [ITEM_CELL_KEY] = {
         .price = 30,
@@ -1738,7 +1738,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 176,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_AVOID,
+        .abilityId = ABILITY_AVOID,
     },
     [ITEM_MYSTIC_DRAUGHT] = {
         .flags = ITEM_INDISPENSABLE,
@@ -1751,7 +1751,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 181,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_FLARE_STORM,
+        .abilityId = ABILITY_FLARE_STORM,
     },
     [ITEM_WEASELS_CLAW] = {
         .price = 40,
@@ -1759,7 +1759,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 182,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_SONIC_SLASH,
+        .abilityId = ABILITY_SONIC_SLASH,
     },
     [ITEM_BRAMBLE_SEED] = {
         .price = 50,
@@ -1767,7 +1767,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 183,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_NETTLE,
+        .abilityId = ABILITY_NETTLE,
     },
     [ITEM_CRYSTAL_POWDER] = {
         .price = 60,
@@ -1775,7 +1775,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 184,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HAIL_PRISM,
+        .abilityId = ABILITY_HAIL_PRISM,
     },
     [ITEM_BLACK_CRYSTAL] = {
         .flags = ITEM_INDISPENSABLE,
@@ -1899,7 +1899,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 162,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_ADEPT_RING,
+        .abilityId = ABILITY_ADEPT_RING,
     },
     [ITEM_WAR_RING] = {
         .price = 2600,
@@ -1909,7 +1909,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 163,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_IMPACT,
+        .abilityId = ABILITY_IMPACT,
     },
     [ITEM_SLEEP_RING] = {
         .price = 1400,
@@ -1919,7 +1919,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 164,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_SLEEP,
+        .abilityId = ABILITY_SLEEP,
     },
     [ITEM_HEALING_RING] = {
         .price = 800,
@@ -1929,7 +1929,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 170,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CURE,
+        .abilityId = ABILITY_CURE,
     },
     [ITEM_UNICORN_RING] = {
         .price = 1100,
@@ -1939,7 +1939,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 171,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CURE_POISON,
+        .abilityId = ABILITY_CURE_POISON,
     },
     [ITEM_FAIRY_RING] = {
         .price = 2900,
@@ -1949,7 +1949,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 172,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_RESTORE,
+        .abilityId = ABILITY_RESTORE,
     },
     [ITEM_CLERICS_RING] = {
         .price = 6400,
@@ -2236,7 +2236,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .primaryBonus = 95,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_GUARD,
+        .abilityId = ABILITY_GUARD,
     },
     [ITEM_VIKING_AXE] = {
         .price = 11000,
@@ -2458,7 +2458,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .primaryBonus = 130,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_RESIST,
+        .abilityId = ABILITY_RESIST,
     },
     [ITEM_ATROPOS_ROD] = {
         .price = 18900,
@@ -2491,7 +2491,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .primaryBonus = 168,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_PURE_PLY,
+        .abilityId = ABILITY_PURE_PLY,
     },
     [ITEM_STAFF_OF_ANUBIS] = {
         .price = 5500,
@@ -2512,7 +2512,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 241,
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 20}},
-        .actionId = ABILITY_TRIDENT,
+        .abilityId = ABILITY_TRIDENT,
     },
     [ITEM_327] = {0},
     [ITEM_PLANET_ARMOR] = {
@@ -2596,7 +2596,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
         .effects = {{.kind = EQUIP_EFFECT_ADD_LUCK, .amount = 7}},
-        .actionId = ABILITY_DELUDE,
+        .abilityId = ABILITY_DELUDE,
     },
     [ITEM_EREBUS_ARMOR] = {
         .price = 9000,
@@ -2628,7 +2628,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 38,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_PLY_WELL,
+        .abilityId = ABILITY_PLY_WELL,
     },
     [ITEM_MYTHRIL_CLOTHES] = {
         .price = 14900,
@@ -2668,7 +2668,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 38,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_SLEEP,
+        .abilityId = ABILITY_SLEEP,
     },
     [ITEM_FESTIVAL_COAT] = {
         .price = 2800,
@@ -2944,7 +2944,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 30,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HAUNT,
+        .abilityId = ABILITY_HAUNT,
     },
     [ITEM_JESTERS_ARMLET] = {
         .price = 5100,
@@ -3063,7 +3063,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 18,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CURE,
+        .abilityId = ABILITY_CURE,
     },
     [ITEM_THORN_CROWN] = {
         .price = 3300,
@@ -3084,7 +3084,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 31,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_424,
+        .abilityId = ABILITY_424,
     },
     [ITEM_HIOTOKO_MASK] = {
         .price = 6600,
@@ -3095,7 +3095,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 33,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_586,
+        .abilityId = ABILITY_586,
     },
     [ITEM_CROWN_OF_GLORY] = {
         .price = 7400,
@@ -3116,7 +3116,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 47,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CONDEMN,
+        .abilityId = ABILITY_CONDEMN,
     },
     [ITEM_389] = {0},
     [ITEM_PURE_CIRCLET] = {
@@ -3209,7 +3209,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .secondaryBonus = 7,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HERB,
+        .abilityId = ABILITY_HERB,
     },
     [ITEM_GOLDEN_SHIRT] = {
         .price = 2400,
@@ -3311,7 +3311,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 312,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_WISH_WELL,
+        .abilityId = ABILITY_WISH_WELL,
     },
     [ITEM_STARDUST_RING] = {
         .price = 2500,
@@ -3321,7 +3321,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 313,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_BIND,
+        .abilityId = ABILITY_BIND,
     },
     [ITEM_AROMA_RING] = {
         .price = 2300,
@@ -3331,7 +3331,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 314,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_HEALING_AURA,
+        .abilityId = ABILITY_HEALING_AURA,
     },
     [ITEM_RAINBOW_RING] = {
         .price = 900,
@@ -3341,7 +3341,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 315,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_DELUDE,
+        .abilityId = ABILITY_DELUDE,
     },
     [ITEM_SOUL_RING] = {
         .price = 1800,
@@ -3351,7 +3351,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 316,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_REVIVE,
+        .abilityId = ABILITY_REVIVE,
     },
     [ITEM_GUARDIAN_RING] = {
         .price = 1700,
@@ -3371,7 +3371,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 363,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_RESIST,
+        .abilityId = ABILITY_RESIST,
     },
     [ITEM_416] = {0},
     [ITEM_RUSTY_SWORD] = {
@@ -3599,7 +3599,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .flags = ITEM_NOT_TRANSFERRED,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
-        .actionId = ABILITY_CLARION_CRY,
+        .abilityId = ABILITY_CLARION_CRY,
     },
     [ITEM_DANCING_IDOL] = {
         .price = 400,

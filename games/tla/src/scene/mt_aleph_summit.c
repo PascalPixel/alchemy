@@ -57,7 +57,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -127,15 +127,15 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Moves each of count colours one step of red, green and blue toward its
 /// target colour.

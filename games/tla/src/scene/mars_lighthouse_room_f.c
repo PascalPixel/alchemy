@@ -370,7 +370,7 @@ void Tightrope_Initialize(void);
 void Tightrope_Place(s32 a0, s32 a1, s32 a2);
 void Actor_DepartInRing(s32 id);
 void Actor_ArriveInRing(s32 id);
-void TileMap_ConvertBuffer(s32 scene, s32 a1);
+void Map_CopyPalette(s32 scene, s32 a1);
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetCellHeight();
@@ -380,7 +380,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -396,14 +396,14 @@ s32 MarsLighthouseRoomF_SetUpStatue(struct Actor *object) {
   return 0;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF4)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF4)
     return gMarsLighthouseRoomF_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF2)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF2)
     return gMarsLighthouseRoomF_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF1)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF1)
     return gMarsLighthouseRoomF_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF3)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF3)
     return gMarsLighthouseRoomF_Room3Placements;
   return gMarsLighthouseRoomF_Placements;
 }
@@ -421,7 +421,7 @@ void MarsLighthouseRoomF_BeginBlazeOnTorch(void) {
 /// Walking east or west at a gap in the Venus tower: across it, unless one of
 /// the stones is in the way, which the leader pushes instead.
 void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 facing = object->facing;
 
   if (facing == 0 || facing == 0x8000) {
@@ -444,7 +444,7 @@ void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
       }
     }
   }
-  if (Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner) != -1)
+  if (Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId) != -1)
     Leader_PushObjectAhead();
 }
 
@@ -457,7 +457,7 @@ void MarsLighthouseRoomF_JumpGap(void) { Field_TryJumpForward(); }
 
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
   s32 position[3];
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
@@ -634,7 +634,7 @@ DEFINE_BURST_WALL(MarsLighthouseRoomF_BurstCenterWall, 14, 78,
 
 /// The button in the Mars tower: its flame thrower starts on its way.
 void MarsLighthouseRoomF_PressButton(void) {
-  Event_PlaySound(SE_584);
+  Event_PlaySound(SE_BUTTON_PRESS);
   Ride_SetEntry(0, 3);
   Event_SetFlag(FLAG_BUTTON_PRESSED);
 }
@@ -817,12 +817,12 @@ void MarsLighthouseRoomF_HideSteppingStones(void) {
 /// The leader sinks into the hole with a puff of dust and drops to the floor
 /// below.
 void MarsLighthouseRoomF_FallIntoHole(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 frame;
 
   Leader_StopMoving();
   Actor_SetSpriteFlags(object, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   FieldEvent_Wait(16);
   frame = 0;
 step:
@@ -835,7 +835,7 @@ step:
   System_Wait(1);
   if (++frame <= 39)
     goto step;
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
   gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -931,13 +931,13 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
     const s16 *table;
     u32 *keys;
 
-    Actor_Get(gMainRoutineWork.currentOwner);
+    Actor_Get(gMainRoutineWork.leaderActorId);
     keys = &gInput.held;
     table = gMarsLighthouseRoomF_JumpAnglesByKey;
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {
       struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-      struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+      struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
       s32 position[3];
       s32 x;
       s32 z;
@@ -1036,14 +1036,14 @@ UNUSED void MarsLighthouseRoomF_SlideFromEdge(void) {
   Fireball_CarryLeaderIfHit();
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF4)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF4)
     return gMarsLighthouseRoomF_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF2)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF2)
     return gMarsLighthouseRoomF_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF1)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF1)
     return gMarsLighthouseRoomF_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseRoomF3)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF3)
     return gMarsLighthouseRoomF_Room3Triggers;
   return gMarsLighthouseRoomF_Triggers;
 }
@@ -1073,7 +1073,7 @@ extern u16 gMarsLighthouseRoomF_VenusStatueFlameStops[];
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
-  s32 scene = work->scene;
+  s32 scene = work->next;
   s32 entrance = work->entrance;
   struct HeapSlots *heap = Ram_HeapSlots;
   s32 value;
@@ -1129,7 +1129,7 @@ s32 Scene_Initialize(void) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-      Actor_SetPosition(work->currentOwner, 0, 0);
+      Actor_SetPosition(work->leaderActorId, 0, 0);
       Actor_SetPosition(ACTOR_MERCURY_TORCH, 0, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
@@ -1201,10 +1201,10 @@ s32 Scene_Initialize(void) {
     if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
           entrance == 8 || entrance == 10 || entrance == 11 || entrance == 13)
-        Actor_DepartInRing(gMainRoutineWork.currentOwner);
+        Actor_DepartInRing(gMainRoutineWork.leaderActorId);
       if (entrance == 3 || entrance == 5 || entrance == 9 || entrance == 12 ||
           entrance == 14)
-        Actor_ArriveInRing(gMainRoutineWork.currentOwner);
+        Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
       if (entrance == 16 && !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
@@ -1238,7 +1238,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_PUSHED_STATUE)->y = 0;
       Actor_GetById(ACTOR_PUSHED_STATUE)->terrainHeight = 0;
     }
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 64;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     Actor_GetById(ACTOR_FIRST_STONE)->priorityFlags |= 192;
     Actor_GetById(ACTOR_SECOND_STONE)->priorityFlags |= 128;
     Actor_GetById(ACTOR_THIRD_STONE)->priorityFlags |= 128;
@@ -1256,9 +1256,9 @@ s32 Scene_PrepareMap(void) {
 
   party = &gMainRoutineWork;
   if (Event_GetFlag(flag))
-    TileMap_ConvertBuffer(
-        party->map + ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
-        0x5000000);
+    Map_CopyPalette(party->mapId + ((s32)&SceneId_MarsLighthouseRoomM3 -
+                                    (s32)&SceneId_Prox2),
+                    0x5000000);
   return 0;
 }
 
@@ -1369,7 +1369,7 @@ struct EventWork__s167c {
 /// Unused here: the Jupiter Lighthouse's whirlwind carries the leader up.
 UNUSED void Whirlwind_CarryLeader(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   u8 *motion;
@@ -1432,8 +1432,8 @@ UNUSED void Whirlwind_CarryLeader(void) {
       goto settle;
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;
   Event_End();
@@ -1445,7 +1445,7 @@ extern s32 gWhirlwind_VanishScript[];
 
 void Whirlwind_Update(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -1491,7 +1491,7 @@ void Whirlwind_Update(struct Actor *self) {
             s32 delay = 200;
             work->raisedTrigger = delay;
           }
-          gMainRoutineWork.renderMode = 0;
+          gMainRoutineWork.movementMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }
@@ -1533,7 +1533,7 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(SE_222);
+  Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(280, position.x, source->y,
@@ -2012,7 +2012,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
 #define position positionU.v
 #endif
 
-  if (main->renderMode == 0) {
+  if (main->movementMode == 0) {
     struct Actor *actor;
 
     // UB: Party_TakeFallDamage takes no arguments and returns nothing; the
@@ -2022,7 +2022,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
 #else
     ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
-    actor = Actor_Get(main->currentOwner);
+    actor = Actor_Get(main->leaderActorId);
     work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -2074,7 +2074,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, -1);
           break;
         }
 #if TLA_PATCH_1
@@ -2172,7 +2172,7 @@ s32 Fireball_CarryLeader(void) {
   ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(7);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
@@ -2423,7 +2423,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           cell->collisionCode = 0;
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_573);
+          Event_PlaySound(SE_ICE_CRACK);
           Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                        actor->facing);
         }
@@ -2447,7 +2447,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
 
     work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2f80 *)(gInventorySnapshot + 0x188);
-    target = Actor_Get(gMainRoutineWork.currentOwner);
+    target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x - target->x) < 0x140000 &&
         (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z - target->z) < 0x140000) {
@@ -2563,7 +2563,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
+      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -2670,7 +2670,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /// The leader on a cracked tile: the first time it cracks, the next it gives
 /// way and he falls through.
 s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct WarpWork *work = &gCrackedTiles;
@@ -2706,7 +2706,7 @@ end:
 
 /// Unused here: places the leader below the tile he fell through.
 UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   u8 *event = Ram_HeapSlots->fieldWork;
   struct WarpWork *work = &gCrackedTiles;
   s32 x = FieldGameFlag_GetByte(work->positionFlag);
@@ -2834,7 +2834,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *object,
 
 void PushTarget_Push(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
   s32 from[3];
@@ -2862,16 +2862,16 @@ void PushTarget_Push(struct PushTarget target) {
             ABS(gPushFootprints[footprint][3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
   System_Wait(15);
   {
     s32 deltaX = (target.x - from[0]) >> 17;
     s32 deltaZ = (target.z - from[2]) >> 17;
 
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX, deltaZ);
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
   }
-  Actor_Get(gMainRoutineWork.currentOwner)->update = Actor_StopAtPushTarget;
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(object, 3);
@@ -2880,21 +2880,21 @@ void PushTarget_Push(struct PushTarget target) {
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
                              (gPushLeaderSteps[direction] << 16) >> 31,
                              (gPushLeaderSteps[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(SE_298);
+  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);
@@ -2938,7 +2938,7 @@ void LightSprites_Draw(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
+  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOams;
 

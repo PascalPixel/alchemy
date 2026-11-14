@@ -2,6 +2,6 @@
 void Leader_SetLayerByte(void) {
   s32 t0;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  t0 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   FIELD_AT((t0 + 0x22), u8, 0) = 2;
 }

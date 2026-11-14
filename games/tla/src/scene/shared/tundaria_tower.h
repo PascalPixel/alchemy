@@ -46,11 +46,11 @@ extern volatile s16 gSlideOnIce_Stopped;
 void Rocks_Spawn(s32 x, s32 y, s32 z, s32 frames);
 
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
-void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 b);
-void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 b);
+void PaletteFade_SetTarget(s32 color, s32 b);
+void PaletteFade_SetSource(s32 color, s32 b);
 
 static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
-  BattleEffect_ApplyColorToSourceBuffer(color, b);
+  PaletteFade_SetSource(color, b);
 }
 
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {

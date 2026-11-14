@@ -211,7 +211,7 @@ struct SpriteAttr {
   unsigned size : 2;
 };
 
-struct ShopCursor {
+struct MenuCursor {
   struct WindowSprite *anchor;
   u16 x;
   u16 y;
@@ -253,7 +253,7 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 extern u8 gInventorySnapshot[];
 
-extern s8 gData_02001000[];
+extern s8 gSceneLocalState[];
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 extern u8 gDebugTextEnabled;

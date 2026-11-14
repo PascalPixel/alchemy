@@ -16,7 +16,7 @@
 /// FieldPsynergy_GatherNearbyCells) inside the width by height rectangle at
 /// (x, z) of the layer, copies the matching cell picture from the rectangle at
 /// (toX, toZ) over it, opens it (layer 2's collision 0) and records the copy
-/// in gData_02001000, up to 64. Trial Road, Gaia Rock and the Gabomba
+/// in gSceneLocalState, up to 64. Trial Road, Gaia Rock and the Gabomba
 /// catacombs call it after a Cyclone.
 void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
@@ -39,7 +39,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
   top = z - layerZ;
   lift = -(owner->terrainHeight >> 20);
 
-  /* FAKEMATCH(signature): gData_02001000 typed as 1491 TouchCells before the
+  /* FAKEMATCH(signature): gSceneLocalState typed as 1491 TouchCells before the
    * copies. */
   for (i = 0; cell[i].x != -1; i++) {
     s32 cz, cx, cellX, cellZ;
@@ -58,15 +58,15 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
       MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
                                           z + dz);
       MapGrid_GetCellAt(cx << 20, cz << 20, 2)->unk02 = 0;
-      n = gData_02001000.count;
+      n = gSceneLocalState.count;
       if (n < 64) {
-        gData_02001000.copies[n].toX = toX + dx;
-        gData_02001000.copies[n].toZ = toZ + dz;
-        gData_02001000.copies[n].fromX = x + dx;
-        gData_02001000.copies[n].fromZ = z + dz;
-        gData_02001000.copies[n].cellX = cell[i].x;
-        gData_02001000.copies[n].cellZ = cell[i].z;
-        gData_02001000.count++;
+        gSceneLocalState.copies[n].toX = toX + dx;
+        gSceneLocalState.copies[n].toZ = toZ + dz;
+        gSceneLocalState.copies[n].fromX = x + dx;
+        gSceneLocalState.copies[n].fromZ = z + dz;
+        gSceneLocalState.copies[n].cellX = cell[i].x;
+        gSceneLocalState.copies[n].cellZ = cell[i].z;
+        gSceneLocalState.count++;
       }
     }
   }

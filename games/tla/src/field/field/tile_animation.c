@@ -105,7 +105,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Dma_Set(buffer, (void *)BG_PLTT, 0x84000070, REG_DMA3);
     {
       u8 *anim = Data_0202d000;
-      BattleEffect_LoadBufferPaletteFar(buffer);
+      PaletteFade_LoadPaletteFar(buffer);
       Decompress_TaggedLz(Resource_GetTableEntry(resources[1]), anim);
       TilesetAnim_StartAll((const u16 *)anim);
     }
@@ -169,7 +169,7 @@ void WorldMap_PresentStillPicture(void) {
 /// the area's tiles again where a field Psynergy used their buffer, saves BG1's
 /// tiles, draws the current affine frame into pixels and hands the window and
 /// VBlank to it.
-void MapAnimation_Start(void) {
+void WorldMap_StartStillPicture(void) {
   u8 *pages = Ram_HeapSlots->unk1c[0];
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapWork;
@@ -936,7 +936,7 @@ u8 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   state = Ram_HeapSlots->mapWork;
   x >>= 20;
   y >>= 20;
-  cells = (struct MapCell *)gMapCellBuffer;
+  cells = (struct MapCell *)gMapGridCellBuffer;
   if (state != NULL) {
     cells = state->layers[layer & 3].cells;
   }
@@ -1005,7 +1005,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
     cells = (u8 *)map->layers[layer].cells;
     shapes = map->layers[layer].terrainIds;
   } else {
-    cells = gMapCellBuffer;
+    cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
   index = x / 16 + ((z / 16) << 7);
@@ -1045,7 +1045,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
     cells = (u8 *)map->layers[actor->terrainId].cells;
     shapes = map->layers[actor->terrainId].terrainIds;
   } else {
-    cells = gMapCellBuffer;
+    cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
   index = x / 16 + ((z / 16) << 7);
@@ -1085,7 +1085,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
     cells = (u8 *)map->layers[actor->terrainId].cells;
     shapes = map->layers[actor->terrainId].terrainIds;
   } else {
-    cells = gMapCellBuffer;
+    cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
   index = x / 16 + ((z / 16) << 7);

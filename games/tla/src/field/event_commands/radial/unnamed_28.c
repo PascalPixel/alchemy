@@ -45,7 +45,7 @@ struct Unk_080e807cWork {
 void FieldPsynergy_UpdateUnnamed28(void) {
   struct Unk_080e807cWork *work = Ram_HeapSlots->battleFxWork[0];
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 *pos = position;
   struct Unk_080e807cEntry *entry;
@@ -402,7 +402,7 @@ struct SparkleBurstWork {
 void FieldPsynergy_EndUnnamed28(void) {
   struct SparkleBurstWork *work = Ram_HeapSlots->battleFxWork[0];
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct BurstMote *mote;
   struct EffectSprite *sprite;
   s32 slot;
@@ -554,7 +554,7 @@ void ViewMove_Start(s32 direction) {
   __asm__("");
   /* FAKEMATCH(barrier): a third empty asm. */
   __asm__("");
-  Map_GetHeaderSizeFar(gMainRoutineWork.map, &bounds);
+  Map_GetHeaderSizeFar(gMainRoutineWork.mapId, &bounds);
   minX = bounds.minX;
   maxX = bounds.maxX;
   minZ = bounds.minZ;

@@ -15,9 +15,9 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
 
   unit = Unit_Get(memberId);
   menu = Ram_HeapSlots->menuRuntime;
-  itemId = ITEM_ID_MASK & unit->inventory[slot];
+  itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
-  useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
+  useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->abilityId,
                                      memberId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
@@ -59,7 +59,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   partyResultShown = 0;
 
   if (targetId == 9)
-    target = Unit_Get(gMainRoutineWork.currentOwner);
+    target = Unit_Get(gMainRoutineWork.leaderActorId);
   else
     target = Unit_Get(targetId);
 
@@ -297,7 +297,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 /// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
 /// ItemMenu_Use after a use that changed something.
 s32 Item_PlayUseAnimation(s32 item) {
-  return Ability_PlayUseAnimation(Item_GetDirectFar(item)->actionId & 0x3fff);
+  return Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId & 0x3fff);
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no
@@ -321,13 +321,13 @@ s32 Ability_PlayUseAnimation(s32 action) {
     case 32:
       break;
     case 5:
-      Sound_PlayReturnOne(MUS_082);
+      Sound_PlayReturnOne(MUS_REVIVE);
       break;
     case 3:
-      Sound_PlayReturnOne(MUS_084);
+      Sound_PlayReturnOne(MUS_CURE);
       break;
     default:
-      Sound_PlayReturnOne(MUS_091);
+      Sound_PlayReturnOne(MUS_JINGLE_SMALL);
       break;
     }
     break;

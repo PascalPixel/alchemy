@@ -79,7 +79,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
     point++;
   }
 
-  ring = (struct EffectStep *)gMapCellBuffer;
+  ring = (struct EffectStep *)gMapGridCellBuffer;
   for (frame = 0; frame != 60; frame++) {
     // The camera turns toward the caster's side, slowing from frame 40.
     if (frame <= 47) {
@@ -137,9 +137,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         if (nearest <= FAR_DEPTH) {
           for (j = 0; j != RING_POINTS; j++) {
             struct EffectStep *from =
-                &((struct EffectStep *)gMapCellBuffer)[j + i * 10];
-            struct EffectStep *to =
-                &((struct EffectStep *)gMapCellBuffer)[(j + 1) % 10 + i * 10];
+                &((struct EffectStep *)gMapGridCellBuffer)[j + i * 10];
+            struct EffectStep *to = &(
+                (struct EffectStep *)gMapGridCellBuffer)[(j + 1) % 10 + i * 10];
 
             for (k = 0; k != RING_STEPS; k++) {
               s32 x =
@@ -258,7 +258,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   }
 
   size = DOT_SIZE;
-  ring = (struct EffectStep *)gMapCellBuffer;
+  ring = (struct EffectStep *)gMapGridCellBuffer;
   for (frame = 0; frame != 128; frame++) {
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)

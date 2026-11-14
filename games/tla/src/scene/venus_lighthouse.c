@@ -106,7 +106,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
+      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -192,7 +192,7 @@ void VenusLighthouse_PushBlockOnto(void) {
   u32 step;
   s32 rate;
 
-  lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.currentOwner);
+  lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.leaderActorId);
   dir = lead->facing >> 12;
   step = gPushLeaderSteps[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);
@@ -305,7 +305,7 @@ extern struct ActorPlacement gActorPlacementsEntrance99[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -319,7 +319,7 @@ s32 SceneActor_ClearSingleChildField(void *actor) {
   return 0;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
     return gActorPlacementsEntrance99;
   return gActorPlacements;
@@ -533,7 +533,7 @@ void VenusLighthouse_RevealPaths(void) {
 #define Actor_SetSpriteColor                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteColor)
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 VenusLighthouse_Idle(void) { return 0; }
 
@@ -587,8 +587,8 @@ s32 VenusLighthouse_Start(void) {
   gFieldWork->transition = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
     // From patch 1 it also saves this scene and entrance 22.
-    routine->savedScene = (s32)&SceneId_VenusLighthouse;
-    routine->savedEntrance = 22;
+    routine->restartScene = (s32)&SceneId_VenusLighthouse;
+    routine->restartEntrance = 22;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();
@@ -1155,7 +1155,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   Event_ClearFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
   Actor_SetPosition(ACTOR_MOVED_STATUE, 664, 792);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  gMainRoutineWork.currentOwner = 5;
+  gMainRoutineWork.leaderActorId = 5;
   Party_RemoveMember(4);
   FieldEvent_Wait(50);
   work = Ram_HeapSlots->fieldWork;

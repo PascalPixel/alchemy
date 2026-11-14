@@ -10,7 +10,7 @@
 
 struct Actor *Actor_GetById(u32 objectId);
 
-void Actor_ResetTargetAndSetMode1(u32 objectId) {
+void Actor_ClearDestinationAndStand(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -22,7 +22,7 @@ void Actor_ResetTargetAndSetMode1(u32 objectId) {
   }
 }
 
-void Actor_ArmCallback(s32 objectId, s32 angle, s32 frames) {
+void Actor_FaceDirectionById(s32 objectId, s32 angle, s32 frames) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
@@ -32,7 +32,7 @@ void Actor_ArmCallback(s32 objectId, s32 angle, s32 frames) {
   }
 }
 
-void Actor_FaceDirectionById(s32 objectId, s32 angle) {
+void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {

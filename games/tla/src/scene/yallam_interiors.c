@@ -86,12 +86,12 @@ void ItemDisplay_ShowItem(s32 item, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_YallamInteriors1)
     return gYallamInteriors_Room1Placements;
@@ -201,8 +201,8 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
   return 0;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_YallamInteriors1)
     return gYallamInteriors_Room1Triggers;
@@ -236,7 +236,7 @@ void YallamInteriors_AskLikeChildrensSongs(void) {
 /// Sunshine would work.
 void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.currentOwner))
+                    gMainRoutineWork.leaderActorId))
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -255,7 +255,7 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
 /// party to Sunshine for something special.
 void YallamInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.currentOwner))
+                    gMainRoutineWork.leaderActorId))
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -274,7 +274,7 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
 /// way to Taopo Swamp.
 void YallamInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.currentOwner))
+                    gMainRoutineWork.leaderActorId))
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -293,7 +293,7 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
 /// talks of the town that never gets tourists.
 void YallamInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.currentOwner))
+                    gMainRoutineWork.leaderActorId))
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -311,7 +311,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
 
 void YallamInteriors_TalkToHealer(s32 actor) {
   u16 facing = ((struct YallamInteriorsObject *)Actor_GetById(
-                    gMainRoutineWork.currentOwner))
+                    gMainRoutineWork.leaderActorId))
                    ->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -412,12 +412,12 @@ void YallamInteriors_TalkToSunshine(void) {
       Actor_FallOverById(14, 0xc000);
       Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(14)),
                            1);
-      Actor_SetDestination(gMainRoutineWork.currentOwner, 488, 408);
-      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+      Actor_SetDestination(gMainRoutineWork.leaderActorId, 488, 408);
+      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
       Actor_SetDestination(14, 504, 408);
       Actor_WaitForMoveById(14);
-      Actor_FaceActor(14, gMainRoutineWork.currentOwner, 0);
+      Actor_FaceActor(14, gMainRoutineWork.leaderActorId, 0);
       Forge_Run(14);
       if (Forge_GetItem()) {
         Actor_SetSpeed(14, 0.4);
@@ -519,7 +519,7 @@ s32 Scene_Initialize(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    scene = party->scene;
+    scene = party->next;
   }
   if (scene == (s32)&SceneId_YallamInteriors1) {
     if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
@@ -536,7 +536,7 @@ s32 Scene_Initialize(void) {
                          0);
     Actor_SetSpritePriority(11, 2);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_YallamInteriors2) {
+  if (gMainRoutineWork.next == (s32)&SceneId_YallamInteriors2) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpritePriority(12, 2);
     ((struct YallamInteriorsObject *)Actor_GetById(12))->collisionFlags |= 4;

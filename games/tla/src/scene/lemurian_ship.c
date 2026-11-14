@@ -56,7 +56,7 @@
 extern s16 gLemurianShip_Room2Entrances[];
 
 u8 *Scene_GetEntrances(void) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_LemurianShip1)
     return gLemurianShip_Room1Entrances;
@@ -65,8 +65,8 @@ u8 *Scene_GetEntrances(void) {
   return gLemurianShip_Entrances;
 }
 
-u8 *Scene_GetRegions(void) {
-  s16 scene = gMainRoutineWork.scene;
+u8 *Scene_GetExitRegions(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_LemurianShip1)
     return gLemurianShip_Room1Regions;
@@ -123,8 +123,8 @@ extern u32 gLemurianShip_LightToOrb[];
 extern struct ActorPlacement gLemurianShip_LedgeRoomPlacements[];
 extern struct ActorPlacement gLemurianShip_SevenJellyRoomPlacements[];
 
-struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip1) {
+struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -144,7 +144,7 @@ struct ActorPlacement *Scene_GetPlacements(void) {
     case 30:
       return gLemurianShip_SevenJellyRoomPlacements;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -200,16 +200,16 @@ next2:
   if (i < 10)
     goto next2;
   Event_PlaySound(SE_DOOR_OPEN);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   MapGrid_CopyCellsTo(0, 0, gLemurianShip_Doors[found].x,
                       gLemurianShip_Doors[found].z, 1, 2);
   MapGrid_AnimateCells(gLemurianShip_Doors[found].value,
                        gLemurianShip_Doors[found].x,
                        gLemurianShip_Doors[found].z + 60);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   {
-    s32 owner = gMainRoutineWork.currentOwner;
+    s32 owner = gMainRoutineWork.leaderActorId;
 
     if (found == 12)
       Actor_SetDestinationOffset(owner, 0, -4);
@@ -253,15 +253,15 @@ next2:
       Event_GetFlag(FLAG_HOLD_PARCHED) == 0)
     found += 4;
   Event_PlaySound(SE_DOOR_OPEN);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   MapGrid_CopyCellsTo(0, 0, gLemurianShip_LowerDoors[found].x,
                       gLemurianShip_LowerDoors[found].z, 1, 2);
   MapGrid_AnimateCells(gLemurianShip_LowerDoors[found].value,
                        gLemurianShip_LowerDoors[found].x,
                        gLemurianShip_LowerDoors[found].z + 60);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_CenterOnColumn(gMainRoutineWork.leaderActorId, 2, -4);
   Event_Wait(4);
   Import_EventSetExitRequest(work->stepTrigger);
 }
@@ -274,19 +274,19 @@ void LemurianShip_WalkIntoPassage(void) {
     s32 x;
     s32 cell;
 
-    leader = ((struct Actor *)Actor_GetById(party->currentOwner));
+    leader = ((struct Actor *)Actor_GetById(party->leaderActorId));
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    Actor_SetAnimation(party->currentOwner, ANIM_WALK);
-    Actor_SetSpeed(party->currentOwner, 0.5);
+    Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
+    Actor_SetSpeed(party->leaderActorId, 0.5);
     x = leader->x;
     cell = x >> 16;
     Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y,
                         leader->z);
     FieldActor_WaitForMove(leader);
     leader->facing = FACING_NORTH;
-    Actor_SetScript(party->currentOwner, gLemurianShip_IntoPassage);
+    Actor_SetScript(party->leaderActorId, gLemurianShip_IntoPassage);
     wait(12);
     Event_PlaySound(SE_MAP_EXIT);
     Event_FinishScreenTransition();
@@ -299,8 +299,8 @@ extern struct Trigger gLemurianShip_LedgeRoomTriggers[];
 extern struct Trigger gLemurianShip_HoldTriggers[];
 extern struct Trigger gLemurianShip_PillarRoomTriggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip1) {
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -322,7 +322,7 @@ const struct Trigger *Scene_GetEvents(void) {
     default:
       return gLemurianShip_CabinTriggers;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -443,16 +443,16 @@ void LemurianShip_StepOnLift(void) {
   u8 *state;
 
   if (!Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
-    leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+    leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 840, 72);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 840, 72);
     opened = Event_GetFlag((FLAG_JELLIES_BEATEN + 2));
     state = &leader->terrainId;
     if (opened) {
       Event_PlaySound(SE_243);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       MapGrid_SetShake(0, 2, 1);
       Event_Wait(20);
@@ -460,9 +460,9 @@ void LemurianShip_StepOnLift(void) {
       MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
       *state = 2;
       Event_Wait(20);
-      Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-      Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-      Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
+      Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
+      Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+      Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 840, 88);
       Event_Wait(20);
       Event_PlaySound(SE_CRUNCH);
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
@@ -484,7 +484,7 @@ void LemurianShip_StepOnLift(void) {
         *bits = value;
       }
       Event_PlaySound(SE_243);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       MapGrid_SetShake(0, 2, 1);
       Event_Wait(20);
@@ -494,13 +494,13 @@ void LemurianShip_StepOnLift(void) {
         s32 two = 2;
         *state = two;
         Event_Wait(20);
-        Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST,
+        Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST,
                             20);
-        Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-        Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-        Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
-        Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_WEST);
-        Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
+        Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
+        Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+        Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 840, 88);
+        Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
+        Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 9);
         helper->gravity = px(1);
         helper->terrainId = two;
       }
@@ -508,13 +508,13 @@ void LemurianShip_StepOnLift(void) {
       Actor_MoveToAndWait(9, 832, 74);
       Actor_Jump(9, 4, 0);
       Actor_MoveToAndWait(9, 856, 88);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(20);
       Event_PlaySound(SE_CRUNCH);
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       Event_Wait(20);
-      Actor_Stop(gMainRoutineWork.currentOwner);
+      Actor_Stop(gMainRoutineWork.leaderActorId);
       *state = 1;
       helper->terrainId = 0;
       wait(1);
@@ -528,13 +528,13 @@ void LemurianShip_StepOnLiftWestSide(void) {
   struct Actor *leader;
 
   if (!Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
-    leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+    leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
     Event_Start();
     Event_ResolvePendingActions(0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 812, 72);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 812, 72);
     Event_PlaySound(SE_243);
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+    Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     MapGrid_SetShake(0, 2, 1);
     Event_Wait(20);
@@ -542,9 +542,9 @@ void LemurianShip_StepOnLiftWestSide(void) {
     MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
     leader->terrainId = 2;
     Event_Wait(20);
-    Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 3.2);
-    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 812, 88);
+    Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 3.2);
+    Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 812, 88);
     Event_Wait(20);
     Event_PlaySound(SE_CRUNCH);
     MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
@@ -557,7 +557,7 @@ void LemurianShip_StepOnLiftWestSide(void) {
   void name(s32 id) {                                                          \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    Actor_FaceActorById(id, gMainRoutineWork.currentOwner, 0);                 \
+    Actor_FaceActorById(id, gMainRoutineWork.leaderActorId, 0);                \
     Actor_StartRepeatedMotion(id, 2);                                          \
     Actor_SetAttachedEffect(id,                                                \
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
@@ -585,7 +585,7 @@ void LemurianShip_LeapIntoHydra(s32 id) {
 void LemurianShip_FightAquaHydra(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(MUS_000);
+  Event_PlaySound(MUS_SILENCE);
   Actor_StartRepeatedMotion(9, 2);
   Actor_StartRepeatedMotion(10, 2);
   Actor_StartRepeatedMotion(11, 2);
@@ -631,7 +631,8 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
     if (column == 35) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+        leader =
+            ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
         Event_Start();
         Event_ResolvePendingActions(0);
         Event_Wait(20);
@@ -641,7 +642,7 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         object->motionFlags = done;
         Actor_SetSpritePriority(8, 3);
         if (object->z > leader->z)
-          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+          Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
           wait(1);
@@ -651,8 +652,8 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         Event_Wait(20);
         Event_SetFlag(FLAG_RIGHT_PILLAR_SUNK);
         if (object->z > leader->z) {
-          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-          ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))
+          Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+          ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
               ->priorityFlags |= 1;
         }
         Event_End();
@@ -666,7 +667,8 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
     if (column == 29) {
       row = object->z >> 20;
       if (row == 9) {
-        leader = ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+        leader =
+            ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
         Event_Start();
         Event_ResolvePendingActions(0);
         Event_Wait(20);
@@ -676,7 +678,7 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         object->motionFlags = done;
         Actor_SetSpritePriority(9, 3);
         if (object->z > leader->z)
-          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+          Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
         for (i = 0; i < 128; i++) {
           object->y += 0xffffe000;
           wait(1);
@@ -686,8 +688,8 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         Event_Wait(20);
         Event_SetFlag(FLAG_LEFT_PILLAR_SUNK);
         if (object->z > leader->z) {
-          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-          ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))
+          Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+          ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
               ->priorityFlags |= 1;
         }
         Event_End();
@@ -772,25 +774,25 @@ DEFINE_RAISE_PILLAR(LemurianShip_RaiseLeftPillar, 9, FLAG_LEFT_PILLAR_SUNK,
 /// are set back where the floor is dry.
 void LemurianShip_ParchHold(void) {
   struct Actor *leader =
-      ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
   struct Actor *object;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
-  Actor_SetPositionFixed(gMainRoutineWork.currentOwner, leader->x,
+  Actor_SetPositionFixed(gMainRoutineWork.leaderActorId, leader->x,
                          leader->z + 0xfed00000);
   object = ((struct Actor *)Actor_GetById(64));
   Actor_SetPositionFixed(64, object->x, object->z + 0xfed00000);
   FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
   wait(10);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   wait(1);
   MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
   Map_CenterOnFollowedPoint();
   wait(1);
   Event_SetFlag(FLAG_HOLD_PARCHED);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   Event_End();
 }
 
@@ -850,7 +852,7 @@ void LemurianShip_KeepPillarRoomPuddles(void) {
 
 void LemurianShip_RippleAroundLeader(void) {
   struct Actor *leader =
-      ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 
@@ -925,14 +927,14 @@ void LemurianShip_SetBlackCrystal(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 808, 208);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 808, 208);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 176, 1);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(8, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
@@ -951,7 +953,7 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   // "OK, now, I must set the black orb in this pedestal."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_PIERS, 808, 148);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Actor_SetSpritePriority(ACTOR_PIERS, 1);
@@ -961,10 +963,10 @@ void LemurianShip_SetBlackCrystal(void) {
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(20);
   Task_Remove(LemurianShip_DrawLightToOrb);
-  Event_PlaySound(SE_251);
+  Event_PlaySound(SE_BLACK_CRYSTAL_SET);
   Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 448, 0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 808, 480);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 808, 480);
   Actor_SetPosition(ACTOR_PIERS, 808, 420);
   Actor_SetPosition(ACTOR_SHEBA, 784, 468);
   Actor_SetPosition(ACTOR_JENNA, 832, 468);
@@ -1068,7 +1070,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x209;
   if (Event_GetFlag(0x9b4))
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
-  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -1097,7 +1099,7 @@ s32 Scene_Initialize(void) {
       LemurianShip_SetUpSevenJellyRoom();
       break;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShip2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -1207,7 +1209,7 @@ void LemurianShip_SetUpRaisedJelly(s32 id) {
   }
 
 void LemurianShip_SetUpSixJellyRoom(void) {
-  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= 32;
   Actor_PlaceBlocks(gLemurianShip_Crate);
   ((struct Actor *)Actor_GetById(8))->priorityFlags |= 32;
@@ -1336,7 +1338,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
 
 void LemurianShip_MatchCratePriority(void) {
   struct Actor *leader =
-      ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
 
   Actor_SetSpritePriority(8, ((struct FieldSprite *)leader->sprite)->priority);
 }
@@ -1363,7 +1365,7 @@ void LemurianShip_SetUpJelly(s32 id) {
 /// The room of seven jellies: each beaten one leaves a puddle and opens its
 /// cell.
 void LemurianShip_SetUpSevenJellyRoom(void) {
-  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= 32;
   Actor_PlaceBlocks(gLemurianShip_Crate);
   ((struct Actor *)Actor_GetById(8))->priorityFlags |= 32;
@@ -1463,7 +1465,7 @@ void LemurianShip_SetUpStairRoom(void) {
 void LemurianShip_SetUpHold(void) {
   struct Actor *object;
 
-  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= 32;
   LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, 0x480);
   if (Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
@@ -1489,7 +1491,7 @@ void LemurianShip_SetUpHold(void) {
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
     MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
     Map_CenterOnFollowedPoint();
     wait(1);
   }
@@ -1503,7 +1505,7 @@ void LemurianShip_SetUpHold(void) {
 void LemurianShip_SetUpPillarRoom(void) {
   struct Actor *object;
 
-  ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))
+  ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= 32;
   Actor_PlaceBlocks(gLemurianShip_Pillars);
   if (Event_GetFlag(FLAG_PILLAR_WAY_OPEN)) {

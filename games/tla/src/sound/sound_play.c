@@ -20,7 +20,7 @@ void Sound_Initialize(void) {
   s32 remaining;
 
   m4aSoundInit();
-  gCurrentBgm = MUS_000;
+  gCurrentBgm = MUS_SILENCE;
   gBgmRestoreDelay = 0;
   gBgmVolumeTarget = BGM_UNITY_SCALE;
   gBgmVolume = BGM_UNITY_SCALE;
@@ -69,7 +69,7 @@ void Sound_Play(s32 id) {
       return;
     m4aMPlayFadeOut(&gMPlayInfo_BGM, 7);
     gBgmFadeRequested++;
-    gCurrentBgm = MUS_000;
+    gCurrentBgm = MUS_SILENCE;
   } else if (id == SOUND_FADE_OUT_ACTION_SE) {
     gMusicPlayerLastSound[MUSIC_PLAYER_ACTION_SE] = 0;
     m4aMPlayFadeOut(&gMPlayInfo_ActionSE, 3);

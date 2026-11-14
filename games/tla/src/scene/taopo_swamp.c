@@ -189,7 +189,7 @@ void TaopoSwamp_FightFlower(void) { Field_RequestDjinnBattle(8, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -203,8 +203,8 @@ extern struct ActorPlacement gTaopoSwamp_Room10Placements[];
 extern struct ActorPlacement gTaopoSwamp_Room9Placements[];
 extern struct ActorPlacement gTaopoSwamp_Room11Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_TaopoSwamp2)
     return gTaopoSwamp_Room2Placements;
@@ -340,7 +340,7 @@ void TaopoSwamp_DigHole(void) {
 /// As TaopoSwamp_DigHole, and the first time (until flag 0xf99) the buried item
 /// comes up, throwing the leader standing on it back a step.
 void TaopoSwamp_DigHoleUnderfoot(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
   if (Event_GetFlag(0xf99) == 0) {
@@ -348,11 +348,11 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
     if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
+      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
       leader->velocityY = px(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
   }
@@ -377,8 +377,8 @@ void TaopoSwamp_StartMadPlantBattle(void) {
 
 /// The leader drops through a hole in the floor to the room below.
 void TaopoSwamp_FallThroughHole(s32 a) {
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
-  TaopoSwamp_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0x1000);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
+  TaopoSwamp_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0x1000);
   Event_PlaySound(SE_310);
   Event_SetFlag(0x122);
   FieldEvent_SetExitRequest(a);
@@ -414,14 +414,14 @@ void TaopoSwamp_StepOnVent(s32 hole) {
   struct Vector3 position;
   s32 found, result, slip;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_TaopoSwamp5) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp5) {
     found = Vent_IsActive(gTaopoSwamp_Room5HoleVents[hole - 10]);
     if (hole == 12 && Event_GetFlag(0xa6e))
       return;
     if (hole == 18 && Event_GetFlag(0xa6d))
       return;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_TaopoSwamp7) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp7) {
     u8 *table = gTaopoSwamp_Room7HoleVents + 1;
     s32 at = hole - 10;
     found = Vent_IsActive(table[at]);
@@ -430,16 +430,16 @@ void TaopoSwamp_StepOnVent(s32 hole) {
     if (hole == 12 && Event_GetFlag(FLAG_SCENE_TEMP_21))
       return;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_TaopoSwamp8) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp8) {
     found = Vent_IsActive(hole - 10);
     if (hole == 10 && Event_GetFlag(FLAG_SCENE_TEMP_21))
       return;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_TaopoSwamp9)
+  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp9)
     found = Vent_IsActive(hole - 10);
   if (found == 0)
     return;
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   goto test;
@@ -481,8 +481,8 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceActor(gMainRoutineWork.currentOwner, 8, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_FaceActor(gMainRoutineWork.leaderActorId, 8, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 312, 1);
   FieldCamera_WaitForArrival();
@@ -556,15 +556,15 @@ void TaopoSwamp_ShatterIcePillar(s32 id) {
   Event_ClearFlag(FLAG_SCENE_TEMP_20);
   Event_ClearFlag(FLAG_SCENE_TEMP_21);
   Event_ClearFlag(FLAG_SCENE_TEMP_22);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+    Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, 16);
+    Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
     FieldEvent_Wait(2);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     FieldEvent_Wait(10);
   }
   MapGrid_CopyCellAttributes(22, 8, 1, 1, 26, 8);
@@ -610,15 +610,15 @@ void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   Event_ClearFlag(FLAG_SCENE_TEMP_21);
   Event_ClearFlag(FLAG_SCENE_TEMP_22);
   GameFlag_SetByte(0x230, 0);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+    Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 0, 16);
+    Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
     FieldEvent_Wait(2);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     FieldEvent_Wait(10);
   }
   MapGrid_CopyCellAttributes(1, 1, 1, 1, 25, 27);
@@ -909,8 +909,8 @@ extern struct Trigger gTaopoSwamp_Room10Triggers[];
 extern s32 gTaopoSwamp_Room9Triggers[];
 extern struct Trigger gTaopoSwamp_Room11Triggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_TaopoSwamp1)
     return (const struct Trigger *)gTaopoSwamp_Room1Triggers;
@@ -1202,7 +1202,7 @@ void TaopoSwamp_StartVents(u16 *points, u16 *values, s32 arg);
 
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
@@ -1285,7 +1285,7 @@ s32 Scene_Initialize(void) {
     } else {
       Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gTaopoSwamp_Room8Vents, 0,
              (s32)TaopoSwamp_CycleDripVent);
-      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       FieldTask_AddFrame(TaopoSwamp_DripInRoom8, 0x480);
       FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, 0x480);
       object = Actor_GetById(10);
@@ -1393,7 +1393,7 @@ s32 Scene_Initialize(void) {
 }
 #else
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *effect = &gFieldWork->transition;
   struct Actor *object, *dummy, *piece;
@@ -1484,7 +1484,7 @@ s32 Scene_Initialize(void) {
     } else {
       Value3((s32 (*)())TaopoSwamp_StartVents, (s32)gTaopoSwamp_Room8Vents, 0,
              (s32)TaopoSwamp_CycleDripVent);
-      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       FieldTask_AddFrame(TaopoSwamp_DripInRoom8, 0x480);
       FieldTask_AddFrame(TaopoSwamp_DripFromCeiling, 0x480);
       object = Actor_GetById(10);
@@ -1627,7 +1627,7 @@ void TaopoSwamp_TwinkleStarDust(void) {
     MapGrid_CopyCellsLayered(45, frame, 3, 3, 76, 61);
 }
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 /// Points the map's followed point at cell (x, z), and the screen follows.
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
@@ -1648,7 +1648,7 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
   focus->unk18[3] = 0;
   index = (z / 2 << 7) + x / 2;
   focus->scaleZ = focus->scaleX = Q16_ONE;
-  focus->cell = gMapCellBuffer + index * 4;
+  focus->cell = gMapGridCellBuffer + index * 4;
   focus->shape = gMapShapeGrid + index;
   focus->scrolledX = Iwram_MulQ16(*(s32 *)(map + 0xe4), 0x10000) + focus->x;
   focus->scrolledZ =

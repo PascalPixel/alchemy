@@ -44,7 +44,7 @@ s32 Event_PickUpItem();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -126,7 +126,7 @@ void FieldCamera_MoveToActorById();
 /// away from the leader with a hop, and back along z.
 void ShamanVillageCave_EddyFlees(void) {
   struct Actor *object = Actor_GetById(17);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 leaderX = leader->x >> 19;
   s32 leaderZ = leader->z >> 19;
   s32 objectX = object->x >> 19;
@@ -201,7 +201,7 @@ s32 ShamanVillageCave_SettleOvergrowth(struct Actor *object) {
   return 0;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -226,7 +226,7 @@ void ShamanVillageCave_LiftFourthRock(void) {
   return;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// The Golden Shirt the gladiators leave goes to the party, if there is room.
 void ShamanVillageCave_TakeGoldenShirt(void) {
@@ -472,10 +472,10 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   FieldEvent_Wait(100);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 1);
   FieldEvent_Wait(20);
-  Event_SetDestination((s16)gMainRoutineWork.savedScene,
-                       (s16)gMainRoutineWork.savedEntrance);
+  Event_SetDestination((s16)gMainRoutineWork.restartScene,
+                       (s16)gMainRoutineWork.restartEntrance);
 #if TLA_PATCH_1
-  WorldMap_SetReturnLeavingScene(gMainRoutineWork.scene,
+  WorldMap_SetReturnLeavingScene(gMainRoutineWork.next,
                                  gMainRoutineWork.entrance);
 #endif
   ((struct {
@@ -608,9 +608,9 @@ next:
   id++;
   if (id < 64)
     goto next;
-  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
   FieldEvent_Wait(5);
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(work->stepTrigger);

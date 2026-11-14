@@ -181,7 +181,7 @@ extern s32 Data_02006be8[8];
                                                                                \
     party = &gMainRoutineWork;                                                 \
     work = Ram_HeapSlots->fieldWork;                                           \
-    if (party->renderMode == 1) {                                              \
+    if (party->movementMode == 1) {                                            \
       if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {        \
         if (Random16() < 0x8000) {                                             \
           Event_RequestDjinnBattle(a, b);                                      \
@@ -208,7 +208,7 @@ void Func_0200022c(void) { WORLD_MAP_TRY_ENCOUNTER(0x80f, 53) }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -313,7 +313,7 @@ extern struct ActorPlacement gData_02006790[];
 
 void Leader_Search(void);
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case 64:
     return gData_02006500;
@@ -334,7 +334,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void WorldMap_SetUpFlyingShip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  gMainRoutineWork.renderMode = 8;
+  gMainRoutineWork.movementMode = 8;
   if (Event_GetFlag(0x147)) {
     WorldMap_Freeze();
     MessageArgument_Push(153, 4);
@@ -367,7 +367,7 @@ void WorldMap_SetUpShip(void) {
   s32 pp;
   s32 i;
 
-  gMainRoutineWork.renderMode = 7;
+  gMainRoutineWork.movementMode = 7;
   Func_02003c3c();
   Gauge_End();
   Actor_SetSpriteFlags(Actor_Get(8), 0);
@@ -377,13 +377,13 @@ void WorldMap_SetUpShip(void) {
   if (pp < count) {
   loop:
     // One member's PP.
-    pp += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))->pp;
+    pp += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->pp;
     i++;
     if (i < count)
       goto loop;
   }
   if (pp == 0)
-    Unit_AddPp(gMainRoutineWork.currentOwner, 1);
+    Unit_AddPp(gMainRoutineWork.leaderActorId, 1);
 }
 
 void Actor_StartIdle(struct Actor *object);
@@ -397,8 +397,8 @@ void WorldMap_BoardShip(void) {
 
   if (GameFlag_Get(0x8de) == 0)
     return;
-  kind = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  kind = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ship = Actor_Get(8);
   dx = (leader->x - ship->x) >> 16;
   dz = (leader->z - ship->z) >> 16;
@@ -407,7 +407,7 @@ void WorldMap_BoardShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  gMainRoutineWork.renderMode = 7;
+  gMainRoutineWork.movementMode = 7;
   gMainRoutineWork.ownerOverride = 1;
   Event_SetFlag(0x176);
   gMainRoutineWork.savedX = ship->x;
@@ -429,7 +429,7 @@ void WorldMap_BoardShip(void) {
   Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
   leader->terrainHeight = 0;
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
   Scene_ChooseMusic();
   Scene_PlayMusic();
   Event_End();
@@ -442,7 +442,7 @@ void WorldMap_BoardShip(void) {
 
 /// The leader jumps ashore from the ship, where the shore ahead lets them land.
 void WorldMap_LeaveShip(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ship = Actor_GetById(8);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 cell = WorldMap_GetCollision(&ship->x);
@@ -487,7 +487,7 @@ void WorldMap_LeaveShip(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEffect_ScheduleRatioTransition(0x10000, 10);
-    gMainRoutineWork.renderMode = 1;
+    gMainRoutineWork.movementMode = 1;
     gMainRoutineWork.ownerOverride = 0;
     Event_ClearFlag(0x176);
     gMainRoutineWork.savedX = ship->x;
@@ -528,7 +528,7 @@ void Func_02000918(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (gMainRoutineWork.renderMode == 8)
+  if (gMainRoutineWork.movementMode == 8)
     WorldMap_SetUpShip();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -546,7 +546,7 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
   Actor_SetAnimation(actor, 2);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestination(actor, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
@@ -561,7 +561,7 @@ void WorldMap_RefuseToRunAway(void) {
   s32 west = FACING_WEST;
 
   if (Event_GetFlag(0xa21) && !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
-    object = Actor_Get(gMainRoutineWork.currentOwner);
+    object = Actor_Get(gMainRoutineWork.leaderActorId);
     x = object->x;
     z = object->z;
     x >>= 20;
@@ -570,11 +570,11 @@ void WorldMap_RefuseToRunAway(void) {
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(0x9b3)) {
       FieldEffect_ScheduleRatioTransition(0x16666, 6);
-      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       Actor_WalkToAndWait(ACTOR_JENNA, (x << 4) + 24, (z << 4) - 12);
       Actor_FaceDirection(ACTOR_JENNA, southwest, 0);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
+      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
                                  FACING_NORTHEAST);
       WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgWeShouldnT);
@@ -583,19 +583,19 @@ void WorldMap_RefuseToRunAway(void) {
       WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
       System_Wait(1);
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 7312, 8192);
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 7312, 8192);
       FieldEffect_ScheduleRatioTransition(0x10000, 6);
     } else {
       s32 besideZ;
 
       FieldEffect_ScheduleRatioTransition(0x16666, 6);
-      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       x <<= 4;
       besideZ = (z << 4) - 12;
       Actor_WalkToAndWait(ACTOR_JENNA, x + 24, besideZ);
       Actor_FaceDirection(ACTOR_JENNA, southwest, 0);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
+      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
                                  FACING_NORTHEAST);
       WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgYouReNot);
@@ -603,10 +603,10 @@ void WorldMap_RefuseToRunAway(void) {
       Event_ShowMessage(ACTOR_JENNA, 0);
       WorldMap_ReloadPendingAreaGraphics();
       Actor_FaceDirection(ACTOR_JENNA, west, 0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x + 12, besideZ);
-      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, x + 12, besideZ);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
       Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
       WorldMap_Freeze();
       // "We can't run anymore, Felix. I promised him that we wouldn't."
@@ -620,7 +620,7 @@ void WorldMap_RefuseToRunAway(void) {
       WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
       System_Wait(1);
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 7312, 8192);
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 7312, 8192);
       Event_SetFlag(0x9b3);
       FieldEffect_ScheduleRatioTransition(0x10000, 6);
     }
@@ -647,7 +647,7 @@ void WorldMap_GazeIntoPond(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 slot = 79;
     struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
-    u8 *unit = Unit_Get(gMainRoutineWork.currentOwner);
+    u8 *unit = Unit_Get(gMainRoutineWork.leaderActorId);
     s32 amount = (((unit[15] * Random16()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
@@ -720,7 +720,7 @@ void Func_02000da4(s32 id) { WorldMap_SetCountdownByZ(id, 34, 33); }
 
 void Func_02000db0(s32 id) { WorldMap_SetCountdownByZ(id, 3, 2); }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern s32 gData_0200632c[];
 
@@ -950,7 +950,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 
       asm volatile("" : "+l"(a1));
       a2 = 0;
-      Actor_ArmCallback(23, a1, a2);
+      Actor_FaceDirectionById(23, a1, a2);
     }
     Event_Wait(5);
     // "Don't play dumb... We all heard you."
@@ -1320,7 +1320,7 @@ void WorldMap_MeetEcho(void) {
   s32 zero = 0;
 
   djinni = Actor_GetById(9);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   x = (leader->x - px(10120)) / 2 + 0x27880000;
   z = (leader->z - px(8356)) / 2 + 0x20a40000;
   /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result, then
@@ -1345,7 +1345,7 @@ void WorldMap_MeetEcho(void) {
     Party_AddMember(4);
     Party_AddMember(5);
     Party_AddMember(6);
-    owner = gMainRoutineWork.currentOwner;
+    owner = gMainRoutineWork.leaderActorId;
     Party_RestoreHpPp(1);
     Event_SetFlag(FLAG_DJINN_LESSON);
     Event_Start();
@@ -1477,7 +1477,7 @@ void WorldMap_MeetEcho(void) {
     Event_ShowMessageAndWait(9, 0);
   joined:
     MessageArgument_Push(0x133, 4);
-    Sound_Play(MUS_081);
+    Sound_Play(MUS_JOINED);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
     Actor_Jump(9, 2, 20);
@@ -1734,8 +1734,8 @@ void Func_020029a4(void) {
   actor->scaleY = 0x13333;
   EventCamera_FollowActor(8, 1);
   System_Wait(1);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetSpriteFlags(Actor_Get(8), 0);
   Actor_SetSpeed(8, 0.4);
   actor->timer = 0;
@@ -1768,8 +1768,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   boat->scaleY = 0x13333;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetSpriteFlags(Actor_Get(10), 0);
   Actor_SetSpeed(10, 0.4);
   boat->timer = 0;
@@ -1800,7 +1800,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SE_162);
   // "???"
-  Event_ShowMessage(gMainRoutineWork.currentOwner, 0);
+  Event_ShowMessage(gMainRoutineWork.leaderActorId, 0);
   // "Oh... This can't be good."
   Event_ShowMessage(8, 0);
   Event_PlaySound(MUS_061);
@@ -1838,8 +1838,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetPosition(ACTOR_FELIX, 3669, 7664);
   Actor_SetPosition(ACTOR_JENNA, 3657, 7621);
   Actor_SetPosition(ACTOR_SHEBA, 3703, 7651);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 1);
   System_Wait(1);
   WorldMap_Freeze();
   Actor_SetAttachedEffect(ACTOR_JENNA,
@@ -1868,8 +1868,8 @@ void WorldMap_DriftNorthOfContinent(void) {
 /// The leader is hidden and released, the screen fades and the camera moves;
 /// once a key is held the scene changes to SceneId_AlhafraManor.
 void Func_02002e00(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX = 0;
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
@@ -1887,9 +1887,9 @@ void WorldMap_TakeTheTiller(void) {
   if (seen == 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    scale = Actor_GetById(gMainRoutineWork.currentOwner)->scaleX;
-    Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = 0;
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    scale = Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX = 0;
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
@@ -1964,8 +1964,8 @@ void WorldMap_TakeTheTiller(void) {
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     // "To the open sea, Felix!"
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
-    gMainRoutineWork.renderMode = 7;
+    Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
+    gMainRoutineWork.movementMode = 7;
     gMainRoutineWork.ownerOverride = 1;
     WorldMap_ReloadPendingAreaGraphics();
     Event_SetFlag(0x8de);
@@ -1973,7 +1973,7 @@ void WorldMap_TakeTheTiller(void) {
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
-    Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = scale;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX = scale;
     Event_End();
   }
 }
@@ -2160,26 +2160,26 @@ void Func_0200343c(struct Actor *parent) {
 void Func_02003490(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  Actor_Get(gMainRoutineWork.currentOwner)->update = Func_0200343c;
-  Actor_Get(gMainRoutineWork.currentOwner)->acceleration = px(1) / 8;
-  Actor_Get(gMainRoutineWork.currentOwner)->speedLimit = px(2);
+  FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = Func_0200343c;
+  Actor_Get(gMainRoutineWork.leaderActorId)->acceleration = px(1) / 8;
+  Actor_Get(gMainRoutineWork.leaderActorId)->speedLimit = px(2);
   System_Wait(5);
   FieldEffect_ScheduleRatioTransition(49152, 60);
   Event_StartScreenTransition();
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14537, 8577);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14465, 8662);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14452, 8766);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14387, 8828);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14331, 8888);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14284, 8904);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14255, 8870);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14255, 8831);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14255, 8772);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14537, 8577);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14465, 8662);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14452, 8766);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14387, 8828);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14331, 8888);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14284, 8904);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14255, 8870);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14255, 8831);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14255, 8772);
   FieldEffect_ScheduleRatioTransition(0x14000, 120);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14275, 8736);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 14257, 8720);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14275, 8736);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 14257, 8720);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -2254,7 +2254,7 @@ void Func_02003d44(s32 mode) {
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2448,7 +2448,7 @@ void Func_02004634(struct Actor *parent) {
         sprite->vramBlock = work->vramBlock;
         ((struct SpriteCacheBits *)&sprite->unk11)->retainCacheEntry = 1;
         sprite->tile =
-            (gResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct WorldMapOam *)sprite)->size = 2;
@@ -2483,7 +2483,7 @@ extern u8 gData_02006f20[][32];
 // queues its sprite over the leader.
 void Func_020048f4(void) {
   u32 *oam = Data_02006e14;
-  s32 tile = gResourceTableEntries[gData_02006e0e].offset >> 5;
+  s32 tile = gVramCacheEntries[gData_02006e0e].offset >> 5;
   struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
   s32 screen[3];
   u32 attributes;

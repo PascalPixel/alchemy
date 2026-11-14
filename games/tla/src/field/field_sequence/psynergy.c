@@ -74,7 +74,7 @@ s32 Field_UsePsynergy(u32 code) {
       s32 scene, entrance;
 
       scene = (u16)state->retreatScene;
-      state->scene = scene;
+      state->next = scene;
       entrance = (u16)state->retreatEntrance;
       state->entrance = entrance;
     }
@@ -97,7 +97,7 @@ s32 Field_UsePsynergy(u32 code) {
   before = Scene_FindPsynergyTrigger(0x10000005, group, selector);
   after = Scene_FindPsynergyTrigger(5, group, selector);
   during = Scene_FindPsynergyTrigger(0x50000005, group, selector);
-  if (abilityId == 156 && gMainRoutineWork.scene != (s32)&SceneId_WorldMap &&
+  if (abilityId == 156 && gMainRoutineWork.next != (s32)&SceneId_WorldMap &&
       before == NULL && after == NULL && during == NULL) {
     FIELD_PSYNERGY_MESSAGE(userId, 156, MsgKey0dbd);
     return 0;

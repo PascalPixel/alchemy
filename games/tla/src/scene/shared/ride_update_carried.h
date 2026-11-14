@@ -3,7 +3,7 @@
 void Flame_UpdateForward(struct Actor *object) {
   struct FlameHitWork *work =
       (struct FlameHitWork *)(gInventorySnapshot + 0x188);
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 dx = object->bounce;
   s32 dz;
@@ -21,7 +21,7 @@ void Flame_UpdateForward(struct Actor *object) {
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
   if (actor->y == actor->terrainHeight && Actor_IsTouching(object, actor) &&
-      gMainRoutineWork.renderMode == 0) {
+      gMainRoutineWork.movementMode == 0) {
     if (object->unk4c != 0) {
       work->direction.x = 0;
       {

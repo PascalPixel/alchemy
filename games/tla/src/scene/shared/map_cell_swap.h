@@ -10,7 +10,7 @@ s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += x + (y << 7);
   old = (cell->collisionCode << 8) | cell->attributeB;
   cell->collisionCode = value >> 8;

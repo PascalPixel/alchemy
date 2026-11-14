@@ -157,7 +157,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
   state = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(owner);
   item = unit->inventory[slot];
-  def = Item_GetDirectFar(item & ITEM_ID_MASK);
+  def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
     created =
         Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12, 0x102);
@@ -272,7 +272,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     Heap_Release(backup);
     break;
   case STATUS_PANEL_LEARN: {
-    s32 psynergy = def->actionId;
+    s32 psynergy = def->abilityId;
     s32 known = 0;
     s32 i;
 
@@ -828,7 +828,7 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
           continue;
         if ((order[pass] & 0x80) && (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
-        value = items[i] & ITEM_ID_MASK;
+        value = items[i] & INVENTORY_ITEM_ID_MASK;
         if (best < value) {
           best_slot = i;
           best = value;

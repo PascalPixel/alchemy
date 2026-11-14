@@ -74,7 +74,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
     piece->priority = 1;
     work->objects[i] = piece;
-    Iwram_CopyWordsEntry(OBJ_VRAM + gResourceTableEntries[piece->slot].offset,
+    Iwram_CopyWordsEntry(OBJ_VRAM + gVramCacheEntries[piece->slot].offset,
                          tiles + i * 0x400, 0x400);
   }
 

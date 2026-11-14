@@ -4,7 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern char ResourceId_SeaSerpentTiles;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_ParticleSpritesD;
@@ -61,7 +61,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   cells = Ram_HeapSlots->unk64[0];
-  tiles = gMapCellBuffer;
+  tiles = gMapGridCellBuffer;
 
   // Open the canvas over a dark backdrop; BG2 is drawn at half scale
   // below the line the IRQ handler picks.
@@ -92,7 +92,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       object->priority = 1;
       work->objects[i] = object;
       Iwram_CopyWords(
-          (void *)(0x06010000 + gResourceTableEntries[object->slot].offset),
+          (void *)(0x06010000 + gVramCacheEntries[object->slot].offset),
           tiles + i * 0x400, 0x400);
     }
   }

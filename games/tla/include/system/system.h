@@ -11,7 +11,7 @@ void Oam_ResetFrame(void);
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 u32 Random16(void);
-extern u32 gRandomState;
+extern u32 gRandomSeed;
 
 extern u16 gSleepActive;
 

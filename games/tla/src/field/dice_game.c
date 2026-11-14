@@ -367,7 +367,7 @@ const u8 gData_081ba30c[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define BET_WINDOW_WIDTH COIN_WINDOW_WIDTH
 #endif
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern char MsgLuckyDiceCoins, MsgLuckyDiceWinnings, MsgDiceGameThrow,
     MsgDiceGameHigher, MsgDiceGameLower, MsgDiceGameHigherAgain,
     MsgDiceGameLowerAgain, MsgDiceGameChoose, MsgDiceGameDoubleUp;
@@ -450,8 +450,8 @@ void SuperLuckyDice_Run(void) {
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   SuperLuckyDice_ResetViewDefaults();
   Task_ResetAll();
-  gRenderOamEnabled = 0;
-  cellBuffer = gMapCellBuffer;
+  gOamCopyEnabled = 0;
+  cellBuffer = gMapGridCellBuffer;
 
   {
     s32 tileX;
@@ -618,7 +618,7 @@ void SuperLuckyDice_Run(void) {
     bet = gMainRoutineWork.coins;
 #endif
   Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow, BET_TEXT_X, 5);
-  Sound_PlayFar(MUS_001);
+  Sound_PlayFar(MUS_SUPER_LUCKY_DICE);
 
   frame = 0;
   for (;;) {
@@ -940,7 +940,7 @@ void SuperLuckyDice_Run(void) {
           Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
                                      BET_TEXT_X, 5);
           multiplier = 0;
-          Sound_PlayFar(MUS_001);
+          Sound_PlayFar(MUS_SUPER_LUCKY_DICE);
           state = 0;
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
@@ -977,7 +977,7 @@ void SuperLuckyDice_Run(void) {
       if (timer > 19) {
         if (gInput.repeat & KEY_A) {
           Window_CloseFar(sprites->helpWindow, 1);
-          Sound_PlayFar(MUS_001);
+          Sound_PlayFar(MUS_SUPER_LUCKY_DICE);
           Sound_PlayFar(SE_MENU_CONFIRM);
           state = 0;
           window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
@@ -992,14 +992,14 @@ void SuperLuckyDice_Run(void) {
           Text_DrawNumberInWindowFar(bet, 6, (s32)sprites->betWindow,
                                      BET_TEXT_X, 5);
           if (winnings > 0) {
-            Sound_PlayFar(SE_105);
+            Sound_PlayFar(SE_COIN_PAYOUT);
             Party_AdjustCoinsFar(winnings);
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                        (s32)sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
-            Sound_PlayFar(SE_105);
+            Sound_PlayFar(SE_COIN_PAYOUT);
           Party_AdjustCoinsFar(1);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, 0);

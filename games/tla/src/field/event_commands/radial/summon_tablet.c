@@ -332,7 +332,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 2:
       if (timer == 0) {
-        Actor_ArmCallback(ownerId, 0x4000, 0);
+        Actor_FaceDirectionById(ownerId, 0x4000, 0);
         break;
       }
       if (owner->script[owner->step] == 17) {
@@ -477,7 +477,7 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
     }
   }
   FlagBlock_ApplyFlags(list);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   height = MapGrid_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;

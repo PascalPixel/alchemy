@@ -260,7 +260,7 @@ void FieldPsynergy_Hover(void) {
     player->motionFlags = 4;
     player->y = player->terrainHeight + 0x248000;
     player->gravity = px(3);
-    gMainRoutineWork.renderMode = 10;
+    gMainRoutineWork.movementMode = 10;
     work->fading = 1;
     event->glowHeld = 1;
     event->glow = 112;
@@ -278,7 +278,7 @@ void FieldPsynergy_EndHover(void) {
   Task_Remove(HoverGlow_Update);
   Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
-  gMainRoutineWork.renderMode = 0;
+  gMainRoutineWork.movementMode = 0;
   for (i = 0; i < 60; i++) {
     if (object->y <= object->terrainHeight)
       break;

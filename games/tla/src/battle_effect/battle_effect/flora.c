@@ -149,8 +149,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 
 #define SLOT_ALT 188 // unkb8[1]
 #define w ((struct FloraWork *)petals)
-#define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
   /* FAKEMATCH(wrapper): the sheet's address through this inline. */

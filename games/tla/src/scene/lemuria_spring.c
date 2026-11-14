@@ -74,11 +74,11 @@ extern s32 gLemuriaSpring_TossChoice;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -139,7 +139,7 @@ void LemuriaSpring_TossCoin(void) {
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void LemuriaSpring_InitializeTossSimulation(void);
 
@@ -154,7 +154,7 @@ s32 Scene_Initialize(void) {
   s32 alpha;
 
   gFieldWork->transition = 0x100;
-  t0 = (s32)Actor_Get(gMainRoutineWork.currentOwner);
+  t0 = (s32)Actor_Get(gMainRoutineWork.leaderActorId);
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
@@ -390,7 +390,7 @@ toss:
     if (choice == 0) {
       if (result != 4) {
         Party_AdjustCoins(gLemuriaSpring_CoinPrizes[result]);
-        Event_PlaySound(MUS_091);
+        Event_PlaySound(MUS_JINGLE_SMALL);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
         // "You won ... coin!"
@@ -1045,7 +1045,7 @@ s32 LemuriaSpring_RunToss(s32 side) {
     if (gLemuriaSpring_TossFrame == 50)
       Event_PlaySound(SE_TOLBI_SPRING_TOSS);
     if (gLemuriaSpring_TossFrame == 16) {
-      Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
+      Actor_SetAnimation(gMainRoutineWork.leaderActorId, 39);
       ride->hold = 0;
       ride->velocity.x = 0x14ccc;
       ride->velocity.y = px(4);

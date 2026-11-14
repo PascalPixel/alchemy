@@ -78,11 +78,11 @@ void FieldCamera_WaitForArrival();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -364,14 +364,14 @@ done:
   return;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *state;
 
   gFieldWork->transition = 256;
   state = &gMainRoutineWork;
-  Actor_Get(state->currentOwner)->priorityFlags |= 32;
+  Actor_Get(state->leaderActorId)->priorityFlags |= 32;
   if (state->entrance == 90) {
     Event_SetFlag(0x90a);
     state->ownerOverride = 1;
@@ -457,7 +457,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       Event_PlaySound(SE_CRASH);
     }
     if (frame == 60) {
-      BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+      PaletteFade_SetTarget(0x7fff, 0);
       PaletteFade_StartInterpolation(90);
       Event_PlaySound(SE_RUMBLE);
     }

@@ -9,7 +9,7 @@ void Party_TakeFallDamage(void) {
   (void *)Actor_Get(leader);
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
-    hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;
+    hp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
   Party_AddHp(-10, 0);
   work->fallenCount = 0;
   work->survivorCount = 0;
@@ -17,12 +17,12 @@ void Party_TakeFallDamage(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   for (i = 0; i < count; i++) {
     struct MainRoutineWork *main = &gMainRoutineWork;
-    struct BattleUnit *unit = Unit_Get(main->activeOwners[i]);
+    struct BattleUnit *unit = Unit_Get(main->party[i]);
 
     if (unit->hp > 0) {
       work->survivorCount++;
     } else if (hp[i] != 0) {
-      work->fallenOwners[(s16)work->fallenCount++] = main->activeOwners[i];
+      work->fallenOwners[(s16)work->fallenCount++] = main->party[i];
       work->raisedTrigger = 0xffff;
       ((u8 *)unit)[0x131] = 0;
     }

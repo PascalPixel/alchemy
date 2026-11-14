@@ -20,8 +20,8 @@
 // The card's picture, unpacked into the map cell buffer, and the 256 random
 // steps that dissolve it after it. Named as a symbol, not Ram_MapCellBuffer's
 // number: see the header.
-extern u8 gMapCellBuffer[];
-#define CARD (gMapCellBuffer + 0x603e)
+extern u8 gMapGridCellBuffer[];
+#define CARD (gMapGridCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
 
 // The four cards, as the wrappers pass them.

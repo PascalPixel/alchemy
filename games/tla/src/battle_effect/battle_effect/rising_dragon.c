@@ -101,12 +101,12 @@ struct StripVertex {
   s8 z;
   s8 unk3;
 };
-/* VIEW(f178710): variable gMapCellBuffer as extern struct StripVertex
- * gMapCellBuffer[2][66]; f175f74 has extern u8 gMapCellBuffer[]; tried as the
- * rest of the object declares it, BattleEffect_RunRisingDragon moves: 93 of 882
- * instructions in tla-ja. */
+/* VIEW(f178710): variable gMapGridCellBuffer as extern struct StripVertex
+ * gMapGridCellBuffer[2][66]; f175f74 has extern u8 gMapGridCellBuffer[]; tried
+ * as the rest of the object declares it, BattleEffect_RunRisingDragon moves: 93
+ * of 882 instructions in tla-ja. */
 extern struct StripVertex
-    gMapCellBuffer__f178710[2][66] __asm__("gMapCellBuffer");
+    gMapCellBuffer__f178710[2][66] __asm__("gMapGridCellBuffer");
 
 // Abilities: Rising Dragon.
 //

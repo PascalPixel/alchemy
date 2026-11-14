@@ -1747,7 +1747,8 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
     s32 action;
 
     action = 9;
-    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.currentOwner))->hp == 0)
+    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
+        0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {

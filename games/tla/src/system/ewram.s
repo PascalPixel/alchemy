@@ -46,8 +46,8 @@ gData_02000504:
 	.global gOwnerStates
 gOwnerStates:
 	.space 0x00000ae0
-	.global gData_02001000
-gData_02001000:
+	.global gSceneLocalState
+gSceneLocalState:
 	.space 0x00000024
 	.global gSnapshotObjects
 gSnapshotObjects:
@@ -70,8 +70,8 @@ gSleepActive:
 	.global gOamDepthLists
 gOamDepthLists:
 	.space 0x00000400
-	.global gResourceBlockOwners
-gResourceBlockOwners:
+	.global gVramCacheBlockOwners
+gVramCacheBlockOwners:
 	.space 0x00000200
 	.global gTasks
 gTasks:
@@ -85,8 +85,8 @@ gSerialSendSize:
 	.global gData_020036d8
 gData_020036d8:
 	.space 0x00000008
-	.global gResourceTableEntries
-gResourceTableEntries:
+	.global gVramCacheEntries
+gVramCacheEntries:
 	.space 0x00000180
 	.global gData_02003860
 gData_02003860:
@@ -139,8 +139,8 @@ gBattleRandomSeed:
 	.global gOamMatrices
 gOamMatrices:
 	.space 0x00000100
-	.global gSerialReceiveDest
-gSerialReceiveDest:
+	.global gSerialReceiveDestination
+gSerialReceiveDestination:
 	.space 0x00000230
 	.global gBgmRestoreDelay
 gBgmRestoreDelay:
@@ -347,8 +347,8 @@ Data_0200fff8:
 	.global Data_0200fffa
 Data_0200fffa:
 	.space 0x00000006
-	.global gMapCellBuffer
-gMapCellBuffer:
+	.global gMapGridCellBuffer
+gMapGridCellBuffer:
 	.space 0x00000001
 	.global Data_02010001
 Data_02010001:
@@ -743,20 +743,20 @@ gWorldMapWork:
 	.global Data_0202a004
 Data_0202a004:
 	.space 0x0000061c
-	.global Data_0202a620
-Data_0202a620:
+	.global gWorldPicture_CursorMarker
+gWorldPicture_CursorMarker:
 	.space 0x0000000c
-	.global Data_0202a62c
-Data_0202a62c:
+	.global gWorldPicture_Cursor
+gWorldPicture_Cursor:
 	.space 0x00000004
-	.global Data_0202a630
-Data_0202a630:
+	.global gWorldPicture_ScrollX
+gWorldPicture_ScrollX:
 	.space 0x00000004
-	.global Data_0202a634
-Data_0202a634:
+	.global gWorldPicture_ScrollY
+gWorldPicture_ScrollY:
 	.space 0x00000004
-	.global Data_0202a638
-Data_0202a638:
+	.global gWorldPicture_NameBox
+gWorldPicture_NameBox:
 	.space 0x00000002
 	.global Data_0202a63a
 Data_0202a63a:
@@ -767,29 +767,29 @@ Data_0202a63c:
 	.global Data_0202a63e
 Data_0202a63e:
 	.space 0x00000002
-	.global Data_0202a640
-Data_0202a640:
+	.global gWorldPicture_Zoomed
+gWorldPicture_Zoomed:
 	.space 0x00000002
 	.global gData_0202a642
 gData_0202a642:
 	.space 0x00000002
-	.global Data_0202a644
-Data_0202a644:
+	.global gWorldPicture_GlideTargetX
+gWorldPicture_GlideTargetX:
 	.space 0x00000004
-	.global Data_0202a648
-Data_0202a648:
+	.global gWorldPicture_GlideTargetY
+gWorldPicture_GlideTargetY:
 	.space 0x00000004
-	.global Data_0202a64c
-Data_0202a64c:
+	.global gWorldPicture_CursorStartX
+gWorldPicture_CursorStartX:
 	.space 0x00000004
-	.global Data_0202a650
-Data_0202a650:
+	.global gWorldPicture_CursorStartY
+gWorldPicture_CursorStartY:
 	.space 0x00000004
-	.global Data_0202a654
-Data_0202a654:
+	.global gWorldPicture_NameRedrawPending
+gWorldPicture_NameRedrawPending:
 	.space 0x00000002
-	.global Data_0202a656
-Data_0202a656:
+	.global gWorldPicture_NameRedrawDelay
+gWorldPicture_NameRedrawDelay:
 	.space 0x000019aa
 	.global gMapCollision
 gMapCollision:

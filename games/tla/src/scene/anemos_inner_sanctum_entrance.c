@@ -99,15 +99,15 @@ s32 AnemosInnerSanctumEntrance_ClearScriptedActorSpriteFlags(
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
 extern struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Room1Placements;
   return gAnemosInnerSanctumEntrance_Placements;
 }
@@ -119,8 +119,8 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   Event_ResolvePendingActions(0);
   Actor_StartRepeatedMotion(8, 2);
   Event_Wait(20);
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
   FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);
@@ -211,18 +211,18 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
 
   party = &gMainRoutineWork;
   if (held) {
-    if (Field_FindNearbyTalkTarget(party->currentOwner) != -1) {
+    if (Field_FindNearbyTalkTarget(party->leaderActorId) != -1) {
       Leader_PushObjectAhead();
       AnemosInnerSanctumEntrance_MoveStatue(0, a);
     }
   } else {
-    if (Actor_GetById(party->currentOwner)->y > -px(28))
+    if (Actor_GetById(party->leaderActorId)->y > -px(28))
       Field_TryJumpForward();
   }
 }
 
 void AnemosInnerSanctumEntrance_OpenTheWay(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 shift = 0x1300000;
   s32 i;
 
@@ -233,18 +233,18 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     return;
   if (MapGrid_GetCellBehaviorAt(object->terrainId, object->x, object->z) != 77)
     return;
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
   FieldActor_SetMoveTargetFixed(object, (object->x & 0xfff00000) + 0x80000,
                                 object->y, (object->z & 0xfff00000) + 0x80000);
 #endif
   {
-    s32 id = gMainRoutineWork.currentOwner;
+    s32 id = gMainRoutineWork.leaderActorId;
 
     if (shift > 0)
-      Actor_ArmCallback(id, FACING_NORTH, 0);
+      Actor_FaceDirectionById(id, FACING_NORTH, 0);
     else
-      Actor_ArmCallback(id, FACING_SOUTH, 0);
+      Actor_FaceDirectionById(id, FACING_SOUTH, 0);
   }
   wait(10);
   i = 0;
@@ -301,8 +301,8 @@ void AnemosInnerSanctumEntrance_DoNothing(void) {}
 extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
 extern struct Trigger gAnemosInnerSanctumEntrance_Room1Triggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
     return gAnemosInnerSanctumEntrance_Room1Triggers;
   return gAnemosInnerSanctumEntrance_Triggers;
 }
@@ -328,7 +328,7 @@ s32 Scene_Initialize(void) {
   /* FAKEMATCH(barrier): an empty asm after the address and the value. */
   __asm__("");
   *route = value;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctumEntrance) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);
     SetObjectValue(9, 0);
@@ -337,7 +337,7 @@ s32 Scene_Initialize(void) {
     SetObjectValue(12, 3);
     SetObjectValue(13, 128);
     SetObjectValue(14, 129);
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
     Actor_GetById(9)->priorityFlags |= 0xc0;
     Actor_GetById(10)->priorityFlags |= 0x80;
     Actor_GetById(11)->priorityFlags |= 0x80;
@@ -373,7 +373,7 @@ void LightSprites_Draw(void) {
 
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
+  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOam;
   picture = gAnemosInnerSanctumEntrance_LightPicture *

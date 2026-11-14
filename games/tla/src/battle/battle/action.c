@@ -22,9 +22,9 @@ u32 BattleUnit_IsListed(u32 unitId) {
   s32 unitCount;
   s32 unitIndex;
 
-  side = BATTLE_SIDE_PARTY;
+  side = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
-    side = BATTLE_SIDE_ENEMIES;
+    side = BATTLE_SIDE_MASK_ENEMIES;
   unitCount = BattleParty_ListActorIds(side, list);
 
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
@@ -48,9 +48,9 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   s32 enemySide;
 
   standbyCount = 0;
-  sideMask = BATTLE_SIDE_PARTY;
+  sideMask = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
-    sideMask = BATTLE_SIDE_ENEMIES;
+    sideMask = BATTLE_SIDE_MASK_ENEMIES;
   unitCount = BattleParty_ListActorIds(sideMask, (u16 *)unitIds);
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
@@ -358,7 +358,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       return ACTION_REPORTED;
     }
     item = Item_GetDirectFar(actor->inventory[request->parameter]);
-    abilityId = item->actionId;
+    abilityId = item->abilityId;
     if (abilityId == 0 ||
         (actor->inventory[request->parameter] & INVENTORY_BROKEN)) {
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -414,7 +414,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       message = (s32)&MsgActorUsesAbility;
     switch (abilityId) {
     case ABILITY_SONIC_WAVE:
-    case ABILITY_436:
+    case ABILITY_SONIC_WAVE_STRONG:
       message = (s32)&MsgEnemyAbility0d53;
       break;
     case ABILITY_HEAT_MIRAGE:

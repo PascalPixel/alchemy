@@ -2,7 +2,7 @@
 /// ends off screen or at a wall.
 void Whirlwind_Update(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -48,7 +48,7 @@ void Whirlwind_Update(struct Actor *self) {
             s32 delay = 200;
             work->raisedTrigger = delay;
           }
-          gMainRoutineWork.renderMode = 0;
+          gMainRoutineWork.movementMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }

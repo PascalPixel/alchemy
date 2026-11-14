@@ -45,7 +45,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   index = djinn % 20;
 
   if (index == 19) {
-    index = gData_02001000[group + 0x1950];
+    index = gSceneLocalState[group + 0x1950];
     if (index == 0)
       return;
     index--;
@@ -74,7 +74,7 @@ void Party_SetFields1f2And1f4(s32 first, s32 second) {
 void Event_LeaveFor(s16 scene, s16 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  gMainRoutineWork.scene = scene;
+  gMainRoutineWork.next = scene;
   gMainRoutineWork.entrance = entrance;
   event->exit = 999;
 }
@@ -87,7 +87,7 @@ void Scene_QueueMusic(s32 soundId) {
   event->queuedSound = state;
   if ((s16)state == -1)
     state = 0x186;
-  Sound_PlayFar(SE_298);
+  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   Sound_PlayFar(state);
 }
 
@@ -104,7 +104,7 @@ void Scene_PlayQueuedMusic(void) {
   }
 }
 
-void Func_080d2cc4(s32 message) {
+void Event_ShowMessageAndOfferScoop(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_ShowFar(message, 1);
@@ -140,4 +140,4 @@ void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
 }
 
 /// Counts up the main routine's countedAnswers.
-void Func_080d2d70(void) { gMainRoutineWork.countedAnswers++; }
+void Event_CountAnswer(void) { gMainRoutineWork.countedAnswers++; }

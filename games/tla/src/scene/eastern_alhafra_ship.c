@@ -51,11 +51,11 @@ void Event_PickUpItem();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-s32 Scene_GetPlacements(void) {
+s32 Scene_GetActorPlacements(void) {
   return (s32)gEasternAlhafraShip_ActorPlacements;
 }
 
@@ -92,10 +92,10 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
   Actor_MoveToAndWaitById(14, 136, 475);
   object1 = Actor_GetById(15);
   *(s32 *)((u8 *)object1 + 40) = v6;
-  Sound_Play(SE_567);
+  Sound_Play(SE_POUND);
   Actor_WaitForMoveById(*(s32 *)((u8 *)v5 + 0));
   Actor_SetModeById(*(s32 *)((u8 *)v5 + 0), 1);
-  Actor_ArmCallback(*(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
+  Actor_FaceDirectionById(*(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
   Event_Wait(20);
   Actor_WaitForMoveById(15);
   Sound_Play(SE_DOOR_CLOSE);
@@ -140,7 +140,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   if (Event_GetFlag(FLAG_EOLEO_LIFTED) == 0) {
     GameFlag_Set(FLAG_EOLEO_LIFTED);
     Event_Wait(30);
-    Actor_ArmCallback(10, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirectionById(10, FACING_SOUTH_SOUTHEAST, 0);
     Event_Wait(30);
     Motion_SetVarCbAndRefresh(10, 2);
     Event_Wait(10);
@@ -150,7 +150,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -159,7 +159,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == 99) {
     GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);
-    gMainRoutineWork.secondary = 3;
+    gMainRoutineWork.returnEntrance = 3;
     gMainRoutineWork.entrance = 3;
     EasternAlhafraShip_BriggsIsCaught();
   }
@@ -282,15 +282,15 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_ArmCallback(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(25, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(40);
   Actor_FaceDirection(25, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 416, 1);
   FieldCamera_WaitForArrival();
@@ -360,12 +360,12 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_StartRepeatedMotion(9, 3);
   Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_ArmCallback(9, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(9, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
   Actor_EmitNotes(9);
   Sound_Play(SE_LIGHT_APPEAR);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_ArmCallback(9, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionById(9, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
   // "Er... Why?"
   Event_ShowMessageThenWait(9, 0, 10);
@@ -388,7 +388,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   // "Hmph! There's nothing brainy about that!"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(25, 3);
   Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -396,8 +396,8 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(30);
-  Actor_ArmCallback(8, FACING_EAST, 0);
-  Actor_ArmCallback(9, FACING_EAST, 0);
+  Actor_FaceDirectionById(8, FACING_EAST, 0);
+  Actor_FaceDirectionById(9, FACING_EAST, 0);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_Wait(20);
@@ -431,11 +431,11 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(10);
   // "You have to come with us and attest to that man's innocence!"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_ArmCallback(8, FACING_EAST, 0);
+  Actor_FaceDirectionById(8, FACING_EAST, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
   Event_Wait(45);
   Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_ArmCallback(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(9, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   // "And...why would I want to do something like that?"
   Event_ShowMessageThenWait(8, 0, 10);
@@ -443,23 +443,23 @@ void EasternAlhafraShip_MayorArrives(void) {
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
-  Actor_ArmCallback(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(25, FACING_EAST, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(25, 3);
   Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
-  Actor_ArmCallback(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionById(25, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "Oh-ho! I was hoping we could avoid any ugliness, but you leave us no..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_FaceDirection(25, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
-  Actor_ArmCallback(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTH, 0);
   Event_Wait(20);
   Actor_Jump(25, 6, 15);
   Actor_Jump(25, 6, 23);
@@ -473,14 +473,14 @@ void EasternAlhafraShip_MayorArrives(void) {
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
     Event_Wait(20);
-    Actor_ArmCallback(ACTOR_JENNA, FACING_WEST, 0);
+    Actor_FaceDirectionById(ACTOR_JENNA, FACING_WEST, 0);
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     gFieldWork->message++;
   } else {
     EasternAlhafraShip_CountAnswer();
     Event_Wait(20);
-    Actor_ArmCallback(ACTOR_JENNA, FACING_WEST, 0);
+    Actor_FaceDirectionById(ACTOR_JENNA, FACING_WEST, 0);
     Event_Wait(20);
     gFieldWork->message++;
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
@@ -599,10 +599,10 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   // "We lost..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, 0xbfff, 0);
-  Actor_ArmCallback(ACTOR_JENNA, 0xc001, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, 0xc001, 0);
   Event_Wait(50);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_SOUTH, 0);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_SOUTH, 0);
   Event_Wait(40);
   Motion_SetModeAndWaitAnimation(8, 4);
   // "Even pirates have honor... I'll go quietly. I won't make a scene..."
@@ -679,7 +679,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetModeAndWaitAnimation(10, 4);
   Event_ShowMessageThenWait(10, 0, 15);
   Actor_FaceDirection(ACTOR_FELIX, 0xbfff, 0);
-  Actor_ArmCallback(ACTOR_JENNA, 0xc001, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, 0xc001, 0);
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -717,7 +717,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_ArmCallback(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(25, FACING_EAST, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
@@ -886,12 +886,12 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetModeAndWaitAnimation(25, 3);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_ArmCallback(25, 0x3fff, 0);
+  Actor_FaceDirectionById(25, 0x3fff, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Motion_SetModeAndWaitAnimation(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  Actor_ArmCallback(25, FACING_NORTH, 0);
+  Actor_FaceDirectionById(25, FACING_NORTH, 0);
   Event_Wait(40);
   Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
@@ -917,13 +917,13 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   FieldEffect_SetAttached(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(16, FACING_NORTHEAST, 0);
-  Actor_ArmCallback(17, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(17, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(16, 3);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_Wait(20);
-  Actor_ArmCallback(16, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(16, FACING_SOUTH, 0);
   Event_Wait(30);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
@@ -1025,7 +1025,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirection(10, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(10, 0, 10);
-  Actor_ArmCallback(8, FACING_EAST, 0);
+  Actor_FaceDirectionById(8, FACING_EAST, 0);
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(10);
@@ -1036,7 +1036,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Motion_SetModeAndWaitAnimation(10, 3);
   Event_Wait(30);
-  Actor_ArmCallback(8, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(8, FACING_SOUTH, 0);
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(20);
@@ -1044,7 +1044,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(22, 3);
   Event_Wait(10);
-  Actor_ArmCallback(8, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionById(8, FACING_SOUTHWEST, 0);
   Event_Wait(15);
   Actor_SetModeById(23, 3);
   Motion_SetModeAndWaitAnimation(24, 3);
@@ -1060,10 +1060,10 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkByAndWait(ACTOR_SHEBA, -16, -32);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetModeById(ACTOR_JENNA, ANIM_STAND);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_ArmCallback(25, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirectionById(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Actor_WalkByById(9, 16, 0);
   Actor_WalkBy(22, 0, -16);
   Actor_WalkByById(23, 16, 0);
@@ -1137,12 +1137,12 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   FieldCamera_MoveTo(464, CAMERA_KEEP, 336, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_ArmCallback(8, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(8, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(8, 0, 10);
   Motion_SetModeAndWaitAnimation(17, 3);
   Event_Wait(20);
-  Actor_ArmCallback(17, FACING_EAST, 0);
+  Actor_FaceDirectionById(17, FACING_EAST, 0);
   Event_Wait(10);
   object16 = Actor_GetById(17);
   object16->actionFlags &= 254;
@@ -1158,7 +1158,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkByAndWait(8, 0, -16);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_ArmCallback(16, FACING_EAST, 0);
+  Actor_FaceDirectionById(16, FACING_EAST, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(16, 2);
   Event_Wait(10);
@@ -1166,11 +1166,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetModeAndWaitAnimation(18, 3);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_ArmCallback(16, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(16, FACING_NORTHWEST, 0);
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(16, 3);
   Event_Wait(30);
-  Actor_ArmCallback(16, FACING_EAST, 0);
+  Actor_FaceDirectionById(16, FACING_EAST, 0);
   Event_Wait(30);
   Motion_SetModeAndWaitAnimation(8, 3);
   Event_Wait(20);
@@ -1179,9 +1179,9 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_WalkBy(23, 0, -32);
   Actor_WalkBy(24, 0, -32);
   Actor_WalkByAndWait(8, 0, -32);
-  Actor_ArmCallback(19, FACING_EAST, 0);
+  Actor_FaceDirectionById(19, FACING_EAST, 0);
   Actor_FaceDirection(16, FACING_NORTH, 0);
-  Actor_ArmCallback(8, FACING_WEST, 0);
+  Actor_FaceDirectionById(8, FACING_WEST, 0);
   Event_Wait(20);
   FieldCamera_MoveWithinMapBounds(px(464), -1, px(296), 1);
   FieldCamera_WaitForArrival();
@@ -1191,7 +1191,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(19, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessageThenWait(8, 0, 10);
-  Actor_ArmCallback(18, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionById(18, FACING_NORTHEAST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(18, 3);
   Event_Wait(10);
@@ -1199,7 +1199,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_StartRepeatedMotion(19, 3);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_ArmCallback(19, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(19, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(19, 3);
   Event_Wait(20);
@@ -1208,7 +1208,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageThenWait(19, 0, 10);
-  Actor_ArmCallback(17, FACING_NORTH, 0);
+  Actor_FaceDirectionById(17, FACING_NORTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
@@ -1224,7 +1224,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   Event_Wait(20);
   Actor_WalkByAndWaitById(20, 16, 16);
-  Actor_ArmCallback(20, FACING_EAST, 0);
+  Actor_FaceDirectionById(20, FACING_EAST, 0);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(20, 2);
   Event_Wait(10);
@@ -1297,11 +1297,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetModeAndWaitAnimation(16, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(16, 0, 10);
-  Actor_ArmCallback(16, FACING_WEST, 0);
+  Actor_FaceDirectionById(16, FACING_WEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(16, 3);
   Event_Wait(20);
-  Actor_ArmCallback(18, FACING_EAST, 0);
+  Actor_FaceDirectionById(18, FACING_EAST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(18, 3);
   Event_Wait(10);
@@ -1330,7 +1330,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 10);
   Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_ArmCallback(ACTOR_SHEBA, 0x4001, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, 0x4001, 0);
   Event_Wait(30);
   Actor_SetModeById(25, 3);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
@@ -1338,13 +1338,13 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetModeAndWaitAnimation(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(25, FACING_NORTH, 0);
-  Actor_ArmCallback(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_NORTH, 0);
   Event_Wait(40);
   Actor_WalkByAndWaitById(17, -32, -8);
   Event_Wait(20);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_ArmCallback(17, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionById(17, FACING_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
@@ -1352,9 +1352,9 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(20);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_ArmCallback(17, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionById(17, FACING_NORTHEAST, 0);
   Event_Wait(30);
-  Actor_ArmCallback(17, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(17, FACING_NORTHWEST, 0);
   Event_Wait(30);
   Actor_WalkByAndWaitById(17, 16, 16);
   Actor_FaceDirection(17, FACING_SOUTH, 0);
@@ -1366,7 +1366,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetVarCbAndRefresh(17, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(17, 0, 10);
-  Actor_ArmCallback(25, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(25, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(25, 2);
   Event_Wait(10);
@@ -1376,7 +1376,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     Event_Wait(30);
     Motion_SetModeAndWaitAnimation(25, 3);
     Event_Wait(10);
-    Actor_ArmCallback(25, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirectionById(25, FACING_NORTH_NORTHWEST, 0);
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(17, 4);
     Event_ShowMessageThenWait(17, 0, 10);
@@ -1384,7 +1384,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   } else {
     Event_Wait(40);
     EasternAlhafraShip_CountAnswer();
-    Actor_ArmCallback(25, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirectionById(25, FACING_NORTH_NORTHWEST, 0);
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(17, 3);
     Event_Wait(20);
@@ -1440,13 +1440,13 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_WalkToAndWait(10, 472, 376);
   FieldCamera_FollowActor(10, 1);
-  Actor_ArmCallback(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_WalkBy(25, -16, -32);
   Actor_WalkByAndWait(ACTOR_FELIX, -16, -32);
   Actor_SetModeById(25, 1);
-  Actor_ArmCallback(25, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirectionById(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Actor_WalkToAndWait(10, 472, 320);
   Actor_WalkBy(ACTOR_JENNA, 16, -32);
   Actor_WalkBy(ACTOR_SHEBA, 16, -32);
@@ -1467,7 +1467,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(25);
   Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
-  Actor_ArmCallback(25, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(25, FACING_SOUTH, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Event_Wait(20);
@@ -1478,14 +1478,14 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_ArmCallback(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_JENNA, FACING_WEST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
-  Actor_ArmCallback(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirectionById(25, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_ArmCallback(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(ACTOR_SHEBA, 2);
   Event_Wait(10);
@@ -1510,7 +1510,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetModeById(ACTOR_JENNA, ANIM_WALK);
-  object20 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object20 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object20 != 0) {
     Actor_SetDestinationById(ACTOR_JENNA, *(s16 *)((u8 *)object20 + 10),
                              *(s16 *)((u8 *)object20 + 18));
@@ -1519,7 +1519,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
-  object21 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object21 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object21 != 0) {
     Actor_SetDestinationById(ACTOR_SHEBA, *(s16 *)((u8 *)object21 + 10),
                              *(s16 *)((u8 *)object21 + 18));
@@ -1528,14 +1528,14 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(25, 1.2);
   Actor_SetModeById(25, 2);
-  object22 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object22 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object22 != 0) {
     Actor_SetDestinationById(25, *(s16 *)((u8 *)object22 + 10),
                              *(s16 *)((u8 *)object22 + 18));
   }
   Actor_WaitForMoveById(25);
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
   return;
 }

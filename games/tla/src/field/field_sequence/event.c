@@ -40,7 +40,7 @@ void Leader_StopMoving(void) {
   object->targetZ = TARGET_UNSET;
   object->velocityX = 0;
   object->velocityZ = 0;
-  if (gMainRoutineWork.renderMode == 2)
+  if (gMainRoutineWork.movementMode == 2)
     Actor_SelectAnimationFar(object, 12);
   else
     Actor_SelectAnimationFar(object, 1);
@@ -64,7 +64,7 @@ void Event_Start(void) {
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
-    state->speaker = party->currentOwner;
+    state->speaker = party->leaderActorId;
     state->messageWindow = 0;
   }
 }
@@ -74,7 +74,7 @@ void Event_End(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
     if (party->ownerOverride == 0)
-      FieldCamera_FollowActor(party->currentOwner, 1);
+      FieldCamera_FollowActor(party->leaderActorId, 1);
     else
       FieldCamera_FollowActor(8, 1);
     GameFlag_RefreshLureCapFar();
@@ -99,7 +99,7 @@ void Event_CallWithLastActiveObjectId(s32 event_id) {
 
 void Event_SetSceneEvents(s32 events) { gFieldWork->triggers = events; }
 
-void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value) {
+void Event_AddPartyMember(s32 event_id, s32 value) {
   Unit_Get(event_id);
   Party_AddMemberFar(event_id);
   if (value != 0) {
@@ -150,12 +150,12 @@ void Party_RemoveMemberRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_Get(gMainRoutineWork.activeOwners[partyIndex]);
+    vitals = Unit_Get(gMainRoutineWork.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_Get(gMainRoutineWork.currentOwner);
+    vitals = Unit_Get(gMainRoutineWork.leaderActorId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -230,8 +230,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       Unit_RefreshPsynergyFar(member);
       Unit_CalculateFar(member);
       owner = PartyInventory_AddFar(item);
-      Sound_PlayFar(MUS_083);
-      if (owner == gMainRoutineWork.currentOwner) {
+      Sound_PlayFar(MUS_TREASURE_FOUND);
+      if (owner == gMainRoutineWork.leaderActorId) {
         MessageArgument_PushFar(item, 2);
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
       } else {
@@ -246,10 +246,10 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     work->message = saved;
     return owner;
   }
-  Sound_PlayFar(MUS_083);
+  Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(item, 2);
   FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
-  if (owner != gMainRoutineWork.currentOwner) {
+  if (owner != gMainRoutineWork.leaderActorId) {
     MessageArgument_PushFar(item, 2);
     MessageArgument_PushFar(owner, 1);
     FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);
@@ -310,7 +310,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   while (Message_AllTypedFar() == 0)
     wait(1);
 
-  wait((2 - gMainRoutineWork.eventMode) * 3);
+  wait((2 - gMainRoutineWork.messageSpeed) * 3);
 
   if (forceBottom == 0) {
     s32 bottom = (s16)window->y + window->height;
@@ -331,13 +331,13 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
     Actor_SetModeById(actor, 4);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gMainRoutineWork.eventMode != 2)
+    if (gMainRoutineWork.messageSpeed != 2)
       Actor_WaitForAnimationEnd(actor, 4);
   } else {
     Actor_SetModeById(actor, 3);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    if (gMainRoutineWork.eventMode != 2)
+    if (gMainRoutineWork.messageSpeed != 2)
       Actor_WaitForAnimationEnd(actor, 3);
   }
 
@@ -358,7 +358,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
     // Four messages on: "But <protagonist>'s party can't carry any more".
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
     Actor_GetById(actor)->scaleX = Q16_ONE;
-    Actor_FaceActorById(gMainRoutineWork.currentOwner, actor, 0);
+    Actor_FaceActorById(gMainRoutineWork.leaderActorId, actor, 0);
     Event_Wait(20);
     return -1;
   }
@@ -387,7 +387,7 @@ Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
 /// ability: ability ID (message ability 4).
 void Party_LearnAbility(s32 unit, s32 ability) {
   Unit_LearnPsynergyFar__event_commands();
-  Sound_PlayFar(MUS_083);
+  Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(unit, 1);
   MessageArgument_PushFar(ability, 4);
   FieldMessage_ShowFar(MsgAbilityLearned, 3);
@@ -419,7 +419,7 @@ void Event_SetDestination(s32 scene, s32 entrance) {
 
   event->exit = 999;
   party = &gMainRoutineWork;
-  party->scene = scene;
+  party->next = scene;
   party->entrance = entrance;
 }
 
@@ -429,8 +429,8 @@ void Event_SetRestartPoint(s32 scene, s32 entrance) {
 
   event->exit = 999;
   party = &gMainRoutineWork;
-  party->savedScene = scene;
-  party->savedEntrance = entrance;
+  party->restartScene = scene;
+  party->restartEntrance = entrance;
 }
 
 void Event_SetExitRequest(u16 frames) {

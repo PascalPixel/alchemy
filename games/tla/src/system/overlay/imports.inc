@@ -135,7 +135,7 @@
 	export Message_OpenWindow, Message_OpenWindowFar
 	export MapGrid_SetCellHeight, MapGrid_SetCellHeightFar
 	export MapGrid_GetCellHeight, MapGrid_GetCellHeightFar
-	export TileMap_ConvertBuffer, TileMap_ConvertBufferFar
+	export Map_CopyPalette, Map_CopyPaletteFar
 	export FieldMessage_Show, FieldMessage_ShowFar
 	export Message_AllTyped, Message_AllTypedFar
 	export WindowSprite_PrepareForRedraw, WindowSprite_PrepareForRedrawFar
@@ -241,7 +241,7 @@
 	export MagmaRock_EndEvent, Event_EndFar
 	export Event_End, Event_EndFar
 	export PartyInventory_GiveItem, PartyInventory_GiveItemFar
-	export Event_PrepareObjectAndApplyValue, Event_PrepareObjectAndApplyValueFar
+	export Event_AddPartyMember, Event_AddPartyMemberFar
 	export Party_RemoveMemberRestored, Party_RemoveMemberRestoredFar
 	export Event_AskYesNoWithActorAnimation, Event_AskYesNoWithActorAnimationFar
 	export Party_LearnAbility, Party_LearnAbilityFar
@@ -280,8 +280,8 @@
 	export Event_ShowMessageThenWait, Event_ShowMessageThenWaitFar
 	export Event_ShowMessageAndWait, Event_ShowMessageAndWaitFar
 	export Event_AskYesNoAndShowResponse, Event_AskYesNoAndShowResponseFar
-	export Actor_ArmCallback, Actor_ArmCallbackFar
 	export Actor_FaceDirectionById, Actor_FaceDirectionByIdFar
+	export Actor_FaceDirectionAndRefreshById, Actor_FaceDirectionAndRefreshByIdFar
 	export Event_ShowTwoMessagesAndWait, Event_ShowTwoMessagesAndWaitFar
 	export Actor_SetSpritePriority, Actor_SetSpritePriorityFar
 	export Actor_DisableById, Actor_DisableByIdFar
@@ -315,8 +315,8 @@
 	export Field_ClimbDown, Field_ClimbDownFar
 	export Leader_StopMoving, Leader_StopMovingFar
 	export ScreenTransition_Start, ScreenTransition_StartFar
-	export BattleEffect_ApplyColorToTargetBuffer, BattleEffect_ApplyColorToTargetBufferFar
-	export BattleEffect_ApplyColorToSourceBuffer, BattleEffect_ApplyColorToSourceBufferFar
+	export PaletteFade_SetTarget, PaletteFade_SetTargetFar
+	export PaletteFade_SetSource, PaletteFade_SetSourceFar
 	export PaletteFade_StartInterpolation, PaletteFade_StartInterpolationFar
 	export Event_StartScreenTransition, Event_StartScreenTransitionFar
 	export Event_FinishScreenTransition, Event_FinishScreenTransitionFar
@@ -374,7 +374,7 @@
 	export WorldMap_StartZoom, WorldMap_StartZoomFar
 	export Prox_InitRockSprite, EffectSprite_InitFar
 	export DehkanPlateau_InitializeRopes, Rope_InitializeFar
-	export Idejima_CountAnswer, Func_080c8930
+	export Idejima_CountAnswer, Event_CountAnswerFar
 	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
 	export Actor_Spawn, Actor_SpawnFar
 	export Actor_SetActionCallback, Actor_SetActionCallbackFar
@@ -414,16 +414,16 @@
 	export HangingVine_Place, HangingVine_PlaceFar
 	export Actor_FallOverById, Actor_FallOverByIdFar
 	export MagmaRockInside_InitRockSprite, EffectSprite_InitFar
-	export TaopoSwamp_ShowMessage, Func_080c8898
-	export GabombaStatueChamber_CountAnswer, Func_080c8930
+	export TaopoSwamp_ShowMessage, Event_ShowMessageAndOfferScoopFar
+	export GabombaStatueChamber_CountAnswer, Event_CountAnswerFar
 	export Exit_PrepareActorAnimation, Exit_PrepareActorAnimationFar
 	export ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
 	export Actor_VanishInSparks, Actor_VanishInSparksFar
 	export Actor_SetSpriteRotationById, Actor_SetSpriteRotationByIdFar
-	export Kibombo_CountAnswer, Func_080c8930
+	export Kibombo_CountAnswer, Event_CountAnswerFar
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
 	export TrialRoad_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
-	export MadraInteriors_CountAnswer, Func_080c8930
+	export MadraInteriors_CountAnswer, Event_CountAnswerFar
 	export EasternAlhafra_InitializeRockSprite, EffectSprite_InitFar
 	export VenusLighthouseEntrance_InitGlowSprite, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
@@ -454,9 +454,9 @@
 	export Teleport_PlaySparks, Teleport_PlaySparksFar
 	export Weather_StartRain, Weather_StartRainFar
 	export MapGrid_SetCellBehavior, MapGrid_SetCellBehaviorFar
-	export BattleEffect_PackTargetBuffer, BattleEffect_PackTargetBufferFar
+	export PaletteFade_PackTarget, PaletteFade_PackTargetFar
 	export SceneEvent_FindActiveRecord, Scene_FindTriggerFar
-	export EasternAlhafraShip_CountAnswer, Func_080c8930
+	export EasternAlhafraShip_CountAnswer, Event_CountAnswerFar
 	export Actor_WatchActor, Actor_WatchActorFar
 	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
 	export StaffCredit_RunCredits, Credits_RunFar
@@ -468,7 +468,7 @@
 	export MapGrid_SetAttributeBBitsAt, MapGrid_SetAttributeBBitsAtFar
 	export MapGrid_ClearAttributeBBitsAt, MapGrid_ClearAttributeBBitsAtFar
 	export Teleport_PlaySparksAndFade, Teleport_PlaySparksAndFadeFar
-	export AlhafraManor_CountAnswer, Func_080c8930
+	export AlhafraManor_CountAnswer, Event_CountAnswerFar
 	export BattleEffect_FillOverlayTiles, BattleEffect_FillOverlayTilesFar
 	export Cyclone_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
 	export Import_DebugMadPlantLeap, MadPlant_LeapAtLeaderFar
@@ -492,7 +492,7 @@
 	export Sound_WaitForJingle, Sound_WaitForJingleFar
 	export ItemPicker_RunToDrop, ItemPicker_RunToDropFar
 	export Inn_QuoteRoomPrice, Inn_QuoteRoomPriceFar
-	export ItemPicker_RunMode1, ItemPicker_RunMode1Far
+	export ItemPicker_RunToShow, ItemPicker_RunToShowFar
 	export Forge_SetItem, Forge_SetItemFar
 	export Forge_GetItem, Forge_GetItemFar
 	export MenuCursor_SetPositionImmediate, MenuCursor_SetPositionImmediateFar

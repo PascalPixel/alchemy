@@ -543,7 +543,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
       if (frame == 4) {
         if (mode == 9 || mode == 17)
-          Sound_PlayFar(MUS_092);
+          Sound_PlayFar(MUS_JINGLE_MEDIUM);
         else
           Sound_PlayFar(SE_WHOOSH);
       }

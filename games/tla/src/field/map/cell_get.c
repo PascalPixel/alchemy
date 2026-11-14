@@ -2,12 +2,12 @@
 #include "system/ram_buffer.h"
 #include "map.h"
 
-/* VIEW(cell_get): variable gMapCellBuffer as u8 gMapCellBuffer[];
- * field/map/cell_fill_byte has struct MapCell gMapCellBuffer[]; tried as the
- * rest of the object declares it, it does not compile in tla-ja
- * (tundaria_tower.c): games/tla/src/field/map/cell_get.c:16: `gMapCellBuffer'
- * undeclared (first use in this function). */
-extern u8 gMapCellBuffer__cell_get[] __asm__("gMapCellBuffer");
+/* VIEW(cell_get): variable gMapGridCellBuffer as u8 gMapGridCellBuffer[];
+ * field/map/cell_fill_byte has struct MapCell gMapGridCellBuffer[]; tried as
+ * the rest of the object declares it, it does not compile in tla-ja
+ * (tundaria_tower.c): games/tla/src/field/map/cell_get.c:16:
+ * `gMapGridCellBuffer' undeclared (first use in this function). */
+extern u8 gMapCellBuffer__cell_get[] __asm__("gMapGridCellBuffer");
 
 /// Returns a cell's collision code and attributes as a halfword.
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z) {

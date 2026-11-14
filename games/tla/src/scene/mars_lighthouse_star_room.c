@@ -122,11 +122,11 @@ s32 MarsLighthouseStarRoom_SetUpStatue(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -235,7 +235,7 @@ void MarsLighthouseStarRoom_WestFireballCracksIce(void) {
   if (Event_GetFlag(FLAG_DRAGON_ICE_BURST) == 0 &&
       Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
-    Event_PlaySound(SE_573);
+    Event_PlaySound(SE_ICE_CRACK);
     object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 0x66) << 16;
     if (Event_GetFlag(FLAG_DRAGON_ICE_CRACKED) == 0) {
@@ -259,7 +259,7 @@ void MarsLighthouseStarRoom_EastFireballCracksIce(void) {
   if (Event_GetFlag(FLAG_DRAGON_ICE_BURST) == 0 &&
       Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
-    Event_PlaySound(SE_573);
+    Event_PlaySound(SE_ICE_CRACK);
     Event_SetFlag(FLAG_DRAGON_ICE_BURSTABLE);
     object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 0x66) << 16;
@@ -293,7 +293,7 @@ void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
   }
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 #include "shared/actor_freeze.h"
 
@@ -308,7 +308,7 @@ extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
 extern char SceneId_MarsLighthouseStarRoom1;
 
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
 
   gFieldWork->transition = 0x204;
@@ -326,7 +326,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
     }
     if (entrance == ENTRANCE_FROM_CRACK) {
-      struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+      struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
       struct FieldWork *work = Ram_HeapSlots->fieldWork;
       /* FAKEMATCH(signature): GameFlag_GetByte declared returning s32, where
        * its definition returns u8. */
@@ -390,12 +390,12 @@ s32 Scene_Initialize(void) {
 }
 
 extern char SceneId_MarsLighthouseRoomM3;
-void TileMap_ConvertBuffer(s32 scene, s32 a1);
+void Map_CopyPalette(s32 scene, s32 a1);
 
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
-    TileMap_ConvertBuffer(
-        gMainRoutineWork.map +
+    Map_CopyPalette(
+        gMainRoutineWork.mapId +
             ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
         0x5000000);
   if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
@@ -412,16 +412,16 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   MarsLighthouseStarRoom_ClearDragonIce();
-  Event_PlaySound(MUS_000);
+  Event_PlaySound(MUS_SILENCE);
   FieldEvent_Wait(40);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 8);
-  FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 10);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, 16);
-  FieldActor_Jump(gMainRoutineWork.currentOwner, 6, 20);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, 8);
+  FieldActor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, 16);
+  FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 20);
   Event_PlaySound(MUS_053);
   Actor_SetAnimation(ACTOR_AGATIO_DRAGON, 2);
   Actor_SetAnimation(ACTOR_KARST_DRAGON, 2);
@@ -504,7 +504,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   FIELD_AT(v8, s32, 24) = 0x4000;
   FIELD_AT(v8, s32, 28) = 0x4000;
   FieldCamera_MoveTo(680, CAMERA_KEEP, 228, 0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 680, 264);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 680, 264);
   System_Wait(1);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
@@ -592,9 +592,10 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "Felix? Is that you?"
   Event_OpenMessage(ACTOR_AGATIO, 0);
-  t87 = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  t87 =
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
   if (t87 == 0) {
-    Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimation(ACTOR_AGATIO, 7);
     Event_ShowMessage(ACTOR_AGATIO, 0);
     gFieldWork->message = (gFieldWork->message + 1);
@@ -604,7 +605,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
      */
     do {
     } while (0);
-    Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimation(ACTOR_AGATIO, 6);
     Event_ShowMessage(ACTOR_AGATIO, 0);
   }
@@ -635,7 +636,7 @@ struct SpriteAttributes {
 };
 
 void MarsLighthouseStarRoom_KeepStarAtLeaderPriority(struct Actor *object) {
-  struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
   struct SpriteAttributes *to = (struct SpriteAttributes *)object->sprite;
   struct SpriteAttributes *from = (struct SpriteAttributes *)owner->sprite;
   struct SpriteBits source = from->bits;
@@ -728,9 +729,9 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_SetAnimation(ACTOR_AGATIO, 10);
   if (!Event_GetFlag(FLAG_MARS_STAR_TAKEN)) {
-    leader = Actor_Get(gMainRoutineWork.currentOwner);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
     object = gMarsLighthouseStarRoom_MarsStar;
     object->motionFlags = 0;
     object->speedLimit = px(4);
@@ -738,7 +739,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     FieldActor_SetMoveTargetFixed(object, leader->x, leader->y + px(32),
                                   leader->z);
     FieldActor_WaitForMove(gMarsLighthouseStarRoom_MarsStar);
-    Event_PlaySound(MUS_083);
+    Event_PlaySound(MUS_TREASURE_FOUND);
     PartyInventory_Remove(ITEM_MYTHRIL_BAG);
     Inventory_AddItem(4, ITEM_MYTHRIL_BAG_MARS_STAR);
     // "Felix got the Mars Star!"
@@ -752,7 +753,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
         break;
       }
     }
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
     Event_SetFlag(FLAG_MARS_STAR_TAKEN);
     FieldActor_SetPositionAndResetMotion(gMarsLighthouseStarRoom_MarsStar, 0, 0,
                                          0);
@@ -874,14 +875,14 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     HeapSlot_Release(68);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
-  Event_PlaySound(MUS_000);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 680, 186);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 40);
+  Event_PlaySound(MUS_SILENCE);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
@@ -907,10 +908,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(
-      gMainRoutineWork.map +
-          ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
-      screen);
+  Map_CopyPalette(gMainRoutineWork.mapId + ((s32)&SceneId_MarsLighthouseRoomM3 -
+                                            (s32)&SceneId_Prox2),
+                  screen);
   zero = 0;
   *screen = zero;
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -936,18 +936,18 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     FieldActor_WaitForMove((s32)*slot);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 670, 170);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
   object = *slot;
   if (object != 0)
     Actor_Release(object);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 680, 186);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
   gMainRoutineWork.battleBackground = (s32)&SceneId_Naribwe;
@@ -996,10 +996,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       HeapSlot_Release(68);
     }
     FieldEvent_Wait(20);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 80);
-    Actor_ShowEmote(gMainRoutineWork.currentOwner,
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 680, 186);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 80);
+    Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     object = *slot;
     if (object != 0) {
@@ -1018,15 +1018,15 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       FieldActor_WaitForMove((s32)*slot);
     }
     FieldEvent_Wait(20);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-    Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 670, 170);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+    Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
     FieldEvent_Wait(1);
-    Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+    Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
     object = *slot;
     if (object != 0)
       Actor_Release(object);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
     Scene_PlayMusic();
     Event_End();
     goto L_020093b0;
@@ -1058,14 +1058,14 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     HeapSlot_Release(68);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 680, 186);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
-  Event_PlaySound(MUS_000);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 680, 186);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 40);
+  Event_PlaySound(MUS_SILENCE);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   MapGrid_SetShake(1, 1, 1);
   FieldEvent_Wait(20);
@@ -1091,10 +1091,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  TileMap_ConvertBuffer(
-      gMainRoutineWork.map +
-          ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
-      screen);
+  Map_CopyPalette(gMainRoutineWork.mapId + ((s32)&SceneId_MarsLighthouseRoomM3 -
+                                            (s32)&SceneId_Prox2),
+                  screen);
   *screen = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(120);
@@ -1119,15 +1118,15 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     FieldActor_WaitForMove((s32)*slot2);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 670, 170);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
   object2 = *slot2;
   if (object2 != 0)
     Actor_Release(object2);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
   Event_SetFlag(FLAG_MARS_STAR_SET);
@@ -1755,7 +1754,7 @@ s32 Fireball_CarryLeader(void) {
   ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
   FieldCamera_SetSpeed(7);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
@@ -1980,7 +1979,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           cell->collisionCode = 0;
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_573);
+          Event_PlaySound(SE_ICE_CRACK);
           Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                        actor->facing);
         }
@@ -2004,7 +2003,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
 
     work2 = Ram_HeapSlots->fieldWork;
     other = RIDE_WORK;
-    target = Actor_Get(gMainRoutineWork.currentOwner);
+    target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x - target->x) < 0x140000 &&
         (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z - target->z) < 0x140000) {
@@ -2112,7 +2111,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner);
+      (struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -2214,7 +2213,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 void GameFlag_SetByte(s32 flag, s32 value);
 
 s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct CellTarget *work = &gCrackedTiles;
@@ -2242,7 +2241,7 @@ s32 CrackedTiles_Step(void) {
 }
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 dx = FieldGameFlag_GetByte(gCrackedTiles.flagByte);
   s32 dz = FieldGameFlag_GetByte(gCrackedTiles.flagByte + 8);

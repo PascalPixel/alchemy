@@ -189,7 +189,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     do {
     } while (0);
     sprite->oam.word.attr23 = 0;
-    sprite->oam.f.tile = gResourceTableEntries[portraitSlot].offset >> 5;
+    sprite->oam.f.tile = gVramCacheEntries[portraitSlot].offset >> 5;
     sprite->oam.f.x = 8;
     sprite->oam.f.y = 24;
     sprite->oam.f.palette = 14;
@@ -539,7 +539,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (Item_ClassifyUseAbility(member, *entry) == 2)
           SUMMARY_TEXT_COPY((s32)MsgKey0d4f, itemText, 32);
         else
-          SUMMARY_TEXT_COPY((*entry & ITEM_ID_MASK) + (s32)MsgItemPlainName,
+          SUMMARY_TEXT_COPY((*entry & INVENTORY_ITEM_ID_MASK) +
+                                (s32)MsgItemPlainName,
                             itemText, SUMMARY_ITEM_HELP_CAPACITY);
       } else {
         SUMMARY_TEXT_COPY((s32)MsgKey0d46, itemText, 32);
@@ -558,7 +559,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (item & INVENTORY_BROKEN)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles((item & ITEM_ID_MASK) + (s32)MsgItemName,
+          Text_DrawMessageAsTiles((item & INVENTORY_ITEM_ID_MASK) +
+                                      (s32)MsgItemName,
                                   statusWindow, 32, 64 + j * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
@@ -599,7 +601,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       rowBase = cursor.groupPositions[3] / 4 * 4;
       row = (s8)(cursor.groupPositions[3] % 4);
       if (rowBase != j || row != shownRow) {
-        work->menuBusy = 1;
+        work->holdTilemapUpload = 1;
         Text_FillCanvasBackground();
         if (count != 0)
           SUMMARY_TEXT_COPY((entries[rowBase + row] & 0x3fff) +
@@ -631,13 +633,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             else if (unit->psySeal != 0)
               Text_SetColor(TEXT_COLOR_PINK);
             tileFlags = 0;
-            work->level = 5;
+            work->textPalette = 5;
             Text_DrawMessageAsTiles(id + (s32)MsgAbilityNothing, statusWindow,
                                     16, 64 + j * 16);
             Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
                                     64 + j * 16);
             Text_SetColor(TEXT_COLOR_WHITE);
-            work->level = 15;
+            work->textPalette = 15;
             if (ability->element != 4)
               Window_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
                                      15, j * 2 + 8, tileFlags);
@@ -658,7 +660,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (count > 4)
           SUMMARY_DRAW_PAGE_MARKS(statusWindow, count, rowBase);
         work->dirty = 1;
-        work->menuBusy = 0;
+        work->holdTilemapUpload = 0;
       }
     } else if (page == 2) {
       // Djinn: each element's set ones, then those on standby or recovering
@@ -707,7 +709,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       if (cursor.groupPositions[4] >= djinnCount)
         cursor.groupPositions[4] = djinnCount - 1;
       entry = djinnList[cursor.groupPositions[4]];
-      work->menuBusy = 1;
+      work->holdTilemapUpload = 1;
       if (djinnCount != 0) {
         MessageArgument_ClearAll();
         if (entry & 0x10000) {
@@ -728,7 +730,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       } else {
         SUMMARY_TEXT_COPY((s32)MsgNoDjinn, psynergyText, 32);
       }
-      work->menuBusy = released;
+      work->holdTilemapUpload = released;
       Text_FillCanvasBackground();
       Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
       if (rowBase != shownBase) {
@@ -766,7 +768,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       if (released > 4)
         SUMMARY_DRAW_PAGE_MARKS(statusWindow, released, rowBase);
       work->dirty = 1;
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
     }
 
     if (redraw != 0) {
@@ -1066,7 +1068,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       sprite = statusSprites;
       slot = statusSlots;
-      for (i = 0, entry = gResourceTableEntries, iconX = 112; i <= 10; i++) {
+      for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
         sprite->oam.word.attr01 = 0x40000400;
         /* FAKEMATCH(dead): an empty once-only block. */
         do {
@@ -1084,7 +1086,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         struct SummaryResourceEntry *iconEntry;
         s32 iconRow;
 
-        for (i = 0, iconEntry = gResourceTableEntries, sprite = iconSprites,
+        for (i = 0, iconEntry = gVramCacheEntries, sprite = iconSprites,
             iconRow = 0;
              i <= 3; i++) {
           sprite->oam.word.attr01 = 0x40000400;

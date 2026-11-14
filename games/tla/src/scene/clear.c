@@ -101,15 +101,15 @@ extern u8 Data_02012f94[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
@@ -173,7 +173,7 @@ scroll_pair:
     /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword. */
     register u16 zero asm("r5");
 
-    leader = Actor_Get(gMainRoutineWork.currentOwner);
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
     zero = 0;
     leader->motionFlags = zero;
   }
@@ -271,7 +271,7 @@ s32 Clear_CanRetreat(void) {
 
   if (FIELD_AT(party, s16, 0x25e) == 2)
     return 0;
-  mode = party->scene ^ (s32)&SceneId_WorldMap;
+  mode = party->next ^ (s32)&SceneId_WorldMap;
   return -((u32)(-mode | mode) >> 31);
 }
 
@@ -281,10 +281,10 @@ s32 Clear_CanRetreat(void) {
  * u16 gData_02003860; tried as the rest of the object declares it,
  * Scene_Initialize moves: 4 of 738 instructions in tla-ja. */
 extern s16 gData_02003860__clear __asm__("gData_02003860");
-/* VIEW(clear): variable gData_02001000 as u32 gData_02001000; module/tla.h has
- * s8 gData_02001000[]; tried as the rest of the object declares it,
+/* VIEW(clear): variable gSceneLocalState as u32 gSceneLocalState; module/tla.h
+ * has s8 gSceneLocalState[]; tried as the rest of the object declares it,
  * Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
-extern u32 gData_02001000__clear __asm__("gData_02001000");
+extern u32 gData_02001000__clear __asm__("gSceneLocalState");
 
 s32 Save_ToChosenFile(void);
 s32 Save_ChooseAndLoadFile(s32 mode);
@@ -320,9 +320,9 @@ void StatusScreen_Run(void);
 /// Goes back to the saved scene and entrance.
 #define RETURN_TO_SAVED(party)                                                 \
   {                                                                            \
-    (party)->scene = (party)->savedScene;                                      \
-    (party)->entrance = (party)->savedEntrance;                                \
-    WorldMap_SetReturnLeavingScene((party)->scene, (party)->entrance);         \
+    (party)->next = (party)->restartScene;                                     \
+    (party)->entrance = (party)->restartEntrance;                              \
+    WorldMap_SetReturnLeavingScene((party)->next, (party)->entrance);          \
     Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);                                 \
   }
 
@@ -367,7 +367,7 @@ top:
   result = Save_ScanFileSummaries();
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.unk244[6] = 1;
-    gAutoSleepEnabled = 1;
+    gIdleSleepEnabled = 1;
     FieldMessage_ShowCentered((s32)&SceneId_DailaInteriors1, 1, 8);
   }
   if (result == 0 && !started) {
@@ -550,7 +550,7 @@ top:
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      party->currentOwner = 4;
+      party->leaderActorId = 4;
       if (Event_GetFlag(0x9ff))
         InventorySnapshot_Restore();
       WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
@@ -803,7 +803,7 @@ transfer:
     ok = 0;
     goto done;
   }
-  if (gSerialReceiveDest != 0) {
+  if (gSerialReceiveDestination != 0) {
     System_Wait(1);
     i++;
     if (i < 600000)
@@ -894,23 +894,23 @@ u16 Clear_Crc16(u32 length, u8 *p);
 void Resource_CopyFixedBlockB(void);
 void Resource_CopyFixedBlockA(void);
 void Graphics_ExpandVramTilesByColorTable(void *vram);
-void MenuCursor_Advance(struct ShopCursor *cursor);
-void MenuCursor_Set(struct ShopCursor *cursor, s32 x, s32 y, s32 kind);
-void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
+void MenuCursor_Advance(struct MenuCursor *cursor);
+void MenuCursor_Set(struct MenuCursor *cursor, s32 x, s32 y, s32 kind);
+void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y);
 
 /// Gives a cursor its sprite.
-static inline void Cursor_Attach(struct ShopCursor *cursor,
+static inline void Cursor_Attach(struct MenuCursor *cursor,
                                  struct WindowSprite *sprite) {
   cursor->anchor = sprite;
 }
 
 /// Sets a cursor where it starts.
-static inline void Cursor_Place(struct ShopCursor *cursor, s32 x, s32 y) {
+static inline void Cursor_Place(struct MenuCursor *cursor, s32 x, s32 y) {
   MenuCursor_SetPositionImmediate(cursor, x, y);
 }
 
 /// Moves a cursor and shows it.
-static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
+static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
   MenuCursor_Set(cursor, x, y, 1);
   MenuCursor_Advance(cursor);
 }
@@ -974,8 +974,8 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
 #endif
 
 s32 Clear_EnterPassword(void) {
-  struct ShopCursor cursorStore;
-  struct ShopCursor gridStore;
+  struct MenuCursor cursorStore;
+  struct MenuCursor gridStore;
   u16 glyph[12];
   s32 mode;
   s32 cursor;
@@ -1234,7 +1234,7 @@ s32 Clear_EnterPassword(void) {
             Sound_Play(SE_MENU_CONFIRM);
             MainRoutineWork_InitializeDefaults();
             party = &gMainRoutineWork;
-            party->currentOwner = 0;
+            party->leaderActorId = 0;
             Party_RemoveMember(4);
             Party_RemoveMember(5);
             Party_RemoveMember(6);
@@ -1248,7 +1248,7 @@ s32 Clear_EnterPassword(void) {
             Window_Close(grid, 2);
             Window_Close(window, 2);
             WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
-            Sound_Play(MUS_074);
+            Sound_Play(MUS_CLEAR);
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
@@ -1282,7 +1282,7 @@ s32 Clear_EnterPassword(void) {
             Sound_Play(SE_MENU_CANCEL);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Sound_Play(MUS_074);
+            Sound_Play(MUS_CLEAR);
             return -1;
           }
         }

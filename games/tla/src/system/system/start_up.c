@@ -35,7 +35,7 @@ void System_Initialize(void) {
   VramCache_Reset();
   Task_ResetAll();
   gCartridgeResetMarker = 0;
-  gRenderOamEnabled = 1;
+  gOamCopyEnabled = 1;
   gOamUsage.limit = 0x100;
   gOamUsage.used = 0;
   gSleepDisabled = 0;

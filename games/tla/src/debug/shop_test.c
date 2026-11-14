@@ -61,11 +61,11 @@ enum ShopTestActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -142,7 +142,7 @@ done:
 void Shop_Run(s32 kind, s32 value);
 void Sanctum_Run(void);
 void Inn_CheckIn(s32 kind, s32 value);
-void ItemPicker_RunMode1(s32 *a, s32 *b);
+void ItemPicker_RunToShow(s32 *a, s32 *b);
 void NameEntry_EditMemberName(s32 index);
 void Summon_ShowLearnedMessage(s32 value);
 void Class_GetSeries(s32 value);
@@ -279,7 +279,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
 void ShopTest_TestItemSelection(void) {
   s32 pos[2];
 
-  ItemPicker_RunMode1(&pos[1], &pos[0]);
+  ItemPicker_RunToShow(&pos[1], &pos[0]);
 }
 
 /// The name entry screen for each of the eight characters in turn.
@@ -564,7 +564,7 @@ void ShopTest_GiveMuramasaAndSummon(void) {
   Class_GetSeries(22);
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void Party_AddIsaacsParty(void);
 
@@ -577,7 +577,7 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   *effect = 256;
-  party->eventMode = 2;
+  party->messageSpeed = 2;
   Actor_SetModeById(ACTOR_SANCTUM_MESSAGES, 5);
   Actor_SetModeById(ACTOR_WEAPON_SHOP_MESSAGES, 5);
   Actor_SetModeById(ACTOR_ARMOR_SHOP_MESSAGES, 5);
@@ -622,7 +622,7 @@ void WindowSprite_RedrawSavedRect(void *window);
 /// raises every party member 5 levels on Start or Select and 1 on A, and
 /// closes on B. Talking to ACTOR_LEVEL_EDITOR.
 void ShopTest_RunLevelEditor(void) {
-  u8 *unit = Unit_Get(gMainRoutineWork.currentOwner);
+  u8 *unit = Unit_Get(gMainRoutineWork.leaderActorId);
   void *window = Window_Create(0, 0, 30, 9, 2);
   const u8 *message = MsgRaiseEveryoneS;
   s32 redraw;
@@ -642,12 +642,12 @@ void ShopTest_RunLevelEditor(void) {
     wait(1);
     if ((gInput.pressed & KEY_START) || (gInput.pressed & KEY_SELECT)) {
       ShopTest_AdjustPartyLevels(5);
-      Sound_Play(MUS_093);
+      Sound_Play(MUS_JINGLE_LARGE);
       redraw = 1;
     }
     if (gInput.pressed & KEY_A) {
       ShopTest_AdjustPartyLevels(1);
-      Sound_Play(MUS_091);
+      Sound_Play(MUS_JINGLE_SMALL);
       redraw = 1;
     }
     if (gInput.pressed & KEY_B)
@@ -859,7 +859,7 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_GetById(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }

@@ -147,11 +147,11 @@ void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -202,7 +202,7 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
   VenusLighthouseEntrance_StopDust();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void VenusLighthouseEntrance_BirdsLand(void);
 void VenusLighthouseEntrance_WakeUp(void);
@@ -212,7 +212,7 @@ s32 Scene_Initialize(void) {
   struct Actor *leader;
 
   gFieldWork->transition = 256;
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   leader->priorityFlags |= 0x20;
   Actor_SetAnimation(ACTOR_WEST_BIRD, 5);
   FieldActor_SetSpritePriority(ACTOR_WEST_BIRD, 1);
@@ -245,7 +245,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gMainRoutineWork.entrance == ENTRANCE_DEFEAT) {
-    gMainRoutineWork.secondary = 1;
+    gMainRoutineWork.returnEntrance = 1;
     gMainRoutineWork.entrance = 1;
     Party_RestoreHpPp(1);
     VenusLighthouseEntrance_WakeUp();
@@ -254,7 +254,7 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN);
   }
   if (gMainRoutineWork.entrance == ENTRANCE_JENNA_TAKES_OVER) {
-    gMainRoutineWork.currentOwner = ACTOR_JENNA;
+    gMainRoutineWork.leaderActorId = ACTOR_JENNA;
     Party_RemoveMember(ACTOR_FELIX);
     Party_RemoveMember(ACTOR_SHEBA);
     Party_RemoveMember(ACTOR_PIERS);
@@ -304,7 +304,7 @@ void VenusLighthouseEntrance_BirdsLand(void) {
   Event_WaitTransitionFrames();
   westBird = Actor_Get(ACTOR_WEST_BIRD);
   Actor_SetAnimation(ACTOR_WEST_BIRD, 4);
-  Event_PlaySound(SE_165);
+  Event_PlaySound(SE_BIRD_WINGS);
   FieldActor_SetMoveTarget(westBird, 352, 8, 176);
   Actor_StartScript(westBird, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(25);
@@ -314,7 +314,7 @@ void VenusLighthouseEntrance_BirdsLand(void) {
   FieldActor_SetMoveTarget(eastBird, 416, 8, 152);
   Actor_StartScript(eastBird, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(60);
-  Event_PlaySound(SE_165);
+  Event_PlaySound(SE_BIRD_WINGS);
   FieldActor_WaitForMoveById(ACTOR_WEST_BIRD);
   FieldActor_WaitForMoveById(ACTOR_EAST_BIRD);
   FieldCamera_WaitForArrival();
@@ -330,7 +330,7 @@ void VenusLighthouseEntrance_BirdsFlyOff(void) {
   Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_PlaySound(SE_165);
+  Event_PlaySound(SE_BIRD_WINGS);
   Actor_SetAnimation(ACTOR_WEST_BIRD, 3);
   FieldActor_SetAnimation(ACTOR_EAST_BIRD, 3);
   FieldEvent_Wait(21);

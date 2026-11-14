@@ -18,7 +18,7 @@ FarCall_ShopTable:
 	export Shop_SaveAndTintFieldPaletteFar, Shop_SaveAndTintFieldPalette
 	export Shop_RestoreFieldPaletteFar, Shop_RestoreFieldPalette
 	export ItemPicker_RunToDropFar, ItemPicker_RunToDrop
-	export ItemPicker_RunMode1Far, ItemPicker_RunMode1
+	export ItemPicker_RunToShowFar, ItemPicker_RunToShow
 	export Sound_WaitForJingleFar, Sound_WaitForJingle
 	export Inn_PlaySleepFar, Inn_PlaySleep
 	export VramBlock_LoadResourceFar, VramBlock_LoadResource

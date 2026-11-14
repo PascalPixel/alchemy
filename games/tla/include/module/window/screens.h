@@ -51,8 +51,8 @@ void Scene_PlayQueuedMusicFar(void);
 void ObjectTable_SnapshotFar(void);
 void DjinnFigures_InitializeTopRowFar(void);
 void DjinnFigures_ReleaseTopRowFar(void);
-void Menu_SetEntryObjectsHiddenFar(s32 shown);
-void MenuIcon_SetPositionFar(s32 index, s32 x, s32 y);
+void DjinnFigures_SetShownFar(s32 shown);
+void DjinnFigures_SetSlotPositionFar(s32 index, s32 x, s32 y);
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode);
 void MenuTitle_Bob(struct BobPairObject *object);
 struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,

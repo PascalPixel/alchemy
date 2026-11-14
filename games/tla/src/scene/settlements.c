@@ -249,8 +249,8 @@ s32 Settlements_ClearSpriteFlags(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-u32 *Scene_GetRegions(void) {
-  s32 scene = gMainRoutineWork.scene;
+u32 *Scene_GetExitRegions(void) {
+  s32 scene = gMainRoutineWork.next;
   u32 *placements;
 
   if (scene == (s32)&SceneId_Settlements5)
@@ -273,8 +273,8 @@ extern struct ActorPlacement gSettlements_Room10Placements[];
 extern struct ActorPlacement gSettlements_Room7Placements[];
 extern struct ActorPlacement gSettlements_Room8Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Settlements1)
     return gSettlements_Room1Placements;
@@ -327,13 +327,13 @@ void Settlements_WarnOfRiddleOfRock(s32 actor) {
 void Settlements_CutLeftBush(void) { Window(5, 70, 9, 7, 5, 43, 1); }
 
 void Settlements_CutStairsBush(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
   if (x == 5 && z == 17) {
-    FieldActor_Jump(gMainRoutineWork.currentOwner, 2, 0);
-    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 88, 296);
+    FieldActor_Jump(gMainRoutineWork.leaderActorId, 2, 0);
+    Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 88, 296);
   }
   TileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -399,8 +399,8 @@ extern struct Trigger gSettlements_Room8Triggers[];
 extern struct Trigger gSettlements_Room9Triggers[];
 extern struct Trigger gSettlements_Room10Triggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Settlements1)
     return gSettlements_Room1Triggers;
@@ -547,9 +547,9 @@ void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x100;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements7)
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements7)
     Settlements_SetUpKaltIsland();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements9) {
     FieldEffect_StartBlankOverlay(0);
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_SCENE_TEMP_06))
@@ -570,7 +570,7 @@ s32 Scene_Initialize(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements4) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements4) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_30)) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
       Actor_SetAnimation(9, 4);
@@ -582,15 +582,15 @@ s32 Scene_Initialize(void) {
     }
     Actor_PlaceBlocks(gSettlements_WallCrate);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements3)
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements3)
     FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements6)
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements6)
     FieldEffect_StartBlankOverlay(0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements9) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_05)) {
       MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
       MapGrid_CopyCellsTo(12, 32, 11, 15, 1, 1);
@@ -608,7 +608,7 @@ s32 Scene_PrepareMap(void) {
     }
 #endif
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements1) {
     if (Event_GetFlag(0xa60)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
@@ -640,14 +640,14 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Settlements4)
+  if (gMainRoutineWork.next == (s32)&SceneId_Settlements4)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
   else
     MapGrid_CopyCellsTo(27, 29, 40, 16, 1, 2);
   Event_PlaySound(SE_DOOR_OPEN);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(2);
   Event_FinishScreenTransition();
@@ -734,7 +734,7 @@ void Settlements_UnblockFallsObjects(void) {
 }
 
 void Settlements_BlockFallsObject(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 2;
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
@@ -785,7 +785,7 @@ void Settlements_SlideCrateDownFalls(void) {
     Actor_SetDestinationOffset(10, 0, 8);
     FieldActor_WaitForMoveById(10);
     FieldEvent_Wait(10);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Actor_SetSpeed(10, 2.4);
     Actor_SetDestinationOffset(10, 0, 80);
     FieldActor_WaitForMoveById(10);
@@ -835,7 +835,7 @@ void Settlements_MoveCrate(void) {
 
 void Settlements_PushIntoFalls(void) {
   Actor_PlaceMovedBlock();
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags += 254;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags += 254;
   Settlements_SinkPillar();
   Settlements_SlideCrateDownFalls();
 }

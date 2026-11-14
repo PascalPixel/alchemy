@@ -7,8 +7,8 @@
 /// expands to the words of one command. An unknown command keeps its number
 /// as its name.
 // The Lost Age numbers its commands as The Broken Seal does, with SC_CMD_03
-// added before SC_MOVE, eleven more commands after SC_PLAYER, SC_CMD_2A after
-// SC_SE and SC_MOVE_XZ after SC_CMD_2F.
+// added before SC_MOVE, eleven more commands after SC_PLAYER, SC_CALL_WITH
+// after SC_SE and SC_MOVE_XZ after SC_CAMERA_IN_BOUNDS.
 
 #include "types.h"
 
@@ -43,28 +43,28 @@
 #define SC_ADD(w, v) 0x17, (w), (v)
 #define SC_CMP(w, v) 0x18, (w), (v)
 #define SC_PLAYER 0x19 ///< key control
-#define SC_CMD_1A 0x1a
+#define SC_WORLD 0x1a
 #define SC_CMD_1B 0x1b
-#define SC_CMD_1C 0x1c
-#define SC_CMD_1D 0x1d
-#define SC_CMD_1E 0x1e
-#define SC_CMD_1F 0x1f
-#define SC_CMD_20 0x20
-#define SC_CMD_21 0x21
-#define SC_CMD_22 0x22
-#define SC_CMD_23 0x23
-#define SC_CMD_24 0x24
-#define SC_CMD_25 0x25
+#define SC_ROPE 0x1c
+#define SC_TIGHTROPE 0x1d
+#define SC_SAND 0x1e
+#define SC_SAIL 0x1f
+#define SC_WORLD_SAIL 0x20
+#define SC_WORLD_FLY 0x21
+#define SC_WORLD_SAND 0x22
+#define SC_HOVER 0x23
+#define SC_WALK 0x24
+#define SC_KEY_COUNT 0x25
 #define SC_FREE 0x26 ///< release the object
 #define SC_ARG(v) 0x27, (v)
 #define SC_NOP(v) 0x28, (v)
 #define SC_SE(n) 0x29, (n) ///< a sound effect
-#define SC_CMD_2A(v) 0x2a, (v)
+#define SC_CALL_WITH(v) 0x2a, (v)
 #define SC_GOTO(script) 0x2b, (s32)(script) ///< continue in another script
-#define SC_B54_OFF 0x2c
-#define SC_B54_ON 0x2d
+#define SC_HIDE_SPRITES 0x2c
+#define SC_SHOW_SPRITE 0x2d
 #define SC_CALL(fn) 0x2e, (s32)(fn)
-#define SC_CMD_2F 0x2f
+#define SC_CAMERA_IN_BOUNDS 0x2f
 #define SC_MOVE_XZ(x, z) 0x30, (x), (z) ///< move to (x, z) at the same height
 
 /// Script work values for SC_SET, SC_ADD and SC_CMP

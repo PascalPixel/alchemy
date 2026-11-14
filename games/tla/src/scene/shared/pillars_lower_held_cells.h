@@ -8,7 +8,7 @@ void Pillars_LowerHeldCells(u16 *list) {
   u8 *grid;
 
   if (held == NULL) {
-    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.currentOwner, 1);
+    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId, 1);
 
     if (id != -1)
       held = Actor_GetById(id);

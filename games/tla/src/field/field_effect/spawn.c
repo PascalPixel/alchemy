@@ -53,7 +53,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                   s32 velocityZ, u32 flags,
                   const struct EffectOptions *options) {
   struct FieldEffect *party =
-      Actor_GetById__spawn(gMainRoutineWork.currentOwner);
+      Actor_GetById__spawn(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

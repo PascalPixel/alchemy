@@ -21,7 +21,8 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   s32 scale;
   s32 position[3];
 
-  leader = (struct CaptureObject *)Actor_GetById(gMainRoutineWork.currentOwner);
+  leader =
+      (struct CaptureObject *)Actor_GetById(gMainRoutineWork.leaderActorId);
   djinni = (struct CaptureObject *)Actor_GetById(arg);
   if (djinni == NULL)
     return;
@@ -44,9 +45,9 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar((struct Actor *)djinni, 3);
   wait(90);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
   wait(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, Q16_ONE);
 
@@ -109,7 +110,7 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   }
 
   wait(100);
-  Sound_PlayFar(SE_298);
+  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
   position[0] = leader->x;
@@ -152,7 +153,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   s8 *statePointer;
   s32 state;
 
-  source = Actor_GetById(gMainRoutineWork.currentOwner);
+  source = Actor_GetById(gMainRoutineWork.leaderActorId);
   statePointer = &effect->state;
   state = *statePointer;
 

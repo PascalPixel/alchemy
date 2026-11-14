@@ -95,7 +95,7 @@ enum {
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_ClawSlashSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern const u16 Data_08199484[][FUME_COLUMNS];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
@@ -213,7 +213,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     buffer = Data_02011000;
     // The strip mesh held in a per-frame local, as the vertex buffer is.
     strip = Data_02012000;
-    corners = (struct Corner *)gMapCellBuffer;
+    corners = (struct Corner *)gMapGridCellBuffer;
     // DEAD: frame never falls below 0; the source keeps the test.
     if (frame >= 0) {
       s32 width;

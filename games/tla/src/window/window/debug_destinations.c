@@ -45,8 +45,8 @@ s16 DebugSceneSelect_Run(void) {
 
   work = 0;
   mode = 0;
-  primary = gMainRoutineWork.primary;
-  secondary = gMainRoutineWork.secondary;
+  primary = gMainRoutineWork.returnScene;
+  secondary = gMainRoutineWork.returnEntrance;
   work = Window_Create(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
   DebugSceneSelect_DrawRow(work, primary, &secondary);
   MenuArrow_Create(&object, &resource);

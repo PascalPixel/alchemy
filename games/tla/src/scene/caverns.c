@@ -44,7 +44,7 @@ extern char SceneId_Caverns1;
 extern char SceneId_Caverns2;
 extern char SceneId_Caverns3;
 extern char SceneId_Caverns4;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
 extern struct ActorPlacement gCaverns_Placements[];
@@ -119,18 +119,18 @@ extern u32 gFieldEffect_LongScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const s16 *Scene_GetRegions(void) {
+const s16 *Scene_GetExitRegions(void) {
   const s16 *result = NULL;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns2)
+  if (gMainRoutineWork.next == (s32)&SceneId_Caverns2)
     result = gCaverns_OseniaRegions;
   return result;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s32 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Caverns1)
     return gCaverns_IndraPlacements;
@@ -148,7 +148,7 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   return (cell[2] << 8) | cell[3];
 }
@@ -163,7 +163,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   old = (cell[2] << 8) | cell[3];
   cell[2] = value >> 8;
@@ -179,7 +179,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
 // steps under its block and is marked occupied.
 void Caverns_PlaceAngaraBlocks(const s16 *data) {
   const u16 *ids = (const u16 *)data;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *object;
   s32 height;
   s32 cell;
@@ -208,7 +208,7 @@ done:
         Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
     leader->velocityY = 0;
     leader->targetY = 0x80000000;
-    FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   }
 }
 
@@ -275,7 +275,7 @@ void Caverns_StartMovingAngaraBlock(void) {
     if (current->unk1c != 147)
       Caverns_ShiftAngaraCellHeights(1);
   } else {
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     angle = (leader->facing + 0x2000) & 0xc000;
     position[0] = leader->x;
     position[1] = leader->y;
@@ -320,7 +320,7 @@ void Caverns_DriftDust(struct Actor *object) {
 // The stacked block's update: draws the leader in front of it while he is
 // south of it.
 void Caverns_LayerLeaderByStack(struct Actor *object) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 leaderZ = leader->z;
   s32 z = object->z;
   u8 *flags = &leader->priorityFlags;
@@ -448,8 +448,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
   MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, value | 128);
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s32 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Caverns1)
     return gCaverns_IndraTriggers;
@@ -462,15 +462,15 @@ const struct Trigger *Scene_GetEvents(void) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns1)
+  if (gMainRoutineWork.next == (s32)&SceneId_Caverns1)
     Caverns_InitializeIndra();
-  if (gMainRoutineWork.scene == (s32)&SceneId_Caverns4)
+  if (gMainRoutineWork.next == (s32)&SceneId_Caverns4)
     Caverns_InitializeAngara();
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Caverns2)
     Caverns_PrepareOsenia();
@@ -525,7 +525,7 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
       struct MainRoutineWork *party = &gMainRoutineWork;
       s32 x = position[1];
       s32 z = position[5];
-      s32 owner = party->currentOwner;
+      s32 owner = party->leaderActorId;
 
       Actor_MoveToAndWaitById(owner, x, z);
     }
@@ -539,7 +539,7 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
 }
 
 void Caverns_JumpEastAcrossGap(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 x;
 
@@ -577,7 +577,7 @@ void Caverns_WalkIntoPassage(void) {
     Actor_SetPosition(8, 144, 224);
   else
     Actor_SetPosition(8, 224, 224);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   BYTE_AT(Actor_GetById(ACTOR_FELIX), 90) &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
@@ -609,7 +609,7 @@ void Caverns_WalkWestIntoPassage(void) {
 }
 
 void Caverns_WalkSouthIntoPassage(void) {
-  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   Caverns_WalkIntoPassage();
   return;

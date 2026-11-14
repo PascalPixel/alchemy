@@ -41,13 +41,13 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   {
     return ret;
   }
-  if (def->actionId == 0) {
+  if (def->abilityId == 0) {
     return ret;
   }
   if ((def->type != 0) && (Item_CanUnitEquip(unit, item) == 0)) {
     return ret;
   }
-  if ((BATTLE_OK & Ability_Get(def->actionId)->flags) == 0) {
+  if ((BATTLE_OK & Ability_Get(def->abilityId)->flags) == 0) {
     return 2;
   }
   return 0;
@@ -202,9 +202,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                                     entries[firstEntry + selectedRow]) == 2)
           MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, CURSOR_TEXT_LENGTH);
         else
-          MENU_TEXT_COPY((entries[firstEntry + selectedRow] & ITEM_ID_MASK) +
-                             (s32)MsgItemPlainName,
-                         messageText, CURSOR_TEXT_LENGTH);
+          MENU_TEXT_COPY(
+              (entries[firstEntry + selectedRow] & INVENTORY_ITEM_ID_MASK) +
+                  (s32)MsgItemPlainName,
+              messageText, CURSOR_TEXT_LENGTH);
       } else {
         MENU_TEXT_COPY((s32)MsgKey0d46, messageText, CURSOR_TEXT_LENGTH);
       }
@@ -222,7 +223,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (item & ITEM_BROKEN)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles((item & ITEM_ID_MASK) + (s32)MsgItemName,
+          Text_DrawMessageAsTiles((item & INVENTORY_ITEM_ID_MASK) +
+                                      (s32)MsgItemName,
                                   window, 16, i * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);

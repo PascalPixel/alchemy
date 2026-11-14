@@ -74,11 +74,11 @@ void MapGrid_SetAttributeBAt();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -86,7 +86,7 @@ s32 CrackedTiles_Step();
 struct GustObject *Whirlwind_SpawnUpper();
 
 void JupiterLighthouse_StartHovering(void) {
-  if (gMainRoutineWork.renderMode == 10)
+  if (gMainRoutineWork.movementMode == 10)
     FieldMapGrid_SetCellBehavior(px(544), px(272), 0, 255);
 }
 
@@ -118,7 +118,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct GustObject *motion;
 
   if (gWhirlwindRiding == 0 &&
-      Actor_Get(gMainRoutineWork.currentOwner)->y > 0) {
+      Actor_Get(gMainRoutineWork.leaderActorId)->y > 0) {
     object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 50) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
@@ -145,7 +145,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
 }
 
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0 &&
       CrackedTiles_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
@@ -155,14 +155,14 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   s32 x;
   s32 z;
 
-  if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0) {
-    leader = Actor_Get(gMainRoutineWork.currentOwner);
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0) {
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
     x = leader->x >> 20;
     z = leader->z >> 20;
     if (x == 18 && z == 34)
-      FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+      FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
     if (x == 8 && z == 39)
-      FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+      FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
     if (CrackedTiles_Step(arg) != 0)
       FieldEvent_SetExitRequest(14);
   }
@@ -173,7 +173,7 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   s32 x;
   s32 z;
 
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader->y <= 0) {
     JupiterLighthouse_StepOnLowerCrackedTile(arg);
   } else {
@@ -194,7 +194,7 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   }
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Sets up the hall: its cracked tiles, and the landing of a leader who fell
 /// through one from the floor above.
@@ -420,7 +420,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

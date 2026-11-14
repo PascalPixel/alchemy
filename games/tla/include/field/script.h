@@ -14,7 +14,8 @@ struct ScriptInterpreter {
   const s32 *script;    ///< the running script; SC_END sets gScript_MainScript
   s16 cursor;           ///< the word index of the next command in script
   u8 padding06[0x4e];   ///< the object's own fields; not read by the commands
-  u8 spriteStorageKind; ///< SC_B54_ON (show a sprite) sets 1, SC_B54_OFF 0
+  u8 spriteStorageKind; ///< SC_SHOW_SPRITE (show a sprite) sets 1,
+                        ///< SC_HIDE_SPRITES 0
   u8 padding55[2];      ///< the object's own fields; not read by the commands
   u8 conditionResult;   ///< the last flag test, read by SC_IF and SC_IFNOT
   u8 padding58[5];      ///< the object's own fields; not read by the commands

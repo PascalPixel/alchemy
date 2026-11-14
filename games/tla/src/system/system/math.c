@@ -9,9 +9,9 @@
 /// 23, 0 to 65535. Called throughout the game.
 u32 Random16(void) {
   enum { MULTIPLIER = 1103515245, INCREMENT = 12345 };
-  u32 value = gRandomState * MULTIPLIER + INCREMENT;
+  u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
 
-  gRandomState = value;
+  gRandomSeed = value;
   return (value << 8) >> 16;
 }
 

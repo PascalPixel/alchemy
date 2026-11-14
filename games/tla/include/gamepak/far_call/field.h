@@ -21,7 +21,7 @@ void MapGrid_LoadMapFar(s32 map);
 void WorldMap_UpdateCurrentTileBlockFar(void);
 void Map_ApplySetFlagEditsFar(void);
 void Actor_StartRenderModeScriptFar(void);
-void MapAnimation_StartFar();
+void WorldMap_StartStillPictureFar();
 void WorldMap_LoadAreaGraphicsFar(void);
 
 #endif

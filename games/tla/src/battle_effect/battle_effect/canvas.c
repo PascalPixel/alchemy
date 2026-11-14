@@ -42,7 +42,7 @@ extern char ResourceId_BlueFlameSheet, ResourceId_DustBlobSheet;
 extern char ResourceId_Data134, ResourceId_TornadoSheet, ResourceId_Data0B4;
 extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 /* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
@@ -61,7 +61,7 @@ EffectSprite_CreateWithTiles__battle_effect(s32 width, s32 height, u32 shape,
                                             u32 attributes);
 
 #define SLOT_ALT 188 // unkb8[1]
-#define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)->slot].offset)
+#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
 
 // Forwarded so that a constant size reaches the call's register at each call.
 
@@ -138,8 +138,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonTiles);
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
-      Decompress_TaggedLz(cells, gMapCellBuffer);
-      tiles = gMapCellBuffer;
+      Decompress_TaggedLz(cells, gMapGridCellBuffer);
+      tiles = gMapGridCellBuffer;
       for (i = 0; i != 31; i++) {
         obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 2;
@@ -150,11 +150,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonHeadTiles);
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
-      Decompress_TaggedLz(cells, gMapCellBuffer);
+      Decompress_TaggedLz(cells, gMapGridCellBuffer);
       obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
       work->objects[31] = obj;
       obj->priority = 2;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), gMapCellBuffer, 0x400);
+      Iwram_CopyWords((void *)OBJ_TILES(obj), gMapGridCellBuffer, 0x400);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
@@ -591,7 +591,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 32;
   {
     const void *mesh = Data_02011000;
-    void *vertices = gMapCellBuffer;
+    void *vertices = gMapGridCellBuffer;
     const void *mesh2 = Data_02012800;
 
     for (frame = 0; frame != 26; frame++) {
@@ -668,7 +668,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         texture3.pixels = work->sheet + 0x3840;
         model->mesh = Data_08199220;
         model->shade = shade;
-        model->vertices = gMapCellBuffer;
+        model->vertices = gMapGridCellBuffer;
         model->kind = 6;
         model->texture = &texture3;
         Transform_Reset();
@@ -676,7 +676,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(s, Q16_ONE * 2, Q16_ONE / 2);
-        Render_TransformVertices(Data_081991c0, gMapCellBuffer, 4);
+        Render_TransformVertices(Data_081991c0, gMapGridCellBuffer, 4);
         Render_DrawModelList(model);
       }
       if (frame == 0) {

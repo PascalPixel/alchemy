@@ -30,7 +30,7 @@ extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
 
 void NaribweInteriors_ReadFortune(void);
 
-s32 ItemPicker_RunMode1(s32 *unit, s32 *slot);
+s32 ItemPicker_RunToShow(s32 *unit, s32 *slot);
 
 void NaribweInteriors_ReadProng(void);
 
@@ -40,11 +40,11 @@ void NaribweInteriors_ReadArmor(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -71,14 +71,14 @@ s32 NaribweInteriors_MindReadFortuneTellerOnReturn(void) {
   return 0;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gNaribweInteriors_TriggersOnReturn;
   return gNaribweInteriors_Triggers;
 }
 
 void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(14, actor);
@@ -93,7 +93,7 @@ void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
 }
 
 void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(14, actor);
@@ -108,7 +108,7 @@ void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
 }
 
 void NaribweInteriors_SendToFortuneTeller(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(15, actor);
@@ -123,7 +123,7 @@ void NaribweInteriors_SendToFortuneTeller(s32 actor) {
 }
 
 void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(15, actor);
@@ -139,7 +139,7 @@ void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
 
 /// "Our cooking is famous all across Gondowan."
 void NaribweInteriors_TalkAboutCooking(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(5, actor);
@@ -154,7 +154,7 @@ void NaribweInteriors_TalkAboutCooking(s32 actor) {
 }
 
 void NaribweInteriors_TalkAboutTravelers(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(5, actor);
@@ -230,13 +230,13 @@ void NaribweInteriors_ReadFortune(void) {
   FieldEvent_Wait(30);
 ask:
 #if !TLA_PATCH_1
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   // Before patch 1 the item variable first holds the choice's result.
-  item = ItemPicker_RunMode1(&unit, &slot);
+  item = ItemPicker_RunToShow(&unit, &slot);
   if (item == -1) {
 #else
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
-  if (ItemPicker_RunMode1(&unit, &slot) == -1) {
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  if (ItemPicker_RunToShow(&unit, &slot) == -1) {
 #endif
     refuse = MsgShallIGive;
     FieldEvent_SetMessageId(refuse);
@@ -280,7 +280,7 @@ read:
   PaletteFade_ApplyTarget(0x40250d, 1);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(120);
-  Event_PlaySound(MUS_011);
+  Event_PlaySound(MUS_KIBOMBO);
   Actor_SetAnimation(10, 5);
   Actor_WaitForAnimationChange(10);
   DANCE_TO(664);
@@ -296,7 +296,7 @@ read:
   FieldActor_Jump(10, 4, 30);
   Actor_SetAnimation(10, 5);
   Actor_SetAnimation(10, 0);
-  Event_PlaySound(MUS_011);
+  Event_PlaySound(MUS_KIBOMBO);
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(30);
   Actor_SetPosition(20, 672, 104);
@@ -311,10 +311,10 @@ read:
   FieldEvent_Wait(15);
   Actor_SetPosition(19, 0, 0);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner, EMOTE_IN_FRONT | EMOTE_WINCE,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_WINCE,
                   0);
   FieldEvent_Wait(60);
-  Event_PlaySound(MUS_010);
+  Event_PlaySound(MUS_NARIBWE);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_ShowMessage(10, 0);
   unitData = Unit_Get(unit);
@@ -811,7 +811,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   gFieldWork->transition = 0x209;
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   Actor_DisableById(17);
   Actor_DisableById(18);
   FieldActor_SetSpritePriority(10, 2);

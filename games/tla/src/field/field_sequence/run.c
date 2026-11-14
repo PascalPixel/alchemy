@@ -17,9 +17,9 @@
 #include "module/tla.h"
 #include "macros.h"
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
-void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
+void PaletteFade_SetTarget(s32 color, s32 mode);
 // UB: declared returning s32; the definition (main_routine.c) returns s16.
 #ifdef UBFIX
 s16 Field_GetSceneAttributes(s32 scene);
@@ -67,8 +67,8 @@ s32 FieldSequence_Run(void) {
   work = HeapSlot_AllocEwram(108, 0xd50);
   Iwram_ClearWordsEntry(work, 0xd50);
   GameFlag_Clear(FLAG_IN_BATTLE);
-  gMainRoutineWork.primary = gMainRoutineWork.scene;
-  gMainRoutineWork.secondary = gMainRoutineWork.entrance;
+  gMainRoutineWork.returnScene = gMainRoutineWork.next;
+  gMainRoutineWork.returnEntrance = gMainRoutineWork.entrance;
   gMainRoutineWork.pair1ee[0] = -1;
   gMainRoutineWork.pair1ee[1] = -1;
   gMainRoutineWork.pair1f2[0] = -1;
@@ -76,19 +76,19 @@ s32 FieldSequence_Run(void) {
   gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gMainRoutineWork.map == (s32)&SceneId_Clear) {
+  if (gMainRoutineWork.mapId == (s32)&SceneId_Clear) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.unk244[0] = 1;
     mode = 3;
     Encounter_SelectMapZones(0);
   } else {
-    MapGrid_LoadMapFar(gMainRoutineWork.map);
+    MapGrid_LoadMapFar(gMainRoutineWork.mapId);
     mode = 2;
     Encounter_SelectMapZones(1);
   }
   work->mode = mode;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-    gData_02001000[0x194c] = 0;
+    gSceneLocalState[0x194c] = 0;
   else
     TileCopies_Restore();
   WindowSystem_InitFieldFar();
@@ -112,28 +112,28 @@ s32 FieldSequence_Run(void) {
     Map_CenterOnFollowedPointFar();
   }
   GameFlag_Clear(287);
-  BattleEffect_InitializeBuffers();
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_Initialize();
+  PaletteFade_SetTarget(0x10000, 0);
   work->transition = 0x100;
   work->transitionFrames = 16;
   work->transitionActive = 0;
   work->walkingDistanceScale = 409;
   work->walkingDistance = 0;
-  if (gMainRoutineWork.sceneVariant == 2) {
+  if (gMainRoutineWork.sceneType == 2) {
     work->walkingDistanceScale = 0;
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
-  work->previousCell = gMapCellBuffer;
+  work->previousCell = gMapGridCellBuffer;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
     HAZARD.limit = 16;
     HAZARD.mode = 0;
     HAZARD.damage = 1;
-    gMainRoutineWork.pausedObject = -1;
+    gMainRoutineWork.haltedActor = -1;
     gMainRoutineWork.cloaked = 0;
   }
   FieldPsynergy_ResumeCloakCheck();
-  value = Field_GetSceneAttributes(gMainRoutineWork.scene);
+  value = Field_GetSceneAttributes(gMainRoutineWork.next);
   work->sceneAttributeHigh = (value >> 4) & 15;
   work->sceneAttributeLow = value & 15;
 
@@ -198,7 +198,7 @@ s32 FieldSequence_Run(void) {
     }
     if (GameFlag_Get(FLAG_SHOW_AREA_NAME)) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-      AreaNameWindow_ShowFar(gMainRoutineWork.scene);
+      AreaNameWindow_ShowFar(gMainRoutineWork.next);
     }
     if (gMainRoutineWork.pendingDjinni != 0) {
       // UB: called with a second argument (1) its definition does not take.
@@ -210,27 +210,27 @@ s32 FieldSequence_Run(void) {
 #endif
       gMainRoutineWork.pendingDjinni = 0;
     }
-    if (gMainRoutineWork.tally25c != 0) {
+    if (gMainRoutineWork.pendingItem != 0) {
       WorldMap_Freeze();
-      if (Party_CheckItemLimit(gMainRoutineWork.tally25c) == 0) {
+      if (Party_CheckItemLimit(gMainRoutineWork.pendingItem) == 0) {
         // UB: called with a second argument (0) its definition does not take.
 #ifdef UBFIX
-        PartyInventory_GiveItem(gMainRoutineWork.tally25c);
+        PartyInventory_GiveItem(gMainRoutineWork.pendingItem);
 #else
-        ((s32 (*)(s32, s32))PartyInventory_GiveItem)(gMainRoutineWork.tally25c,
-                                                     0);
+        ((s32 (*)(s32, s32))PartyInventory_GiveItem)(
+            gMainRoutineWork.pendingItem, 0);
 #endif
       }
       WorldMap_ReloadPendingAreaGraphics();
-      gMainRoutineWork.tally25c = 0;
+      gMainRoutineWork.pendingItem = 0;
     }
   }
 
   party = &gMainRoutineWork;
-  leaderId = &gMainRoutineWork.currentOwner;
+  leaderId = &gMainRoutineWork.leaderActorId;
   steps = &gMainRoutineWork.encounterSteps;
   entrance = &gMainRoutineWork.entrance;
-  turn = &gMainRoutineWork.turn;
+  turn = &gMainRoutineWork.layer;
   for (;;) {
     GameFlag_Set(FLAG_FIELD_HANDLING_REQUESTS);
     leader = WorldMap_Unfreeze();
@@ -259,17 +259,17 @@ s32 FieldSequence_Run(void) {
               Actor_SelectAnimationFar(leader, 36);
             else
               Actor_SelectAnimationFar(leader, 19);
-            Sound_PlayFar(MUS_059);
+            Sound_PlayFar(MUS_DEFEAT);
             FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated, 1);
             unit = Unit_Get(*leaderId);
             unit->hp = 1;
             Unit_UpdateGauges(unit);
             {
-              s32 restartScene = party->savedScene;
+              s32 restartScene = party->restartScene;
               s32 restartEntrance;
 
-              party->scene = restartScene;
-              restartEntrance = party->savedEntrance;
+              party->next = restartScene;
+              restartEntrance = party->restartEntrance;
               *entrance = restartEntrance;
               WorldMap_SetReturnLeavingScene((s16)restartScene,
                                              (s16)restartEntrance);
@@ -344,8 +344,8 @@ s32 FieldSequence_Run(void) {
       } else if (work->encounter != 0) {
         Leader_StopMoving();
         ObjectTable_Snapshot();
-        party->returnCue = -1;
-        party->scene = 510;
+        party->returnMusic = -1;
+        party->next = 510;
         *entrance = work->encounter;
         work->exit = 999;
         Field_StartEncounterTransition(work->encounter);
@@ -436,10 +436,10 @@ s32 FieldSequence_Run(void) {
         } else {
           Event_ResolveAllPendingActions();
           AreaNameWindow_HideFar();
-          party->returnCue = Sound_GetCurrentBgmFar();
+          party->returnMusic = Sound_GetCurrentBgmFar();
           if (!GameFlag_Get(382)) {
             u8 *objects = (u8 *)Ram_HeapSlots->objectSystem;
-            u8 *owner = gResourceBlockOwners;
+            u8 *owner = gVramCacheBlockOwners;
             s32 freeBlocks = 0;
             s32 n = 512;
 
@@ -590,7 +590,7 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
     SET_POSITION(&gMainRoutineWork, entry->x << 16, entry->y << 16,
                  entry->z << 16);
     gMainRoutineWork.heading = entry->facing;
-    gMainRoutineWork.turn = 0;
+    gMainRoutineWork.layer = 0;
   }
 
   left = entry->cameraLeft;

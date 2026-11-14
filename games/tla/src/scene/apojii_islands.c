@@ -172,12 +172,12 @@ void ApojiiIslands_HazeJoinsParty(void) { Djinn_JoinParty(10, 3, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_ApojiiIslands1)
     return gApojiiIslands_Room1Placements;
@@ -190,11 +190,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 // Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back up).
 void ApojiiIslands_SinkIntoSand(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 2;
 }
 
 void ApojiiIslands_RiseFromSand(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 0;
 }
 
 extern s32 gApojiiIslands_FallsCycleFrame;
@@ -315,14 +315,14 @@ void ApojiiIslands_StopFlashing(struct Actor *object) {
 
 #include "shared/actor_flicker_child.h"
 
-/* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32
- * BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void
- * BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the
- * definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode),
+/* VIEW(s07a4): routine PaletteFade_SetTarget as s32
+ * PaletteFade_SetTarget(s32 a, s32 b); event.h has void
+ * PaletteFade_SetTarget(s32 value, s32 mode); tried as the
+ * definition's void PaletteFade_SetTarget(s32 value, s32 mode),
  * which the object already declares, ApojiiIslands_DouseAquaStone moves: 1 of
  * 188 instructions in tla-ja (apojii_islands.c). */
 extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__(
-    "BattleEffect_ApplyColorToTargetBuffer");
+    "PaletteFade_SetTarget");
 
 static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
   BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
@@ -344,13 +344,13 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   actor->update = Actor_FlickerChild;
   Sound_Play(SOUND_FADE_OUT_BGM);
   wait(30);
-  Sound_Play(MUS_021);
+  Sound_Play(MUS_AQUA_ROCK);
   ApojiiIslands_StartSparkles();
   ApojiiIslands_SetSparkleAnchor(17);
   Scene_QueueMusic(SE_170);
   i = 3;
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash. */
-  /* FAKEMATCH(signature): BattleEffect_ApplyColorToTargetBuffer declared
+  /* FAKEMATCH(signature): PaletteFade_SetTarget declared
    * returning s32, though its target returns nothing. */
 flash:
   ApojiiIslands_Flash(Random16() & 0x7fff, 0);
@@ -397,7 +397,7 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_Get(17)->update = (void (*)(void))ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
-  Actor_FaceActor(gMainRoutineWork.currentOwner, 16, 0);
+  Actor_FaceActor(gMainRoutineWork.leaderActorId, 16, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_FaceDirection(16, FACING_EAST, 0);
@@ -429,7 +429,7 @@ void ApojiiIslands_ClearFirstBush(void) {
 #define DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5,    \
                                                   n6, n7, n8, n9, n10)         \
   void name(void) {                                                            \
-    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);          \
                                                                                \
     ApojiiIslands_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);                 \
     if (Event_GetFlag(n5) == 0) {                                              \
@@ -437,12 +437,12 @@ void ApojiiIslands_ClearFirstBush(void) {
       if (leader->x >> 20 == n9 && leader->z >> 20 == n10) {                   \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
-        Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,                 \
+        Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,                \
                                 ATTACHED_EFFECT_IN_FRONT |                     \
                                     ATTACHED_EFFECT_ONCE);                     \
-        Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);      \
+        Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);     \
         leader->velocityY = px(6);                                             \
-        FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);             \
+        FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);            \
         Event_End();                                                           \
       }                                                                        \
     }                                                                          \
@@ -468,12 +468,12 @@ void ApojiiIslands_EnterDoor(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -6);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
@@ -484,12 +484,12 @@ void ApojiiIslands_EnterDoor(void) {
 s32 ApojiiIslands_TalkToSon(void) {
   u16 facing;
 
-  facing = (s16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  facing = (s16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
                  0xc000);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
-    Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(9, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
     // "Why does my father keep staring at that rock every day?"
     Event_ShowMessage(9, 0);
@@ -502,7 +502,7 @@ s32 ApojiiIslands_TalkToSon(void) {
 s32 ApojiiIslands_MindReadSon(void) {
   u16 facing;
 
-  facing = (s16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  facing = (s16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
                  0xc000);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -516,11 +516,11 @@ s32 ApojiiIslands_MindReadSon(void) {
 }
 
 void ApojiiIslands_JumpDownLedge(void) {
-  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 1, 5);
+  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 1, 5);
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_ApojiiIslands1)
     return gApojiiIslands_Room1Triggers;
@@ -532,7 +532,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 void ApojiiIslands_TalkToInnkeeper(s32 actor) {
-  if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Inn_CheckIn(8, actor);
     return;
@@ -567,7 +567,7 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
 }
 
 void ApojiiIslands_TalkToMerchant(s32 actor) {
-  if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Shop_Run(23, actor);
     return;
@@ -620,7 +620,7 @@ s32 Scene_Initialize(void) {
   effect = &gFieldWork->transition;
   *effect = 0x202;
   party = &gMainRoutineWork;
-  scene = party->scene;
+  scene = party->next;
   if (scene == (s32)&SceneId_ApojiiIslands2) {
     ApojiiIslands_InitializeRoom2();
   } else if (scene == (s32)&SceneId_ApojiiIslands1) {
@@ -684,13 +684,13 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
 // In a stream the current carries the leader downstream, splashing.
 void ApojiiIslands_FlowWithStream(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 owner = gMainRoutineWork.currentOwner;
+  s32 owner = gMainRoutineWork.leaderActorId;
   struct Actor *anchor = work->camera;
   struct Actor *leader = Actor_Get(owner);
   s32 position[3];
   s32 result;
 
-  if (gMainRoutineWork.scene != (s32)&SceneId_AquaRock1 ||
+  if (gMainRoutineWork.next != (s32)&SceneId_AquaRock1 ||
       leader->terrainHeight != 0) {
     position[0] = leader->x;
     position[1] = leader->y;
@@ -762,7 +762,7 @@ void ApojiiIslands_DrawCellMarkers(void) {
   // source keeps its load and a store to the stack that nothing reads.
   s32 viewY = map->origin[1];
   struct CellMarkers *table = &gApojiiIslands_CellMarkers;
-  struct VramBlockCacheEntry *entry = &gResourceTableEntries[table->block];
+  struct VramBlockCacheEntry *entry = &gVramCacheEntries[table->block];
   u32 tile = entry->offset >> 5;
   u32 offset = entry->offset;
   struct CellMarker *record;

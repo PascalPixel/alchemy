@@ -140,11 +140,11 @@ void JupiterLighthouse_DrawSparkSprite(
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -270,7 +270,7 @@ static __inline__ void Bring(s32 id) {
 /// rises there with motes circling it, the hall's floor changes and its lights
 /// cycle, and the row of four grey blocks rises to hover.
 void JupiterLighthouse_ActivateTheLighthouse(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *a = Actor_GetById(ACTOR_FIRST_ROW_BLOCK);
   struct Actor *b = Actor_GetById(ACTOR_FIRST_ROW_BLOCK + 1);
   struct Actor *c = Actor_GetById(ACTOR_FIRST_ROW_BLOCK + 2);
@@ -283,7 +283,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
     return;
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   FieldEvent_Wait(30);
   leader->update = JupiterLighthouse_ShimmerColors;
   FieldEvent_Wait(30);
@@ -342,7 +342,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   System_Wait(1);
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, 16);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 1);
   Actor_SetScript(ACTOR_LOWER_BEAM, gJupiterLighthouse_PulseScript);
   Actor_SetScript(ACTOR_UPPER_BEAM, gJupiterLighthouse_PulseScript);
   gJupiterLighthouse_PulseStep = 2;
@@ -377,7 +377,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 1);
   Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 2);
   Actor_RaiseFromCell(ACTOR_LAST_ROW_BLOCK);
-  Event_PlaySound(MUS_080);
+  Event_PlaySound(MUS_PUZZLE_SOLVED);
   Sound_WaitForJingle();
 }
 
@@ -473,7 +473,7 @@ void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(actor), 2);
   Event_PlaySound(SE_ASCEND);
   System_Wait(50);
-  Event_PlaySound(MUS_082);
+  Event_PlaySound(MUS_REVIVE);
   for (i = 0; i < 120; i++) {
     {
       struct Actor *object = Actor_Get(target);
@@ -574,7 +574,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Sets up the hall: Alex while he waits for the party, the beam of light
 /// hidden until the lighthouse is activated, then shown with its motes.
@@ -614,7 +614,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))
     MapGrid_SetCellBehavior(0xd00000, 0x2a00000, 2, 236);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
@@ -661,7 +661,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 void JupiterLighthouse_UpdateOrb(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -707,7 +707,7 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
             s32 delay = 200;
             work->raisedTrigger = delay;
           }
-          gMainRoutineWork.renderMode = 0;
+          gMainRoutineWork.movementMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }
@@ -743,7 +743,7 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(SE_222);
+  Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Math_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
@@ -908,7 +908,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   struct SparkWork__s1650 *work =
       HeapSlot_Alloc(220, sizeof(struct SparkWork__s1650));
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct SparkSprite *sprite;
   struct Spark *spark;
   s32 entry;
@@ -994,7 +994,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

@@ -49,7 +49,7 @@ void Rope_Draw(void) {
   s32 i;
   s32 prevX = 0;
   s32 prevY = 0;
-  u32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   s32 prevZ = 0;
   s32 started = 0;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -133,8 +133,8 @@ void Rope_Update(void) {
   s32 i = 0;
 
   if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
-    if (gMainRoutineWork.renderMode == 0) {
-      s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
+    if (gMainRoutineWork.movementMode == 0) {
+      s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
 
       if (target != -1) {
         for (i = 0; i < 8; i++)
@@ -144,7 +144,7 @@ void Rope_Update(void) {
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->raisedTrigger = 0xfc85;
       }
-    } else if (gMainRoutineWork.renderMode == 3) {
+    } else if (gMainRoutineWork.movementMode == 3) {
       event->raisedTrigger = 0xfc86;
     }
   }
@@ -654,7 +654,7 @@ void Rope_DebugSwing(struct Actor *object) {
 /// Returns 1 when the leader stands on the cell of post firstId or secondId, or
 /// a cell beside it along an axis, at the same height.
 s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
   s32 x = owner->x >> 20;
@@ -760,7 +760,7 @@ void Tightrope_Draw(void) {
   s32 prevY = 0;
   s32 prevZ = 0;
   s32 started = 0;
-  u32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
@@ -841,8 +841,8 @@ void Tightrope_Update(void) {
   if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    if (party->renderMode == 0) {
-      s32 target = Field_FindNearbyTalkTarget(party->currentOwner);
+    if (party->movementMode == 0) {
+      s32 target = Field_FindNearbyTalkTarget(party->leaderActorId);
 
       if (target != -1) {
         for (i = 0; i < 8; i++) {
@@ -853,7 +853,7 @@ void Tightrope_Update(void) {
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->raisedTrigger = 0xfc83;
       }
-    } else if (party->renderMode == 4) {
+    } else if (party->movementMode == 4) {
       event->raisedTrigger = 0xfc84;
     }
   }
@@ -1341,7 +1341,7 @@ void HangingVine_Draw(void) {
   u32 angle;
   s32 prevX = 0;
   s32 prevY = 0;
-  u32 tiles = gResourceTableEntries[work->vramEntry].offset >> 5;
+  u32 tiles = gVramCacheEntries[work->vramEntry].offset >> 5;
   s32 prevZ = 0;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;

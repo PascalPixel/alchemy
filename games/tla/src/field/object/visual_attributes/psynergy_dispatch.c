@@ -127,10 +127,10 @@ void FieldPsynergy_Run(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
     s32 paused;
 
-    paused = party->pausedObject;
+    paused = party->haltedActor;
     if (paused != -1) {
       FieldPsynergy_ResumeHaltedActor(paused);
-      party->pausedObject = -1;
+      party->haltedActor = -1;
     }
     objectId = Field_FindNearbyPsynergyTarget(scene->firstObjectId, animation);
     objectId = FieldPsynergy_FilterHaltTarget(objectId);
@@ -138,7 +138,7 @@ void FieldPsynergy_Run(void) {
       FieldPsynergy_SetupActorPair(scene->firstObjectId, objectId);
       FieldPsynergy_HaltOnTarget(objectId);
       FieldPsynergy_HaltActor(objectId);
-      party->pausedObject = objectId;
+      party->haltedActor = objectId;
     } else {
       FieldPsynergy_Halt();
     }
@@ -221,19 +221,19 @@ void FieldPsynergy_Dispatch(void) {
     if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
     party = &gMainRoutineWork;
-    if (party->pausedObject != scene->secondObjectId)
+    if (party->haltedActor != scene->secondObjectId)
       ((struct Actor *)scene->child)->movementState = 1;
     FieldPsynergy_StartMindReadWave(scene->firstObjectId, targetId);
   } else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the target.
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    if (party->pausedObject != -1) {
-      FieldPsynergy_ResumeHaltedActor(party->pausedObject);
-      party->pausedObject = -1;
+    if (party->haltedActor != -1) {
+      FieldPsynergy_ResumeHaltedActor(party->haltedActor);
+      party->haltedActor = -1;
     }
     FieldPsynergy_HaltActor(targetId);
-    party->pausedObject = targetId;
+    party->haltedActor = targetId;
     FieldPsynergy_HaltOnTarget(targetId);
   }
 }

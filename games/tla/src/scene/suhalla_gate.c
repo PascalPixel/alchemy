@@ -115,7 +115,7 @@ void SuhallaGate_FightDew(void) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
     return gSuhallaGate_CliffsEntrances;
@@ -124,12 +124,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaGate_RoadEntrances;
 }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
     return gSuhallaGate_CliffsPlacements;
@@ -138,8 +138,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gSuhallaGate_CavePlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_SuhallaGate2)
     return gSuhallaGate_CliffsTriggers;
@@ -198,7 +198,7 @@ s32 Scene_Initialize(void) {
 
   work = Ram_HeapSlots->fieldWork;
   work->transition = 256;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_SuhallaGate1)
     SuhallaGate_SetUpRoad();
   else if (scene == (s32)&SceneId_SuhallaGate2)
@@ -236,7 +236,7 @@ void SuhallaGate_EnterHouse(void) {
 void SuhallaGate_LeaveForIdejima(void) {
   s32 value = gFieldWork->stepTrigger;
 
-  gMainRoutineWork.currentOwner = ACTOR_FELIX;
+  gMainRoutineWork.leaderActorId = ACTOR_FELIX;
   Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
 }
@@ -248,11 +248,11 @@ void SuhallaGate_RuffianSpotsParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWaahhhItS);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 472, 320);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 472, 320);
   FieldCamera_MoveTo(456, CAMERA_KEEP, 280, 1);
   FieldCamera_WaitForArrival();
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Actor_Jump(ACTOR_ROAD_RUFFIAN, 6, 20);
   Event_Wait(20);
@@ -290,7 +290,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgHaThatWas);
   work = &gMainRoutineWork;
-  owner = &work->currentOwner;
+  owner = &work->leaderActorId;
   Actor_WalkByAndWait(*owner, 0, -4);
   FieldEvent_Wait(30);
   Actor_GetById(*owner)->actionFlags &= 254;
@@ -332,7 +332,7 @@ void SuhallaGate_FightPunchAnt(void) {
   struct Actor *owner;
 
   Actor_Jump(ACTOR_PUNCH_ANT, 4, 0);
-  owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (owner != NULL)
     Actor_SetDestination(ACTOR_PUNCH_ANT, ((s16 *)&owner->x)[1],
                          ((s16 *)&owner->z)[1]);
@@ -352,8 +352,8 @@ void SuhallaGate_PunchAntHopsFromWest(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_PUNCH_ANT, 472, 480);
   Event_Wait(16);
-  Actor_FaceActor(gMainRoutineWork.currentOwner, ACTOR_PUNCH_ANT, 0);
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_PUNCH_ANT, 0);
+  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldCamera_FollowActor(ACTOR_PUNCH_ANT, 1);
   FieldCamera_WaitForArrival();
@@ -380,12 +380,12 @@ void SuhallaGate_PunchAntHopsFromEast(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_PUNCH_ANT, 472, 480);
   Event_Wait(16);
-  Actor_FaceActor(gMainRoutineWork.currentOwner, ACTOR_PUNCH_ANT, 0);
+  Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_PUNCH_ANT, 0);
   emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
   frames = 0;
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner, emote, frames);
+  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId, emote, frames);
   Event_Wait(16);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 488, 440);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 488, 440);
   Event_Wait(16);
   FieldCamera_FollowActor(ACTOR_PUNCH_ANT, 1);
   FieldCamera_WaitForArrival();
@@ -412,23 +412,23 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgMyThatWas);
   Actor_SetPosition(ACTOR_CAVE_KRADEN, 512, 432);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 528, 432);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 528, 432);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // "My! That was invigorating! He wasn't too strong..."
   Event_ShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_CAVE_KRADEN, 2);
   Event_Wait(20);
   // "I never knew fighting could be so fun! Ah, but we'd better get on to the
   // peninsula..."
   Event_ShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(30);
   Event_SetFlag(FLAG_GATEWAY_CAVE_PUNCH_ANT_BEATEN);
   Actor_SetAnimation(ACTOR_CAVE_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader)
     Actor_SetDestination(ACTOR_CAVE_KRADEN, ((s16 *)&leader->x)[1],
                          ((s16 *)&leader->z)[1]);
@@ -452,14 +452,14 @@ void SuhallaGate_PointToMeetingSpot(void) {
   // down here and go into that cave."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_CLIFFS_KRADEN, 0, 10);
   Actor_SetAnimation(ACTOR_CLIFFS_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader)
     Actor_SetDestination(ACTOR_CLIFFS_KRADEN, ((s16 *)&leader->x)[1],
                          ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(ACTOR_CLIFFS_KRADEN);
   Actor_SetPosition(ACTOR_CLIFFS_KRADEN, 0, 0);
   Event_Wait(10);
-  Actor_WalkByAndWait(gMainRoutineWork.currentOwner, 16, 0);
+  Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 16, 0);
   Event_End();
 }
 

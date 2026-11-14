@@ -108,7 +108,7 @@ void wait(s32 frames) {
     gTasksRunning = 1;
     Task_RunPass(TASK_PASS_VBLANK);
     gTasksRunning = 0;
-    if (gRenderOamEnabled) {
+    if (gOamCopyEnabled) {
       Render_BuildOamList(HeapSlot_Alloc(80, 0x400));
     } else {
       gOamUsage.used = 0;
@@ -132,12 +132,12 @@ void wait(s32 frames) {
       }
     }
     if (gSleepDisabled == 0) {
-      if (gAutoSleepEnabled) {
+      if (gIdleSleepEnabled) {
         if (gInput.held)
-          gIdleFrameCount = 0;
+          gIdleFrames = 0;
         else {
-          gIdleFrameCount++;
-          if (gIdleFrameCount > SLEEP_IDLE_FRAMES)
+          gIdleFrames++;
+          if (gIdleFrames > SLEEP_IDLE_FRAMES)
             gSleepRequested = 1;
         }
       }
@@ -174,7 +174,7 @@ void wait(s32 frames) {
     HeapSlot_Release(80);
     Oam_ResetFrame();
     gFrameCount++;
-    gFrameWaitCount++;
+    gPlayTimeFrames++;
     Input_UpdateKeyRepeatAndDirection();
     if (gSerialExchangeActive) {
       Serial_PollStatus();
@@ -215,7 +215,7 @@ void wait(s32 frames) {
         Io_Write16((u16)display, &REG_DISPCNT);
         Io_Write16((u16)backdrop, &PLTT_BACKDROP);
         gSleepRequested = 0;
-        gIdleFrameCount = 0;
+        gIdleFrames = 0;
       } else
         gSleepRequested--;
     }

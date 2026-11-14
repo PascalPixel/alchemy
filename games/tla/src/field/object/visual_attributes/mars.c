@@ -31,7 +31,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s8 *slotState;
 
   djinni = Actor_GetById(djinniId);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (djinni == NULL)
     return;
 
@@ -39,7 +39,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   effectSlots = Ram_HeapSlots->effectWork;
   Shop_SaveAndTintFieldPaletteFar(0x201090);
   wait(30);
-  Actor_ArmCallback(djinniId, 0x4000, 0);
+  Actor_FaceDirectionById(djinniId, 0x4000, 0);
   wait(20);
   Sound_PlayFar(SE_NOTE_LOW);
   Motion_SetVarCbAndRefresh(djinniId, 1);
@@ -85,9 +85,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   wait(60);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
 
   // Every spark still in use stops its fountain (state 2). The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -176,7 +176,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
   s32 y;
 
   other = (struct DescendingOrbitObject *)Actor_GetById(
-      gMainRoutineWork.currentOwner);
+      gMainRoutineWork.leaderActorId);
   raw = actor->timer - 1;
   actor->timer = raw;
   value = actor->timer;
@@ -203,7 +203,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   s32 magnitude;
   s32 angle;
 
-  source = Actor_GetById(gMainRoutineWork.currentOwner);
+  source = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
   if (state == 0) {

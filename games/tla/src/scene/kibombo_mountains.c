@@ -99,7 +99,7 @@ void KibomboMountains_FightWaft(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -109,8 +109,8 @@ extern struct ActorPlacement gKibomboMountains_Placements[];
 extern struct ActorPlacement gKibomboMountains_Room1Placements[];
 extern struct ActorPlacement gKibomboMountains_Room2Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_KibomboMountains1)
     return gKibomboMountains_Room1Placements;
@@ -336,8 +336,8 @@ extern struct Trigger gKibomboMountains_Room1Triggers[];
 extern struct Trigger gKibomboMountains_Room2Triggers[];
 extern s16 gKibomboMountains_Room3Triggers[];
 
-const u8 *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u8 *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_KibomboMountains1)
     return gKibomboMountains_Room1Triggers;
@@ -365,7 +365,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = EVENT_WORK_VALUE;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_KibomboMountains1) {
     Actor_SetSpritePriority(18, 1);
     Actor_SetSpritePriority(19, 1);
@@ -489,7 +489,7 @@ void KibomboMountains_GuardsReport(void) {
   Actor_SetAnimationAndWait(11, 3);
   // "Keep a good watch. Do not permit anyone to pass."
   Event_ShowMessage(11, 0);
-  FieldActor_WatchAndSetScript(11, gMainRoutineWork.currentOwner);
+  FieldActor_WatchAndSetScript(11, gMainRoutineWork.leaderActorId);
   System_Wait(30);
   // "If anyone interrupts Akafubu's ceremony, he will hold you responsible..."
   Event_ShowMessage(11, 0);
@@ -512,7 +512,7 @@ void KibomboMountains_WalkSlowly(s32 id) {
 // Caught: "Here! The intruder is here!" The warriors march the party back down
 // the road.
 void KibomboMountains_GuardsTurnPartyBack(void) {
-  s32 owner = gMainRoutineWork.currentOwner;
+  s32 owner = gMainRoutineWork.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -602,7 +602,7 @@ void KibomboMountains_SendPartyBack(void) {
 
 // A warrior sees the party: "Guards! An intruder!"
 void KibomboMountains_GuardSpotsParty(s32 id) {
-  s32 owner = gMainRoutineWork.currentOwner;
+  s32 owner = gMainRoutineWork.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -626,7 +626,7 @@ void KibomboMountains_GuardSpotsParty(s32 id) {
 
 // The dog sees the party and barks for the warriors.
 void KibomboMountains_DogSpotsParty(s32 id) {
-  s32 owner = gMainRoutineWork.currentOwner;
+  s32 owner = gMainRoutineWork.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -650,7 +650,7 @@ void KibomboMountains_DogSpotsParty(s32 id) {
 
 // Stepping in the first lookout's sight, unless the crate hides the leader.
 void KibomboMountains_StepWestOfCrate(void) {
-  struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *guard = Actor_Get(14);
 
   if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <
@@ -661,7 +661,7 @@ void KibomboMountains_StepWestOfCrate(void) {
 }
 
 void KibomboMountains_StepEastOfCrate(void) {
-  struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *guard = Actor_Get(15);
 
   if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <
@@ -680,7 +680,7 @@ void KibomboMountains_StepBeforeSecondLookoutAgain(void) {
 }
 
 void KibomboMountains_StepBeforeThirdLookout(void) {
-  if (gMainRoutineWork.renderMode != 3)
+  if (gMainRoutineWork.movementMode != 3)
     KibomboMountains_GuardSpotsParty(12);
 }
 

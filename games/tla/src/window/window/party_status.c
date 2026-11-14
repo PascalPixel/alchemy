@@ -19,7 +19,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
   s32 width;
   s32 x;
 
-  if (work->menuState != 0) {
+  if (work->battleMode != 0) {
     n = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
@@ -56,12 +56,12 @@ void PartyStatus_CreateWindow(s32 flags) {
   window = HeapSlot_AllocEwram(64, sizeof(struct PartyStatusWindow));
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   zero = 0;
-  work->menuBusy = 1;
+  work->holdTilemapUpload = 1;
   PartyStatus_BuildLayoutBounds(flags);
   window->window = (struct Window *)Window_Create(
       window->x, window->y, window->width, window->height, 6);
   PartyStatus_Draw(flags);
-  work->menuBusy = zero;
+  work->holdTilemapUpload = zero;
 }
 
 /// Draws the vertical lines between the party members' columns of the party
@@ -75,7 +75,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   s32 bias = 0;
   u32 max = window->width - 1;
   s32 i;
-  u8 state = canvas->menuState;
+  u8 state = canvas->battleMode;
   u32 rows = window->height;
   u32 col;
   u32 row;
@@ -111,7 +111,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
       i++;
       table = gWindow_PartyColumnOffsets;
     } while (gWindow_PartyColumnOffsets[i] >= 0);
-    state = canvas->menuState;
+    state = canvas->battleMode;
   }
   {
     /* FAKEMATCH(barrier): an empty asm copies the state into a word local. */
@@ -148,7 +148,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   u32 pixels;
   u32 result;
 
-  if (canvas->menuState == 0) {
+  if (canvas->battleMode == 0) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
             (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
     BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
@@ -219,7 +219,7 @@ void PartyStatus_Draw(s32 flags) {
   u16 members[5];
   u8 standbyDjinn[4];
 
-  if (work->menuState != 0) {
+  if (work->battleMode != 0) {
     count = BattleParty_PrepareMembersFar(0);
     y = -1;
     for (i = 0; i < count; i++) {
@@ -232,7 +232,7 @@ void PartyStatus_Draw(s32 flags) {
     if (count > 4)
       count = 4;
     for (i = 0; i < count; i++)
-      members[i] = gMainRoutineWork.activeOwners[i];
+      members[i] = gMainRoutineWork.party[i];
     members[i] = 255;
   }
   count = i;
@@ -241,14 +241,14 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->menuState == 0 || Func_08118130__screens(0, 0) == 0)
+  if (work->battleMode == 0 || Func_08118130__screens(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
     return;
   }
 
-  work->menuBusy = 1;
+  work->holdTilemapUpload = 1;
   if (layout->flags == flags) {
     WindowSprite_RedrawSavedRect(window);
     Window_DrawColumnBorders(window, flags);
@@ -277,12 +277,12 @@ void PartyStatus_Draw(s32 flags) {
       Text_SetColor(TEXT_COLOR_YELLOW);
     else
       Text_SetColor(TEXT_COLOR_WHITE);
-    work->level = 14;
-    if (work->menuState != 0)
-      work->level = 5;
+    work->textPalette = 14;
+    if (work->battleMode != 0)
+      work->textPalette = 5;
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-    work->level = 15;
+    work->textPalette = 15;
     Text_DrawStringAtOffset(unit->name, (struct RenderInput *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Text_SetColor(TEXT_COLOR_WHITE);
@@ -296,9 +296,9 @@ void PartyStatus_Draw(s32 flags) {
                            barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
-      work->level = 14;
-      if (work->menuState != 0)
-        work->level = 5;
+      work->textPalette = 14;
+      if (work->battleMode != 0)
+        work->textPalette = 5;
       Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                       (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                       y * 8 + 16, 1);
@@ -313,9 +313,9 @@ void PartyStatus_Draw(s32 flags) {
       }
     }
   }
-  work->level = 15;
+  work->textPalette = 15;
 
-  if (work->menuState != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
+  if (work->battleMode != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
     /* FAKEMATCH(dead): i set to a 0 never read. */
@@ -339,7 +339,7 @@ void PartyStatus_Draw(s32 flags) {
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[3]), 3,
                            row + 1, 0);
   }
-  work->menuBusy = 0;
+  work->holdTilemapUpload = 0;
 }
 
 void PartyStatus_Close(void) {

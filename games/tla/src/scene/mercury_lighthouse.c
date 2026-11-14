@@ -78,15 +78,15 @@ void MercuryLighthouse_LookAround(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
@@ -102,7 +102,7 @@ void MercuryLighthouse_SpawnMotes(void) {
 
   Actor_SetSpritePriority(8, 3);
   Actor_SetSpritePriority(9, 3);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   phase = gFrameCount & 15;
   if (phase == 0) {
     object = ((struct Actor *)Import_ActorCreate(0x2a2, 0, 0, 0));
@@ -135,7 +135,7 @@ void MercuryLighthouse_HearVoices(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
   wait(1);
   gMercuryLighthouse_MoteFrames = 0;
   Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);
@@ -256,7 +256,7 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_PlaySound(SE_ASCEND);
-    BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+    PaletteFade_SetTarget(0x7fff, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
     Import_EventSetExitRequest(9);

@@ -23,11 +23,11 @@ struct WindowWork {
   u8 alt;         ///< 1 lets text use the second range of tiles
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
   u8 dirty;
-  u8 mode;             ///< nonzero widens a message window by 2
-  u8 menuState;        ///< 1 from the work's setup
-  u8 menuBusy;         ///< while set, the tilemap is not uploaded
-  u8 level;            ///< text tiles' palette; 15 by default
-  u16 tilemap[20][32]; ///< the windows' BG tilemap
+  u8 mode;              ///< nonzero widens a message window by 2
+  u8 battleMode;        ///< 1 from the work's setup
+  u8 holdTilemapUpload; ///< while set, the tilemap is not uploaded
+  u8 textPalette;       ///< text tiles' palette; 15 by default
+  u16 tilemap[20][32];  ///< the windows' BG tilemap
   struct Window windows[UI_WINDOW_COUNT];
   struct UiChannelSlot channels[3];
   struct WindowSprite outputs[UI_OUTPUT_COUNT];
@@ -69,8 +69,8 @@ STATIC_ASSERT(offsetof(struct WindowWork, freeOutputs.tailLink) == 0xe34);
 STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) == 0xf38);
 STATIC_ASSERT(offsetof(struct WindowWork, colour) == 0xf3e);
 STATIC_ASSERT(offsetof(struct WindowWork, entries) == 0xf40);
-STATIC_ASSERT(offsetof(struct WindowWork, menuState) == 5);
-STATIC_ASSERT(offsetof(struct WindowWork, level) == 7);
+STATIC_ASSERT(offsetof(struct WindowWork, battleMode) == 5);
+STATIC_ASSERT(offsetof(struct WindowWork, textPalette) == 7);
 STATIC_ASSERT(offsetof(struct WindowWork, tileAttributes) == 0xe38);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 STATIC_ASSERT(offsetof(struct WindowWork, count) == 0x1342);

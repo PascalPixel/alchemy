@@ -92,11 +92,11 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -145,8 +145,8 @@ void JupiterLighthouse_TeleportToGroundFloor(void) {
   Import_EventSetExitRequest(6);
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement2)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement2)
     return gJupiterLighthouseBasement_Room2Triggers;
   return gJupiterLighthouseBasement_Triggers;
 }
@@ -247,16 +247,16 @@ void JupiterLighthouse_SpawnSparks(void) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
-  if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement1) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineWork.entrance == 4)
-      Actor_DepartInRing(gMainRoutineWork.currentOwner);
+      Actor_DepartInRing(gMainRoutineWork.leaderActorId);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
         gMainRoutineWork.entrance == 6)
-      Actor_DepartInRing(gMainRoutineWork.currentOwner);
+      Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_JupiterLighthouseBasement2) {
+  if (gMainRoutineWork.next == (s32)&SceneId_JupiterLighthouseBasement2) {
     REG_BLDALPHA = 0x1008;
     REG_BLDCNT = 0x3f10;
     JupiterLighthouse_SpawnSparks();
@@ -361,7 +361,7 @@ void LightSprites_Draw(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
+  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOam;
 
@@ -484,7 +484,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

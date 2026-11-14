@@ -87,16 +87,16 @@ void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const u32 *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Loho2)
+const u32 *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Loho2)
     return gLoho_Regions;
   return 0;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Loho2)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Loho2)
     return gLoho_Room2Placements;
   return gLoho_Placements;
 }
@@ -561,17 +561,17 @@ void Loho_LiftRock(void) {
     Actor_SetPosition(66, 520, 136);
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Loho1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Loho1)
     return gLoho_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Loho2)
+  if (gMainRoutineWork.next == (s32)&SceneId_Loho2)
     return gLoho_Room2Triggers;
   return gLoho_Triggers;
 }
 
 /// "People staying at the inn can check in at the counter."
 void Loho_ReadInnSign(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -590,7 +590,7 @@ void Loho_TalkToInnkeeper(void) {
 
 /// "Commerce really took off when we started this mining colony in Loho."
 void Loho_TalkAboutCommerce(void) {
-  Actor_GetById(gMainRoutineWork.currentOwner);
+  Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
     Shop_Run(30, 8);
   } else {
@@ -605,7 +605,7 @@ void Loho_TalkAboutCommerce(void) {
 
 /// "If you're only here for the cannon, you can forget about it."
 void Loho_TalkAboutCannon(s32 actor) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
@@ -660,9 +660,9 @@ loop:
   work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
   Event_PlaySound(SE_MAP_EXIT);
   Event_Wait(6);
   Import_EventSetExitRequest(*(s16 *)work);
@@ -678,10 +678,10 @@ void Loho_EnterDoor(void) {
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
-  Actor_SetAnimation(party->currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
+  Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
@@ -754,7 +754,7 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Loho1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Loho1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
@@ -785,7 +785,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Loho1 && Event_GetFlag(0xa5f))
+  if (gMainRoutineWork.next == (s32)&SceneId_Loho1 && Event_GetFlag(0xa5f))
     Loho_DrawBrokenWall();
   return 0;
 }

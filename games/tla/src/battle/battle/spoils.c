@@ -39,7 +39,7 @@ void BattleSpoils_Clear(void) {
 
   battle = Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
-  gMainRoutineWork.tally25c = 0;
+  gMainRoutineWork.pendingItem = 0;
   spoils->coins = 0;
   spoils->experience = 0;
   spoils->defeated = 0;
@@ -238,7 +238,7 @@ void Battle_AwardSpoils(void) {
       unit->experience += spoils->experience;
     while (Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit)),
            Unit_TryLevelUpFar(unitId, gains) != 0) {
-      Sound_PlayFar(MUS_089);
+      Sound_PlayFar(MUS_LEVEL_UP);
       MessageArgument_ClearAllFar();
       MessageArgument_PushFar(unit->classIndex, MESSAGE_ARGUMENT_CLASS);
       MessageArgument_PushFar(list[i], MESSAGE_ARGUMENT_ACTOR);

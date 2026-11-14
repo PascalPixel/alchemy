@@ -77,7 +77,7 @@ struct WingVertex {
   s8 unused2;
 };
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
 extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
@@ -169,7 +169,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   u8 *shades;
   u16 *dst;
 
-  buffer = gMapCellBuffer;
+  buffer = gMapGridCellBuffer;
   shades = Data_02010fa0;
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -226,8 +226,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   sprite = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
   ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
-  STAMP_TILES(work) =
-      gResourceTableEntries[sprite->vramBlock].offset + 0x06010000;
+  STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + 0x06010000;
   {
     u8 *c = work->sheet;
 

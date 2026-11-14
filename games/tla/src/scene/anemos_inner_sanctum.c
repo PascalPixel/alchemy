@@ -395,7 +395,7 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -406,16 +406,16 @@ extern struct ActorPlacement gAnemosInnerSanctum_Room3Placements[];
 extern s32 gAnemosInnerSanctum_Room4Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_Room5Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum1)
     return gAnemosInnerSanctum_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum2)
     return gAnemosInnerSanctum_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum3)
     return gAnemosInnerSanctum_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4)
     return gAnemosInnerSanctum_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum5)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum5)
     return gAnemosInnerSanctum_Room5Placements;
   return gAnemosInnerSanctum_Placements;
 }
@@ -560,7 +560,7 @@ extern s32 gAnemosInnerSanctum_SparkOffsets[][2];
 
 void AnemosInnerSanctum_LightThePillar(void) {
   struct Work__s0ac8 *work = ((struct Globals *)Ram_HeapSlots)->work;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   volatile u16 alpha = REG_BLDALPHA;
   s32 x, z;
   s32 targetX = 0;
@@ -638,13 +638,13 @@ void AnemosInnerSanctum_LightThePillar(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   FieldCamera_SetSpeed(0.8);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, x, z);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, x, z);
   FieldCamera_MoveToFixed(x << 16, -1, z << 16, 1);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   actor =
       (FieldActor_Create((u16)type, leader->x, leader->y + px(8), leader->z));
   actor->motionFlags = 0;
@@ -772,7 +772,7 @@ void AnemosInnerSanctum_LightThePillar(void) {
 
   Actor_Release(actor);
   Event_SetFlag(FLAG_SCENE_TEMP_00);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(60);
   Event_End();
@@ -794,14 +794,14 @@ extern s16 gAnemosInnerSanctum_Room3Blocks[];
 extern s16 gAnemosInnerSanctum_Room4Blocks[];
 
 void AnemosInnerSanctum_StartMovingBlock(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum2) {
     Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room2Blocks);
   } else {
-    if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum3) {
       Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room3Blocks);
       Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 0xff);
     } else {
-      if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4) {
+      if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4) {
         Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room4Blocks);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0xff);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 0xff);
@@ -829,31 +829,31 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
   Actor_PlaceMovedBlock();
   x = leader->x >> 19;
   z = leader->z >> 19;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum3) {
     Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 232);
     if (x != 8)
       Field_SetCellBehaviorAt(2, 0x480000, 0x1a80000, 232);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4) {
     Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0);
     Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 232);
     Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0);
     Field_SetCellBehaviorAt(2, 0x2080000, 0x2780000, 232);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum2) {
     if (x == 37 && z == 31) {
       GameFlag_Set(0xa80);
       Actor_SetSpritePriority(8, 2);
     }
     if (x == 55 && z == 95)
       GameFlag_Set(0xa81);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum3) {
     if (x == 7 && z == 53)
       GameFlag_Set(0xa82);
     if (x == 67 && z == 45) {
       MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
       Actor_SetPosition(14, 0, 0);
-      Event_PlaySound(SE_584);
+      Event_PlaySound(SE_BUTTON_PRESS);
       FieldEvent_Wait(30);
       Event_PlaySound(SE_THUMP);
       MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
@@ -875,7 +875,7 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
       GameFlag_Set(0xa85);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4 && x == 33 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4 && x == 33 &&
       z == 45)
     GameFlag_Set(0xa86);
   Event_End();
@@ -890,13 +890,13 @@ extern s32 gAnemosInnerSanctum_TileGlowScript[];
 // sets flag 0x207.
 void AnemosInnerSanctum_StepOnTile(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object;
   s32 all;
   s32 i;
   s32 id;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4)
     MapGrid_CopyCellsTo(17, 71, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   else
     MapGrid_CopyCellsTo(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
@@ -922,7 +922,7 @@ void AnemosInnerSanctum_StepOnTile(void) {
     FieldEvent_Wait(10);
     FieldCamera_SetSpeed(0.8);
     id = 9;
-    if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
+    if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4)
       id = 8;
     FieldCamera_MoveToActorById(id, 1);
     FieldCamera_WaitForArrival();
@@ -940,12 +940,12 @@ void AnemosInnerSanctum_StepOnTile(void) {
 // AnemosInnerSanctum4) or actor 9 with cue 198, 4 pixels at once and then 128
 // more, before the screen transition finishes.
 void AnemosInnerSanctum_RaisePlatform(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4) {
     object = Actor_Get(8);
     FieldEvent_SetExitRequest(13);
   } else {
@@ -956,9 +956,9 @@ void AnemosInnerSanctum_RaisePlatform(void) {
     s32 x = ((leader->x >> 20) << 4) + 8;
     s32 z = ((leader->z >> 20) << 4) + 8;
 
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x, z);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, x, z);
   }
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 10);
   FieldEvent_Wait(30);
   object->motionFlags = 0;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -982,7 +982,7 @@ void AnemosInnerSanctum_SinkIntoSand(void) {
   struct Actor *object;
   s32 t1;
 
-  object = Actor_Get(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.leaderActorId);
   t1 = FieldMapGrid_GetCellBehaviorAt(2, object->x, object->z);
   if (t1 == 0xe8) {
     object->terrainId = 2;
@@ -992,18 +992,18 @@ void AnemosInnerSanctum_SinkIntoSand(void) {
 void Leader_SetLayerByte(void) {
   s32 t0;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  t0 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   FIELD_AT((t0 + 0x22), u8, 0) = 0;
 }
 
 void AnemosInnerSanctum_PressFirstSwitch(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 536, 360);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 536, 360);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
   Actor_SetPosition(14, 0, 0);
-  Event_PlaySound(SE_584);
+  Event_PlaySound(SE_BUTTON_PRESS);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
@@ -1025,7 +1025,7 @@ void AnemosInnerSanctum_PressSecondSwitch(void) {
   object->terrainHeight = -917504;
   object->y = -917504;
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
-  Event_PlaySound(SE_584);
+  Event_PlaySound(SE_BUTTON_PRESS);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(50, 20, 31, 20, 1, 2);
@@ -1060,13 +1060,13 @@ extern s32 gAnemosInnerSanctum_DustScript[];
 // the cell kind under it is 52 or 51, setting the event work's unk16a to 201
 // or 200. unk4c and acceleration hold the leader's last x and z.
 void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 next[2];
   s32 ahead[3];
   struct Actor *dust;
   s32 kind;
 
-  if (Actor_Get(gMainRoutineWork.currentOwner)->z >> 16 > 248) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->z >> 16 > 248) {
     self->update = 0;
     Event_ClearFlag(FLAG_SCENE_TEMP_00);
     self->x = (self->x & 0xfff00000) + 0x80000;
@@ -1134,11 +1134,11 @@ void AnemosInnerSanctum_StartFollower(void) {
     object = Actor_Get(9);
   else
     object = Actor_Get(10);
-  if (*(s16 *)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 18) <= 247) {
+  if (*(s16 *)((u8 *)Actor_Get(gMainRoutineWork.leaderActorId) + 18) <= 247) {
     object->motionFlags = 0;
     object->update = AnemosInnerSanctum_FollowLeader;
-    object->unk4c = Actor_Get(gMainRoutineWork.currentOwner)->x;
-    object->acceleration = Actor_Get(gMainRoutineWork.currentOwner)->z;
+    object->unk4c = Actor_Get(gMainRoutineWork.leaderActorId)->x;
+    object->acceleration = Actor_Get(gMainRoutineWork.leaderActorId)->z;
     Event_SetFlag(FLAG_SCENE_TEMP_00);
   }
 }
@@ -1260,16 +1260,16 @@ extern struct Trigger gAnemosInnerSanctum_Room3Triggers[];
 extern struct Trigger gAnemosInnerSanctum_Room4Triggers[];
 extern struct Trigger gAnemosInnerSanctum_Room5Triggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum1)
     return gAnemosInnerSanctum_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum2)
     return gAnemosInnerSanctum_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum3)
     return gAnemosInnerSanctum_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum4)
     return gAnemosInnerSanctum_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum5)
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum5)
     return gAnemosInnerSanctum_Room5Triggers;
   return gAnemosInnerSanctum_Triggers;
 }
@@ -1316,7 +1316,7 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   Event_PlaySound(SE_DOOR_OPEN);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctum1) {
     MapGrid_AnimateCells(gAnemosInnerSanctum_DoorFrames, 33, 7);
   } else {
     s32 index = work->stepTrigger / 2 - 1;
@@ -1325,9 +1325,9 @@ loop:
                                    gAnemosInnerSanctum_Doors[index].x,
                                    gAnemosInnerSanctum_Doors[index].y);
   }
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
   FieldEvent_Wait(6);
   FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
@@ -1343,8 +1343,8 @@ void AnemosInnerSanctum_RaiseFirstStatue(void) {
   Actor_SetAnimation(9, 2);
   object->y = -px(64);
   Actor_SetPositionFixed(9, px(728), px(120));
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 728, 120);
-  Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 728, 120);
+  Actor_Get(gMainRoutineWork.leaderActorId)->y = -px(48);
   Event_StartScreenTransition();
   object->acceleration = px(1);
   object->speedLimit = px(1);
@@ -1362,7 +1362,7 @@ void AnemosInnerSanctum_RaiseSecondStatue(void) {
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
   object->y = -px(64);
-  Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
+  Actor_Get(gMainRoutineWork.leaderActorId)->y = -px(48);
   Event_StartScreenTransition();
   object->acceleration = px(1);
   object->speedLimit = px(1);
@@ -1395,7 +1395,7 @@ s32 Scene_Initialize(void) {
   v_r7 = 0x204;
   v_r6 = (s32)&gMainRoutineWork;
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
-  v_r1 = gMainRoutineWork.scene;
+  v_r1 = gMainRoutineWork.next;
   if (v_r1 == (s32)&SceneId_AnemosInnerSanctum1) {
     Palette_SetColors((s32)gAnemosInnerSanctum_PaletteSlots,
                       (s32)gAnemosInnerSanctum_PaletteColors,
@@ -1478,7 +1478,7 @@ L_0200a03c:
     if ((Event_GetFlag(FLAG_SCENE_TEMP_06)) != 0) {
       MapGrid_CopyCellsTo(54, 87, 46, 88, 1, 1);
     }
-    FIELD_AT(((s32)Actor_Get((work->currentOwner))), u8, 35) |= 32;
+    FIELD_AT(((s32)Actor_Get((work->leaderActorId))), u8, 35) |= 32;
   }
   goto L_0200a6e6;
 L_0200a1b4:
@@ -1633,7 +1633,7 @@ L_0200a580:
     goto L_0200a596;
   Actor_SetPosition(11, 0, 0);
 L_0200a596:
-  FIELD_AT(((s32)Actor_Get((gMainRoutineWork.currentOwner))), u8, 35) |= 64;
+  FIELD_AT(((s32)Actor_Get((gMainRoutineWork.leaderActorId))), u8, 35) |= 64;
   Actor_SetAnimation(11, 2);
   FIELD_AT(((s32)Actor_Get(11)), u8, 85) = 0;
   FIELD_AT(((s32)Actor_Get(11)), u8, 35) |= 128;
@@ -1720,7 +1720,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                             s32 velocityZ, u32 flags,
                             const struct EffectOptions *options) {
   struct FieldEffect *party =
-      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -1815,7 +1815,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #undef AnemosInnerSanctum_SparkRing
 #undef AnemosInnerSanctum_DropSpark
 void CrackedTile_DropIn(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
   s32 spawn = 1;
@@ -1865,18 +1865,18 @@ loop:
   if (i <= 16)
     goto loop;
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   actor->gravity = px(1);
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Event_End();
 }
 

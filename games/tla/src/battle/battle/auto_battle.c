@@ -20,7 +20,7 @@ s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry *entry;
   struct BattleUnit *unit;
 
-  firstCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
+  firstCount = BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY, unitIds);
   for (index = 0; index != 4; index++)
     Unit_Get(index);
   for (index = 0; index < firstCount; index++) {
@@ -35,9 +35,9 @@ s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
     entry->priority = 0x80;
     count++;
   }
-  secondCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
+  secondCount = BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_ENEMIES, unitIds);
   entry = &entries[firstCount];
-  priorityRange = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
+  priorityRange = BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY, NULL);
   for (index = 0; index < secondCount; index++) {
     s32 unitId = unitIds[index];
 
@@ -156,8 +156,8 @@ s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
 
   (void)action;
   if (((u32)(Random16() << 4) >> 16) != 0) {
-    party_size =
-        BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, (u16 *)party_members);
+    party_size = BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY,
+                                             (u16 *)party_members);
     animated = 0;
     if (party_size != 0) {
       member_slot = 0;
@@ -503,9 +503,11 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   }
 
   if (targetId > 0x7F) {
-    livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
+    livingCount =
+        BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
   } else {
-    livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
+    livingCount =
+        BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY, livingUnits);
   }
 
   if (livingCount == 0) {

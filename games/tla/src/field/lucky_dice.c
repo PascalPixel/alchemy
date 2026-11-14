@@ -49,7 +49,7 @@ extern const s16 gLuckyDice_FaceHeights[];
 
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Sound_PlayFar(MUS_002);
+  Sound_PlayFar(MUS_ALHAFRA);
   LuckyDice_Run();
   return 0;
 }
@@ -297,7 +297,7 @@ void LuckyDice_Run(void) {
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
   Camera_ResetViewDefaults();
   Task_ResetAll();
-  gRenderOamEnabled = 0;
+  gOamCopyEnabled = 0;
 
   index = 0;
   for (tileY = 0; tileY != 20; tileY++) {
@@ -822,7 +822,7 @@ void LuckyDice_Run(void) {
           }
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      (s32)sprites->coinsWindow, 0, 0);
-          Sound_PlayFar(MUS_093);
+          Sound_PlayFar(MUS_JINGLE_LARGE);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -845,7 +845,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            Sound_PlayFar(MUS_091);
+            Sound_PlayFar(MUS_JINGLE_SMALL);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -853,7 +853,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            Sound_PlayFar(MUS_092);
+            Sound_PlayFar(MUS_JINGLE_MEDIUM);
           }
         }
       }

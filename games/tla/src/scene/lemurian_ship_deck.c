@@ -40,15 +40,15 @@ extern s32 gLemurianShipDeck_BobPhase;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gLemurianShipDeck_Placements[];
 extern struct ActorPlacement gLemurianShipDeck_Room1Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_LemurianShipDeck1)
     return gLemurianShipDeck_Room1Placements;
@@ -81,9 +81,9 @@ void LemurianShipDeck_EnterCabin(void) {
       Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-    Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+    Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -4);
     FieldEvent_Wait(8);
     Event_PlaySound(SE_MAP_EXIT);
     FieldEvent_SetExitRequest(work->stepTrigger);
@@ -96,8 +96,8 @@ void LemurianShipDeck_EnterCabin(void) {
 extern struct Trigger gLemurianShipDeck_Triggers[];
 extern struct Trigger gLemurianShipDeck_Room2Triggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_LemurianShipDeck2)
     return gLemurianShipDeck_Room2Triggers;
@@ -252,7 +252,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldCamera_MoveTo(342, 48, 408, 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  LemurianShipDeck_PlaceFacing(gMainRoutineWork.currentOwner, px(552), px(376),
+  LemurianShipDeck_PlaceFacing(gMainRoutineWork.leaderActorId, px(552), px(376),
                                FACING_EAST);
   LemurianShipDeck_PlaceFacing(9, px(558), px(345), 0xd000);
   LemurianShipDeck_PlaceFacing(7, px(534), px(404), FACING_EAST);
@@ -277,10 +277,10 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
   // "Take the tiller, Felix!"
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   gFieldWork->message++;
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 20);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 20);
   // "If you hope to reach Lemuria, you'll have to learn a few things..."
   Event_ShowMessage(ACTOR_PIERS, 0);
   FieldActor_Stop(ACTOR_JENNA);
@@ -301,8 +301,8 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   // "I'd love to see your hometown, Jenna! Shall we? Let's do it! To Vale..."
   Event_OpenMessage(7, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+                                            0) == 0) {
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "I don't think that's a good idea."
@@ -349,7 +349,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_ShowMessage(9, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "What's decided?"
   Event_ShowMessage(ACTOR_PIERS, 0);
@@ -370,7 +370,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_ShowMessage(9, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gMainRoutineWork.renderMode = 7;
+  gMainRoutineWork.movementMode = 7;
   gMainRoutineWork.ownerOverride = 1;
   Event_SetFlag(0x8de);
   FieldEvent_SetExitRequest(10);
@@ -523,7 +523,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
 /// Room1, the deck at the tiller: the colour rotations, and the tiller scenes
 /// of entrances 10 and 20.
 void LemurianShipDeck_SetUpTillerDeck(void) {
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, 0x480);
   FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, 0x480);
   if (gMainRoutineWork.entrance == 10)
@@ -545,14 +545,14 @@ s32 Scene_Initialize(void) {
   } while (0);
   party = &gMainRoutineWork;
   map->bits = bits;
-  if (party->scene == (s32)&SceneId_LemurianShipDeck1) {
+  if (party->next == (s32)&SceneId_LemurianShipDeck1) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     gFieldWork->transition = 0x100;
     /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
-    Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
+    Actor_Get(party->leaderActorId)->priorityFlags |= 0x20;
     Actor_SetAnimation(8, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
     FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, 0x480);
@@ -565,7 +565,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_LemurianShipDeck1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShipDeck1) {
     MapGrid_CopyCellsTo(2, 2, 10, 24, 18, 10);
     MapGrid_CopyCellsTo(0, 62, 26, 62, 3, 8);
     MapGrid_CopyCellsTo(50, 65, 25, 61, 6, 1);
@@ -624,10 +624,10 @@ void LemurianShipDeck_SightMenardisShip(void) {
   // "Do you think it could have drifted here?"
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   answer =
-      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
-  owner = gMainRoutineWork.currentOwner;
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
+  owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
     Actor_SetAnimation(9, 3);
@@ -703,9 +703,9 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
   if (Event_GetFlag(FLAG_SCENE_TEMP_11)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
     System_Wait(1);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     Actor_SetSpeed(9, 0.8);
     Actor_WalkToAndWait(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
@@ -713,7 +713,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     // "Well, there's no point in hanging around here all day. Let's go see..."
     Event_ShowMessage(9, 0);
     Actor_SetAnimation(9, 2);
-    object = Actor_Get(gMainRoutineWork.currentOwner);
+    object = Actor_Get(gMainRoutineWork.leaderActorId);
     if (object != 0)
       Actor_SetDestination(9, *(s16 *)((u8 *)object + 10),
                            *(s16 *)((u8 *)object + 18));
@@ -794,9 +794,9 @@ void LemurianShipDeck_ReturnToShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   System_Wait(1);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.6);
   Actor_WalkToAndWait(ACTOR_PIERS, 412, 424);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
@@ -808,12 +808,12 @@ void LemurianShipDeck_ReturnToShip(void) {
   // "Finally, I can return to my beloved Lemuria."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_WalkToAndWait(ACTOR_PIERS, 386, 424);
-  Actor_FaceActor(ACTOR_PIERS, gMainRoutineWork.currentOwner, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_FaceActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId, 0);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   // "Wait there a moment."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_SetScript(gMainRoutineWork.currentOwner,
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_SetScript(gMainRoutineWork.leaderActorId,
                   gLemurianShipDeck_ReturnToShipScript);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_WalkToAndWait(ACTOR_PIERS, 360, 424);
@@ -849,7 +849,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   // "Let's head down."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != 0)
     Actor_SetDestination(ACTOR_PIERS, ((s16 *)&object->x)[1],
                          ((s16 *)&object->z)[1]);
@@ -935,7 +935,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   // "Right, Felix?" Yes: "What's with the guilt trip? Piers hasn't..." No:
   // "Sheba is right! You guys just let Piers give..."
   Event_OpenMessage(9, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     // "What's with the guilt trip? Piers hasn't even given us his answer yet!"
@@ -962,7 +962,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "Don't worry, Sheba... I've actually been thinking about this quite a..."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -994,7 +994,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 20);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
   Actor_FaceDirection(9, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   // "What did you just say!?"
@@ -1002,10 +1002,10 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   // "I will take you to Lemuria."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(9, 3);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
@@ -1026,7 +1026,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   // "After what we've been through, it would be wrong to deny you. That's..."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "What's what made up your mind?"
@@ -1077,7 +1077,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_WalkByAndWait(ACTOR_JENNA, 0, 16);
   // "What's wrong, Piers?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
@@ -1088,7 +1088,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
   // "Is that acceptable, Felix? Can we stop by Madra briefly before we..."
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   Actor_SetAnimation(9, 3);
   // "What do you say, Felix? Shall we go see the mayor?"
@@ -1104,7 +1104,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
     // "I have no objection, so why not? Let's go."
     Event_ShowMessage(9, 0);
   }
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   // "But we must depart as soon as we're done at the mayor's house, Piers."
@@ -1112,7 +1112,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   // "Oh, thank you!"
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   Actor_SetAnimationAndWait(9, 3);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
@@ -1144,17 +1144,17 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
     FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 0, FACING_WEST);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 0);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     FieldEvent_SetMessageId(MsgThenLetS);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_Get(ACTOR_PIERS)->update = 0;
     // "Then let's waste no time! We should set out for Madra at once!"
     Event_ShowMessage(ACTOR_PIERS, 0);
     Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
-    Actor_Get(gMainRoutineWork.currentOwner)->update =
+    Actor_Get(gMainRoutineWork.leaderActorId)->update =
         (void (*)(void))Actor_EmitSmoke;
     Actor_WalkByAndWait(ACTOR_FELIX, 0, 16);
-    Actor_Get(gMainRoutineWork.currentOwner)->update = 0;
+    Actor_Get(gMainRoutineWork.leaderActorId)->update = 0;
     Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     object = Actor_Get(ACTOR_FELIX);

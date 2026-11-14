@@ -1,7 +1,7 @@
 /// The leader sinks away to `entrance`.
 void Leader_SinkAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 *owner = &gMainRoutineWork.currentOwner;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 *owner = &gMainRoutineWork.leaderActorId;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

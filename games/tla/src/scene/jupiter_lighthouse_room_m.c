@@ -146,11 +146,11 @@ s32 JupiterLighthouse_ClearScriptedActorSpriteFlags(s32 object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -171,10 +171,10 @@ void JupiterLighthouse_RideWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    if (party->renderMode == 10) {
-      struct Actor *object = Actor_Get(party->currentOwner);
+    if (party->movementMode == 10) {
+      struct Actor *object = Actor_Get(party->leaderActorId);
 
-      party->renderMode = 12;
+      party->movementMode = 12;
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
       Whirlwind_SpawnUpper((struct GustObject *)Actor_Get(25));
@@ -232,7 +232,7 @@ void JupiterLighthouse_FlashSky(void) {
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   FieldActor_Jump(ACTOR_FELIX, 6, 0);
   Actor_Get(ACTOR_FELIX)->actionFlags &= ~1;
   Actor_WalkBy(ACTOR_FELIX, -16, 0);
@@ -281,7 +281,7 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
 }
 
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_GetById(id);
   s32 x;
   s32 i;
@@ -305,40 +305,44 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     FieldEvent_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     FieldCamera_WaitForArrival();
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
     x = leader->x >> 20;
     if (x == 64) {
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1032, 232);
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1000, 232);
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1032, 232);
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 232);
     } else if (x == 63) {
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1000, 232);
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 232);
     }
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1000, 248);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 248);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
     PaletteFade_ApplySource(0x10000, 0);
     PaletteFade_ApplyTarget(0x10003, 0);
     PaletteFade_Interpolate(60);
     FieldEvent_Wait(50);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+                               FACING_SOUTHWEST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHEAST);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+                               FACING_SOUTHEAST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+                               FACING_SOUTHWEST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHEAST);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
+                               FACING_SOUTHEAST);
     FieldEvent_Wait(20);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
     FieldEvent_Wait(20);
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+    FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
     FieldEvent_Wait(20);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, 22);
     FieldEvent_Wait(40);
     PaletteCycle_SetPausesInEvents(0);
     JupiterLighthouse_FlashSky();
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
-    Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
+    Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
     FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
     Actor_SetAttachedEffect(ACTOR_FELIX,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -349,7 +353,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
     object->update = 0;
-    Event_PlaySound(MUS_080);
+    Event_PlaySound(MUS_PUZZLE_SOLVED);
     Sound_WaitForJingle();
     FieldEvent_Wait(10);
     Camera_MoveWithinMapBounds_(246 << 18, -0x400000, 248 << 16, 1);
@@ -456,7 +460,7 @@ void JupiterLighthouse_OpenFloor(void) {
     Event_Wait(10);
   }
   Event_Wait(20);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -476,12 +480,12 @@ void JupiterLighthouse_CloseFloor(void) {
   Event_PlaySound(SE_IMPACT);
   MapGrid_CopyCellsLayered(49, 100, 4, 3, 49, 76);
   FieldEvent_Wait(20);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Talking to one of the party: each answers with its own message.
 void JupiterLighthouse_TalkToReunitedParty(s32 actor) {
@@ -1195,7 +1199,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   FieldUnit_AddHp(0, 173);
   JupiterLighthouseRoomM_AddPp(2, -10000);
   Unit_AddPp(0, -10000);
-  gMainRoutineWork.currentOwner = 0;
+  gMainRoutineWork.leaderActorId = 0;
   Field_RequestBattleFromEncounterTable(102, 4);
 }
 
@@ -1235,7 +1239,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(737, 0, 209, 0);
-  gMainRoutineWork.currentOwner = 4;
+  gMainRoutineWork.leaderActorId = 4;
   Party_RemoveMember(0);
   Party_RemoveMember(2);
   Party_RemoveMember(5);
@@ -1768,7 +1772,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(SE_222);
+  Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
@@ -1829,7 +1833,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

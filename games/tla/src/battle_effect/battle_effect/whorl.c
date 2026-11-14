@@ -83,7 +83,7 @@ extern char ResourceId_FlashBurstSheet, ResourceId_Data0D2, ResourceId_Data0D3;
 extern char ResourceId_Data134, ResourceId_JupiterDjinnSmallSheet;
 extern char ResourceId_MarsDjinnSheet, ResourceId_WaterSpraySheet;
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
@@ -493,7 +493,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           Transform_ApplyRoll((i << 10) + 256);
           Transform_ApplyPitch((i << 13) - (frame << 11));
           SceneTransform_ApplyScale3(0x21770, Q16_ONE, Q16_ONE);
-          Render_TransformVertices(gMapCellBuffer, vertices, 66);
+          Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
           Render_DrawModelList(model);
           Transform_Pop();
         }
@@ -566,7 +566,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
           Transform_ApplyPitch(i << 15);
           Transform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >> 16);
           SceneTransform_ApplyScale3(0x14e20, Q16_ONE / 2, Q16_ONE);
-          Render_TransformVertices(gMapCellBuffer, vertices, 66);
+          Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
           Render_DrawModelList(model);
         }
       } else {
@@ -602,7 +602,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
               Transform_ApplyPitch((i << 13) - (frame << 11));
             }
             SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
-            Render_ProjectVertices(gMapCellBuffer, vertices, 66);
+            Render_ProjectVertices(gMapGridCellBuffer, vertices, 66);
             Render_DrawModelList(model);
             Transform_Pop();
           }

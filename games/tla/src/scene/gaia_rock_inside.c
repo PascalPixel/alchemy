@@ -252,8 +252,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u32 gGaiaRockInside_Regions[];
 
-const u8 *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5)
+const u8 *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5)
     return gGaiaRockInside_Regions;
   return 0;
 }
@@ -263,10 +263,10 @@ static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 a, s32 b) {
 }
 
 void GaiaRockInside_JumpDownByAltar(void) {
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1d40000, 286);
   OverlayObject_PrepareObject(0x2c80000, 0, 0x1ea0000, 286);
-  GaiaRockInside_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0x800);
+  GaiaRockInside_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0x800);
   Event_PlaySound(SE_310);
   Event_SetFlag(290);
   FieldEvent_SetExitRequest(8);
@@ -288,7 +288,7 @@ extern s32 Event_EndWithResult(void) __asm__("Event_End");
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
 s32 GaiaRockInside_RaiseDust(void) {
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
   s32 spawn = 1;
@@ -338,18 +338,18 @@ loop:
   if (i <= 16)
     goto loop;
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   actor->gravity = px(1);
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = 0x204;
   return Event_EndWithResult();
 }
@@ -521,7 +521,7 @@ s32 GaiaRockInside_SerpentBreathesFire(void) {
 
 s32 GaiaRockInside_SerpentTurnsToLeader(void) {
   struct Actor *object = Actor_Get(9);
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (leader->z >> 19 <= 45 && leader->x >> 19 <= 57)
     Actor_StartScript(object, gGaiaRockInside_SerpentTurnRightScript);
@@ -581,14 +581,14 @@ extern s32 gGaiaRockInside_PlatformFrame;
 extern s32 gGaiaRockInside_PlatformDownScript[];
 
 // Return the table for the current room.
-const void *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside2)
+const void *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside2)
     return gGaiaRockInside_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside3)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside3)
     return gGaiaRockInside_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside4)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside4)
     return gGaiaRockInside_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5)
     return gGaiaRockInside_Room5Placements;
   if (gMainRoutineWork.entrance > 8)
     return gGaiaRockInside_LairPlacements;
@@ -646,7 +646,7 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
 // 23) to (38, 25), moves a leader standing on that cell aside, and sets flag
 // 0x30a, or 0x9bf once FLAG_SERPENT_SLAIN is set.
 void GaiaRockInside_CycloneClearsHallBushes(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Call7(Cyclone_CopyTouchedCells, 37, 26, 0, 3, 3, 61, 0);
   if (FieldMapGrid_GetCellBehaviorAt(2, 152 << 18, 200 << 17) == 0) {
@@ -654,11 +654,11 @@ void GaiaRockInside_CycloneClearsHallBushes(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (leader->x >> 20 == 38 && leader->z >> 20 == 25) {
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
+      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);
       leader->velocityY = px(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     }
     if (!Event_GetFlag(FLAG_SERPENT_SLAIN)) {
       Event_SetFlag(FLAG_AREA_TEMP_0A);
@@ -743,14 +743,14 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   if (count <= 0)
     return;
   guard = Actor_Get(15);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (leader->z >> 19 > 53 && leader->x >> 19 > 83 && leader->x >> 19 <= 91) {
     leader->speedLimit = px(2);
-    Actor_ShowEmote(gMainRoutineWork.currentOwner,
+    Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                     EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Actor_SetScript(gMainRoutineWork.currentOwner,
+    Actor_SetScript(gMainRoutineWork.leaderActorId,
                     gGaiaRockInside_LeaderStepsBackScript);
   }
   Actor_SetScript(15, gGaiaRockInside_AltarShakesScript);
@@ -875,7 +875,7 @@ void GaiaRockInside_MeetSusa(void) {
     FieldActor_RefreshSelectorById(9);
   GaiaRockInside_SaveSusa();
   Actor_SetAnimation(10, 1);
-  Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(10, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
   // "Who are you? How did you get here?"
@@ -937,7 +937,7 @@ void GaiaRockInside_TalkToSusa(void) {
       FieldActor_RefreshSelectorById(9);
     GaiaRockInside_SaveSusa();
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside03);
-    Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(10, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_Wait(10);
     // "If you understand, then get out of my way. Stand over there."
     Event_ShowMessage(10, 0);
@@ -1098,8 +1098,8 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
                                   ((s16 *)&a->z)[1] << 16, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = 0x3333;
@@ -1202,14 +1202,14 @@ third:
     goto third;
   Sound_Play(SE_SHIMMER);
   wait(50);
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(SE_574);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletSettleScript);
   Actor_SetMovementTypeById(idB, gGaiaRockInside_FelixSettleScript);
@@ -1229,7 +1229,7 @@ void BlendScript_Resume(void);
 // screen blends out and back while the ledge changes, the party gains the item
 // and person 11 joins the leader (flag 0x9ba).
 s32 GaiaRockInside_ReadSandTablet(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   /* FAKEMATCH(volatile): the blend level rereads through its slot. */
   volatile u16 level;
   s32 message;
@@ -1238,34 +1238,34 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   FieldEvent_ResolvePendingActions(0);
   message = (s32)MsgGaiaRockInside09;
   ((s32 (*)())FieldMessage_Show)(message, 1);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   if (leader->z >> 19 <= 39) {
-    Actor_WalkTo(gMainRoutineWork.currentOwner, 440, 328);
-    FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+    Actor_WalkTo(gMainRoutineWork.leaderActorId, 440, 328);
+    FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   }
-  Actor_MoveToObject(11, gMainRoutineWork.currentOwner);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 470, 354);
+  Actor_MoveToObject(11, gMainRoutineWork.leaderActorId);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 470, 354);
   Actor_WalkTo(11, 446, 354);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(11);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_EAST, 0);
   FieldEvent_SetMessageId(message + 1);
   // "Wielder of Earth's might... That'd be you, Felix. Touch it. Go on..."
   Event_ShowMessage(11, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(11, 3);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 466, 342);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 466, 342);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Message_ShowCentered(message + 2, 1);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1294,7 +1294,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_SetSpeed(11, 1.2);
   Actor_SetAnimation(11, 2);
   {
-    struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
+    struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
 
     if (owner != 0)
       Actor_SetDestination(11, ((s16 *)&owner->x)[1], ((s16 *)&owner->z)[1]);
@@ -1465,7 +1465,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
 void GaiaRockInside_EndSand(void) {
   s32 t0;
 
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  t0 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   FIELD_AT((t0 + 0x22), u8, 0) = 0;
 }
 
@@ -1596,7 +1596,7 @@ L_0200a1f8:
   Actor_SetAnimation(8, 4);
   Actor_SetAnimation(9, 4);
   FieldEvent_Wait(30);
-  t50 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  t50 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   if (t50 != 0) {
     Actor_SetDestination(13, FIELD_AT(t50, s16, 10), FIELD_AT(t50, s16, 18));
   }
@@ -1624,12 +1624,12 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
-  Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(12, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(12, 528, 372);
   partner->velocityY = px(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
-  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.leaderActorId, 0);
   Sound_Play(SE_576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -1664,7 +1664,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     Sound_Play(SE_564);
     Actor_SetModeById(8, 4);
     Event_Wait(30);
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
@@ -1688,7 +1688,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     Event_Wait(30);
     Actor_SetModeById(8, 4);
     Event_Wait(30);
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
@@ -1713,12 +1713,12 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
-  Actor_MoveToObject(12, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(12, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(12, 672, 372);
   partner->velocityY = px(6);
   Actor_WaitForMoveById(12);
   Event_Wait(45);
-  Actor_FaceActorById(9, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(9, gMainRoutineWork.leaderActorId, 0);
   Sound_Play(SE_576);
   Actor_SetModeById(9, 5);
   wait(30);
@@ -1753,7 +1753,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     Sound_Play(SE_564);
     Actor_SetModeById(9, 4);
     Event_Wait(30);
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
@@ -1777,7 +1777,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     Event_Wait(30);
     Actor_SetModeById(9, 4);
     Event_Wait(30);
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(12, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
@@ -1802,12 +1802,12 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
-  Actor_MoveToObject(14, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(14, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(14, 336, 396);
   partner->velocityY = px(6);
   Actor_WaitForMoveById(14);
   Event_Wait(45);
-  Actor_FaceActorById(8, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(8, gMainRoutineWork.leaderActorId, 0);
   Sound_Play(SE_576);
   Actor_SetModeById(8, 5);
   wait(30);
@@ -1842,7 +1842,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
     Sound_Play(SE_564);
     Actor_SetModeById(8, 4);
     Event_Wait(30);
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(14, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
@@ -1866,7 +1866,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
     Event_Wait(30);
     Actor_SetModeById(8, 4);
     Event_Wait(30);
-    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetDestinationById(14, *(s16 *)((u8 *)leader + 10),
                                *(s16 *)((u8 *)leader + 18));
@@ -1928,14 +1928,14 @@ extern struct Trigger gGaiaRockInside_Room4Triggers[];
 extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
 // Returns the current room's table.
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside2)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside2)
     return gGaiaRockInside_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside3)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside3)
     return gGaiaRockInside_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside4)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside4)
     return gGaiaRockInside_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5)
     return gGaiaRockInside_Room5Triggers;
   if (gMainRoutineWork.entrance == 9)
     return gGaiaRockInside_LairTriggers;
@@ -2232,7 +2232,7 @@ s32 Scene_Initialize(void) {
 
   work = &gMainRoutineWork;
   gFieldWork->transition = 516;
-  if (work->scene == (s32)&SceneId_GaiaRockInside1) {
+  if (work->next == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -2242,7 +2242,7 @@ s32 Scene_Initialize(void) {
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
-      C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
+      C3(Actor_SetHorizontalPositionWithTerrain, work->leaderActorId, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
       C1(Actor_Stop, 9);
@@ -2344,7 +2344,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 9, 1);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
         C2(Actor_SetMovementTypeById, 10, 1);
-        C3(Actor_ArmCallback, 10, 0xe000, 0);
+        C3(Actor_FaceDirectionById, 10, 0xe000, 0);
         C2(Actor_SetModeById, 8, 2);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
@@ -2375,10 +2375,10 @@ s32 Scene_Initialize(void) {
         height = 19;
         C6(MapGrid_CopyCellPictureCellsRect, 85, 76, 5, 2, width, height);
         C1(Sound_Play, 572);
-        C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+        C2(PaletteFade_SetTarget, 0x7fff, 0);
         C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
-        C2(BattleEffect_ApplyColorToTargetBuffer, 0x10000, 0);
+        C2(PaletteFade_SetTarget, 0x10000, 0);
         C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
         C1(Event_Wait, 60);
@@ -2479,7 +2479,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(Event_Wait, 20);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
-        C2(FieldCamera_FollowActor, gMainRoutineWork.currentOwner, 1);
+        C2(FieldCamera_FollowActor, gMainRoutineWork.leaderActorId, 1);
         FieldCamera_WaitForArrival();
         C2(Actor_SetSpritePriority, 10, 3);
         C6(Map_CopyCellAttributeRect, 30, 19, 1, 1, 27, 19);
@@ -2518,12 +2518,12 @@ s32 Scene_Initialize(void) {
       dragon = Actor_GetById(10);
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x1b80000, 0x1380000);
-      owner = &room->currentOwner;
+      owner = &room->leaderActorId;
       C3(Actor_SetHorizontalPositionWithTerrain, *owner, 0x1c80000, 0x1480000);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1e80000, 0x1a80000);
-      C3(Actor_ArmCallback, *owner, 0, 0);
-      C3(Actor_ArmCallback, 11, 0, 0);
-      C3(Actor_ArmCallback, 10, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, 0, 0);
+      C3(Actor_FaceDirectionById, 11, 0, 0);
+      C3(Actor_FaceDirectionById, 10, 0xc000, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C3(Actor_ShowEmoteById, 11, 258, 30);
@@ -2534,8 +2534,8 @@ s32 Scene_Initialize(void) {
       Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_ArmCallback, *owner, 0x4000, 0);
-      C3(Actor_ArmCallback, 11, 0x4000, 0);
+      C3(Actor_FaceDirectionById, *owner, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 11, 0x4000, 0);
       C1(Event_Wait, 30);
       C2(FieldCamera_MoveToActorById, 10, 1);
       FieldCamera_WaitForArrival();
@@ -2562,20 +2562,20 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 10);
       C1(Sound_Play, 572);
       dragon->movementState = 1;
-      C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C1(Sound_Play, 530);
-      C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
+      C2(PaletteFade_SetTarget, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
+      C2(PaletteFade_SetTarget, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
@@ -2585,14 +2585,14 @@ s32 Scene_Initialize(void) {
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
       C2(Actor_SetModeById, 10, 1);
-      C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
+      C2(PaletteFade_SetTarget, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C3(Actor_FaceActorById, 10, *owner, 0);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
-      C3(Actor_ArmCallback, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
@@ -2604,7 +2604,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
-      C3(Actor_ArmCallback, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 536);
       C2(FieldCamera_FollowActor, *owner, 1);
@@ -2631,7 +2631,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 30);
       C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_ArmCallback, *owner, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, 0xc000, 0);
       C1(Event_Wait, 15);
       other = Actor_GetById(12);
       alpha = REG_BLDALPHA;
@@ -2686,7 +2686,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c00000, 0x1580000);
       {
-        s32 *lead = &room->currentOwner;
+        s32 *lead = &room->leaderActorId;
 
         C3(Actor_FaceActorById, 10, *lead, 0);
         Value2((s32 (*)())Actor_SetModeById, *lead, 19);
@@ -2701,7 +2701,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1ae0000, 0x1400000);
       C2(Actor_SetModeById, 10, 5);
-      C2(Actor_SetModeById, room->currentOwner, 19);
+      C2(Actor_SetModeById, room->leaderActorId, 19);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C1(Event_Wait, 30);
@@ -2713,11 +2713,12 @@ s32 Scene_Initialize(void) {
       Event_ShowMessageAndWait(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
-      C2(WorldMap_SetReturnLeavingScene, room->scene, *entrance);
+      C2(Event_SetDestination, (s16)room->restartScene,
+         (s16)room->restartEntrance);
+      C2(WorldMap_SetReturnLeavingScene, room->next, *entrance);
       Event_End();
     }
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside2) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside2) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -2749,10 +2750,10 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11,
          gGaiaRockInside_RockSpots[(s8)high][0] << 19,
          gGaiaRockInside_RockSpots[(s8)high][1] << 19);
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside4) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside4) {
     if (Test(0xa63))
       C1(GaiaRockInside_StartPlatforms, 1);
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside3) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside3) {
     struct Actor *object;
     struct Actor *other;
 
@@ -2795,7 +2796,7 @@ s32 Scene_Initialize(void) {
       C1(Event_ResolvePendingActions, 0);
       C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
-      C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
+      C3(Actor_SetHorizontalPositionWithTerrain, work->leaderActorId, 0, 0);
       Event_StartScreenTransition();
       C1(Event_Wait, 15);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x2a00000, 0x1800000);
@@ -2826,7 +2827,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
     if (!Test(0x109) && gMainRoutineWork.entrance == 3)
       GaiaRockInside_RaiseDust();
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside5) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside5) {
     C2(HangingVine_Place, 10, 1);
     C2(GaiaRockInside_SetPlatformPose, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
@@ -2932,7 +2933,7 @@ s32 Scene_Initialize(void) {
 
   work = &gMainRoutineWork;
   gFieldWork->transition = 516;
-  if (work->scene == (s32)&SceneId_GaiaRockInside1) {
+  if (work->next == (s32)&SceneId_GaiaRockInside1) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -2942,7 +2943,7 @@ s32 Scene_Initialize(void) {
       Event_Start();
       C1(Event_ResolvePendingActions, 0);
       C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
-      C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
+      C3(Actor_SetHorizontalPositionWithTerrain, work->leaderActorId, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0, 0);
       C1(Actor_Stop, 9);
@@ -3044,7 +3045,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 9, 1);
         C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
         C2(Actor_SetMovementTypeById, 10, 1);
-        C3(Actor_ArmCallback, 10, 0xe000, 0);
+        C3(Actor_FaceDirectionById, 10, 0xe000, 0);
         C2(Actor_SetModeById, 8, 2);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
@@ -3075,10 +3076,10 @@ s32 Scene_Initialize(void) {
         height = 19;
         C6(MapGrid_CopyCellPictureCellsRect, 85, 76, 5, 2, width, height);
         C1(Sound_Play, 572);
-        C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+        C2(PaletteFade_SetTarget, 0x7fff, 0);
         C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
-        C2(BattleEffect_ApplyColorToTargetBuffer, 0x10000, 0);
+        C2(PaletteFade_SetTarget, 0x10000, 0);
         C1(PaletteFade_StartInterpolation, 10);
         C1(Event_Wait, 10);
         C1(Event_Wait, 60);
@@ -3179,7 +3180,7 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(Event_Wait, 20);
         C2(Event_ShowMessageAndWait, 0x600a, 0);
-        C2(FieldCamera_FollowActor, gMainRoutineWork.currentOwner, 1);
+        C2(FieldCamera_FollowActor, gMainRoutineWork.leaderActorId, 1);
         FieldCamera_WaitForArrival();
         C2(Actor_SetSpritePriority, 10, 3);
         C6(Map_CopyCellAttributeRect, 30, 19, 1, 1, 27, 19);
@@ -3218,12 +3219,12 @@ s32 Scene_Initialize(void) {
       dragon = Actor_GetById(10);
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x1b80000, 0x1380000);
-      owner = &room->currentOwner;
+      owner = &room->leaderActorId;
       C3(Actor_SetHorizontalPositionWithTerrain, *owner, 0x1c80000, 0x1480000);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1e80000, 0x1a80000);
-      C3(Actor_ArmCallback, *owner, 0, 0);
-      C3(Actor_ArmCallback, 11, 0, 0);
-      C3(Actor_ArmCallback, 10, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, 0, 0);
+      C3(Actor_FaceDirectionById, 11, 0, 0);
+      C3(Actor_FaceDirectionById, 10, 0xc000, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C3(Actor_ShowEmoteById, 11, 258, 30);
@@ -3234,8 +3235,8 @@ s32 Scene_Initialize(void) {
       Actor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       C3(Actor_ShowEmoteById, 11, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_ArmCallback, *owner, 0x4000, 0);
-      C3(Actor_ArmCallback, 11, 0x4000, 0);
+      C3(Actor_FaceDirectionById, *owner, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 11, 0x4000, 0);
       C1(Event_Wait, 30);
       C2(FieldCamera_MoveToActorById, 10, 1);
       FieldCamera_WaitForArrival();
@@ -3262,20 +3263,20 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 10);
       C1(Sound_Play, 572);
       dragon->movementState = 1;
-      C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C1(Sound_Play, 530);
-      C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
+      C2(PaletteFade_SetTarget, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
+      C2(PaletteFade_SetTarget, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
-      C2(BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+      C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
@@ -3285,14 +3286,14 @@ s32 Scene_Initialize(void) {
       dragon->speedLimit = slow;
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c80000, 0x1680000);
       C2(Actor_SetModeById, 10, 1);
-      C2(BattleEffect_ApplyColorToTargetBuffer, scale, 0);
+      C2(PaletteFade_SetTarget, scale, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
       C3(Actor_FaceActorById, 10, *owner, 0);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
       C2(Event_ShowMessageAndWait, 10, 0);
-      C3(Actor_ArmCallback, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 392);
       C2(Actor_StartRepeatedMotion, 11, 1);
@@ -3304,7 +3305,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 15);
       C2(Event_ShowMessageAndWait, 10, 0);
       C2(Motion_SetModeAndWaitAnimation, 10, 3);
-      C3(Actor_ArmCallback, 10, 0x4000, 0);
+      C3(Actor_FaceDirectionById, 10, 0x4000, 0);
       C2(Actor_SetModeById, 10, 2);
       C3(Actor_WalkToById, 10, 488, 536);
       C2(FieldCamera_FollowActor, *owner, 1);
@@ -3331,7 +3332,7 @@ s32 Scene_Initialize(void) {
       C1(Event_Wait, 30);
       C3(Actor_ShowEmoteById, *owner, 256, 0);
       C1(Event_Wait, 15);
-      C3(Actor_ArmCallback, *owner, 0xc000, 0);
+      C3(Actor_FaceDirectionById, *owner, 0xc000, 0);
       C1(Event_Wait, 15);
       other = Actor_GetById(12);
       alpha = REG_BLDALPHA;
@@ -3386,7 +3387,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1c00000, 0x1580000);
       {
-        s32 *lead = &room->currentOwner;
+        s32 *lead = &room->leaderActorId;
 
         C3(Actor_FaceActorById, 10, *lead, 0);
         Value2((s32 (*)())Actor_SetModeById, *lead, 19);
@@ -3397,7 +3398,8 @@ s32 Scene_Initialize(void) {
       Event_ShowMessageAndWait(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
+      C2(Event_SetDestination, (s16)room->restartScene,
+         (s16)room->restartEntrance);
       Event_End();
     } else if (*entrance == 12) {
       Event_Start();
@@ -3405,7 +3407,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 9, 0, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 10, 0x1ae0000, 0x1400000);
       C2(Actor_SetModeById, 10, 5);
-      C2(Actor_SetModeById, room->currentOwner, 19);
+      C2(Actor_SetModeById, room->leaderActorId, 19);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C1(Event_Wait, 30);
@@ -3415,10 +3417,11 @@ s32 Scene_Initialize(void) {
       Event_ShowMessageAndWait(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      C2(Event_SetDestination, (s16)room->savedScene, (s16)room->savedEntrance);
+      C2(Event_SetDestination, (s16)room->restartScene,
+         (s16)room->restartEntrance);
       Event_End();
     }
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside2) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside2) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -3450,10 +3453,10 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11,
          gGaiaRockInside_RockSpots[(s8)high][0] << 19,
          gGaiaRockInside_RockSpots[(s8)high][1] << 19);
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside4) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside4) {
     if (Test(0xa63))
       C1(GaiaRockInside_StartPlatforms, 1);
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside3) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside3) {
     struct Actor *object;
     struct Actor *other;
 
@@ -3496,7 +3499,7 @@ s32 Scene_Initialize(void) {
       C1(Event_ResolvePendingActions, 0);
       C4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
-      C3(Actor_SetHorizontalPositionWithTerrain, work->currentOwner, 0, 0);
+      C3(Actor_SetHorizontalPositionWithTerrain, work->leaderActorId, 0, 0);
       Event_StartScreenTransition();
       C1(Event_Wait, 15);
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0x2a00000, 0x1800000);
@@ -3525,7 +3528,7 @@ s32 Scene_Initialize(void) {
     }
     if (!Test(0x9c4))
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
-  } else if (work->scene == (s32)&SceneId_GaiaRockInside5) {
+  } else if (work->next == (s32)&SceneId_GaiaRockInside5) {
     C2(HangingVine_Place, 10, 1);
     C2(GaiaRockInside_SetPlatformPose, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
@@ -3600,7 +3603,7 @@ void GaiaRockInside_SwayPlatformDown__platforms(void) __asm__(
   GaiaRockInside_SwayPlatformDown__platforms
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside1) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
 
     if (gMainRoutineWork.entrance <= 4) {
@@ -3610,7 +3613,7 @@ s32 Scene_PrepareMap(void) {
       s32 i;
 
       total = 0;
-      unit = Unit_Get(gMainRoutineWork.currentOwner);
+      unit = Unit_Get(gMainRoutineWork.leaderActorId);
 
       for (i = 0; i <= 13; i++)
         total += unit[i];
@@ -3673,7 +3676,7 @@ s32 Scene_PrepareMap(void) {
                       24);
       BlendScript_Start((u16 *)(Ram_MapCollision + 0x1e00));
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -3694,7 +3697,7 @@ s32 Scene_PrepareMap(void) {
       GaiaRockInside_ClearMazeLayer(101);
       break;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRockInside5) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 3:
@@ -3739,14 +3742,14 @@ void GaiaRockInside_LayMaze(s32 seed) {
   s32 x, y, nx, ny, step, tries, dir, v, next;
   u32 saved;
 
-  saved = gRandomState;
+  saved = gRandomSeed;
   path = gPath;
   steps = path->steps;
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     return;
   if (GameFlag_Get(FLAG_AREA_TEMP_F0))
     return;
-  gRandomState = seed;
+  gRandomSeed = seed;
 restart:
   grid = Heap_AllocEwram_(sizeof *grid);
   Iwram_ClearWordsEntry(grid, sizeof *grid);
@@ -3935,7 +3938,7 @@ restart:
   path->unk_0 = 1;
   Heap_Release(grid);
   Event_SetFlag(FLAG_AREA_TEMP_F0);
-  gRandomState = saved;
+  gRandomSeed = saved;
 }
 
 void GaiaRockInside_TakeMazeExit(s32 direction) {
@@ -4037,10 +4040,10 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
 }
 
 void GaiaRockInside_TriggerWallCell(void) {
-  if (gMainRoutineWork.renderMode == 2) {
+  if (gMainRoutineWork.movementMode == 2) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+    struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
     struct MapCell *cells = map->layers[2].cells;
@@ -4086,7 +4089,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   __asm__("");
   /* FAKEMATCH(temporary): the form kept. */
   value = id;
-  leader = Actor_Get(entryWork->currentOwner);
+  leader = Actor_Get(entryWork->leaderActorId);
   gravity = leader->gravity;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -4118,10 +4121,10 @@ burst:
   i--;
   if (i >= 0)
     goto burst;
-  Event_PlaySound(SE_590);
+  Event_PlaySound(SE_STATUE_RISE);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
@@ -4136,7 +4139,7 @@ burst:
   Event_PlaySound(SE_THUMP);
   work = &gMainRoutineWork;
   leader->gravity = gravity;
-  Actor_SetAttachedEffect(work->currentOwner, ATTACHED_EFFECT_REMOVE);
+  Actor_SetAttachedEffect(work->leaderActorId, ATTACHED_EFFECT_REMOVE);
   Actor_SelectAnimation(leader, 38);
   MapGrid_SetShake(1, 4, 1);
   System_Wait(10);
@@ -4149,7 +4152,7 @@ burst:
   Actor_SelectAnimation(leader, 1);
   leader->velocityY = px(4);
   System_Wait(20);
-  work->renderMode = 0;
+  work->movementMode = 0;
   Event_End();
   Event_SetFlag(flag);
 }
@@ -4432,7 +4435,7 @@ s32 gGaiaRockInside_SerpentSettleScript[] = {
     SC_CALL(GaiaRockInside_SerpentRears),
     SC_WAIT(2),
     SC_LOOP(8, SC_TO(1)),
-    SC_CMD_2A(197),
+    SC_CALL_WITH(197),
     SC_CALL(GaiaRockInside_SerpentSpits),
     SC_WAIT(240),
     SC_LABEL(2),

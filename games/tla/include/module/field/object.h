@@ -54,7 +54,7 @@ extern const u8 gAnimationFacing_EightPictures[8];
 
 extern const struct ActorPlacement gField_DefaultPlacements[];
 
-void BattleEffect_InitializeBuffers(void);
+void PaletteFade_Initialize(void);
 
 s32 Entrance_PlayArrival(void);
 void Exit_StartStairsDown(void);
@@ -73,7 +73,7 @@ void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
 
 s32 PaletteFade_ClampComponent(s32 value);
 s32 PaletteFade_ClampShiftedComponent(s32 value);
-void BattleEffect_SetPrimaryBufferValue(u32 value);
+void PaletteFade_SetBackdrop(u32 value);
 
 extern char ResourceId_DefaultMapAnimation;
 extern char ResourceId_WorldMapTilesA1;
@@ -171,8 +171,8 @@ void FieldMotes_Update(void);
 
 void Weather_UpdateRain(void);
 
-void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
-                                     s32 frames);
+void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
+                                s32 frames);
 
 extern const s32 gActorSprite_FullScale[2];
 extern const s32 gCamera_FixedViewMatrix[12];

@@ -60,11 +60,11 @@ void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -113,7 +113,7 @@ void PsynergyTest2_ScatterRocks(s32 id) {
   PsynergyTest2_EndRocks();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Sets screen transition 256 and event mode 2, and coils the rope.
 s32 Scene_Initialize(void) {
@@ -122,7 +122,7 @@ s32 Scene_Initialize(void) {
   work->transition = 256;
   work->sceneAttributeHigh = 0;
   work->sceneAttributeLow = 0;
-  gMainRoutineWork.eventMode = 2;
+  gMainRoutineWork.messageSpeed = 2;
   Rope_Initialize();
   // Coils rope 0 between actors 10 and 11.
   Value3((s32 (*)())Rope_Coil, 0, 10, 11);
@@ -352,7 +352,7 @@ UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
+          Actor_Get(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(row, column);
     }
   }

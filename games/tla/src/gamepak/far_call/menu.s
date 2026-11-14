@@ -20,8 +20,8 @@ FarCall_MenuTable:
 	export Menu_ReleaseEntryObjectsFar, Menu_ReleaseEntryObjects
 	export DjinnFigures_InitializeTopRowFar, DjinnFigures_InitializeTopRow
 	export DjinnFigures_ReleaseTopRowFar, DjinnFigures_ReleaseTopRow
-	export Menu_SetEntryObjectsHiddenFar, Menu_SetEntryObjectsHidden
-	export MenuIcon_ReplaceObjectFar, MenuIcon_ReplaceObject
-	export MenuIcon_SetPositionFar, MenuIcon_SetPosition
-	export MenuIcon_SetPictureFar, MenuIcon_SetPicture
+	export DjinnFigures_SetShownFar, DjinnFigures_SetShown
+	export DjinnFigures_ReplaceSlotFar, DjinnFigures_ReplaceSlot
+	export DjinnFigures_SetSlotPositionFar, DjinnFigures_SetSlotPosition
+	export DjinnFigures_SetSlotDepthFar, DjinnFigures_SetSlotDepth
 	export DjinnFigures_SetSlotPhaseFar, DjinnFigures_SetSlotPhase

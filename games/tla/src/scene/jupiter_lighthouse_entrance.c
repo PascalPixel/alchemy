@@ -74,11 +74,11 @@ void MapGrid_SetAttributeBAt();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -105,7 +105,7 @@ void JupiterLighthouse_CycloneFifthPatch(void) {
 }
 
 void JupiterLighthouse_CycloneUncoversTheSpot(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   if (!Event_GetFlag(0xfe2)) {
@@ -113,11 +113,11 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
     if (leader->x >> 20 == 17 && leader->z >> 20 == 27) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, -16, 0);
+      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, -16, 0);
       leader->velocityY = px(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
   }
@@ -125,7 +125,7 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
 
 void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(4); }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   s32 clear;
@@ -134,10 +134,10 @@ s32 Scene_Initialize(void) {
   clear = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
   if (clear == 0) {
     if (gMainRoutineWork.entrance == 4)
-      Actor_ArriveInRing(gMainRoutineWork.currentOwner);
+      Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
   }
-  gMainRoutineWork.savedScene = (s32)&SceneId_Contigo2;
-  gMainRoutineWork.savedEntrance = 6;
+  gMainRoutineWork.restartScene = (s32)&SceneId_Contigo2;
+  gMainRoutineWork.restartEntrance = 6;
   return 0;
 }
 
@@ -200,7 +200,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   struct EffectOptions options;
   struct GustObject *object;
 
-  Event_PlaySound(SE_222);
+  Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
@@ -350,7 +350,7 @@ void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

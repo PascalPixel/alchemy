@@ -49,7 +49,7 @@ extern s16 gLemuriaDock_HouseDoorOpening[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 s32 *Scene_GetExits(void) {
   if (!Event_GetFlag(0x960))
@@ -57,7 +57,7 @@ s32 *Scene_GetExits(void) {
   return gLemuriaDock_ExitsWithFlag960;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -85,7 +85,7 @@ void LemuriaDock_MovePiers(void) {
       Actor_WalkToAndWait(8, 440, 440);
       Actor_SetSpeed(8, 1.2);
       Actor_SetAnimation(8, 2);
-      leader = Actor_GetById(party->currentOwner);
+      leader = Actor_GetById(party->leaderActorId);
       if (leader != NULL)
         Actor_SetDestination(8, S16_AT(leader, 10), S16_AT(leader, 18));
       Actor_WaitForMoveById(8);
@@ -105,7 +105,7 @@ void LemuriaDock_AskSettingOff(void) {
   s32 z;
 
   if (gFieldWork->psynergy != 0) {
-    Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   }
   Event_SetMessageId((s32)MsgAreWeSetting);
@@ -121,9 +121,9 @@ void LemuriaDock_AskSettingOff(void) {
     Actor_FaceDirectionAndWait(8, FACING_EAST);
     Event_Wait(5);
     party = &gMainRoutineWork;
-    z = Actor_GetById(party->currentOwner)->z;
+    z = Actor_GetById(party->leaderActorId)->z;
     limit = 0x1880000;
-    id = party->currentOwner;
+    id = party->leaderActorId;
     if (z < limit)
       Actor_WalkToAndWait(id, 472, 376);
     else
@@ -152,10 +152,10 @@ void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  id = gMainRoutineWork.currentOwner;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  id = gMainRoutineWork.leaderActorId;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
   else
@@ -171,7 +171,7 @@ void LemuriaDock_EnterHouse(s32 door) {
   LemuriaDock_EnterDoor(&gLemuriaDock_HouseDoor, door, 0);
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// A palette task: every 8 frames it turns colours 4 to 9 and 12 to 15 of
 /// background palette 11 round by one.
@@ -207,7 +207,7 @@ void LemuriaDock_CyclePalette(void) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   Task_Add(LemuriaDock_CyclePalette, 0x480);
   Flag_Clear(FLAG_SHOW_AREA_NAME);
 #if TLA_PATCH_1 /* From patch 1. */

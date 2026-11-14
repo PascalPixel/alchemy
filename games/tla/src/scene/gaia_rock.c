@@ -75,22 +75,22 @@ extern u32 gGaiaRock_CrateScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct ActorPlacement *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1)
+const struct ActorPlacement *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock1)
     return (const struct ActorPlacement *)gGaiaRock_Room1Regions;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock2)
     return (const struct ActorPlacement *)gGaiaRock_Room2Regions;
   return 0;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct Trigger *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1)
+const struct Trigger *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock1)
     return (const struct Trigger *)gGaiaRock_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock2)
     return (const struct Trigger *)gGaiaRock_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock3)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock3)
     return (const struct Trigger *)gGaiaRock_Room3Placements;
   return (const struct Trigger *)gGaiaRock_Placements;
 }
@@ -290,10 +290,10 @@ void GaiaRock_MindReadSusa(void) {
   }
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock1)
     return gGaiaRock_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2)
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock2)
     return gGaiaRock_Room2Triggers;
   return gGaiaRock_Triggers;
 }
@@ -459,7 +459,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.retreatScene = (s32)&SceneId_GaiaRock1;
   gMainRoutineWork.retreatEntrance = 5;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock1) {
     Task_Add((s32)GaiaRock_StatueBlowsWind, 0x480);
     Call2((void (*)())HangingVine_Place, 8, 1);
     Call2((void (*)())HangingVine_Place, 9, 1);
@@ -516,7 +516,7 @@ s32 Scene_Initialize(void) {
         Event_End();
       }
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock2) {
     Call2((void (*)())HangingVine_Place, 8, 1);
     Call2((void (*)())HangingVine_Place, 9, 1);
     Call2((void (*)())HangingVine_Place, 10, 1);
@@ -536,7 +536,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
       GaiaRock_PlaceStatue(19, 0x30a0000, -0x770000, 0x1a80000);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock3) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock3) {
     actor = Actor_GetById(64);
     if (actor != 0) {
       Actor_SetPosition(64, 0, 0);
@@ -552,7 +552,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GaiaRock2 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRock2 &&
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapWork->layers[1];
 
@@ -563,10 +563,10 @@ s32 Scene_PrepareMap(void) {
 }
 
 void GaiaRock_TriggerWallCell(void) {
-  if (gMainRoutineWork.renderMode == 2) {
+  if (gMainRoutineWork.movementMode == 2) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
-    struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+    struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
     s32 x = object->x / 0x100000;
     s32 z = (object->z - object->y + 0x7fff) / 0x100000;
     struct MapCell *cells = map->layers[2].cells;
@@ -595,7 +595,7 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 }
 
 void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
   struct Actor *pillar;
   s32 i;
@@ -634,10 +634,10 @@ dust:
   }
   if (--i >= 0)
     goto dust;
-  Event_PlaySound(SE_590);
+  Event_PlaySound(SE_STATUE_RISE);
   Event_PlaySound(SE_FLOOR_SWITCH);
   MapGrid_SetShake(2, 2, 0.9);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(leader, 40);
   FieldEvent_Wait(40);
@@ -656,7 +656,7 @@ fall:
   }
   Event_PlaySound(SE_THUMP);
   leader->gravity = gravity;
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_REMOVE);
   Actor_SelectAnimation(leader, 38);
   MapGrid_SetShake(1, 4, 1);
@@ -670,7 +670,7 @@ fall:
   Actor_SelectAnimation(leader, 1);
   leader->velocityY = px(4);
   System_Wait(20);
-  gMainRoutineWork.renderMode = 0;
+  gMainRoutineWork.movementMode = 0;
   Event_End();
   Event_SetFlag(flag);
 }

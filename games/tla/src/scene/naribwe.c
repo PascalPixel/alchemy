@@ -48,11 +48,11 @@ extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const u8 *Scene_GetPlacements(void) {
+const u8 *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == 10)
     return gNaribwe_Entrance10Placements;
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
@@ -72,7 +72,7 @@ void Naribwe_PrepareBlaze(void) {
     *flag = 0;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gNaribwe_TriggersOnReturn;
   return gNaribwe_Triggers;
@@ -145,7 +145,7 @@ void Naribwe_AskGoingToKibombo(void) {
 /// "No one can see the future. Absolutely no one. Except for our
 /// fortune-teller."
 void Naribwe_PraiseFortuneTeller(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0x8000) {
     Shop_Run(16, actor);
     return;
@@ -159,7 +159,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
 }
 
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0x8000) {
     Shop_Run(16, actor);
     return;
@@ -175,7 +175,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
 /// "I am but a humble pilgrim, serving the greater good in the heart of
 /// Gondowan."
 void Naribwe_TalkToPilgrim(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Sanctum_Run(actor);
     return;
@@ -189,7 +189,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
 }
 
 void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Sanctum_Run(actor);
     return;
@@ -227,9 +227,9 @@ void Naribwe_EnterDoor(void) {
   index -= 4;
   MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
                        gNaribwe_Doors[index].z);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

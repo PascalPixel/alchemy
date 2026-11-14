@@ -188,9 +188,14 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
 };
 
-/// BattleUnit.restraint bits, The Broken Seal's Unit.curse.
+/// The curse bits of BattleUnit.restraint, as The Broken Seal's Unit.curse.
 enum CurseFlag {
-  CURSE_BOUND = 0x01 ///< the unit is bound: one action in four is lost
+  CURSE_BOUND = 0x01,      ///< the unit is bound: one action in four is lost
+  CURSE_ITEM = 0x02,       ///< a cursed item is equipped
+  CURSE_KEEP_BOUND = 0x04, ///< keeps CURSE_BOUND through Unit_Calculate
+  /// EQUIP_EFFECT_CURSE_REMOVABLE: Unit_Calculate clears it again with
+  /// CURSE_BOUND.
+  CURSE_REMOVABLE = 0x08
 };
 
 /// BattleUnit.classIndex of an enemy, which has no class of its own.

@@ -12,7 +12,7 @@ struct BattleUnit;
 /// An inventory entry's parts, and a unit's slot count.
 /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item id
 enum InventoryEncoding {
-  ITEM_ID_MASK = 0x1ff,
+  INVENTORY_ITEM_ID_MASK = 0x1ff,
   INVENTORY_EQUIPPED = 0x200,
   INVENTORY_BROKEN = 0x400,
   /// The item id with its broken and equipped bits, all but the quantity.
@@ -155,7 +155,7 @@ struct ItemDefinition {
   s32 element;      ///< a weapon's attack element; ELEMENT_NONE for none
   struct EquipEffect
       effects[EQUIP_EFFECT_SLOTS]; ///< what it does while equipped
-  u16 actionId;                    ///< the ability used, or taught as Psynergy
+  u16 abilityId;                   ///< the ability used, or taught as Psynergy
   u8 reserved2a[2];                ///< 0 in every row
 };
 
@@ -172,7 +172,7 @@ STATIC_ASSERT(offsetof(struct ItemDefinition, useType) == 0x0c);
 STATIC_ASSERT(offsetof(struct ItemDefinition, unleashAbility) == 0x0e);
 STATIC_ASSERT(offsetof(struct ItemDefinition, element) == 0x14);
 STATIC_ASSERT(offsetof(struct ItemDefinition, effects) == 0x18);
-STATIC_ASSERT(offsetof(struct ItemDefinition, actionId) == 0x28);
+STATIC_ASSERT(offsetof(struct ItemDefinition, abilityId) == 0x28);
 
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);

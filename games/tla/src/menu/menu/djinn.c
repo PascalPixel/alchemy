@@ -52,8 +52,8 @@ s32 DjinnMenu_Run(void) {
   s32 zero;
 
   menu = HeapSlot_Alloc(220, 0xcec);
-  savedEventMode = gMainRoutineWork.eventMode;
-  gMainRoutineWork.eventMode = 2;
+  savedEventMode = gMainRoutineWork.messageSpeed;
+  gMainRoutineWork.messageSpeed = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
@@ -108,7 +108,7 @@ s32 DjinnMenu_Run(void) {
   Heap_Release(menu->backdrop);
   HeapSlot_Release(220);
   Party_ClearUnusableShortcutsFar();
-  gMainRoutineWork.eventMode = savedEventMode;
+  gMainRoutineWork.messageSpeed = savedEventMode;
   return 1;
 }
 
@@ -178,7 +178,7 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case 2:
       Menu_SetFirstActorRowCoordinates(0);
-      MenuIcon_SetPosition(1, 0, 200);
+      DjinnFigures_SetSlotPosition(1, 0, 200);
       result = DjinnMenu_SelectDjinn(0);
       step = 15;
       if (result == 10)
@@ -218,7 +218,7 @@ s32 DjinnMenu_RunScreen(void) {
       Menu_SetFirstActorRowCoordinates(-8);
       menu->member = menu->members[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
-      MenuIcon_SetPosition(0, menu->selectedColumn[0] * 56 + 48, 54);
+      DjinnFigures_SetSlotPosition(0, menu->selectedColumn[0] * 56 + 48, 54);
       result = DjinnMenu_SelectDjinn(1);
       for (listIndex = 0; listIndex < menu->memberCount; listIndex++)
         menu->memberY[listIndex] += 8;
@@ -850,7 +850,7 @@ s32 DjinnMenu_ShowHelp(void) {
     }
     channel->work = 0;
   } while (result == 0);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
   WindowSprite_ClearListFar(statusWindow);
   WindowSprite_ClearListFar(helpWindow);
   wait(1);
@@ -862,7 +862,7 @@ s32 DjinnMenu_ShowHelp(void) {
     WindowSprite_PrepareForRedrawFar(menu->helpWindow);
     WindowSprite_PrepareForRedrawFar(menu->listWindow);
     WindowSprite_PrepareForRedrawFar(menu->statusWindow);
-    ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
+    ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
   return result;
@@ -889,8 +889,8 @@ extern u8 gDjinnMenu_TextLevel[];
 s32 Djinn_MarkTradeOnlyRecipients(s8 *table, s32 self);
 
 void Menu_SetPageArrowsB(s32 index, s32 count);
-void MenuIcon_SetPicture(s32 index, s32 frame);
-void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation);
+void DjinnFigures_SetSlotDepth(s32 index, s32 frame);
+void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation);
 
 void DjinnRecovery_CountDownFar(void);
 s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
@@ -904,7 +904,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
   do {                                                                         \
     (window) =                                                                 \
         Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + (offset), 9, 9, 1); \
-    gMainRoutineWork.eventMode = 1;                                            \
+    gMainRoutineWork.messageSpeed = 1;                                         \
     while (Message_AllTypedFar() == 0)                                         \
       wait(1);                                                                 \
   } while (0)
@@ -1033,7 +1033,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       number = DJINN_NUMBER(djinn);
       state = DjinnMenu_GetEntryState(djinn);
       if (selectedRow == -1) {
-        MenuIcon_SetPosition(mode, 0, 200);
+        DjinnFigures_SetSlotPosition(mode, 0, 200);
       } else {
         s32 frame;
         s32 animation;
@@ -1052,12 +1052,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           frame = 0x8000;
           break;
         }
-        MenuIcon_SetPosition(mode, memberColumn % 4 * 56 + 48,
-                             mode == 0 ? 62 : 54);
-        MenuIcon_SetPicture(mode, frame);
+        DjinnFigures_SetSlotPosition(mode, memberColumn % 4 * 56 + 48,
+                                     mode == 0 ? 62 : 54);
+        DjinnFigures_SetSlotDepth(mode, frame);
         if (redraw & 2)
           DjinnFigures_SetSlotPhase(mode, 0);
-        MenuIcon_ReplaceObject(mode, element, animation);
+        DjinnFigures_ReplaceSlot(mode, element, animation);
       }
       window = menu->statusWindow;
       unit = Unit_Get(menu->members[memberColumn]);
@@ -1245,7 +1245,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case 15:
         if (backdrop->tutorialTimer == 60) {
-          gMainRoutineWork.eventMode = 1;
+          gMainRoutineWork.messageSpeed = 1;
           messageWindow =
               Message_OpenWindowFar(Menu_GetDjinnGiveMessage() + 4, 9, 9, 1);
           MenuCursor_Slide(2, 146);
@@ -1522,7 +1522,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairMember[mode] = DJINN_OWNER(entry);
   }
   menu->selection[mode] = memberColumn + djinnRow * 10;
-  MenuIcon_SetPicture(mode, 0x4000);
+  DjinnFigures_SetSlotDepth(mode, 0x4000);
   return result;
 }
 

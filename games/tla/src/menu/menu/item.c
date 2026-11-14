@@ -124,7 +124,7 @@ s32 ItemMenu_Run(void) {
       u16 chosenSlot;
     } *selection = Ram_HeapSlots->fieldWork;
 
-    selection->chosenItem = (owner << 10) | (item & ITEM_ID_MASK);
+    selection->chosenItem = (owner << 10) | (item & INVENTORY_ITEM_ID_MASK);
     selection->chosenSlot = screen->selectedSlots[0];
   }
 
@@ -258,12 +258,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->completionFlag = 1;
       }
       if (command == 0) {
-        if (BattleEffect_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) !=
-            0) {
+        if (BattleEffect_HasTriggerFar(menu->selectedItems[0] &
+                                       INVENTORY_ITEM_ID_MASK) != 0) {
           done = 1;
           *ownerOut = menu->sideMember[0];
           *targetOut = command;
-          *itemOut = menu->selectedItems[0] & ITEM_ID_MASK;
+          *itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
           ret = 1;
           break;
         }
@@ -290,7 +290,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           done = 1;
           *ownerOut = menu->sideMember[0];
           *targetOut = menu->sideMember[1];
-          *itemOut = menu->selectedItems[0] & ITEM_ID_MASK;
+          *itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
           ret = 1;
         }
       }
@@ -321,8 +321,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                  16);
       if (ItemMenu_SelectTarget(0) != -1) {
         command = 0;
-        if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] & ITEM_ID_MASK) !=
-            0) {
+        if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] &
+                                       INVENTORY_ITEM_ID_MASK) != 0) {
           command = 8;
         }
         result = ItemMenu_Use();
@@ -365,7 +365,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 5:
       ItemMenu_HideAllIcons();
-      item = Item_GetDirectFar(menu->selectedItems[0] & ITEM_ID_MASK);
+      item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       result = 0;
       if ((item->flags & 16) != 0) {
         qty = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
@@ -380,7 +380,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       menu->sideMember[1] = 0;
       Resource_LoadByModeIntoSlotFar(
-          2, (menu->selectedItems[0] & ITEM_ID_MASK) | (result << 11),
+          2, (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) | (result << 11),
           (u8)menu->selectedItemIcon->index, 0);
       menu->selectedItemIcon->active = ICON_SHOWN;
       menu->selectedItemIcon->x = 120;
@@ -394,7 +394,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Unit_Get(command);
         for (work = 0; work < result + 1; work++) {
           Inventory_RemoveFar(command, menu->selectedSlots[0]);
-          Item_AdjustCounterFar(menu->selectedItems[0] & ITEM_ID_MASK, 1);
+          Item_AdjustCounterFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK,
+                                1);
         }
         Unit_RefreshPsynergyFar(command);
         Unit_CalculateFar(command);
@@ -417,10 +418,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 4:
       aborted = 0;
-      item = Item_GetDirectFar(menu->selectedItems[0] & ITEM_ID_MASK);
+      item = Item_GetDirectFar(menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
       if ((item->flags & 16) != 0) {
         qty = ItemMenu_GetItemQuantity(menu->sideMember[1],
-                                       menu->selectedItems[0] & ITEM_ID_MASK);
+                                       menu->selectedItems[0] &
+                                           INVENTORY_ITEM_ID_MASK);
         if (qty == 30) {
           aborted = 1;
         }
@@ -448,9 +450,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             break;
           }
           for (command = 0; command < result + 1; command++) {
-            qty = Inventory_AddItemFar(menu->sideMember[1],
-                                       menu->selectedItems[0] &
-                                           (ITEM_ID_MASK | INVENTORY_BROKEN));
+            qty = Inventory_AddItemFar(
+                menu->sideMember[1],
+                menu->selectedItems[0] &
+                    (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
             if (qty != -1) {
               Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
               menu->selectedSlots[1] = qty;
@@ -460,9 +463,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       } else {
-        result = Inventory_AddItemFar(menu->sideMember[1],
-                                      menu->selectedItems[0] &
-                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
+        result = Inventory_AddItemFar(
+            menu->sideMember[1],
+            menu->selectedItems[0] &
+                (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           state = 7;
           break;
@@ -552,7 +556,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       movedTarget = 0;
       while (movedTarget <= 29) {
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
-          item = Item_GetDirectFar(menu->selectedItems[1] & ITEM_ID_MASK);
+          item = Item_GetDirectFar(menu->selectedItems[1] &
+                                   INVENTORY_ITEM_ID_MASK);
           if ((item->flags & 2) != 0) {
             aborted = 1;
           }
@@ -570,9 +575,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       movedTarget++;
       while (movedSource != 0) {
-        result = Inventory_AddItemFar(menu->sideMember[1],
-                                      menu->selectedItems[0] &
-                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
+        result = Inventory_AddItemFar(
+            menu->sideMember[1],
+            menu->selectedItems[0] &
+                (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           aborted = 1;
           break;
@@ -581,9 +587,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         movedSource--;
       }
       while (movedTarget != 0) {
-        result = Inventory_AddItemFar(menu->sideMember[0],
-                                      menu->selectedItems[1] &
-                                          (ITEM_ID_MASK | INVENTORY_BROKEN));
+        result = Inventory_AddItemFar(
+            menu->sideMember[0],
+            menu->selectedItems[1] &
+                (INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
         if (result == -1) {
           aborted = 1;
           break;
@@ -1119,9 +1126,9 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         Window_DrawDividerLineFar(window, 0, 9, 16, 9);
         Window_ClearInteriorTilesFar(window, 0, 72, 120, 80);
         if (selection != menu->sideIndex[0]) {
-          heldCount =
-              ItemMenu_GetItemQuantity(menu->memberIds[selection],
-                                       menu->selectedItems[0] & ITEM_ID_MASK);
+          heldCount = ItemMenu_GetItemQuantity(menu->memberIds[selection],
+                                               menu->selectedItems[0] &
+                                                   INVENTORY_ITEM_ID_MASK);
           if (ItemMenu_CountItems(menu->memberIds[selection]) == 15 &&
               heldCount == 0) {
             labelX = TRADE_LABEL_X;
@@ -1148,7 +1155,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
                                   0, menu->memberIds[selection]);
       }
       if (mode == 0) {
-        if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] & ITEM_ID_MASK))
+        if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] &
+                                       INVENTORY_ITEM_ID_MASK))
           StatusPanel_Draw(menu->statusWindow, menu->memberIds[selection],
                            menu->selectedSlots[0], 8);
         else
@@ -1156,7 +1164,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
                            menu->selectedSlots[0], 0);
         if (!GameFlag_Get(0x151) && !descriptionShown) {
           ITEM_INFO_CLEAR(menu->infoWindow);
-          ITEM_INFO_DRAW((menu->selectedItems[0] & ITEM_ID_MASK) +
+          ITEM_INFO_DRAW((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
                              (s32)MsgItemPlainName,
                          menu->infoWindow, 0, 0);
           descriptionShown = 1;
@@ -1212,7 +1220,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
       s32 owner = menu->memberSpriteIds[i];
 
       if (owner != -1) {
-        if (Item_CanUnitEquip(owner, menu->selectedItems[0] & ITEM_ID_MASK))
+        if (Item_CanUnitEquip(owner,
+                              menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
           Animation_ApplyChildArgumentFar(menu->memberSprites[i], 3);
         else
           Animation_ApplyChildArgumentFar(menu->memberSprites[i], 1);
@@ -1268,7 +1277,7 @@ s32 ItemMenu_CountItems(s32 owner_id) {
   s32 i;
 
   for (i = 0; i < 15; i++) {
-    s32 item_id = state->inventory[i] & ITEM_ID_MASK;
+    s32 item_id = state->inventory[i] & INVENTORY_ITEM_ID_MASK;
 
     if (item_id != 0)
       count++;
@@ -1286,7 +1295,7 @@ s32 ItemMenu_GetItemQuantity(s32 owner, s32 item) {
   i = 0;
   do {
     if (state->inventory[i] != 0 &&
-        (state->inventory[i] & ITEM_ID_MASK) == item) {
+        (state->inventory[i] & INVENTORY_ITEM_ID_MASK) == item) {
       quantity += (state->inventory[i] & INVENTORY_QUANTITY_MASK) >>
                   INVENTORY_QUANTITY_SHIFT;
       quantity++;
@@ -1362,7 +1371,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   s32 entry = unit->inventory[slot];
   s32 previewSlot;
   void *buffer;
-  struct ItemDefinition *item = Item_GetDirectFar(entry & ITEM_ID_MASK);
+  struct ItemDefinition *item =
+      Item_GetDirectFar(entry & INVENTORY_ITEM_ID_MASK);
 
   if (mode == 1)
     style = 0x100;
@@ -1700,7 +1710,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   struct ItemDefinition *item;
 
   menu = Ram_HeapSlots->menuRuntime;
-  item = Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0]);
+  item = Item_GetDirectFar(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0]);
 
   if (item->type == 0) {
     commandStates[0] = COMMAND_AVAILABLE;
@@ -1719,7 +1729,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     commandStates[0] = COMMAND_DISABLED;
 
   if (Item_CanUnitEquip(menu->sideMember[0],
-                        menu->selectedItems[0] & ITEM_ID_MASK) == 0) {
+                        menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) == 0) {
     commandStates[1] = COMMAND_DISABLED;
   }
 
@@ -1742,7 +1752,8 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     }
   }
 
-  if (BattleEffect_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0)
+  if (BattleEffect_HasTriggerFar(menu->selectedItems[0] &
+                                 INVENTORY_ITEM_ID_MASK) != 0)
     commandStates[0] = COMMAND_AVAILABLE;
 
   if (menu->partyCount <= 1)
@@ -2051,7 +2062,7 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
 
   row = 0;
   consumable = 0;
-  def = Item_GetDirectFar(item & ITEM_ID_MASK);
+  def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (def->type != 0) {
     found = 0;
     if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
@@ -2380,9 +2391,9 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   WindowSprite_RedrawSavedRectFar(window);
   if (dropMode == 0)
     targetCount = ItemMenu_GetItemQuantity(
-        menu->sideMember[1], menu->selectedItems[0] & ITEM_ID_MASK);
-  ownerCount = ItemMenu_GetItemQuantity(menu->sideMember[0],
-                                        menu->selectedItems[0] & ITEM_ID_MASK);
+        menu->sideMember[1], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
+  ownerCount = ItemMenu_GetItemQuantity(
+      menu->sideMember[0], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   entry = VramCache_FindFreeEntry();
   if (entry != 96) {
     VramCache_Load(entry, 0x100, 0);
@@ -2405,9 +2416,10 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         QuantityBar_FillFar(baseQuantity, 2, tiles);
         VramCache_Load(entry, 0x100, tiles);
         Text_DrawNumberInWindowFar(value + 1, 2, window, 32, 32);
-        Text_DrawMessageAsTilesFar((menu->selectedItems[0] & ITEM_ID_MASK) +
-                                       (s32)MsgItemName,
-                                   window, 16, 8);
+        Text_DrawMessageAsTilesFar(
+            (menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
+                (s32)MsgItemName,
+            window, 16, 8);
         Text_DrawNumberInWindowFar(ownerCount - value - 1, 2, window, 16, 24);
 #if LANGUAGE == LANGUAGE_JAPANESE
         Text_DrawMessageAsTilesFar(MSG_PIECE, window, 32, 24);
@@ -2472,7 +2484,7 @@ void ItemMenu_DrawItemHead(void) {
   Icon_PrepareActor(menu->selectedItemIcon);
   Text_DrawStringAtOffsetFar(Unit_Get(menu->sideMember[0]),
                              menu->questionWindow, 16, 0);
-  Text_DrawMessageAsTilesFar((menu->selectedItems[0] & ITEM_ID_MASK) +
+  Text_DrawMessageAsTilesFar((menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) +
                                  (s32)MsgItemName,
                              menu->questionWindow, 16, 8);
 }
@@ -2496,7 +2508,7 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   s32 changed = 1;
 
   window = Window_CreateFar(13, 3, 17, 10, WINDOW_FLAG_INSTANT);
-  itemId = item & ITEM_ID_MASK;
+  itemId = item & INVENTORY_ITEM_ID_MASK;
   Item_GetDirectFar(itemId);
   Text_DrawMessageAsTilesFar(itemId + (s32)MsgItemName, window, 24, 0);
   question = (s32)MsgConfirmDrop;
@@ -2735,7 +2747,8 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
 
   combined = state->selectedIndex;
   if (menu->items[combined] != 0) {
-    s32 masked = (menu->items[combined] & ITEM_ID_MASK) + (s32)MsgItemPlainName;
+    s32 masked = (menu->items[combined] & INVENTORY_ITEM_ID_MASK) +
+                 (s32)MsgItemPlainName;
 
     // Japanese draws the name as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -2796,7 +2809,8 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
   if (visibleCount > row) {
     itemId = &menu->items[firstEntry];
     do {
-      Text_DrawMessageAsTilesFar((itemId[0] & ITEM_ID_MASK) + (s32)MsgItemName,
+      Text_DrawMessageAsTilesFar((itemId[0] & INVENTORY_ITEM_ID_MASK) +
+                                     (s32)MsgItemName,
                                  menu->itemWindow, ENTRY_X, row * 16 + 8);
       row++;
       itemId++;
@@ -2896,8 +2910,9 @@ s32 ItemMenu_RunList(s32 pane) {
         for (i = 0; i <= 3; i++) {
           s32 slot = menu->memberSpriteIds[i];
           if (slot != -1 &&
-              Item_CanUnitEquip(
-                  slot, ITEM_ID_MASK & menu->items[state.selectedIndex]) != 0)
+              Item_CanUnitEquip(slot, INVENTORY_ITEM_ID_MASK &
+                                          menu->items[state.selectedIndex]) !=
+                  0)
             Animation_ApplyChildArgumentFar(menu->memberSprites[i], 3);
         }
       }

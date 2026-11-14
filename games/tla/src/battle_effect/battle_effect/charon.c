@@ -159,9 +159,9 @@ struct RegisterQueue {
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
 #define REGISTER_QUEUE ((struct RegisterQueue *)&gIoWriteQueue)
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 #define SPRITES ((struct SpriteObject__f175f74 **)Ram_MapCellBuffer)
-#define SPRITE_BUFFER gMapCellBuffer
+#define SPRITE_BUFFER gMapGridCellBuffer
 extern u8 gData_02014000[];
 #define OAM_BUFFER ((u32 *)gData_02014000)
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
@@ -288,7 +288,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   unit88 = SYSTEM_WORK->unit88;
   savedWidth = gBgScroll[1].x;
   glyphs = SYSTEM_WORK->glyphs;
-  sprites = (struct SpriteObject__f175f74 **)gMapCellBuffer;
+  sprites = (struct SpriteObject__f175f74 **)gMapGridCellBuffer;
   scene = SYSTEM_WORK->scene;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
@@ -339,7 +339,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
     work->objects[0] = object;
     object->priority = 3;
-    slots = gResourceTableEntries;
+    slots = gVramCacheEntries;
     Iwram_CopyWords(OBJ_VRAM + slots[object->slot].offset, work->buffer,
                     0x1000);
   }
@@ -673,7 +673,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Iwram_FillWords(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
         Decompress_TaggedLz(source, work->buffer + 0x2400);
-        for (i = 0, objectSlots = gResourceTableEntries; i != 12; i++) {
+        for (i = 0, objectSlots = gVramCacheEntries; i != 12; i++) {
           struct SpriteObject__f175f74 *object =
               EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
 
@@ -694,7 +694,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
           work->objects[12] = object;
           object->priority = 3;
-          tileSlots = gResourceTableEntries;
+          tileSlots = gVramCacheEntries;
           {
             u8 *vram = OBJ_VRAM;
 
@@ -879,8 +879,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             s32 texel = *lowByte | (*highByte << 8);
 
             *(u16 *)(OBJ_VRAM +
-                     (row +
-                      gResourceTableEntries[work->objects[13]->slot].offset) +
+                     (row + gVramCacheEntries[work->objects[13]->slot].offset) +
                      column) = texel;
             column = orderCopy[0x1001] * 2;
             pixel = row + column;
@@ -888,8 +887,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             highByte = high + pixel;
             texel = *lowByte | (*highByte << 8);
             *(u16 *)(OBJ_VRAM +
-                     (row +
-                      gResourceTableEntries[work->objects[13]->slot].offset) +
+                     (row + gVramCacheEntries[work->objects[13]->slot].offset) +
                      column) = texel;
           }
         }

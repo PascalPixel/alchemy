@@ -183,8 +183,8 @@ update_object:
   return 1;
 }
 
-/// SC_CMD_25: checks the configured keys (Field_CheckConfiguredKeys) and steps
-/// the script on. Returns 1.
+/// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys) and
+/// steps the script on. Returns 1.
 s32 Field_CheckConfiguredKeysAndCount(struct ActorScriptView *interpreter) {
   Field_CheckConfiguredKeys();
   interpreter->scriptCursor++;

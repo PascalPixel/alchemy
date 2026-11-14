@@ -89,7 +89,7 @@ void Actor_DepartInRing(s32 id);
   do {                                                                         \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,                     \
+    FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,                    \
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
@@ -124,16 +124,16 @@ void GabombaCatacombs_ClearRoom5SmallBushes(void) {
 // Cyclone on the bushes before the statue, hopping the leader off the cleared
 // patch.
 void GabombaCatacombs_ClearBushesByTheStatue(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(0xf53) == 0) {
     Actor_SetPosition(64, 392, 344);
     if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
       LEADER_HOP();
-      Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);
+      Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
       leader->velocityY = px(6);
-      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
   }
@@ -158,15 +158,15 @@ void GabombaCatacombs_TakeThirdTeleporter(void) {
 #define DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5, \
                                                      n6, n7, n8, n9)           \
   void name(void) {                                                            \
-    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);      \
                                                                                \
     GabombaCatacombs_ClearBushes(n1, n2, 0, n3, 3, 56, n4);                    \
     Actor_SetPosition(n5, n6, n7);                                             \
     if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
       LEADER_HOP();                                                            \
-      Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, 16, 0);    \
+      Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);   \
       leader->velocityY = px(6);                                               \
-      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);                    \
+      Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);                   \
       Event_End();                                                             \
     }                                                                          \
   }
@@ -178,18 +178,18 @@ DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
     GabombaCatacombs_UncoverSecondPuddle, 5, 13, 5, 52, 9, 136, 248, 8, 15)
 
 void GabombaCatacombs_UncoverThirdPuddle(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(10, 152, 264);
   if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+    FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, -16, 0);
+    Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, -16, 0);
     leader->velocityY = px(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     Event_End();
   }
 }
@@ -207,18 +207,18 @@ DEFINE_GABOMBA_CATACOMBS_SHIFT_CELLS_AND_HOP(
     GabombaCatacombs_UncoverSeventhPuddle, 5, 13, 5, 52, 14, 104, 248, 6, 15)
 
 void GabombaCatacombs_UncoverRoom5Puddle(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
   Actor_SetPosition(8, 280, 296);
   if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+    FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
     leader->velocityY = px(6);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     Event_End();
   }
 }
@@ -315,7 +315,7 @@ void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
 // Walking in the stream: spray rises every eighth frame and the water pushes
 // the leader along.
 void GabombaCatacombs_WadeStream(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
@@ -326,7 +326,7 @@ void GabombaCatacombs_WadeStream(void) {
       Actor_SelectAnimation(steam, 1);
       Actor_StartScript(steam, gGabombaCatacombs_SprayScript);
     }
-    Sound_Play(SE_623);
+    Sound_Play(SE_WADE);
   }
   GabombaCatacombs_DriftWithStream(leader, 55705);
 }
@@ -358,7 +358,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   PaletteFade_ApplyTarget(0x403108, 1);
   PaletteFade_StartInterpolation(60);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1);
-  Sound_Play(MUS_026);
+  Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Event_Wait(60);
   Actor_SetModeById(8, 2);
   Sound_Play(SE_576);
@@ -385,9 +385,9 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   glow->z = 0;
   glow->update = 0;
   TALK();
-  Actor_SetDestinationById(gMainRoutineWork.currentOwner, 166, 188);
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
+  Actor_SetDestinationById(gMainRoutineWork.leaderActorId, 166, 188);
+  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
   speed = 0x10000;
   follower->speedLimit = speed;
   Actor_SetDestinationById(9, 184, 188);
@@ -395,9 +395,9 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_FaceDirection(9, FACING_WEST, 0);
   // "By reaching this place, you have proven your power."
   Event_ShowMessageAndWait(9, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   TALK();
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
@@ -413,23 +413,23 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   // "I am grateful for your promise... But I am worried that we have done..."
   Event_ShowMessageAndWait(9, 0);
   TALK();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_ArmCallback(9, FACING_WEST, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirectionById(9, FACING_WEST, 0);
   Event_Wait(10);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
   TALK();
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Event_Wait(60);
   TALK();
   Event_Wait(40);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(40);
   Actor_SetModeById(9, 3);
   // "Akafubu has not honed his own powers, and the fault lies with him..."
@@ -439,7 +439,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_Wait(30);
   Actor_SetModeById(8, 4);
   Actor_SetModeById(9, 2);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(9, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(9);
@@ -449,7 +449,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Scene_PlayMusic();
   PaletteFade_ApplyTarget(speed, 0);
   PaletteFade_StartInterpolation(60);
-  FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_MoveToActorById(gMainRoutineWork.leaderActorId, 1);
   Event_Wait(60);
   Event_End();
 }
@@ -463,8 +463,8 @@ void GabombaCatacombs_TalkToStatue(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
+const struct SceneRegion *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1)
     return (const struct SceneRegion *)gGabombaCatacombs_Room1Regions;
   return 0;
 }
@@ -473,30 +473,30 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct Trigger gGabombaCatacombs_Triggers[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs2)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs3)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs4)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs5)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room5Placements;
   return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1)
     return gGabombaCatacombs_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs2)
     return gGabombaCatacombs_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs3)
     return gGabombaCatacombs_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs4)
     return gGabombaCatacombs_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5)
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs5)
     return gGabombaCatacombs_Room5Triggers;
   return gGabombaCatacombs_Triggers;
 }
@@ -516,7 +516,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs1 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Get(0xa27)) {
       gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatue7;
@@ -527,10 +527,10 @@ s32 Scene_Initialize(void) {
     }
   }
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs2 &&
+      gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs2 &&
       gMainRoutineWork.entrance > 2)
-    Actor_DepartInRing(gMainRoutineWork.currentOwner);
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs3) {
+    Actor_DepartInRing(gMainRoutineWork.leaderActorId);
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs3) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_00))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
     if (GameFlag_Get(FLAG_SCENE_TEMP_01))
@@ -546,10 +546,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs5 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs5 &&
       GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
-  if (gMainRoutineWork.scene == (s32)&SceneId_GabombaCatacombs4 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs4 &&
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(64);

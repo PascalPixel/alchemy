@@ -302,7 +302,7 @@ void Party_AddPp(s32 amount, s32 unused) {
   s32 i;
 
   for (i = 0; i < targetCount; i++)
-    Unit_AddPpFar(gMainRoutineWork.activeOwners[i], amount);
+    Unit_AddPpFar(gMainRoutineWork.party[i], amount);
 }
 
 void Party_AddHp(s32 amount, s32 scaled) {
@@ -311,7 +311,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
   s32 value;
   struct BattleUnit *unit;
   if (amount < 0) {
-    BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
+    PaletteFade_SetSource(0x1ff, 0);
     PaletteFade_StartInterpolation(4);
     if (amount < -10)
       Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -322,7 +322,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
   }
   count = Party_CountMembersFar();
   for (i = 0; i < count; i++) {
-    unit = Unit_Get(gMainRoutineWork.activeOwners[i]);
+    unit = Unit_Get(gMainRoutineWork.party[i]);
     if (!scaled) {
       value = amount;
     } else {
@@ -333,7 +333,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
           value = -value;
       }
     }
-    Unit_AddHpFar(gMainRoutineWork.activeOwners[i], value);
+    Unit_AddHpFar(gMainRoutineWork.party[i], value);
   }
 }
 
@@ -381,7 +381,7 @@ s32 Party_ApplyPoisonDamage(void) {
   }
 
   if (result != 0) {
-    BattleEffect_ApplyColorToSourceBuffer(0x1ff, 0);
+    PaletteFade_SetSource(0x1ff, 0);
     PaletteFade_StartInterpolation(4);
     Sound_PlayFar(SE_IMPACT);
   }
@@ -391,7 +391,7 @@ s32 Party_ApplyPoisonDamage(void) {
 
 /// In control mode 3, marks the event work busy, shows its object and, when a
 /// fade is pending, starts it at level 80 and waits 2 frames; then calls
-/// MapAnimation_StartFar.
+/// WorldMap_StartStillPictureFar.
 void WorldMap_Freeze(void) {
   struct FxWork *work = HeapSlot_AllocEwram(108, 0xd50);
 
@@ -411,7 +411,7 @@ void WorldMap_Freeze(void) {
       fade->pending = zero;
       wait(2);
     }
-    MapAnimation_StartFar();
+    WorldMap_StartStillPictureFar();
   }
 }
 
@@ -433,7 +433,7 @@ void *WorldMap_Unfreeze(void) {
 
   event = Ram_HeapSlots->fieldWork;
   if (party->ownerOverride == 0) {
-    s32 offset = party->currentOwner * 4;
+    s32 offset = party->leaderActorId * 4;
 
     offset += 20;
     event = *(void **)((u8 *)event + offset);

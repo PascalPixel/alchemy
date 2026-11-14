@@ -2,7 +2,7 @@
 /// and onto a cracked one other than the one it cracked last, the leader falls
 /// through it; 1 when it falls.
 s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct CellTarget *work = &gCrackedTiles;

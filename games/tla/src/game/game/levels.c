@@ -124,14 +124,14 @@ s32 Owner_UpdateClassActions(s32 owner) {
     if (def->useType != ITEM_USE_TEACHES)
       continue;
     for (i = 0; i < PSYNERGY_SLOTS; i++) {
-      if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->actionId)
+      if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->abilityId)
         break;
     }
     if (i != PSYNERGY_SLOTS)
       continue;
     for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if (ability[i * 2] == 0) {
-        ability[i * 2] = def->actionId | OWNER_ACTION_ITEM;
+        ability[i * 2] = def->abilityId | OWNER_ACTION_ITEM;
         break;
       }
     }
@@ -253,8 +253,8 @@ void Party_InitializeCharacters(void) {
 
         for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
              i++) {
-          slot = Inventory_AddItem(*startingUnitId,
-                                   character->items[i] & ITEM_ID_MASK);
+          slot = Inventory_AddItem(*startingUnitId, character->items[i] &
+                                                        INVENTORY_ITEM_ID_MASK);
           Inventory_Equip(*startingUnitId, slot);
         }
 

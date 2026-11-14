@@ -246,7 +246,8 @@ counted:
     s32 action;
 
     action = 9;
-    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.currentOwner))->hp == 0)
+    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
+        0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {
@@ -370,7 +371,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   created = Actor_Create(14, object->x, object->y + 0x40000, object->z);
   sprite = object->sprite;
   if (!(object->unk66 & 1))
-    Sound_PlayFar(SE_623);
+    Sound_PlayFar(SE_WADE);
   if (created != NULL) {
     struct Child *child = created->sprite;
 
@@ -390,7 +391,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 }
 #undef SAME_CELL
 
-extern struct MapCell gMapCellBuffer[];
+extern struct MapCell gMapGridCellBuffer[];
 // The heading of each direction-pad combination, -1 for none.
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
@@ -617,7 +618,8 @@ counted:
     s32 action;
 
     action = 9;
-    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.currentOwner))->hp == 0)
+    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
+        0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {
@@ -664,7 +666,7 @@ counted:
     if (object->terrainId <= 2)
       cells = ((struct MapWork *)map)->layers[object->terrainId].cells;
     else
-      cells = gMapCellBuffer;
+      cells = gMapGridCellBuffer;
     cells += object->x / 0x100000 + (object->z / 0x100000) * 128;
     /* FAKEMATCH(temporary): the cell attribute read into a local before the
      * flags. */

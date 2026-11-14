@@ -471,7 +471,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
       /* FAKEMATCH(dead): the vertex's index with q added and v, its equal,
        * taken away. */
       struct WaterVertex *vertex =
-          (struct WaterVertex *)((s8 *)gMapCellBuffer + (a + q - v) * 4);
+          (struct WaterVertex *)((s8 *)gMapGridCellBuffer + (a + q - v) * 4);
       s32 u = column * 8;
 
       SET_POSITION(vertex, column * 11 - 82, 60, row * 24 - 84);
@@ -604,7 +604,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     for (offset = 64; row != 7; row++, offset += 64) {
       s8 *vertex;
 
-      for (column = 0, vertex = (s8 *)gMapCellBuffer + offset + 1;
+      for (column = 0, vertex = (s8 *)gMapGridCellBuffer + offset + 1;
            column != WATER_COLUMNS; column++, vertex += 4) {
         s32 amplitude = (16 - column) * height / 32;
         s32 y = ((Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
@@ -655,7 +655,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
     model->shade = shade;
     model->scrollU = (frame + phase) & 127;
     model->scrollV = 127 & ~frame;
-    Render_TransformVertices(gMapCellBuffer, vertices, 128);
+    Render_TransformVertices(gMapGridCellBuffer, vertices, 128);
     Render_DrawModelList(model);
 
     if (frame == 0) {
@@ -798,7 +798,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
   sprites = Ram_HeapSlots->unk64[0];
   // Read through funnel at the corner loop and the transform only; through it
   // at the head loop, 14 of 609 differ (2026-11-08).
-  funnel = gMapCellBuffer;
+  funnel = gMapGridCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
     BattleEffect_RunDjinniEntrance(effect, effect->side << 4 | 3,
@@ -860,7 +860,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != WAFT_SEGMENTS; i++) {
         row = i * 8;
         for (k = 0; k != 2; k++) {
-          head = (s8 *)gMapCellBuffer + row + k * 4;
+          head = (s8 *)gMapGridCellBuffer + row + k * 4;
           head[1] = -(x + k * 24);
           head[0] = 0;
           head[2] = (s32)vertices;
@@ -895,7 +895,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
       s32 i;
       for (i = 32; i != 0; i--) {
         k = 0;
-        corner = (s8 *)gMapCellBuffer + (i - 1) * 8;
+        corner = (s8 *)gMapGridCellBuffer + (i - 1) * 8;
         for (; k != 2; k++) {
           corner[8] = corner[0];
           corner[9] = corner[1];
@@ -1019,7 +1019,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
 extern char ResourceId_CrystalBitmapSheet;
 extern char ResourceId_Data0C1;
 
-extern u8 Data_02014e20[];         // gMapCellBuffer + 20000, the berg
+extern u8 Data_02014e20[];         // gMapGridCellBuffer + 20000, the berg
 extern s32 gData_08197834[];       // the shards' cells: offsets,
 extern u8 gPrism_ShardWidths[];    // widths
 extern u8 gData_08197826[];        // and heights
@@ -1067,7 +1067,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
-  cells = gMapCellBuffer;
+  cells = gMapGridCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet, cells + 20000,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, cells, 0, 0);

@@ -327,7 +327,7 @@ enum {
 
 extern char ResourceId_SmallFlameSheet;
 
-// The life of each spark in the map cell buffer: gMapCellBuffer's
+// The life of each spark in the map cell buffer: gMapGridCellBuffer's
 // EffectSteps from their variant field on.
 extern s32 Data_02010018[];
 extern u8 Data_0819940c[][7];

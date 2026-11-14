@@ -84,7 +84,7 @@ s32 AirsRock_ClearScriptedActorSpriteFlags(s32 a0) {
   return 0;
 }
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   struct AirsRockMapWork *map =
@@ -96,7 +96,7 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   return (cell[2] << 8) | cell[3];
 }
@@ -112,7 +112,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   old = (cell[2] << 8) | cell[3];
   cell[2] = value >> 8;
@@ -189,8 +189,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern s16 gAirsRock_Regions[];
 
-s16 *Scene_GetRegions(void) {
-  s32 scene = gMainRoutineWork.scene;
+s16 *Scene_GetExitRegions(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AirsRock1)
     return gAirsRock_Room1Regions;
@@ -201,8 +201,8 @@ s16 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s32 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AirsRock1)
     return gAirsRock_Room1Placements;
@@ -237,12 +237,12 @@ void AirsRock_EnterTheRock(void) {
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
   Map_ClearLayerEntryFlag(0);
   FieldEvent_Wait(45);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 312, 680);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 312, 680);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(4);
   Event_End();
@@ -285,7 +285,7 @@ void AirsRock_MoveSecondPillar(void) {
     MapCell_SetAttributes(4, 70, 67, value);
     MapCell_SetAttributes(2, 33, 54, value);
   }
-  leader = (struct Actor *)((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  leader = (struct Actor *)((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   if ((leader->y >> 19) == 26)
     MapGrid_CopyCellAttributes(70, 67, 1, 1, 33, 54);
   Event_End();
@@ -307,7 +307,7 @@ void AirsRock_MoveThirdPillar(void) {
 // over 14 frames with cue 217 while turned to angle 0x5000, then lands 16
 // pixels on and plays cue 390 again.
 void AirsRock_ClimbLedge(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 z = leader->z;
   u32 i;
 
@@ -321,7 +321,8 @@ void AirsRock_ClimbLedge(void) {
   FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y, z + 0xc0000);
   System_Wait(6);
   Event_PlaySound(SE_FLOOR_SWITCH);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH_SOUTHWEST,
+                      0);
   leader->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     leader->y += -px(2);
@@ -337,8 +338,8 @@ void AirsRock_ClimbLedge(void) {
   Event_NoOp();
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s32 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s32 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AirsRock1)
     return gAirsRock_Room1Triggers;
@@ -416,7 +417,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // (FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + hit - 1) with cue 298. Then the gust
 // shrinks and rises away over 8 frames.
 void AirsRock_BlowGust(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectWork *effect = (struct EffectWork *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark;
   struct Vector3 velocity;
@@ -519,7 +520,7 @@ void AirsRock_BlowGust(void) {
     gust->speedLimit = px(1) / 2;
     gust->acceleration = px(1) / 2;
     Actor_SetMoveTarget(gust, cell.x << 16, gust->y, cell.z << 16);
-    Sound_Play(SE_235);
+    Sound_Play(SE_GUST);
     hit -= 30;
     while (Actor_HasArrived(gust) == 0) {
       if ((gFrameCount & 1) == 0) {
@@ -568,7 +569,7 @@ void AirsRock_BlowGust(void) {
                           gAirsRock_GustTargets[2][1], cell.x, cell.z, 1, 1);
       Map_CenterOnFollowedPoint();
     }
-    Sound_Play(SE_298);
+    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
     Event_SetFlag(flag + FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN);
   }
   gust->acceleration = 0;
@@ -584,7 +585,7 @@ void AirsRock_BlowGust(void) {
   }
   Actor_Release(gust);
   Event_Wait(30);
-  FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_MoveToActorById(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -644,7 +645,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, DMA_COPY_WORDS(208),
           REG_DMA3);
   Heap_Release(buffer);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   FieldActor_SetSpritePriority(8, 1);
   {
     s32 control = 0x40d;
@@ -702,7 +703,7 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(330, CAMERA_KEEP, 73, 1);
@@ -786,7 +787,7 @@ fade:
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   {
-    s32 *ownerId = &work->currentOwner;
+    s32 *ownerId = &work->leaderActorId;
 
     Actor_Get(*ownerId)->priorityFlags &= ~32;
     Actor_Get(*ownerId)->priorityFlags |= 1;
@@ -806,7 +807,7 @@ fade:
 // The leader rides a statue's whirlwind along its path until it fades, landing
 // where it ends.
 void AirsRock_RideWhirlwind(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedObject;
   struct Actor *rider, *dust;
   u8 *riding, *motion;
@@ -834,7 +835,7 @@ void AirsRock_RideWhirlwind(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Sound_Play(SE_288);
+  Sound_Play(SE_STOP_ACTION_SE);
   facing = ride->facing;
   if (facing == 0xc000) {
     rider = ride->watchedObject;
@@ -934,10 +935,10 @@ void AirsRock_RideWhirlwind(void) {
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(dust);
   }
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   Event_ClearFlag(FLAG_RIDING_WHIRLWIND);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   wait(10);
   Event_End();
@@ -953,7 +954,7 @@ extern u32 gAirsRock_WhirlwindFadesScript[];
 // A statue's whirlwind's update: it travels its way, picks up a leader it
 // touches and fades on a wall or another statue.
 void AirsRock_MoveWhirlwind(struct Actor *shot) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 speed = 0x18000;
   s32 cue = 539;
@@ -964,7 +965,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
   struct Actor **objects;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0 || gMainRoutineWork.renderMode == 5) {
+      work->item != 0 || gMainRoutineWork.movementMode == 5) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -987,7 +988,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     i = 0;
     leaderPosition = &leader->x;
     shotPosition = &shot->x;
-    if (gMainRoutineWork.renderMode == 2) {
+    if (gMainRoutineWork.movementMode == 2) {
       if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         i = 1;
@@ -1003,7 +1004,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
-      gMainRoutineWork.renderMode = 0;
+      gMainRoutineWork.movementMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
     }
@@ -1266,7 +1267,7 @@ row:
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_Interpolate(60);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(536, CAMERA_KEEP, 216, 1);
@@ -1282,7 +1283,7 @@ row:
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
-  Actor_Get(gMainRoutineWork.currentOwner)->facing = FACING_SOUTH;
+  Actor_Get(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
   System_Wait(1);
   PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10003, 0);
@@ -1493,7 +1494,7 @@ void AirsRock_WhirlwindClearsFog(void) {
     }
     FieldEvent_Wait(1);
   }
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(152, CAMERA_KEEP, 144, 1);
@@ -1557,10 +1558,10 @@ void AirsRock_WhirlwindClearsFog(void) {
                          gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   Actor_Get(12)->priorityFlags |= 1;
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_SetFlag(FLAG_AIRS_ROCK_FOG_CLEARED);
   Event_End();
@@ -1597,7 +1598,7 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 
 #include "shared/leader_lift.h"
 
-#define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
+#define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
 
 // A statue that breathes whirlwinds (AirsRock_StatueBreathesWhirlwind), from
@@ -1621,7 +1622,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.retreatScene = (s32)&SceneId_AirsRock1;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRock1) {
     switch (gMainRoutineWork.entrance) {
     case 2:
     case 3:
@@ -1675,7 +1676,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock2) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRock2) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1742,7 +1743,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRock3) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRock3) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -1791,7 +1792,7 @@ s32 Scene_Initialize(void) {
       Leader_Lift(0x480000);
     case 4:
     case 5:
-      Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+      Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
       break;
     case 8:
     case 9:
@@ -1874,7 +1875,7 @@ s32 Scene_Initialize(void) {
         leader->terrainId = 0;
         leader->y = leader->terrainHeight =
             Map_GetTerrainHeight(0, leader->x, leader->z - leader->y);
-        EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+        EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }
       break;
     case 99:
@@ -1894,7 +1895,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)MsgCurePoison2) {
+  if (gMainRoutineWork.next == (s32)MsgCurePoison2) {
     AirsRock_SetLedgeCellsByLevel();
   }
   return 0;

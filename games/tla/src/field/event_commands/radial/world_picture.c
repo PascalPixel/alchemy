@@ -77,7 +77,7 @@ void WorldPicture_Initialize(void) {
   Ram_WorldMapCursorStart[0] = work->x;
   Ram_WorldMapCursorStart[1] = work->z;
   work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
-  tile = gResourceTableEntries[work->windowSlot].offset;
+  tile = gVramCacheEntries[work->windowSlot].offset;
   work->window = Window_CreateFar(0, 0, 0, 0, 2);
   work->shown = -1;
   work->speed = px(1);

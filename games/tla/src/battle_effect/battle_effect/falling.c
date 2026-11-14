@@ -20,7 +20,7 @@
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 // Ice, Ice Horn and Ice Missile (effect kind 7, variants 0 to 2).
 
@@ -103,7 +103,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   // Window 0's left and right edge for each line: a band slanting with the
   // shards' fall, then the targets' full width, then nothing.
   if (effect->side == 0) {
-    line = gMapCellBuffer;
+    line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
         line[i] = (0xf0 - i) | ((0x70 - i) << 8);
@@ -113,7 +113,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
         line[i] = 0x100;
     }
   } else {
-    line = gMapCellBuffer;
+    line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 95)
         line[i] = (i - 8 + 160) | ((i + 0x18) << 8);
@@ -305,7 +305,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   // Window 0's left and right edge for each line: a band slanting with the
   // drops' fall, then the targets' width, then nothing.
   if (effect->side == 0) {
-    line = gMapCellBuffer;
+    line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
@@ -315,7 +315,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
         line[i] = 0x100;
     }
   } else {
-    line = gMapCellBuffer;
+    line = gMapGridCellBuffer;
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);

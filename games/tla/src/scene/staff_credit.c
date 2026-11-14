@@ -61,15 +61,15 @@ extern u32 gGauge_Sprite[3];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Sets the layer blend, switching its alpha every two frames unless
 /// gStaffCredit_BlendSteady is set.
@@ -211,7 +211,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
   map->unk11c = 0xd000;
   Iwram_ClearWordsEntry((void *)0x050001c0, 32);
   wait(1);
-  Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->animationKind = 0;
   gFieldWork->transitionFrames = 64;
   Event_StartScreenTransition();
   Camera_MoveWithinMapBounds_(gStaffCredit_FlightEnds[stage][0] << 16,
@@ -583,7 +583,7 @@ void Actor_SetFlightMode(struct Actor *object, s32 mode) {
     object->update = (void (*)(void))StaffCredit_FlashInFlight;
   } else {
     object->update = (void (*)(void))Actor_CycleChildValues;
-    Event_PlaySound(SE_291);
+    Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }
 
@@ -627,7 +627,7 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -786,7 +786,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
         /* FAKEMATCH(signature): the sprite written through LinkedSpriteView. */
         ((struct LinkedSpriteView *)sprite)->retainCacheEntry = 1;
         sprite->tile =
-            (gResourceTableEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct LinkedSpriteView *)sprite)->size = 2;
@@ -916,7 +916,7 @@ extern s16 gGauge_Countdown;
 /// Counts down while A or B is held, redraws the gauge and queues its sprite.
 void Gauge_Update(void) {
   u32 *oam = gGauge_Sprite;
-  s32 tile = gResourceTableEntries[gGauge_Vram].offset >> 5;
+  s32 tile = gVramCacheEntries[gGauge_Vram].offset >> 5;
   struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
   s32 screen[3];
   u32 attributes;

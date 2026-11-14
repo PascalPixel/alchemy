@@ -160,7 +160,7 @@ void DehkanPlateau_FightCannon(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -179,8 +179,8 @@ extern struct Trigger gDehkanPlateau_Room4Triggers[];
 extern struct Trigger gDehkanPlateau_Room5Triggers[];
 extern struct Trigger gDehkanPlateau_Room6Triggers[];
 
-const u8 *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u8 *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_DehkanPlateau1)
     return gDehkanPlateau_Room1Placements;
@@ -197,8 +197,8 @@ const u8 *Scene_GetPlacements(void) {
   return gDehkanPlateau_Placements;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_DehkanPlateau1)
     return gDehkanPlateau_Room1Triggers;
@@ -237,10 +237,10 @@ void DehkanPlateau_StepOnRoom2Pillars(void) {
 
   CrumblingPillars_StepWithStandIn(gDehkanPlateau_Room2CrumblingPillars);
   DehkanPlateau_SetRoom2StandingPillarCells();
-  y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
+  y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
   if (y < 0x80000) {
-    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+    Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   }
 }
 
@@ -255,9 +255,9 @@ void DehkanPlateau_SetRoom3StandingPillarCells(void) {
 void DehkanPlateau_StepOnRoom3Pillars(void) {
   CrumblingPillars_Step(gDehkanPlateau_Room3CrumblingPillars);
   DehkanPlateau_SetRoom3StandingPillarCells();
-  if (Actor_GetById(gMainRoutineWork.currentOwner)->y < -px(24)) {
-    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y < -px(24)) {
+    Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   }
 }
 
@@ -265,7 +265,7 @@ void DehkanPlateau_StepOnRoom6Pillar(void) {
   s32 y;
 
   CrumblingPillars_Step(gDehkanPlateau_Room6CrumblingPillar);
-  y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
+  y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
   if (y < 0x180000)
     DehkanPlateau_LeaveConeCell();
 }
@@ -273,7 +273,7 @@ void DehkanPlateau_StepOnRoom6Pillar(void) {
 void Actors_SetHidden(s32 show, s32 first, u32 count);
 
 void DehkanPlateau_SetActorsHidden(s32 show) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_DehkanPlateau1)
     Actors_SetHidden(show, 13, 14);
@@ -408,7 +408,7 @@ void DehkanPlateau_PushRoom3SecondPillar(void) {
   u8 *flags;
 
   if ((Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x >> 20) == 38) {
-    flags = &Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags;
+    flags = &Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags;
     Event_Start();
     Event_ResolvePendingActions(0);
     *flags = 0;
@@ -528,25 +528,25 @@ extern s32 gDehkanPlateau_CrackZ;
 // count.
 void DehkanPlateau_StepOnCrack(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 cellX = ((leader->x >> 20) << 1) + 1;
   s32 cellZ = ((leader->z >> 20) << 1) + 1;
   s32 n, flag;
   u16 *record, *next;
 
-  if (gMainRoutineWork.scene == SCENE(DehkanPlateau1)) {
+  if (gMainRoutineWork.next == SCENE(DehkanPlateau1)) {
     n = work->stepTrigger - 11;
     flag = work->stepTrigger + 0x235;
     record = &gDehkanPlateau_Room1Cracks[n][1];
-  } else if (gMainRoutineWork.scene == SCENE(DehkanPlateau2)) {
+  } else if (gMainRoutineWork.next == SCENE(DehkanPlateau2)) {
     n = work->stepTrigger - 14;
     flag = work->stepTrigger + 0x232;
     record = &gDehkanPlateau_Room2Cracks[n][1];
-  } else if (gMainRoutineWork.scene == SCENE(DehkanPlateau3)) {
+  } else if (gMainRoutineWork.next == SCENE(DehkanPlateau3)) {
     n = work->stepTrigger - 12;
     flag = work->stepTrigger + 0x234;
     record = &gDehkanPlateau_Room3Cracks[n][1];
-  } else if (gMainRoutineWork.scene == SCENE(DehkanPlateau5)) {
+  } else if (gMainRoutineWork.next == SCENE(DehkanPlateau5)) {
     n = work->stepTrigger - 18;
     flag = work->stepTrigger + 0x22e;
     record = &gDehkanPlateau_Room5Cracks[n][1];
@@ -557,8 +557,8 @@ void DehkanPlateau_StepOnCrack(void) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, cellX << 3,
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 4);
+  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, cellX << 3,
                           cellZ << 3);
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
   Event_Wait(4);
@@ -571,7 +571,7 @@ void DehkanPlateau_StepOnCrack(void) {
     x = *record;
     record = next;
     {
-      s16 scene = gMainRoutineWork.scene;
+      s16 scene = gMainRoutineWork.next;
       y = *record++;
       if (scene == SCENE(DehkanPlateau1))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room1CrackPictures[2],
@@ -595,7 +595,7 @@ void DehkanPlateau_StepOnCrack(void) {
     toX = record[0];
     toZ = record[1];
     {
-      s16 scene = gMainRoutineWork.scene;
+      s16 scene = gMainRoutineWork.next;
       if (scene == SCENE(DehkanPlateau1)) {
         {
           s32 srcX = gDehkanPlateau_Room1HolePictures[cellX],
@@ -639,22 +639,22 @@ void DehkanPlateau_StepOnCrack(void) {
     Event_Wait(12);
     leader->facing = FACING_SOUTH;
     leader->motionFlags = 0;
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
     {
-      s16 scene = gMainRoutineWork.scene;
+      s16 scene = gMainRoutineWork.next;
       if (scene == SCENE(DehkanPlateau1)) {
-        Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+        Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
       } else if (scene == SCENE(DehkanPlateau2) ||
                  scene == SCENE(DehkanPlateau3)) {
-        Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+        Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
       } else if (scene == SCENE(DehkanPlateau5)) {
         if (gDehkanPlateau_PoundCube != NULL)
           ((struct FieldSprite *)gDehkanPlateau_PoundCube->sprite)->priority =
               3;
-        Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+        Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
       }
     }
-    Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
+    Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);
     Event_Wait(16);
     for (cellX = 0; (u32)cellX <= 39; cellX++) {
       if (cellX == 5)
@@ -675,7 +675,7 @@ void DehkanPlateau_StepOnCrack(void) {
     y = *next;
     x = *record;
     {
-      s16 scene = gMainRoutineWork.scene;
+      s16 scene = gMainRoutineWork.next;
       if (scene == SCENE(DehkanPlateau1))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room1CrackPictures[0],
                                            gDehkanPlateau_Room1CrackPictures[1],
@@ -697,7 +697,7 @@ void DehkanPlateau_StepOnCrack(void) {
     GameFlag_Set(flag);
     GameFlag_Set(FLAG_STANDING_ON_OPENED_CRACK);
     {
-      s16 scene = gMainRoutineWork.scene;
+      s16 scene = gMainRoutineWork.next;
       if (scene == SCENE(DehkanPlateau5) || scene == SCENE(DehkanPlateau3)) {
         gDehkanPlateau_CrackX = leader->x >> 20;
         gDehkanPlateau_CrackZ = leader->z >> 20;
@@ -713,7 +713,7 @@ void DehkanPlateau_ForgetCrackOnLeaving(void) {
   struct Actor *object;
 
   if (Flag_Test(FLAG_STANDING_ON_OPENED_CRACK) != 0) {
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (gDehkanPlateau_CrackX != (object->x >> 20) ||
         gDehkanPlateau_CrackZ != (object->z >> 20))
       GameFlag_Clear(FLAG_STANDING_ON_OPENED_CRACK);
@@ -816,7 +816,7 @@ void Scene_RunIfHeld(void) {
 
   if (Leader_CanPushObjectAhead() != 0) {
     object = Actor_GetById(
-        Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner));
+        Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
     Pillars_LowerHeldCells(gDehkanPlateau_Room3RaisedPillars);
     Leader_PushObjectAhead();
     DehkanPlateau_PlaceRaisedPillar(object);
@@ -906,7 +906,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceActorById(ACTOR_ROOM2_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM2_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM2_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       40);
   Actor_SetSpeed(ACTOR_ROOM2_CANNON, 1.6);
@@ -932,7 +932,7 @@ void DehkanPlateau_CannonFleesEast(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceActorById(ACTOR_ROOM2_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM2_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM2_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       40);
   Actor_GetById(ACTOR_ROOM2_CANNON)->motionFlags = 0;
@@ -952,7 +952,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM3_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       40);
   Actor_SetSpeed(ACTOR_ROOM3_CANNON, 1.6);
@@ -972,17 +972,17 @@ void DehkanPlateau_CannonLeapsAway(void) {
 void DehkanPlateau_CannonPoundsPillar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 25);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveToFixed(212 << 17, -1, 208 << 15, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM3_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
   FieldCamera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(ACTOR_ROOM3_CANNON, 1.6);
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 424, 152);
-  Actor_ArmCallback(ACTOR_ROOM3_CANNON, FACING_EAST, 20);
+  Actor_FaceDirectionById(ACTOR_ROOM3_CANNON, FACING_EAST, 20);
   DehkanPlateau_CannonCastsPound();
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 440, 152);
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 456, 168);
@@ -1094,11 +1094,11 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   actor = Actor_GetById(ACTOR_ROOM3_CANNON);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 25);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(616, CAMERA_KEEP, 280, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM3_CANNON, gMainRoutineWork.leaderActorId, 0);
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
   Actor_ShowEmoteById(ACTOR_ROOM3_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       40);
@@ -1126,8 +1126,8 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_SetSpritePriority(ACTOR_ROOM3_CANNON, 1);
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 712, 200);
   Actor_WalkToAndWaitById(ACTOR_ROOM3_CANNON, 712, 168);
-  Actor_Stop(gMainRoutineWork.currentOwner);
-  Actor_FaceDirectionById(ACTOR_ROOM3_CANNON, FACING_EAST);
+  Actor_Stop(gMainRoutineWork.leaderActorId);
+  Actor_FaceDirectionAndRefreshById(ACTOR_ROOM3_CANNON, FACING_EAST);
   Actor_SetSpeed(ACTOR_ROOM3_CANNON, 2);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = px(8);
@@ -1135,7 +1135,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_WalkToAndWait(ACTOR_ROOM3_CANNON, 744, 168);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROOM3_CANNON), 1);
   DehkanPlateau_CrumblePillar(24, 25, 0x216);
-  Actor_FaceDirectionById(ACTOR_ROOM3_CANNON, FACING_NORTH);
+  Actor_FaceDirectionAndRefreshById(ACTOR_ROOM3_CANNON, FACING_NORTH);
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = px(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROOM3_CANNON), 0);
@@ -1155,7 +1155,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
 }
 
 void DehkanPlateau_CannonPoundsLeaderThrough(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 i;
 
   Event_Start();
@@ -1164,13 +1164,13 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
     s32 facing = FACING_NORTH;
 
     Actor_SetHorizontalPositionAndAngleWithTerrain(
-        gMainRoutineWork.currentOwner, px(248), px(136), facing);
+        gMainRoutineWork.leaderActorId, px(248), px(136), facing);
   }
   MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
   GameFlag_Set(FLAG_SCENE_TEMP_45);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
-  Actor_FaceActorById(ACTOR_ROOM5_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM5_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM5_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
   DehkanPlateau_CannonCastsPoundOnLeader();
@@ -1178,8 +1178,8 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   leader->facing = FACING_SOUTH;
   leader->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_ROOM5_CANNON, 3);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
+  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);
   Event_Wait(16);
   for (i = 0; i < 40; i++) {
     if (i == 5)
@@ -1200,7 +1200,7 @@ void DehkanPlateau_PoundLeaderThrough(void) {
     Sound_Play(SE_SPLASH);
     MapGrid_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
-    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+    Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   }
 }
 
@@ -1238,7 +1238,7 @@ extern void Task_Add__events_i(void (*func)(void),
 void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   BattleEffect_LoadActionEffectResources(134, 1);
   Task_Add__events_i(DehkanPlateau_PoundLeaderThrough, 0x480);
-  FieldPsynergy_SetupActorPair(9, gMainRoutineWork.currentOwner);
+  FieldPsynergy_SetupActorPair(9, gMainRoutineWork.leaderActorId);
   EventObject_Initialize();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -1250,7 +1250,7 @@ void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
 void DehkanPlateau_CannonDropsPoundCube(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *helper = Actor_GetById(ACTOR_ROOM5_CANNON);
 
   Event_Start();
@@ -1278,7 +1278,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
     gDehkanPlateau_PoundCube->acceleration = 0x19999;
     gDehkanPlateau_PoundCube->velocityY = px(8);
   }
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   Actor_SetSpeed(ACTOR_ROOM5_CANNON, 1.6);
   leader->velocityY = px(6);
   helper->velocityY = px(6);
@@ -1289,8 +1289,8 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Actor_WaitForMove(leader);
   Event_Wait(20);
   Actor_ShowEmoteById(ACTOR_ROOM5_CANNON, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_ROOM5_CANNON, FACING_WEST, 60);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ROOM5_CANNON, FACING_WEST, 60);
   Actor_WalkToAndWait(ACTOR_ROOM5_CANNON, 296, 104);
   Actor_WalkToAndWait(ACTOR_ROOM5_CANNON, 296, 80);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_ROOM5_CANNON, 0, 0);
@@ -1310,11 +1310,11 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   actor = Actor_GetById(ACTOR_ROOM6_CANNON);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 16);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveWithinMapBounds(px(760), px(32), px(204), 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceActorById(ACTOR_ROOM6_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM6_CANNON, gMainRoutineWork.leaderActorId, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
   // before the 0x100's shift.
   Actor_ShowEmote(ACTOR_ROOM6_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -1337,8 +1337,8 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Actor_WalkToAndWaitById(ACTOR_ROOM6_CANNON, 824, 200);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROOM6_CANNON), 1);
   Event_Wait(20);
-  Actor_WatchAndSetScript(ACTOR_ROOM6_CANNON, gMainRoutineWork.currentOwner);
-  Actor_Stop(gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_ROOM6_CANNON, gMainRoutineWork.leaderActorId);
+  Actor_Stop(gMainRoutineWork.leaderActorId);
   Event_Wait(20);
   Event_End();
 }
@@ -1346,14 +1346,14 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
 void DehkanPlateau_CannonCornered(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActorById(ACTOR_ROOM6_CANNON, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_ROOM6_CANNON, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmoteById(ACTOR_ROOM6_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       40);
-  Actor_FaceDirectionById(ACTOR_ROOM6_CANNON, FACING_EAST);
+  Actor_FaceDirectionAndRefreshById(ACTOR_ROOM6_CANNON, FACING_EAST);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(ACTOR_ROOM6_CANNON, 3);
   Actor_FaceDirectionAndWait(ACTOR_ROOM6_CANNON, FACING_WEST);
-  Actor_WatchAndSetScript(ACTOR_ROOM6_CANNON, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(ACTOR_ROOM6_CANNON, gMainRoutineWork.leaderActorId);
   FieldEffect_SetAttached(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_End();
@@ -1385,8 +1385,8 @@ void DehkanPlateau_LeaveRoom(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_DehkanPlateau1)
-    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+  if (gMainRoutineWork.next == (s32)&SceneId_DehkanPlateau1)
+    Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1394,7 +1394,7 @@ void DehkanPlateau_LeaveRoom(void) {
 }
 
 s32 Scene_Initialize(void) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_DehkanPlateau1)
     DehkanPlateau_InitializeRoom1();
@@ -1416,7 +1416,7 @@ s32 Scene_Initialize(void) {
 // table would settle it.
 void DehkanPlateau_KeepPriorityWithLeader(void) {
   Actor_SetSpritePriority(64, ((struct AnimationFacing *)Actor_GetById(
-                                   gMainRoutineWork.currentOwner)
+                                   gMainRoutineWork.leaderActorId)
                                    ->sprite)
                                   ->facing);
 }
@@ -1451,10 +1451,10 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
 
 void DehkanPlateau_InitializeRoom2(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
     if (gMainRoutineWork.entrance == 5) {
-      Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+      Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
     }
   }
   CrumblingPillars_PlaceWithStandIns(gDehkanPlateau_Room2CrumblingPillars);
@@ -1502,9 +1502,9 @@ void DehkanPlateau_InitializeRoom3(void) {
   s32 zero, value;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
-    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+    Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   }
   Actor_SetSpritePriority(8, 1);
   Actor_SetSpritePriority(ACTOR_ROOM5_CANNON, 1);
@@ -1637,7 +1637,7 @@ DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawRoom5FallLanding, 13, 5,
 
 void DehkanPlateau_InitializeRoom4(void) {
   gFieldWork->transition = 0x204;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   DehkanPlateau_HideRoom4Actors();
   if (GameFlag_Get(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
     MapGrid_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
@@ -1666,7 +1666,7 @@ void DehkanPlateau_InitializeRoom4(void) {
 
 // The leader drops in from the crack above, landing in a ring of dust.
 void DehkanPlateau_LandFromFall(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   u32 i;
   struct EffectOptions *opts;
@@ -1719,24 +1719,24 @@ loop:
   if (i <= 16)
     goto loop;
   Sound_Play(SE_THUMP);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = 0x204;
   Event_End();
 }
 
 void DehkanPlateau_InitializeRoom5(void) {
-  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 entrance;
 
   gFieldWork->transition = 0x204;
@@ -1802,7 +1802,7 @@ void DehkanPlateau_CreatePoundCube(void) {
 
 void DehkanPlateau_InitializeRoom6(void) {
   gFieldWork->transition = 0x204;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_CANNON)) != 0)
     GameFlag_Set(FLAG_CANNON_MET);
   Pillars_Place(gDehkanPlateau_Room6PoundPillars);

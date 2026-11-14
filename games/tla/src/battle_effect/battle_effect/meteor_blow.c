@@ -97,7 +97,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0DA;
 extern char ResourceId_Data0C1;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern s32 Data_02010018[]; // the shards' variants, 28 bytes apart
 extern u16 gBattleEffect_MoteCells[];
 extern const struct PointPair Data_08196f20;
@@ -174,7 +174,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   struct ModelTexture__f18df5c texture;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
-  map = gMapCellBuffer;
+  map = gMapGridCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
   work->effect = effect;
@@ -436,17 +436,17 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           Render_ProjectPoint(point, screen);
           if (screen[2] > 0) {
             if (kind == 7) {
-              blit[0](gMapCellBuffer, sprites + i % 30, screen[0], screen[1], 1,
-                      1);
+              blit[0](gMapGridCellBuffer, sprites + i % 30, screen[0],
+                      screen[1], 1, 1);
             } else {
-              blit[0](gMapCellBuffer, work->sheet + Data_08199e7e[kind],
+              blit[0](gMapGridCellBuffer, work->sheet + Data_08199e7e[kind],
                       screen[0], screen[1], Data_08199e70[kind],
                       Data_08199e77[kind]);
             }
           }
         }
       } else {
-        Iwram_ClearWordsEntry(gMapCellBuffer, 0x7800);
+        Iwram_ClearWordsEntry(gMapGridCellBuffer, 0x7800);
       }
     }
 
@@ -574,7 +574,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       struct EffectStep *p;
       s32 count = 256;
 
-      p = (struct EffectStep *)gMapCellBuffer;
+      p = (struct EffectStep *)gMapGridCellBuffer;
       i = 0;
       half = (hx / 2) << 16;
       /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
@@ -682,7 +682,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     {
       struct EffectStep *p;
 
-      p = (struct EffectStep *)gMapCellBuffer;
+      p = (struct EffectStep *)gMapGridCellBuffer;
       for (i = 0; i != 256; i++, p++) {
         if (p->variant >= 0) {
           s32 n = (p->variant >> 2) + 1;

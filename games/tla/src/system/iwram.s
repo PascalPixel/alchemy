@@ -40,8 +40,8 @@ gDecodeFillByte:
 	.global gScreenFadeVBlanks
 gScreenFadeVBlanks:
 	.space 0x00000004
-	.global gFrameWaitCount
-gFrameWaitCount:
+	.global gPlayTimeFrames
+gPlayTimeFrames:
 	.space 0x00000004
 	.global gSleepDisabled
 gSleepDisabled:
@@ -58,8 +58,8 @@ gScreenFadeTargetLevel:
 	.global gSerialExchangeActive
 gSerialExchangeActive:
 	.space 0x00000004
-	.global gRandomState
-gRandomState:
+	.global gRandomSeed
+gRandomSeed:
 	.space 0x00000004
 	.global gResetRequested
 gResetRequested:
@@ -100,17 +100,17 @@ gVBlankCallback:
 	.global gOamMatrixCount
 gOamMatrixCount:
 	.space 0x00000004
-	.global gAutoSleepEnabled
-gAutoSleepEnabled:
+	.global gIdleSleepEnabled
+gIdleSleepEnabled:
 	.space 0x0000000c
-	.global gRenderOamEnabled
-gRenderOamEnabled:
+	.global gOamCopyEnabled
+gOamCopyEnabled:
 	.space 0x00000008
 	.global gDebugPaused
 gDebugPaused:
 	.space 0x00000004
-	.global gIdleFrameCount
-gIdleFrameCount:
+	.global gIdleFrames
+gIdleFrames:
 	.space 0x00000004
 	.global gVBlankDone
 gVBlankDone:

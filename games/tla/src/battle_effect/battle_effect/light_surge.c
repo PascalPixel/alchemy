@@ -90,7 +90,7 @@ extern char ResourceId_Data0C9;
 extern char ResourceId_Data134;
 extern char ResourceId_EffectPalette02;
 extern char ResourceId_MercuryDjinnSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern const u8 Data_08199244[];   // a quad's mesh
 extern const u8 Data_081991e0[];   // its corners
 extern const s32 Data_08198bfc[4]; // per pillar: its size,
@@ -166,7 +166,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   target = BattleObject_GetFar(effect->actors[0])->object;
 
   // Shaded circles of 2 to 64 pixels, packed in the map buffer.
-  cells = (s32)gMapCellBuffer;
+  cells = (s32)gMapGridCellBuffer;
   circles = (s16 *)work->sheet;
   offset = 0;
   size = 2;

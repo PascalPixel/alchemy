@@ -67,9 +67,9 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
   // The current owner turns to 0x4000 and takes mode 28.
   wait(60);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.currentOwner), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
   wait(40);
   Sound_PlayFar(SE_SCATTER);
   wait(100);
@@ -132,7 +132,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct EffectVector position;
   s32 state;
 
-  owner = (struct EffectOwner *)Actor_GetById(gMainRoutineWork.currentOwner);
+  owner = (struct EffectOwner *)Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
   if (state == 0) {

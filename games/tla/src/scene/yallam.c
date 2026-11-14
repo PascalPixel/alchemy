@@ -150,7 +150,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   struct Actor *leader;
   s32 force = 0;
 
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
     u8 *state = &object->movementState;
@@ -172,7 +172,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
     else
       target = Actor_Get(9);
     if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
-      leader = Actor_Get(gMainRoutineWork.currentOwner);
+      leader = Actor_Get(gMainRoutineWork.leaderActorId);
       if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
         force = 1;
       Yallam_FaceIfNear(object, leader, 24, force);
@@ -193,7 +193,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   else
     target = Actor_Get(9);
   if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
-    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+    struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
     if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
@@ -205,7 +205,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -213,11 +213,11 @@ extern s32 gYallam_Placements[];
 extern struct ActorPlacement gYallam_Room2Placements[];
 extern struct ActorPlacement gYallam_SongGamePlacements[];
 
-const u8 *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1 &&
+const u8 *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1 &&
       gMainRoutineWork.entrance == 15)
     return gYallam_SongGamePlacements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam2)
+  if (gMainRoutineWork.next == (s32)&SceneId_Yallam2)
     return gYallam_Room2Placements;
   return gYallam_Placements;
 }
@@ -246,10 +246,10 @@ void Yallam_EnterDoor(void) {
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
                        gYallam_Doors[index].y);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   {
-    s32 owner = gMainRoutineWork.currentOwner;
+    s32 owner = gMainRoutineWork.leaderActorId;
 
     if (index == 7)
       Actor_SetDestinationOffset(owner, 0, -4);
@@ -279,7 +279,7 @@ void Yallam_DigFirstHole(void) {
 void Yallam_DigSecondHole(void) { Yallam_EditMap(67, 25, 2, 1, 79, 22, 1); }
 
 void Yallam_DigThirdHole(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Yallam_EditMap(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(0xf62) == 0) {
@@ -287,11 +287,11 @@ void Yallam_DigThirdHole(void) {
     if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
+      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);
       leader->velocityY = px(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
   }
@@ -300,7 +300,7 @@ void Yallam_DigThirdHole(void) {
 void Yallam_DigFourthHole(void) { Yallam_EditMap(67, 25, 3, 3, 106, 20, 1); }
 
 void Yallam_DigFifthHole(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Yallam_EditMap(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(0xf60) == 0) {
@@ -308,11 +308,11 @@ void Yallam_DigFifthHole(void) {
     if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+      Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -16);
+      Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
       leader->velocityY = px(6);
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
   }
@@ -324,11 +324,11 @@ extern struct Trigger gYallam_Triggers[];
 extern struct Trigger gYallam_RoomTwoTriggers[];
 extern struct Trigger gYallam_EntranceFifteenTriggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1 &&
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1 &&
       gMainRoutineWork.entrance == 15)
     return gYallam_EntranceFifteenTriggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam2)
+  if (gMainRoutineWork.next == (s32)&SceneId_Yallam2)
     return gYallam_RoomTwoTriggers;
   return gYallam_Triggers;
 }
@@ -360,7 +360,7 @@ void Yallam_TalkAboutSongCircles(void) {
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->psynergy == 0) {
-    Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(9, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId(MsgRunningAroundIn);
   } else {
     FieldEvent_SetMessageId(MsgThereSALot);
@@ -384,7 +384,7 @@ void Yallam_TalkAboutSongGame(void) {
   FieldEvent_ResolvePendingActions(0);
   object->unk63 = 1;
   if (work->psynergy == 0) {
-    Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
+    Actor_FaceActor(10, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId(MsgThereSAGame);
   } else {
     FieldEvent_SetMessageId(MsgIOnceHeard);
@@ -1268,7 +1268,7 @@ void Yallam_UpdateSongGame(void) {
   struct Actor *b = Actor_Get(10);
   struct Actor *c = Actor_Get(9);
   struct Actor *d = Actor_Get(11);
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 value = (s16)a->unk66;
 
   switch (value) {
@@ -1299,7 +1299,7 @@ void Yallam_UpdateSongGame(void) {
   Yallam_RunSongPath(10);
   Yallam_RunSongPath(9);
   Yallam_RunSongPath(11);
-  Yallam_RunSongPath(gMainRoutineWork.currentOwner);
+  Yallam_RunSongPath(gMainRoutineWork.leaderActorId);
 }
 
 /// Saves every runner's state and stops the game's task.
@@ -1326,7 +1326,7 @@ void Yallam_PauseSongGame(void) {
   gYallam_SavedSongGame[3].mode = (s16)object->unk66;
   gYallam_SavedSongGame[3].byte98 = BYTE_AT(object, 98);
   gYallam_SavedSongGame[3].byte99 = BYTE_AT(object, 99);
-  object = Actor_Get(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.leaderActorId);
   gYallam_SavedSongGame[4].action = object->timer;
   gYallam_SavedSongGame[4].mode = (s16)object->unk66;
   gYallam_SavedSongGame[4].byte98 = BYTE_AT(object, 98);
@@ -1358,7 +1358,7 @@ void Yallam_ResumeSongGame(void) {
   object->unk66 = gYallam_SavedSongGame[3].mode;
   BYTE_AT(object, 98) = gYallam_SavedSongGame[3].byte98;
   BYTE_AT(object, 99) = gYallam_SavedSongGame[3].byte99;
-  object = Actor_Get(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.leaderActorId);
   object->timer = gYallam_SavedSongGame[4].action;
   object->unk66 = gYallam_SavedSongGame[4].mode;
   BYTE_AT(object, 98) = gYallam_SavedSongGame[4].byte98;
@@ -1410,9 +1410,9 @@ void Yallam_ShowSongGame(void) {
   (FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(304, CAMERA_KEEP, 878, 1);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 296, 872);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 296, 872);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
@@ -1427,24 +1427,24 @@ void Yallam_ShowSongGame(void) {
   Actor_RunScriptAndWait(11, gYallam_SongGameForm11);
   Actor_SetPosition(ACTOR_JENNA, 296, 872);
   System_Wait(1);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_WalkToAndWait(ACTOR_JENNA, 312, 854);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_JENNA, ((s16 *)(&leader->x))[1],
                          ((s16 *)(&leader->z))[1]);
   }
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 896);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 912);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 316, 896);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 344, 912);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   Event_PlaySound(MUS_017);
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
   // "If you want to go to the stars, if you want to go to the stars."
@@ -1459,7 +1459,7 @@ void Yallam_ShowSongGame(void) {
   Yallam_StartRunner(10);
   Yallam_StartRunner(9);
   Yallam_StartRunner(11);
-  Yallam_StartRunner(gMainRoutineWork.currentOwner);
+  Yallam_StartRunner(gMainRoutineWork.leaderActorId);
   {
     s32 priority = 0x480;
     Task_AddFrame(Yallam_UpdateSongGame, priority);
@@ -1504,14 +1504,14 @@ wait3:
   FieldActor_Jump(10, 4, 0);
   FieldActor_Jump(9, 4, 0);
   FieldActor_Jump(11, 4, 40);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(11, FACING_WEST);
   Event_OpenMessage(8, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+                                            0) == 0) {
     Yallam_SingMoonSong();
   } else {
     FieldEvent_ShowMessageThenWait(8, 0, 20);
@@ -1542,7 +1542,7 @@ void Yallam_SingMoonSong(void) {
   Actor_FaceDirection(10, FACING_WEST, 0);
   Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWant);
   v5 = object;
   // "If you want to go to the moon, if you want to go to the moon."
@@ -1623,7 +1623,7 @@ void Yallam_SingSunSong(void) {
   Actor_FaceDirection(10, FACING_EAST, 0);
   Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
+  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWantTo);
   v5 = v6;
   // "If you want to go to the sun, if you want to go to the sun."
@@ -1718,10 +1718,10 @@ waitFourthVerse:
   FieldActor_Jump(11, 4, 0);
   FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
   FieldActor_WaitForMoveById(11);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 184, 686);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 186, 674);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 184, 686);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 186, 674);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
   t63 = ((s32)Actor_Get(8));
   FIELD_AT(t63, u8, 90) = (FIELD_AT(t63, u8, 90) | 1);
   t64 = ((s32)Actor_Get(10));
@@ -1751,7 +1751,7 @@ void Yallam_PlaceFallenPillar(void) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1) {
     if (gMainRoutineWork.entrance == 15)
       Yallam_StartWatchers();
     else
@@ -1761,7 +1761,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Yallam1 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1 &&
       Event_GetFlag(FLAG_AREA_TEMP_00))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;

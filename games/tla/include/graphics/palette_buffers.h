@@ -7,7 +7,7 @@
 
 /// A colour buffer for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
-struct PaletteFade {
+struct TitlePaletteFade {
   /// The source palette, RGB555: 256 BG colours, then 256 OBJ colours.
   u16 palette[512];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
@@ -23,17 +23,17 @@ struct PaletteFade {
   u8 padding3003; ///< never named
 };
 
-STATIC_ASSERT(sizeof(struct PaletteFade) == 0x3004);
-STATIC_ASSERT(offsetof(struct PaletteFade, current) == 0x400);
-STATIC_ASSERT(offsetof(struct PaletteFade, target) == 0x1000);
-STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 0x1c00);
-STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 0x2800);
-STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x3000);
+STATIC_ASSERT(sizeof(struct TitlePaletteFade) == 0x3004);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, current) == 0x400);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, target) == 0x1000);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, delta) == 0x1c00);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, packed) == 0x2800);
+STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 0x3000);
 
 /// The colour buffer (heap block 32) that fades the BG and OBJ palettes: the
 /// source palette, the shown and target colour channels, their per-frame
 /// steps, and two pages of packed RGB555 colours queued each frame.
-struct BattleEffectBuffers {
+struct PaletteFade {
   /// The source palette, RGB555: 224 BG colours, then 224 OBJ colours;
   /// palette[0] is the backdrop.
   u16 palette[0x1c0];
@@ -50,12 +50,12 @@ struct BattleEffectBuffers {
   u8 padding2a03; ///< never named
 };
 
-STATIC_ASSERT(sizeof(struct BattleEffectBuffers) == 0x2a04);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, current) == 0x380);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, target) == 0xe00);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, delta) == 0x1880);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, packed) == 0x2300);
-STATIC_ASSERT(offsetof(struct BattleEffectBuffers, page) == 0x2a00);
+STATIC_ASSERT(sizeof(struct PaletteFade) == 0x2a04);
+STATIC_ASSERT(offsetof(struct PaletteFade, current) == 0x380);
+STATIC_ASSERT(offsetof(struct PaletteFade, target) == 0xe00);
+STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 0x1880);
+STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 0x2300);
+STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x2a00);
 
 extern u16 gPalette_ChannelCurve[32];
 extern u16 gPalette_ChannelCurveLight[32];
@@ -77,16 +77,17 @@ enum PaletteTransform {
   PALETTE_TRANSFORM_SPLIT = 0x800000
 };
 
-void PaletteFade_Build(u32 mode, u16 *source, u16 *destination, s32 half);
+void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
+                                  s32 half);
 
-void PaletteFade_Initialize(void);
-void PaletteFade_Update(void);
-void PaletteFade_SetTarget(s32 index, s32 transform);
-void PaletteFade_SetBackdrop(s32 value);
+void TitlePaletteFade_Initialize(void);
+void TitlePaletteFade_Update(void);
+void TitlePaletteFade_SetTarget(s32 index, s32 transform);
+void TitlePaletteFade_SetBackdrop(s32 value);
 void TitlePaletteFade_Start(s32 frames);
-void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
-                                s32 frames);
-void PaletteFade_Release(void);
+void TitlePaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
+                                     s32 frames);
+void TitlePaletteFade_Release(void);
 
 enum PaletteTint {
   PALETTE_TINT_FROM_SOURCE = 0x8000,

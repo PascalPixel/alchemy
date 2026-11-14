@@ -326,7 +326,7 @@ extern char ResourceId_RedHazeBackdrop;
 struct CornerRow {
   struct Corner corners[2];
 };
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 #define SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];

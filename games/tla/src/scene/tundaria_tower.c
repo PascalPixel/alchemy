@@ -107,7 +107,7 @@ void TundariaTower_FightReflux(void) {
 
 #include "../field/map/cell_get.c"
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 /// Replaces a cell's collision code and attributes, returning the old value.
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
@@ -120,7 +120,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   if (layer <= 2)
     cell = (u8 *)map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (z << 7)) << 2;
   old = (cell[2] << 8) | cell[3];
   cell[2] = value >> 8;
@@ -194,10 +194,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 extern u32 gTundariaTower_Room6Regions[];
 extern u32 gTundariaTower_Room7Regions[];
 
-const struct ActorPlacement *Scene_GetRegions(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6)
+const struct ActorPlacement *Scene_GetExitRegions(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6)
     return (const struct ActorPlacement *)gTundariaTower_Room6Regions;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower7)
     return (const struct ActorPlacement *)gTundariaTower_Room7Regions;
   return 0;
 }
@@ -211,18 +211,18 @@ extern struct ActorPlacement gTundariaTower_Room5Placements[];
 extern struct ActorPlacement gTundariaTower_Room6Placements[];
 extern struct ActorPlacement gTundariaTower_Room7Placements[];
 
-const struct Trigger *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower2)
+const struct Trigger *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower2)
     return (const struct Trigger *)gTundariaTower_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower3)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower3)
     return (const struct Trigger *)gTundariaTower_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower4)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower4)
     return (const struct Trigger *)gTundariaTower_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower5)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower5)
     return (const struct Trigger *)gTundariaTower_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6)
     return (const struct Trigger *)gTundariaTower_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower7)
     return (const struct Trigger *)gTundariaTower_Room7Placements;
   return (const struct Trigger *)gTundariaTower_Room2Placements;
 }
@@ -425,13 +425,13 @@ void TundariaTower_RefluxAppears(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   TundariaTower_FadeFrom(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(2);
   Sound_Play(SE_WATER);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
   Event_Wait(2);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(2);
   object->actionFlags = 0;
   object->update = 0;
@@ -439,7 +439,7 @@ void TundariaTower_RefluxAppears(void) {
   TundariaTower_StartEffectScript(object, gTundariaTower_RefluxHops);
   Actor_WaitForMoveById(8);
   GameFlag_Set(FLAG_REFLUX_APPEARED);
-  Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
+  Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
   MapCell_SetAttributes(0, 21, 33, 0x3200);
   MapCell_SetAttributes(0, 22, 33, 0x3200);
   MapCell_SetAttributes(0, 26, 33, 0xff00);
@@ -485,26 +485,26 @@ void TundariaTower_PoundIceColumn(s32 arg0, s32 arg1) {
 /// The leader jumps onto the black ice slide and goes down it to the room
 /// below.
 void TundariaTower_JumpDownSlide(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   leader->facing = FACING_SOUTH;
   Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 22);
   Event_Wait(30);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
+  Motion_SetVarCbAndRefresh(gMainRoutineWork.leaderActorId, 2);
   Event_Wait(20);
   leader->facing = FACING_NORTH;
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 5);
-  Actor_SetActionById(gMainRoutineWork.currentOwner, 24);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 5);
+  Actor_SetActionById(gMainRoutineWork.leaderActorId, 24);
   Event_Wait(40);
   MapGrid_SetCellHeight(0x1300000, 0x3900000, 0, -12);
-  Actor_GetById(gMainRoutineWork.currentOwner)->bounce = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->bounce = 0;
   Import_EventSetExitRequest(11);
   Event_End();
 }
@@ -513,13 +513,13 @@ void TundariaTower_LiftPillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->scene == (s32)&SceneId_TundariaTower6) {
+  if (party->next == (s32)&SceneId_TundariaTower6) {
     struct Actor *object;
 
     Actor_LiftTargetBlock(gTundariaTower_Room6Pillars);
     object = *(struct Actor **)((u8 *)work + 0xcbc);
     object->timer = ((object->x >> 20) << 8) | ((object->z >> 20) & 0xff);
-  } else if (party->scene == (s32)&SceneId_TundariaTower7) {
+  } else if (party->next == (s32)&SceneId_TundariaTower7) {
     Actor_LiftTargetBlock(gTundariaTower_Room7Pillar);
   }
 }
@@ -578,7 +578,7 @@ void TundariaTower_SetDownPillar(void) {
     object->terrainId = 0;
   }
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6) {
     /* FAKEMATCH(temporary): the copy makes each column test reload X. */
     struct Actor *o = object;
 
@@ -596,9 +596,9 @@ void TundariaTower_EndRevealIcyWall(void) {
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
-    if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 20 == 38) {
-      s16 angle = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
-      s32 owner = gMainRoutineWork.currentOwner;
+    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z >> 20 == 38) {
+      s16 angle = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
+      s32 owner = gMainRoutineWork.leaderActorId;
 
       if (angle < 0)
         Actor_SetHorizontalPositionWithTerrain(owner, px(872), px(600));
@@ -615,7 +615,7 @@ void TundariaTower_RevealIcyWall(void) {
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
-    if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 20 > 38)
+    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z >> 20 > 38)
       MapCell_SetAttributes(0, 54, 37, 0x1f00);
     else
       MapCell_SetAttributes(0, 54, 39, 0x1f00);
@@ -673,27 +673,27 @@ void TundariaTower_BurstIcyWall(s32 mode, s32 cue) {
     TundariaTower_EndFallingRocks();
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower1)
     return gTundariaTower_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower2)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower2)
     return gTundariaTower_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower3)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower3)
     return gTundariaTower_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower4)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower4)
     return gTundariaTower_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower5)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower5)
     return gTundariaTower_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower6)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6)
     return gTundariaTower_Room6Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower7)
     return gTundariaTower_Room7Triggers;
   return gTundariaTower_Room2Triggers;
 }
 
 /// The leader's reflection in the ice, mirrored across the room's line.
 void TundariaTower_ReflectLeader(struct Actor *object) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct ReflectionAnimation *leaderAnimation = leader->sprite;
   struct ReflectionAnimation *animation = object->sprite;
 
@@ -787,7 +787,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// The party drops in from the slide above and lands in a puff of dust.
 void TundariaTower_LandFromSlide(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   s32 angle;
   u32 i;
@@ -827,13 +827,13 @@ void TundariaTower_LandFromSlide(void) {
     i++;
   } while (i <= 16);
   Sound_Play(SE_THUMP);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 22);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
@@ -842,7 +842,7 @@ void TundariaTower_LandFromSlide(void) {
 }
 
 void TundariaTower_UpdateLedgeCell(void) {
-  if ((Actor_GetById(gMainRoutineWork.currentOwner)->y >> 19) != 0)
+  if ((Actor_GetById(gMainRoutineWork.leaderActorId)->y >> 19) != 0)
     MapCell_SetAttributes(0, 14, 17, 0);
   else
     MapCell_SetAttributes(0, 14, 17, 0x3200);
@@ -858,7 +858,7 @@ s32 Scene_Initialize(void) {
   s32 flag;
 
   gFieldWork->transition = 0x204;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_TundariaTower1) {
   } else if (scene == (s32)&SceneId_TundariaTower2) {
     switch (gMainRoutineWork.entrance) {
@@ -908,7 +908,7 @@ s32 Scene_Initialize(void) {
         } else if (!GameFlag_Get(FLAG_FIGHTING_REFLUX)) {
           MapCell_SetAttributes(0, 26, 33, 0xff00);
         }
-        Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
+        Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
       }
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
           gMainRoutineWork.entrance == 7)
@@ -1124,7 +1124,7 @@ next:
   if (*table != 0xffff)
     goto next;
 done:
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < ground) {
     leader->terrainHeight = ground;
@@ -1142,7 +1142,7 @@ UNUSED void TundariaTower_CheckCrumblingStep(const u16 *table) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
@@ -1267,9 +1267,9 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(10, gMainRoutineWork.leaderActorId);
   wait(1);
   TundariaTower_SetPillarMode3(8);
   TundariaTower_SetPillarMode3(9);
@@ -1333,7 +1333,7 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   partner = Actor_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;
@@ -1413,7 +1413,7 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt);
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void TundariaTower_SpawnRubble(s32 spread) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
@@ -1453,7 +1453,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
 }
 
 void TundariaTower_SpawnDustRing(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 state;
   u32 i;
   s32 zero = 0;
@@ -1495,7 +1495,7 @@ void TundariaTower_SpawnDustRing(void) {
 #include "shared/actor_set_cell_shape.h"
 
 void TundariaTower_SetLeaderCellShape(s32 a, s32 b) {
-  Actor_SetCellShape(a, b, gMainRoutineWork.currentOwner);
+  Actor_SetCellShape(a, b, gMainRoutineWork.leaderActorId);
 }
 
 void TundariaTower_UpdateFallingRocks(void) {

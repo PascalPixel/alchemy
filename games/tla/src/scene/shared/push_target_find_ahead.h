@@ -2,7 +2,7 @@
 /// direction pushed.
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor **entry;
   struct Actor *object;
   u32 i, k;

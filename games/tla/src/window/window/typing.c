@@ -91,7 +91,7 @@ s32 Text_CheckPauseSkipped(struct UiChannelSlot *channel);
 s32 Text_CheckTextDismissed(struct UiChannelSlot *channel);
 void WindowSprite_PrepareForRedraw(struct Window *window);
 
-#define TEXT_SPEED gMainRoutineWork.eventMode
+#define TEXT_SPEED gMainRoutineWork.messageSpeed
 #define ENTRY_MASK (UI_TEXT_ENTRY_COUNT - 1)
 
 /// Types one frame's share of a message's text: runs control codes (new
@@ -125,7 +125,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
   (void)keys;
 
-  if (work->menuState != 0) {
+  if (work->battleMode != 0) {
     // The VBlank count read through a volatile view, a load apart from the
     frameVBlanks = *(volatile u16 *)&gLastFrameVBlanks;
     if (frameVBlanks < 0)
@@ -305,7 +305,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         return 8;
       }
 
-      if (work->menuState == 0)
+      if (work->battleMode == 0)
         glyphsLeft = 1;
     } else {
       pixelX = (channel->x + 128) / 256;
@@ -378,7 +378,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         glyphAdvance += channel->spacing[channel->line];
 #endif
       channel->x += glyphAdvance;
-      if (code == 32 && work->menuState == 0)
+      if (code == 32 && work->battleMode == 0)
         glyphsLeft = 1;
     }
 

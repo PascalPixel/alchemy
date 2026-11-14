@@ -118,11 +118,11 @@ void JupiterLighthouse_FightWhorl(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -343,7 +343,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_CopyCellsLayered(72, 53, 8, 5, 72, 16);
     MapGrid_CopyCellsLayered(70, 47, 1, 1, 8, 74);
     MapGrid_SetCellHeight(0x800000, 0xc00000, 0, 6);
-    FieldActor_Stop(gMainRoutineWork.currentOwner);
+    FieldActor_Stop(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(ACTOR_THIRD_PATH_BLOCK, 0, 0);
     if (mode == 1) {
       frame = 0;
@@ -426,7 +426,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       Event_PlaySound(SE_MAP_TRANSITION);
     if (spot == 4 && Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)))
       Event_PlaySound(SE_MAP_TRANSITION);
-    Actor_Stop(gMainRoutineWork.currentOwner);
+    Actor_Stop(gMainRoutineWork.leaderActorId);
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
     if (JupiterLighthouse_CountBlocksInGaps() != 2 ||
         !Event_GetFlag(FLAG_FIRST_CONE_SUNK))
@@ -444,7 +444,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     object->priorityFlags &= ~2;
     FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
     Event_Wait(30);
-    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+    EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
     FieldCamera_WaitForArrival();
     Event_End();
     return;
@@ -489,7 +489,7 @@ void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   object->velocityY = px(8);
   Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
-  Event_PlaySound(SE_222);
+  Event_PlaySound(SE_WHIRLWIND);
 }
 
 /// The cone-shaped pillar Pounded down throws the two blocks back out of their
@@ -552,7 +552,7 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   }
   object->motionFlags = 0;
   FieldEvent_Wait(30);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
 }
 
@@ -580,7 +580,7 @@ void Leader_PushObjectAhead(void);
 /// Walking into a block on the floor pushes it; walking at a gap with no block
 /// in it jumps the gap.
 void JupiterLighthouse_JumpOrPushBlock(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *first = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
   struct Actor *second = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
   s32 position[3];
@@ -624,7 +624,7 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
 
 void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void Actors_SetCellsOpen();
 void LightSprites_InitB();
@@ -637,7 +637,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) + -3) << 16) > (u32)0x10000)
     goto L_02008e6e;
-  t1 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  t1 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   FIELD_AT(t1, u8, 35) = (32 | FIELD_AT(t1, u8, 35));
 L_02008e6e:
   t2 = ((s32)Actor_Get(ACTOR_ARCHER_STATUE));
@@ -683,7 +683,7 @@ L_02008f12:
 L_02008f3c:
   Actor_SetPosition(ACTOR_SECOND_PATH_BLOCK, 0, 0);
 L_02008f46:
-  t23 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
+  t23 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
   FIELD_AT(t23, u8, 35) = (64 | FIELD_AT(t23, u8, 35));
   t24 = ((s32)Actor_Get(ACTOR_FIRST_GREY_BLOCK));
   FIELD_AT(t24, u8, 35) = (FIELD_AT(t24, u8, 35) | 128);
@@ -798,7 +798,7 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_UpdateLower(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -844,7 +844,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
             s32 delay = 200;
             work->raisedTrigger = delay;
           }
-          gMainRoutineWork.renderMode = 0;
+          gMainRoutineWork.movementMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }
@@ -1008,7 +1008,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

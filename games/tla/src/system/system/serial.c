@@ -82,7 +82,7 @@ void Serial_Initialize(void) {
   gLinkExchangeState = 0;
   gSerialSendSource = 0;
   gSerialSendSize = 0;
-  gSerialReceiveDest = 0;
+  gSerialReceiveDestination = 0;
   gSerialReceivedSize = 0;
   LinkBattle_ResetTransferState();
   IRQ_UNLOCK(interruptEnable);
@@ -470,11 +470,11 @@ s32 Serial_StartReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
 
-  if (gSerialReceiveDest != 0)
+  if (gSerialReceiveDestination != 0)
     return -1;
   IRQ_LOCK(savedInterruptMaster);
   state->status = SERIAL_STATUS_RUNNING | 1;
-  gSerialReceiveDest = (s32)destination;
+  gSerialReceiveDestination = (s32)destination;
   gSerialReceivedSize = 0;
   state->active = 1;
   gSerialBlockNumber = 0;
@@ -496,11 +496,11 @@ void Serial_WaitForSend(void) {
 void Serial_WaitForReceive(void) {
   u32 count = 0;
 
-  if (gSerialReceiveDest != 0) {
+  if (gSerialReceiveDestination != 0) {
     do {
       wait(1);
       count++;
-    } while (count <= 0x927bf && gSerialReceiveDest != 0);
+    } while (count <= 0x927bf && gSerialReceiveDestination != 0);
   }
 }
 
@@ -510,7 +510,7 @@ void Serial_WaitForTransfers(void) {
   u32 count;
 
   count = 0;
-  while (gSerialSendSource != 0 || gSerialReceiveDest != 0) {
+  while (gSerialSendSource != 0 || gSerialReceiveDestination != 0) {
     wait(1);
     count++;
     if (count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
@@ -527,7 +527,7 @@ s32 Serial_GetActiveTransfers(void) {
   if (gSerialSendSource != 0) {
     flags = 1;
   }
-  if (gSerialReceiveDest != 0) {
+  if (gSerialReceiveDestination != 0) {
     flags |= 2;
   }
   return flags;
@@ -552,7 +552,7 @@ void LinkBattle_ResetTransferState(void) {
   gSerialSendSource = zero;
   *(u8 *)&state->flags = zero;
   gSerialSendSize = zero;
-  gSerialReceiveDest = zero;
+  gSerialReceiveDestination = zero;
   gSerialReceivedSize = zero;
   *ime = saved;
 }
@@ -579,7 +579,7 @@ void Serial_StepBlockTransfer(void) {
   // Receiving advances only when the peer presents the expected block number.
   // peerFlags is the sender's block kind, an enum SerialSendState.
   {
-    s32 dest = gSerialReceiveDest;
+    s32 dest = gSerialReceiveDestination;
     if (dest != 0) {
       if (own->flags == SERIAL_RECEIVE_ACTIVE &&
           (u8)(peer->peerFlags - SERIAL_SEND_MORE) <=
@@ -590,7 +590,7 @@ void Serial_StepBlockTransfer(void) {
           case SERIAL_SEND_MORE:
             // A block with more to come: store it and move on
             Dma_Set(peer->payload, (void *)dest, DMA_COPY_WORDS(5), REG_DMA3);
-            gSerialReceiveDest += SERIAL_BLOCK_BYTES;
+            gSerialReceiveDestination += SERIAL_BLOCK_BYTES;
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->status = (own->status + 1) | SERIAL_STATUS_RUNNING;
             break;
@@ -666,17 +666,17 @@ void Serial_StepBlockTransfer(void) {
   // block; the receive ends once the partner has seen that
   if (own->flags == SERIAL_RECEIVE_DONE) {
     if (peer->peerFlags != SERIAL_SEND_LAST) {
-      gSerialReceiveDest = 0;
+      gSerialReceiveDestination = 0;
       own->flags = SERIAL_RECEIVE_IDLE;
     }
   } else {
     own->flags = SERIAL_RECEIVE_IDLE;
-    if (gSerialReceiveDest != 0)
+    if (gSerialReceiveDestination != 0)
       own->flags = SERIAL_RECEIVE_ACTIVE;
   }
 }
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 /// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
@@ -690,7 +690,7 @@ void SerialTest_Run(void) {
   s32 delay;
   volatile u32 *held;
 
-  Sound_PlayFar(MUS_003);
+  Sound_PlayFar(MUS_CHAMPA);
   Serial_Initialize();
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
@@ -701,10 +701,10 @@ void SerialTest_Run(void) {
     tile--;
     value--;
   } while (n >= 0);
-  Cpu_Fill32(0, gMapCellBuffer, 0x400);
+  Cpu_Fill32(0, gMapGridCellBuffer, 0x400);
   Serial_WaitForStatusMask(3);
 restart:
-  Serial_StartReceive(gMapCellBuffer);
+  Serial_StartReceive(gMapGridCellBuffer);
   held = &gInput.held;
   for (;;) {
     if (*held & KEY_A)
@@ -718,9 +718,9 @@ restart:
         SerialTest_Delay();
       } while (delay >= 0);
     }
-    if (gSerialReceiveDest == 0) {
-      Dma_Set(gMapCellBuffer, (void *)BG_SCREEN_BLOCK(2), DMA_COPY_WORDS(160),
-              REG_DMA3);
+    if (gSerialReceiveDestination == 0) {
+      Dma_Set(gMapGridCellBuffer, (void *)BG_SCREEN_BLOCK(2),
+              DMA_COPY_WORDS(160), REG_DMA3);
       goto restart;
     }
     wait(1);

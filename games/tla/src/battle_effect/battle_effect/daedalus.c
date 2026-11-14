@@ -543,7 +543,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
-              (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+              (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
               &work->frames[(j << 12) + i * 0x200], 0x200);
         }
         obj = EffectSprite_Acquire__f17e698(32, 32, 0x80000000, 0xf000);
@@ -562,7 +562,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords(
-            (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+            (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
             DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = EffectSprite_CreateWithTiles(32, 64, 0xc000a000, 0);
@@ -575,7 +575,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
        * source. */
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_CopyWords(
-          (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+          (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
           DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
       Iwram_CopyWords((void *)(OBJ_PLTT + 14 * 16), src, 32);
@@ -585,7 +585,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       obj->priority = 1;
       work->sprites[41] = obj;
       Iwram_CopyWords(
-          (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
+          (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
           DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
@@ -1531,7 +1531,7 @@ void BattleMotion_ApplyKnockbackFar(
     s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 
 extern char ResourceId_Data0C9;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 extern const u8 Data_081995ec[]; // the seven strike frames
 /* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
@@ -1743,10 +1743,10 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       size = 128;
       if (grow <= 64) {
         size = grow * 2;
-        cells = gMapCellBuffer;
+        cells = gMapGridCellBuffer;
         BattleEffect_DrawShadedCircles(cells, size, 0x10000);
       }
-      cells = gMapCellBuffer;
+      cells = gMapGridCellBuffer;
       Canvas_BlitAtFoot(cells, i >> 16, discY >> 16, size);
       if (frame == 56) {
         s32 delay;

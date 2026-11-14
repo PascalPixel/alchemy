@@ -364,7 +364,7 @@ struct Scythe {
 };
 
 extern char ResourceId_Data0F5;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 Data_020112e8[];        // the reaper's raised pose
 extern u8 Data_0201276b[];        // the blade's texture
 extern u8 Data_0201476b[];        // the handle's texture
@@ -409,7 +409,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   }
   REG_BG2PA = 0x100;
   REG_BLDALPHA = BLEND_ALPHA(16, 6);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F5, gMapCellBuffer, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0F5, gMapGridCellBuffer, 1,
+                             1);
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(
         SLOT_BLITTER,
@@ -495,7 +496,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
           x = 9;
         }
       }
-      blit[0](canvas, gMapCellBuffer, x + shift, reaperY >> 16, 55, 88);
+      blit[0](canvas, gMapGridCellBuffer, x + shift, reaperY >> 16, 55, 88);
     }
 
     // The scythe's path: still, a backswing at 24, the strike at 33.
@@ -705,7 +706,7 @@ extern char ResourceId_MercuryDjinnSheet;
 extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
 
-// The life of each drop in the map cell buffer: gMapCellBuffer's
+// The life of each drop in the map cell buffer: gMapGridCellBuffer's
 // EffectSteps from their variant field on.
 extern s32 Data_02010018[];
 
@@ -1331,8 +1332,7 @@ void Graphics_LoadGreyRamp(void);
 void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
 void Palette_BrightenSavedBattleBg(s32 r, s32 g, s32 b);
 
-#define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[(obj)->vramEntry].offset)
+#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->vramEntry].offset)
 #define COLOR_RED(c) ((c) & 31)
 #define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
 #define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)
@@ -1407,7 +1407,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
-  u8 *cellBuffer = gMapCellBuffer;
+  u8 *cellBuffer = gMapGridCellBuffer;
   // Only blit[0] is used; the array takes an 8-byte slot in the frame.
   DrawRectangle blit[2];
   struct WordPair grid;
@@ -1476,7 +1476,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       u8 *cells;
 
       i = 0;
-      cells = gMapCellBuffer;
+      cells = gMapGridCellBuffer;
       for (; i != 12; cells += 1024, i++) {
         obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
         obj->priority = 2;
@@ -2028,7 +2028,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (frame > st && frame < st + 10) {
             s32 d;
 
-            texture.pixels = gMapCellBuffer;
+            texture.pixels = gMapGridCellBuffer;
             sh = -16;
             d = frame - st;
             model->kind = 6;

@@ -20,7 +20,7 @@ void Leader_SlideOnIce(void) {
   s32 dx;
   s32 dz;
 
-  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  actor = ObjectTable_Get(gMainRoutineWork.leaderActorId);
 
 top:
   Leader_StopIfPending();

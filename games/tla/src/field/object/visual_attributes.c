@@ -27,7 +27,7 @@
 #include "visual_attributes/field_psynergy.c"
 
 #undef Actor_ShowEmoteById
-#undef BattleEffect_ApplyColorToTargetBuffer
+#undef PaletteFade_SetTarget
 #undef FieldCamera_MoveToActor
 #undef MapGrid_SetCellBehavior
 #undef FieldPsynergy_SteerPushedTarget

@@ -47,7 +47,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
   BattleEffect_StartTiledCanvas(0x2000);
   REG_BG2PA = 0x100;
-  cells = gMapCellBuffer;
+  cells = gMapGridCellBuffer;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);
@@ -169,19 +169,19 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
                              gCondemn_PictureX[column * 7 + 2],
                              gCondemn_PanelY[row * 7 + 2] + screenY, 128, 91);
         if ((u32)(frame - 76) <= 1)
-          draw[effect->side](canvas, gMapCellBuffer + PANEL_D,
+          draw[effect->side](canvas, gMapGridCellBuffer + PANEL_D,
                              gCondemn_PictureX[column * 7 + 3],
                              gCondemn_PanelY[row * 7 + 3] + screenY, 128, 91);
         if ((u32)(frame - 78) <= 1)
-          draw[effect->side](canvas, gMapCellBuffer + PANEL_E,
+          draw[effect->side](canvas, gMapGridCellBuffer + PANEL_E,
                              gCondemn_PictureX[column * 7 + 4],
                              gCondemn_PanelY[row * 7 + 4] + screenY, 128, 59);
         if ((u32)(frame - 80) <= 1)
-          draw[effect->side](canvas, gMapCellBuffer + PANEL_F,
+          draw[effect->side](canvas, gMapGridCellBuffer + PANEL_F,
                              gCondemn_PictureX[column * 7 + 5],
                              gCondemn_PanelY[row * 7 + 5] + screenY, 122, 29);
         if ((u32)(frame - 82) <= 1)
-          draw[effect->side](canvas, gMapCellBuffer + PANEL_G,
+          draw[effect->side](canvas, gMapGridCellBuffer + PANEL_G,
                              gCondemn_PictureX[column * 7 + 6],
                              gCondemn_PanelY[row * 7 + 6] + screenY, 76, 25);
       }

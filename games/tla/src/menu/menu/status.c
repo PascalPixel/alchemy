@@ -132,7 +132,7 @@ s32 StatusScreen_Run(void) {
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), tiles, 0x2800);
   Heap_Release(tiles);
   Heap_Release(palette);
-  ((struct WindowWork *)heap->windowTiles)->menuBusy = 1;
+  ((struct WindowWork *)heap->windowTiles)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
   HeapSlot_Release(220);
@@ -140,7 +140,7 @@ s32 StatusScreen_Run(void) {
   transition->active = saved;
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
-  ((struct WindowWork *)heap->windowTiles)->menuBusy = 0;
+  ((struct WindowWork *)heap->windowTiles)->holdTilemapUpload = 0;
   return result;
 }
 
@@ -1527,12 +1527,14 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   if (menu->items[state->selectedIndex] != 0) {
     // Japanese draws the name as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-    Text_DrawMessageFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
-                            (s32)MsgItemPlainName,
-                        menu->infoWindow, 0, 0);
+    Text_DrawMessageFar(
+        (menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK) +
+            (s32)MsgItemPlainName,
+        menu->infoWindow, 0, 0);
 #else
     Text_DrawMessageAsTilesFar(
-        (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
+        (menu->items[state->selectedIndex] & INVENTORY_ITEM_ID_MASK) +
+            MsgItemPlainName,
         menu->infoWindow, 0, 0);
 #endif
   }
@@ -1540,7 +1542,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   for (row = 0; row < PAGE_ROWS; row++) {
     if (row == state->row) {
       entry = menu->items[state->selectedIndex];
-      mask = ITEM_ID_MASK;
+      mask = INVENTORY_ITEM_ID_MASK;
       mask &= entry;
       item = Item_GetDirectFar(mask);
       if (item->element != 4) {
@@ -1552,7 +1554,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       }
     } else {
       entry = menu->items[base + row];
-      mask = ITEM_ID_MASK;
+      mask = INVENTORY_ITEM_ID_MASK;
       mask &= entry;
       item = Item_GetDirectFar(mask);
       if (item->element != 4) {
@@ -1570,7 +1572,8 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
                               EQUIP_SLOT_WIDTH, 1, 15);
 
   if (menu->items[state->selectedIndex] & INVENTORY_EQUIPPED) {
-    item = Item_GetDirectFar(menu->items[state->selectedIndex] & ITEM_ID_MASK);
+    item = Item_GetDirectFar(menu->items[state->selectedIndex] &
+                             INVENTORY_ITEM_ID_MASK);
     switch (item->type) {
     case 1:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1,
@@ -1651,7 +1654,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
     if (rowCount > rowIndex) {
       inventoryEntry = &menu->items[firstEntry];
       do {
-        Text_DrawMessageAsTilesFar((*inventoryEntry & ITEM_ID_MASK) +
+        Text_DrawMessageAsTilesFar((*inventoryEntry & INVENTORY_ITEM_ID_MASK) +
                                        MsgItemName,
                                    window, ITEM_NAME_X, (rowIndex << 4) + 8);
         rowIndex = (u8)(rowIndex + 1);
@@ -1826,7 +1829,7 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
 
   for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (items[i] & INVENTORY_EQUIPPED) {
-      item = items[i] & ITEM_ID_MASK;
+      item = items[i] & INVENTORY_ITEM_ID_MASK;
       switch (Item_GetDirectFar(item)->type) {
       case 1:
         Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 8);
@@ -1885,7 +1888,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
     if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
       icon = state->entryIcons[i];
       if (icon != 0) {
-        switch (Item_GetDirectFar(items[i] & ITEM_ID_MASK)->type) {
+        switch (Item_GetDirectFar(items[i] & INVENTORY_ITEM_ID_MASK)->type) {
         case 1:
           icon->x = 216;
           icon->y = 32;

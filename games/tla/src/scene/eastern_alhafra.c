@@ -151,11 +151,11 @@ s32 Actor_HasArrived();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void *Scene_GetPlacements(void) {
+void *Scene_GetActorPlacements(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
     return gEasternAlhafra_PlacementsAfterBriggsCaught;
   return gEasternAlhafra_Placements;
@@ -216,7 +216,7 @@ void EasternAlhafra_StartPushingBlock(s32 unused, s32 id) {
   s32 x;
   s32 z;
 
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
   object->motionFlags = 0;
   if (id == 10) {
@@ -280,7 +280,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     System_Wait(5);
     for (i = 0; i < 60 && object->y > 0; i++)
       System_Wait(1);
-    Event_PlaySound(SE_298);
+    Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
     System_Wait(1);
     Event_PlaySound(SE_LOG_FALL);
     object->collisionFlags = 0;
@@ -299,7 +299,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     if (i <= 2)
       goto create;
     EasternAlhafra_PlaceClearedDebris();
-    FieldActor_Stop(gMainRoutineWork.currentOwner);
+    FieldActor_Stop(gMainRoutineWork.leaderActorId);
     System_Wait(30);
     for (i = 0; i <= 2; i++)
       Actor_Release(sparks[i]);
@@ -344,7 +344,7 @@ void EasternAlhafra_FinishPushingLastCrate(s32 mode, s32 id) {
     FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
   EasternAlhafra_FinishPushingBlock(mode, id);
   if (open)
-    EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+    EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
 }
 
 void EasternAlhafra_OverhearWorkers(void);
@@ -365,7 +365,7 @@ void EasternAlhafra_RollLog(void) {
   actor15 = Actor_GetById(15);
   actor16 = Actor_GetById(16);
   facing =
-      (Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
+      (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (actor16 != NULL && Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0)
     MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 255);
   if (PushTarget_FindSlide(&unk) != 0) {
@@ -399,7 +399,7 @@ void EasternAlhafra_RollLog(void) {
       Event_PlaySound(SE_LOG_FALL);
       Actor_SetAnimation(15, 8);
       FieldEvent_Wait(60);
-      EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+      EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
       Event_End();
     }
   }
@@ -410,7 +410,7 @@ void EasternAlhafra_RollLog(void) {
 void EasternAlhafra_PushAhead(s32 mode) {
   s32 tile;
 
-  tile = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
+  tile = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   if (tile == 16) {
     EasternAlhafra_StartPushingLastCrate(mode, 16);
     if (Leader_CanPushObjectAhead() != 0)
@@ -427,7 +427,7 @@ void EasternAlhafra_TalkToSailor(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgWhatSYour);
   Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceActor(22, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(22, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(20);
   // "What's your problem?"
   FieldEvent_ShowMessageThenWait(22, 0, 10);
@@ -502,10 +502,10 @@ void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
-  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
@@ -539,7 +539,7 @@ run:
   // "I don't know what we're going to do about this rock... I think we've..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != NULL)
     Actor_SetDestination(ACTOR_JENNA, ((s16 *)leader)[5], ((s16 *)leader)[9]);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
@@ -553,7 +553,7 @@ check:
     goto run;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern u8 gEasternAlhafra_WaveTableIndex[];
 
@@ -609,7 +609,7 @@ s32 Scene_Initialize(void) {
 
   ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
   EasternAlhafra_StartWave();
-  OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  OBJECT(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
     if (Event_GetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0 &&
         Event_GetFlag(FLAG_ALHAFRA_SHIP_GONE) == 0) {
@@ -646,7 +646,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (gMainRoutineWork.entrance == 99) {
-    gMainRoutineWork.secondary = 1;
+    gMainRoutineWork.returnEntrance = 1;
     gMainRoutineWork.entrance = 1;
     Actor_SetPosition(ACTOR_FELIX, 136, 552);
     Actor_SetPosition(26, 120, 552);
@@ -901,12 +901,12 @@ void EasternAlhafra_OverhearWorkers(void) {
   Actor_FaceDirection(24, FACING_NORTH, 0);
   Actor_FaceDirection(25, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  EventCamera_MoveToActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_MoveToActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  object0 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object0 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object0 != 0) {
     Actor_SetDestination(ACTOR_JENNA, *(s16 *)((u8 *)object0 + 10),
                          *(s16 *)((u8 *)object0 + 18));
@@ -915,7 +915,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  object1 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object1 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object1 != 0) {
     Actor_SetDestination(ACTOR_SHEBA, *(s16 *)((u8 *)object1 + 10),
                          *(s16 *)((u8 *)object1 + 18));
@@ -924,14 +924,14 @@ void EasternAlhafra_OverhearWorkers(void) {
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
-  object2 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object2 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object2 != 0) {
     Actor_SetDestination(26, *(s16 *)((u8 *)object2 + 10),
                          *(s16 *)((u8 *)object2 + 18));
   }
   FieldActor_WaitForMoveById(26);
   Actor_SetPosition(26, 0, 0);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
   return;
@@ -998,7 +998,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   if (result3 != 0) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-    object4 = Actor_GetById(gMainRoutineWork.currentOwner);
+    object4 = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object4 != 0) {
       Actor_SetDestination(ACTOR_PIERS, *(s16 *)((u8 *)object4 + 10),
                            *(s16 *)((u8 *)object4 + 18));
@@ -1008,7 +1008,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   }
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  object5 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object5 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object5 != 0) {
     Actor_SetDestination(ACTOR_JENNA, *(s16 *)((u8 *)object5 + 10),
                          *(s16 *)((u8 *)object5 + 18));
@@ -1017,7 +1017,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  object6 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object6 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object6 != 0) {
     Actor_SetDestination(ACTOR_SHEBA, *(s16 *)((u8 *)object6 + 10),
                          *(s16 *)((u8 *)object6 + 18));
@@ -1026,7 +1026,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
-  object7 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object7 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object7 != 0) {
     Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
                          *(s16 *)((u8 *)object7 + 18));
@@ -1128,7 +1128,7 @@ void EasternAlhafra_AskIfFinished(void) {
   if (result3 != 0) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-    object4 = Actor_GetById(gMainRoutineWork.currentOwner);
+    object4 = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object4 != 0) {
       Actor_SetDestination(ACTOR_PIERS, *(s16 *)((u8 *)object4 + 10),
                            *(s16 *)((u8 *)object4 + 18));
@@ -1138,7 +1138,7 @@ void EasternAlhafra_AskIfFinished(void) {
   }
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  object5 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object5 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object5 != 0) {
     Actor_SetDestination(ACTOR_JENNA, *(s16 *)((u8 *)object5 + 10),
                          *(s16 *)((u8 *)object5 + 18));
@@ -1147,7 +1147,7 @@ void EasternAlhafra_AskIfFinished(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  object6 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object6 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object6 != 0) {
     Actor_SetDestination(ACTOR_SHEBA, *(s16 *)((u8 *)object6 + 10),
                          *(s16 *)((u8 *)object6 + 18));
@@ -1156,7 +1156,7 @@ void EasternAlhafra_AskIfFinished(void) {
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
-  object7 = Actor_GetById(gMainRoutineWork.currentOwner);
+  object7 = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object7 != 0) {
     Actor_SetDestination(26, *(s16 *)((u8 *)object7 + 10),
                          *(s16 *)((u8 *)object7 + 18));
@@ -1657,7 +1657,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(29, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 136, 552);
   FieldActor_LaunchFromLeader(26, -16, 0, FACING_NORTHWEST);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   FieldActor_WaitForMoveById(26);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x1a, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0x1e);
@@ -1723,7 +1723,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   // "... ..."
   FieldEvent_ShowMessageThenWait(25, 0, 10);
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirectionById(22, FACING_EAST, 0);
   Actor_FaceDirection(23, FACING_WEST, 0);
   FieldEvent_Wait(25);
   Actor_SetAnimationAndWait(22, 3);
@@ -1759,14 +1759,14 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(20);
   // "Look how far away they are... There's no way they can catch us now!"
   FieldEvent_ShowMessageThenWait(23, 0, 10);
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirectionById(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0x2d);
   Actor_WalkByAndWait(22, 0, 32);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(0x16, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x2d);
   Actor_WalkByAndWait(22, 0, -32);
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirectionById(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
@@ -1774,7 +1774,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_ShowMessageThenWait(22, 0, 10);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(50);
-  Actor_ArmCallback(23, FACING_WEST, 0);
+  Actor_FaceDirectionById(23, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldActor_ShowEmote(0x17, EMOTE_IN_FRONT | EMOTE_SMILE, 0x1e);
   // "They can't catch us... What would they do, swim?"
@@ -1784,7 +1784,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(0x16, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x32);
   Actor_WalkByAndWait(22, 0, -32);
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirectionById(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
@@ -1798,7 +1798,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   EasternAlhafra_PuffFrom(22);
   Event_PlaySound(SE_CURSE);
   FieldActor_ShowEmote(0x16, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x32);
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirectionById(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(23, 4);
   // "Don't tell me you forgot... It's all you ever talked about when you..."
@@ -1807,7 +1807,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   FieldEvent_Wait(30);
   EasternAlhafra_PuffFrom(22);
   FieldActor_ShowEmote(0x16, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x32);
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirectionById(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(22, 3);
   FieldEvent_Wait(10);
@@ -1835,7 +1835,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetAnimation(22, 7);
   FieldEvent_Wait(20);
   Actor_SetAnimation(22, 1);
-  Actor_ArmCallback(22, FACING_EAST, 0);
+  Actor_FaceDirectionById(22, FACING_EAST, 0);
   FieldEvent_Wait(15);
   // "But, Chaucha, they're an awfully tough bunch..."
   FieldEvent_ShowMessageThenWait(22, 0, 10);
@@ -1849,7 +1849,7 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_WalkByAndWait(22, 10, 16);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHWEST, 0);
   Actor_WalkByAndWait(22, 6, 16);
-  Actor_ArmCallback(22, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(22, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(10);
   FieldActor_Jump(22, 6, 15);
   FieldActor_Jump(22, 6, 23);
@@ -2004,7 +2004,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_FaceDirection(29, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_Jump(29, 6, 40);
   FieldActor_ShowEmote(0x1d, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
-  Actor_ArmCallback(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetSpeed(25, 0.7);
   Actor_GetById(25)->actionFlags &= 0xfe;
@@ -2053,13 +2053,13 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_GetById(27)->facing = FACING_NORTH_NORTHWEST;
   FieldActor_Jump(27, 6, 40);
   FieldActor_ShowEmote(0x1b, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
-  Actor_ArmCallback(25, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionById(25, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(0x19, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
   // "You guys have royally botched this one. This ruins everything!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   FieldActor_ShowEmote(0x1d, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0x32);
-  Actor_ArmCallback(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(25, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   FieldActor_ShowEmote(0x19, EMOTE_IN_FRONT | EMOTE_SCOWL, 0x1e);
   // "You all ought to be ashamed! All of you were cowering, while I was..."
@@ -2069,8 +2069,8 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldEvent_Wait(30);
   // "All of you!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_ArmCallback(29, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_ArmCallback(27, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionById(29, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(27, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(29, 3);
   Actor_SetAttachedEffect(29, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2080,12 +2080,12 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetSpeed(29, 1.8);
   Actor_WalkByAndWait(29, 16, 16);
   Actor_WalkByAndWait(29, 0, 40);
-  Actor_ArmCallback(29, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(29, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimation(25, 1);
   FieldEvent_Wait(30);
-  Actor_ArmCallback(29, FACING_NORTH_NORTHWEST, 0);
-  Actor_ArmCallback(27, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(29, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(27, FACING_NORTH_NORTHWEST, 0);
   // "I'm going back to my manor!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   Actor_SetAnimation(27, 3);
@@ -2109,9 +2109,9 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_WalkToAndWait(29, 152, 472);
   Actor_SetAnimation(25, 1);
   Actor_SetAnimation(27, 1);
-  Actor_ArmCallback(29, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_ArmCallback(27, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_ArmCallback(25, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(29, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(27, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(25, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 4);
   // "And you, Felix. I am extremely disappointed in you."
@@ -2129,8 +2129,8 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldActor_ShowEmote(0x19, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0x28);
   // "There will be no reward for you, Felix!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 25, 0, 10);
-  Actor_ArmCallback(26, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionById(26, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(25, 3);
   FieldEvent_Wait(20);
@@ -2150,17 +2150,17 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldActor_SetSpriteRotationById(28, 0);
   Actor_SetSpriteFlags(Actor_GetById(28), 1);
   FieldActor_Jump(28, 6, 20);
-  Actor_ArmCallback(28, FACING_WEST, 0);
+  Actor_FaceDirectionById(28, FACING_WEST, 0);
   Actor_SetPosition(31, 128, 608);
   FieldActor_SetSpriteRotationById(31, 0);
   Actor_SetSpriteFlags(Actor_GetById(31), 1);
   FieldActor_Jump(31, 6, 20);
-  Actor_ArmCallback(31, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionById(31, FACING_NORTH_NORTHEAST, 0);
   Actor_SetPosition(30, 192, 616);
   FieldActor_SetSpriteRotationById(30, 0);
   Actor_SetSpriteFlags(Actor_GetById(30), 1);
   FieldActor_Jump(30, 6, 20);
-  Actor_ArmCallback(30, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(30, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(25, 4);
   // "We don't have a boat, so there's no reason for anyone to be here at..."
@@ -2187,15 +2187,15 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   FieldEvent_Wait(15);
   Actor_SetScript(30, (s32)gEasternAlhafra_RunOffScript);
   FieldActor_RefreshSelectorById(25);
-  Actor_ArmCallback(26, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(26, FACING_SOUTH_SOUTHWEST, 0);
   FieldActor_RefreshSelectorById(30);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
   FieldActor_ShowEmote(0x1a, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x32);
-  Actor_ArmCallback(26, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_FELIX, FACING_WEST, 0);
+  Actor_FaceDirectionById(26, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_FELIX, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldMessage_ShowAtActor_(0x1a, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -2210,14 +2210,14 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetSpeed(26, 0.8);
   Actor_WalkByAndWait(26, 0, -16);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
-  Actor_ArmCallback(26, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirectionById(26, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(26, 2);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
   Actor_WalkByAndWait(26, 0, 16);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
-  Actor_ArmCallback(26, FACING_EAST, 0);
+  Actor_FaceDirectionById(26, FACING_EAST, 0);
   FieldEvent_Wait(20);
   FieldMessage_ShowAtActor_(0x1a, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0) {
@@ -2237,7 +2237,7 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetSpeed(26, 1.2);
   Actor_SetAnimation(26, 2);
   {
-    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
     if (leader != NULL)
       Actor_SetDestination(26, ((s16 *)leader)[5], ((s16 *)leader)[9]);
@@ -2456,7 +2456,7 @@ struct PushTarget {
 
 void PushTarget_Push(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_Get(target.id);
   s32 cell[3];
   s32 from[3];
@@ -2484,16 +2484,16 @@ void PushTarget_Push(struct PushTarget target) {
             ABS(gPushFootprints[footprint][3])) >>
            4;
   Map_FillCellRectByte2(0, cell[0], cell[2], width, height, 0);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
   System_Wait(15);
   {
     s32 deltaX = (target.x - from[0]) >> 17;
     s32 deltaZ = (target.z - from[2]) >> 17;
 
-    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX, deltaZ);
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
   }
-  Actor_Get(gMainRoutineWork.currentOwner)->update = Actor_StopAtPushTarget;
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(object, 3);
@@ -2502,21 +2502,21 @@ void PushTarget_Push(struct PushTarget target) {
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
   FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.1);
-  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
                              (gPushLeaderSteps[direction] << 16) >> 31,
                              (gPushLeaderSteps[direction] << 16) >> 17);
   if (target.callback != 0)
     target.callback();
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = 0;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(object);
-  Event_PlaySound(SE_298);
+  Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
   Actor_SelectAnimation(object, 1);

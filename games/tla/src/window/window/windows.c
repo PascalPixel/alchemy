@@ -76,7 +76,7 @@ void WindowSystem_InitField(void) {
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
-  work->level = 15;
+  work->textPalette = 15;
   FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap),
             WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
@@ -101,8 +101,8 @@ void WindowSystem_InitBattle(s32 kind) {
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
-  work->menuState = 1;
-  work->level = 15;
+  work->battleMode = 1;
+  work->textPalette = 15;
   Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap),
                        WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
@@ -127,7 +127,7 @@ void WindowSystem_UploadTilemap(void) {
 
   flags = work->dirty;
   if (flags != 0) {
-    if (!work->menuBusy) {
+    if (!work->holdTilemapUpload) {
       src = (u8 *)work->tilemap;
       dst = (u8 *)BG_SCREEN_BLOCK(4);
       if (flags & 1)
@@ -174,7 +174,7 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
     do {
       u32 column;
 
-      if (canvas->menuState != 0) {
+      if (canvas->battleMode != 0) {
         if ((u32)(y + row) > 16)
           tile = WINDOW_TILE_COMMAND_PANEL;
         else

@@ -251,7 +251,7 @@ loaded:
       switch (phase) {
       case 0:
         if (timer == 10)
-          Sound_PlayFar(SE_542);
+          Sound_PlayFar(SE_PARCH);
         work->discScaleX += 0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX > 0x3fff) {
@@ -324,7 +324,7 @@ loaded:
       case 1:
         if (timer == 40) {
           fade = 0;
-          BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+          PaletteFade_SetTarget(0x7fff, 0);
           PaletteFade_StartInterpolation(100);
         }
         spawn = 2;

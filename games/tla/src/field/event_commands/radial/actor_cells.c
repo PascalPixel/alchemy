@@ -60,7 +60,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     cell = &blocks[slot];
     cell->block = 0xff;
   }
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   height = MapGrid_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;
@@ -167,7 +167,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 /// Returns the actor one cell, or failing that two cells, ahead of the leader
 /// at the leader's height, or NULL.
 struct Actor *Leader_FindActorAhead(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 angle = ((leader->facing >> 12) + 2) & 12;
   struct Actor *found;

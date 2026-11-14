@@ -12,7 +12,7 @@
 /// Cookie, Apple, Hard Nut, Mint and Lucky Pepper (an inventory entry may be
 /// passed).
 s32 Item_RaisesStat(s32 id) {
-  switch (id & ITEM_ID_MASK) {
+  switch (id & INVENTORY_ITEM_ID_MASK) {
   case ITEM_POWER_BREAD:
   case ITEM_COOKIE:
   case ITEM_APPLE:
@@ -79,7 +79,7 @@ void InventorySnapshot_Save(void) {
     // Keep shortcuts and party order with the inventory snapshot.
     *save++ = firstShortcut;
     *save++ = secondShortcut;
-    inventory = (s16 *)gMainRoutineWork.activeOwners;
+    inventory = (s16 *)gMainRoutineWork.party;
     save[0] = inventory[0];
     save[1] = inventory[1];
   }
@@ -109,14 +109,14 @@ void InventorySnapshot_Restore(void) {
     gMainRoutineWork.packedEvents[0] = *src++;
     gMainRoutineWork.packedEvents[1] = *src++;
 #ifdef UBFIX
-    gMainRoutineWork.activeOwners[0] = src[0];
-    gMainRoutineWork.activeOwners[1] = src[0] >> 8;
-    gMainRoutineWork.activeOwners[2] = src[1];
-    gMainRoutineWork.activeOwners[3] = src[1] >> 8;
+    gMainRoutineWork.party[0] = src[0];
+    gMainRoutineWork.party[1] = src[0] >> 8;
+    gMainRoutineWork.party[2] = src[1];
+    gMainRoutineWork.party[3] = src[1] >> 8;
 #else
     {
       // UB: the party order's four bytes are stored as two halfwords.
-      u16 *owners = (u16 *)gMainRoutineWork.activeOwners;
+      u16 *owners = (u16 *)gMainRoutineWork.party;
 
       /* FAKEMATCH(temporary): both party-order halfwords stored through one
        * cursor over activeOwners. */

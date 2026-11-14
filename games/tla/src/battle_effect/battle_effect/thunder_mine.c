@@ -757,7 +757,7 @@ void BattleCamera_ApplyPhasedDelta(void); // the camera's sway
 extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_CometSheetB;
 extern char ResourceId_RuneSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern const s8 Data_08196e9c[]; // the hexagon's corners (z, y)
 
 #define VOID_BEAM_FRAMES 88

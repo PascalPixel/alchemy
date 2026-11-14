@@ -64,13 +64,13 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gChampa_ActorPlacements[];
 
-const s16 *Scene_GetPlacements(void) {
+const s16 *Scene_GetActorPlacements(void) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
     return gChampa_ActorPlacementsOnceBriggsSailed;
   return gChampa_ActorPlacements;
@@ -89,10 +89,10 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
-  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  id = gMainRoutineWork.currentOwner;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  id = gMainRoutineWork.leaderActorId;
   if (mode == 0)
     Actor_CenterAndWalk(id, 2, -8);
   else
@@ -110,7 +110,7 @@ void Champa_EnterDoor(s32 door) {
   s32 *table = gChampa_Doors;
 
   if ((u32)(door - 1) <= 1)
-    *(void **)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 108) =
+    *(void **)((u8 *)Actor_Get(gMainRoutineWork.leaderActorId) + 108) =
         Champa_ShrinkIntoDoorway;
   if (door == 7) {
     Map_ClearLayerEntryFlag(8);
@@ -457,7 +457,7 @@ void Champa_FeizhiArrives(void) {
   }
 }
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
     return gChampa_TriggersOnceBriggsSailed;
   return gChampa_Triggers;
@@ -1204,7 +1204,7 @@ void Champa_MeetAlex(void) {
   FieldCamera_MoveTo(304, CAMERA_KEEP, 624, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Event_PlaySound(MUS_003);
+  Event_PlaySound(MUS_CHAMPA);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
@@ -1341,22 +1341,22 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  Actor_HeadToward(5, gMainRoutineWork.currentOwner);
+  Actor_HeadToward(5, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  Actor_HeadToward(6, gMainRoutineWork.currentOwner);
+  Actor_HeadToward(6, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  Actor_HeadToward(7, gMainRoutineWork.currentOwner);
+  Actor_HeadToward(7, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(28, 1.2);
   Actor_SetAnimation(28, 2);
-  Actor_HeadToward(28, gMainRoutineWork.currentOwner);
+  Actor_HeadToward(28, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(28);
   Actor_SetPosition(28, 0, 0);
   Event_End();

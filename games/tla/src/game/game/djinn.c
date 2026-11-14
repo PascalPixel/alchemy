@@ -35,7 +35,7 @@ s32 Djinn_GiveToParty(s32 index, s32 bit) {
   if (bestNo < result) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    owners = party->activeOwners;
+    owners = party->party;
     count = result;
     do {
       struct OwnerDjinnState *state = Unit_Get(*owners);

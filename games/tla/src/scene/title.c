@@ -50,15 +50,15 @@ extern s16 gTitle_RevealStep;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /* VIEW(title): tag struct TitleSprite as struct TitleSprite__title;
  * module/tla.h has another definition; tried with the definition the rest of
@@ -83,8 +83,8 @@ s32 Title_Run(void) {
   s32 frames;
 
   if (gMainRoutineWork.entrance == 10) {
-    Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-    Event_PlaySound(MUS_075);
+    Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+    Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
     Title_RevealScreen(0);
     wait(120);
     for (frames = 0; frames <= 3599; frames++) {
@@ -96,24 +96,24 @@ s32 Title_Run(void) {
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
-    Event_PlaySound(MUS_068);
+    Event_PlaySound(MUS_ENDING);
     Credits_Run(1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
     Event_Wait(240);
-    Event_PlaySound(MUS_000);
+    Event_PlaySound(MUS_SILENCE);
     Event_SetDestination((s32)&SceneId_Title, 2);
     return 0;
   }
   Resource_ReservedNoOp((s32)&ResourceId_FarCall00B);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
-      Event_PlaySound(MUS_000);
+      Event_PlaySound(MUS_SILENCE);
       Title_ShowNintendoLogo(0);
       Title_ShowCamelotLogo(0);
       if (Save_ScanFileSummaries() > 0) {
-        Event_PlaySound(MUS_040);
+        Event_PlaySound(MUS_TITLE);
         TitleIntro_Run(1);
         if (Title_ShowIntro(1) == 0) {
           Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -142,7 +142,7 @@ s32 Title_Run(void) {
     Event_SetDestination((s32)&SceneId_Clear, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
-      Event_PlaySound(MUS_040);
+      Event_PlaySound(MUS_TITLE);
       TitleIntro_Run(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
@@ -150,7 +150,7 @@ s32 Title_Run(void) {
       Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
-      Event_PlaySound(MUS_075);
+      Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
       Title_ShowIntro(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
@@ -162,7 +162,7 @@ s32 Title_Run(void) {
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
   Event_Wait(60);
-  Event_PlaySound(MUS_000);
+  Event_PlaySound(MUS_SILENCE);
   return 0;
 }
 
@@ -200,7 +200,7 @@ void Title_RevealSpriteRow(void) {
 
   p = gTitle_SpriteRow;
   w = gTitle_SpriteRow[0].attr;
-  tile = gResourceTableEntries[gTitleVramBlock].offset >> 5;
+  tile = gVramCacheEntries[gTitleVramBlock].offset >> 5;
   i = 0;
   y = 0x88;
   do {

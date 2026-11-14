@@ -14,7 +14,7 @@ void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
   s32 velocityZ;
   s32 scaleRateX;
 
-  Actor_GetById(gMainRoutineWork.currentOwner);
+  Actor_GetById(gMainRoutineWork.leaderActorId);
   velocityX = effect->velocity.x;
   effect->x += velocityX;
   effect->y += effect->velocity.y;

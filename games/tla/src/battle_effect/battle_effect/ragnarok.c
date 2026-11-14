@@ -745,8 +745,7 @@ static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   BattleEffect_LoadBlitter(SLOT_ALT, mode);                                    \
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
   HeapSlot_Release(SLOT_ALT)
-#define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 
 // IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
 // the value store and the address store: the first tile queue matches only

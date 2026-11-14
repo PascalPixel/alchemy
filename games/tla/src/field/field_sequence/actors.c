@@ -24,7 +24,7 @@ s32 Party_GetCharacterSprite(s32 character) {
   if (sprite <= 8) {
     if (sprite == 8) {
       sprite = 9;
-      if (gMainRoutineWork.map != (s32)&SceneId_Clear)
+      if (gMainRoutineWork.mapId != (s32)&SceneId_Clear)
         sprite = 11;
       if (GameFlag_Get(FLAG_SHIP_FLIES))
         sprite++;
@@ -68,7 +68,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       s32 group = (condition - 48) / 20;
 
       if ((condition - 48) % 20 == 19) {
-        s32 member = gData_02001000[group + 0x1950];
+        s32 member = gSceneLocalState[group + 0x1950];
 
         if (member == 0)
           continue;
@@ -109,7 +109,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         }
       }
     } else {
-      if (entry->sprite == gMainRoutineWork.currentOwner)
+      if (entry->sprite == gMainRoutineWork.leaderActorId)
         continue;
       Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }
@@ -201,7 +201,7 @@ void Actor_ResetForLeader(s32 table) {
 
   work = Ram_HeapSlots->fieldWork;
   placements = (struct EventWorkPlacements *)work;
-  leader = gMainRoutineWork.currentOwner;
+  leader = gMainRoutineWork.leaderActorId;
   entry = placements->leader;
   entry[0] = gField_DefaultPlacements[0];
   entry[1] = gField_DefaultPlacements[1];
@@ -225,18 +225,18 @@ void Actor_ResetForLeader(s32 table) {
   Event_SpawnObjectTable((struct ActorPlacement *)table, 8);
 
   object = work->actors[leader];
-  object->terrainId = gMainRoutineWork.turn;
+  object->terrainId = gMainRoutineWork.layer;
   object->timer = 0;
   object->unk66 = 0;
   if (work->mode == 3) {
     if (gMainRoutineWork.ownerOverride != 0)
-      gMainRoutineWork.renderMode = 7;
+      gMainRoutineWork.movementMode = 7;
     else
-      gMainRoutineWork.renderMode = 1;
+      gMainRoutineWork.movementMode = 1;
   } else if (gMainRoutineWork.ownerOverride != 0) {
-    gMainRoutineWork.renderMode = 6;
+    gMainRoutineWork.movementMode = 6;
   } else {
-    gMainRoutineWork.renderMode = 0;
+    gMainRoutineWork.movementMode = 0;
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapWork->layers[object->terrainId].cells +
@@ -244,7 +244,7 @@ void Actor_ResetForLeader(s32 table) {
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
-      gMainRoutineWork.renderMode = 2;
+      gMainRoutineWork.movementMode = 2;
       height = MapGrid_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
                0x200000;
       object->y += height;

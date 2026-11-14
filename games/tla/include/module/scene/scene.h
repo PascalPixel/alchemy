@@ -926,7 +926,7 @@ struct BobbingMarker {
   s16 stopped;
 };
 
-/// gMainRoutineWork.savedScene and savedEntrance as this script reads them.
+/// gMainRoutineWork.restartScene and savedEntrance as this script reads them.
 struct SavedDestination {
   u8 unk000[0x1e4];
   s16 scene;

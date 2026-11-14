@@ -230,7 +230,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             menu->cursor->active = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(2, 96);
-          gMainRoutineWork.eventMode = 1;
+          gMainRoutineWork.messageSpeed = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);
@@ -258,7 +258,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             menu->cursor->active = ICON_SHOWN;
           } while (0);
           MenuCursor_Slide(106, 56);
-          gMainRoutineWork.eventMode = 1;
+          gMainRoutineWork.messageSpeed = 1;
           while (Message_AllTypedFar() == 0)
             wait(1);
           Window_CloseFar(window, 1);
@@ -291,7 +291,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Text_DrawMessageAsTilesFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }
-      work->menuBusy = 1;
+      work->holdTilemapUpload = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
       if ((redraw >> 1) != 0)
@@ -330,7 +330,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                   previewMode, selectedPages[0] + 1, 1);
         break;
       }
-      work->menuBusy = 0;
+      work->holdTilemapUpload = 0;
     }
 
     if (page <= 1) {
@@ -373,11 +373,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       if (rise > 12)
         rise = 12;
       slide = step % 35 * 2;
-      MenuIcon_SetPosition(0, slide + 34, rise + 20);
+      DjinnFigures_SetSlotPosition(0, slide + 34, rise + 20);
       if (mode == 0)
-        MenuIcon_SetPosition(1, 99 - slide, 36 - rise);
+        DjinnFigures_SetSlotPosition(1, 99 - slide, 36 - rise);
     } else {
-      MenuIcon_SetPosition(0, 32, 30);
+      DjinnFigures_SetSlotPosition(0, 32, 30);
     }
     if (redraw != 0) {
       redraw = 0;
@@ -444,7 +444,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
   Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
@@ -453,7 +453,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
   WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
   wait(1);
   return result;
 }
@@ -545,13 +545,13 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     pageCount = &pageCounts[side];
     pairMember = menu->pairMember;
     if (redraw) {
-      render->menuBusy = 1;
+      render->holdTilemapUpload = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
       DjinnMenu_DrawStatPreview(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
       DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0,
                                 0, 3, selectedPages[0] + 1, 1);
-      render->menuBusy = 0;
+      render->holdTilemapUpload = 0;
     }
     if (counts[side] > 1) {
       window = menu->secondWindow;
@@ -573,7 +573,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     frame++;
     blink = frame % 60 - 5;
     CLAMP(blink, 0, 29);
-    MenuIcon_SetPosition(0, 32, 200);
+    DjinnFigures_SetSlotPosition(0, 32, 200);
     // DEAD: the test cannot change the result, redraw = 0 alone does the same;
     // the ROM keeps the compare (its twin also steps a phase under it).
     if (redraw)
@@ -610,7 +610,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     wait(1);
   }
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
   wait(1);
   Window_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
@@ -619,7 +619,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   WindowSprite_RedrawSavedRectFar(menu->listWindow);
   WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
+  ((struct WindowWork *)Ram_HeapSlots->windowTiles)->holdTilemapUpload = 0;
   wait(1);
   return result;
 }

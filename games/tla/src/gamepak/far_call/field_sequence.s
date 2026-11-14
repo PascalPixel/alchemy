@@ -13,7 +13,7 @@ FarCall_OverworldTable:
 	export Event_CallWithLastActiveObjectIdFar, Event_CallWithLastActiveObjectId
 	export Scene_AssignViewFlagsFar, Scene_AssignViewFlags
 	export Event_SetSceneEventsFar, Event_SetSceneEvents
-	export Event_PrepareObjectAndApplyValueFar, Event_PrepareObjectAndApplyValue
+	export Event_AddPartyMemberFar, Event_AddPartyMember
 	export Event_PrepareTwoObjectsAndApplyFar, Event_PrepareTwoObjectsAndApply
 	export Party_RemoveMemberRestoredFar, Party_RemoveMemberRestored
 	export PartyInventory_GiveItemFar, PartyInventory_GiveItem
@@ -62,9 +62,9 @@ FarCall_OverworldTable:
 	export Event_ShowSpeakerMessageFar, Event_ShowSpeakerMessage
 	export Event_ShowCounterFar, Event_ShowCounter
 	export Event_ShowMessageAtPositionFar, Event_ShowMessageAtPosition
-	export Actor_ArmCallbackFar, Actor_ArmCallback
 	export Actor_FaceDirectionByIdFar, Actor_FaceDirectionById
-	export Actor_ResetTargetAndSetMode1Far, Actor_ResetTargetAndSetMode1
+	export Actor_FaceDirectionAndRefreshByIdFar, Actor_FaceDirectionAndRefreshById
+	export Actor_ClearDestinationAndStandFar, Actor_ClearDestinationAndStand
 	export Actor_ClosePortraitFar, Actor_ClosePortrait
 	export Event_ShowTwoMessagesAndWaitFar, Event_ShowTwoMessagesAndWait
 	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor
@@ -114,13 +114,13 @@ FarCall_OverworldTable:
 	export ScreenTransition_FinishFar, ScreenTransition_Finish
 	export ScreenTransition_HideBackgroundsFar, ScreenTransition_HideBackgrounds
 	export Scene_TalkToActorFar, Scene_TalkToActor
-	export BattleEffect_InitializeBuffersFar, BattleEffect_InitializeBuffers
-	export BattleEffect_ApplyColorToTargetBufferFar, BattleEffect_ApplyColorToTargetBuffer
-	export BattleEffect_ApplyColorToSourceBufferFar, BattleEffect_ApplyColorToSourceBuffer
-	export BattleEffect_InterpolateBuffersFar, BattleEffect_InterpolateBuffers
+	export PaletteFade_InitializeFar, PaletteFade_Initialize
+	export PaletteFade_SetTargetFar, PaletteFade_SetTarget
+	export PaletteFade_SetSourceFar, PaletteFade_SetSource
+	export PaletteFade_CalculateStepsFar, PaletteFade_CalculateSteps
 	export PaletteFade_StartInterpolationFar, PaletteFade_StartInterpolation
-	export BattlePalette_StopBlendAndReleaseBufferFar, BattlePalette_StopBlendAndReleaseBuffer
-	export BattleEffect_SetPrimaryBufferValueFar, BattleEffect_SetPrimaryBufferValue
+	export PaletteFade_ReleaseFar, PaletteFade_Release
+	export PaletteFade_SetBackdropFar, PaletteFade_SetBackdrop
 	export Event_StartScreenTransitionFar, Event_StartScreenTransition
 	export Event_FinishScreenTransitionFar, Event_FinishScreenTransition
 	export Event_WaitTransitionFramesFar, Event_WaitTransitionFrames
@@ -280,7 +280,7 @@ FarCall_OverworldTable:
 	export Actor_DepartInRingFar, Actor_DepartInRing
 	export Actor_ArriveInRingFar, Actor_ArriveInRing
 	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
-	export Func_080c8898, Func_080d2cc4
+	export Event_ShowMessageAndOfferScoopFar, Event_ShowMessageAndOfferScoop
 	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
 	export EffectSprite_InitFromSlot94Far, EffectSprite_InitFromSlot94
 	export BattleEffect_DrawSpriteAtWorldPositionFar, BattleEffect_DrawSpriteAtWorldPosition
@@ -320,12 +320,12 @@ Teleport_PlaySparksFar:
 	export Weather_StartRainFar, Weather_StartRain
 	export Weather_StopRainFar, Weather_StopRain
 	export SummonTablet_PlayRunesFar, SummonTablet_PlayRunes
-	export Func_080c8930, Func_080d2d70
+	export Event_CountAnswerFar, Event_CountAnswer
 	export WorldMap_SetReturnForSceneFar, WorldMap_SetReturnForScene
 	export WorldMap_SetReturnLeavingSceneFar, WorldMap_SetReturnLeavingScene
 	export MadPlant_LeapAtLeaderFar, MadPlant_LeapAtLeader
 	export ScreenTransition_IsScanlineActiveFar, ScreenTransition_IsScanlineActive
 	export Party_CheckItemLimitFar, Party_CheckItemLimit
 	export Scene_FindTriggerFar, Scene_FindTrigger
-	export BattleEffect_PackTargetBufferFar, BattleEffect_PackTargetBuffer
-	export BattleEffect_LoadBufferPaletteFar, BattleEffect_LoadBufferPalette
+	export PaletteFade_PackTargetFar, PaletteFade_PackTarget
+	export PaletteFade_LoadPaletteFar, PaletteFade_LoadPalette

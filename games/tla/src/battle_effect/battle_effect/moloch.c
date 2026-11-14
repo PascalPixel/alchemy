@@ -22,7 +22,7 @@ struct Model;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0C1;
 extern char ResourceId_Data134;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern const u8 Data_08196f28[];
 // The particle sheet's cell offsets by size (The Broken Seal's
 // gBattleEffect_MoteCells).
@@ -121,7 +121,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
           work->particles[i].variant = -1;
 
         // The motes start along the top, each after its own delay.
-        motes = gMapCellBuffer;
+        motes = gMapGridCellBuffer;
         for (i = 0; i != 256; i++) {
           mote = &motes[i];
           Random16();
@@ -155,7 +155,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
       }
 
       if (frame <= 271) {
-        motes = gMapCellBuffer;
+        motes = gMapGridCellBuffer;
         for (i = 0; i != 256; i++) {
           mote = &motes[i];
           if (mote->variant == 0) {
@@ -728,8 +728,7 @@ void Transform_ResetMatrix(void);
 void SceneTransform_ApplyScale(s32 *scale);
 
 #define SLOT_ALT 188 // unkb8[1]
-#define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
 #define SCENE (&Data_02012ee0)
 #define PLTT 0x05000000
 #define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])
@@ -907,7 +906,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  struct IrisSprite **objects = (struct IrisSprite **)gMapCellBuffer;
+  struct IrisSprite **objects = (struct IrisSprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->unk64[0];
   struct IrisSparks *sparks = &Data_02011f40;
   u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
@@ -1342,7 +1341,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       Iwram_FillWords((void *)(PLTT + 0x3e0), 32, -1);
       colors += 32;
       DECODE_01(colors, work->sheet);
-      table = gResourceTableEntries;
+      table = gVramCacheEntries;
       for (i = 0; i != 15; i++) {
         struct IrisSprite *obj =
             EffectSprite_CreateWithTiles(16, 16, 0x40000000, 0xf000);

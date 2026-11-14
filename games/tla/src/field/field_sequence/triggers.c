@@ -67,19 +67,19 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// condition holds and whose push (STEP_TRIGGER_FLAG_WALKING) and facing
 /// (TRIGGER_FLAG_FACING) requirements are met, or NULL. Kinds 8 and 9 answer
 /// any target, and the facing test alone is skipped while
-/// gMainRoutineWork.renderMode is 2.
+/// gMainRoutineWork.movementMode is 2.
 // XXX: what kinds 8 and 9 are; the triggers of the scenes that use them would
 // settle it.
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
-  u32 facing = ObjectTable_Get(gMainRoutineWork.currentOwner)->facing;
+  u32 facing = ObjectTable_Get(gMainRoutineWork.leaderActorId)->facing;
 
   flags = trigger->flags;
   while (flags != -1) {
     // Holds one address for its whole life.
-    u8 *mode = &gMainRoutineWork.renderMode;
+    u8 *mode = &gMainRoutineWork.movementMode;
 
     if ((flags & TRIGGER_KIND_MASK) == kind &&
         (trigger->value == target || kind == 8 || kind == 9) &&
@@ -144,7 +144,7 @@ extern struct DescriptorEntry gData_080eff28[];
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
 
 /// Returns the talk trigger of object id, or 0: for the object field Psynergy
-/// has stopped (gMainRoutineWork.pausedObject), its kind 7 trigger if it has
+/// has stopped (gMainRoutineWork.haltedActor), its kind 7 trigger if it has
 /// one, the event for talking to it while it is stopped.
 void *Scene_FindActorTalkTrigger(s32 id) {
   void *found = Scene_FindTrigger(0, id);
@@ -152,7 +152,7 @@ void *Scene_FindActorTalkTrigger(s32 id) {
   void *event;
   s32 stopped;
 
-  stopped = party->pausedObject;
+  stopped = party->haltedActor;
   event = found;
   if (stopped == id) {
     void *alt = Scene_FindTrigger(7, stopped);
@@ -248,7 +248,7 @@ s32 Scene_TalkToActor(s32 id) {
       *busy = 1;
       if (silent == 0)
         FieldMessage_ShowFar(found + (s32)&MsgKey0dc4, 1);
-      if (gMainRoutineWork.scene == (s32)&SceneId_VenusLighthouse &&
+      if (gMainRoutineWork.next == (s32)&SceneId_VenusLighthouse &&
           noHint == 0 && !GameFlag_Get(flag)) {
         MessageArgument_PushFar(contents, 2);
         FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
@@ -268,7 +268,7 @@ s32 Scene_TalkToActor(s32 id) {
 
         trap->update = ItemDisplay_EmitSparkles;
         ItemDisplay_RaiseAboveLeader(trap);
-        Sound_PlayFar(MUS_083);
+        Sound_PlayFar(MUS_TREASURE_FOUND);
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
         Party_AddPp(1999, 0);
@@ -312,7 +312,7 @@ s32 Scene_TalkToActor(s32 id) {
           work->encounter = Encounter_GetFormationAtSlot(104, contents);
         gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
         BattleEffect_SelectBattleCue(104, contents);
-        Sound_PlayFar(gMainRoutineWork.sceneCue);
+        Sound_PlayFar(gMainRoutineWork.battleMusic);
         FieldMessage_ShowFar((s32)&MsgKey0e1a, 1);
         goto done;
       }
@@ -335,7 +335,7 @@ s32 Scene_TalkToActor(s32 id) {
             ObjectEvent_SetMode2(index);
         }
         ItemDisplay_RaiseAboveLeader(shown);
-        Sound_PlayFar(MUS_083);
+        Sound_PlayFar(MUS_TREASURE_FOUND);
         contents &= 0x7fff;
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgKey0e10, 3);
@@ -376,9 +376,9 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == 128)
         ObjectEvent_SetMode2(index);
       ItemDisplay_RaiseAboveLeader(shown);
-      Sound_PlayFar(MUS_083);
+      Sound_PlayFar(MUS_TREASURE_FOUND);
       MessageArgument_PushFar(contents, 2);
-      if (slot == gMainRoutineWork.currentOwner) {
+      if (slot == gMainRoutineWork.leaderActorId) {
         FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
       } else {
         MessageArgument_PushFar(slot, 1);
@@ -406,7 +406,7 @@ s32 Scene_TalkToActor(s32 id) {
     }
   }
 
-  if (gMainRoutineWork.pausedObject == id) {
+  if (gMainRoutineWork.haltedActor == id) {
     paused = 1;
     talk = Scene_FindTrigger(7, id);
     if (talk == NULL) {
@@ -434,10 +434,10 @@ s32 Scene_TalkToActor(s32 id) {
     Actor_SetAnimationSpeedFar(object, 0);
     savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
-      leader = Actor_GetById(gMainRoutineWork.currentOwner);
+      leader = Actor_GetById(gMainRoutineWork.leaderActorId);
       Actor_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
                                          leader->z);
-      Actor_TurnToFaceEachOther(id, gMainRoutineWork.currentOwner, 0);
+      Actor_TurnToFaceEachOther(id, gMainRoutineWork.leaderActorId, 0);
     }
   }
   if (talk->script < 0x10000) {
@@ -450,7 +450,7 @@ s32 Scene_TalkToActor(s32 id) {
   if (!paused) {
     if (object->script[object->step] == 17) {
       if ((s8)placement->talkFacing == 3) {
-        object->watchedObject = Actor_GetById(gMainRoutineWork.currentOwner);
+        object->watchedObject = Actor_GetById(gMainRoutineWork.leaderActorId);
         object->actionFlags |= 1;
         Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
       } else if ((s8)placement->talkFacing == 1) {
@@ -464,8 +464,8 @@ s32 Scene_TalkToActor(s32 id) {
   result = 0;
 resume:
   if (paused) {
-    FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.pausedObject);
-    gMainRoutineWork.pausedObject = -1;
+    FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
+    gMainRoutineWork.haltedActor = -1;
   }
   return result;
 }
@@ -547,7 +547,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// called with keys and the target). Always returns 0.
 s32 Field_RunPushCell(s32 keys) {
   struct EventWorkView *work = Ram_HeapSlots->fieldWork;
-  s32 owner = gMainRoutineWork.currentOwner;
+  s32 owner = gMainRoutineWork.leaderActorId;
   struct SceneEventEntry *event;
   s32 target;
   s32 result;
@@ -578,7 +578,7 @@ s32 Field_RunPushCell(s32 keys) {
     }
   }
   if ((keys & 2) && work->blockedSteps > 12 && Leader_CanPushObjectAhead()) {
-    target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
+    target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
     if (target != -1) {
       event = Scene_FindTrigger(8, target);
       if (event != NULL && (result = event->result) != 0) {
@@ -652,7 +652,7 @@ s32 Field_ExamineCell(s32 id) {
       goto done;
     }
     if (GameFlag_IsConditionActive(condition))
-      ((void (*)(s32))event->value)(gMainRoutineWork.currentOwner);
+      ((void (*)(s32))event->value)(gMainRoutineWork.leaderActorId);
     if (GameFlag_Get(FLAG_NOTHING_HAPPENS))
       FieldMessage_ShowFar(kind + (s32)&MsgKey0def, 1);
     goto done;

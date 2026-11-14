@@ -41,8 +41,7 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (i = 0; i < count; i++) {
-    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))
-                 ->level;
+    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->level;
   }
   total = total / count;
   return total;
@@ -413,7 +412,7 @@ void GameFlag_RefreshLureCap(void) {
     struct OwnerInventoryState *unit;
     s32 inventorySlot;
 
-    unit = Unit_Get(gMainRoutineWork.activeOwners[partyIndex]);
+    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct EquipEffect *effect;
@@ -452,7 +451,7 @@ s32 Party_GetPpRatio(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.activeOwners[i]);
+    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.party[i]);
 
     pp += unit->pp;
     max += unit->maxPp;
@@ -472,11 +471,11 @@ s32 Party_DrainPpFromFullest(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    s32 ratio = Owner_GetPpRatio(gMainRoutineWork.activeOwners[i]);
+    s32 ratio = Owner_GetPpRatio(gMainRoutineWork.party[i]);
 
     if (ratio > best) {
       best = ratio;
-      bestOwner = gMainRoutineWork.activeOwners[i];
+      bestOwner = gMainRoutineWork.party[i];
     }
   }
   if (bestOwner == -1)
@@ -546,10 +545,10 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
-extern s8 gData_02001000[];
+extern s8 gSceneLocalState[];
 #ifndef MODERN
 // A current GCC refuses the volatile redeclaration and reads frame.h's.
-extern volatile u8 gAutoSleepEnabled;
+extern volatile u8 gIdleSleepEnabled;
 #endif
 
 /// Starts a new game's state: clears gMainRoutineWork, the work block, the
@@ -567,7 +566,7 @@ void MainRoutineWork_InitializeDefaults(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 184);
   zero = 0;
 #if TLA_PATCH_1
-  START_DMA(&zero, gData_02001000,
+  START_DMA(&zero, gSceneLocalState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992);
   WaitDma(DMA3);
 #else
@@ -577,7 +576,7 @@ void MainRoutineWork_InitializeDefaults(void) {
     register u32 held asm("r3") = (u32)DMA3;
     struct DmaRegisters volatile *channel;
 
-    Dma_Set((const void *)&zero, gData_02001000,
+    Dma_Set((const void *)&zero, gSceneLocalState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992,
             (volatile u32 *)held);
     channel = (struct DmaRegisters volatile *)held;
@@ -589,7 +588,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
-  gData_02001000[4] = 0xff;
+  gSceneLocalState[4] = 0xff;
   zero = 0;
   START_DMA(&zero, gOwnerStates,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
@@ -603,7 +602,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.dashKeys = 2;
   gMainRoutineWork.packedEvents[0] = 0;
   gMainRoutineWork.packedEvents[1] = 0;
-  gMainRoutineWork.currentOwner = 4;
+  gMainRoutineWork.leaderActorId = 4;
   Party_AddMember(4);
   Party_AddMember(5);
   Unit_LearnPsynergy(4, 149);
@@ -619,20 +618,20 @@ void MainRoutineWork_InitializeDefaults(void) {
   *(u32 *)&gMainRoutineWork.unk284[8] = 0;
   gMainRoutineWork.forgeItem = 0;
   gMainRoutineWork.countedAnswers = 0;
-  gMainRoutineWork.eventMode = 1;
-  gMainRoutineWork.battleFxEnabled = 1;
+  gMainRoutineWork.messageSpeed = 1;
+  gMainRoutineWork.speech = 1;
   gMainRoutineWork.unusedAfterSpeech = 1;
   gMainRoutineWork.paletteGlow[0] = 0;
   gMainRoutineWork.paletteGlow[1] = 8;
   gMainRoutineWork.buildStamp = 0;
   // Its result taken as a whole word, where the definition returns u16.
   gMainRoutineWork.startStamp = ((u32 (*)(void))BuildStamp_GetTime)();
-  gFrameWaitCount = 0;
-  gAutoSleepEnabled = 0;
+  gPlayTimeFrames = 0;
+  gIdleSleepEnabled = 0;
   gMainRoutineWork.playTime = 0;
   /* FAKEMATCH(volatile): the auto-sleep flag. */
-  gMainRoutineWork.unk244[6] = gAutoSleepEnabled;
-  gIdleFrameCount = 0;
+  gMainRoutineWork.unk244[6] = gIdleSleepEnabled;
+  gIdleFrames = 0;
   gSaveSlot = -1;
   gMainRoutineWork.unk284[2] = gData_02003860;
   gMainRoutineWork.unk13d[0] = 4;
@@ -653,18 +652,18 @@ void MainRoutineWork_InitializeDefaults(void) {
 
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)
-      gData_02001000[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
+      gSceneLocalState[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
   }
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 5; j++)
-      gData_02001000[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
+      gSceneLocalState[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
   }
 }
 
-void Party_SetLeaderJenna(void) { gMainRoutineWork.currentOwner = 5; }
+void Party_SetLeaderJenna(void) { gMainRoutineWork.leaderActorId = 5; }
 
 void Party_SetLeaderFelix(void) {
-  gMainRoutineWork.currentOwner = 4;
+  gMainRoutineWork.leaderActorId = 4;
   Party_AddMember(4);
   Party_RemoveMember(5);
   Party_RemoveMember(6);
@@ -686,7 +685,7 @@ void Party_GivePiersDjinn(void) {
   ((void (*)(s32))Party_BalanceDjinn)(0);
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
-    Unit_Calculate(gMainRoutineWork.activeOwners[i]);
+    Unit_Calculate(gMainRoutineWork.party[i]);
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -698,7 +697,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gMainRoutineWork.activeOwners[partyIndex]);
+    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
 
     unit->hp = unit->maxHp;
     unit->pp = unit->maxPp;
@@ -724,7 +723,7 @@ void Party_RestorePpOfLitElements(void) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unitId = gMainRoutineWork.activeOwners[partyIndex];
+    unitId = gMainRoutineWork.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {
@@ -789,7 +788,7 @@ void Party_BalanceDjinn(void) {
     s32 index;
 
     for (i = 0; i < count; i++) {
-      s32 owner = gMainRoutineWork.activeOwners[i];
+      s32 owner = gMainRoutineWork.party[i];
       struct OwnerDjinnState *unit = Unit_Get(owner);
       u8 *counts;
       s32 j;
@@ -879,8 +878,8 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   if (byPassword == 0) {
     state->paletteGlow[0] = party->paletteGlow[0];
     state->paletteGlow[1] = party->paletteGlow[1];
-    state->eventMode = party->eventMode;
-    state->battleFxEnabled = party->battleFxEnabled;
+    state->messageSpeed = party->messageSpeed;
+    state->speech = party->speech;
     state->unk244[6] = party->unk244[6];
     WindowColor_ApplyFar(state->paletteGlow[0], state->paletteGlow[1]);
   }
@@ -908,7 +907,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   Party_RestoreHpPp(1);
   GameFlag_Set((byPassword & 1) + FLAG_TRANSFERRED_BY_LINK);
   GameFlag_Set(FLAG_DATA_TRANSFERRED);
-  gFrameWaitCount = gMainRoutineWork.playTime;
+  gPlayTimeFrames = gMainRoutineWork.playTime;
 }
 
 /// Carries Clear Data over to a new quest: the options, coins and each unit's
@@ -922,8 +921,8 @@ void ClearData_Apply(u8 *save) {
 
   gMainRoutineWork.paletteGlow[0] = party->paletteGlow[0];
   gMainRoutineWork.paletteGlow[1] = party->paletteGlow[1];
-  gMainRoutineWork.eventMode = party->eventMode;
-  gMainRoutineWork.battleFxEnabled = party->battleFxEnabled;
+  gMainRoutineWork.messageSpeed = party->messageSpeed;
+  gMainRoutineWork.speech = party->speech;
   gMainRoutineWork.unk244[6] = party->unk244[6];
   WindowColor_ApplyFar(gMainRoutineWork.paletteGlow[0],
                        gMainRoutineWork.paletteGlow[1]);
@@ -1002,7 +1001,7 @@ void Party_AddIsaacsParty(void) {
       djinni = missing[(Random16() * count) >> 16] + 1;
     else
       djinni = 0;
-    gData_02001000[0x1950 + i] = djinni;
+    gSceneLocalState[0x1950 + i] = djinni;
   }
   // The Psynergy items Isaac's party carried in The Broken Seal.
   Party_GiveItemIfMissing(ITEM_FROST_JEWEL, MIA);
@@ -1050,7 +1049,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
 
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
-    saved[i] = gMainRoutineWork.activeOwners[i];
+    saved[i] = gMainRoutineWork.party[i];
   for (i = 0; i < count; i++)
     Party_RemoveMember(saved[i]);
   for (i = ISAAC; i <= MIA; i++)

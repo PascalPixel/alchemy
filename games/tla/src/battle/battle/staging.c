@@ -289,9 +289,9 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     }
     case STAGING_MEGAERA:
       BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
-      if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) == 0)
+      if (BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         break;
-      if (BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) == 0)
+      if (BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
         break;
       BattleStaging_PlanHighImpact((struct ActionTargets *)&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);

@@ -185,7 +185,7 @@ extern u16 gGaroh_Room2NightColors[];
 // Build BG palette 1 colors 8-15 from the table.
 #define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
   void name(void) {                                                            \
-    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;              \
+    struct PaletteFade *buffers = Ram_HeapSlots->block32;                      \
     const u8 *table = (const u8 *)data1;                                       \
     u32 i = 0;                                                                 \
     u16 *dst = &buffers->palette[n1];                                          \
@@ -221,7 +221,7 @@ s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -235,8 +235,8 @@ extern struct ActorPlacement gGaroh_Room5Placements[];
 extern struct MapGridCellAnimation gGaroh_Doors[];
 
 /// Return the table for the current room.
-const void *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const void *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Garoh1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
@@ -279,10 +279,10 @@ loop:
   index--;
   MapGrid_AnimateCells(gGaroh_Doors[index].steps, gGaroh_Doors[index].x,
                        gGaroh_Doors[index].y);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   {
-    s32 owner = gMainRoutineWork.currentOwner;
+    s32 owner = gMainRoutineWork.leaderActorId;
 
     if (index == 5)
       Actor_SetDestinationOffset(owner, 0, -4);
@@ -525,8 +525,8 @@ void Garoh_MeetInTheCave(void) {
 }
 
 /// Return the table for the current room.
-const void *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const void *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Garoh1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
@@ -549,7 +549,7 @@ void Garoh_HowlAtNight(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
     gGaroh_HowlCounter++;
     if ((gGaroh_HowlCounter & 0x3ff) == 0)
-      Event_PlaySound(SE_525);
+      Event_PlaySound(SE_HOWL);
   }
 }
 
@@ -558,9 +558,9 @@ void Garoh_InitializeRoom2(void);
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Garoh4) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Garoh4) {
     gFieldWork->transition = 0x204;
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh5) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_Garoh5) {
     FieldActor_SetSpritePriority(13, 1);
     FieldActor_SetSpritePriority(14, 1);
     if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
@@ -581,16 +581,16 @@ s32 Scene_Initialize(void) {
     }
   } else {
     gFieldWork->transition = 0;
-    if (gMainRoutineWork.scene == (s32)&SceneId_Garoh1) {
+    if (gMainRoutineWork.next == (s32)&SceneId_Garoh1) {
       Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
       Garoh_InitializeRoom1();
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh2) {
+    } else if (gMainRoutineWork.next == (s32)&SceneId_Garoh2) {
       Garoh_InitializeRoom2();
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh3) {
+    } else if (gMainRoutineWork.next == (s32)&SceneId_Garoh3) {
       Garoh_InitializeRoom3();
       if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
-        gMainRoutineWork.savedScene = (s32)&SceneId_GarohInteriors3;
-        gMainRoutineWork.savedEntrance = 2;
+        gMainRoutineWork.restartScene = (s32)&SceneId_GarohInteriors3;
+        gMainRoutineWork.restartEntrance = 2;
       }
     }
   }
@@ -611,7 +611,7 @@ void Garoh_InitializeRoom1(void) {
       PaletteFade_ApplyTarget(0x10003, 2);
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
-    BattleEffect_PackTargetBuffer();
+    PaletteFade_PackTarget();
     {
       u8 *palette = *(u8 **)((u8 *)Ram_HeapSlots + 0x80);
 
@@ -652,7 +652,7 @@ void Garoh_InitializeRoom2(void) {
     }
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
-    BattleEffect_PackTargetBuffer();
+    PaletteFade_PackTarget();
     Garoh_LoadRoom2NightColors();
     PaletteFade_ApplyTarget(0x10000, 1);
     Task_AddFrame((s32)Garoh_WaveRoom2Layer, 0xc80);
@@ -981,7 +981,7 @@ DEFINE_GAROH_PLAY_EFFECT(Garoh_CloseCaveCrevice, 3, 39)
                                                                                \
     Actor_SetSpeed(id, 1.2);                                                   \
     Actor_SetAnimation(id, 2);                                                 \
-    leader_ = Actor_Get(gMainRoutineWork.currentOwner);                        \
+    leader_ = Actor_Get(gMainRoutineWork.leaderActorId);                       \
     if (leader_ != NULL)                                                       \
       Actor_SetDestination(id, *(s16 *)((u8 *)leader_ + 10),                   \
                            *(s16 *)((u8 *)leader_ + 18));                      \
@@ -1355,7 +1355,7 @@ loop2:
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     FOLLOW_LEADER(7);
   }
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
 }
 

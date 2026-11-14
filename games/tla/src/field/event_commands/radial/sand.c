@@ -24,14 +24,14 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 void FieldPsynergy_WatchSandGround(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct Actor *object = ObjectTable_Get(party->currentOwner);
+  struct Actor *object = ObjectTable_Get(party->leaderActorId);
   s32 reason = 0;
 
   if ((s8)party->unk2c3 != 0)
     reason = 1;
   if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
     reason = 2;
-  if (party->renderMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
+  if (party->movementMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;
@@ -329,7 +329,7 @@ void FieldPsynergy_EndSand(void) {
   Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                      owner->z);
   party = &gMainRoutineWork;
-  Actor_SetFirstSpriteAnimationFar(owner, party->currentOwner);
+  Actor_SetFirstSpriteAnimationFar(owner, party->leaderActorId);
   ((u8 *)owner->sprite)[5] &= mask;
   mask &= ((u8 *)owner->sprite)[7];
   mask |= 128;
@@ -511,9 +511,9 @@ void FieldPsynergy_Sand(void) {
     wait(1);
   }
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
-    gMainRoutineWork.renderMode = 9;
+    gMainRoutineWork.movementMode = 9;
   else
-    gMainRoutineWork.renderMode = 5;
+    gMainRoutineWork.movementMode = 5;
   owner->timer = 0;
   owner->unk66 = 0;
   event->unkd4a = 3;

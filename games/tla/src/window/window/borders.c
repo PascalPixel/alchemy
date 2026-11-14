@@ -339,9 +339,9 @@ void BattleMessage_Open(s32 message) {
   // cursor.
   result = 0;
   // The menu state reads 2 while the message decodes.
-  work->menuState = 2;
+  work->battleMode = 2;
   entry = Message_Decode(message, 1);
-  work->menuState = 1;
+  work->battleMode = 1;
   if (work->entries[entry] != 0) {
     previous = slot->window;
     if (previous == NULL) {

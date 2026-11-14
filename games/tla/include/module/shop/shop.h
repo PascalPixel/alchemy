@@ -7,7 +7,7 @@
 #include "types.h"
 
 struct RenderInput;
-struct ShopCursor;
+struct MenuCursor;
 struct WindowSprite;
 
 void Shop_InitializeWork(void);
@@ -41,10 +41,10 @@ void Shop_ShowKeeperMessage(s32 messageId);
 struct WindowSprite *
 Shop_CreatePriceSprite(s32 value, struct RenderInput *window, s32 x, s32 y);
 
-void MenuCursor_Set(struct ShopCursor *cursor, s32 targetX, s32 targetY,
+void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
                     s8 kind);
-void MenuCursor_Advance(struct ShopCursor *cursor);
-void MenuCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y);
+void MenuCursor_Advance(struct MenuCursor *cursor);
+void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y);
 void VramBlock_LoadResource(s32 entryId, s32 size, s32 resourceId);
 
 s32 ShopStock_GetRowCount(void);

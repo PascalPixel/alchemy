@@ -11,9 +11,9 @@ void MagmaRockInside_RestorePillars(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; /* the shape grid, read once */
 
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(10, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   MagmaRockInside_SetPillarMode3(8);
   MagmaRockInside_SetPillarMode3(9);

@@ -61,12 +61,12 @@ void AttekaInlet_GeodeJoins(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AttekaInlet1) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
@@ -85,8 +85,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 extern struct Trigger gAttekaInlet_HarbourTriggers[];
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AttekaInlet1)
     return gAttekaInlet_HarbourTriggers;
@@ -107,7 +107,8 @@ void AttekaInlet_AskPiersToSetSail(void) {
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(18, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+      0) {
     Actor_SetModeById(18, 3);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
@@ -123,7 +124,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
       Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
                                *(s16 *)((u8 *)object + 18));
@@ -152,7 +153,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Actor_Jump(9, 6, 0);
     Actor_MoveToAndWait(9, 64, 336);
     Actor_WalkToAndWait(9, 70, 308);
-    Actor_ArmCallback(9, FACING_EAST, 0);
+    Actor_FaceDirectionById(9, FACING_EAST, 0);
     {
       s32 angle = 160;
 
@@ -163,7 +164,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Actor_Jump(10, 6, 0);
     Actor_MoveToAndWait(10, 90, 288);
     Actor_WalkToAndWaitById(10, 80, 316);
-    Actor_FaceDirectionById(10, FACING_EAST);
+    Actor_FaceDirectionAndRefreshById(10, FACING_EAST);
     Actor_GetById(9)->velocityY = px(4);
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
@@ -179,9 +180,9 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Actor_SetModeById(10, 3);
     // "I want to! Boy, do I want to!"
     Event_ShowMessageAndWait(10, 0);
-    Actor_ArmCallback(10, FACING_EAST, 0);
+    Actor_FaceDirectionById(10, FACING_EAST, 0);
     Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-    Actor_ArmCallback(9, FACING_EAST, 20);
+    Actor_FaceDirectionById(9, FACING_EAST, 20);
     // "So hurry up! We want to see the boat fly!"
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0);
     // "Thanks, buddy!"
@@ -248,7 +249,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_SetModeById(23, 4);
     // "At first, you may not want to move your ship too high or too far..."
     Event_ShowMessageAndWait(23, 0);
-    Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+    Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "It will be difficult at first, but that is to be expected... After..."
@@ -264,7 +265,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_WalkToAndWaitById(23, 504, 360);
     Event_Wait(1);
     Actor_GetById(23)->actionFlags |= 1;
-    Actor_FaceDirectionById(23, FACING_SOUTH_SOUTHEAST);
+    Actor_FaceDirectionAndRefreshById(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
     // "All of Contigo is watching... Show them your power, and make your..."
     Event_ShowMessageAndWait(23, 0);
@@ -282,17 +283,18 @@ void AttekaInlet_PiersAsksToSetSail(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(18, gMainRoutineWork.leaderActorId);
   wait(1);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_SetSpeed(18, 0.8);
   Actor_WalkToAndWaitById(18, 532, 248);
-  Actor_FaceDirectionById(18, FACING_SOUTH_SOUTHEAST);
+  Actor_FaceDirectionAndRefreshById(18, FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgAreWeSetting);
   // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
   // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(18, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+      0) {
     Actor_SetModeById(18, 3);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
@@ -308,14 +310,14 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
       Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
                                *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
-    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 528, 276);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 528, 276);
     Event_End();
   }
 }
@@ -340,13 +342,13 @@ void AttekaInlet_CycloneUncoversGeode(void) {
 
   MapCopy(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_GEODE))) {
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.leaderActorId);
     Event_Start();
     Event_ResolvePendingActions(0);
     moved = 0;
     if ((object->x >> 20) == 7 && (object->z >> 20) == 23) {
-      Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
-      Actor_SetDestination(gMainRoutineWork.currentOwner, 104, 376);
+      Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
+      Actor_SetDestination(gMainRoutineWork.leaderActorId, 104, 376);
       moved = 1;
     }
     Actor_SetHorizontalPositionWithTerrain(14, 120 << 16, 376 << 16);
@@ -354,7 +356,8 @@ void AttekaInlet_CycloneUncoversGeode(void) {
     Actor_Jump(14, 4, 10);
     GameFlag_Set(FLAG_AREA_TEMP_00);
     if (moved)
-      Actor_FaceDirectionById(gMainRoutineWork.currentOwner, FACING_EAST);
+      Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
+                                        FACING_EAST);
     Event_End();
   }
 }
@@ -390,7 +393,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_SetMessageId((s32)MsgHeyWait2);
   // "Hey, wait!"
   Event_ShowMessageAndWait(24, 0);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_SetSpeed(1.6);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -408,7 +411,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   // "I'm supposed to deliver this to Isaac... It's not too late, is it?"
   Event_ShowMessageAndWait(24, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
-  Actor_FaceDirectionById(24, angle);
+  Actor_FaceDirectionAndRefreshById(24, angle);
   Actor_GetById(24)->actionFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 384);
   Event_Wait(1);
@@ -427,7 +430,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   FieldCamera_MoveWithinMapBounds(px(512), -1, px(348), 1);
   Actor_WalkToAndWait(24, 504, 460);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
-  Actor_FaceDirectionById(23, angle);
+  Actor_FaceDirectionAndRefreshById(23, angle);
   // "On my way here, I stopped in Kalay briefly to speak with Master Hammet."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
@@ -446,7 +449,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
 
 void AttekaInlet_ShareLeadersPriority(void) {
   s32 variant =
-      ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
+      ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.leaderActorId)
            ->sprite)
           ->priority;
 
@@ -457,7 +460,7 @@ void AttekaInlet_ShareLeadersPriority(void) {
 
 void AttekaInlet_ShareLeadersPriorityWithRock(void) {
   Actor_SetSpritePriority(
-      13, ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
+      13, ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.leaderActorId)
                ->sprite)
               ->priority);
 }
@@ -505,9 +508,9 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -4);
   Event_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -515,7 +518,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
 }
 
 s32 Scene_Initialize(void) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AttekaInlet1)
     AttekaInlet_SetUpTheHarbour();
@@ -525,7 +528,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AttekaInlet1 &&
       GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
@@ -552,7 +555,7 @@ void AttekaInlet_SetUpTheHarbour(void) {
     Actor_SetHorizontalPositionWithTerrain(65, 0, 0);
   map->mode = 1;
   party = &gMainRoutineWork;
-  Actor_GetById(party->currentOwner)->priorityFlags |= 32;
+  Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
   Task_Add_(AttekaInlet_RotateWaterColors, 0x480);
   Task_Add_(AttekaInlet_ShareLeadersPriority, 0x480);
   Actor_SetSpriteFlags(Actor_GetById(17), 0);
@@ -569,10 +572,10 @@ void AttekaInlet_SetUpTheHarbour(void) {
 
       Actor_SetPositionAndFacing(23, px(504), px(360), speed << 6);
     }
-    Actor_WatchAndSetScript(19, party->currentOwner);
-    Actor_WatchAndSetScript(20, party->currentOwner);
-    Actor_WatchAndSetScript(21, party->currentOwner);
-    Actor_WatchAndSetScript(22, party->currentOwner);
+    Actor_WatchAndSetScript(19, party->leaderActorId);
+    Actor_WatchAndSetScript(20, party->leaderActorId);
+    Actor_WatchAndSetScript(21, party->leaderActorId);
+    Actor_WatchAndSetScript(22, party->leaderActorId);
   }
 }
 

@@ -44,7 +44,7 @@ next:
   if (*table != 0xffff)
     goto next;
 done:
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < ground) {
     leader->terrainHeight = ground;

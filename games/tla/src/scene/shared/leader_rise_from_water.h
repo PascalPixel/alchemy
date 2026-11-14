@@ -1,8 +1,8 @@
 /// The leader rises out of the water, unless the party keeps its place.
 void Leader_RiseFromWater(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 flag = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
-  s32 *owner = &gMainRoutineWork.currentOwner;
+  s32 *owner = &gMainRoutineWork.leaderActorId;
   s32 offset;
 
   if (flag == 0) {

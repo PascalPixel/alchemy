@@ -65,8 +65,8 @@ enum MikasallaActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-s16 *Scene_GetRegions(void) {
-  s16 scene = gMainRoutineWork.scene;
+s16 *Scene_GetExitRegions(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Mikasalla2)
     return gMikasalla_TunnelRegions;
@@ -75,8 +75,8 @@ s16 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Mikasalla1)
     return gMikasalla_VillagePlacements;
@@ -126,12 +126,12 @@ void Mikasalla_EnterDoor(void) {
   index--;
   MapGrid_AnimateCells(gMikasalla_Doors[index].map, gMikasalla_Doors[index].x,
                        gMikasalla_Doors[index].z);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   if (index != 4) {
-    Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+    Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
     Event_Wait(10);
   }
   Import_EventSetExitRequest(*choice);
@@ -144,8 +144,8 @@ void Mikasalla_EnterDoor(void) {
 /// without a fight.
 void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_Mikasalla2)
     return gMikasalla_TunnelTriggers;
@@ -221,8 +221,8 @@ s32 Scene_PrepareMap(void) {
     party = &gMainRoutineWork;
   } while (0);
   object->priorityFlags = flags;
-  Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
-  if (party->scene == (s32)&SceneId_Mikasalla2) {
+  Actor_GetById(party->leaderActorId)->priorityFlags |= 0x20;
+  if (party->next == (s32)&SceneId_Mikasalla2) {
     if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
@@ -250,7 +250,7 @@ void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_Mikasalla1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_Mikasalla1) {
     exit = 12;
     drop = 17;
   } else {

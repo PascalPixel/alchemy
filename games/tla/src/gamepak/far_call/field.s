@@ -81,7 +81,7 @@ FarCall_FieldTable:
 	export Animation_SetDisplayFlagFar, Animation_SetDisplayFlag
 	export MapGrid_IsWallAtFar, MapGrid_IsWallAt
 	export Actor_RegisterSpriteMetadataFar, Actor_RegisterSpriteMetadata
-	export MapAnimation_StartFar, MapAnimation_Start
+	export WorldMap_StartStillPictureFar, WorldMap_StartStillPicture
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Actor_SetSpriteColorModeFar, Actor_SetSpriteColorMode
 	export Animation_ApplyChildValuesToRecordFar, Animation_ApplyChildValuesToRecord
@@ -118,6 +118,6 @@ FarCall_FieldTable:
 	export Map_LoadCellsAndShapesFar, Map_LoadCellsAndShapes
 	export VramBlock_Reset93Far, VramBlock_Reset93
 	export VramBlock_Load93Far, VramBlock_Load93
-	export TileMap_ConvertBufferFar, TileMap_ConvertBuffer
+	export Map_CopyPaletteFar, Map_CopyPalette
 	export SpriteViewer_RunFar, SpriteViewer_Run
 	export Actor_SpawnWaterSplashFar, Actor_SpawnWaterSplash

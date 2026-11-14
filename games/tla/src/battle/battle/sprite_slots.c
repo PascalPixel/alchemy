@@ -14,7 +14,7 @@
 void BattleObject_Put(void) {
   s16 list[14];
 
-  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+  BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, list);
   BattleActor_SpawnObjectsForList(list, 1);
 }
 
@@ -23,7 +23,7 @@ void BattleObject_Put(void) {
 void BattleUnit_ListAllAndSubmit(void) {
   s16 list[14];
 
-  BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
+  BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, list);
   BattleActor_SpawnObjectsForList(list, 0);
 }
 
@@ -158,7 +158,8 @@ s32 BattleUnit_GetWeaponSprite(s32 owner) {
   if (slot >= 0) {
     s32 index;
 
-    index = BattleUnit_GetWeaponKind(unit->inventory[slot] & ITEM_ID_MASK);
+    index = BattleUnit_GetWeaponKind(unit->inventory[slot] &
+                                     INVENTORY_ITEM_ID_MASK);
     switch (unit->classId) {
     case ISAAC:
       result = gData_081287d4[index];

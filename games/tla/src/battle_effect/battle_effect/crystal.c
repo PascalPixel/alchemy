@@ -47,7 +47,7 @@ void Transform_ApplyYaw(s32 angle);
 extern char ResourceId_Data0FB;
 extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_BlastSheet;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 gData_02014000[];
 extern const u8 gData_08199364[]; // the crystal's mesh
 extern const u8 gData_08199210[]; // its four corners
@@ -83,7 +83,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   discOffsets = (u16 *)(work->sheet + 0x2710);
-  cells = (s32)gMapCellBuffer;
+  cells = (s32)gMapGridCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
     BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 0x10000);

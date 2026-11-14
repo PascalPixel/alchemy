@@ -84,7 +84,7 @@ void BattlePlayback_Run(void) {
   struct PlaybackEvents *events = &battle->events;
 
   void BattleSprite_ClearTiles(struct AnimationRecord * record, s32 unused) {
-    u8 *tiles = (u8 *)OBJ_VRAM + gResourceTableEntries[record->slot].offset;
+    u8 *tiles = (u8 *)OBJ_VRAM + gVramCacheEntries[record->slot].offset;
 
     Iwram_ClearWordsEntry(tiles, record->width * record->height);
   }

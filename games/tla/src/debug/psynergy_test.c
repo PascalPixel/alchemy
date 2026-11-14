@@ -99,11 +99,11 @@ extern struct SparkleWork gPsynergyTest_LeaderRings;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -455,14 +455,14 @@ void PsynergyTest_IgnoreGrind(void) {}
 /// frames.
 void PsynergyTest_ShowRings(s32 actor) {
   PsynergyTest_StartRings(Actor_Get(actor), &gPsynergyTest_TargetRings);
-  PsynergyTest_StartRings(Actor_Get(gMainRoutineWork.currentOwner),
+  PsynergyTest_StartRings(Actor_Get(gMainRoutineWork.leaderActorId),
                           &gPsynergyTest_LeaderRings);
   System_Wait(100);
   PsynergyTest_StopRings(Actor_Get(actor));
-  PsynergyTest_StopRings(Actor_Get(gMainRoutineWork.currentOwner));
+  PsynergyTest_StopRings(Actor_Get(gMainRoutineWork.leaderActorId));
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Sets the shops' rare stock, lays the fallen actors down, puts back what
 /// the Scoop spots and the item have already done, and sends the leader away
@@ -489,7 +489,7 @@ s32 Scene_Initialize(void) {
   Item_AdjustCounter(ITEM_VAMBRACE, 1);
   Item_AdjustCounter(ITEM_SPIRIT_ARMLET, 1);
   Item_AdjustCounter(ITEM_WARRIORS_HELM, 1);
-  gMainRoutineWork.eventMode = 2;
+  gMainRoutineWork.messageSpeed = 2;
   Actor_SetAnimation(ACTOR_MENU_TESTER, 2);
   Actor_SetAnimation(16, 2);
   // Call3 and Call2 build each call's constants afresh (call.h).
@@ -507,9 +507,9 @@ s32 Scene_Initialize(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->entrance == 6)
-      Actor_DepartInRing(party->currentOwner);
+      Actor_DepartInRing(party->leaderActorId);
     if (party->entrance == 8)
-      Actor_ArriveInRing(party->currentOwner);
+      Actor_ArriveInRing(party->leaderActorId);
   }
   return 0;
 }
@@ -606,7 +606,7 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
       object->facing =
-          Actor_Get(gMainRoutineWork.currentOwner)->facing + TRIG_TURN / 2;
+          Actor_Get(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 2;
       Field_RequestBattleFromEncounterTable(row, column);
     }
   }
@@ -913,7 +913,7 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
   object->update = PsynergyTest_UpdateRings;
-  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;

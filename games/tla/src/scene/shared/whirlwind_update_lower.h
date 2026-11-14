@@ -1,7 +1,7 @@
 /// Whirlwind_Update as the lower floors' copies compile it.
 void Whirlwind_UpdateLower(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -40,7 +40,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
           work->raisedTrigger = 200;
-          gMainRoutineWork.renderMode = 0;
+          gMainRoutineWork.movementMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }

@@ -225,7 +225,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
                                FIGURE(work), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
     frames = 80;
-    Sound_PlayFar(MUS_084);
+    Sound_PlayFar(MUS_CURE);
   } else if (mode == 11) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
     LOAD_BG_PALETTE(ResourceId_MarsDjinnSmallSheet);

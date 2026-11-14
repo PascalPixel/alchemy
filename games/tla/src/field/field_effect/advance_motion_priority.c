@@ -54,7 +54,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
 
   party = &gMainRoutineWork;
 
-  leader = Actor_GetById(party->currentOwner);
+  leader = Actor_GetById(party->leaderActorId);
   to = (struct EffectSpriteAttributes__advance_motion_priority *)effect->sprite;
   from =
       (struct EffectSpriteAttributes__advance_motion_priority *)leader->sprite;

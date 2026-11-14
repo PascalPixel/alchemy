@@ -55,7 +55,7 @@ extern u16 gScript_MainScript[];
 s32 Animation_InitializeObjects(struct AnimationObject *);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 void AnimationObject_SetActiveTimerSteps(struct AnimationObject *, s32);
-s32 BattleEffect_ApplyColorToTargetBufferFar(s32, s32);
+s32 PaletteFade_SetTargetFar(s32, s32);
 void FieldPsynergy_FinishMindRead(void);
 void FieldPsynergy_Dispatch(void);
 void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);

@@ -205,7 +205,7 @@ void Actor_LaunchFromLeader(s32 actorId, s32 xOffset, s32 zOffset, s32 action) {
 
   if (object != NULL) {
     Actor_SetSpeedParameters(actorId, 0xcccc, 0x6666);
-    Actor_MoveToObject(actorId, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(actorId, gMainRoutineWork.leaderActorId);
     Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
                                        object->z - 0x10000);
     object->movementState = 0;
@@ -480,7 +480,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Actor_SetMoveTargetFar(object, x, object->y, z + 0xc0000);
   wait(6);
   Sound_PlayFar(SE_FLOOR_SWITCH);
-  Actor_ArmCallback(id, 0x5000, 0);
+  Actor_FaceDirectionById(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {
     object->y -= px(2);

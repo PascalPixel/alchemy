@@ -104,11 +104,11 @@ extern const u16 gPaletteCycleUnlitColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -176,7 +176,7 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
 
 void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
@@ -184,10 +184,10 @@ s32 Scene_Initialize(void) {
   HangingVine_Place(13, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gMainRoutineWork.entrance == 12)
-    Actor_DepartInRing(gMainRoutineWork.currentOwner);
+    Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gMainRoutineWork.entrance == 13)
-    Actor_DepartInRing(gMainRoutineWork.currentOwner);
+    Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   return 0;
 }
 
@@ -469,7 +469,7 @@ extern const s32 *gFieldEffect_DurationScripts[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

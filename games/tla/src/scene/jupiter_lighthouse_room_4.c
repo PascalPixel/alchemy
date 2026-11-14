@@ -99,11 +99,11 @@ extern u16 gPaletteCycleColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -187,7 +187,7 @@ void JupiterLighthouse_TryLockedDoor(void) {
   Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// A particle's step, Jupiter Lighthouse room 2's
 /// JupiterLighthouse_CircleTheMote with other numbers: it circles at its angle
@@ -251,12 +251,12 @@ s32 Scene_Initialize(void) {
   JupiterLighthouse_SpawnCirclingMotes();
   flag = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0 && gMainRoutineWork.entrance == 11) {
-    leader = Actor_Get(gMainRoutineWork.currentOwner);
+    leader = Actor_Get(gMainRoutineWork.leaderActorId);
     leader->priorityFlags &= ~64;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
+    FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
     leader->y = leader->terrainHeight = -px(120);
@@ -272,16 +272,16 @@ s32 Scene_Initialize(void) {
     leader->motionFlags = 3;
     leader->velocityY = px(3);
     leader->gravity = px(1) / 2;
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
     FieldEvent_Wait(40);
     leader->gravity = px(1);
     leader->priorityFlags |= 64;
-    Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
     Event_End();
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
       gMainRoutineWork.entrance == 12)
-    Actor_ArriveInRing(gMainRoutineWork.currentOwner);
+    Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
   return 0;
 }
 
@@ -290,7 +290,7 @@ void JupiterLighthouse_LoadPalettes(s32 value);
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_FIRST_BLOCK);
     Actor_RaiseFromCell(ACTOR_FIRST_BLOCK + 1);
@@ -343,7 +343,7 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_UpdateLower(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
   s32 distance;
   s32 near;
@@ -389,7 +389,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
             s32 delay = 200;
             work->raisedTrigger = delay;
           }
-          gMainRoutineWork.renderMode = 0;
+          gMainRoutineWork.movementMode = 0;
           *((u8 *)self + 0x62) = 1;
           *((u8 *)self + 0x63) = 1;
         }
@@ -516,7 +516,7 @@ void LightSprites_Draw(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gLightSpriteTile].offset >> 5;
+  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOam;
 
@@ -720,7 +720,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -826,7 +826,7 @@ extern u32 gFieldEffect_LongScript[];
 void GameFlag_SetByte(s32 flag, s32 value);
 
 s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct CellTarget *puzzle = &gCrackedTiles;
@@ -854,7 +854,7 @@ s32 CrackedTiles_Step(void) {
 }
 
 void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   u8 *event = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
   s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));

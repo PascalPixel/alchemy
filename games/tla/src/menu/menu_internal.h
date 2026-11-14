@@ -164,7 +164,7 @@ struct ItemMenuWork {
   /// (memberSprites); the shops clear it while a details window covers them.
   s8 memberSpritesShown;
   /// Nonzero while the row of four figures is drawn
-  /// (Menu_SetEntryObjectsHidden).
+  /// (DjinnFigures_SetShown).
   s8 figuresShown;
   u8 unk50b[0x6c1];
   /// The five menu icons (MenuIcon_LoadSlots): a sprite and a VRAM cache
@@ -378,7 +378,7 @@ extern u8 gMenu_BackdropBorderTile[];
 void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);
 void DjinnFigures_SetSlotPhase(s32 index, s32 scale);
-void MenuIcon_SetPosition(s32 slot, s32 x, s32 y);
+void DjinnFigures_SetSlotPosition(s32 slot, s32 x, s32 y);
 void Render_ApplyProjectedPlacementAtDepthFar(struct AnimationObject *object,
                                               struct SpritePlacement *position,
                                               struct SpriteScale *scale,

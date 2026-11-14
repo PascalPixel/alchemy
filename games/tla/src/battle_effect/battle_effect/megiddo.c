@@ -82,7 +82,7 @@ void Transform_Pop(void);
 
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 gData_02014000[];
 extern u16 gBattleEffect_MoteCells[];
 extern const u8 gData_08199364[];
@@ -166,7 +166,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = 0;
   zero = 0;
-  ring = gMapCellBuffer;
+  ring = gMapGridCellBuffer;
   transformed = Data_02011000;
   strip = Data_02012000;
   sheet2 = gData_02014000;

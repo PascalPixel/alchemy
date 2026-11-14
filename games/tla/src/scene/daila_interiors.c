@@ -96,7 +96,7 @@ void Field_TryJumpForward(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 extern s32 gDailaInteriorsExits[];
 
@@ -106,8 +106,8 @@ const void *Scene_GetExits(void) {
   return gDailaInteriorsExits;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors2)
     return gDailaInteriors2Placements;
   if (GameFlag_Get(FLAG_TAVI_RESCUED))
     return gDailaInteriors1PlacementsOnceTaviIsRescued;
@@ -127,14 +127,14 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
     // "GAH!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
-    Actor_ArmCallback(actor, FACING_SOUTH, 0);
+    Actor_FaceDirectionById(actor, FACING_SOUTH, 0);
     GameFlag_Set(FLAG_DAILA_PRACTICE_AT_DOOR);
   } else {
     Event_SetMessageId((s32)MsgDailaInteriorsYarg);
     // "YARG!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
-    Actor_ArmCallback(actor, FACING_WEST, 0);
+    Actor_FaceDirectionById(actor, FACING_WEST, 0);
     GameFlag_Clear(FLAG_DAILA_PRACTICE_AT_DOOR);
   }
   FieldEvent_Wait(20);
@@ -177,22 +177,22 @@ s32 DailaInteriors_TalkMazeTreasure(void) {
 void DailaInteriors_StartLeaderEvent(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
 extern struct Trigger gDailaInteriors1Events[];
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 flag = GameFlag_Get(FLAG_TAVI_RESCUED);
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 id = (s32)&SceneId_DailaInteriors2;
 
   if (flag) {
-    if (party->scene == id)
+    if (party->next == id)
       return gDailaInteriors2EventsOnceTaviIsRescued;
     return gDailaInteriors1EventsOnceTaviIsRescued;
   }
-  if (party->scene == id)
+  if (party->next == id)
     return gDailaInteriors2Events;
   return gDailaInteriors1Events;
 }
@@ -201,7 +201,7 @@ struct Actor *Actor_GetById(u32 objectId);
 s32 Inn_CheckIn(s32 mode, s32 objectId);
 
 void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(1, actor);
@@ -216,7 +216,7 @@ void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
 }
 
 void DailaInteriors_TalkToArmorMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(2, actor);
@@ -233,7 +233,7 @@ void DailaInteriors_TalkToArmorMerchant(s32 actor) {
 /// The innkeeper takes guests across the counter to the north, and otherwise
 /// wonders what to cook.
 void DailaInteriors_TalkToInnkeeper(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(0, actor);
@@ -249,7 +249,7 @@ void DailaInteriors_TalkToInnkeeper(s32 actor) {
 
 void DailaInteriors_TalkToHealer(s32 actor) {
   s32 msg;
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
@@ -293,7 +293,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
 }
 
 void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -308,7 +308,7 @@ void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
 }
 
 void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(1, actor);
@@ -323,7 +323,7 @@ void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
 }
 
 void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(2, actor);
@@ -339,7 +339,7 @@ void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
 
 /// As DailaInteriors_TalkToInnkeeper, wondering when the boats will be mended.
 void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(0, actor);
@@ -429,7 +429,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   Event_ResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
-    Sound_Play(MUS_083);
+    Sound_Play(MUS_TREASURE_FOUND);
     MessageArgument_Push(item, 2);
     // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 1);
@@ -440,7 +440,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
-    Sound_Play(MUS_083);
+    Sound_Play(MUS_TREASURE_FOUND);
     if (DailaInteriors_GiveItem(item, 0) != -1) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(ACTOR_TEAR_SPOT, 232 << 16,
@@ -526,8 +526,8 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       Unit_RefreshPsynergy(member);
       Unit_Calculate(member);
       owner = PartyInventory_Add(item);
-      Sound_Play(MUS_083);
-      if (owner == gMainRoutineWork.currentOwner) {
+      Sound_Play(MUS_TREASURE_FOUND);
+      if (owner == gMainRoutineWork.leaderActorId) {
         MessageArgument_Push(item, 2);
         // "Felix got ...."
         FieldMessage_Show((s32)MsgItemReceived, 3);
@@ -541,11 +541,11 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       return owner;
     }
   } else {
-    Sound_Play(MUS_083);
+    Sound_Play(MUS_TREASURE_FOUND);
     MessageArgument_Push(item, 2);
     // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 3);
-    if (owner != gMainRoutineWork.currentOwner) {
+    if (owner != gMainRoutineWork.leaderActorId) {
       MessageArgument_Push(item, 2);
       MessageArgument_Push(owner, 1);
       // "Felix gave ... to ...."
@@ -567,7 +567,7 @@ s32 DailaInteriors_Start(void) {
   s32 value = 0x209;
 
   *effect = value;
-  if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors1) {
     if (gMainRoutineWork.entrance == 7) {
       Scene_FadeInAndClearFlag();
     } else {
@@ -577,13 +577,13 @@ s32 DailaInteriors_Start(void) {
         Actor_SetModeById(25, 5);
         Actor_SetSpriteFlags(Actor_GetById(25), 0);
       }
-      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       Actor_GetById(ACTOR_TEAR_SPOT)->priorityFlags |= 32;
       Actor_GetById(19)->priorityFlags |= 32;
       Actor_SetSpritePriority(19, 2);
       Actor_GetById(19)->collisionFlags |= 4;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -615,7 +615,7 @@ s32 DailaInteriors_Start(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors2 &&
       GameFlag_Get(FLAG_TAVI_RESCUED)) {
     Map_SetLayerEntryFlag(0);
     MapGrid_CopyCells(29, 33, 10, 6, 10, 12);

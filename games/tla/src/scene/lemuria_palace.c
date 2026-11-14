@@ -59,11 +59,11 @@ void Event_Start();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -74,10 +74,10 @@ void LemuriaPalace_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
-  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(countdown);
   Event_FinishScreenTransition();
@@ -95,7 +95,7 @@ void LemuriaPalace_EnterDoor(s32 kind) {
   LemuriaPalace_OpenDoorAndEnter(data, kind, 0);
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern s16 gLemuriaPalace_GlowColors[];
 
@@ -144,7 +144,7 @@ s32 Scene_Initialize(void) {
   Task_AddFrame(LemuriaPalace_CycleGlowColors, 0xc80);
   FieldActor_SetSpritePriority(8, 3);
   if (gMainRoutineWork.entrance == 6)
-    Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   if (Event_GetFlag(0x96a)) {
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_SetPosition(15, 0, 0);

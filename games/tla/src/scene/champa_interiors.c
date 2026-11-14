@@ -59,14 +59,14 @@ enum ChampaIsletHouseActorId { ACTOR_INDRA_NEIGHBOR = ACTOR_FIRST_PLACED };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void Shop_Run(s32 a, s32 b);
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_ChampaInteriors &&
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_ChampaInteriors &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return gChampaInteriors_IsletHouseActorPlacements;
   return gChampaInteriors_ActorPlacements;
@@ -78,8 +78,8 @@ void ChampaInteriors_OpenArtifactShop(s32 actor) { Shop_Run(25, actor); }
 /// Talking to the innkeeper across his counter opens the inn.
 void ChampaInteriors_OpenInn(s32 actor) { Inn_CheckIn(10, actor); }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_ChampaInteriors &&
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_ChampaInteriors &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return gChampaInteriors_IsletHouseTriggers;
   if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
@@ -96,7 +96,7 @@ s32 Scene_Initialize(void) {
 #endif
 
   *effect = value;
-  if (gMainRoutineWork.scene == (s32)&SceneId_ChampaInteriors &&
+  if (gMainRoutineWork.next == (s32)&SceneId_ChampaInteriors &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     Scene_FadeInAndClearFlag();
   return 0;

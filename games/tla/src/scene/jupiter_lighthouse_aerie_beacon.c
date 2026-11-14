@@ -64,11 +64,11 @@ s32 JupiterLighthouse_ShowSprite(s32 a0) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -513,7 +513,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         created->velocityY = px(8);
         FieldActor_SetMoveTarget(created, 512, 128, 294);
         FieldActor_SetMoveTargetFixed(actor37, px(512), -1, px(294));
-        Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+        Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
         System_Wait(1);
         Actor_SetSpeed(ACTOR_PIERS, 0.8);
         Actor_WalkBy(ACTOR_PIERS, 12, 0);
@@ -569,8 +569,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       System_Wait(20);
       Actor_WalkBy(ACTOR_FELIX, 0, -16);
       Actor_WalkBy(ACTOR_PIERS, 0, -16);
-      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+      FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+      Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
       Actor_SetAnimation(ACTOR_PIERS, ANIM_STAND);
       FieldEvent_Wait(50);
       Event_PlaySound(SE_RUMBLE);
@@ -596,7 +596,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       FieldCamera_WaitForArrival();
       FieldActor_SetSpritePriority(31, 1);
       FieldActor_SetSpritePriority(32, 1);
-      FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+      FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
       FieldActor_SetSpritePriority(ACTOR_PIERS, 1);
       FieldEvent_Wait(20);
       Actor_SetSpriteFlags(Actor_GetById(31), 0);
@@ -821,7 +821,7 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
   FieldEvent_Wait_(10);
   Actor_SetAttachedEffect(ACTOR_PIERS, 258);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId, 258);
   FieldEvent_Wait_(30);
   ((void *)Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30));
   Actor_FaceDirection(28, FACING_NORTH_NORTHWEST, 0);
@@ -1177,7 +1177,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
     for (n = 0; n < count; n++) {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      member = Unit_Get(party->activeOwners[n]);
+      member = Unit_Get(party->party[n]);
       maxHp = member->hp = member->maxHp;
       member->hpGauge = Vitals_Clamp((maxHp << 14) / maxHp);
       if (member->hpGauge == 0 && member->hp != 0)
@@ -2144,7 +2144,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 // Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
 // the three rows from 72 less the row of z. Nothing in this overlay calls it.
@@ -2352,7 +2352,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x201;
   Call2(HangingVine_Place, 0xf, 1);
   HangingVine_Place(16, 1);
-  t2 = Actor_Get(gMainRoutineWork.currentOwner);
+  t2 = Actor_Get(gMainRoutineWork.leaderActorId);
   FIELD_AT((t2 + 0x23), u8, 0) = (0x40 | FIELD_AT((t2 + 0x23), u8, 0));
   t3 = Actor_Get(17);
   FIELD_AT((t3 + 0x23), u8, 0) = (FIELD_AT((t3 + 0x23), u8, 0) | 0x80);
@@ -2482,7 +2482,7 @@ void Actor_RaiseFromCell(s32 id) {
 
 void JupiterLighthouse_RideTheBeam(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   u8 *p;
@@ -2544,8 +2544,8 @@ void JupiterLighthouse_RideTheBeam(void) {
     } while (actor->velocityY != 0);
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;
   Event_End();
@@ -2557,7 +2557,7 @@ extern u32 gJupiterLighthouse_WhirlwindFadesScript[];
 
 void Whirlwind_Update(struct Object6a5 *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Vector3 position;
   s32 distance;
   s32 near;
@@ -2601,7 +2601,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
             flags = &leader->priorityFlags;
             *flags &= ~1;
             work->raisedTrigger = 200;
-            gMainRoutineWork.renderMode = 0;
+            gMainRoutineWork.movementMode = 0;
             object->unk62 = 1;
             object->unk63 = 1;
           }
@@ -2712,7 +2712,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
   struct FieldEffect *party =
-      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
+      ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.leaderActorId));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;

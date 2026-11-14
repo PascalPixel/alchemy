@@ -8,6 +8,6 @@ void Mikasalla_TurnAndClimbDownLadder(void) {
   id = 4;
   /* FAKEMATCH(barrier): the id held at an empty asm. */
   __asm__ volatile("" : "+r"(id));
-  Actor_ArmCallback(id, a << 8, 0);
+  Actor_FaceDirectionById(id, a << 8, 0);
   Mikasalla_ClimbDownLadder();
 }

@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-#define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
+#define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
 #define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
 #define Ram_Data_0202e008 FIXED_ADDRESS((u8 *), 0x0202e008, gData_0202e008)
@@ -28,7 +28,8 @@
 /// WorldMapPicture_UpdateScroll reads it at constant addresses: the y word
 /// loads from its own literal, or as the x word's address plus 4 where that is
 /// live, which only constants give.
-#define Ram_WorldMapScroll FIXED_ADDRESS((s32 *), 0x0202a630, Data_0202a630)
+#define Ram_WorldMapScroll                                                     \
+  FIXED_ADDRESS((s32 *), 0x0202a630, gWorldPicture_ScrollX)
 
 /// The world map screen's work. Its setup (WorldPicture_Initialize) reaches it
 /// at a constant address: the work's fields are read again after stores to the
@@ -37,14 +38,16 @@
   FIXED_ADDRESS((struct WorldMapWork *), 0x0202a000, gWorldMapWork)
 /// Where WorldMapPicture_UpdateScroll reads the cursor from (x, then y, 16.16
 /// pixels): the setup points it at the work's cursor.
-#define Ram_WorldMapCursor FIXED_ADDRESS((s32 **), 0x0202a62c, Data_0202a62c)
+#define Ram_WorldMapCursor                                                     \
+  FIXED_ADDRESS((s32 **), 0x0202a62c, gWorldPicture_Cursor)
 /// The shown place name's box on the world map screen (x, y, width, height,
 /// pixels). WorldPicture_UpdateMarkers reaches the four halfwords from one
 /// address by adding and subtracting their offsets, which only constants give.
-#define Ram_WorldMapNameBox FIXED_ADDRESS((s16 *), 0x0202a638, Data_0202a638)
+#define Ram_WorldMapNameBox                                                    \
+  FIXED_ADDRESS((s16 *), 0x0202a638, gWorldPicture_NameBox)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
 #define Ram_WorldMapCursorStart                                                \
-  FIXED_ADDRESS((s32 *), 0x0202a64c, Data_0202a64c)
+  FIXED_ADDRESS((s32 *), 0x0202a64c, gWorldPicture_CursorStartX)
 
 struct BattleWork;
 struct BattlePresentationTransition;

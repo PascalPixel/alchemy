@@ -13,7 +13,7 @@ void KNOCK_BACK(void) {
   struct Work020023c4 *work;
   struct Vector3 position;
 
-  if (main->renderMode == 0) {
+  if (main->movementMode == 0) {
     struct Actor *actor;
 
 #ifdef UBFIX
@@ -22,7 +22,7 @@ void KNOCK_BACK(void) {
     // UB: the fall damage takes no arguments and returns nothing.
     ((s32 (*)())KNOCK_BACK_TAKE_DAMAGE)(-10, 0);
 #endif
-    actor = Actor_Get(main->currentOwner);
+    actor = Actor_Get(main->leaderActorId);
     work = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -91,7 +91,7 @@ void KNOCK_BACK(void) {
           break;
         if (result < 0) {
           actor->facing = TRIG_TURN / 4;
-          Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, -1);
+          Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, -1);
           break;
         }
 #if TLA_PATCH_1

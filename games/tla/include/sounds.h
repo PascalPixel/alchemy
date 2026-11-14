@@ -15,14 +15,14 @@ enum SoundId {
   /// A song of no tracks: scenes play it to silence the music, and the music
   /// rules give it to the Epilogue, and to Kibombo and the Gabomba Statue once
   /// flag 0x8f7 is set.
-  MUS_000,
+  MUS_SILENCE,
   /// Super Lucky Dice's music, started with each new bet (SuperLuckyDice_Run).
-  MUS_001,
+  MUS_SUPER_LUCKY_DICE,
   /// The field music of Alhafra and Eastern Alhafra.
-  MUS_002,
+  MUS_ALHAFRA,
   /// The field music of Champa, and of the Kandorean Temple's last two rooms,
   /// an Apojii Islands house and one islet.
-  MUS_003,
+  MUS_CHAMPA,
   /// The field music of Daila and West Indra Islet.
   MUS_DAILA,
   /// The field music of the Apojii Islands and SW Atteka Islet.
@@ -31,15 +31,15 @@ enum SoundId {
   /// celebrates.
   MUS_IZUMO_CELEBRATION,
   /// The field music of Izumo and the Izumo Ruins.
-  MUS_007,
+  MUS_IZUMO,
   MUS_008,
   /// The field music of the Kandorean Temple's first seven rooms.
   MUS_KANDOREAN_TEMPLE,
   /// The field music of Naribwe, the Kibombo Mountains and Kibombo's first
   /// three scenes.
-  MUS_010,
+  MUS_NARIBWE,
   /// The field music of Kibombo's fourth and fifth scenes.
-  MUS_011,
+  MUS_KIBOMBO,
   /// The field music of Lemuria and Ancient Lemuria.
   MUS_LEMURIA,
   /// The field music of Madra, Mikasalla and Hesperia Settlement.
@@ -56,7 +56,7 @@ enum SoundId {
   /// The field music of Air's Rock.
   MUS_AIRS_ROCK,
   /// The field music of Aqua Rock.
-  MUS_021,
+  MUS_AQUA_ROCK,
   /// The field music of the Madra Catacombs, Alhafran Cave, Islet Cave and
   /// Apojii Islands Cave.
   MUS_MADRA_CATACOMBS,
@@ -66,15 +66,15 @@ enum SoundId {
   /// The field music of Gaia Rock.
   MUS_GAIA_ROCK,
   /// The field music of the Gabomba Statue.
-  MUS_025,
+  MUS_GABOMBA_STATUE,
   /// The field music of Jupiter Lighthouse.
-  MUS_026,
+  MUS_JUPITER_LIGHTHOUSE,
   /// The field music of Magma Rock.
   MUS_MAGMA_ROCK,
   /// The field music of Mars Lighthouse.
-  MUS_028,
+  MUS_MARS_LIGHTHOUSE,
   /// The field music of Tundaria Tower.
-  MUS_029,
+  MUS_TUNDARIA_TOWER,
   /// The field music of Taopo Swamp.
   MUS_TAOPO_SWAMP,
   /// The field music of the Ankohl Ruins.
@@ -85,13 +85,13 @@ enum SoundId {
   MUS_035,
   MUS_036,
   /// The field music of Shaman Village and Loho.
-  MUS_037,
+  MUS_SHAMAN_VILLAGE,
   MUS_038,
   MUS_039,
   /// The title intro's music at power-on, when a save file exists, and before
   /// a new game's intro (the title's Scene_Initialize), as The Broken Seal's
   /// MUS_TITLE.
-  MUS_040,
+  MUS_TITLE,
   /// The field music of the Lemurian Ship and the Northern Reaches, and of the
   /// World Map once flag 0x176 is set.
   MUS_LEMURIAN_SHIP,
@@ -99,7 +99,7 @@ enum SoundId {
   /// Atteka Inlet.
   MUS_WORLD_MAP,
   /// MUS_WORLD_MAP's places once FLAG_REUNITED is set.
-  MUS_043,
+  MUS_WORLD_MAP_REUNITED,
   /// The music of the Staff Credit scene.
   MUS_STAFF_CREDIT,
   MUS_045,
@@ -107,9 +107,9 @@ enum SoundId {
   MUS_047,
   MUS_048,
   /// The battle music when Jenna is in the front row without Felix or Isaac.
-  MUS_049,
+  MUS_JENNA_BATTLE,
   /// The battle music: the usual one, and with Felix in the front row.
-  MUS_050,
+  MUS_BATTLE,
   MUS_051,
   MUS_052,
   MUS_053,
@@ -120,9 +120,9 @@ enum SoundId {
   MUS_SHIP_BATTLE,
   MUS_057,
   /// The battle is won.
-  MUS_058,
+  MUS_VICTORY,
   /// The party falls in battle.
-  MUS_059,
+  MUS_DEFEAT,
   MUS_060,
   MUS_061,
   /// The field music of Prox.
@@ -135,57 +135,57 @@ enum SoundId {
   MUS_067,
   /// The staff credits' music (the title's entrance 8, Credits_Run), as The
   /// Broken Seal's MUS_ENDING.
-  MUS_068,
+  MUS_ENDING,
   MUS_069,
   MUS_070,
   MUS_071,
   /// The field music of the Mercury Lighthouse scene and one way into the Mars
   /// Lighthouse aerie.
-  MUS_072,
+  MUS_MERCURY_LIGHTHOUSE,
   MUS_073,
   /// The music of the Clear scene, area "(Clear data)", where data is
   /// transferred.
-  MUS_074,
+  MUS_CLEAR,
   /// The title held without its prompt: after the prologue (the title's
   /// entrance 3), as The Broken Seal's MUS_TITLE_AFTER_PROLOGUE, and as the
   /// logo shows after the ending (entrance 10).
-  MUS_075,
+  MUS_TITLE_AFTER_PROLOGUE,
   /// The Trial Road race: Moapa's challenge, the rules and the countdown in
   /// Shaman Village, and the Trial Road's music while
   /// FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT is set.
-  MUS_076,
+  MUS_TRIAL_ROAD,
   MUS_077,
   /// Not a sound: fades the music out.
   SOUND_FADE_OUT_BGM,
   /// Not a sound: keeps the music that is playing.
   SOUND_KEEP_BGM,
   /// A puzzle is solved, such as Aqua Rock's and the lighthouses'.
-  MUS_080,
+  MUS_PUZZLE_SOLVED,
   /// Someone joins the party.
-  MUS_081,
+  MUS_JOINED,
   /// A unit is revived.
-  MUS_082,
+  MUS_REVIVE,
   /// Treasure is found.
-  MUS_083,
+  MUS_TREASURE_FOUND,
   /// A unit is cured.
-  MUS_084,
+  MUS_CURE,
   /// The game is saved.
-  MUS_085,
+  MUS_SAVED,
   /// A night at an inn.
-  MUS_086,
+  MUS_INN,
   /// A sanctum removes a curse.
   MUS_REMOVE_CURSE,
   /// A sanctum repels evil.
   MUS_REPEL_EVIL,
   /// A unit levels up, among a battle's spoils.
-  MUS_089,
+  MUS_LEVEL_UP,
   MUS_090,
   /// Lucky Dice's and Contigo's smallest prize.
-  MUS_091,
+  MUS_JINGLE_SMALL,
   /// Lucky Dice's and Contigo's middle prize.
-  MUS_092,
+  MUS_JINGLE_MEDIUM,
   /// Lucky Dice's, Lucky Wheels' and Contigo's largest prize.
-  MUS_093,
+  MUS_JINGLE_LARGE,
   MUS_094,
   MUS_095,
   MUS_096,
@@ -198,7 +198,7 @@ enum SoundId {
   SE_CURSE,
   SE_104,
   /// Super Lucky Dice's winnings counted into the party's coins.
-  SE_105,
+  SE_COIN_PAYOUT,
   SE_DRIP,
   SE_TREMOR,
   SE_TRIPLE_TONE_LOW,
@@ -259,11 +259,11 @@ enum SoundId {
   SE_163,
   SE_SCATTER,
   /// Played as the birds land on Venus Lighthouse's entrance and fly off.
-  SE_165,
+  SE_BIRD_WINGS,
   SE_166,
   SE_MAP_TRANSITION,
   /// Played three times as the Ruin Key opens the Madra Catacombs.
-  SE_168,
+  SE_UNLOCK,
   SE_169,
   SE_170,
   SE_THUNDER,
@@ -280,7 +280,7 @@ enum SoundId {
   SE_GEM_SET,
   SE_STONE_RUMBLE,
   /// Played as an actor pops up and as Aqua Rock's moai steps aside.
-  SE_184,
+  SE_POP_UP,
   SE_PUSH,
   SE_SOL_SANCTUM_LIGHT_UP,
   SE_FALLING_LIGHT,
@@ -320,7 +320,7 @@ enum SoundId {
   SE_RISE_WITH_SPARKS,
   /// Played as the whirlwinds of Air's Rock and the gusts of Jupiter Lighthouse
   /// appear.
-  SE_222,
+  SE_WHIRLWIND,
   SE_LIFT,
   SE_224,
   SE_225,
@@ -334,7 +334,7 @@ enum SoundId {
   SE_CART_ROLL,
   SE_RUN_BACK,
   /// Played as Air's Rock blows its gusts.
-  SE_235,
+  SE_GUST,
   SE_COLOSSO_COUNTDOWN,
   SE_COLOSSO_GO,
   SE_PUSH_STEP,
@@ -351,7 +351,7 @@ enum SoundId {
   SE_249,
   SE_250,
   /// Played as the Black Crystal is set on the Lemurian Ship.
-  SE_251,
+  SE_BLACK_CRYSTAL_SET,
   SE_COLOSSO_WARRIOR_APPEAR,
   SE_253,
   SE_254,
@@ -391,18 +391,18 @@ enum SoundId {
   SE_VOICE_MAN_2,
   SE_VOICE_MAN_3,
   SE_VOICE_MAN_4,
-  SE_288,
+  SE_STOP_ACTION_SE,
   SE_289,
   SE_290,
   /// Played as an actor takes flight.
-  SE_291,
+  SE_TAKE_FLIGHT,
   SE_ERUPTION_COLUMNS,
   SE_293,
   SE_294,
   SE_295,
   SE_296,
   SE_297,
-  SE_298,
+  SE_STOP_MUSIC_PLAYER_5,
   SE_299,
   SE_TOLBI_SPRING_TOSS,
   SE_TOLBI_SPRING_OBSTACLE_HIT,
@@ -620,7 +620,7 @@ enum SoundId {
   SE_510,
   SE_511,
   /// The field Psynergy Lash.
-  SE_512,
+  SE_LASH,
   SE_513,
   SE_514,
   SE_515,
@@ -634,7 +634,7 @@ enum SoundId {
   SE_523,
   SE_524,
   /// Played as Garoh's people howl at night.
-  SE_525,
+  SE_HOWL,
   SE_526,
   SE_527,
   SE_528,
@@ -652,7 +652,7 @@ enum SoundId {
   SE_540,
   SE_541,
   /// The field Psynergy Parch.
-  SE_542,
+  SE_PARCH,
   SE_543,
   SE_544,
   SE_545,
@@ -661,12 +661,12 @@ enum SoundId {
   SE_548,
   SE_549,
   /// Played as the party drops through a hole on an islet.
-  SE_550,
+  SE_DROP_THROUGH_HOLE,
   SE_551,
   SE_552,
   SE_553,
   /// Played as Magma Rock's flames grow.
-  SE_554,
+  SE_FLAME_GROW,
   SE_555,
   SE_556,
   SE_557,
@@ -681,14 +681,14 @@ enum SoundId {
   SE_566,
   /// The field Psynergy Pound strikes, and the like blows of Magma Rock's rocks
   /// and Treasure Isle's spiky rock.
-  SE_567,
+  SE_POUND,
   SE_568,
   SE_569,
   SE_570,
   SE_571,
   SE_572,
   /// Played as Mars Lighthouse's ice sheets crack.
-  SE_573,
+  SE_ICE_CRACK,
   SE_574,
   SE_575,
   SE_576,
@@ -701,14 +701,14 @@ enum SoundId {
   SE_583,
   /// Played as the party presses a switch or button in Mars Lighthouse, the
   /// Ankohl Ruins and the Anemos Inner Sanctum.
-  SE_584,
+  SE_BUTTON_PRESS,
   SE_585,
   SE_586,
   SE_587,
   SE_588,
   SE_589,
   /// Played as Gaia Rock's statue rises under the leader.
-  SE_590,
+  SE_STATUE_RISE,
   SE_591,
   SE_592,
   SE_593,
@@ -716,7 +716,7 @@ enum SoundId {
   SE_595,
   SE_596,
   /// Played as the ship rides the Sea of Time's current.
-  SE_597,
+  SE_CURRENT,
   SE_598,
   SE_599,
   SE_600,
@@ -732,7 +732,7 @@ enum SoundId {
   SE_610,
   SE_611,
   /// Played as the leader spins away.
-  SE_612,
+  SE_SPIN_AWAY,
   SE_613,
   SE_614,
   SE_615,
@@ -744,7 +744,7 @@ enum SoundId {
   SE_621,
   SE_622,
   /// Played as an actor wades through water.
-  SE_623,
+  SE_WADE,
   SE_624,
   SE_625,
   SE_626,
@@ -829,12 +829,12 @@ enum SoundId {
   MUS_LEMURIA_PALACE,
   MUS_704,
   /// The reunion of the two parties in Contigo (Contigo_TheReunion).
-  MUS_705,
+  MUS_REUNION,
   MUS_706,
   MUS_707,
   MUS_708,
   /// The field music of Lemuria's spring scene and the Link Lobby.
-  MUS_709,
+  MUS_LEMURIA_SPRING,
   MUS_710,
   MUS_711,
   MUS_712,

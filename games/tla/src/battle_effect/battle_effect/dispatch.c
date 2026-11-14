@@ -23,7 +23,7 @@ void BattleEffect_CallDoNothing(s32 cnt) {
   }
 }
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 /// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
 /// with the effect's three work blocks taken.
@@ -158,7 +158,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   s32 i;
   s32 right;
 
-  edge = (u16 *)gMapCellBuffer;
+  edge = (u16 *)gMapGridCellBuffer;
   line = (u16 *)(Ram_MapCellBuffer + 0x82);
   inset = Ram_MapCellBuffer + 2;
   for (i = 0; i != 160; i++) {
@@ -178,7 +178,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     channel[5] = control & 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];
-    Dma_Set(gMapCellBuffer + 0x82, (void *)&REG_WIN0H,
+    Dma_Set(gMapGridCellBuffer + 0x82, (void *)&REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }

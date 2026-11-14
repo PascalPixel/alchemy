@@ -45,7 +45,7 @@ void CrumblingPillars_Place(u16 *list) {
     }
     list += 2;
   }
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
   if (leader->y < height) {
     leader->terrainHeight = height;
@@ -60,7 +60,7 @@ void CrumblingPillars_Step(u16 *list) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   position[0] = leader->x;
   position[1] = leader->y;
   position[2] = leader->z;
@@ -170,9 +170,9 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u8 *grid;
 
-  Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(10, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(8, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(10, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   CrumblingPillar_Prepare(8);
   CrumblingPillar_Prepare(9);
@@ -229,7 +229,7 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
 
   if (Field_TryJumpForward() != 0)
     return;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   helper = Actor_GetById(8);
   position[0] = leader->x;
   position[1] = leader->y;

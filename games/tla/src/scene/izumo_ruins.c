@@ -57,7 +57,7 @@ struct IzumoRuinsEffectWork {
   s16 objectId;
 };
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern char SceneId_IzumoRuinsFirstRoom;
 extern char SceneId_IzumoRuinsSecondRoom;
 
@@ -167,7 +167,7 @@ s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   return (cell[2] << 8) | cell[3];
 }
@@ -183,7 +183,7 @@ s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   old = (cell[2] << 8) | cell[3];
   cell[2] = value >> 8;
@@ -248,8 +248,8 @@ void IzumoRuins_PlacePillars(u16 *list) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const u32 *Scene_GetRegions(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u32 *Scene_GetExitRegions(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
     return gIzumoRuins_FirstRoomRegions;
@@ -260,8 +260,8 @@ const u32 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
     return gIzumoRuins_FirstRoomActorPlacements;
@@ -277,7 +277,7 @@ void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   s16 scene;
 
-  scene = party->scene;
+  scene = party->next;
   if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
     Pound_SinkTarget(gIzumoRuins_FirstRoomPoundPillars, aArg, b);
   else
@@ -303,7 +303,7 @@ void IzumoRuins_SinkIntoSand(void) {
   struct Actor *object0;
   s32 result1;
 
-  object0 = Actor_Get(gMainRoutineWork.currentOwner);
+  object0 = Actor_Get(gMainRoutineWork.leaderActorId);
   result1 = MapGrid_GetCellWord(2, (object0->x >> 20), (object0->z >> 20));
   if (!((result1 >> 8) != 232)) {
     object0->terrainId = 2;
@@ -316,7 +316,7 @@ void IzumoRuins_SinkIntoSand(void) {
 // Outside the first room, sets the high byte of map cell (50, 13) on layer 2
 // to 0xff; then starts the room's effect.
 void IzumoRuins_StartMovingPillar(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {
+  if (gMainRoutineWork.next == (s32)&SceneId_IzumoRuinsFirstRoom) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomMovablePillars);
   } else {
     /* FAKEMATCH(signature): the cell read through an s16 return type. */
@@ -332,7 +332,7 @@ void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsSecondRoom)
+  if (gMainRoutineWork.next == (s32)&SceneId_IzumoRuinsSecondRoom)
     MapGrid_SetCellWord(2, 50, 13, MapGrid_GetCellWord(2, 50, 13) & 255);
   Event_End();
 }
@@ -345,8 +345,8 @@ void IzumoRuins_ParchThePool(void) {
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
     return gIzumoRuins_FirstRoomTriggers;
@@ -359,9 +359,9 @@ s32 Scene_Initialize(void) {
   s32 height;
 
   work->transition = 0x204;
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_IzumoRuinsFirstRoom) {
+  if (gMainRoutineWork.next == (s32)&SceneId_IzumoRuinsFirstRoom) {
     Actor_PlaceBlocks(gIzumoRuins_FirstRoomMovablePillars);
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_FirstRoomPoundPillars);
     FlagBlock_PlaceAll(gIzumoRuins_Puddles);
@@ -376,12 +376,12 @@ s32 Scene_Initialize(void) {
       Map_CenterOnFollowedPoint();
       System_Wait(1);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-        object = Actor_Get(gMainRoutineWork.currentOwner);
+        object = Actor_Get(gMainRoutineWork.leaderActorId);
         height = Map_GetTerrainHeight(object->terrainId, object->x,
                                       object->z - object->y);
         object->terrainHeight = height;
         object->y = height;
-        EventCamera_FollowActor(gMainRoutineWork.currentOwner, 0);
+        EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }
     }
   }

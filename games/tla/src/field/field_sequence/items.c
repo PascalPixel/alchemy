@@ -36,7 +36,7 @@ s32 Party_GetLeaderActor(void) {
 
   actor = 8;
   if (state->ownerOverride == 0)
-    actor = state->currentOwner;
+    actor = state->leaderActorId;
   return actor;
 }
 
@@ -132,7 +132,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (actor == 15) {
       actor = 0;
       for (i = 0; i < count; i++) {
-        obj = Unit_Get(gMainRoutineWork.activeOwners[i]);
+        obj = Unit_Get(gMainRoutineWork.party[i]);
         matches = 0;
         for (j = 0; j < 15; j++) {
           if ((obj->inventory[j] & 0x1ff) == itemId)
@@ -141,7 +141,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (best < matches) {
           best = matches;
-          actor = gMainRoutineWork.activeOwners[i];
+          actor = gMainRoutineWork.party[i];
         }
       }
     } else {
@@ -199,7 +199,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (i != 0)
           return 0;
 
-        gMainRoutineWork.scene = *(u16 *)&gMainRoutineWork.retreatScene;
+        gMainRoutineWork.next = *(u16 *)&gMainRoutineWork.retreatScene;
         gMainRoutineWork.entrance = *(u16 *)&gMainRoutineWork.retreatEntrance;
         runtime->exit = 999;
       }

@@ -55,15 +55,15 @@ s32 EndingPicture_Show();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Each frame while a name is shown, keeps the green panel under it.
 void Epilogue_PlaceNamePanel(void) {
@@ -264,9 +264,9 @@ s32 Scene_Initialize(void) {
   struct BgScroll *scroll;
 
   work = &gMainRoutineWork;
-  eventMode = &work->eventMode;
+  eventMode = &work->messageSpeed;
   saved = *eventMode;
-  actor = (u8 *)Actor_Get(work->currentOwner);
+  actor = (u8 *)Actor_Get(work->leaderActorId);
   zero = 0;
   actor[85] = zero;
   one = 1;
@@ -409,7 +409,7 @@ L_02008692:
   FieldEvent_Wait(180);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   p = &gMainRoutineWork;
-  ((struct MainRoutineWork *)p)->eventMode = saved;
+  ((struct MainRoutineWork *)p)->messageSpeed = saved;
   FieldEvent_Wait(300);
   count = 0;
   if (gInput.pressed != 0)
@@ -433,7 +433,7 @@ L_0200871e:
   REG_DISPCNT = value;
   Window_LoadGraphics();
   DebugText_Clear();
-  gRenderOamEnabled = 1;
+  gOamCopyEnabled = 1;
   Event_ClearFlag(FLAG_CANNOT_SAVE_HERE);
   Event_SetDestination((s32)&SceneId_Clear, 2);
   return 0;

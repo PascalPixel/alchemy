@@ -25,7 +25,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   x &= 0x1ff;
   y &= 0xff;
   *(u32 *)&output->sprite.oam = (x << 16) | y | flags;
-  ((u32 *)&output->sprite.oam)[1] = gResourceTableEntries[slot].offset >> 5;
+  ((u32 *)&output->sprite.oam)[1] = gVramCacheEntries[slot].offset >> 5;
   output->sentinel = 254;
   output->x = x;
   output->y = (s16)y;

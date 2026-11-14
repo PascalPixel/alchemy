@@ -237,5 +237,5 @@ struct SpriteObject {
   u8 priority : 2;
   u8 palette : 4;
   u8 unk0a[6];
-  u8 slot; // its row of gResourceTableEntries
+  u8 slot; // its row of gVramCacheEntries
 };

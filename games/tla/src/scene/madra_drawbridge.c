@@ -45,11 +45,11 @@ enum MadraDrawbridgeActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -63,7 +63,8 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
   // "You goin' to Osenia?" Yes: "You'll have to head back to town and get..."
   // No: "Then get lost, pal. These parts can be dangerous..."
   Event_OpenMessage(ACTOR_EAST_GUARD, 0);
-  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+      0) {
     Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, ANIM_NOD);
     // "You'll have to head back to town and get a permit! Just go to the..."
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
@@ -75,7 +76,7 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// The guards close ranks across the bridge as the party steps onto it, once a
 /// visit, and the first time they ask for the elder's permission.
@@ -86,7 +87,7 @@ void MadraDrawbridge_BlockBridge(void) {
     if (Event_GetFlag(FLAG_GUARDS_ASKED_FOR_PERMISSION) == 0) {
       FieldCamera_SetSpeed(1.5);
       FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
-      Actor_WalkTo(gMainRoutineWork.currentOwner, 158, 316);
+      Actor_WalkTo(gMainRoutineWork.leaderActorId, 158, 316);
     }
     Actor_GetById(ACTOR_EAST_GUARD)->actionFlags &= ~1;
     Actor_GetById(ACTOR_WEST_GUARD)->actionFlags &= ~1;
@@ -97,8 +98,8 @@ void MadraDrawbridge_BlockBridge(void) {
     Actor_GetById(ACTOR_WEST_GUARD)->actionFlags |= 1;
     Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     Event_SetFlag(FLAG_GUARDS_BLOCKED_BRIDGE);
     FieldCamera_WaitForArrival();
     MapGrid_CopyCellAttributes(11, 9, 4, 1, 8, 14);

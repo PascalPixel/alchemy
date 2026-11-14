@@ -71,7 +71,7 @@ extern char SceneId_AirsRockInside7;
 extern char SceneId_AirsRockInside8;
 extern char SceneId_AirsRockInside9;
 extern char SceneId_AirsRockInside10;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
@@ -362,7 +362,7 @@ void TilesetAnim_ResumeAll(void);
 // and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
 // the previous one and sets mode 9 after action 212, mode 10 otherwise.
 void AirsRockInside_ScatterMote(struct Actor *object) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *self = (struct Actor *)object;
 
   if (Random16() & 0xff) {
@@ -436,7 +436,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   old = (cell[2] << 8) | cell[3];
   cell[2] = value >> 8;
@@ -456,7 +456,7 @@ s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   return (cell[2] << 8) | cell[3];
 }
@@ -521,9 +521,9 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     second->motionFlags = 0;
     second->y += -px(28);
     wait(1);
-    entry = &gResourceTableEntries[secondSprite->vramBlock];
+    entry = &gVramCacheEntries[secondSprite->vramBlock];
     second->watchedObject = (void *)(entry->offset + OBJ_VRAM0);
-    entry = &gResourceTableEntries[firstSprite->vramBlock];
+    entry = &gVramCacheEntries[firstSprite->vramBlock];
     first->watchedObject = (void *)(entry->offset + OBJ_VRAM0);
     Dma_Fill32(step, second->watchedObject, entry->size);
     Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(192),
@@ -595,7 +595,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag);
 
 // The leader rides a statue's whirlwind along its path until it fades.
 void AirsRockInside_RideWhirlwind(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedObject;
   struct Actor *rider, *dust;
   u8 *riding, *motion, *priority;
@@ -622,8 +622,8 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Sound_Play(SE_288);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1 &&
+  Sound_Play(SE_STOP_ACTION_SE);
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside1 &&
       leader->x >> 19 == 39) {
     Event_SetExitRequest(16);
     Event_End();
@@ -732,8 +732,8 @@ void AirsRockInside_RideWhirlwind(void) {
     Actor_WaitForMove(dust);
     break;
   }
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   GameFlag_Clear(FLAG_SCENE_TEMP_50);
   wait(10);
@@ -765,7 +765,7 @@ s32 Trig_Sin(s32 angle);
 // 0x16a 200, render mode 0); it moves 1.5 pixels a frame along its angle,
 // upward when its angle is 0xc000.
 void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
@@ -773,7 +773,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   s32 speed = 0x18000;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0 || gMainRoutineWork.renderMode == 5) {
+      work->item != 0 || gMainRoutineWork.movementMode == 5) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -793,7 +793,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     near = 0;
     leaderPosition = &leader->x;
     shotPosition = &shot->x;
-    if (gMainRoutineWork.renderMode == 2) {
+    if (gMainRoutineWork.movementMode == 2) {
       if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         near = 1;
@@ -809,7 +809,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
-      gMainRoutineWork.renderMode = 0;
+      gMainRoutineWork.movementMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
     }
@@ -884,7 +884,7 @@ void AirsRockInside_WakeStatue(struct Actor *object, s16 timer, u8 value) {
 extern u32 gAirsRockInside_PooledWhirlwindFadesScript[];
 
 void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
@@ -917,7 +917,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     near = 0;
     leaderPosition = &leader->x;
     shotPosition = &shot->x;
-    if (gMainRoutineWork.renderMode == 2) {
+    if (gMainRoutineWork.movementMode == 2) {
       if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
           leader->z >> 20 == shot->z >> 20)
         near = 1;
@@ -933,7 +933,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
-      gMainRoutineWork.renderMode = 0;
+      gMainRoutineWork.movementMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
     }
@@ -1016,7 +1016,7 @@ void AirsRockInside_WakePooledStatue(struct Actor *object, s16 timer,
 
 void AirsRockInside_UpdateVentPuff(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *other;
   s32 *pos;
   u8 i;
@@ -1055,14 +1055,14 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
     object->speedLimit = -object->speedLimit >> 1;
     object->z = leader->z - px(8);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside3) {
     other = Actor_GetById(8);
     if (Position_FlatDistance(&other->x, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->unk4c = 0;
       object->z = other->z - px(8);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside8) {
     for (i = 0; i != 3; i++) {
       struct Actor *other2 = Actor_GetById(i + 12);
 #define other other2
@@ -1117,7 +1117,7 @@ void AirsRockInside_PuffVents(void) {
   frame = gFrameCount;
   if ((frame & 6) != 0)
     return;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_AirsRockInside3) {
     s32 x;
 
@@ -1129,8 +1129,8 @@ void AirsRockInside_PuffVents(void) {
     AirsRockInside_PuffVent(x, 0, 0x2680000);
   } else if (scene == (s32)&SceneId_AirsRockInside8) {
     if (frame & 1) {
-      if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 19 > 41) {
-        if (Actor_GetById(gMainRoutineWork.currentOwner)->x >> 19 <= 44)
+      if (Actor_GetById(gMainRoutineWork.leaderActorId)->z >> 19 > 41) {
+        if (Actor_GetById(gMainRoutineWork.leaderActorId)->x >> 19 <= 44)
         dripA8:
           AirsRockInside_PuffVent(0xa80000, 0, 0x25b0000);
         else if (!GameFlag_Get(FLAG_SCENE_TEMP_01))
@@ -1142,8 +1142,8 @@ void AirsRockInside_PuffVents(void) {
         AirsRockInside_PuffVent(0x2680000, -0x200000, 0x880000);
       }
     } else {
-      if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 19 > 41) {
-        if (Actor_GetById(gMainRoutineWork.currentOwner)->x >> 19 > 49)
+      if (Actor_GetById(gMainRoutineWork.leaderActorId)->z >> 19 > 41) {
+        if (Actor_GetById(gMainRoutineWork.leaderActorId)->x >> 19 > 49)
         drip228:
           AirsRockInside_PuffVent(0x2280000, 0, 0x1c80000);
         else if (GameFlag_Get(FLAG_SCENE_TEMP_00))
@@ -1196,7 +1196,7 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 // Whirlwind on a twister rock: a gust rises from it and travels ahead of the
 // leader, carrying what it meets.
 void AirsRockInside_BlowGust(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectWork *effect = (struct EffectWork *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark, *object;
   struct Vector3 velocity;
@@ -1303,16 +1303,16 @@ void AirsRockInside_BlowGust(void) {
   }
   carried = 0;
   while (Actor_HasArrived(gust) == 0) {
-    if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside6) {
       object = Actor_GetById(8);
       if (gust->x >> 19 == object->x >> 19 && carried == 0)
         PICK_UP(object, 0x270025);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
+    } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside8) {
       object = Actor_GetById(9);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
         PICK_UP(object, 0x290069);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
+    } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside9) {
       object = Actor_GetById(10);
       if (gust->x >> 20 == object->x >> 20 &&
           gust->z >> 20 == object->z >> 20 && carried == 0)
@@ -1342,11 +1342,11 @@ void AirsRockInside_BlowGust(void) {
     object->priorityFlags &= ~6;
     Actor_SetSpriteFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
-    if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
+    if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside6) {
       object->terrainHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
       GameFlag_Set(FLAG_AIRS_ROCK_STATUE_MOVED);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
+    } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside8) {
       Call6(Map_CopyCellAttributeRect, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
       wait(1);
@@ -1355,7 +1355,7 @@ void AirsRockInside_BlowGust(void) {
       object->terrainHeight = 0;
       object->y = 0;
       MapGrid_SetCellHeight(0x1400000, 0x3400000, 0, 4);
-    } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
+    } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside9) {
       OverlayObject_WaitUntilIdle(object);
       wait(1);
       OverlayObject_WaitUntilIdle(object);
@@ -1383,7 +1383,7 @@ void AirsRockInside_BlowGust(void) {
       if (hit > 4)
         goto shrink;
       if (i == 0) {
-        Sound_Play(SE_235);
+        Sound_Play(SE_GUST);
         i = 1;
       }
       if ((gFrameCount & 1) == 0) {
@@ -1399,7 +1399,7 @@ void AirsRockInside_BlowGust(void) {
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &dust);
       }
       if ((gFrameCount & 3) == 0) {
-        if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
+        if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside4) {
           GameFlag_Set(FLAG_AREA_TEMP_00);
           cell.x = (gust->x >> 20) + 64;
           cell.z = gust->z >> 20;
@@ -1407,7 +1407,7 @@ void AirsRockInside_BlowGust(void) {
           MapGrid_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
           Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
           Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
-        } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7) {
+        } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside7) {
           cell.x = gust->x >> 20;
           cell.z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
@@ -1422,7 +1422,7 @@ void AirsRockInside_BlowGust(void) {
             Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
             Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
           }
-        } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
+        } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside9) {
           GameFlag_Set(FLAG_AREA_TEMP_06);
           cell.x = gust->x >> 20;
           Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
@@ -1433,7 +1433,7 @@ void AirsRockInside_BlowGust(void) {
       }
       FieldEvent_Wait(1);
     }
-    Sound_Play(SE_298);
+    Sound_Play(SE_STOP_MUSIC_PLAYER_5);
   }
 shrink:
   gust->acceleration = 0;
@@ -1448,7 +1448,7 @@ shrink:
     FieldEvent_Wait(1);
   }
   Actor_Release(gust);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside4) {
     if (hit == 5) {
       SHAKE();
       Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 29, 85, 5, 7);
@@ -1470,7 +1470,7 @@ shrink:
       Call6(Map_CopyCellAttributeRect, 0x30, 88, 1, 1, 31, 89);
       GameFlag_Clear(FLAG_AREA_TEMP_01);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside6) {
     if (hit == 5) {
       SHAKE();
       Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
@@ -1525,7 +1525,7 @@ shrink:
     }
   }
   FieldEvent_Wait(30);
-  FieldCamera_MoveToActorById(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_MoveToActorById(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -1534,33 +1534,33 @@ extern struct ActorPlacement gAirsRockInside_Entrances[];
 extern s16 gAirsRockInside_Room1Entrances[];
 
 const u8 *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside1)
     return gAirsRockInside_Room1Entrances;
   return gAirsRockInside_Entrances;
 }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside1)
     return gAirsRockInside_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside2)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside2)
     return gAirsRockInside_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside3)
     return gAirsRockInside_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside4)
     return gAirsRockInside_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside5)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside5)
     return gAirsRockInside_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside6)
     return gAirsRockInside_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside7)
     return gAirsRockInside_Room7Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside8)
     return gAirsRockInside_Room8Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside9)
     return gAirsRockInside_Room9Placements;
   return gAirsRockInside_Placements;
 }
@@ -1584,7 +1584,7 @@ void AirsRockInside_RestoreCellBehindLeader(void) {
   gAirsRockInside_StampedCell = -1;
   CopyCells(73, 72, gAirsRockInside_StampedWidth, gAirsRockInside_StampedHeight,
             gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
-  if (gMainRoutineWork.scene != (s32)&SceneId_AirsRockInside5)
+  if (gMainRoutineWork.next != (s32)&SceneId_AirsRockInside5)
     return;
   work = Ram_HeapSlots->fieldWork;
   value = MapCell_GetAttributes(2, x, z) >> 8;
@@ -1622,7 +1622,7 @@ void AirsRockInside_StampCellUnderLeader(void) {
   gAirsRockInside_StampedCell = cell;
   gAirsRockInside_StampedWidth = 1;
   gAirsRockInside_StampedHeight = 2;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_AirsRockInside1 ||
       scene == (s32)&SceneId_AirsRockInside2 ||
       scene == (s32)&SceneId_AirsRockInside3) {
@@ -1656,7 +1656,7 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
   gAirsRockInside_StampedCell = cell;
   gAirsRockInside_StampedWidth = 1;
   gAirsRockInside_StampedHeight = 2;
-  scene = gMainRoutineWork.scene;
+  scene = gMainRoutineWork.next;
   if (scene == (s32)&SceneId_AirsRockInside1 ||
       scene == (s32)&SceneId_AirsRockInside2) {
     gAirsRockInside_StampedX = x;
@@ -1797,8 +1797,8 @@ void AirsRockInside_FlickerTarget(struct Actor *object) {
   Actor_SetSpriteColor(object, (u8)(bit * BYTE_AT(object, 98)));
 }
 
-void BattleEffect_ApplyColorToSourceBuffer(s32 a, s32 b);
-s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void PaletteFade_SetSource(s32 a, s32 b);
+s32 PaletteFade_SetTarget(s32 a, s32 b);
 void PaletteFade_StartInterpolation(s32 mode);
 void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
@@ -1878,10 +1878,10 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10000, 0);
-  Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
+  Call2((void (*)())PaletteFade_SetSource, 0x10000, 0);
+  Call2((void (*)())PaletteFade_SetTarget, 0x10003, 0);
   PaletteFade_StartInterpolation(60);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, px(312), -1, px(680), 1);
@@ -1894,12 +1894,12 @@ row:
   gBgScroll[0].y = 42;
   wait(30);
   Sound_Play(SE_ITEM_BREAK);
-  Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
-  Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+  Call2((void (*)())PaletteFade_SetSource, 0x10003, 0);
+  Call2((void (*)())PaletteFade_SetTarget, 0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  PaletteFade_SetSource(0x7fff, 0);
+  PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(64, 78, 18, 105, 3, 3);
@@ -1912,8 +1912,8 @@ fade:
   i++;
   if (i != 32)
     goto fade;
-  BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetSource(0x10003, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
@@ -1951,7 +1951,7 @@ void Actor_WalkToById(s32 actor, s32 x, s32 z);
 // When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
 // steps 65, 66, 67 and 62 and moves the leader to (312, 792).
 void AirsRockInside_StepOntoLedge(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 width;
   s32 height;
 
@@ -1971,11 +1971,11 @@ void AirsRockInside_StepOntoLedge(void) {
   FieldEvent_Wait(8);
   MapGrid_CopyCellPictureIndicesRect(62, 76, 19, 92, width, height);
   FieldEvent_Wait(15);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit =
-      Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = px(1) / 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->speedLimit =
+      Actor_GetById(gMainRoutineWork.leaderActorId)->acceleration = px(1) / 2;
   Sound_Play(SE_MAP_EXIT);
-  Actor_WalkToById(gMainRoutineWork.currentOwner, 312, 792);
+  Actor_WalkToById(gMainRoutineWork.leaderActorId, 312, 792);
   FieldEvent_Wait(5);
   Event_SetExitRequest(15);
   Event_End();
@@ -1989,7 +1989,7 @@ static inline void ClearLayer2Shape(s32 x, s32 z) {
 // Runs each room's list on entering it; room 7 also clears two cells' shapes
 // and room 9 stops object 10's timer.
 void AirsRockInside_StartPushingPillar(void) {
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AirsRockInside1) {
     Actor_LiftTargetBlock(gAirsRockInside_Room1Pillars);
@@ -2038,25 +2038,25 @@ void AirsRockInside_FinishPushingPillar(void) {
   }
   x = pushed->x >> 19;
   z = pushed->z >> 19;
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside1) {
     if (x == 103 && z == 41)
       GameFlag_Set(FLAG_AIRS_ROCK_FIRST_ROOM_PILLAR_PLACED);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside2) {
     if (x == 13 && z == 49)
       GameFlag_Set(FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED);
     else if (x == 41 && z == 49)
       GameFlag_Set(FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside3) {
     if (x == 33 && z == 79)
       GameFlag_Set(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED);
     else if (x == 77 && z == 71)
       GameFlag_Set(FLAG_AIRS_ROCK_THIRD_ROOM_SECOND_PILLAR_PLACED);
     else if (x == 59 && z == 65)
       GameFlag_Set(FLAG_AIRS_ROCK_THIRD_ROOM_THIRD_PILLAR_PLACED);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside4) {
     if (x == 81 && z == 37)
       GameFlag_Set(FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside7) {
     Call4((void (*)())MapGrid_SetCellHeight, 0x2600000, 0x1500000, 2, -4);
     Call4((void (*)())MapGrid_SetCellHeight, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
@@ -2073,7 +2073,7 @@ void AirsRockInside_FinishPushingPillar(void) {
       else
         ((u8 *)Actor_GetById(14))[99] = 0;
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside8) {
     if (x == 35 && z == 59)
       GameFlag_Set(FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED);
     if (x == 45 && z == 105)
@@ -2094,7 +2094,7 @@ void AirsRockInside_FinishPushingPillar(void) {
                           Actor_GetById(8)->z >> 20, 0);
     MapCell_SetAttributes(2, Actor_GetById(9)->x >> 20,
                           Actor_GetById(9)->z >> 20, 0);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside9) {
     if (x == 45 && z == 33)
       GameFlag_Set(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED);
     MapCell_SetAttributes(2, Actor_GetById(10)->x >> 20,
@@ -2179,10 +2179,10 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10000, 0);
-  Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x10003, 0);
+  Call2((void (*)())PaletteFade_SetSource, 0x10000, 0);
+  Call2((void (*)())PaletteFade_SetTarget, 0x10003, 0);
   PaletteFade_StartInterpolation(60);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Call2((void (*)())Camera_SetSpeedParameters, 0x10000, 0x2000);
   Call4((void (*)())FieldCamera_MoveWithinMapBounds, px(216), -1, px(224), 1);
@@ -2195,12 +2195,12 @@ row:
   gBgScroll[0].y = 42;
   wait(30);
   Sound_Play(SE_ITEM_BREAK);
-  Call2((void (*)())BattleEffect_ApplyColorToSourceBuffer, 0x10003, 0);
-  Call2((void (*)())BattleEffect_ApplyColorToTargetBuffer, 0x7fff, 0);
+  Call2((void (*)())PaletteFade_SetSource, 0x10003, 0);
+  Call2((void (*)())PaletteFade_SetTarget, 0x7fff, 0);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  BattleEffect_ApplyColorToSourceBuffer(0x7fff, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 0);
+  PaletteFade_SetSource(0x7fff, 0);
+  PaletteFade_SetTarget(0x10003, 0);
   PaletteFade_StartInterpolation(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_CopyCellPictureIndicesRect(68, 84, 12, 77, 3, 3);
@@ -2213,8 +2213,8 @@ fade:
   i++;
   if (i != 32)
     goto fade;
-  BattleEffect_ApplyColorToSourceBuffer(0x10003, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetSource(0x10003, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(60);
   wait(30);
   Sound_Play(SE_BOSS_ROAR);
@@ -2251,7 +2251,7 @@ void AirsRockInside_JumpDownLedge(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
-  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
+  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
   Event_SetExitRequest(3);
   Event_End();
 }
@@ -2265,15 +2265,15 @@ void AirsRockInside_StepOffRide(void) {
   u8 *flags;
   u8 bit = 1;
 
-  if (((s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->z)[1] > 653)
+  if (((s16 *)&Actor_GetById(gMainRoutineWork.leaderActorId)->z)[1] > 653)
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
-  BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90) &= ~1;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 376, 668);
-  flags = &BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 90);
+  BYTE_AT(Actor_GetById(gMainRoutineWork.leaderActorId), 90) &= ~1;
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x40000, 0x20000);
+  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 376, 668);
+  flags = &BYTE_AT(Actor_GetById(gMainRoutineWork.leaderActorId), 90);
   *flags = bit | *flags;
   Event_End();
 }
@@ -2330,7 +2330,7 @@ void AirsRockInside_StepOnVanishingStone(void) {
   struct Actor *leader;
   s32 cell, row = 54;
 
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   cell = MapCell_GetAttributes(2, leader->x >> 20, leader->z >> 20);
   work += 0x16a;
   // From 54 in two steps: as one expression the constants fold into
@@ -2485,8 +2485,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
                                   ((s16 *)&a->z)[1] << 16, 1);
   Sound_Play(SE_RUMBLE);
   Call3(MapGrid_SetScreenShake, 0x20000, 0x20000, 0x10000);
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
   a->acceleration = 0x3333;
@@ -2597,14 +2597,14 @@ third:
     goto third;
   Sound_Play(SE_SHIMMER);
   wait(50);
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetScreenShake(0, 0, 0);
   Actor_ConfigureSpriteColor(idA, 0);
   Actor_ConfigureSpriteColor(idB, 0);
   Sound_Play(SE_574);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(idA, gAirsRockInside_TabletSettleScript);
   Actor_SetMovementTypeById(idB, gAirsRockInside_ShebaSettleScript);
@@ -2619,7 +2619,7 @@ third:
 #include "text/msg_ids.h"
 
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
+void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -2654,33 +2654,34 @@ void AirsRockInside_ReadRevealTablet(void) {
   } else {
     Event_SetMessageId((s32)MsgCheckedTheTablet);
     EVENT_WORK->message++;
-    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
+    Call3(Actor_SetSpeedParameters, gMainRoutineWork.leaderActorId, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
-    Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
+    Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
     FieldEvent_Wait(1);
-    Call3(Actor_WalkToById, gMainRoutineWork.currentOwner, 256, 136);
+    Call3(Actor_WalkToById, gMainRoutineWork.leaderActorId, 256, 136);
     Actor_WalkToById(ACTOR_SHEBA, 272, 136);
-    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+    Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     Actor_WaitForMoveById(ACTOR_SHEBA);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Actor_ArmCallback(ACTOR_SHEBA, FACING_WEST, 0);
+    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
+    Actor_FaceDirectionById(ACTOR_SHEBA, FACING_WEST, 0);
     FieldEvent_Wait(10);
     // "Do you think I ought to touch it?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
+    Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
     FieldEvent_Wait(30);
-    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 256, 152);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 256, 152);
+    Call3(Actor_FaceDirectionById, gMainRoutineWork.leaderActorId, FACING_NORTH,
+          0);
     FieldEvent_Wait(20);
-    Actor_ArmCallback(ACTOR_SHEBA, FACING_SOUTH, 0);
+    Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTH, 0);
     FieldEvent_Wait(20);
     Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
     FieldEvent_Wait(30);
-    Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
+    Call3(Actor_FaceDirectionById, 6, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     Call3(Actor_WalkToAndWaitById, 6, 264, 137);
-    Actor_ArmCallback(ACTOR_SHEBA, FACING_NORTH, 0);
+    Actor_FaceDirectionById(ACTOR_SHEBA, FACING_NORTH, 0);
     FieldEvent_Wait(20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(MapGrid_SetScreenShake, 0x50000, 0x70000, 0x10000);
@@ -2690,14 +2691,14 @@ void AirsRockInside_ReadRevealTablet(void) {
     AirsRockInside_ShebaLearnsReveal(8, 6);
     Party_LearnAbility(SHEBA, ABILITY_REVEAL);
     GameFlag_Set(FLAG_REVEAL_TABLET_READ);
-    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, ACTOR_SHEBA, 0);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SHEBA, 0);
     FieldEvent_Wait(10);
     Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
-    Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
+    Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
     FieldEvent_Wait(20);
     Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
     Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
-    object = Actor_GetById(gMainRoutineWork.currentOwner);
+    object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != 0)
       Actor_SetDestinationById(ACTOR_SHEBA, FIELD_AT(object, s16, 10),
                                FIELD_AT(object, s16, 18));
@@ -2715,10 +2716,10 @@ void AirsRockInside_WalkToRevealTablet(void) {
     FieldMessage_Show(MsgCheckedTheTablet, 1);
     Event_End();
   } else {
-    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 248, 107);
-    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 248, 136);
-    Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);
-    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 248, 107);
+    Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 248, 136);
+    Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 264, 136);
+    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     AirsRockInside_ReadRevealTablet();
   }
@@ -2732,9 +2733,10 @@ void AirsRockInside_WalkToRevealTablet(void) {
       FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, n1, 136);         \
-      Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 264, 136);        \
-      Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);       \
+      Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, n1, 136);        \
+      Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 264, 136);       \
+      Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH,    \
+                              0);                                              \
       FieldEvent_Wait(10);                                                     \
       AirsRockInside_ReadRevealTablet();                                       \
     }                                                                          \
@@ -2779,7 +2781,7 @@ void AirsRockInside_TradePairedStatues(void) {
   u32 id, i;
   s32 busy;
 
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   pair = gAirsRockInside_Room7Cones;
   if (*pair == 0xffff)
     goto found;
@@ -2804,9 +2806,9 @@ found:
   second->motionFlags = busy;
   second->y += -px(28);
   wait(1);
-  entry = &gResourceTableEntries[secondSprite->vramBlock];
+  entry = &gVramCacheEntries[secondSprite->vramBlock];
   second->watchedObject = (void *)(entry->offset + 0x6010000);
-  entry = &gResourceTableEntries[firstSprite->vramBlock];
+  entry = &gVramCacheEntries[firstSprite->vramBlock];
   first->watchedObject = (void *)(entry->offset + 0x6010000);
   Dma_Fill32(busy, second->watchedObject, entry->size);
   Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(192),
@@ -2859,15 +2861,15 @@ void AirsRockInside_RideFaceWarp(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
-  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x40000, 0x20000);
   switch (*warp) {
   case 50:
     // XXX: the leader is looked up twice and neither result is used; likely
     // left from a position read, because the other warps give theirs as
     // constants.
-    Actor_GetById(gMainRoutineWork.currentOwner);
-    Actor_GetById(gMainRoutineWork.currentOwner);
+    Actor_GetById(gMainRoutineWork.leaderActorId);
+    Actor_GetById(gMainRoutineWork.leaderActorId);
     x = 148;
     z = 632;
     break;
@@ -2892,8 +2894,8 @@ void AirsRockInside_RideFaceWarp(void) {
     z = 188;
     break;
   }
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, x, z);
-  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, x, z);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
   Event_End();
 }
 
@@ -2913,8 +2915,8 @@ void AirsRockInside_CheckPsynergyStone(void) {
 }
 
 // The placement table for the current room.
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AirsRockInside1)
     return gAirsRockInside_Room1Triggers;
@@ -2941,7 +2943,7 @@ const struct Trigger *Scene_GetEvents(void) {
 
 // The leader rises 80 pixels on a lift into the room.
 void AirsRockInside_RiseOnLift(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *prepared, *lift;
 #if TLA_PATCH_1
   u8 priorityFlags;
@@ -2973,9 +2975,9 @@ void AirsRockInside_RiseOnLift(void) {
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
-  Sound_Play(SE_288);
+  Sound_Play(SE_STOP_ACTION_SE);
   FieldEvent_Wait(10);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - px(16));
   leader->y = height;
   leader->terrainHeight = height;
@@ -2991,7 +2993,7 @@ void AirsRockInside_RiseOnLift(void) {
   Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - px(16));
   OverlayObject_WaitUntilIdle(leader);
   Actor_WaitForMove(leader);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Actor_SelectAnimation(lift, 5);
   wait(12);
   Actor_Release(lift);
@@ -3105,7 +3107,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 void AirsRockInside_LandInHall(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   u32 i;
 
@@ -3146,13 +3148,13 @@ void AirsRockInside_LandInHall(void) {
         &options);
   }
   Sound_Play(SE_THUMP);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, 22);
   Call3((void (*)())MapGrid_SetScreenShake, 0x50000, 0x50000, 0x10000);
   Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
@@ -3174,15 +3176,15 @@ s32 Scene_Initialize(void) {
    * Call6. */
 
   gFieldWork->transition = 516;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   GameFlag_Set(FLAG_AREA_TEMP_00);
   GameFlag_Set(FLAG_AIRS_ROCK_STATUE_MOVED);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside1) {
     AirsRockInside_StartRestoringCells();
     // The Japanese release arrives here whatever flag 265 says.
     if (gMainRoutineWork.entrance == 16 &&
         (!TLA_PATCH_1 || !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))) {
-      Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 1;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 1;
       wait(8);
       Map_CenterOnFollowedPoint();
       wait(1);
@@ -3224,7 +3226,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 11 &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       AirsRockInside_LandInHall();
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside2) {
     REG_BLDALPHA = 0x1008;
     REG_BLDCNT = 0x3f10;
     AirsRockInside_StartRestoringCells();
@@ -3244,7 +3246,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 3 &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       AirsRockInside_RiseOnLift();
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside3) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside3) {
     AirsRockInside_StartRestoringCells();
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
@@ -3272,7 +3274,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
     Actor_SetSpriteFlags(Actor_GetById(13), 0);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside4) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside4) {
     Tightrope_Initialize();
     Tightrope_Place(0, 11, 12);
     Tightrope_Place(1, 13, 14);
@@ -3300,7 +3302,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(648), px(296));
     Actor_PlaceBlocks(gAirsRockInside_Room4Pillars);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside5) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside5) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     AirsRockInside_StartRestoringCells();
     i = 0;
@@ -3318,7 +3320,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(8)->terrainHeight = px(16);
     object->y = px(16);
     Actor_SetActionCallback(Actor_GetById(8), 9);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside6) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside6) {
     AirsRockInside_StartRestoringCells();
     Tightrope_Initialize();
     Tightrope_Place(0, 11, 12);
@@ -3344,7 +3346,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(8)->terrainHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside7) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside7) {
     AirsRockInside_StartRestoringCells();
     one = 1;
     ((u8 *)Actor_GetById(12))[98] = one;
@@ -3369,7 +3371,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
       Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside8) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside8) {
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
@@ -3393,7 +3395,7 @@ s32 Scene_Initialize(void) {
     else
       AirsRockInside_WakeStatue(Actor_GetById(11), 8, 0);
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside9) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside9) {
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(360), px(264));
@@ -3416,7 +3418,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_AirsRockInside1)
+  if (gMainRoutineWork.next == (s32)&SceneId_AirsRockInside1)
     AirsRockInside_SetLedgeCellsByLevel();
   return 0;
 }

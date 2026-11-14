@@ -13,7 +13,7 @@ enum VramBlockLimits {
   VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
-extern u8 gResourceBlockOwners[VRAM_BLOCK_COUNT];
+extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];
 
 struct VramBlockCacheEntry {
   u16 size;
@@ -23,6 +23,6 @@ struct VramBlockCacheEntry {
 STATIC_ASSERT(sizeof(struct VramBlockCacheEntry) == 4);
 STATIC_ASSERT(offsetof(struct VramBlockCacheEntry, offset) == 2);
 
-extern struct VramBlockCacheEntry gResourceTableEntries[];
+extern struct VramBlockCacheEntry gVramCacheEntries[];
 
 #endif

@@ -40,7 +40,7 @@ struct SeaOfTimeMapWork {
 extern volatile u32 gSeaOfTime_WaveStartFrame;
 extern u32 gSeaOfTime_WaveState;
 extern u32 gSceneState[];
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
@@ -151,7 +151,7 @@ s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   return (cell[2] << 8) | cell[3];
 }
@@ -167,7 +167,7 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
   if (layer <= 2)
     cell = map->layers[layer].cells;
   else
-    cell = gMapCellBuffer;
+    cell = gMapGridCellBuffer;
   cell += (x + (y << 7)) << 2;
   old = (cell[2] << 8) | cell[3];
   cell[2] = value >> 8;
@@ -179,14 +179,14 @@ s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gSeaOfTime_Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime2)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_SeaOfTime2)
     return gSeaOfTime_Room2Placements;
   return gSeaOfTime_Placements;
 }
@@ -331,7 +331,7 @@ void SeaOfTime_RideCurrent(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Event_PlaySound(SE_597);
+      Event_PlaySound(SE_CURRENT);
     spark.priority = 2;
     spark.palette = 7;
     spark.startScaleX = 0xcccc;
@@ -414,7 +414,7 @@ void SeaOfTime_FollowChannel(void) {
       phase &= gFrameCount;
       if (phase == 0) {
         if ((gFrameCount & 10) == 0) {
-          Sound_Play(SE_597);
+          Sound_Play(SE_CURRENT);
         }
         spark.priority = 2;
         spark.palette = 7;
@@ -976,8 +976,8 @@ DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit4, 4)
 
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit5, 5)
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_SeaOfTime1)
     return gSeaOfTime_Room1Triggers;
   if (gMainRoutineWork.entrance <= 4)
     return gSeaOfTime_EntranceTriggers;
@@ -1067,7 +1067,7 @@ void SeaOfTime_AnimateSea(void) {
 
   Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->block32, DMA_COPY_WORDS(112),
           REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   *(s32 *)((u8 *)layer + 0x1c) = 0;
   for (i = 0; i != 160; i++)
     *line++ =
@@ -1132,7 +1132,7 @@ void SeaOfTime_Open(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_PlaySound(MUS_000);
+  Event_PlaySound(MUS_SILENCE);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(159, px(348), 0, px(184));
   actor->update = (void (*)(void))SeaOfTime_UpdateSpray;
@@ -1251,7 +1251,7 @@ void SeaOfTime_Open(void) {
 // frame callback.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
-  if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_SeaOfTime1) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
@@ -1272,7 +1272,7 @@ s32 Scene_Initialize(void) {
       } while (i != 14);
       Task_Add(SeaOfTime_TrackWaves, 0x480);
     }
-  } else if (gMainRoutineWork.scene == (s32)&SceneId_SeaOfTime2) {
+  } else if (gMainRoutineWork.next == (s32)&SceneId_SeaOfTime2) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
@@ -1294,7 +1294,7 @@ s32 Scene_Initialize(void) {
           BG_PLTT_COLOR(0, 15) &= 0xffe0;
           Dma_Set((const void *)BG_PLTT, block, DMA_COPY_WORDS(112), REG_DMA3);
         }
-        BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+        PaletteFade_SetTarget(0x10000, 0);
       }
       if (gMainRoutineWork.entrance == 4 &&
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1316,7 +1316,7 @@ s32 Scene_PrepareMap(void) {
   void *block = Ram_HeapSlots->block32;
 
   Dma_Fill32(-1, block, 0x1c0);
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
+  PaletteFade_SetSource(0x10000, 0);
   return 0;
 }
 

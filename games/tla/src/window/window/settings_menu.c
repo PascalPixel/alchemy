@@ -144,9 +144,9 @@ void SettingsMenu_InitializeWork(void) {
   work->optionCount[0] = 24;
   work->option[1] = gMainRoutineWork.paletteGlow[1];
   work->optionCount[1] = 15;
-  work->option[2] = gMainRoutineWork.eventMode;
+  work->option[2] = gMainRoutineWork.messageSpeed;
   work->optionCount[2] = 3;
-  work->option[3] = gMainRoutineWork.battleFxEnabled;
+  work->option[3] = gMainRoutineWork.speech;
   work->optionCount[3] = 2;
   work->option[4] = gMainRoutineWork.unk244[6];
   work->optionCount[4] = 2;
@@ -568,10 +568,10 @@ s32 SettingsMenu_Run(void) {
   if (result == 0) {
     gMainRoutineWork.paletteGlow[0] = work->option[0];
     gMainRoutineWork.paletteGlow[1] = work->option[1];
-    gMainRoutineWork.eventMode = work->option[2];
-    gMainRoutineWork.battleFxEnabled = work->option[3];
+    gMainRoutineWork.messageSpeed = work->option[2];
+    gMainRoutineWork.speech = work->option[3];
     gMainRoutineWork.unk244[6] = work->option[4];
-    gAutoSleepEnabled = gMainRoutineWork.unk244[6];
+    gIdleSleepEnabled = gMainRoutineWork.unk244[6];
   } else {
     WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                       gMainRoutineWork.paletteGlow[1]);

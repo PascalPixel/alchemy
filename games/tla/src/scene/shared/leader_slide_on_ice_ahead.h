@@ -21,7 +21,7 @@ void Leader_SlideOnIceAhead(void) {
   s32 startX;
   s32 startZ;
 
-  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  actor = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   heading = (s16)((actor->facing + 0x2000) & -0x4000);
 
 top:

@@ -654,7 +654,7 @@ extern char ResourceId_BlueFlameSheet;
 // One model vertex: signed byte coordinates, padded to a word.
 
 // The cone's 64 vertices, stored at the buffer's constant address.
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
@@ -1017,7 +1017,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           model->shade = (const void *)spireShade;
           SceneTransform_ApplyPosition3(target->x, -0x40000, target->z);
           SceneTransform_ApplyScale3(scale, scale, scale);
-          Render_ProjectVertices((const u8 *)gMapCellBuffer, vertices, 64);
+          Render_ProjectVertices((const u8 *)gMapGridCellBuffer, vertices, 64);
           Render_DrawModelList(model);
           spireShade = -32;
           model->shade = (const void *)spireShade;

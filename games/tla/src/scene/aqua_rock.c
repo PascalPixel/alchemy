@@ -56,7 +56,7 @@ void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_Release(struct Actor *object);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Map_CopyCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
+void PaletteFade_SetTarget(s32 a, s32 b);
 void Event_End(void);
 void Event_NoOp(void);
 s32 Actor_EmitMist(struct Actor *object);
@@ -204,8 +204,8 @@ extern struct Unk02003450 gAquaRock_Streams[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const u8 *Scene_GetRegions(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u8 *Scene_GetExitRegions(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AquaRock1)
     return gAquaRock_Room1Regions;
@@ -278,8 +278,8 @@ s32 AquaRock_StartDrifter(struct Actor *object) {
   return 0;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AquaRock1)
     return gAquaRock_Room1Placements;
@@ -508,14 +508,14 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
   else
     AquaRock_SetSparkleAnchor(0);
   for (i = 3; i >= 0; i--) {
-    BattleEffect_ApplyColorToTargetBuffer(Random16() & 0x7fff, 0);
+    PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    PaletteFade_SetTarget(0x10000, 0);
     PaletteFade_StartInterpolation(10);
     wait(10);
   }
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
   if (Event_GetFlag(0xa68) == 0) {
@@ -540,7 +540,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     AquaRock_SetCellMarkerAnchor(0);
   }
   Event_Wait(30);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   Event_End();
@@ -597,10 +597,10 @@ void AquaRock_RideStreamUp(void) {
 
   if (GameFlag_Get(0xa68)) {
     work = Ram_HeapSlots->fieldWork;
-    owner = gMainRoutineWork.currentOwner;
+    owner = gMainRoutineWork.leaderActorId;
     carried = work->camera;
     leader = Actor_GetById(owner);
-    if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
+    if (gMainRoutineWork.next == (s32)&SceneId_AquaRock1 &&
         leader->terrainHeight == 0)
       return;
     ahead.x = leader->x;
@@ -628,13 +628,13 @@ void AquaRock_RideStreamUp(void) {
     ahead.z = leader->z - px(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
-      if (gMainRoutineWork.scene != (s32)&SceneId_AquaRock1)
+      if (gMainRoutineWork.next != (s32)&SceneId_AquaRock1)
         return;
       Event_Start();
       Event_ResolvePendingActions(0);
       leader->motionFlags = 0;
       Actor_SetSpriteFlags(leader, 0);
-      gMainRoutineWork.renderMode = 2;
+      gMainRoutineWork.movementMode = 2;
       AquaRock_SpawnSplash(leader);
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
@@ -644,7 +644,7 @@ void AquaRock_RideStreamUp(void) {
           AquaRock_SpawnSplash(leader);
         wait(1);
       }
-      gMainRoutineWork.renderMode = 0;
+      gMainRoutineWork.movementMode = 0;
       Event_End();
       Import_EventSetExitRequest(6);
       return;
@@ -675,11 +675,11 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
 void AquaRock_StepIntoCurrent(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 col;
   s32 row;
 
-  if (gMainRoutineWork.renderMode == 2) {
+  if (gMainRoutineWork.movementMode == 2) {
     col = object->x >> 20;
     row = (object->z - object->y - px(12)) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
@@ -702,14 +702,14 @@ void AquaRock_DouseTearRock(void) {
 }
 
 void AquaRock_DropDownFalls(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 saved = object->gravity;
   s32 i;
   struct MainRoutineWork *state;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldEffect_SetAttached(gMainRoutineWork.currentOwner,
+  FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(object, 40);
   object->motionFlags = 3;
@@ -720,10 +720,10 @@ void AquaRock_DropDownFalls(void) {
   }
   state = &gMainRoutineWork;
   object->gravity = saved;
-  FieldEffect_SetAttached(state->currentOwner, ATTACHED_EFFECT_REMOVE);
+  FieldEffect_SetAttached(state->leaderActorId, ATTACHED_EFFECT_REMOVE);
   Actor_SetSpriteFlags(object, 1);
   Actor_SelectAnimation(object, 1);
-  state->renderMode = 0;
+  state->movementMode = 0;
   Event_End();
 }
 
@@ -774,14 +774,14 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   AquaRock_SetSparkleAnchor(8);
   Sound_Play(SE_SHIMMER);
   for (i = 3; i >= 0; i--) {
-    BattleEffect_ApplyColorToTargetBuffer(Random16() & 0x7fff, 0);
+    PaletteFade_SetTarget(Random16() & 0x7fff, 0);
     PaletteFade_StartInterpolation(15);
     wait(10);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    PaletteFade_SetTarget(0x10000, 0);
     PaletteFade_StartInterpolation(10);
     wait(10);
   }
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
   GameFlag_Set(0xa69);
@@ -805,15 +805,15 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   Actor_GetById(15)->update = (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
   for (i = 5; i >= 0; i--) {
-    Sound_Play(SE_623);
+    Sound_Play(SE_WADE);
     wait(10);
   }
   Event_Wait(30);
   Event_End();
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct Trigger *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AquaRock1)
     return gAquaRock_Room1Triggers;
@@ -830,7 +830,7 @@ void AquaRock_KeepLeaderPriority(void) {
     s32 priority;
 
     sprite = object->sprite;
-    priority = gMainRoutineWork.renderMode == 2 ? 2 : 1;
+    priority = gMainRoutineWork.movementMode == 2 ? 2 : 1;
     sprite->priority = priority;
     sprite->partPriority = priority;
     object->priorityFlags &= 0xfe;
@@ -838,21 +838,21 @@ void AquaRock_KeepLeaderPriority(void) {
 }
 
 void AquaRock_SpinOut(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 saved = object->motionFlags;
   s32 i;
   s32 angle;
   s32 up;
   struct MainRoutineWork *state;
 
-  Sound_Play(SE_612);
+  Sound_Play(SE_SPIN_AWAY);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->y = -px(16);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   for (i = 15; i >= 0; i--) {
     object->y += px(1);
     angle = object->facing;
@@ -867,14 +867,14 @@ void AquaRock_SpinOut(void) {
   up = gInput.held & KEY_UP;
   state = &gMainRoutineWork;
   if (up)
-    Actor_MoveToAndWaitById(state->currentOwner, 264, 760);
+    Actor_MoveToAndWaitById(state->leaderActorId, 264, 760);
   else
-    Actor_MoveToAndWaitById(state->currentOwner, 264, 824);
+    Actor_MoveToAndWaitById(state->leaderActorId, 264, 824);
   Event_End();
 }
 
 void AquaRock_DropIn(void) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 saved = object->motionFlags;
   s32 i;
   s32 angle;
@@ -885,7 +885,7 @@ void AquaRock_DropIn(void) {
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   object->y = -px(64);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   for (i = 23; i >= 0; i--) {
     object->y += px(2);
     angle = object->facing;
@@ -897,7 +897,7 @@ void AquaRock_DropIn(void) {
   object->motionFlags = saved;
   object->velocityY = px(12);
   Actor_SetSpriteFlags(object, 1);
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, 680, 912);
+  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 680, 912);
   Event_End();
 }
 
@@ -942,10 +942,10 @@ void AquaRock_MoaiStepAside(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId, 0, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Sound_Play(SE_184);
+  Sound_Play(SE_POP_UP);
   i = 17;
 scatter:
   {
@@ -973,7 +973,7 @@ settle:
   Actor_GetById(i)->update = (void (*)(void))AquaRock_SwayMoaiBack;
   if (++i <= 21)
     goto settle;
-  Sound_Play(SE_298);
+  Sound_Play(SE_STOP_MUSIC_PLAYER_5);
   Event_Wait(60);
   {
     struct Actor *object = Actor_GetById(21);
@@ -992,7 +992,7 @@ settle:
 #undef UNK02003450_SET
 
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
   s32 id, x, z;
   s16 *entrance;
@@ -1166,11 +1166,11 @@ void AquaRock_FlowWithStream(void) {
   {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    owner = gMainRoutineWork.currentOwner;
+    owner = gMainRoutineWork.leaderActorId;
     anchor = work->camera;
   }
   leader = Actor_GetById(owner);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_AquaRock1 &&
       leader->terrainHeight == 0)
     return;
   position[0] = leader->x;
@@ -1230,18 +1230,18 @@ void AquaRock_SetMoaiFace(s32 id) {
 }
 
 void AquaRock_SpinUpAndAway(s32 arg0) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 i;
   s32 angle;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   object->motionFlags = 0;
   object->priorityFlags |= 0x20;
   Sound_Play(SE_SPLASH_SMALL);
   Actor_SelectAnimation(object, 18);
-  Sound_Play(SE_612);
+  Sound_Play(SE_SPIN_AWAY);
   for (i = 0; i < 60; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
@@ -1263,8 +1263,8 @@ void AquaRock_SpinUpAndAway(s32 arg0) {
 #include "shared/actor_emit_mist.h"
 
 void AquaRock_EnterSparklingPassage(s32 entrance) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 *owner = &gMainRoutineWork.currentOwner;
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  s32 *owner = &gMainRoutineWork.leaderActorId;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1285,9 +1285,9 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
 }
 
 void AquaRock_ArriveFromPassage(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
-  s32 *owner = &gMainRoutineWork.currentOwner;
+  s32 *owner = &gMainRoutineWork.leaderActorId;
   s32 offset;
 
   if (flag == 0) {
@@ -1334,7 +1334,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
 #endif
   s32 lift = map->origin[1];
   struct AquaRockWork *work = &gAquaRock_CellMarkers;
-  u32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   struct Actor *source;
   struct Bubble *entry;
   s32 i, x, y, z, screenX, screenY;
@@ -1398,7 +1398,7 @@ void AquaRock_DrawFallingCellMarkers(void) {
   s32 viewZ = view[1] & 0xffff0000;
   s32 lift = map->origin[1];
   struct AquaRockWork *work = &gAquaRock_CellMarkers;
-  u32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   struct Actor *source;
   struct Bubble *bubble;
   s32 i, x, y, depth, screenX, screenY, z, row;

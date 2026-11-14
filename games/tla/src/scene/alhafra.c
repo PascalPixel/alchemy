@@ -51,7 +51,7 @@ extern s16 gAlhafra_LeftDoorEdit[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -114,7 +114,7 @@ extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheShipIsStolen[];
 extern struct ActorPlacement gAlhafra_ActorPlacementsOnceTheMastIsCleared[];
 extern struct DoorStep gAlhafra_Doors[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE) == 0)
       return gAlhafra_ActorPlacementsOnceTheMastIsCleared;
@@ -133,10 +133,10 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(step->script, step->x, step->z);
-  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
-  Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
+  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(countdown);
   Event_FinishScreenTransition();
@@ -235,7 +235,7 @@ void Alhafra_SailorToldToWork(void) {
   Event_SetMessageId((s32)MsgAlhafra50);
   // "What does a sailor like me know about building houses, anyway?"
   FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 10);
-  Actor_ArmCallback(ACTOR_MAN_SCOLDING_THE_SAILOR, -256, 0);
+  Actor_FaceDirectionById(ACTOR_MAN_SCOLDING_THE_SAILOR, -256, 0);
   Event_Wait(10);
   Actor_ShowEmoteById(ACTOR_MAN_SCOLDING_THE_SAILOR,
                       EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -257,7 +257,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgAlhafra69);
   Event_Wait(10);
-  Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(10);
   // "Thanks, mister."
   Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 10);
@@ -324,16 +324,16 @@ void Alhafra_FindGoldCoins(void) {
   Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_SOUTHWEST, 0);
   Actor_SetModeById(ACTOR_GOLD_COIN_FINDER, 5);
-  Sound_Play(MUS_089);
-  gMainRoutineWork.currentOwner = 0x1d;
+  Sound_Play(MUS_LEVEL_UP);
+  gMainRoutineWork.leaderActorId = 0x1d;
   ItemDisplay_ShowItem(0, 3);
-  gMainRoutineWork.currentOwner = 4;
+  gMainRoutineWork.leaderActorId = 4;
   Event_Wait(50);
   FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 15);
   FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 23);
   // "Wow, honey! You found some gold coins!"
   FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 0, 10);
-  Actor_ArmCallback(ACTOR_GOLD_COIN_FINDER, FACING_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_GOLD_COIN_FINDER, FACING_WEST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
   Event_Wait(20);
@@ -352,7 +352,7 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(10);
   // "That's great, though! We can use it to buy some food!"
   FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_CHILD, 0, 10);
-  Actor_ArmCallback(ACTOR_GOLD_COIN_FINDER, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_GOLD_COIN_FINDER, FACING_EAST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
   Event_Wait(20);
@@ -369,7 +369,7 @@ void Alhafra_FindGoldCoins(void) {
   Actor_SetAnimation(ACTOR_GOLD_COIN_FINDERS_CHILD, 6);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_HUSBAND, FACING_NORTH, 0);
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -395,13 +395,13 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
       Event_Wait(20);
       Event_SetMessageId(message + 2);
       Event_ShowMessage(actor, 0);
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 72, 344);
-      Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 344);
+      Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
       Event_Wait(10);
       Actor_SetSpeed(actor, 1);
       Actor_WalkToAndWait(actor, 56, 328);
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-      Actor_ArmCallback(actor, FACING_SOUTHEAST, 0);
+      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
+      Actor_FaceDirectionById(actor, FACING_SOUTHEAST, 0);
       Event_Wait(20);
       Motion_SetModeAndWaitAnimation(actor, 3);
       Event_Wait(10);
@@ -421,7 +421,7 @@ extern struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[];
 extern struct Trigger gAlhafra_TriggersOnceTheShipIsStolen[];
 extern struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[];
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE) == 0)
       return gAlhafra_TriggersOnceTheMastIsCleared;
@@ -481,7 +481,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(FLAG_LET_INTO_CAVE)) {
       Actor_SetPosition(12, 56, 328);
-      Actor_ArmCallback(12, FACING_EAST, 0);
+      Actor_FaceDirectionById(12, FACING_EAST, 0);
     }
   } else {
     Actor_SetSpritePriority(13, 2);
@@ -574,7 +574,7 @@ void Alhafra_MadransArrive(s32 a0) {
   if (a0 == 0x14) {
     Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   } else {
-    Actor_ArmCallback(ACTOR_FELIX, FACING_EAST, 0);
+    Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   }
   Event_Wait(20);
   FieldCamera_MoveTo(400, CAMERA_KEEP, 808, 1);
@@ -606,7 +606,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WalkBy(35, 0, -48);
   Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, -48);
   Actor_WaitForMoveById(35);
-  Actor_ArmCallback(35, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(35, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
   Motion_SetVarCbAndRefresh(ACTOR_FIRST_MADRAN_SOLDIER, 2);
   Event_Wait(10);
@@ -673,9 +673,9 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldActor_WatchAndSetScript(ACTOR_MADRAN_ELDER, 30);
   Actor_WatchAndSetScript(35, 30);
   Event_Wait(20);
-  Actor_ArmCallback(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
-  Actor_ArmCallback(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
   Event_Wait(10);
@@ -698,7 +698,7 @@ void Alhafra_MadransArrive(s32 a0) {
   // "We didn't come to Alhafra to shop, Mister Mayor."
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_HUNTING_BRIGGS, 0, 10);
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_ArmCallback(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(ACTOR_MADRAN_HUNTING_BRIGGS, 2);
   Event_Wait(20);
@@ -737,7 +737,7 @@ void Alhafra_MadransArrive(s32 a0) {
   // "We're in no shape to go present ourselves to the mayor right now!"
   Event_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
   Event_Wait(10);
-  Actor_ArmCallback(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
   Event_Wait(20);
@@ -745,7 +745,8 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_ArmCallback(ACTOR_SECOND_MADRAN_SOLDIER, FACING_EAST_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_SECOND_MADRAN_SOLDIER, FACING_EAST_SOUTHEAST,
+                          0);
   Event_Wait(20);
   // "Look, Briggs is obviously not here, and besides, we already know..."
   FieldEvent_ShowMessageThenWait(ACTOR_SECOND_MADRAN_SOLDIER, 0, 10);
@@ -782,8 +783,8 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 32, 36);
   Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 32, 0);
   Actor_WalkToAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 504, 808);
-  Actor_ArmCallback(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_NORTH_NORTHEAST,
-                    0);
+  Actor_FaceDirectionById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+                          FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
   FieldActor_StartRepeatedMotion(33, 3);
   FieldEffect_SetAttached(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
@@ -797,7 +798,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 10);
   Motion_SetVarCbAndRefresh(ACTOR_MADRAN_HUNTING_BRIGGS, 2);
   Event_Wait(20);
-  Actor_ArmCallback(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_EAST, 0);
   Event_Wait(20);
   // "That would explain why Alhafra doesn't seem to have any boats for..."
   FieldEvent_ShowMessageThenWait(
@@ -817,7 +818,7 @@ void Alhafra_MadransArrive(s32 a0) {
   // "...Which means the pirates must still be here, trying to get a boat!"
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_ArmCallback(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
   Event_Wait(30);
   FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 15);
   FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 23);
@@ -948,22 +949,22 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldCamera_WaitForArrival();
   // "Just keep going down this road. It's the last house. You can't miss it."
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0, 10);
-  Actor_ArmCallback(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, FACING_SOUTH_SOUTHEAST,
-                    0);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
+                          FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, ANIM_NOD);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkByAndWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, -16, 0);
-  Actor_ArmCallback(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, FACING_EAST, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MADRAN_HUNTING_BRIGGS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_EAST, 0);
-  Actor_ArmCallback(ACTOR_MADRAN_ELDER, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAN_ELDER, FACING_EAST, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MADRAN_HUNTING_BRIGGS, ANIM_NOD);
@@ -1001,7 +1002,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetPosition(ACTOR_MADRAN_ELDER, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(35, 0, 0);
   Event_Wait(15);
-  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
@@ -1014,8 +1015,8 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
   FieldEvent_SetMessageId((s32)MsgAlhafra28);
   if (a0 == 1) {
     FieldEvent_Wait(10);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 736);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 168, 736);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   }
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Ooo... This ain't good!"
@@ -1066,7 +1067,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(ACTOR_LOOKOUT, ANIM_NOD);
     Event_Wait(10);
-    Actor_ArmCallback(ACTOR_LOOKOUT, FACING_NORTHEAST, 0);
+    Actor_FaceDirectionById(ACTOR_LOOKOUT, FACING_NORTHEAST, 0);
     Event_Wait(70);
     Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
     Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);

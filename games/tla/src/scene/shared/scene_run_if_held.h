@@ -4,7 +4,7 @@ void Scene_RunIfHeld(void) {
 
   if (Leader_CanPushObjectAhead() != 0) {
     object = Actor_GetById(
-        Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner));
+        Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
     Pillars_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
     Leader_PushObjectAhead();
     MadraCatacombs_SettleClimbablePillar(object);

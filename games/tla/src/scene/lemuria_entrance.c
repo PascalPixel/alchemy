@@ -45,11 +45,11 @@ s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *object) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -60,11 +60,11 @@ void LemuriaEntrance_LeaveByExit3(s32 arg) {
   party->ownerOverride = 0;
   Event_ClearFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
-  party->currentOwner = 8;
+  party->leaderActorId = 8;
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  party->currentOwner = 4;
+  party->leaderActorId = 4;
   FieldEvent_SetExitRequest(arg);
 }
 
@@ -73,11 +73,11 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   party->ownerOverride = 0;
   Event_SetFlag(0x960);
   Event_PlaySound(SE_MAP_EXIT);
-  party->currentOwner = 8;
+  party->leaderActorId = 8;
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  party->currentOwner = 4;
+  party->leaderActorId = 4;
   FieldEvent_SetExitRequest(arg);
 }
 
@@ -87,7 +87,7 @@ void LemuriaEntrance_GrindRock(void) {
   Actor_SetPosition(19, 0, 0);
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Unused: once flag 0x800 is set, the party boards the ship (actor 8) and
 /// sails it (render mode 6); otherwise the leader takes control again. Nothing
@@ -101,7 +101,7 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
     {
       struct MainRoutineWork *state = &gMainRoutineWork;
 
-      state->renderMode = 6;
+      state->movementMode = 6;
       state->ownerOverride = 1;
     }
     Actor_SetAnimation(8, 7);
@@ -109,8 +109,8 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
   } else {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->currentOwner = 4;
-    party->renderMode = 0;
+    party->leaderActorId = 4;
+    party->movementMode = 0;
     party->ownerOverride = 0;
   }
 }
@@ -122,7 +122,7 @@ s32 Scene_Initialize(void) {
   s32 effect = 0x204;
 
   *screen = effect;
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   Actor_SetSpriteFlags(Actor_Get(19), 0);
   Event_SetFlag(0x907);
   Event_ClearFlag(0x9b4);
@@ -143,11 +143,11 @@ s32 Scene_Initialize(void) {
     Event_SetDestination((s32)&SceneId_LemuriaEntrance, 1);
   }
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
-    gMainRoutineWork.currentOwner = 8;
+    gMainRoutineWork.leaderActorId = 8;
     gFieldWork->transition = 0x209;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    gMainRoutineWork.currentOwner = 4;
+    gMainRoutineWork.leaderActorId = 4;
     gFieldWork->transition = effect;
   }
   if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x96b)) {
@@ -203,8 +203,8 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   struct FieldWork *work;
   u8 saved;
 
-  saved = gMainRoutineWork.eventMode;
-  gMainRoutineWork.eventMode = 2;
+  saved = gMainRoutineWork.messageSpeed;
+  gMainRoutineWork.messageSpeed = 2;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(8, 0.27);
@@ -240,7 +240,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(1);
-  gMainRoutineWork.eventMode = saved;
+  gMainRoutineWork.messageSpeed = saved;
   Event_End();
 }
 

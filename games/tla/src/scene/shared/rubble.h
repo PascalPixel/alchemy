@@ -6,7 +6,7 @@ extern u32 gRubble_SprayScript[];
 /// Eight puffs of dust in a row over the leader, flung outwards when `spread`
 /// is set.
 void Rubble_Spray(s32 spread) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   void *frame = 0;
   u32 i = 0;
@@ -50,7 +50,7 @@ extern u32 gRubble_BurstScript[];
 /// Seventeen puffs of dust thrown out in a ring from the leader as a pillar
 /// lands.
 void Rubble_Burst(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   void *frame;
   u32 i;

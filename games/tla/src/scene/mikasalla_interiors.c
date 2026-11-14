@@ -46,12 +46,12 @@ extern u32 gMikasallaInteriors_ClimbersWifePaces[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors2)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors2)
     return gMikasallaInteriors_SanctumPlacements;
   return gMikasallaInteriors_InnPlacements;
 }
@@ -82,8 +82,8 @@ s32 MikasallaInteriors_MindReadIslanderComplaints(void) {
   return 0;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors2)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors2)
     return gMikasallaInteriors_SanctumTriggers;
   return gMikasallaInteriors_InnTriggers;
 }
@@ -114,7 +114,8 @@ void MikasallaInteriors_AskAreYouExplorer(void) {
 void MikasallaInteriors_TalkToMerchant(s32 actor) {
   u16 facing;
 
-  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
+  facing =
+      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Shop_Run(13, actor);
   } else {
@@ -130,7 +131,8 @@ void MikasallaInteriors_TalkToMerchant(s32 actor) {
 void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing;
 
-  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
+  facing =
+      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Inn_CheckIn(4, actor);
   } else {
@@ -149,7 +151,8 @@ void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
 void MikasallaInteriors_AskBeenToGaroh(s32 actor) {
   u16 facing;
 
-  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
+  facing =
+      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Sanctum_Run(actor);
   } else {
@@ -176,7 +179,8 @@ void MikasallaInteriors_AskBeenToGaroh(s32 actor) {
 void MikasallaInteriors_TalkAboutIslandLife(s32 actor) {
   u16 facing;
 
-  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
+  facing =
+      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Sanctum_Run(actor);
   } else {
@@ -194,7 +198,8 @@ void MikasallaInteriors_TalkAboutIslandLife(s32 actor) {
 void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
   u16 facing;
 
-  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
+  facing =
+      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Sanctum_Run(actor);
   } else {
@@ -209,8 +214,8 @@ void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x209;
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors1) {
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors1) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
@@ -222,7 +227,7 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_Get(18), 4);
     return 0;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors2) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors2) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 1) {
@@ -277,10 +282,10 @@ void MikasallaInteriors_MeetGalahad(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors19);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_FaceActor(18, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(18, gMainRoutineWork.leaderActorId, 0);
   // "Forgive my manners..."
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetAnimation(18, 4);
   FieldEvent_Wait(15);
@@ -289,8 +294,8 @@ void MikasallaInteriors_MeetGalahad(void) {
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
   // "I am the warrior Galahad. I am looking for someone, and I need your..."
   Event_OpenMessage(18, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
+                                            0) == 0) {
     // "You do? I must warn Sir Isaac that he is in danger most grievous......"
     Event_ShowMessage(18, 0);
     Event_SetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC);

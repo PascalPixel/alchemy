@@ -53,11 +53,11 @@ enum OseniaCliffsActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
@@ -72,7 +72,7 @@ void OseniaCliffs_LashRope(void) {
   Event_SetFlag(FLAG_ROPE_LASHED);
 }
 
-const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
+const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 void Rope_Initialize(void);
 
@@ -85,7 +85,7 @@ s32 Scene_Initialize(void) {
   Task_Add(OseniaCliffs_CyclePalette, 0x480);
   {
     u8 *flags =
-        (u8 *)((void *)Actor_GetById(gMainRoutineWork.currentOwner)) + 35;
+        (u8 *)((void *)Actor_GetById(gMainRoutineWork.leaderActorId)) + 35;
     u32 value = *flags;
     u32 bit = 32;
 

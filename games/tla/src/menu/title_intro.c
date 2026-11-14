@@ -96,7 +96,7 @@ struct TitleScreenWork {
 };
 
 extern char ResourceId_Data018;
-void PaletteFade_SetSource(s32 index, s32 transform);
+void TitlePaletteFade_SetCurrent(s32 index, s32 transform);
 extern u8 Data_02026800[];
 extern char ResourceId_Data01B;
 extern char ResourceId_Data01C;
@@ -223,10 +223,10 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
     gBgScroll[i].x = 0;
   }
   if (mode == 0) {
-    PaletteFade_Initialize();
+    TitlePaletteFade_Initialize();
   }
-  PaletteFade_SetSource(2, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  TitlePaletteFade_SetCurrent(2, 0);
+  TitlePaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = DISPCNT_BG1_ON | DISPCNT_BG2_ON;
   if (mode == 0) {
     TitlePaletteFade_Start(1);
@@ -253,7 +253,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
       return 0;
     if (!TITLE_STEP(20, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
-    PaletteFade_SetTarget(2, 0);
+    TitlePaletteFade_SetTarget(2, 0);
     TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, 0, 1, 0, 3, 0, 1, 0))
       return 0;
@@ -272,7 +272,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
       return 0;
     if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
       return 0;
-    PaletteFade_SetTarget(2, 0);
+    TitlePaletteFade_SetTarget(2, 0);
     TitlePaletteFade_Start(60);
     if (!TITLE_STEP(60, -1, -1, 0, -2, 15, 1, 0, 0))
       return 0;
@@ -295,7 +295,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
       if (Title_WaitOrPress(1))
         return 0;
     }
-    PaletteFade_SetTarget(0x7fff, 0);
+    TitlePaletteFade_SetTarget(0x7fff, 0);
     TitlePaletteFade_Start(1);
     if (Title_WaitOrPress(2)) {
       ScreenFade_Wait();
@@ -340,13 +340,13 @@ s32 TitleIntro_ShowCard(void) {
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
 
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  TitlePaletteFade_SetCurrent(0, 0);
+  TitlePaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = DISPCNT_BG3_ON;
   TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(150))
     return 0;
-  PaletteFade_SetTarget(2, 0);
+  TitlePaletteFade_SetTarget(2, 0);
   TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
     return 0;
@@ -405,8 +405,8 @@ s32 TitleIntro_ShowBlendedCard(void) {
   for (i = 0; i < 4; i++)
     gBgScroll[i].x = gBgScroll[i].y = 0;
 
-  PaletteFade_SetSource(0, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  TitlePaletteFade_SetCurrent(0, 0);
+  TitlePaletteFade_SetTarget(0x10000, 0);
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_BG3_ON;
   TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
@@ -418,7 +418,7 @@ s32 TitleIntro_ShowBlendedCard(void) {
   }
   if (Title_WaitOrPress(150))
     return 0;
-  PaletteFade_SetTarget(2, 0);
+  TitlePaletteFade_SetTarget(2, 0);
   TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
     return 0;
@@ -460,11 +460,11 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
       s->scroll += s->step;
       gBgScroll[1].y += s->step;
       if (timers->white != 0 && --timers->white == 1) {
-        PaletteFade_SetTarget(0x7fff, 0);
+        TitlePaletteFade_SetTarget(0x7fff, 0);
         TitlePaletteFade_Start(10);
       }
       if (timers->back != 0 && --timers->back == 1) {
-        PaletteFade_SetTarget(0x10000, 0);
+        TitlePaletteFade_SetTarget(0x10000, 0);
         TitlePaletteFade_Start(10);
       }
     }
@@ -643,7 +643,7 @@ void TitleIntro_UpdateLogo(void) {
   }
 }
 
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 
 /// Shows the lighthouse picture with its gulls
 /// (ResourceId_IntroLighthousePicture, ResourceId_IntroGullSprites), scrolls it
@@ -666,7 +666,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   REG_DISPCNT = 0;
   Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
-  buffer = gMapCellBuffer;
+  buffer = gMapGridCellBuffer;
   source += 32;
   Resource_DecodeByteLzInRam(source, buffer);
   Dma_Set(buffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00,
@@ -708,7 +708,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   Dma_Set((void *)BG_PLTT, Ram_HeapSlots->block32,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   wait(1);
-  PaletteFade_SetTarget(q16One, 0);
+  TitlePaletteFade_SetTarget(q16One, 0);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
   TitlePaletteFade_Start(10);
 
@@ -760,7 +760,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   i = TitleIntro_ScrollLighthouse(&scroll);
   if (i)
     goto stopped;
-  PaletteFade_SetTarget(0x7fff, 0);
+  TitlePaletteFade_SetTarget(0x7fff, 0);
   TitlePaletteFade_Start(20);
   scroll.limit = 0;
   scroll.step = -5;
@@ -769,7 +769,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     Title_WaitOrPress(120);
   goto done;
 stopped:
-  PaletteFade_SetTarget(0, 0);
+  TitlePaletteFade_SetTarget(0, 0);
   TitlePaletteFade_Start(10);
   wait(10);
 done:
@@ -823,7 +823,7 @@ s32 TitleIntro_Run(void) {
   VramCache_Reset();
   wait(1);
   Task_ResetAll();
-  gRenderOamEnabled = 0;
+  gOamCopyEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
   TitleIntro_LoadPictureTiles();
   if ((result = TitleIntro_ScrollPicture(0)) == 0 ||
@@ -831,13 +831,13 @@ s32 TitleIntro_Run(void) {
       (result = TitleIntro_ScrollPicture(1)) == 0 ||
       (result = TitleIntro_ShowBlendedCard()) == 0 ||
       (result = TitleIntro_ScrollPicture(2)) == 0) {
-    PaletteFade_SetTarget(0, 0);
+    TitlePaletteFade_SetTarget(0, 0);
     TitlePaletteFade_Start(10);
     wait(10);
   }
   if (result)
     TitleIntro_ShowLighthouse();
-  gRenderOamEnabled = 1;
+  gOamCopyEnabled = 1;
   wait(1);
   // The result's register counts the backgrounds (a separate counter takes
   // other registers).
@@ -846,7 +846,7 @@ s32 TitleIntro_Run(void) {
   REG_DISPCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
-  PaletteFade_Initialize();
+  TitlePaletteFade_Initialize();
   gCpuLoadDisplayEnabled = cpuLoad;
   return 1;
 }
@@ -992,7 +992,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   s32 resource;
 
   Sound_PlayFar(SE_CHIME);
-  gRenderOamEnabled = 1;
+  gOamCopyEnabled = 1;
   resource = (s32)&ResourceId_NintendoLogo;
   Task_ResetAll();
   ScreenFade_ToBlack(1);
@@ -1074,7 +1074,7 @@ s32 Title_ShowCamelotLogo(void) {
   u8 *buffer;
   s32 resource;
 
-  gRenderOamEnabled = 1;
+  gOamCopyEnabled = 1;
   result = 0;
   resource = (s32)&ResourceId_CamelotLogo;
   Task_ResetAll();
@@ -1127,7 +1127,8 @@ void Data_081a786c(void) {}
 /// dst: target components.
 /// step: destination for component increments.
 /// frames: fade duration; nothing is written if zero or negative.
-void PaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step, s32 frames) {
+void TitlePaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step,
+                                     s32 frames) {
   s32 n;
   s32 from;
   s32 to;
@@ -1148,8 +1149,8 @@ void PaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step, s32 frames) {
 /// step until the last frame, which copies the target instead, packs the
 /// channels into the hidden page of RGB555 colours and queues that page for the
 /// BG and OBJ palettes.
-void PaletteFade_Update(void) {
-  struct PaletteFade *work = Ram_HeapSlots->block32;
+void TitlePaletteFade_Update(void) {
+  struct TitlePaletteFade *work = Ram_HeapSlots->block32;
   u16 *delta = work->delta;
   u16 *current;
   u16 *packed;
@@ -1182,8 +1183,8 @@ void PaletteFade_Update(void) {
   IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + 256), DMA_COPY_WORDS(128));
 }
 
-void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
-                       s32 selectedPalettes) {
+void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
+                                  s32 selectedPalettes) {
   u32 colorIndex;
   u32 colorCount = 512;
   s32 red;
@@ -1437,8 +1438,8 @@ void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
   }
 }
 
-void PaletteFade_Initialize(void) {
-  struct PaletteFade *buffer;
+void TitlePaletteFade_Initialize(void) {
+  struct TitlePaletteFade *buffer;
   s32 operation;
 
   buffer = HeapSlot_AllocEwram(128, sizeof(*buffer));
@@ -1446,45 +1447,47 @@ void PaletteFade_Initialize(void) {
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(128), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(128),
           REG_DMA3);
-  PaletteFade_Build(0x10000, buffer->palette, buffer->target, 0);
+  TitlePaletteFade_BuildColors(0x10000, buffer->palette, buffer->target, 0);
   operation = 1152;
-  Task_Add((s32)(PaletteFade_Update), operation);
+  Task_Add((s32)(TitlePaletteFade_Update), operation);
 }
 
-void PaletteFade_Release(void) {
-  Task_Remove((u32)((s32)&PaletteFade_Update));
+void TitlePaletteFade_Release(void) {
+  Task_Remove((u32)((s32)&TitlePaletteFade_Update));
   HeapSlot_Release(0x80);
 }
 
-void PaletteFade_SetTarget(s32 index, s32 transform) {
-  struct PaletteFade *target = Ram_HeapSlots->block32;
+void TitlePaletteFade_SetTarget(s32 index, s32 transform) {
+  struct TitlePaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
-    PaletteFade_Build(index, target->palette, target->target, transform);
+    TitlePaletteFade_BuildColors(index, target->palette, target->target,
+                                 transform);
 }
 
-void PaletteFade_SetSource(s32 index, s32 transform) {
-  struct PaletteFade *target = Ram_HeapSlots->block32;
+void TitlePaletteFade_SetCurrent(s32 index, s32 transform) {
+  struct TitlePaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
-    PaletteFade_Build(index, (u16 *)target, target->current, transform);
+    TitlePaletteFade_BuildColors(index, (u16 *)target, target->current,
+                                 transform);
 }
 
-void PaletteFade_SetBackdrop(s32 value) {
-  struct PaletteFade *target = Ram_HeapSlots->block32;
+void TitlePaletteFade_SetBackdrop(s32 value) {
+  struct TitlePaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
     target->palette[0] = value;
 }
 
 void TitlePaletteFade_Start(s32 value) {
-  struct PaletteFade *state = Ram_HeapSlots->block32;
+  struct TitlePaletteFade *state = Ram_HeapSlots->block32;
 
   if (state != NULL) {
     state->duration = value;
     state->step = 0;
-    PaletteFade_CalculateSteps((s16 *)state->current, (s16 *)state->target,
-                               (s16 *)state->delta, value);
+    TitlePaletteFade_CalculateSteps((s16 *)state->current, (s16 *)state->target,
+                                    (s16 *)state->delta, value);
   }
 }
 

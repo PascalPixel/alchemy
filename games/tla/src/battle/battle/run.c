@@ -48,11 +48,11 @@ void BattleParty_SwapInReserves(void) {
     to->anchorZ = from->anchorZ;
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
                                        place->z);
-    gMainRoutineWork.activeOwners[i] = id;
+    gMainRoutineWork.party[i] = id;
     work->partyUnits[i] = id;
   }
   for (i = 0; i < count; i++)
-    gMainRoutineWork.activeOwners[actorCount + i] = actors[i];
+    gMainRoutineWork.party[actorCount + i] = actors[i];
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   BattleObject_Put();
   BattleHighlight_SetModes(reserves, HIGHLIGHT_FADE_IN);
@@ -266,7 +266,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   }
   Task_Add(BattleCamera_Update, 0x47f);
 
-  cue = gMainRoutineWork.sceneCue;
+  cue = gMainRoutineWork.battleMusic;
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
@@ -274,7 +274,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       Sound_LoadReverbCode(4);
     }
   } else {
-    Sound_PlayFar(MUS_050);
+    Sound_PlayFar(MUS_BATTLE);
   }
 
   BattleUnit_Collect();
@@ -443,9 +443,9 @@ won_scripted:
   if ((u32)scripted > 1) {
     if (enemyGroup != 80 && GameFlag_Get(FLAG_DJINN_LESSON) == 0) {
       if (battle->twoSided != 0)
-        Sound_PlayFar(MUS_058);
+        Sound_PlayFar(MUS_VICTORY);
       if (battle->defeated != 0) {
-        Sound_PlayFar(MUS_058);
+        Sound_PlayFar(MUS_VICTORY);
         if (battle->defeatState <= 1) {
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                             26);
@@ -479,7 +479,7 @@ party_lost:
   scripted = enemyGroup - 74;
   if ((u32)scripted > 1 && enemyGroup != 638) {
     if (enemyGroup != 76) {
-      Sound_PlayFar(MUS_059);
+      Sound_PlayFar(MUS_DEFEAT);
       MessageArgument_ClearAllFar();
       if (BattleParty_PrepareMembers(0) == 1)
         BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
@@ -527,7 +527,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
     count = limit;
 
   for (index = 0; index < count; index++) {
-    s32 owner = gMainRoutineWork.activeOwners[index];
+    s32 owner = gMainRoutineWork.party[index];
 
     if (owners != 0)
       *owners++ = owner;
@@ -552,7 +552,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
     count = 0;
 
   for (index = 0; index < count; index++) {
-    s32 owner = gMainRoutineWork.activeOwners[index + 4];
+    s32 owner = gMainRoutineWork.party[index + 4];
 
     if (owners != 0)
       *owners++ = owner;
@@ -613,7 +613,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
-  if (sideMask & BATTLE_SIDE_PARTY) {
+  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = activeMembers;
     activeCount = BattleParty_PrepareMembers(base);
     if (livingCount < activeCount) {
@@ -634,7 +634,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
       } while (remaining != 0);
     }
   }
-  if (sideMask & BATTLE_SIDE_ENEMIES) {
+  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
     remaining = 0x80;
     enemyLimit = enemyCapacity + 0x80;
     if (remaining < enemyLimit) {
@@ -679,7 +679,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
-  if (sideMask & BATTLE_SIDE_PARTY) {
+  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = members;
     count = BattleParty_PrepareMembers(base);
     count += BattleParty_PrepareReserveOwners(base + count);
@@ -701,7 +701,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
       } while (remaining != 0);
     }
   }
-  if (sideMask & BATTLE_SIDE_ENEMIES) {
+  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
     remaining = 0x80;
     enemyLimit = enemyCapacity + 0x80;
     if (remaining < enemyLimit) {

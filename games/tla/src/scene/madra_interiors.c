@@ -74,7 +74,7 @@ void MadraInteriors_CountAnswer();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -104,8 +104,8 @@ void MadraInteriors_InterrogatePiers(void);
 
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraInteriors2)
     return gMadraInteriors_SecondRoomsPlacements;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailPlacements;
@@ -140,7 +140,7 @@ void MadraInteriors_AskWillWeBeSafe(void) {
 /// otherwise talks of the week's troubles, the Kibombo, and later the dead fish
 /// on the shore, which from patch 1 is a question.
 void MadraInteriors_TalkToInnkeeper(void) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(1, 22);
@@ -185,7 +185,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
 /// Madra's sanctum healer heals across the counter, and otherwise talks of the
 /// town's trials, the Kibombo, and later the warming sea.
 void MadraInteriors_TalkToHealer(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -342,8 +342,8 @@ void MadraInteriors_TalkToIllMan(void) {
   }
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraInteriors2)
     return gMadraInteriors_SecondRoomsTriggers;
   if (gMainRoutineWork.entrance == 20)
     return gMadraInteriors_JailTriggers;
@@ -407,9 +407,9 @@ s32 Scene_Initialize(void) {
   void *event;
 
   gFieldWork->transition = 521;
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors1) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraInteriors1) {
     event = Ram_HeapSlots->fieldWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!Event_GetFlag(0x821)) {
@@ -426,7 +426,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == 20)
     MadraInteriors_SetUpJail();
-  if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors2) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MadraInteriors2) {
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
       Actor_SetPosition(10, 0, 0);
     } else {

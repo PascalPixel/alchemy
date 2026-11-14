@@ -257,7 +257,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     copy((void *)BG_PLTT, palette, 128);
   }
 
-  sparks = gMapCellBuffer;
+  sparks = gMapGridCellBuffer;
 
   for (i = 0; i != GROUP_COUNT; i++) {
     // The group's ring of flash points, wider and later further out.

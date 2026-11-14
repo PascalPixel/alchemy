@@ -245,10 +245,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       battle->partyUnits[state->swappedPlace] = swapped;
       shortSwapped = (s16)swapped;
       for (k = 0; k < 8; k++) {
-        if (gMainRoutineWork.activeOwners[k] == shortSwapped)
-          gMainRoutineWork.activeOwners[k] = old;
-        else if (gMainRoutineWork.activeOwners[k] == old)
-          gMainRoutineWork.activeOwners[k] = shortSwapped;
+        if (gMainRoutineWork.party[k] == shortSwapped)
+          gMainRoutineWork.party[k] = old;
+        else if (gMainRoutineWork.party[k] == old)
+          gMainRoutineWork.party[k] = shortSwapped;
       }
       PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
       BattleObject_PutFar();
@@ -471,7 +471,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
-        work->level = 5;
+        work->textPalette = 5;
         if (ability->ppCost > unit->pp)
           Text_SetColor(TEXT_COLOR_RED);
         else if (unit->psySeal != 0)
@@ -479,7 +479,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityNothing,
                                 commandWindow, 16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        work->level = 15;
+        work->textPalette = 15;
         Text_SetColor(TEXT_COLOR_WHITE);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
@@ -705,7 +705,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         selection = pick[mode];
         parameter = selection;
         ability = Ability_Get(
-            Item_GetDirectFar(unit->inventory[selection])->actionId);
+            Item_GetDirectFar(unit->inventory[selection])->abilityId);
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
@@ -720,9 +720,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;
-        Text_DrawMessageAsTiles((unit->inventory[selection] & ITEM_ID_MASK) +
-                                    (s32)MsgItemName,
-                                commandWindow, 24, 0);
+        Text_DrawMessageAsTiles(
+            (unit->inventory[selection] & INVENTORY_ITEM_ID_MASK) +
+                (s32)MsgItemName,
+            commandWindow, 24, 0);
         command->range = cost;
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
@@ -904,7 +905,7 @@ void IconMenu_DrawIcons(void) {
       attr = &sprite->link;
       *attr++ = 0;
       *attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
-      *attr = gResourceTableEntries[sprite->slot].offset >> 5;
+      *attr = gVramCacheEntries[sprite->slot].offset >> 5;
       slot = 246;
     } else {
       u32 base;
@@ -914,7 +915,7 @@ void IconMenu_DrawIcons(void) {
       y = sprite->y;
       *attr++ = 0;
       value = y | (px << 16) | 0x80002000;
-      base = gResourceTableEntries[sprite->slot].offset;
+      base = gVramCacheEntries[sprite->slot].offset;
       *attr++ = value;
       *attr = base >> 5;
       slot = 245;

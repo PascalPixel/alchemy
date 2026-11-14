@@ -91,16 +91,6 @@ enum ClassSeries {
   CLASS_SERIES_DARK_MAGE        ///< with the Tomegathericon equipped
 };
 
-/// The curse bits of BattleUnit.restraint, as The Broken Seal's CurseFlag.
-enum CurseFlag {
-  CURSE_BOUND = 0x01,      ///< the unit is bound
-  CURSE_ITEM = 0x02,       ///< a cursed item is equipped
-  CURSE_KEEP_BOUND = 0x04, ///< keeps CURSE_BOUND through Unit_Calculate
-  /// EQUIP_EFFECT_CURSE_REMOVABLE: Unit_Calculate clears it again with
-  /// CURSE_BOUND.
-  CURSE_REMOVABLE = 0x08
-};
-
 // The caps on a unit's level and stats (Unit_Calculate).
 #define UNIT_LEVEL_MAX 99
 #define UNIT_ENEMY_HP_MAX 16383    ///< maximum HP, an enemy's
@@ -124,9 +114,6 @@ enum CurseFlag {
 
 /// Unit ids from 128 are the enemies', as The Broken Seal's.
 #define FIRST_ENEMY_UNIT 128
-
-/// BattleUnit.classIndex of an enemy, which has no class of its own.
-#define CLASS_NONE 0
 
 /// How many classes gClass_DefinitionTable holds.
 #define CLASS_COUNT 244

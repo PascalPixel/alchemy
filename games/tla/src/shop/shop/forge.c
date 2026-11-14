@@ -11,7 +11,7 @@
 const struct ForgeRecipe *Forge_FindRecipe(s32 itemId) {
   const struct ForgeRecipe *recipe;
 
-  itemId &= ITEM_ID_MASK;
+  itemId &= INVENTORY_ITEM_ID_MASK;
   for (recipe = gForge_Recipes; recipe->item != -1; recipe++) {
     if (recipe->item == itemId)
       return recipe;
@@ -86,7 +86,7 @@ s32 Forge_PartyHasMaterial(void) {
 
 /// Records the item the forge is making, for the smith to hand over later.
 void Forge_SetItem(s32 itemId) {
-  gMainRoutineWork.forgeItem = itemId & ITEM_ID_MASK;
+  gMainRoutineWork.forgeItem = itemId & INVENTORY_ITEM_ID_MASK;
 }
 
 /// Returns the item the forge is making.
@@ -94,7 +94,7 @@ s32 Forge_GetItem(void) {
   u32 itemId = gMainRoutineWork.forgeItem;
   u32 mask;
 
-  mask = ITEM_ID_MASK;
+  mask = INVENTORY_ITEM_ID_MASK;
   mask &= itemId;
   return mask;
 }

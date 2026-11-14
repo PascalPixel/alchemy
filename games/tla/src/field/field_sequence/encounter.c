@@ -60,7 +60,7 @@ s32 FlagEntries_GetValue(s32 flag) {
 
 void Encounter_SelectMapZones(s32 search) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
   u8 *out = work->encounterZones;
   u32 first = 0;
@@ -101,9 +101,9 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   s32 zone;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->renderMode == 8)
+  if (party->movementMode == 8)
     return 0;
-  if (party->renderMode == 7)
+  if (party->movementMode == 7)
     rule = gData_080eef34;
   behavior = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&kind);
   kind %= 20;
@@ -235,9 +235,9 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
 
 void Scene_ChooseMusic(void) {
   s16 cue = 79;
-  s16 scene = gMainRoutineWork.scene;
+  s16 scene = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
-  s16 group = gMainRoutineWork.sceneGroup;
+  s16 group = gMainRoutineWork.area;
   const struct SceneCueRule *rule = gScene_CueRuleTable;
 
   for (; rule->id != -1; rule++) {
@@ -262,7 +262,7 @@ void Scene_ChooseMusic(void) {
     }
   }
 
-  gMainRoutineWork.cue = cue;
+  gMainRoutineWork.sceneMusic = cue;
 }
 
 s32 Area_GetNameIndex(s32 scene, s32 entrance) {
@@ -292,7 +292,7 @@ s32 Area_GetNameIndex(s32 scene, s32 entrance) {
 }
 
 /// Sets the scene the party returns to after a defeat
-/// (gMainRoutineWork.savedScene and savedEntrance), from the first rule of
+/// (gMainRoutineWork.restartScene and savedEntrance), from the first rule of
 /// gParty_PairResolveRules that matches the current scene and entrance: rows
 /// of eight halfwords that open {scene, entrance (-1 for any), return scene,
 /// return entrance}, ended by scene -1. Without a match the restart point stays
@@ -303,14 +303,14 @@ void Scene_SetRestartPoint(void) {
   s16 second;
   const s16 *entry;
 
-  first = party->scene;
+  first = party->next;
   second = party->entrance;
   entry = gParty_PairResolveRules;
 
   while (entry[0] != -1) {
     if (entry[0] == first && (entry[1] == -1 || entry[1] == second)) {
-      party->savedScene = entry[2];
-      party->savedEntrance = entry[3];
+      party->restartScene = entry[2];
+      party->restartEntrance = entry[3];
       return;
     }
     entry += 8;
@@ -370,7 +370,7 @@ s16 BattleBackground_GetSelected(void) {
 /// backdrop before it; once the Mars Lighthouse has thawed, the second dragon
 /// hall backdrop becomes the first.
 void BattleBackground_SelectForMap(void) {
-  s32 target = gMainRoutineWork.scene;
+  s32 target = gMainRoutineWork.next;
   s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   s32 result; // not initialised: with no marked row before the scene it keeps
@@ -432,14 +432,14 @@ s32 Party_IsInFrontRow(s32 owner) {
   if (count > 4)
     count = 4;
   for (i = 0; i < count; i++) {
-    if (gMainRoutineWork.activeOwners[i] == owner)
+    if (gMainRoutineWork.party[i] == owner)
       return 1;
   }
   return 0;
 }
 
-/// Chooses the battle music for slot of zone (gMainRoutineWork.sceneCue): a key
-/// takes the song listed last before it in gEncounter_BattleMusic, and flag
+/// Chooses the battle music for slot of zone (gMainRoutineWork.battleMusic): a
+/// key takes the song listed last before it in gEncounter_BattleMusic, and flag
 /// 0x16c's battles always use music 79. With no song found, it is 56 while
 /// ownerOverride is set and flag 0x8df clear, else 50 when owner 4 is active,
 /// 750 when owner 0 is, 49 when owner 5 is, or 50.
@@ -474,5 +474,5 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     else
       music = 50;
   }
-  gMainRoutineWork.sceneCue = music;
+  gMainRoutineWork.battleMusic = music;
 }

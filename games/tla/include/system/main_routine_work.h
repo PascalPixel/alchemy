@@ -51,18 +51,19 @@ struct MainRoutineWork {
   /// The party's Djinn recovery list (TradeOfferState from its offers on),
   /// read through Djinn_GetRecoveryTable.
   u8 djinnRecovery[0x124];
-  s32 counterB; ///< shop credit, at most 999999 (Party_AdjustShopCredit)
-  s8 counterC;  ///< shop gifts, 0 to 28 (Party_AdjustShopGifts)
+  s32 shopCredit; ///< shop credit, at most 999999 (Party_AdjustShopCredit)
+  s8 shopGifts;   ///< shop gifts, 0 to 28 (Party_AdjustShopGifts)
   /// Not named by ⚓️ code; a new game sets its first 15 bytes as ☀️'s
   /// prizeWeights (three each of 4, 8, 16, 32 and 64).
   u8 unk13d[0xa3];
-  s16 scene;
+  s16 next;
   s16 entrance;
-  u16 savedScene;    ///< where a defeat returns to without a defeat point
-  u16 savedEntrance; ///< where a defeat returns to without a defeat point
-  s16 primary;       ///< the default scene: the fallback of both destinations
-  s16 secondary;  ///< the default entrance: the fallback of both destinations
-  s16 sceneGroup; ///< the current scene's group; a new group resets its state
+  u16 restartScene;    ///< where a defeat returns to without a defeat point
+  u16 restartEntrance; ///< where a defeat returns to without a defeat point
+  s16 returnScene;     ///< the default scene: the fallback of both destinations
+  s16 returnEntrance;  ///< the default entrance: the fallback of both
+                       ///< destinations
+  s16 area; ///< the current scene's group; a new group resets its state
   /// The next destination (scene, entrance), -1 for none; the default scene
   /// and entrance stand in for either.
   u16 pair1ee[2];
@@ -70,27 +71,27 @@ struct MainRoutineWork {
   s16 battleBackground; ///< the battle background chosen for the scene or
                         ///< terrain
   u8 unusedAfterBackground[2];
-  s16 map;
+  s16 mapId;
   s32 x; ///< the party's position on entering, as ☀️'s gMainRoutineWork
   s32 y;
   s32 z;
   s32 heading;
-  u16 turn;     ///< 0 on taking an entrance, as ☀️'s turn
-  s16 sceneCue; ///< the battle music chosen for the encounter
-  s16 cue;      ///< the current scene's field music
+  u16 layer;       ///< 0 on taking an entrance, as ☀️'s layer
+  s16 battleMusic; ///< the battle music chosen for the encounter
+  s16 sceneMusic;  ///< the current scene's field music
   /// The leader's movement: 0 on foot, 2 climbing, 3 or 4 holding a
   /// workspace item or node; 7, 8 and 10 set by the world map and others.
-  u8 renderMode;
-  s32 currentOwner;   ///< the leader, as ☀️'s selectedActor
-  u8 activeOwners[8]; ///< the party in order
-  u8 unk220[5];       ///< not named by ⚓️ code
-  u8 paletteGlow[2];  ///< window hue and brightness (options 0 and 1)
+  u8 movementMode;
+  s32 leaderActorId;      ///< the leader, as ☀️'s selectedActor
+  u8 party[8];            ///< the party in order
+  u8 unusedAfterParty[5]; ///< not named by ⚓️ code
+  u8 paletteGlow[2];      ///< window hue and brightness (options 0 and 1)
   u8 unusedAfterBrightness[3];
-  u8 battleFxEnabled;   ///< option 3, on or off; 1 on a new game
+  u8 speech;            ///< option 3, on or off; 1 on a new game
   u8 unusedAfterSpeech; ///< 1 on a new game; nothing reads it
   /// Option 2, the message speed, 0 to 2: 1 on a new game; some scenes set 2
   /// and restore it after.
-  u8 eventMode;
+  u8 messageSpeed;
   u8 unk22d[3]; ///< byte 2 goes into the save summary's sendFlag
   /// The buttons for each field command, as KEY_ masks, set on a new game;
   /// read with gInput.pressed except dashKeys, held.
@@ -103,7 +104,7 @@ struct MainRoutineWork {
   u16 secondShortcutKeys; ///< KEY_R
   u16 dashKeys;           ///< KEY_B
   ///@}
-  s16 returnCue; ///< the music to play on returning, -1 for the scene's own
+  s16 returnMusic; ///< the music to play on returning, -1 for the scene's own
   /// The shortcuts' assignments, run by firstShortcutKeys and
   /// secondShortcutKeys (PsynergyMenu_SetShortcut: kind << 10 | id).
   u16 packedEvents[2];
@@ -128,28 +129,28 @@ struct MainRoutineWork {
   s32 encounterSteps; ///< reset on entering a new scene group
   /// Cleared with the battle's spoils, as ☀️'s pendingItem; not read by name
   /// in ⚓️.
-  u16 tally25c;
-  s16 sceneVariant;    ///< the current scene's variant from its record
+  u16 pendingItem;
+  s16 sceneType;       ///< the current scene's variant from its record
   s16 retreatScene;    ///< where Retreat goes; the group's first entrance
   s16 retreatEntrance; ///< where Retreat goes; the group's first entrance
   s32 avoidDistance;   ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;      ///< Avoid came from an item (flag 0x145)
-  u8 savedByte;        ///< the paused object's first animation param
-  s16 pausedObject;    ///< the object field Psynergy has stopped, -1 for none
+  u8 pausedPose;       ///< the paused object's first animation param
+  s16 haltedActor;     ///< the object field Psynergy has stopped, -1 for none
   /// Nonzero runs packed action 0x208b with the pending actions, and idles
   /// the field's push and button handler; not written by name in ⚓️.
   s8 pendingThird;
   s8 cloaked; ///< Cloak: the leader is hidden
   u8 unusedAfterCloaked[2];
-  u32 savedCallback; ///< the paused object's update, restored on resuming
+  u32 pausedUpdate; ///< the paused object's update, restored on resuming
   /// The answers events count: telling Kraden on Idejima that the Western
   /// Sea is not where they go, agreeing with Alhafra's mayor that the party
   /// owes him, and others; Ancient Lemuria asks its question only while this
-  /// is 4 or less. 0 on a new game, counted up by Func_080d2d70.
+  /// is 4 or less. 0 on a new game, counted up by Event_CountAnswer.
   // XXX: what the counted answers share; reading every site's question and
   // the Ancient Lemuria event that tests the count would settle it.
   u8 countedAnswers;
-  /// Nonzero makes actor 8, not currentOwner, the one events control.
+  /// Nonzero makes actor 8, not leaderActorId, the one events control.
   s16 ownerOverride;
   s32 savedX;      ///< the world map leader's x, kept on leaving
   s32 savedZ;      ///< the world map leader's z, kept on leaving
@@ -171,8 +172,8 @@ struct MainRoutineWork {
 };
 
 STATIC_ASSERT(offsetof(struct MainRoutineWork, coins) == 0x10);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, scene) == 0x1e0);
-STATIC_ASSERT(offsetof(struct MainRoutineWork, currentOwner) == 0x214);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, next) == 0x1e0);
+STATIC_ASSERT(offsetof(struct MainRoutineWork, leaderActorId) == 0x214);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, battleType) == 0x24b);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, ownerOverride) == 0x276);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 0x2c4);

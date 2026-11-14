@@ -66,7 +66,7 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
   /* FAKEMATCH(pin): result held in r8. */
   register s32 result asm("r8");
 
-  itemId = ITEM_ID_MASK;
+  itemId = INVENTORY_ITEM_ID_MASK;
   itemId &= inventoryEntry;
   condition = Forge_GetItemCondition(itemId);
   result = -1;
@@ -99,7 +99,7 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
 
 /// Runs the item picker for an item to show, refusing one that cannot be
 /// unequipped: Naribwe's fortune teller reads the party's fortune from it.
-s32 ItemPicker_RunMode1(s32 *selectedUnit, s32 *selectedSlot) {
+s32 ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot) {
   return ItemPicker_Run(selectedUnit, selectedSlot, ITEM_PICKER_SHOW);
 }
 
@@ -249,7 +249,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       inventoryCount = Inventory_CountFar(unitId);
       if (slot > inventoryCount - 1)
         slot = inventoryCount - 1;
-      itemId = ITEM_ID_MASK & unit->inventory[slot];
+      itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
       window = shop->itemWindow;
       column = slot % SHOP_INVENTORY_COLUMNS;
       row = slot / SHOP_INVENTORY_COLUMNS;
@@ -378,7 +378,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 void ItemPicker_DrawItem(struct RenderInput *window, s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
-  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
+  s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   u32 inventoryEntry = unit->inventory[slot];
   s32 quantity = (inventoryEntry >> INVENTORY_QUANTITY_SHIFT) + 1;
   s32 refusal;
@@ -498,7 +498,7 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
         attr = (u32 *)&sprite->attr;
         *attr++ = OUTPUT_SIZE_16X16;
         *attr = 0;
-        sprite->attr.tile = gResourceTableEntries[entry].offset >> 5;
+        sprite->attr.tile = gVramCacheEntries[entry].offset >> 5;
       }
       shop->iconSlots[i] = entry;
     }

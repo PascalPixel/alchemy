@@ -63,7 +63,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   work->page ^= 1;
   if (work->page != 0) {
     FieldEffect_AdvanceHueCycle();
-    BattleEffect_ApplyColorToTargetBuffer(
+    PaletteFade_SetTarget(
         (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
     PaletteFade_StartInterpolation(1);
   }
@@ -685,7 +685,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
 
   work = Ram_HeapSlots->fieldWork;
   party = &gMainRoutineWork;
-  actor = ObjectTable_Get(party->currentOwner);
+  actor = ObjectTable_Get(party->leaderActorId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -733,8 +733,8 @@ void FieldPsynergy_Reveal(void) {
   caster = scene->mainObject;
   transition->centreX = caster->x;
   transition->centreY = caster->z - caster->y;
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x10001, 1);
   PaletteFade_StartInterpolation(1);
   event->revealActive = 0;
   wait(1);
@@ -778,10 +778,10 @@ void FieldPsynergy_EndReveal(void) {
     event->revealActive = 0;
     event->revealFrames = 0;
     BattleEffect_RunBusyWaitDelay__f0dd820(0);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+    PaletteFade_SetTarget(0x10000, 1);
     PaletteFade_StartInterpolation(1);
-    BattleEffect_ApplyColorToSourceBuffer(0, 0);
-    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    PaletteFade_SetSource(0, 0);
+    PaletteFade_SetTarget(0x10000, 0);
     PaletteFade_StartInterpolation(30);
     wait(1);
     pending = Scene_FindPsynergyTrigger(
@@ -1644,7 +1644,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   Actor_SetSpriteColorModeFar(object, 0);
-  Sound_PlayFar(MUS_084);
+  Sound_PlayFar(MUS_CURE);
   if (object != 0) {
     target->update = (void (*)(void))FieldEffect_RunSparkEmitter;
     target->timer = 0;

@@ -56,7 +56,7 @@ void BattleUnit_ResetGuardLevels(void) {
   s32 count;
   s32 index;
 
-  count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
+  count = BattleParty_ListActorIds(BATTLE_SIDE_MASK_BOTH, (u16 *)ids);
   for (index = 0; index < count; index++) {
     struct BattleUnit *actor;
 
@@ -82,12 +82,14 @@ s32 BattleFlee_CheckSuccess(void) {
   } else {
     levelTotal = 0;
     chance = 0x1388 + (escapeState->failedAttempts * 0x7D0);
-    livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, livingUnits);
+    livingCount =
+        BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
     }
     chance += __divsi3(levelTotal * 0x1F4, livingCount);
-    livingCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, livingUnits);
+    livingCount =
+        BattleParty_ListLivingUnits(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
@@ -361,7 +363,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
       state->count = count;
       state->check = Battle_RandomFar();
       IRQ_LOCK(saved);
-      gBattleRandomSeed = state->seed = gRandomState;
+      gBattleRandomSeed = state->seed = gRandomSeed;
       IRQ_UNLOCK(saved);
       if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;

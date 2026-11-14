@@ -1,7 +1,7 @@
 /// Cracks the tile under the leader, swapping in its cracked picture.
 void CrackedTile_Crack(struct CellTarget *table,
                        struct CellTargetEntry *entry) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x;
   s32 z;
 

@@ -23,7 +23,7 @@ void Leader_SlideOnIceFromEdge(void) {
 
   /* FAKEMATCH(volatile): the stop flag read as a volatile s16, reread after
    * each test and for lsls #16. */
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
   gSlideOnIce_Stopped = 0;
 retry:
   Leader_StopIfPending();

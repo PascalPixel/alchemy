@@ -47,7 +47,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void);
 extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_Data0DA;
 extern char ResourceId_OrangePaletteB;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern const u8 gData_081990d0[];
 extern const u8 Data_08198b52[]; // each ring's start
 extern const u8 Data_08198b56[]; // growth
@@ -135,7 +135,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   caster = BattleObject_GetFar(effect->actor)->object;
   gBgScroll[1].x = -56;
   // The battlefield's picture, later the dome's texture.
-  picture = gMapCellBuffer;
+  picture = gMapGridCellBuffer;
   {
     u8 *cell = picture;
     s32 x;

@@ -151,21 +151,21 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->savedShakeX = map->shakeX;
   work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
-  if (gMainRoutineWork.map == (s32)&SceneId_GabombaCatacombs5)
+  if (gMainRoutineWork.mapId == (s32)&SceneId_GabombaCatacombs5)
     work->lit = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_TundariaTower1)
+  if (gMainRoutineWork.mapId == (s32)&SceneId_TundariaTower1)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_TundariaTower2)
+  if (gMainRoutineWork.mapId == (s32)&SceneId_TundariaTower2)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.mapId == (s32)&SceneId_TundariaTower7)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_JupiterLighthouseAerie)
+  if (gMainRoutineWork.mapId == (s32)&SceneId_JupiterLighthouseAerie)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_JupiterLighthouseAerieBeacon)
+  if (gMainRoutineWork.mapId == (s32)&SceneId_JupiterLighthouseAerieBeacon)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.map == (s32)&SceneId_Loho1)
+  if (gMainRoutineWork.mapId == (s32)&SceneId_Loho1)
     *((u8 *)work + 0x41) = 1;
-  FieldPsynergy_SetupActorPair(gMainRoutineWork.currentOwner, -1);
+  FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
   if (work->animation != 8)
     event->effectTimerRunning = 0;
   if (work->animation != 28)
@@ -367,7 +367,7 @@ void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
   work->unk295 = 0;
   FieldPsynergy_FadeToCastColor();
   FieldEffect_AdvanceHueCycle();
-  BattleEffect_ApplyColorToTargetBuffer(
+  PaletteFade_SetTarget(
       (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
   PaletteFade_StartInterpolation(8);
   FieldPsynergy_GreyMindReadPalette();
@@ -427,6 +427,7 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   BG_PLTT_COLOR(15, 3) = 0;       // Black.
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).
   BG_PLTT_COLOR(15, 12) = 0x5294; // Gray (20).
-  WindowColor_ApplyFar(gMainRoutineWork.unk220[5], gMainRoutineWork.unk220[6]);
+  WindowColor_ApplyFar(gMainRoutineWork.unusedAfterParty[5],
+                       gMainRoutineWork.unusedAfterParty[6]);
   work[4] = 0;
 }

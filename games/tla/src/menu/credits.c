@@ -209,11 +209,11 @@ s32 Credits_Run(s32 mode) {
   s32 step;
   s32 frame;
 
-  gRenderOamEnabled = 0;
+  gOamCopyEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
   gDebugTextEnabled = 0;
   gCredits_PendingSlides = 0;
-  gAutoSleepEnabled = 0;
+  gIdleSleepEnabled = 0;
   Task_ResetAll();
   Task_Add(Credits_ScrollBackgrounds, TASK_PASS_FRAME);
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
@@ -280,7 +280,7 @@ done:
   Io_Write16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);
   Window_LoadGraphics();
   DebugText_Clear();
-  gRenderOamEnabled = 1;
+  gOamCopyEnabled = 1;
   return 0;
 }
 
@@ -887,7 +887,7 @@ void EndingPicture_Scroll(void) {
 void EndingPicture_Start(void) {
   gCpuLoadDisplayEnabled = 0;
   gDebugTextEnabled = 0;
-  gAutoSleepEnabled = 0;
+  gIdleSleepEnabled = 0;
   Task_ResetAll();
   gEndingPicture_MapScroll = 0;
   gEndingPicture_Scroll = 0;

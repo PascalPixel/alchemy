@@ -439,7 +439,7 @@ struct FixedPointPosition {
 /// Runs one sparkle of the service's burst: placed on a ring 40 pixels out and
 /// sent to a point near the centre, it flies in again each time it arrives,
 /// until the burst ends and it is freed on arrival.
-void Sanctum_UpdateBurstSparkle(struct Effect_080b2f4c *sparkle) {
+void Sanctum_UpdateBurstSparkle(struct FieldParticle *sparkle) {
   struct FieldParticle *particle = (struct FieldParticle *)sparkle;
   struct FixedPointPosition position;
   s8 *statePointer;
@@ -518,11 +518,11 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   effectIndex = 0;
   effect = shop->effects;
   do {
-    FieldParticle_InitializeFar((struct Effect_080b2f4c *)effect, 0x2a0,
+    FieldParticle_InitializeFar((struct FieldParticle *)effect, 0x2a0,
                                 position.x, position.z);
-    FieldParticle_SetCallbackFar((struct Effect_080b2f4c *)effect,
+    FieldParticle_SetCallbackFar((struct FieldParticle *)effect,
                                  Sanctum_UpdateBurstSparkle);
-    FieldParticle_SetActorModeFar((struct Effect_080b2f4c *)effect, 7);
+    FieldParticle_SetActorModeFar((struct FieldParticle *)effect, 7);
     Animation_ApplyChildValuesToRecordFar(effect->object,
                                           (Random16() * 7) >> 16);
     effect->scaleY = Q16_ONE * 7 / 10;
@@ -567,7 +567,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
       active += sizeof(struct FieldParticle);
       if (flag != 0) {
-        FieldEffect_ClearOwnedSlotFar((struct Effect_080b2f4c *)particle);
+        FieldEffect_ClearOwnedSlotFar((struct FieldParticle *)particle);
       }
       particle++;
     }

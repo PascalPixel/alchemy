@@ -284,7 +284,7 @@ void AquaRockInside_FightSteam(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -300,8 +300,8 @@ extern struct ActorPlacement gAquaRockInside_Room8Placements[];
 extern struct ActorPlacement gAquaRockInside_Room9Placements[];
 extern struct ActorPlacement gAquaRockInside_Room10Placements[];
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  s16 scene = gMainRoutineWork.scene;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AquaRockInside1)
     return gAquaRockInside_Room1Placements;
@@ -488,7 +488,7 @@ void AquaRockInside_SpringDries(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Event_PlaySound(SE_557);
   priority = 0x480;
   FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
@@ -522,7 +522,7 @@ void AquaRockInside_UseAquariusStone(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   AquaRockInside_ShowAquariusStone();
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(60);
@@ -564,7 +564,7 @@ cell:
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
-  Event_PlaySound(MUS_080);
+  Event_PlaySound(MUS_PUZZLE_SOLVED);
   Sound_WaitForBgmRestore();
   Event_End();
   Scene_PlayMusic();
@@ -587,11 +587,11 @@ void AquaRockInside_StepOnLoosePlank(s32 value) {
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(108, 98, 19, 29, width, height);
   FieldEvent_Wait(15);
-  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_Get(gMainRoutineWork.currentOwner)->speedLimit =
-      Actor_Get(gMainRoutineWork.currentOwner)->acceleration = px(1) / 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->speedLimit =
+      Actor_Get(gMainRoutineWork.leaderActorId)->acceleration = px(1) / 2;
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 312, 496);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 312, 496);
   FieldEvent_Wait(5);
   FieldEvent_SetExitRequest(value);
 }
@@ -707,7 +707,7 @@ void AquaRockInside_DouseSecondWaterStone(s32 unused, s32 id) {
 }
 
 void AquaRockInside_JumpDownLedge(void) {
-  Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
+  Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
   Event_End();
 }
 
@@ -726,7 +726,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   struct Vector3 target;
   s32 result;
 
-  if (gMainRoutineWork.scene == (s32)&SceneId_AquaRockInside5) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AquaRockInside5) {
     s32 column = Actor_Get(8)->x >> 20;
 
     if (trigger == 77 && column == 17)
@@ -734,7 +734,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
     if (trigger == 78 && column == 19)
       clear = 0;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_AquaRockInside6) {
+  if (gMainRoutineWork.next == (s32)&SceneId_AquaRockInside6) {
     if (trigger == 77 && Actor_Get(10)->x >> 20 == 9)
       clear = 0;
     if (trigger == 78 && Actor_Get(11)->x >> 20 == 13)
@@ -742,7 +742,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   }
   if (clear == 0)
     return;
-  object = Actor_Get(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   goto test;
@@ -793,14 +793,14 @@ void AquaRockInside_DouseThirdWaterStone(void) {
 }
 
 void AquaRockInside_RideFalls(s32 value) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 speed;
   s32 i;
   u8 *flags;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   flags = &object->motionFlags;
   speed = 0;
   *flags = 0;
@@ -833,7 +833,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Event_PlaySound(SE_557);
     Actor_SetAnimation(9, 2);
     MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
@@ -1094,8 +1094,8 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
                                   (first->z >> 16) << 16, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
-  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
-  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = 0x3333;
@@ -1197,14 +1197,14 @@ column:
     goto column;
   Sound_Play(SE_SHIMMER);
   wait(50);
-  BattleEffect_ApplyColorToTargetBuffer(0x7fff, 0);
+  PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_ConfigureSpriteColor(firstId, 0);
   Actor_ConfigureSpriteColor(secondId, 0);
   Sound_Play(SE_574);
-  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletSettleScript);
   Actor_SetMovementTypeById(secondId, gAquaRockInside_PiersSettleScript);
@@ -1238,20 +1238,20 @@ void AquaRockInside_ReadParchTablet(void) {
   }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   gFieldWork->message = (gFieldWork->message + 1);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   FieldEvent_Wait(1);
-  Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 184);
+  Actor_WalkTo(gMainRoutineWork.leaderActorId, 256, 184);
   Actor_WalkTo(ACTOR_PIERS, 274, 184);
-  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldEvent_Wait(5);
   Event_ShowMessage(ACTOR_PIERS, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 184);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 248, 184);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldEvent_Wait(20);
@@ -1269,10 +1269,10 @@ void AquaRockInside_ReadParchTablet(void) {
   Event_SetFlag(0x9ae);
   Event_PlaySound(SE_TREMOR);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(gMainRoutineWork.currentOwner,
+  Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   AquaRockInside_WaterSinks();
@@ -1280,7 +1280,7 @@ void AquaRockInside_ReadParchTablet(void) {
   FieldEvent_Wait(30);
   FieldEvent_SetMessageId((s32)&MsgWhatWentWrong);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Actor_FaceEachOther(gMainRoutineWork.currentOwner, ACTOR_PIERS, 0);
+  Actor_FaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_PIERS, 0);
   FieldEvent_Wait(10);
   // "What went wrong? What are we going to do, Felix?"
   Event_ShowMessage(ACTOR_PIERS, 0);
@@ -1289,11 +1289,11 @@ void AquaRockInside_ReadParchTablet(void) {
   Event_ShowMessage(ACTOR_PIERS, 0);
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  object = Actor_Get(gMainRoutineWork.currentOwner);
+  object = Actor_Get(gMainRoutineWork.leaderActorId);
   if (object != 0) {
     Actor_SetDestination(ACTOR_PIERS, FIELD_AT((u8 *)object, s16, 10),
                          FIELD_AT((u8 *)object, s16, 18));
@@ -1311,10 +1311,10 @@ void AquaRockInside_WalkToParchTablet(void) {
     Message_ShowCentered(MsgCheckedTheTabletIt, 1);
     Event_End();
   } else {
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 152);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 248, 184);
-    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);
-    Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 248, 152);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 248, 184);
+    Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 184);
+    Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     FieldEvent_Wait(10);
     AquaRockInside_ReadParchTablet();
   }
@@ -1328,9 +1328,9 @@ void AquaRockInside_WalkToParchTablet(void) {
       Message_ShowCentered(MsgCheckedTheTabletIt, 1);                          \
       Event_End();                                                             \
     } else {                                                                   \
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, n1, 184);             \
-      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);            \
-      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);     \
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, n1, 184);            \
+      Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 264, 184);           \
+      Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);    \
       FieldEvent_Wait(10);                                                     \
       AquaRockInside_ReadParchTablet();                                        \
     }                                                                          \
@@ -1352,8 +1352,8 @@ extern s16 gAquaRockInside_Room8Triggers[];
 extern struct Trigger gAquaRockInside_Room9Triggers[];
 extern struct Trigger gAquaRockInside_Room10Triggers[];
 
-const u8 *Scene_GetEvents(void) {
-  s16 scene = gMainRoutineWork.scene;
+const u8 *Scene_GetTriggers(void) {
+  s16 scene = gMainRoutineWork.next;
 
   if (scene == (s32)&SceneId_AquaRockInside1)
     return gAquaRockInside_Room1Triggers;
@@ -1414,7 +1414,7 @@ void AquaRockInside_SplashBeneath(struct Actor *object) {
 }
 
 void AquaRockInside_FallThroughWater(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
   s32 speed;
@@ -1439,11 +1439,11 @@ fall:
     goto fall;
   AquaRockInside_SpawnSplash(object);
   Actor_SetSpriteColorMode(object, 0);
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   *flags = saved;
   object->velocityY = px(8);
   Event_PlaySound(SE_SPLASH_SMALL);
-  Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 168, 200);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 168, 200);
   Event_End();
 }
 
@@ -1477,7 +1477,7 @@ s32 AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b,
 // their flags (or dims those still empty), opens what the story has opened and
 // arms the room's water and cell handlers by entrance.
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
@@ -1602,7 +1602,7 @@ void Tightrope_Initialize();
 // the drained state once its flag is set. Room 6 clears its actors' x and z
 // where the other rooms clear terrainHeight and y.
 s32 Scene_PrepareMap(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
   volatile u16 control;
   // i1, i3, i4, i6, i7, i12, i14, i17 and b each hold one constant for their
@@ -1705,7 +1705,7 @@ s32 Scene_PrepareMap(void) {
     goto no_statues;
   statues:
     {
-      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       Value3((s32 (*)())AquaRockInside_AddPillar, 12, 5, 4);
       Value3((s32 (*)())AquaRockInside_AddPillar, 13, 3, 4);
       Value3((s32 (*)())AquaRockInside_AddPillar, 14, 4, 4);
@@ -1794,7 +1794,7 @@ s32 Scene_PrepareMap(void) {
     Tightrope_Place(0, 8, 9);
   } else if (scene == (s32)&SceneId_AquaRockInside9) {
     if ((u32)(entrance - 3) <= 1) {
-      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       Value3((s32 (*)())AquaRockInside_AddPillar, 10, 6, 4);
       Value3((s32 (*)())AquaRockInside_AddPillar, 11, 3, 4);
       Value3((s32 (*)())AquaRockInside_AddPillar, 12, 5, 4);
@@ -1891,11 +1891,11 @@ void AquaRockInside_FlowWithStream(void) {
   {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-    id = gMainRoutineWork.currentOwner;
+    id = gMainRoutineWork.leaderActorId;
     center = work->camera;
   }
   actor = Actor_Get(id);
-  if (gMainRoutineWork.scene == (s32)&SceneId_AquaRock1 &&
+  if (gMainRoutineWork.next == (s32)&SceneId_AquaRock1 &&
       actor->terrainHeight == 0)
     return;
   position[0] = actor->x;
@@ -1944,17 +1944,17 @@ void AquaRockInside_FlowWithStream(void) {
 #include "shared/actor_show_parts.h"
 
 void Leader_SpinAway(s32 entrance) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 i;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   leader->motionFlags = 0;
   leader->priorityFlags |= 0x20;
   Event_PlaySound(SE_SPLASH_SMALL);
   Actor_SelectAnimation(leader, 18);
-  Event_PlaySound(SE_612);
+  Event_PlaySound(SE_SPIN_AWAY);
   for (i = 0; i < 60; i++) {
     s32 angle;
 
@@ -1995,7 +1995,7 @@ void AquaRockInside_DrawPillars(void) {
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   originY = Ram_HeapSlots->mapWork->origin[1];
-  tile = gResourceTableEntries[work->vramEntry].offset >> 5;
+  tile = gVramCacheEntries[work->vramEntry].offset >> 5;
 
   for (i = 0; i < 32; i++) {
     if (entry->state != 0) {
@@ -2213,7 +2213,7 @@ void AquaRockInside_DrawSplashes(void) {
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   originY = map->origin[1];
-  tile = gResourceTableEntries[splashes->vramEntry].offset >> 5;
+  tile = gVramCacheEntries[splashes->vramEntry].offset >> 5;
   splash = splashes->splashes;
   i = 31;
 

@@ -77,7 +77,7 @@ extern char ResourceId_Data0DA;
 extern char ResourceId_Data134;
 extern char ResourceId_EffectPalette02;
 extern char ResourceId_OrangePaletteB;
-extern u8 gMapCellBuffer[];
+extern u8 gMapGridCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02011400[];
 extern u8 Data_02012964[]; // 128 sparks
@@ -153,7 +153,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   circles = (s16 *)(work->sheet + 0x4c56);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   // offset first holds the cell buffer's address, for the FlashBurst load.
-  offset = (s32)gMapCellBuffer;
+  offset = (s32)gMapGridCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0xc56, 0,
                              0);
   orange = orangeBase + 4;
@@ -162,7 +162,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   if (draw) {
     /* FAKEMATCH(temporary): the effect palette's id in a local. */
     paletteBase = (s32)&ResourceId_EffectPalette02 - 4;
-    cells = (s32)gMapCellBuffer;
+    cells = (s32)gMapGridCellBuffer;
     palette = paletteBase + 4;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,

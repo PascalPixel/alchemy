@@ -1,7 +1,7 @@
 /// Whirlwind_CarryLeader as the lower floors' copies compile it.
 void Whirlwind_CarryLeaderLower(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
   s32 facing;
@@ -51,8 +51,8 @@ void Whirlwind_CarryLeaderLower(void) {
     System_Wait(1);
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;
   Event_End();

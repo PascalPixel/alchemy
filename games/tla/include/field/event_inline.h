@@ -101,7 +101,7 @@ static inline void FieldEvent_Wait(s32 frames) { Event_Wait(frames); }
 
 /// Turns an actor to a direction and holds the event until it has turned.
 static inline void Actor_FaceDirectionAndWait(s32 actorId, s32 facing) {
-  Actor_FaceDirectionById(actorId, facing);
+  Actor_FaceDirectionAndRefreshById(actorId, facing);
 }
 
 /// Places an actor at a point at once, as Actor_SetPosition does, facing a
@@ -275,9 +275,9 @@ static inline void Event_RequestDjinnBattle(s32 actorId, s32 djinni) {
   Field_RequestDjinnBattle(actorId, djinni);
 }
 
-/// Event_PrepareObjectAndApplyValue, from an event.
+/// Event_AddPartyMember, from an event.
 static inline void Event_PrepareActorAndApplyValue(s32 unit, s32 announce) {
-  Event_PrepareObjectAndApplyValue(unit, announce);
+  Event_AddPartyMember(unit, announce);
 }
 
 /// Holds the event until the screen shake dies down

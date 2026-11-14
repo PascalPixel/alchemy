@@ -943,7 +943,7 @@ extern u8 gData_02028000[];
 
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
-void BattleEffect_LoadBufferPaletteFar(void *palette);
+void PaletteFade_LoadPaletteFar(void *palette);
 
 void TilesetAnim_StartAll(const u16 *script);
 extern char ResourceId_DefaultMapCells;
@@ -1120,7 +1120,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
 void TileMap_DecodeStagedBuffer(s32 size);
-void Tilemap_ConvertBuffer(void);
+void TileMap_ConvertBuffer(void);
 
 void MapGrid_UpdateLayerScroll(void);
 

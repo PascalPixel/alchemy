@@ -525,7 +525,7 @@ void Scoop_DigUpItem(void) {
 
   anchor = work->anchor;
   event = Ram_HeapSlots->fieldWork;
-  unit = Unit_Get(gMainRoutineWork.currentOwner);
+  unit = Unit_Get(gMainRoutineWork.leaderActorId);
 
   object = Actor_GetById(id);
   if (object == NULL) {

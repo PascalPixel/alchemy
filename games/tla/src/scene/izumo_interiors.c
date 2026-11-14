@@ -66,7 +66,7 @@ DEFINE_IZUMO_INTERIORS_IS_CLEAR(IzumoInteriors_IsSecondPacerClear, 9, 0x840000)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -80,10 +80,10 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Shop_Run(s32 slot, s32 actor);
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, animation, frames);
+  Actor_ShowEmoteById(gMainRoutineWork.leaderActorId, animation, frames);
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain;
   if (gMainRoutineWork.entrance == 7)
@@ -91,7 +91,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gIzumoInteriors_ActorPlacements;
 }
 
-const struct Trigger *Scene_GetEvents(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN))
     return gIzumoInteriors_TriggersOnceTheSerpentIsSlain;
   if (gMainRoutineWork.entrance == 7)
@@ -100,7 +100,7 @@ const struct Trigger *Scene_GetEvents(void) {
 }
 
 void IzumoInteriors_TalkToHealer(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
@@ -121,7 +121,7 @@ void IzumoInteriors_TalkToHealer(s32 actor) {
 }
 
 void IzumoInteriors_TalkToInnkeeper(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(9, actor);
@@ -139,7 +139,7 @@ void IzumoInteriors_TalkToInnkeeper(s32 actor) {
 }
 
 void IzumoInteriors_TalkToMerchant(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(24, actor);
@@ -201,7 +201,7 @@ void IzumoInteriors_TalkToUzume(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.leaderActorId, 0);
   if (GameFlag_Get(FLAG_UZUME_HAS_THE_DOLL)) {
     Event_SetMessageId((s32)MsgWithThisDancing);
     // "With this dancing doll, I can explore Mt. Mikage on my own. Take..."
@@ -240,7 +240,7 @@ void IzumoInteriors_AskAboutMtMikage(void) {
 void IzumoInteriors_ReadUzumesMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.leaderActorId, 0);
   if (Event_GetFlag(0x92b)) {
     Event_SetMessageId((s32)MsgTryingAgainWhat);
     // "Trying again, Felix? What a pest. You can see my mind, but you are..."
@@ -294,10 +294,10 @@ s32 IzumoInteriors_KushinadaPleads(void) {
     // "Susa, please... Don't try to save me."
     Event_ShowMessageAndWait(17, 0);
   }
-  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
-  Actor_WalkByById(gMainRoutineWork.currentOwner, 0, 16);
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_WalkByById(gMainRoutineWork.leaderActorId, 0, 16);
+  Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
   Event_End();
   return 0;
 }
@@ -367,7 +367,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   FieldEvent_Wait(15);
   // "Oh, Susa..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 20, 0);
-  Actor_FaceActor(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(15, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_Wait(30);
   Actor_SetDestinationOffset(15, 0, 16);
   FieldActor_WaitForMoveById(15);
@@ -634,7 +634,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_WalkToAndWait(22, 88, 568);
     Event_Wait(1);
     Actor_GetById(22)->actionFlags |= 1;
-    Actor_ArmCallback(22, FACING_EAST, 0);
+    Actor_FaceDirectionById(22, FACING_EAST, 0);
     Actor_SetSpritePriority(21, 1);
     Actor_WalkToAndWait(21, 104, 568);
     Actor_FaceActorById(*(s32 *)owner, 21, 0);
@@ -730,7 +730,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
-  Actor_ArmCallback(23, FACING_NORTH, 0);
+  Actor_FaceDirectionById(23, FACING_NORTH, 0);
   Event_Wait(15);
   // "Susa..."
   Event_ShowMessageAndWait(20, 0);
@@ -883,7 +883,7 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   // "Susa had given the beast a lot of Dragonsbane in order to weaken it."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirection(15, FACING_SOUTH, 0);
-  Actor_ArmCallback(20, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(20, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
@@ -1143,13 +1143,13 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAhCouldIt);
-  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 144, 536);
-  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 144, 536);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_Wait(15);
   Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   // "Ah... Could it be? Is this the dancing doll of Mt. Mikage?"
   Event_OpenMessage(15, 0);
-  if (!Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0)) {
+  if (!Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0)) {
     Event_SetMessageId((s32)&MsgAhCouldIt + 1);
     // "You found this at the peak of Mt. Mikage?"
     Event_ShowMessageAndWait(15, 0);
@@ -1175,7 +1175,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Actor_Jump(24, 6, 0);
   Actor_SetDestination(24, 160, 520);
   Actor_WaitForMoveById(24);
-  Actor_ArmCallback(24, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(24, FACING_SOUTH, 0);
   Event_Wait(60);
   t31 = ((s32)Actor_GetById(15));
   BattleEffect_SetObjectUpdateMode(t31, 0);
@@ -1187,7 +1187,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_Wait(30);
   // "This is my pet. It's very dear to me."
   Event_ShowMessageAndWait(15, 0);
-  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(60);
   // "I am unsure how it works, but this fellow seems to magnify our power..."
   Event_ShowMessageAndWait(15, 0);
@@ -1202,8 +1202,8 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_Wait(60);
   Actor_Jump(24, 4, 20);
   Event_Wait(60);
-  Actor_FaceActorById(15, gMainRoutineWork.currentOwner, 0);
-  Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActorById(15, gMainRoutineWork.leaderActorId, 0);
+  Actor_FaceActorById(24, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(60);
   // "Please, accept this gift."
   Event_ShowMessageAndWait(15, 0);
@@ -1212,7 +1212,7 @@ void IzumoInteriors_GiveUzumeTheDoll(void) {
   Event_End();
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceActorById(gMainRoutineWork.currentOwner, 15, 0);
+  Actor_FaceActorById(gMainRoutineWork.leaderActorId, 15, 0);
   Event_Wait(60);
   Actor_StartRepeatedMotion(15, 2);
   Event_Wait(30);
@@ -1231,7 +1231,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       !GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7) {
-    Event_PlaySound(MUS_007);
+    Event_PlaySound(MUS_IZUMO);
     Actor_SetPosition(22, 144, 568);
     Actor_SetPosition(21, 0, 0);
     Actor_SetPosition(16, 0, 0);
@@ -1242,7 +1242,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_SERPENT_SLAIN) &&
       GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
       gMainRoutineWork.entrance == 7 && GameFlag_Get(FLAG_AREA_TEMP_50)) {
-    Event_PlaySound(MUS_007);
+    Event_PlaySound(MUS_IZUMO);
     Actor_SetPosition(16, 0, 0);
     Actor_SetPosition(17, 0, 0);
     Actor_SetPosition(18, 0, 0);

@@ -122,7 +122,7 @@ void MarsLighthouseEntrance_FightBalm(void) {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -140,20 +140,20 @@ s32 MarsLighthouseEntrance_LightDragonFace(void) {
   return 0;
 }
 
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance1)
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance1)
     return gMarsLighthouseEntrance_Room1Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance2)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance2)
     return gMarsLighthouseEntrance_Room2Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance3)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance3)
     return gMarsLighthouseEntrance_Room3Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance4)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance4)
     return gMarsLighthouseEntrance_Room4Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance5)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance5)
     return gMarsLighthouseEntrance_Room5Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance6)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance6)
     return gMarsLighthouseEntrance_Room6Placements;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance7)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance7)
     return gMarsLighthouseEntrance_Room7Placements;
   return gMarsLighthouseEntrance_Placements;
 }
@@ -168,7 +168,7 @@ UNUSED void MarsLighthouseEntrance_BeginBlazeOnStatue(void) {
   event->unkd38 = 1;
 }
 
-extern struct MapCell gMapCellBuffer[];
+extern struct MapCell gMapGridCellBuffer[];
 
 #include "shared/map_cell_get.h"
 
@@ -184,7 +184,7 @@ void Teleport_PlaySparks(void);
 extern u16 gMarsLighthouseEntrance_HoleMaskVram;
 extern u32 gMarsLighthouseEntrance_HoleMaskSprite[3];
 extern s16 gMarsLighthouseEntrance_DragonFireTimer;
-void TileMap_ConvertBuffer(s32 scene, s32 a1);
+void Map_CopyPalette(s32 scene, s32 a1);
 s32 FieldEffect_StartBlankOverlay();
 s32 Weather_StartRain();
 extern s32 Data_02006878;
@@ -377,9 +377,9 @@ void MarsLighthouseEntrance_Teleport(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Teleport_PlaySparks();
-    WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
-    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-    Actor_SetHorizontalPositionWithTerrain_(gMainRoutineWork.currentOwner,
+    WORD_AT(Actor_Get(gMainRoutineWork.leaderActorId), 108) = 0;
+    FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 0);
+    Actor_SetHorizontalPositionWithTerrain_(gMainRoutineWork.leaderActorId,
                                             px(688), px(360));
     FieldCamera_MoveTo(688, CAMERA_KEEP, 360, 1);
     FieldCamera_WaitForArrival();
@@ -473,7 +473,7 @@ void MarsLighthouseEntrance_CrackRoom3IceSheet(void) {
   struct Actor *object = Actor_Get(20);
 
   if (!Flag_IsSet(FLAG_ROOM3_SECOND_SHEET_BURST)) {
-    Event_PlaySound(SE_573);
+    Event_PlaySound(SE_ICE_CRACK);
     Flag_Set(FLAG_ROOM3_SECOND_SHEET_SHOWN);
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
@@ -589,7 +589,7 @@ void MarsLighthouseEntrance_CrackRoom5IceSheet(void) {
   struct Actor *object = Actor_Get(12);
 
   if (!Flag_IsSet(FLAG_ROOM5_SHEET_BURST)) {
-    Event_PlaySound(SE_573);
+    Event_PlaySound(SE_ICE_CRACK);
     Flag_Set(FLAG_ROOM5_SHEET_SHOWN);
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
@@ -702,8 +702,8 @@ void MarsLighthouseEntrance_DrawHoleMask(void) {
   s32 cameraZ = camera[1] & 0xffff0000;
   s32 originY = map->origin[1];
   s32 tile =
-      gResourceTableEntries[gMarsLighthouseEntrance_HoleMaskVram].offset >> 5;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+      gVramCacheEntries[gMarsLighthouseEntrance_HoleMaskVram].offset >> 5;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 y, z, depth, sx, sy;
   u32 *word;
 
@@ -761,22 +761,22 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
   s32 x, z;
   s32 i;
 
-  actor = Actor_Get(gMainRoutineWork.currentOwner);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   actor->update = NULL;
   {
     s32 value = 0x100;
 
-    FieldActor_ShowEmote(gMainRoutineWork.currentOwner, value, 0);
+    FieldActor_ShowEmote(gMainRoutineWork.leaderActorId, value, 0);
   }
   Actor_SelectAnimation(actor, 27);
   Actor_SetAnimationSpeed(actor, 48);
   System_Wait(30);
   actor->facing = FACING_SOUTH;
   actor->motionFlags = 0;
-  buffer = gMapCellBuffer;
+  buffer = gMapGridCellBuffer;
   x = actor->x >> 20;
   z = actor->z >> 20;
   map = Ram_HeapSlots->mapWork;
@@ -790,7 +790,7 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
     REG_DISPCNT |= DISPCNT_OBJWIN_ON;
     MarsLighthouseEntrance_StartHoleMask();
   }
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   FieldEvent_Wait(16);
   i = 0;
 next:
@@ -803,7 +803,7 @@ next:
   i++;
   if (i <= 39)
     goto next;
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -833,7 +833,7 @@ void Actor_HoldDuringEvent__mars_lighthouse_entrance(void) __asm__(
 
 /// The dragon face wakes and begins its slow way left, breathing fire.
 void MarsLighthouseEntrance_WakeDragonFace(void) {
-  Event_PlaySound(SE_584);
+  Event_PlaySound(SE_BUTTON_PRESS);
   Flag_Set(FLAG_NO_PLACE_TO_SAVE);
   Actor_SetScript(11, gMarsLighthouseEntrance_DragonFaceGoesLeft);
   Ride_SetEntryState(0, 3);
@@ -849,7 +849,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 /// The leader drops through a cracked floor tile.
 void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 z = leader->z;
   s32 i = leader->x >> 20;
 
@@ -857,9 +857,9 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   GameFlag_SetByte(0x348, z >> 20);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   leader->update = 0;
-  FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
+  FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SelectAnimation(leader, 27);
   Actor_SetAnimationSpeed(leader, 48);
@@ -875,7 +875,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
     REG_DISPCNT |= 0x8000;
     MarsLighthouseEntrance_StartHoleMask();
   }
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   FieldEvent_Wait(16);
   i = 0;
 next:
@@ -888,7 +888,7 @@ next:
   i++;
   if (i <= 39)
     goto next;
-  Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -908,10 +908,10 @@ void MarsLighthouseEntrance_CheckCrackedFloor(void) {
   s32 z;
   struct MapCell *cell;
 
-  object = Actor_Get(party->currentOwner);
+  object = Actor_Get(party->leaderActorId);
   x = object->x >> 20;
   z = object->z >> 20;
-  cell = gMapCellBuffer;
+  cell = gMapGridCellBuffer;
   if (map != NULL)
     cell = map->layers[object->terrainId & 3].cells;
   cell += x + (z << 7);
@@ -919,20 +919,20 @@ void MarsLighthouseEntrance_CheckCrackedFloor(void) {
     MarsLighthouseEntrance_FallThroughCrack(cell + 128);
 }
 
-const struct Trigger *Scene_GetEvents(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance1)
+const struct Trigger *Scene_GetTriggers(void) {
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance1)
     return gMarsLighthouseEntrance_Room1Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance2)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance2)
     return gMarsLighthouseEntrance_Room2Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance3)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance3)
     return gMarsLighthouseEntrance_Room3Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance4)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance4)
     return gMarsLighthouseEntrance_Room4Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance5)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance5)
     return gMarsLighthouseEntrance_Room5Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance6)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance6)
     return gMarsLighthouseEntrance_Room6Triggers;
-  if (gMainRoutineWork.scene == (s32)&SceneId_MarsLighthouseEntrance7)
+  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseEntrance7)
     return gMarsLighthouseEntrance_Room7Triggers;
   return gMarsLighthouseEntrance_Triggers;
 }
@@ -1037,7 +1037,7 @@ extern s16 gMarsLighthouseEntrance_FadeColorsTo[];
 extern u32 gMarsLighthouseEntrance_FadeOrder[];
 
 s32 Scene_Initialize(void) {
-  s32 scene = gMainRoutineWork.scene;
+  s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
   s32 i;
@@ -1106,14 +1106,14 @@ s32 Scene_Initialize(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       MapGrid_SetShake(0, 2, 1);
-      Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
+      Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
       Actor_SetPosition(18, 0, 0);
       Actor_Get(18)->priorityFlags |= 2;
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       object = Actor_Get(18);
       Actor_SetPosition(18, object->timer, object->unk66);
-      Event_PlaySound(SE_573);
+      Event_PlaySound(SE_ICE_CRACK);
       i = 2;
       do {
         MarsLighthouseEntrance_ScatterIceChips(18);
@@ -1243,8 +1243,8 @@ void Actor_HoldDuringEvent(void);
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
-    TileMap_ConvertBuffer(
-        gMainRoutineWork.map +
+    Map_CopyPalette(
+        gMainRoutineWork.mapId +
             ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
         0x5000000);
   return 0;
@@ -1577,7 +1577,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
    * it returns nothing. */
   Party_TakeFallDamage__s2860(-10, 0);
   FieldCamera_SetSpeed(7);
-  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
@@ -1814,7 +1814,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           cell->collisionCode = 0;
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
-          Event_PlaySound(SE_573);
+          Event_PlaySound(SE_ICE_CRACK);
           Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                        actor->facing);
         }
@@ -1838,7 +1838,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
 
     work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2860 *)(gInventorySnapshot + 0x188);
-    target = Actor_Get(gMainRoutineWork.currentOwner);
+    target = Actor_Get(gMainRoutineWork.leaderActorId);
     if (ABS(actor->x - target->x) < 0x140000 &&
         (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
         ABS(actor->z - target->z) < 0x140000) {
@@ -1884,7 +1884,7 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
 extern s16 gMarsLighthouseEntrance_DragonFireTimer;
 extern u16 gMarsLighthouseEntrance_HoleMaskVram;
 
-void TileMap_ConvertBuffer(s32 scene, s32 a1);
+void Map_CopyPalette(s32 scene, s32 a1);
 
 #include "shared/actor_attach.h"
 
@@ -1951,7 +1951,7 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -2035,7 +2035,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 /// A cracked tile gives way under the leader, who drops through it.
 void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x;
   s32 z;
   s32 mask;
@@ -2057,7 +2057,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
     object->facing = FACING_SOUTH;
     object->motionFlags = zero;
   }
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   {
     u32 winout = 0xf1f;
 
@@ -2067,7 +2067,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
   } while (0);
   REG_DISPCNT |= 0x8000;
   event->busy = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
     if (x == 5)
@@ -2078,7 +2078,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
     System_Wait(1);
   }
   do {
-    Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
+    Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
   } while (0);
   event->busy = 0;
   gFieldWork->transition = 0x209;
@@ -2093,7 +2093,7 @@ void Teleport_PlayWhirl(void);
 
 /// The leader lands from the floor above in a puff of dust.
 void MarsLighthouseEntrance_LandFromCrack(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
   struct Vector3 velocity;
   u32 i;
@@ -2134,18 +2134,18 @@ next:
   if (++i <= 16)
     goto next;
   Event_PlaySound(SE_THUMP);
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
-  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Event_End();
 }
 
@@ -2164,7 +2164,7 @@ void MarsLighthouseEntrance_DropThroughCrack__s42f8(
   MarsLighthouseEntrance_DropThroughCrack__s42f8
 
 s32 CrackedTiles_Step(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
   struct CellTarget *work = &gCrackedTiles;
@@ -2192,7 +2192,7 @@ s32 CrackedTiles_Step(void) {
 }
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 dx = FieldGameFlag_GetByte(gCrackedTiles.flagByte);
   s32 dz = FieldGameFlag_GetByte(gCrackedTiles.flagByte + 8);

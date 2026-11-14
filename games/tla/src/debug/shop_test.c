@@ -676,11 +676,6 @@ extern char gShopTest_ItemPrompt[];
 extern char gShopTest_ItemHelp[];
 extern char gShopTest_ItemFull[];
 
-struct ItemSummary {
-  u8 unk00[6];
-  u16 icon;
-};
-
 void WindowSprite_PrepareForRedraw(void *window);
 void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x, s32 y);
 void Text_DrawMessageAsTiles(s32 message, void *window, s32 x, s32 y);

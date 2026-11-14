@@ -81,8 +81,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-// clang-format off
-s32 gData_0200015c[] = {
-    0x2000200, 0x3600400, -1, -1,
+/// Unused: four halfwords (512, 512, 1024, 864) and an end of -1s after the
+/// room's tables; nothing reads them.
+s32 gTestScenes_UnusedRow[] = {
+    0x2000200,
+    0x3600400,
+    -1,
+    -1,
 };
-// clang-format on

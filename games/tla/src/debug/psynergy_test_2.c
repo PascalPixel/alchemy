@@ -51,7 +51,8 @@ void PsynergyTest2_EndRocks(void);
 
 void Rope_Coil(s32 a, s32 b, s32 c);
 
-void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
+void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
+                              s32 gravity);
 
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 

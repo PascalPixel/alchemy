@@ -178,7 +178,7 @@ void FieldPsynergy_Whirlwind(void) {
       kind = ORB_HANDOFF;
   }
 
-  SET_POSITION(&from, caster->x, caster->y, caster->z);
+  SET_POSITION(&from, caster->x.fixed, caster->y.fixed, caster->z.fixed);
   SET_POSITION(&to, scene->x, scene->y - px(4), scene->z);
   orb = Actor_Spawn(ORB_OBJECT, 0, 0, 0);
   if (orb == 0)
@@ -190,9 +190,9 @@ void FieldPsynergy_Whirlwind(void) {
   do {
     s32 scale;
 
-    SET_POSITION(orb, from.x + (to.x - from.x) * step / 10,
-                 from.y + (to.y - from.y) * step / 10,
-                 from.z + (to.z - from.z) * step / 10);
+    SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / 10,
+                       from.y + (to.y - from.y) * step / 10,
+                       from.z + (to.z - from.z) * step / 10);
     scale = step * 0x10ccc / 10 + Q16_ONE / 4; // from 0.25 to 1.3
     orb->scaleX = scale;
     orb->scaleY = scale;
@@ -218,7 +218,8 @@ void FieldPsynergy_Whirlwind(void) {
     for (i = 0; i <= 15; i++) {
       s32 distance;
 
-      SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + px(4), orb->z);
+      SET_POSITION(&position, orb->x.fixed, orb->y.fixed + i * 0xcccc + px(4),
+                   orb->z.fixed);
       distance = Random16() * 5 + px(3);
       Vector_AddPolarOffset(distance, Random16(), &position);
       mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
@@ -247,7 +248,8 @@ void FieldPsynergy_Whirlwind(void) {
       for (i = 0; i <= 15; i++) {
         s32 distance;
 
-        SET_POSITION(&position, orb->x, orb->y + i * 0xcccc + px(4), orb->z);
+        SET_POSITION(&position, orb->x.fixed, orb->y.fixed + i * 0xcccc + px(4),
+                     orb->z.fixed);
         distance = Random16() * 5;
         distance += px(3);
         Vector_AddPolarOffset(distance, Random16(), &position);
@@ -348,7 +350,7 @@ void FieldPsynergy_Halt(void) {
   s32 step;
   s32 i;
 
-  scene->y = user->y;
+  scene->y = user->y.fixed;
   obj = Actor_Spawn(309, 0, 0, 0);
   step = 0;
   Actor_SelectAnimationFar(obj, 0);
@@ -356,15 +358,15 @@ void FieldPsynergy_Halt(void) {
     return;
 
   FieldPsynergy_FadeToCastColor();
-  SET_POSITION(&from, user->x, user->y + px(16), user->z);
+  SET_POSITION(&from, user->x.fixed, user->y.fixed + px(16), user->z.fixed);
   SET_POSITION(&to, scene->x, scene->y + px(8), scene->z);
   for (;;) {
     s32 steps = 11;
     s32 scale;
 
-    SET_POSITION(obj, from.x + (to.x - from.x) * step / 10,
-                 from.y + (to.y - from.y) * step / 10,
-                 from.z + (to.z - from.z) * step / 10);
+    SET_ACTOR_POSITION(obj, from.x + (to.x - from.x) * step / 10,
+                       from.y + (to.y - from.y) * step / 10,
+                       from.z + (to.z - from.z) * step / 10);
     scale = BattleEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
     obj->scaleX = scale;
     obj->scaleY = scale;
@@ -386,7 +388,7 @@ void FieldPsynergy_Halt(void) {
 
   slot = &((struct FallbackScene *)scene)->slots[0];
   for (i = 0; i < 16; i++) {
-    SET_POSITION(&pos, obj->x, obj->y + px(8), obj->z);
+    SET_POSITION(&pos, obj->x.fixed, obj->y.fixed + px(8), obj->z.fixed);
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(px(4), Random16(), &pos);
     FieldParticle_Initialize(slot, 673, pos.x, pos.z);
@@ -395,7 +397,7 @@ void FieldPsynergy_Halt(void) {
     slot++;
   }
 
-  SET_POSITION(&pos, obj->x, obj->y + px(8), obj->z);
+  SET_POSITION(&pos, obj->x.fixed, obj->y.fixed + px(8), obj->z.fixed);
   wait(8);
   Actor_ReleaseFar(obj);
   wait(4);
@@ -478,10 +480,11 @@ void FieldPsynergy_Catch(void) {
   s32 index;
   s32 steps = 11;
 
-  SET_POSITION(&origin, mainObject->x, mainObject->y + 0x100000, mainObject->z);
+  SET_POSITION(&origin, mainObject->x.fixed, mainObject->y.fixed + 0x100000,
+               mainObject->z.fixed);
   if (scene->enabled) {
-    SET_POSITION(&target, mainObject->x, mainObject->y + 0x200000,
-                 mainObject->z);
+    SET_POSITION(&target, mainObject->x.fixed, mainObject->y.fixed + 0x200000,
+                 mainObject->z.fixed);
     Vector_AddPolarOffset(px(32), scene->angle, &target.x);
   } else {
     SET_POSITION(&target, scene->x, scene->y + 0x200000, scene->z);
@@ -501,9 +504,9 @@ void FieldPsynergy_Catch(void) {
   do {
     s32 scale;
 
-    SET_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
-                 origin.y + (target.y - origin.y) * step / 10,
-                 origin.z + (target.z - origin.z) * step / 10);
+    SET_ACTOR_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
+                       origin.y + (target.y - origin.y) * step / 10,
+                       origin.z + (target.z - origin.z) * step / 10);
     scale = Interpolate(Q16_ONE / 4, Q16_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
@@ -514,16 +517,17 @@ void FieldPsynergy_Catch(void) {
   Actor_SelectAnimationFar(object, 6);
   wait(15);
   for (index = 0; index < 10; index++) {
-    object->y -= px(2);
+    object->y.fixed -= px(2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, 5);
   Sound_PlayFar(SE_WATER);
   if (secondary != 0)
-    Actor_SetPositionAndResetMotionFar(secondary, -px(9), secondary->y, -px(9));
+    Actor_SetPositionAndResetMotionFar(secondary, -px(9), secondary->y.fixed,
+                                       -px(9));
   wait(20);
   for (index = 0; index < 13; index++) {
-    object->y += px(3) / 2;
+    object->y.fixed += px(3) / 2;
     wait(1);
   }
   wait(10);
@@ -532,9 +536,9 @@ void FieldPsynergy_Catch(void) {
   do {
     s32 scale;
 
-    SET_POSITION(object, target.x + (origin.x - target.x) * step / 10,
-                 target.y + (origin.y - target.y) * step / 10,
-                 target.z + (origin.z - target.z) * step / 10);
+    SET_ACTOR_POSITION(object, target.x + (origin.x - target.x) * step / 10,
+                       target.y + (origin.y - target.y) * step / 10,
+                       target.z + (origin.z - target.z) * step / 10);
     scale = Interpolate(Q16_ONE, Q16_ONE / 4, step);
     object->scaleX = scale;
     object->scaleY = scale;
@@ -565,7 +569,7 @@ void FieldPsynergy_UpdateLash(void) {
     s32 speed;
 
     particle = &work->particles[work->next];
-    SET_POSITION(particle, object->x, object->y, object->z);
+    SET_POSITION(particle, object->x.fixed, object->y.fixed, object->z.fixed);
     distance = Random16() * 12 + 0x40000;
     Vector_AddPolarOffset(distance, Random16(), particle);
     particle->velocityX = 0;
@@ -624,7 +628,7 @@ void FieldPsynergy_UpdateLash(void) {
     if (work->timer == 0)
       work->flash = 1;
     Rope_GetEndNodePosition(event->targetX, &position);
-    SET_POSITION(object, position.x, position.y - 0x40000, position.z);
+    SET_ACTOR_POSITION(object, position.x, position.y - 0x40000, position.z);
     if (work->hit != 0) {
       work->phase++;
       work->timer = -1;
@@ -637,7 +641,7 @@ void FieldPsynergy_UpdateLash(void) {
   case 3:
     Actor_SelectAnimationFar(object, 3);
     work->spawnCount = 3;
-    object->y += work->timer << 17;
+    object->y.fixed += work->timer << 17;
     if (work->timer == 10) {
       work->phase++;
       work->timer = -1;
@@ -731,7 +735,7 @@ void FieldPsynergy_Lash(void) {
       sprite->oam.priority = 0;
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
-      SET_POSITION(particle, object->x, object->y, object->z);
+      SET_POSITION(particle, object->x.fixed, object->y.fixed, object->z.fixed);
       Vector_AddPolarOffset(px(12), Random16(), particle);
       particle->timer = -1;
       sprite++;
@@ -743,13 +747,14 @@ void FieldPsynergy_Lash(void) {
     Actor_SelectAnimationFar(object, 1);
     wait(10);
     for (i = 15; i >= 0; i--) {
-      object->y += -px(2);
+      object->y.fixed += -px(2);
       wait(1);
     }
     Sound_PlayFar(SE_WATER);
     if (scene->enabled != 0) {
       for (i = 15; i >= 0; i--)
-        BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
+        BattleEffect_SpawnScatterParticle(object->x.fixed, object->y.fixed,
+                                          object->z.fixed);
       wait(1);
     } else {
       wait(6);
@@ -799,7 +804,7 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   scaleX = obj->scaleX;
   scale = scaleX + step;
   obj->facing += TRIG_TURN / 8;
-  obj->y += px(1);
+  obj->y.fixed += px(1);
   obj->scaleX = scale;
   if ((s32)scale < 0x3000) {
     obj->spriteStorageKind = 0;
@@ -943,7 +948,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   if (party->mapId == SCENE_CLEAR)
     limit = particle->groundHeight + 0x40000;
 
-  y = particle->y;
+  y = particle->y.fixed;
   if (y <= limit) {
     Actor_ReleaseFar(particle);
     return;
@@ -954,8 +959,8 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
-  SET_POSITION(particle, source->x, y - 0x20000,
-               source->z + ((Q16_ONE - scale) * 5) + 0x90000);
+  SET_ACTOR_POSITION(particle, source->x.fixed, y - 0x20000,
+                     source->z.fixed + ((Q16_ONE - scale) * 5) + 0x90000);
 }
 
 void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
@@ -970,7 +975,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   if (party->mapId == SCENE_CLEAR)
     limit = particle->groundHeight + 0x40000;
 
-  y = particle->y;
+  y = particle->y.fixed;
   if (y <= limit) {
     Actor_ReleaseFar(particle);
     return;
@@ -981,8 +986,8 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
     scale = Q16_ONE;
   particle->scaleX = scale;
   particle->scaleY = -scale;
-  SET_POSITION(particle, source->x, y - 0x20000,
-               source->z - ((Q16_ONE - scale) * 5) + 0x100000);
+  SET_ACTOR_POSITION(particle, source->x.fixed, y - 0x20000,
+                     source->z.fixed - ((Q16_ONE - scale) * 5) + 0x100000);
 }
 
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
@@ -1238,9 +1243,9 @@ void BattleEffect_UpdateArcEffect(void) {
       struct ArcSprite__f0e150c *sprite;
       s32 x, y;
 
-      position[0] = target->x;
-      position[1] = target->y + (work->age[group] << 16);
-      position[2] = target->z;
+      position[0] = target->x.fixed;
+      position[1] = target->y.fixed + (work->age[group] << 16);
+      position[2] = target->z.fixed;
       Camera_WorldToScreen(position);
       x = position[0];
       y = position[2];
@@ -1386,7 +1391,7 @@ again:
       object = event->actors[objectIndex];
       if (object != NULL && object->script != NULL &&
           (object->collisionFlags & 1) && object != scene->mainObject &&
-          FieldPsynergy_CheckOverlap(&motion->x, 2, &object->x,
+          FieldPsynergy_CheckOverlap(&motion->x, 2, &object->x.fixed,
                                      object->radius - 2) >= 0)
         goto hit;
     }
@@ -1611,8 +1616,8 @@ void FieldPsynergy_Unnamed29(void) {
   *(volatile s32 *)&sprite->scaleX = 0x6666;
   *(volatile s32 *)&sprite->scaleY = 0x6666;
   sprite->angle = scene->angle;
-  pos[0] = scene->mainObject->x;
-  pos[2] = scene->mainObject->z;
+  pos[0] = scene->mainObject->x.fixed;
+  pos[2] = scene->mainObject->z.fixed;
   motion = &work->bowMotion;
   Vector_AddPolarOffset(px(8), scene->angle, pos);
   SET_POSITION(motion, pos[0], px(16), pos[2]);
@@ -1631,8 +1636,8 @@ void FieldPsynergy_Unnamed29(void) {
   *(volatile s32 *)&sprite->scaleX = 0;
   *(volatile s32 *)&sprite->scaleY = 0;
   sprite->angle = scene->angle;
-  pos[0] = scene->mainObject->x;
-  pos[2] = scene->mainObject->z;
+  pos[0] = scene->mainObject->x.fixed;
+  pos[2] = scene->mainObject->z.fixed;
   motion = &work->arrowMotion;
   Vector_AddPolarOffset(px(18), scene->angle, pos);
   SET_POSITION(motion, pos[0], px(16), pos[2]);
@@ -1645,13 +1650,13 @@ void FieldPsynergy_Unnamed29(void) {
   canvas->mode = CANVAS_SPRITE_256_COLORS;
   canvas->command = 0;
   canvas->angle = scene->angle;
-  work->start[0] = scene->mainObject->x;
-  work->start[1] = scene->mainObject->y;
-  work->start[2] = scene->mainObject->z;
+  work->start[0] = scene->mainObject->x.fixed;
+  work->start[1] = scene->mainObject->y.fixed;
+  work->start[2] = scene->mainObject->z.fixed;
   blue = 31 << 10;
-  work->target[0] = scene->mainObject->x;
-  work->target[1] = scene->mainObject->y;
-  work->target[2] = scene->mainObject->z;
+  work->target[0] = scene->mainObject->x.fixed;
+  work->target[1] = scene->mainObject->y.fixed;
+  work->target[2] = scene->mainObject->z.fixed;
   Vector_AddPolarOffset(px(80), scene->angle, work->target);
 
   palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
@@ -1710,8 +1715,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
   event->unk_d40 = -1;
   event->unk_d42 = -1;
   for (i = 0; i <= 20; i++) {
-    x = owner->x + (gFieldPsynergy_NearbyCellOffsets[i * 2] << 20);
-    z = owner->z + (gFieldPsynergy_NearbyCellOffsets[i * 2 + 1] << 20);
+    x = owner->x.fixed + (gFieldPsynergy_NearbyCellOffsets[i * 2] << 20);
+    z = owner->z.fixed + (gFieldPsynergy_NearbyCellOffsets[i * 2 + 1] << 20);
     kind = MapGrid_GetCycloneCellKind(x, z, owner->layer);
     // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;

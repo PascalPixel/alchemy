@@ -104,8 +104,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   user = first->object;
   target = second->object;
   percent = 90;
-  x = user->x + percent * (target->x - user->x) / 100;
-  z = user->z + percent * (target->z - user->z) / 100;
+  x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
+  z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
   userHeight = BattleUnit_GetEffectHeightFar(args->user);
   targetHeight = BattleUnit_GetEffectHeightFar(args->targets[0]);
   EffectPosition_ProjectBattler(args->targets[0], &targetScreen);
@@ -131,8 +131,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     if (frame == 11) {
       target->scaleY = -target->scaleY;
       user->scaleY = -user->scaleY;
-      user->y += userHeight;
-      target->y += targetHeight;
+      user->y.fixed += userHeight;
+      target->y.fixed += targetHeight;
     }
 
     // Frame 54: the hit. The target flashes and both are thrown back, the
@@ -148,16 +148,16 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       user->speedLimit = px(2);
       user->steeringFlags = 0;
       Actor_StartIdleFar(user);
-      Actor_SetMoveTargetFar(user, 0, 0, user->z);
+      Actor_SetMoveTargetFar(user, 0, 0, user->z.fixed);
     }
 
     if (args->variant == 0) {
       // The flash, and the ring of flashes, at the user.
       Transform_Reset();
       Transform_SetLookAt(camera->eye, camera->focus);
-      point[0] = user->x;
-      point[1] = user->y;
-      point[2] = user->z;
+      point[0] = user->x.fixed;
+      point[1] = user->y.fixed;
+      point[2] = user->z.fixed;
       EffectPosition_ProjectPoint(point, &screen);
       screen.x >>= 1;
       if (frame == 54 || frame == 55)
@@ -249,8 +249,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     if (frame == 64) {
       target->scaleY = -target->scaleY;
       user->scaleY = -user->scaleY;
-      user->y -= userHeight;
-      target->y -= targetHeight;
+      user->y.fixed -= userHeight;
+      target->y.fixed -= targetHeight;
       Actor_SelectAnimationFar(user, 0);
     }
     if (frame == 54) {

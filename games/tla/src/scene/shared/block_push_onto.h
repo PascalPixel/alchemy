@@ -72,7 +72,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   lead->targetZ = 0x80000000;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.fixed = lead->x.part.pixel << 16;
-  lead->z.fixed = lead->z.part.pixel << 16;
+  lead->x.fixed = lead->x.part[0].pixel << 16;
+  lead->z.fixed = lead->z.part[0].pixel << 16;
   Actor_SelectAnimation(lead, 1);
 }

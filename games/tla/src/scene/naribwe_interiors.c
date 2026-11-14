@@ -822,7 +822,7 @@ s32 Scene_Initialize(void) {
 
   object = Actor_Get(18);
   object->motionFlags = 0;
-  object->y = -px(4);
+  object->y.fixed = -px(4);
   object->groundHeight = -px(4);
   Actor_Get(18)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(18, 1);
@@ -830,7 +830,7 @@ s32 Scene_Initialize(void) {
 
   object = Actor_Get(19);
   object->motionFlags = 0;
-  object->y = px(12);
+  object->y.fixed = px(12);
   object->groundHeight = px(12);
   Actor_Get(19)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(19, 1);
@@ -838,7 +838,7 @@ s32 Scene_Initialize(void) {
 
   object = Actor_Get(20);
   object->motionFlags = 0;
-  object->y = px(12);
+  object->y.fixed = px(12);
   object->groundHeight = px(12);
   Actor_Get(20)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(20, 1);

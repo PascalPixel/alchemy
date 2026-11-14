@@ -139,10 +139,10 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   s32 i;
 
   object = Actor_Get(id);
-  if (object->x >> 20 == 10 && object->z >> 20 == 32) {
+  if (object->x.fixed >> 20 == 10 && object->z.fixed >> 20 == 32) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y += px(2);
+      object->y.fixed += px(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -198,14 +198,14 @@ void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 angle = object->timer;
   s16 height = object->userValue;
 
-  SET_POSITION(object,
-               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (232 << 16),
-               (height * 3 << 16) - (120 << 16), 130 << 18);
+  SET_ACTOR_POSITION(
+      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (232 << 16),
+      (height * 3 << 16) - (120 << 16), 130 << 18);
   if ((s16)object->userValue == 1)
     Actor_SelectAnimation(object, 7);
   if ((s16)object->userValue == 38)
     Actor_SelectAnimation(object, 2);
-  if (object->y > 0)
+  if (object->y.fixed > 0)
     object->userValue = 0xffff;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -259,15 +259,15 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
-    leader->y = leader->groundHeight = -px(120);
+    leader->y.fixed = leader->groundHeight = -px(120);
     Event_StartScreenTransition();
     FieldEvent_Wait(10);
-    for (i = 0; i <= 89 && leader->y < 0; i++) {
-      leader->groundHeight = leader->y = leader->y + px(3);
+    for (i = 0; i <= 89 && leader->y.fixed < 0; i++) {
+      leader->groundHeight = leader->y.fixed = leader->y.fixed + px(3);
       leader->facing += 0x1800;
       System_Wait(2);
     }
-    leader->groundHeight = leader->y = 0;
+    leader->groundHeight = leader->y.fixed = 0;
     leader->facing = FACING_SOUTH;
     leader->motionFlags = 3;
     leader->velocityY = px(3);
@@ -362,10 +362,10 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+    position[0] = self->x.fixed;
+    position[1] = self->y.fixed;
+    position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
@@ -374,11 +374,11 @@ void Whirlwind_UpdateLower(struct Actor *self) {
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
+        distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
-          distance = self->y - leader->y;
+          distance = self->y.fixed - leader->y.fixed;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -403,9 +403,9 @@ void Whirlwind_UpdateLower(struct Actor *self) {
         do {
           multiply = Iwram_MulQ16;
         } while (0);
-        self->x += multiply(cosine, speed);
+        self->x.fixed += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }
@@ -439,10 +439,10 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
     options.startScaleX = 0xb333;
     options.startScaleY = 0xb333;
     options.palette = 14;
-    x = object->x + ((((Random16() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - ((Random16() * 20) >> 16)) << 16);
+    x = object->x.fixed + ((((Random16() * 9) >> 16) - 4) << 16);
+    y = object->y.fixed + ((32 - ((Random16() * 20) >> 16)) << 16);
     velocityY = (s32)(((((Random16() * 5) >> 16) << 16) + 0x50000)) / 10;
-    FieldEffect_Spawn(x, y, object->z, 0, velocityY, 0,
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
                       &options);
@@ -468,32 +468,32 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   Actor_SetPosition(10, 552, 256);
   Actor_Get(24)->scaleX = 0;
   rider->motionFlags = 0;
-  rider->y = rider->groundHeight;
+  rider->y.fixed = rider->groundHeight;
   left->motionFlags = 0;
-  left->y = left->groundHeight;
+  left->y.fixed = left->groundHeight;
   right->motionFlags = 0;
-  right->y = right->groundHeight;
+  right->y.fixed = right->groundHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    left->y += 0x66640;
-    rider->y += 0x1eb80;
-    rider->x += -0x28f40;
+    left->y.fixed += 0x66640;
+    rider->y.fixed += 0x1eb80;
+    rider->x.fixed += -0x28f40;
     sprite->rotation += 0x800;
     Actor_SetSpriteColorMode(Actor_Get(9), 4);
     Actor_SetSpriteColorMode(Actor_Get(11), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    right->y += 0x66640;
-    rider->y += 0x1eb80;
-    rider->x += 0x28f40;
+    right->y.fixed += 0x66640;
+    rider->y.fixed += 0x1eb80;
+    rider->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
     Actor_SetSpriteColorMode(Actor_Get(10), 4);
     Actor_SetSpriteColorMode(Actor_Get(12), 4);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    left->y += 0x199900;
-    right->y += 0x199900;
-    rider->y += 0x1b8480;
+    left->y.fixed += 0x199900;
+    right->y.fixed += 0x199900;
+    rider->y.fixed += 0x1b8480;
     left->motionFlags = 4;
     right->motionFlags = 4;
     rider->motionFlags = 4;
@@ -522,13 +522,13 @@ void LightSprites_Draw(void) {
 
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x != 0) {
+    if (actor != 0 && actor->x.fixed != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
       u32 *word;
-      ox = actor->x - viewX;
-      y = actor->y - viewY + 0x80000;
-      z = actor->z - viewZ - viewY;
+      ox = actor->x.fixed - viewX;
+      y = actor->y.fixed - viewY + 0x80000;
+      z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
       big = gLightSpritesLarge;
@@ -827,8 +827,8 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
   struct CellTarget *puzzle = &gCrackedTiles;
   struct CellTargetEntry *tile = puzzle->entries;
   s32 i;
@@ -865,11 +865,11 @@ void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x = ((x + dx) << 20) + 0x80000;
-    object->z = ((z + dz) << 20) + 0x80000;
+    object->x.fixed = ((x + dx) << 20) + 0x80000;
+    object->z.fixed = ((z + dz) << 20) + 0x80000;
     shadow = *(struct Actor **)(event + 460);
-    shadow->x = object->x;
-    shadow->z = object->z;
+    shadow->x.fixed = object->x.fixed;
+    shadow->z.fixed = object->z.fixed;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = value;

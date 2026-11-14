@@ -5,10 +5,10 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   s32 *to;
   s32 *from;
 
-  to = &other->x;
-  from = &self->x;
+  to = &other->x.fixed;
+  from = &self->x.fixed;
   if (Lemuria_Distance(to, from) < range) {
-    u32 angle = (u16)ArcTan2(other->z - self->z, *to - *from);
+    u32 angle = (u16)ArcTan2(other->z.fixed - self->z.fixed, *to - *from);
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;

@@ -468,8 +468,8 @@ void IsletCave_PlaceLogByCellLeft(s32 id, s32 a, s32 b, s32 x, s32 z,
       Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, b, 3, 1, (object->x >> 20) - 1,
-                               object->z >> 20);
+    MapGrid_CopyCellAttributes(a, b, 3, 1, (object->x.fixed >> 20) - 1,
+                               object->z.fixed >> 20);
   }
 }
 
@@ -484,8 +484,8 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
       Actor_SetHorizontalPositionWithTerrain(id, x << 16, z << 16);
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, bArg, 1, 3, object->x >> 20,
-                               (object->z >> 20) - 1);
+    MapGrid_CopyCellAttributes(a, bArg, 1, 3, object->x.fixed >> 20,
+                               (object->z.fixed >> 20) - 1);
   }
 }
 
@@ -601,13 +601,13 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
 /// name is ours.
 #define DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(name, logId, dx, flagCall, flag)     \
   void name(void) {                                                            \
-    s32 fromX = Actor_GetById(logId)->x;                                       \
-    s32 fromZ = Actor_GetById(logId)->z;                                       \
+    s32 fromX = Actor_GetById(logId)->x.fixed;                                 \
+    s32 fromZ = Actor_GetById(logId)->z.fixed;                                 \
                                                                                \
     IsletCave_RideLog(logId, dx, 0);                                           \
     wait(2);                                                                   \
     Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,            \
-                              Actor_GetById(logId)->x >> 20,                   \
+                              Actor_GetById(logId)->x.fixed >> 20,             \
                               (fromZ >> 20) - 1);                              \
     Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);     \
     flagCall(flag);                                                            \
@@ -627,15 +627,15 @@ void IsletCave_RideSecondLogEast(void) {
   struct Actor *object4;
 
   object0 = Actor_GetById(9);
-  value1 = object0->x;
+  value1 = object0->x.fixed;
   object2 = Actor_GetById(9);
-  value3 = object2->z;
+  value3 = object2->z.fixed;
   IsletCave_RideLog(9, 112, 0);
   IsletCave_RideLog(9, 96, 0);
   wait(2);
   object4 = Actor_GetById(9);
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
+                            (object4->x.fixed >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
   GameFlag_Clear(FLAG_SCENE_TEMP_81);
   return;
@@ -649,15 +649,15 @@ void IsletCave_RideSecondLogWest(void) {
   struct Actor *object4;
 
   object0 = Actor_GetById(9);
-  value1 = object0->x;
+  value1 = object0->x.fixed;
   object2 = Actor_GetById(9);
-  value3 = object2->z;
+  value3 = object2->z.fixed;
   IsletCave_RideLog(9, -112, 0);
   IsletCave_RideLog(9, -96, 0);
   wait(2);
   object4 = Actor_GetById(9);
   Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,
-                            (object4->x >> 20), ((value3 >> 20) - 1));
+                            (object4->x.fixed >> 20), ((value3 >> 20) - 1));
   Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
   GameFlag_Set(FLAG_SCENE_TEMP_81);
   return;
@@ -697,11 +697,11 @@ void IsletCave_RideSeventhLogNorth(void) {
   struct Actor *object3;
 
   object0 = Actor_GetById(14);
-  value1 = object0->x;
+  value1 = object0->x.fixed;
   v5 = value1;
   object2 = Actor_GetById(14);
   v6 = 112;
-  v8 = object2->z;
+  v8 = object2->z.fixed;
   v6 = -v6;
   v8 = (v8 >> 20);
   IsletCave_RideLog(14, 0, v6);
@@ -711,7 +711,7 @@ void IsletCave_RideSeventhLogNorth(void) {
   object3 = Actor_GetById(14);
   v5 = (v5 >> 20);
   v5 = (v5 - 1);
-  MapGrid_CopyCellAttributes(v5, v8, 3, 1, v5, (object3->z >> 20));
+  MapGrid_CopyCellAttributes(v5, v8, 3, 1, v5, (object3->z.fixed >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v8);
   GameFlag_Set(FLAG_SCENE_TEMP_86);
   return;
@@ -727,10 +727,10 @@ void IsletCave_RideSeventhLogSouth(void) {
   struct Actor *object4;
 
   object0 = Actor_GetById(14);
-  value1 = object0->x;
+  value1 = object0->x.fixed;
   v5 = value1;
   object2 = Actor_GetById(14);
-  value3 = object2->z;
+  value3 = object2->z.fixed;
   v6 = value3;
   IsletCave_RideLog(14, 0, 112);
   IsletCave_RideLog(14, 0, 112);
@@ -740,7 +740,7 @@ void IsletCave_RideSeventhLogSouth(void) {
   v5 = (v5 >> 20);
   v5 = (v5 - 1);
   v6 = (v6 >> 20);
-  MapGrid_CopyCellAttributes(v5, v6, 3, 1, v5, (object4->z >> 20));
+  MapGrid_CopyCellAttributes(v5, v6, 3, 1, v5, (object4->z.fixed >> 20));
   Map_CopyCellAttributeRect(0, 0, 3, 1, v5, v6);
   GameFlag_Clear(FLAG_SCENE_TEMP_86);
   return;
@@ -797,7 +797,7 @@ void IsletCave_TremorRevealsSerac(void) {
     Actor_SetPosition(9, 296, 160);
     object->speedLimit = px(3) / 2;
     object->velocityY = px(15);
-    Actor_MoveToAndWait(9, 344, ((owner->z >> 19) << 3) + 24);
+    Actor_MoveToAndWait(9, 344, ((owner->z.fixed >> 19) << 3) + 24);
     Actor_Stop(8);
     object->speedLimit = px(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 9, 0);

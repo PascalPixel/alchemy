@@ -561,7 +561,7 @@ void PsynergyTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   object = Actor_Get(id);
   if (mode == 2) {
     Actor_SetPositionFixed(id, px(x), px(z));
-    object->y = px(32);
+    object->y.fixed = px(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;
     System_Wait(50);
@@ -647,8 +647,8 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
       if (work->unka0[i] <= 31) {
         struct Vector3 *p = &position;
 
-        SET_POSITION(p, object->x, object->y + (work->unka0[i] << 16),
-                     object->z);
+        SET_POSITION(p, object->x.fixed,
+                     object->y.fixed + (work->unka0[i] << 16), object->z.fixed);
         Camera_WorldToScreen(p);
         x = p->x;
         j = 0;

@@ -113,7 +113,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void JupiterLighthouse_DrawLogBelowLedge(struct Actor *object) {
-  if (object->x >> 20 == 14 && object->z >> 20 == 12)
+  if (object->x.fixed >> 20 == 14 && object->z.fixed >> 20 == 12)
     Actor_SetSpritePriorityDirect(object, 2);
 }
 
@@ -126,7 +126,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
   object->update = (void (*)(void))JupiterLighthouse_DrawLogBelowLedge;
   if (PushTarget_FindSlide(&target))
     PushTarget_PushFill(target);
-  if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
+  if (object->x.fixed >> 20 == 16 && object->z.fixed >> 20 == 12 &&
       Event_GetFlag(FLAG_LOG_OFF_LEDGE) == 0) {
     Event_SetFlag(FLAG_LOG_OFF_LEDGE);
     FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
@@ -153,11 +153,11 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 placed = 0;
   s32 i;
-  if (object->x >> 20 == 20 && object->z >> 20 == 36) {
+  if (object->x.fixed >> 20 == 20 && object->z.fixed >> 20 == 36) {
     Event_SetFlag(FLAG_LEFT_PILLAR_IN_GAP);
     placed = 1;
   }
-  if (object->x >> 20 == 32 && object->z >> 20 == 36) {
+  if (object->x.fixed >> 20 == 32 && object->z.fixed >> 20 == 36) {
     Event_SetFlag(FLAG_RIGHT_PILLAR_IN_GAP);
     placed = 1;
   }
@@ -165,12 +165,12 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
     System_Wait(10);
     Event_PlaySound(SE_HEAVY_IMPACT);
     for (i = 0; i < 30; i++) {
-      if (object->y <= object->groundHeight && object->velocityY == 0)
+      if (object->y.fixed <= object->groundHeight && object->velocityY == 0)
         break;
       System_Wait(1);
     }
     object->motionFlags = 0;
-    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
 }
 
@@ -201,17 +201,17 @@ s32 Scene_PrepareMap(void) {
     object = Actor_Get(14);
     object->motionFlags = 0;
     object->groundHeight = px(-32);
-    object->y = px(-32);
+    object->y.fixed = px(-32);
     Actor_SetPositionFixed(14, px(328), px(584));
-    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
     object = Actor_Get(15);
     object->motionFlags = 0;
     object->groundHeight = px(-32);
-    object->y = px(-32);
+    object->y.fixed = px(-32);
     Actor_SetPositionFixed(15, px(520), px(584));
-    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   Actor_Get(8)->priorityFlags |= 32;
   Actor_Get(9)->priorityFlags |= 32;
@@ -323,8 +323,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = (actor->x + (gPushFootprints[j][0] << 16)) >> 20;
-  z = (actor->z + (gPushFootprints[j][1] << 16)) >> 20;
+  x = (actor->x.fixed + (gPushFootprints[j][0] << 16)) >> 20;
+  z = (actor->z.fixed + (gPushFootprints[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
   i = mapX; // i is reused to hold mapX.
   mapZ = *(s32 *)(map + 332) >> 20;
@@ -380,9 +380,9 @@ void PushTarget_UpdatePusher(struct Actor *object) {
 
   angle = object->facing >> 12;
   angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   FieldVector_AddPolarOffset(px(16), angle, position);
   other = Actor_FindAtCell(position, 1);
   if (other != NULL) {
@@ -394,15 +394,15 @@ void PushTarget_UpdatePusher(struct Actor *object) {
     i++;
     if (i < 6)
       goto next;
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
   }
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   if (MapGrid_CheckCollision(object, position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
 }
 
 extern s16 gLightSpriteTile;

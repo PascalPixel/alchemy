@@ -95,7 +95,7 @@ void ShamanVillageCave_StartMovingPillar(void) {
 /// the shortcut (flag 0x9a8).
 void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
-  s32 x = object->x >> 20;
+  s32 x = object->x.fixed >> 20;
 
   if (x == 38) {
     Event_SetFlag(0x9a8);
@@ -127,9 +127,9 @@ void FieldCamera_MoveToActorById();
 void ShamanVillageCave_EddyFlees(void) {
   struct Actor *object = Actor_GetById(17);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 leaderX = leader->x >> 19;
-  s32 leaderZ = leader->z >> 19;
-  s32 objectX = object->x >> 19;
+  s32 leaderX = leader->x.fixed >> 19;
+  s32 leaderZ = leader->z.fixed >> 19;
+  s32 objectX = object->x.fixed >> 19;
   s32 dx;
   s32 dz;
 
@@ -633,8 +633,8 @@ s32 Scene_Initialize(void) {
     object = Actor_Get(15);
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->x = px(616);
-    object->y = 0;
+    object->x.fixed = px(616);
+    object->y.fixed = 0;
     Actor_SetSpriteFlags(object, 0);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);
   }
@@ -646,7 +646,7 @@ s32 Scene_Initialize(void) {
     FieldActor_SetSpriteColor(Actor_Get(16), 0);
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->y = 0;
+    object->y.fixed = 0;
     MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_06))

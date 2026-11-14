@@ -14,7 +14,7 @@ void Actor_GrowDown(struct Actor *object) {
   object->scaleY = -scale;
 
   rise = 0x10000;
-  object->x = parent->x;
-  object->y += rise;
-  object->z = parent->z - (rise - scale) * 5 + 0x100000;
+  object->x.fixed = parent->x.fixed;
+  object->y.fixed += rise;
+  object->z.fixed = parent->z.fixed - (rise - scale) * 5 + 0x100000;
 }

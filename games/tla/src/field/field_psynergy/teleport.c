@@ -85,7 +85,8 @@ void Teleport_PlayWhirl(void) {
         angle = Random16();
         spark = &work->sparks[next];
         spark->age = 0;
-        SET_POSITION(spark, object->x, object->y + Random16() * 20, object->z);
+        SET_POSITION(spark, object->x.fixed, object->y.fixed + Random16() * 20,
+                     object->z.fixed);
         Vector_AddPolarOffset(Random16() << 3, angle, &spark->x);
         next++;
         spark->angle = angle;
@@ -239,7 +240,8 @@ void Teleport_PlaySparks(void) {
       angle = Random16();
       particle = &work->particles[next];
       particle->age = zero;
-      SET_POSITION(particle, object->x, object->y + Random16() * 20, object->z);
+      SET_POSITION(particle, object->x.fixed, object->y.fixed + Random16() * 20,
+                   object->z.fixed);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;

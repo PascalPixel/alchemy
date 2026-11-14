@@ -43,7 +43,7 @@ void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
 
     owner = Actor_Get(gMainRoutineWork.leaderActorId);
     work = Ram_HeapSlots->fieldWork;
-    if (owner->x < target->x)
+    if (owner->x.fixed < target->x.fixed)
       work->exit = thenValue;
     else
       work->exit = elseValue;
@@ -69,7 +69,7 @@ void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
 
     owner = Actor_Get(gMainRoutineWork.leaderActorId);
     work = Ram_HeapSlots->fieldWork;
-    if (owner->z < target->z)
+    if (owner->z.fixed < target->z.fixed)
       work->exit = thenValue;
     else
       work->exit = elseValue;
@@ -116,9 +116,9 @@ void WorldMap_UpdatePlacedActors(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *object = work->camera;
   s32 zoom = map->zoom;
-  s32 x = object->x;
+  s32 x = object->x.fixed;
   u8 kind = placement->kind;
-  s32 z = object->z;
+  s32 z = object->z.fixed;
   struct Actor **objects = gWorldMap_PlacedActors;
 
   if (zoom <= 0x10000) {
@@ -179,13 +179,13 @@ void WorldMap_UpdatePlacedActors(void) {
           s32 dx;
           s32 reach, dz;
 
-          dx = object->x - leader->x;
+          dx = object->x.fixed - leader->x.fixed;
           if (dx < 0)
-            dx = leader->x - object->x;
+            dx = leader->x.fixed - object->x.fixed;
           reach = leaderReach + object->radius * scale;
-          dz = object->z - leader->z;
+          dz = object->z.fixed - leader->z.fixed;
           if (dz >= 0 ? dx + dz < reach
-                      : dx + (leader->z - object->z) < reach) {
+                      : dx + (leader->z.fixed - object->z.fixed) < reach) {
             if (GameFlag_Get(0x104) == 0) {
               if (gMainRoutineWork.movementMode == 9)
                 work->psynergy = 0x208b;
@@ -240,9 +240,9 @@ s32 WorldMap_RiseFromAnchor(struct Actor *object) {
   scale = Iwram_MulQ16(Math_Sin(step << 10), 0x14000);
   object->scaleX = scale;
   object->scaleY = scale;
-  object->x = parent->x;
-  object->y += px(1);
-  object->z = parent->z;
+  object->x.fixed = parent->x.fixed;
+  object->y.fixed += px(1);
+  object->z.fixed = parent->z.fixed;
   return 1;
 }
 
@@ -261,7 +261,8 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
   /* FAKEMATCH(temporary): the resident multiply called through a local pointer.
    */
   mulQ16(object->scaleX, 0x18000);
-  spark = FieldActor_Create(271, object->x, object->y, object->z);
+  spark =
+      FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
@@ -275,7 +276,8 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
       sprite->priority = 1;
     }
   }
-  spark = FieldActor_Create(271, object->x, object->y, object->z);
+  spark =
+      FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
@@ -299,7 +301,8 @@ void WorldMap_SpawnParticle(struct Actor *object) {
   struct FieldSprite *sprite;
 
   Iwram_MulQ16(object->scaleX, 0x18000);
-  SET_VECTOR(position, object->x, object->y + px(2), object->z);
+  SET_VECTOR(position, object->x.fixed, object->y.fixed + px(2),
+             object->z.fixed);
   angle = Random16();
   FieldVector_AddPolarOffset(angle * 20, Random16(), position);
   particle = (FieldActor_Create(674, position[0], position[1], position[2]));

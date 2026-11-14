@@ -168,7 +168,8 @@ void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
 }
 
 void VenusLighthouseEntrance_TrailDust(struct Actor *object) {
-  VenusLighthouseEntrance_EmitDust(object, object->x, object->y, object->z);
+  VenusLighthouseEntrance_EmitDust(object, object->x.fixed, object->y.fixed,
+                                   object->z.fixed);
   if (++object->timer % 8 == 0)
     Event_PlaySound(SE_CHEST_CLOSE);
 }
@@ -835,9 +836,9 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldActor_WaitForMoveById(ACTOR_SCOLDING_WORKMAN);
   Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, ANIM_STAND);
   Event_PlaySound(SE_IMPACT);
-  workman->x += px(8);
+  workman->x.fixed += px(8);
   workman->update = zero;
-  workman->z += -px(8);
+  workman->z.fixed += -px(8);
   {
     s32 shown = FACING_NORTH;
 
@@ -850,8 +851,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
     sprite->rotation = shown;
   }
   FieldEvent_Wait(55);
-  workman->x += -px(4);
-  workman->z += px(4);
+  workman->x.fixed += -px(4);
+  workman->z.fixed += px(4);
   {
     s32 shown = FACING_SOUTH;
     struct FieldSprite *sprite = workman->sprite;
@@ -1082,8 +1083,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   actor = Actor_Get(ACTOR_JENNA);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&actor->x)[1],
-                         ((s16 *)&actor->z)[1]);
+    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1157,8 +1158,8 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_Get(ACTOR_JENNA);
   if (object != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1279,8 +1280,8 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_Get(ACTOR_JENNA);
   if (object != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1353,8 +1354,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     s16 *timer = &work->timer;
 
     if (work->timer == 10) {
-      object->z = 0;
-      object->x = 0;
+      object->z.fixed = 0;
+      object->x.fixed = 0;
     }
     if (*timer == 30) {
       work->stage++;
@@ -1434,7 +1435,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       sprite->tile = work->tile + ((state->frame >> 2) & 3) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, state);
       if (work->follow != 0)
-        object->y = state->y;
+        object->y.fixed = state->y;
     }
   }
   work->timer++;
@@ -1457,9 +1458,9 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
 
   actor->paused = zero;
   work->object = actor;
-  work->x = actor->x;
-  work->y = actor->y;
-  work->z = actor->z + px(2);
+  work->x = actor->x.fixed;
+  work->y = actor->y.fixed;
+  work->z = actor->z.fixed + px(2);
   Decompress_TaggedLz(gField_Tiles64D, work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
@@ -1478,14 +1479,15 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
     sprite++;
     state++;
   }
-  effect = (FieldActor_Create(290, actor->x, actor->y, actor->z));
+  effect =
+      (FieldActor_Create(290, actor->x.fixed, actor->y.fixed, actor->z.fixed));
   work->effect = effect;
   Actor_SelectAnimation(effect, 1);
   Actor_SetSpriteFlags(effect, 0);
   effect->priorityFlags = 2;
   Actor_SetSpriteFlags(actor, 0);
   ((struct GlowAnimation *)actor->sprite)->angle = 0x4000;
-  actor->x += -px(12);
+  actor->x.fixed += -px(12);
   actor->motionFlags = 0;
   work->stage = 0;
   work->timer = 0;

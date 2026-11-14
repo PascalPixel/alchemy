@@ -177,22 +177,22 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
 
   MapGrid_CopyCellAttributes(8, 90, 1, 1, 8, 91);
   if (id == 16 && Event_GetFlag(FLAG_FIRST_PILLAR_DROPPED) == 0 &&
-      (object->x >> 19) <= 11) {
+      (object->x.fixed >> 19) <= 11) {
     DROP_OBJECT_CALLED(16);
     Event_SetFlag(FLAG_FIRST_PILLAR_DROPPED);
     MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
   }
   if (id == 19 && Event_GetFlag(FLAG_SECOND_PILLAR_DROPPED) == 0) {
-    if ((object->x >> 19) == 77)
+    if ((object->x.fixed >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
     /* FAKEMATCH(temporary): the object read again through p for the last two
      * tests. */
     p = object;
-    if ((p->x >> 19) == 79 && (p->y >> 19) == 12) {
+    if ((p->x.fixed >> 19) == 79 && (p->y.fixed >> 19) == 12) {
       DROP_OBJECT(19);
       MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
     }
-    if ((p->x >> 19) == 81) {
+    if ((p->x.fixed >> 19) == 81) {
       Event_SetFlag(FLAG_SECOND_PILLAR_DROPPED);
       {
         s32 row = 46;
@@ -208,11 +208,11 @@ void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 
 void GaiaRock_StartPushingBlock(void) {
-  MapGrid_CopyCellAttributes(13, 18, 1, 1, 13, Actor_Get(8)->z >> 20);
+  MapGrid_CopyCellAttributes(13, 18, 1, 1, 13, Actor_Get(8)->z.fixed >> 20);
 }
 
 void GaiaRock_FinishPushingBlock(void) {
-  MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, Actor_Get(8)->z >> 20);
+  MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, Actor_Get(8)->z.fixed >> 20);
 }
 
 void GaiaRock_CycloneClearsWall(void) {
@@ -229,7 +229,7 @@ void GaiaRock_RevealIdol(void) {
   if (done == 0) {
     Actor_SetPosition(64, 657, 246);
     object->motionFlags = done;
-    object->y = px(80);
+    object->y.fixed = px(80);
   }
 }
 
@@ -242,7 +242,7 @@ void GaiaRock_CheckAltar(void) {
   struct Actor *object = Actor_Get(64);
 
   Message_ShowCentered(MsgCheckedTheAltar, 1);
-  if (object != NULL && object->x != 0) {
+  if (object != NULL && object->x.fixed != 0) {
     Scene_TalkToActor(4160);
   } else if (Event_GetFlag(0xf74) == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -427,7 +427,8 @@ void GaiaRock_StatueBlowsWind(void) {
 
   if (phase == 0) {
     Event_PlayCueNearFocus(object, 202);
-    object = Actor_Spawn(0x118, object->x, object->y, object->z);
+    object =
+        Actor_Spawn(0x118, object->x.fixed, object->y.fixed, object->z.fixed);
     if (object != NULL) {
       object->acceleration = px(2);
       object->speedLimit = px(2);
@@ -435,8 +436,8 @@ void GaiaRock_StatueBlowsWind(void) {
       object->scaleY = 0x1999;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
-      FieldActor_SetMoveTargetFixed(object, object->x - px(32), object->y,
-                                    object->z);
+      FieldActor_SetMoveTargetFixed(object, object->x.fixed - px(32),
+                                    object->y.fixed, object->z.fixed);
       Actor_StartScript(object, gGaiaRock_WindScript);
       Actor_SetSpritePriorityDirect(object, 2);
     }
@@ -472,8 +473,8 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_FIRST_PILLAR_DROPPED)) {
       actor = Actor_GetById(16);
       actor->motionFlags = 0;
-      actor->x = px(88);
-      actor->y = px(128);
+      actor->x.fixed = px(88);
+      actor->y.fixed = px(128);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
     }
@@ -481,16 +482,16 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     if (GameFlag_Get(FLAG_SECOND_PILLAR_DROPPED)) {
       actor->motionFlags = 0;
-      actor->x = px(648);
-      actor->y = px(64);
+      actor->x.fixed = px(648);
+      actor->y.fixed = px(64);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
     } else if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      if ((actor->x >> 19) != 75) {
+      if ((actor->x.fixed >> 19) != 75) {
         MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       }
-      if ((actor->x >> 19) == 79) {
+      if ((actor->x.fixed >> 19) == 79) {
         actor->motionFlags = 0;
         MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
       }
@@ -546,7 +547,7 @@ s32 Scene_Initialize(void) {
     work->actors[64] = actor;
     actor = Actor_GetById(8);
     actor->motionFlags = 0;
-    MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, actor->z >> 20);
+    MapGrid_CopyCellAttributes(11, 14, 1, 1, 13, actor->z.fixed >> 20);
   }
   return 0;
 }
@@ -567,8 +568,8 @@ void GaiaRock_TriggerWallCell(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x / 0x100000;
-    s32 z = (object->z - object->y + 0x7fff) / 0x100000;
+    s32 x = object->x.fixed / 0x100000;
+    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / 0x100000;
     struct MapCell *cells = map->layers[2].cells;
     struct MapCell *cell = &cells[x + (z << 7)];
     s32 code = cell->collisionCode;
@@ -586,9 +587,9 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 
   cell += cellX + (cellZ << 7);
   cell->collisionCode = 255;
-  object->x = (x & 0xfff00000) + 0x80000;
-  object->z = (z & 0xfff00000) + 0x80000;
-  object->y = object->z - (cellZ << 20);
+  object->x.fixed = (x & 0xfff00000) + 0x80000;
+  object->z.fixed = (z & 0xfff00000) + 0x80000;
+  object->y.fixed = object->z.fixed - (cellZ << 20);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
   Actor_SetSpriteFlags(object, 0);
@@ -604,13 +605,13 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   pillar = Actor_Get(id);
-  GaiaRock_PlaceStatue(id, leader->x, leader->y, leader->z);
+  GaiaRock_PlaceStatue(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_StartScript(pillar, gGaiaRock_StatueRiseScript);
   i = 15;
 dust:
   {
-    struct Actor *dust =
-        FieldActor_Create(255, leader->x, leader->y + px(16), leader->z);
+    struct Actor *dust = FieldActor_Create(
+        255, leader->x.fixed, leader->y.fixed + px(16), leader->z.fixed);
 
     if (dust != 0) {
       s32 angle;
@@ -651,7 +652,7 @@ next:
 fall:
   if (id <= 179) {
     System_Wait(1);
-    if (leader->y > leader->groundHeight)
+    if (leader->y.fixed > leader->groundHeight)
       goto next;
   }
   Event_PlaySound(SE_THUMP);
@@ -663,7 +664,7 @@ fall:
   System_Wait(10);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   System_Wait(20);
-  FieldCamera_MoveToFixed(leader->x, leader->y, leader->z, 1);
+  FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);

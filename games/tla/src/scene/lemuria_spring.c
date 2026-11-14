@@ -558,9 +558,9 @@ void LemuriaSpring_SetActorAppearance(s32 id, s32 *pos, s32 dir, s32 palette,
   if (object != NULL) {
     struct Half zero;
 
-    object->x = *pos++;
-    object->y = *pos++;
-    object->z = *pos;
+    object->x.fixed = *pos++;
+    object->y.fixed = *pos++;
+    object->z.fixed = *pos;
     object->facing = dir;
     zero.v = 0;
     object->motionFlags = zero.v;

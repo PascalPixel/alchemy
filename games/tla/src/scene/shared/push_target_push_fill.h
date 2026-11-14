@@ -19,10 +19,10 @@ void PushTarget_PushFill(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x;
-  from[2] = object->z;
-  cell[0] = (object->x + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z + (gPushFootprints[footprint][1] << 16)) >> 20;
+  from[0] = object->x.fixed;
+  from[2] = object->z.fixed;
+  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -64,7 +64,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   FieldActor_WaitForMove(object);
   Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+                                       target.z);
   Actor_SelectAnimation(object, 1);
   target.x = target.x + (gPushFootprints[footprint][0] << 16);
   target.z = target.z + (gPushFootprints[footprint][1] << 16);

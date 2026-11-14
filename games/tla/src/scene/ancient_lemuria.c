@@ -103,8 +103,8 @@ void AncientLemuria_StartMovingStatue(void) {}
 
 void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   if (x == 8 && z == 36)
     GameFlag_Set(0x961);
@@ -215,7 +215,7 @@ void AncientLemuria_TremorShakesOutRime(void) {
   GameFlag_Clear(FLAG_RIME_IN_THE_STATUE);
   AncientLemuria_StillTheStatue(13);
   Actor_SetPosition(ACTOR_RIME, 270, 184);
-  object->y = 22 << 16;
+  object->y.fixed = 22 << 16;
   Actor_Jump(ACTOR_RIME, 11, 0);
   object->scaleY = Q16_ONE / 2;
   object->scaleX = Q16_ONE / 2;
@@ -814,16 +814,16 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetModeById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_PIERS, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(11, 1.2);
   Actor_SetModeById(11, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(11, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(11, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(11);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Event_End();

@@ -61,10 +61,11 @@ extern struct ActorPlacement gTrialRoad_Room2Placements[];
 extern s32 gTrialRoad_Room1Placements[];
 
 s32 TrialRoad_SettleOnGround(struct Actor *object) {
-  s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
+  s32 height =
+      Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + 0x20000;
 
   object->groundHeight = height;
-  object->y = height;
+  object->y.fixed = height;
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->scaleY = Q16_ONE * 3 / 2;
@@ -436,8 +437,8 @@ s32 TrialRoad_OfferToGiveUp(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId,
-                        ((leader->x >> 20) << 4) + 8,
-                        ((leader->z >> 20) << 4) + 8);
+                        ((leader->x.fixed >> 20) << 4) + 8,
+                        ((leader->z.fixed >> 20) << 4) + 8);
     Event_PlaySound(SE_SPLASH);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     message = (s32)&MsgTrialRoadGiveUpPrompt;
@@ -476,8 +477,8 @@ void TrialRoad_OpenChests(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId,
-                      ((leader->x >> 20) << 4) + 8,
-                      ((leader->z >> 20) << 4) + 8);
+                      ((leader->x.fixed >> 20) << 4) + 8,
+                      ((leader->z.fixed >> 20) << 4) + 8);
   TrialRoad_Idle();
   found = TrialRoad_RivalIsAhead(0);
   if (found != 0)
@@ -565,7 +566,9 @@ void TrialRoad_BlockCellUnder(s32 id) {
 
   if (object != NULL) {
     u8 *cells = map->layers[0].cells;
-    u8 *cell = cells + (((object->x >> 20) + ((object->z >> 20) << 7)) << 2);
+    u8 *cell =
+        cells +
+        (((object->x.fixed >> 20) + ((object->z.fixed >> 20) << 7)) << 2);
     s32 bit = 128;
 
     cell[3] = bit | cell[3];
@@ -579,7 +582,9 @@ void TrialRoad_UnblockCellUnder(s32 id) {
 
   if (object != NULL) {
     u8 *cells = map->layers[0].cells;
-    u8 *cell = cells + (((object->x >> 20) + ((object->z >> 20) << 7)) << 2);
+    u8 *cell =
+        cells +
+        (((object->x.fixed >> 20) + ((object->z.fixed >> 20) << 7)) << 2);
 
     cell[3] &= 0x7f;
   }
@@ -588,8 +593,9 @@ void TrialRoad_UnblockCellUnder(s32 id) {
 s32 TrialRoad_FollowPillar(struct Actor *object) {
   struct Actor *owner = object->watchedActor;
 
-  SET_POSITION(object, owner->x, owner->y + (OBJECT_BYTE(object, 99) << 16),
-               owner->z);
+  SET_ACTOR_POSITION(object, owner->x.fixed,
+                     owner->y.fixed + (OBJECT_BYTE(object, 99) << 16),
+                     owner->z.fixed);
   object->groundHeight = owner->groundHeight;
   return 1;
 }
@@ -601,7 +607,8 @@ void TrialRoad_AddPillarTop(s32 id) {
   struct Actor *object;
 
   if (owner != NULL) {
-    object = FieldActor_Create(489, owner->x, owner->y, owner->z);
+    object =
+        FieldActor_Create(489, owner->x.fixed, owner->y.fixed, owner->z.fixed);
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       Actor_StartScript(object, gTrialRoad_PillarTopScript);
@@ -655,11 +662,12 @@ void TrialRoad_OpenSpoutCell(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL)
-    MapGrid_CopyCellsLayered(14, 27, 1, 1, object->x >> 20, object->z >> 20);
+    MapGrid_CopyCellsLayered(14, 27, 1, 1, object->x.fixed >> 20,
+                             object->z.fixed >> 20);
 }
 
 void TrialRoad_TrackLeaderOnPillars(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
+  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y == 0x200000)
     Event_SetFlag(FLAG_SCENE_TEMP_08);
@@ -668,7 +676,7 @@ void TrialRoad_TrackLeaderOnPillars(void) {
 }
 
 void TrialRoad_JumpAcrossGap(void) {
-  if (Actor_GetById(16)->z >> 20 == 23)
+  if (Actor_GetById(16)->z.fixed >> 20 == 23)
     Field_TryJumpForward();
   else
     Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
@@ -687,7 +695,7 @@ void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
     return;
   }
   x = (s32)Actor_GetById(id);
-  x = ((struct Actor *)x)->x >> 20;
+  x = ((struct Actor *)x)->x.fixed >> 20;
   id = 0;
   if (x == 13)
     id = 17;
@@ -775,8 +783,8 @@ void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
 next:
   {
     struct Actor *object = Actor_GetById(id);
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
+    s32 x = object->x.fixed >> 20;
+    s32 z = object->z.fixed >> 20;
     u8 *covered = &OBJECT_BYTE(
         Actor_GetById(gTrialRoad_PoundPartners[(id - 18) & 3]), 99);
     s32 other;
@@ -789,9 +797,9 @@ next:
   test:
     if (other <= 17) {
       object = Actor_GetById(other);
-      if (x != object->x >> 20)
+      if (x != object->x.fixed >> 20)
         goto step;
-      if (z != object->z >> 20)
+      if (z != object->z.fixed >> 20)
         goto step;
       *covered = 1;
     }
@@ -828,11 +836,11 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
       Event_ClearFlag(FLAG_AREA_TEMP_37);
       break;
     }
-    if (partner->x >> 20 == leader->x >> 20 &&
-        partner->z >> 20 == leader->z >> 20) {
+    if (partner->x.fixed >> 20 == leader->x.fixed >> 20 &&
+        partner->z.fixed >> 20 == leader->z.fixed >> 20) {
       leader->velocityY = px(8);
-      leader->x = (leader->x & 0xfff00000) + 0x80000;
-      leader->z = (leader->z & 0xfff00000) + 0x80000;
+      leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
+      leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
     }
   }
   if (frame == 9)
@@ -901,7 +909,7 @@ void TrialRoad_StepOnPillar21(void) {
 }
 
 void TrialRoad_LandOnPillar(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
+  s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y >= 0x100000) {
     Field_TryJumpForward();
@@ -941,7 +949,7 @@ void TrialRoad_BlockLogCells(s32 id, s32 mode) {
 
   if (object == 0)
     return;
-  index = (object->x >> 20) + ((object->z >> 20) << 7);
+  index = (object->x.fixed >> 20) + ((object->z.fixed >> 20) << 7);
   low = (struct MapCell *)map->layers[0].cells + index;
   high = (struct MapCell *)map->layers[2].cells + index;
   if (mode == 0) {
@@ -981,7 +989,7 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   u8 *cell;
   s32 value;
 
-  if (object->x >> 20 == x && object->z >> 20 == z)
+  if (object->x.fixed >> 20 == x && object->z.fixed >> 20 == z)
     return 1;
   cells = map->layers[0].cells;
   cell = cells + ((x + (z << 7)) << 2);
@@ -992,14 +1000,14 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *object = Actor_GetById(id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 fromX = object->x >> 20;
-  s32 fromZ = object->z >> 20;
+  s32 fromX = object->x.fixed >> 20;
+  s32 fromZ = object->z.fixed >> 20;
   s32 toX = fromX;
   s32 toZ = fromZ;
   s32 n;
   s32 mode = 2;
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
+  s32 x = leader->x.fixed >> 20;
+  s32 z = leader->z.fixed >> 20;
   // Unused: gives the stack frame its 12 bytes.
   struct Vector3 unused;
 
@@ -1103,11 +1111,11 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
     struct Actor *object = Actor_GetById(id);
     s32 height;
 
-    object->x = object->timer << 16;
-    object->z = (s16)object->userValue << 16;
-    height = Map_GetTerrainHeight(0, object->x, object->z);
+    object->x.fixed = object->timer << 16;
+    object->z.fixed = (s16)object->userValue << 16;
+    height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
     object->groundHeight = height;
-    object->y = height;
+    object->y.fixed = height;
     TrialRoad_OpenSpoutCell(id);
     Event_SetFlag(id + 0x353);
   }
@@ -1129,11 +1137,12 @@ void TrialRoad_StandOnBlock(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *block = Actor_GetById(15);
 
-  if (block->x >> 20 == leader->x >> 20 && block->z >> 20 == leader->z >> 20) {
-    s32 y = leader->y;
+  if (block->x.fixed >> 20 == leader->x.fixed >> 20 &&
+      block->z.fixed >> 20 == leader->z.fixed >> 20) {
+    s32 y = leader->y.fixed;
 
     if (y < 0x200000)
-      leader->y = px(32);
+      leader->y.fixed = px(32);
   }
 }
 
@@ -1244,7 +1253,7 @@ void TrialRoad_DriftWithStream(void) {
 
   if (gMainRoutineWork.movementMode == 4)
     return;
-  leader->z += px(1);
+  leader->z.fixed += px(1);
   if ((gFrameCount & 7) != 0)
     return;
   if (leader->velocityZ == 0 && leader->velocityX == 0)
@@ -1257,8 +1266,8 @@ void TrialRoad_DriftWithStream(void) {
   velocity[0] = 0;
   velocity[0] += ((Random16() << 17) >> 16) - 0x10000;
   velocity[2] += ((Random16() << 16) >> 16) - 0x8000;
-  FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                    velocity[2], 0x1000001, &options);
+  FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                    velocity[0], velocity[1], velocity[2], 0x1000001, &options);
 }
 
 // Trial Road's rooms set up, the rival Moapa's race, the peak, the
@@ -1336,10 +1345,10 @@ void TrialRoad_ChallengeMoapa(void) {
 void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  if (object->x >> 20 == 8) {
+  if (object->x.fixed >> 20 == 8) {
     Event_SetFlag(0x9fc);
     object->motionFlags = 0;
-    object->y -= px(1);
+    object->y.fixed -= px(1);
   }
 }
 
@@ -1593,14 +1602,14 @@ void TrialRoad_GaspFlees(void) {
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_88))
     return;
-  dx = (leader->x - partner->x) >> 16;
-  dz = (leader->z - partner->z) >> 16;
+  dx = (leader->x.fixed - partner->x.fixed) >> 16;
+  dz = (leader->z.fixed - partner->z.fixed) >> 16;
   near = dx * dx + dz * dz;
-  dx = (leader->x >> 16) - 296;
-  dz = (leader->z >> 16) - 248;
+  dx = (leader->x.fixed >> 16) - 296;
+  dz = (leader->z.fixed >> 16) - 248;
   far = dx * dx + dz * dz;
   if (far <= 6400 || near <= 2304)
-    Actor_SetMoveTarget(partner, (296 - dx) << 16, partner->y,
+    Actor_SetMoveTarget(partner, (296 - dx) << 16, partner->y.fixed,
                         (248 - dz) << 16);
   if (far > 15)
     return;
@@ -1613,7 +1622,7 @@ void TrialRoad_GaspFlees(void) {
   partner->collisionFlags = 1;
   partner->velocityY = px(10);
   Actor_SetScript(8, gTrialRoad_GaspHopScript);
-  y = partner->y;
+  y = partner->y.fixed;
   Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
   Event_SetFlag(FLAG_SCENE_TEMP_88);
 }
@@ -1638,10 +1647,10 @@ void TrialRoad_SetUpPoolRoom(void) {
 
     if (!started) {
       *flags = 5;
-      object->y += 0x88000;
+      object->y.fixed += 0x88000;
     } else {
       *flags = 3;
-      object->y = 0;
+      object->y.fixed = 0;
     }
     Task_Add(TrialRoad_GaspFlees, 0x480);
   }
@@ -1835,7 +1844,7 @@ void TrialRoad_UpdateRival(void) {
 
         TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[pattern & 7]);
         Actor_GetById(8)->groundHeight = 0;
-        Actor_GetById(8)->y = 0;
+        Actor_GetById(8)->y.fixed = 0;
       } else {
         Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
       }
@@ -2093,8 +2102,8 @@ s32 Scene_PrepareMap(void) {
         Map_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-          leader->y = leader->groundHeight =
-              Map_GetTerrainHeight(0, leader->x, leader->z);
+          leader->y.fixed = leader->groundHeight =
+              Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed);
         if (GameFlag_Get(2559)) {
           struct TrialRoadState *road;
 
@@ -2261,7 +2270,8 @@ void TrialRoad_ReachPeakFirst(void) {
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  Actor_SetMoveTarget(object, object->x, object->y + px(88), object->z);
+  Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed + px(88),
+                      object->z.fixed);
   Actor_SelectAnimation(object, 2);
   FieldActor_WaitForMove(object);
   Actor_SelectAnimation(object, 1);
@@ -2270,20 +2280,21 @@ void TrialRoad_ReachPeakFirst(void) {
   object->velocityY = px(4);
   object->speedLimit = px(3);
   object->acceleration = px(2);
-  Actor_SetMoveTarget(object, object->x, object->y, object->z - px(16));
+  Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed,
+                      object->z.fixed - px(16));
   FieldActor_WaitForMove(object);
   wait(12);
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
   FieldActor_SetMoveTargetFixed(object, TrialRoad_MirrorCellX(41) << 16,
-                                object->y, 264 << 16);
+                                object->y.fixed, 264 << 16);
   FieldActor_WaitForMove(object);
   wait(6);
   Event_PlaySound(SE_JUMP);
   object->velocityY = px(6);
   object->speedLimit = px(3);
   object->acceleration = px(2);
-  Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y,
+  Actor_SetMoveTarget(object, TrialRoad_MirrorCellX(37) << 16, object->y.fixed,
                       264 << 16);
   FieldActor_WaitForMove(object);
   wait(6);
@@ -2541,8 +2552,8 @@ void TrialRoad_ShowTraps(void) {
   for (i = 9; i < 80; i++) {
     struct Actor *object = Actor_GetById(i);
 
-    if (object->x != 0)
-      object->x -= px(144);
+    if (object->x.fixed != 0)
+      object->x.fixed -= px(144);
   }
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightEntersScript);
@@ -2704,7 +2715,7 @@ void TrialRoad_UpdateFountains(void) {
     if (mover->id == 0)
       continue;
     actor = Actor_GetById(mover->id);
-    if (actor->x == 0 && actor->z == 0)
+    if (actor->x.fixed == 0 && actor->z.fixed == 0)
       continue;
     if (mover->phase == mover->riseAt) {
       Sound_Play(SE_CURSE_FALL);
@@ -2731,9 +2742,9 @@ void TrialRoad_UpdateFountains(void) {
       if (++mover->phase >= mover->period)
         mover->phase = 0;
     }
-    cell = (actor->x >> 20) + ((actor->z >> 20) << 7);
+    cell = (actor->x.fixed >> 20) + ((actor->z.fixed >> 20) << 7);
     shapes[cell] = (u8)work->shape + i;
-    *collision = ((((s16 *)&actor->y)[1] + mover->height) / 8) << 8;
+    *collision = ((actor->y.part[0].pixel + mover->height) / 8) << 8;
     attributes = cells + cell * 4;
     if (mover->speed != 0)
       attributes[3] = 0;
@@ -2751,15 +2762,15 @@ void TrialRoad_UpdateFountains(void) {
     marker = mover->spout;
     if (marker != 0) {
       if (mover->height == 0) {
-        marker->y = actor->y - px(16);
+        marker->y.fixed = actor->y.fixed - px(16);
       } else {
         s32 wave;
         mover->bob += 0x1000;
         wave = Iwram_MulQ16(0x20000, Trig_Sin(mover->bob)) - 0xe0000;
-        marker->y = actor->y + (mover->height << 16) + wave;
+        marker->y.fixed = actor->y.fixed + (mover->height << 16) + wave;
       }
-      marker->x = actor->x;
-      marker->z = actor->z;
+      marker->x.fixed = actor->x.fixed;
+      marker->z.fixed = actor->z.fixed;
     }
   }
 }
@@ -2817,9 +2828,9 @@ void TrialRoad_DrawFountains(void) {
     next:
       if (count > 79)
         goto skip;
-      x = object->x - viewX;
-      height = object->y + (lift << 16) - viewY;
-      z = object->z - viewZ - viewY;
+      x = object->x.fixed - viewX;
+      height = object->y.fixed + (lift << 16) - viewY;
+      z = object->z.fixed - viewZ - viewY;
       x = (x >> 16) - 8;
       sy = z - height;
       sy = (sy >> 16) - 16;
@@ -2842,9 +2853,9 @@ void TrialRoad_DrawFountains(void) {
     }
     if (count > 79)
       continue;
-    x = object->x - viewX;
-    height = object->y + (mover->height << 16) - viewY;
-    z = object->z - viewZ - viewY;
+    x = object->x.fixed - viewX;
+    height = object->y.fixed + (mover->height << 16) - viewY;
+    z = object->z.fixed - viewZ - viewY;
     x = (x >> 16) - 8;
     sy = z - height;
     bob = Iwram_MulQ16(rise, Trig_Sin(mover->bob));
@@ -2918,8 +2929,8 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
     fountain->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  spout = ((struct Actor *)Import_ActorCreate(0x8000, object->x, object->y,
-                                              object->z));
+  spout = ((struct Actor *)Import_ActorCreate(
+      0x8000, object->x.fixed, object->y.fixed, object->z.fixed));
   spout->collisionFlags = 0;
   spout->motionFlags = 0;
   spout->priorityFlags |= 128;
@@ -2991,7 +3002,8 @@ void Actor_MoveToObject(s32 id, s32 owner);
 #include "shared/pillars_restore.h"
 
 void TrialRoad_TakePlaceOf(struct Actor *object, struct Actor *target) {
-  Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
+  Actor_SetPositionAndResetMotion(object, target->x.fixed, target->y.fixed,
+                                  target->z.fixed);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
@@ -3009,9 +3021,9 @@ void TrialRoad_StepOnTrap(const u16 *table) {
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   partner = Actor_GetById(8);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
   if (trap != 0) {
     goto test;
@@ -3131,10 +3143,11 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   do {
     {
       /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
+      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x - px(8), y - 0x20000, leader->z);
+          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
+          leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -3175,8 +3188,8 @@ void MagmaRockInside_SpawnDustRing(void) {
   frame = 0;
   i = 0;
   do {
-    effect = (struct FieldEffect *)Import_ActorCreate(285, leader->x, leader->y,
-                                                      leader->z);
+    effect = (struct FieldEffect *)Import_ActorCreate(
+        285, leader->x.fixed, leader->y.fixed, leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -3205,12 +3218,15 @@ void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
   struct Actor *object = Actor_GetById(owner);
   u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
                                   (struct MapCell *)Ram_MapCellBuffer);
-  s32 value = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
-  s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
+  s32 value =
+      MapGrid_GetTerrainKind(object->layer, object->x.fixed, object->z.fixed);
+  s32 height =
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed) >>
+      19;
 
   height += level;
 
-  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
+  shape += object->x.fixed / 0x100000 + object->z.fixed / 0x100000 * 128;
   *shape = MapCollision_FindOrAddTag(object->layer, value, height);
 }
 
@@ -3275,17 +3291,17 @@ void TrialRoad_MoveRival(void) {
   if (rival == 0)
     return;
   if (state->mode == 4) {
-    x = leader->x;
-    z = leader->z;
+    x = leader->x.fixed;
+    z = leader->z.fixed;
     if ((u32)(z - 0x1000000) > 0x1300000)
       x = 0x2100000 - (x & 0xffff0000);
     if (gMainRoutineWork.entrance & 1)
       x += 0x1300000;
     else
       x -= 0x1300000;
-    if (rival->x != x || rival->z != z) {
-      dx = x - rival->x;
-      dz = z - rival->z;
+    if (rival->x.fixed != x || rival->z.fixed != z) {
+      dx = x - rival->x.fixed;
+      dz = z - rival->z.fixed;
       heading = ArcTan2(dz, dx);
       turn = (s16)(heading - rival->facing);
       if (turn > 0x1000)
@@ -3293,8 +3309,8 @@ void TrialRoad_MoveRival(void) {
       if (turn < -0x1000)
         turn = -0x1000;
       rival->facing += turn;
-      rival->x = x;
-      rival->z = z;
+      rival->x.fixed = x;
+      rival->z.fixed = z;
     }
     if (state->still > 2)
       Actor_SelectAnimation(rival, 1);
@@ -3319,7 +3335,7 @@ void TrialRoad_MoveRival(void) {
     if (GameFlag_Get(dz = 529) && link != 0) {
       state->mode = 9;
       Actor_SelectAnimation(rival, 1);
-      if (work->linkX < rival->x)
+      if (work->linkX < rival->x.fixed)
         x = work->linkX + 0xc0000;
       else
         x = work->linkX - 0xc0000;
@@ -3338,8 +3354,8 @@ void TrialRoad_MoveRival(void) {
       x <<= 16;
       z <<= 16;
       rival->facing = angle;
-      rival->x = x;
-      rival->z = z;
+      rival->x.fixed = x;
+      rival->z.fixed = z;
       Actor_SelectAnimation(rival, ok);
     }
     partner = *signature++;
@@ -3352,9 +3368,9 @@ void TrialRoad_MoveRival(void) {
     rival = Actor_GetById(partner);
     if (rival == 0)
       return;
-    rival->x = x << 16;
+    rival->x.fixed = x << 16;
     rival->facing = angle;
-    rival->z = z << 16;
+    rival->z.fixed = z << 16;
     Actor_SelectAnimation(rival, ok);
   } else if (state->mode == 1) {
     if (state->resource != work->resource) {
@@ -3377,9 +3393,9 @@ void TrialRoad_MoveRival(void) {
       x += 0x1300000;
     else
       x -= 0x1300000;
-    if (rival->x != x || rival->z != z) {
-      dx = x - rival->x;
-      dz = z - rival->z;
+    if (rival->x.fixed != x || rival->z.fixed != z) {
+      dx = x - rival->x.fixed;
+      dz = z - rival->z.fixed;
       heading = ArcTan2(dz, dx);
       turn = (s16)(heading - rival->facing);
       if (turn > 0x1000)
@@ -3387,8 +3403,8 @@ void TrialRoad_MoveRival(void) {
       if (turn < -0x1000)
         turn = -0x1000;
       rival->facing += turn;
-      rival->x = x;
-      rival->z = z;
+      rival->x.fixed = x;
+      rival->z.fixed = z;
       state->still = 0;
     } else {
       state->still++;
@@ -3398,8 +3414,8 @@ void TrialRoad_MoveRival(void) {
     else
       Actor_SelectAnimation(rival, 5);
   } else if (state->mode == 2) {
-    x = rival->x >> 16;
-    z = rival->z >> 16;
+    x = rival->x.fixed >> 16;
+    z = rival->z.fixed >> 16;
     work->path[state->point] = x;
     work->path[state->point + 1] = z;
     if (!GameFlag_Get(260))
@@ -3455,15 +3471,15 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     register s32 arg asm("r0");                                                \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
-      x = (actor->x - work->originX) / px(16) left;                            \
+      x = (actor->x.fixed - work->originX) / px(16) left;                      \
       arg = which;                                                             \
     } else {                                                                   \
-      x = (actor->x - work->originX) / px(16) right;                           \
+      x = (actor->x.fixed - work->originX) / px(16) right;                     \
       arg = which;                                                             \
     }                                                                          \
     originZ = &work->originZ;                                                  \
     lift = TrialRoad_GetStage(arg);                                            \
-    y = (actor->z - *originZ) / px(16) + work->scrollY - lift * 36 + 4;        \
+    y = (actor->z.fixed - *originZ) / px(16) + work->scrollY - lift * 36 + 4;  \
     /* Once-only: ends the block, so y + 4 is scheduled before x & 511. */     \
     do {                                                                       \
     } while (0);                                                               \
@@ -3554,7 +3570,7 @@ void TrialRoad_DrawProgress(void) {
            -work->fade * 6 - work->scrollX + 232, 0, 10);
   }
   actor = ObjectTable_Get(work->b);
-  if (actor == NULL || actor->x == 0)
+  if (actor == NULL || actor->x.fixed == 0)
     return;
   {
     // XXX: this side's offset adds scrollX where the first marker's subtracts

@@ -816,8 +816,8 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_SetSpeed(ACTOR_MUSHROOM_COOK, 0.4);
   Actor_WalkTo(ACTOR_MUSHROOM_COOK, 410, 109);
   object = Actor_Get(ACTOR_FELIX);
-  if (object->z > px(95))
-    Actor_WalkToAndWait(ACTOR_FELIX, object->x / 0x10000, 95);
+  if (object->z.fixed > px(95))
+    Actor_WalkToAndWait(ACTOR_FELIX, object->x.fixed / 0x10000, 95);
   Actor_WalkToAndWait(ACTOR_FELIX, 362, 95);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldActor_WaitForMoveById(ACTOR_MUSHROOM_COOK);
@@ -914,8 +914,8 @@ void MadraInteriors_GiveLaughingFungus(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object0 = Actor_Get(ACTOR_FELIX);
-  if (object0->z > px(95))
-    Actor_WalkToAndWait(ACTOR_FELIX, object0->x / 0x10000, 95);
+  if (object0->z.fixed > px(95))
+    Actor_WalkToAndWait(ACTOR_FELIX, object0->x.fixed / 0x10000, 95);
   Actor_WalkToAndWait(ACTOR_FELIX, 362, 95);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_SetMessageId((s32)MsgMadraInteriors110);
@@ -962,8 +962,8 @@ static inline void MadraInteriors_WalkIntoLeader(s32 actorId) {
   Actor_SetAnimation(actorId, 2);
   leader = Actor_Get(ACTOR_FELIX);
   if (leader != NULL)
-    Actor_SetDestination(actorId, ((s16 *)&leader->x)[1],
-                         ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(actorId, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   FieldActor_WaitForMoveById(actorId);
   Actor_SetPosition(actorId, 0, 0);
 }

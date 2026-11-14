@@ -424,16 +424,17 @@ void ShamanVillage_FlickerRock(struct Actor *object) {
 /// as it is deep, the radius growing with its height, one step of 256 per
 /// lap, and blinks the part attribute every other frame.
 void Effect_CircleAndBlink(struct Actor *object) {
-  s32 radius = object->y;
+  s32 radius = object->y.fixed;
   s32 step = WORD_AT(object, 48);
 
   radius >>= 2;
   radius += 0xc0000;
-  object->x = WORD_AT(object, 68) +
-              Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
-  object->z = WORD_AT(object, 76) +
-              Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
-  object->y += WORD_AT(object, 72);
+  object->x.fixed = WORD_AT(object, 68) +
+                    Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
+  object->z.fixed =
+      WORD_AT(object, 76) +
+      Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
+  object->y.fixed += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
   FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
 }
@@ -443,10 +444,10 @@ void Effect_CircleAndBlink(struct Actor *object) {
 /// and grows, right of it leftward and shrinks. It takes sprite priority 1
 /// while it moves right, 2 otherwise, and spins.
 void ShamanVillage_SwirlSandGrain(struct Actor *object) {
-  object->x += object->bounce;
-  object->y += object->gravity;
-  object->z += *(s32 *)((u8 *)object + 76);
-  if (object->x >> 16 < 168) {
+  object->x.fixed += object->bounce;
+  object->y.fixed += object->gravity;
+  object->z.fixed += *(s32 *)((u8 *)object + 76);
+  if (object->x.fixed >> 16 < 168) {
     object->bounce += Q16_ONE * 3 / 2;
     object->scaleY = object->scaleX += 0xccc;
   } else {
@@ -522,16 +523,16 @@ row:
   Actor_GetById(14)->update = ShamanVillage_FlickerRock;
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
-                                                 Actor_GetById(14)->y,
-                                                 Actor_GetById(14)->z);
+      spark = (struct Actor *)Import_ActorCreate(
+          0x2a0, Actor_GetById(14)->x.fixed, Actor_GetById(14)->y.fixed,
+          Actor_GetById(14)->z.fixed);
       ((struct SpriteAttr2High *)spark->sprite)->priority =
           (((s8 *)Actor_GetById(14)->sprite)[9] & 12) >> 2;
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
-      spark->bounce = spark->x;
+      spark->bounce = spark->x.fixed;
       spark->gravity = px(3) / 2;
-      spark->riseBaseY = spark->z;
+      spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Import_ActorSetMode((struct Actor *)spark, 7);
       Import_ActorStartScript((struct Actor *)spark, gFieldEffect_MediumScript);
@@ -1340,7 +1341,7 @@ void ShamanVillage_TakeRightPath(void) {
 void ShamanVillage_DropPillar(void) {
   struct Actor *object = ((struct Actor *)Actor_GetById(14));
 
-  if (object->x >> 20 == 32 && object->z >> 20 == 11) {
+  if (object->x.fixed >> 20 == 32 && object->z.fixed >> 20 == 11) {
     Event_Start();
     Event_ResolvePendingActions(0);
     object->motionFlags = 3;
@@ -2445,9 +2446,9 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (mode == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
-    cell = object->x >> 16;
-    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
-                        object->z);
+    cell = object->x.fixed >> 16;
+    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
+                        object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
@@ -2681,9 +2682,9 @@ void ShamanVillage_SetUpRoom3(void) {
 void ShamanVillage_DriftSmoke(struct Actor *object) {
   s32 step;
 
-  object->x += object->timer << 8;
+  object->x.fixed += object->timer << 8;
 
-  object->y += 0x8000;
+  object->y.fixed += 0x8000;
 
   step = 0x51e;
   object->scaleX += step;

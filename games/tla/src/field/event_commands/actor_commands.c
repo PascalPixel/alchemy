@@ -107,8 +107,8 @@ void Actor_FallOverById(u32 id, u32 angle) {
   if (object != NULL && sprite != NULL) {
     Actor_SelectAnimationFar(object, 0);
     angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
-    position[0] = object->x;
-    position[2] = object->z;
+    position[0] = object->x.fixed;
+    position[2] = object->z.fixed;
     MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
     Vector_AddPolarOffset(px(16), angle, position);
     MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
@@ -146,22 +146,22 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
     return;
   if (mode != -1)
     Actor_SelectAnimationFar(object, mode);
-  position[0] = object->x;
+  position[0] = object->x.fixed;
   angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
-  position[2] = object->z;
+  position[2] = object->z.fixed;
   MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
   Vector_AddPolarOffset(px(16), angle, position);
   MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
   switch (angle) {
   case 0:
-    object->x += px(8);
-    object->z += px(1);
+    object->x.fixed += px(8);
+    object->z.fixed += px(1);
     ((s8 *)sprite->unk14)[2] -= 4;
     ((s8 *)sprite->unk14)[3] += 15;
     break;
   case 0x8000:
-    object->x -= px(8);
-    object->z += px(1);
+    object->x.fixed -= px(8);
+    object->z.fixed += px(1);
     ((s8 *)sprite->unk14)[2] += 3;
     ((s8 *)sprite->unk14)[3] += 16;
     break;
@@ -169,7 +169,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
     ((s8 *)sprite->unk14)[3] += 1;
     break;
   case 0x4000:
-    object->z += px(8);
+    object->z.fixed += px(8);
     ((s8 *)sprite->unk14)[3] += 13;
     break;
   }

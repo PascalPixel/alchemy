@@ -71,7 +71,7 @@ void LemurianShipDeck_EnterCabin(void) {
 
       if (object != 0) {
         object->motionFlags = 0;
-        object->y = px(32);
+        object->y.fixed = px(32);
       }
     }
     i++;
@@ -177,7 +177,7 @@ void LemurianShipDeck_BobDeck(void) {
   struct Actor *object = EventCamera_GetActor();
   s32 offset = Math_Sin(gLemurianShipDeck_BobPhase) >> 2;
 
-  object->y += offset;
+  object->y.fixed += offset;
   LAYER_WORD(layer, 12) += offset;
   gLemurianShipDeck_BobPhase += 0x200;
 }
@@ -384,7 +384,7 @@ static inline void RunToActor4(s32 id) {
   Actor_SetAnimation(id, 2);
   target = Actor_GetById(ACTOR_FELIX);
   if (target != NULL)
-    Actor_SetDestination(id, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
+    Actor_SetDestination(id, target->x.part[0].pixel, target->z.part[0].pixel);
   Actor_WaitForMoveById(id);
   Actor_SetPosition(id, 0, 0);
 }
@@ -665,17 +665,17 @@ void LemurianShipDeck_SightMenardisShip(void) {
     Actor_SetAnimation(9, 2);
     target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(9, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
+      Actor_SetDestination(9, target->x.part[0].pixel, target->z.part[0].pixel);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
     target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(ACTOR_JENNA, ((s16 *)&target->x)[1],
-                           ((s16 *)&target->z)[1]);
+      Actor_SetDestination(ACTOR_JENNA, target->x.part[0].pixel,
+                           target->z.part[0].pixel);
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
     target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(ACTOR_SHEBA, ((s16 *)&target->x)[1],
-                           ((s16 *)&target->z)[1]);
+      Actor_SetDestination(ACTOR_SHEBA, target->x.part[0].pixel,
+                           target->z.part[0].pixel);
   }
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
@@ -851,8 +851,8 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != 0)
-    Actor_SetDestination(ACTOR_PIERS, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_PIERS, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_SetFlag(0x985);

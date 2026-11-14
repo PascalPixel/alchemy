@@ -176,7 +176,7 @@ void GondowanCliffs_WaitToLand(struct Actor *object, s32 height) {
   while (count != 0) {
     System_Wait(1);
     count--;
-    if (object->y <= height)
+    if (object->y.fixed <= height)
       break;
   }
 }
@@ -188,19 +188,20 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
   struct FieldSprite *sprite;
   u32 i;
 
-  if (actor->x >> 20 != 76)
+  if (actor->x.fixed >> 20 != 76)
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
   MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);
-  if (Actor_GetById(15)->x >> 20 == 76) {
+  if (Actor_GetById(15)->x.fixed >> 20 == 76) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
     for (i = 0; i <= 17; i++) {
       System_Wait(1);
       sprite = actor->sprite;
       sprite->rotation -= 256;
-      actor->x -= Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
+      actor->x.fixed -=
+          Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
       actor->targetX = 0x80000000;
     }
     actor->update = GondowanCliffs_RollPillar;
@@ -224,7 +225,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     options.targetScaleX = 0x18000;
     options.targetScaleY = 0x13333;
     options.startScaleY = 0xcccc;
-    FieldEffect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0,
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET,
                       &options);
@@ -245,7 +246,7 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   object->groundHeight = px(32);
-  object->y = px(32);
+  object->y.fixed = px(32);
   MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
@@ -261,8 +262,8 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
     object = Actor_Get(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
     Actor_SetPosition(17, 1912, 728);
-    object->groundHeight = object->y =
-        Map_GetTerrainHeight(0, object->x, object->z);
+    object->groundHeight = object->y.fixed =
+        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
   }
 }
@@ -276,9 +277,9 @@ void GondowanCliffs_TalkToDog(void) {
   } position;
   s32 *out = (s32 *)&position;
 
-  out[0] = object->x;
-  out[1] = object->y;
-  out[2] = object->z;
+  out[0] = object->x.fixed;
+  out[1] = object->y.fixed;
+  out[2] = object->z.fixed;
   FieldVector_AddPolarOffset(px(16), object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
     gFieldWork->fieldMenu = 1;
@@ -443,8 +444,8 @@ s32 Scene_Initialize(void) {
     actor = Actor_GetById(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
     Actor_SetPosition(17, 1912, 728);
-    height = Map_GetTerrainHeight(0, actor->x, actor->z);
-    actor->y = height;
+    height = Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
+    actor->y.fixed = height;
     actor->groundHeight = height;
   }
   Actor_SetAnimation(16, 4);
@@ -498,7 +499,7 @@ void Geysers_Update(void) {
     if (entry->id == 0)
       continue;
     object = Actor_GetById(entry->id);
-    if (object->x == 0 && object->z == 0)
+    if (object->x.fixed == 0 && object->z.fixed == 0)
       continue;
     if (entry->timer == entry->riseAt) {
       Sound_Play(SE_CURSE_FALL);
@@ -525,9 +526,9 @@ void Geysers_Update(void) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }
-    index = (object->x >> 20) + (object->z >> 20) * 128;
+    index = (object->x.fixed >> 20) + (object->z.fixed >> 20) * 128;
     terrain[index] = (u8)work->value + i;
-    *collision = ((PIXEL_PART(object->y) + entry->height) / 8) << 8;
+    *collision = ((PIXEL_PART(object->y.fixed) + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
       cell->attributeB = 0;
@@ -541,16 +542,16 @@ void Geysers_Update(void) {
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
-      rider->y = object->y + -0x100000;
+      rider->y.fixed = object->y.fixed + -0x100000;
     } else {
       s32 wave;
 
       entry->phase += 0x1000;
       wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
-      rider->y = object->y + (entry->height << 16) + wave;
+      rider->y.fixed = object->y.fixed + (entry->height << 16) + wave;
     }
-    rider->x = object->x;
-    rider->z = object->z;
+    rider->x.fixed = object->x.fixed;
+    rider->z.fixed = object->z.fixed;
   }
 }
 
@@ -591,9 +592,9 @@ void Geysers_Draw(void) {
   again:
     if (count > 79)
       goto next;
-    x = actor->x - scrollX;
-    y = actor->y + (h << 16) - lift;
-    z = actor->z - scrollZ - lift;
+    x = actor->x.fixed - scrollX;
+    y = actor->y.fixed + (h << 16) - lift;
+    z = actor->z.fixed - scrollZ - lift;
     x = (x >> 16) - 8;
     screenY = z - y;
     screenY = (screenY >> 16) - 16;
@@ -616,9 +617,9 @@ void Geysers_Draw(void) {
   top:
     if (count > 79)
       continue;
-    x = actor->x - scrollX;
-    y = actor->y + (swing->height << 16) - lift;
-    z = actor->z - scrollZ - lift;
+    x = actor->x.fixed - scrollX;
+    y = actor->y.fixed + (swing->height << 16) - lift;
+    z = actor->z.fixed - scrollZ - lift;
     screenY = z - y;
     x = (x >> 16) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
@@ -690,7 +691,8 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  rider = (FieldActor_Create(0x8000, object->x, object->y, object->z));
+  rider = (FieldActor_Create(0x8000, object->x.fixed, object->y.fixed,
+                             object->z.fixed));
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= 128;

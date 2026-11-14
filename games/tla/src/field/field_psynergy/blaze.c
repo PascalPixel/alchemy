@@ -108,9 +108,9 @@ void FieldPsynergy_Blaze(void) {
                        ->height
                    << 16;
           work->mode = 1;
-          work->origin[0] = cursor.object->x;
-          work->origin[1] = cursor.object->y + height;
-          work->origin[2] = cursor.object->z;
+          work->origin[0] = cursor.object->x.fixed;
+          work->origin[1] = cursor.object->y.fixed + height;
+          work->origin[2] = cursor.object->z.fixed;
           scene->secondObjectId = i;
           scene->child = cursor.object;
           best = distance;
@@ -280,7 +280,7 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   result = 0;
   if (work->mode != EVENT_MODE_NO_CELL_TEST) {
-    if (MapGrid_CheckCollisionAtFar(object->x, object->z, 0,
+    if (MapGrid_CheckCollisionAtFar(object->x.fixed, object->z.fixed, 0,
                                     object->groundHeight) != 0)
       result = 1;
   }
@@ -288,8 +288,8 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   for (i = SCRIPT_OBJECT_COUNT - 1; i >= 0; i--, other++) {
     if (other->script != NULL && (other->collisionFlags & 1) &&
         other != object) {
-      if (Field_CheckSpheresOverlapFar(&object->x, object->radius - 2,
-                                       &other->x, other->radius - 2) >= 0)
+      if (Field_CheckSpheresOverlapFar(&object->x.fixed, object->radius - 2,
+                                       &other->x.fixed, other->radius - 2) >= 0)
         result |= 2;
     }
   }

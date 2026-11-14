@@ -129,11 +129,11 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       object->facing = entry->facing;
       object->collisionFlags = 1;
       Actor_SetActionCallback(object, entry->behavior);
-      ((struct SpawnActor *)object)->homeX = object->x / Q16_ONE;
-      ((struct SpawnActor *)object)->homeZ = object->z / Q16_ONE;
-      if (object->y != 0) {
+      ((struct SpawnActor *)object)->homeX = object->x.fixed / Q16_ONE;
+      ((struct SpawnActor *)object)->homeZ = object->z.fixed / Q16_ONE;
+      if (object->y.fixed != 0) {
         object->motionFlags = 4;
-        object->y += px(1) / 2;
+        object->y.fixed += px(1) / 2;
       }
       if (work->mode == 3) {
         object->motionFlags &= 0xfe;
@@ -141,8 +141,8 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
           sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
       } else {
         object->groundHeight =
-            MapGrid_GetTerrainHeightFar(0, object->x, object->z);
-        object->y += object->groundHeight;
+            MapGrid_GetTerrainHeightFar(0, object->x.fixed, object->z.fixed);
+        object->y.fixed += object->groundHeight;
       }
       object->priorityFlags = 1;
     }
@@ -219,7 +219,7 @@ void Actor_ResetForLeader(s32 table) {
 
     if (y != 0) {
       object = work->actors[leader];
-      object->y = y;
+      object->y.fixed = y;
       object->groundHeight = y;
     }
   }
@@ -241,15 +241,16 @@ void Actor_ResetForLeader(s32 table) {
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
-           ((object->x / 0x100000) + ((object->z / 0x100000) << 7));
+           ((object->x.fixed / 0x100000) + ((object->z.fixed / 0x100000) << 7));
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
       gMainRoutineWork.movementMode = 2;
-      height = MapGrid_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
+      height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
+                                           object->z.fixed - 0x100000) -
                0x200000;
-      object->y += height;
-      object->groundHeight = object->y;
+      object->y.fixed += height;
+      object->groundHeight = object->y.fixed;
       object->motionFlags = 0;
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_SelectAnimationFar(object, 12);
@@ -259,15 +260,17 @@ void Actor_ResetForLeader(s32 table) {
   if (gMainRoutineWork.ownerOverride != 0) {
     struct Actor *stand = work->actors[8];
 
-    SET_POSITION(stand, object->x, object->y, object->z);
+    SET_ACTOR_POSITION(stand, object->x.fixed, object->y.fixed,
+                       object->z.fixed);
     stand->groundHeight = object->groundHeight;
     stand->facing = object->facing;
-    object->x = 0;
-    object->z = 0;
+    object->x.fixed = 0;
+    object->z.fixed = 0;
     object = stand;
   }
 
-  camera = Actor_CreateFar(0x8000, object->x, object->y, object->z);
+  camera = Actor_CreateFar(0x8000, object->x.fixed, object->y.fixed,
+                           object->z.fixed);
   camera->groundHeight = object->groundHeight;
   Actor_StartCameraFar(camera, object);
   if (work->mode == 3) {
@@ -276,7 +279,7 @@ void Actor_ResetForLeader(s32 table) {
     effect[5] = 15;
     effect[6] = 9;
   }
-  Ram_HeapSlots->mapGrid->origin = &camera->x;
+  Ram_HeapSlots->mapGrid->origin = &camera->x.fixed;
   work->camera = camera;
 }
 
@@ -410,11 +413,11 @@ void Actor_Restore(void) {
       if (index == Party_GetLeaderActor()) {
         camera = gFieldWork->camera;
         view = Ram_HeapSlots->mapGrid->origin;
-        y = object->y;
-        camera->x = object->x;
+        y = object->y.fixed;
+        camera->x.fixed = object->x.fixed;
         camera->groundHeight = y;
-        camera->y = y;
-        camera->z = object->z;
+        camera->y.fixed = y;
+        camera->z.fixed = object->z.fixed;
         view[1] = y;
         Actor_StartIdleFar(object);
       }

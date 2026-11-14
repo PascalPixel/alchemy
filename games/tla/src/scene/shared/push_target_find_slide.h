@@ -29,9 +29,9 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     count = 0;
     layer = &object->layer;
     *layer = 2;
-    target->x = object->x + dx;
-    target->z = object->z + dz;
-    position[1] = object->y;
+    target->x = object->x.fixed + dx;
+    target->z = object->z.fixed + dz;
+    position[1] = object->y.fixed;
     for (;;) {
       position[2] = target->z + (gPushFootprints[footprint][1] << 16);
       for (row = 0; row < height; row++) {
@@ -52,9 +52,9 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     *layer = 0;
     if (count == 0)
       return 0;
-    target->x = object->x + dx * count;
-    target->y = object->y;
-    target->z = object->z + dz * count;
+    target->x = object->x.fixed + dx * count;
+    target->y = object->y.fixed;
+    target->z = object->z.fixed + dz * count;
     return 1;
   }
   return 0;

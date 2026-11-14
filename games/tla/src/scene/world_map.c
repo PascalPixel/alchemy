@@ -297,11 +297,12 @@ s32 Func_020003b4(struct Actor *object) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
     return 1;
   Actor_SetSpriteFlags(object, 0);
-  x = object->x;
+  x = object->x.fixed;
   object->acceleration = px(1) / 16;
   object->speedLimit = px(1) / 16;
-  z = object->z;
-  FieldActor_SetMoveTargetFixed(object, x - 0x1e0000, object->y, z + 0x80000);
+  z = object->z.fixed;
+  FieldActor_SetMoveTargetFixed(object, x - 0x1e0000, object->y.fixed,
+                                z + 0x80000);
   return 0;
 }
 
@@ -400,8 +401,8 @@ void WorldMap_BoardShip(void) {
   kind = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ship = Actor_Get(8);
-  dx = (leader->x - ship->x) >> 16;
-  dz = (leader->z - ship->z) >> 16;
+  dx = (leader->x.fixed - ship->x.fixed) >> 16;
+  dz = (leader->z.fixed - ship->z.fixed) >> 16;
   distance = dx * dx + dz * dz;
   if (kind != 8 && distance > 255)
     return;
@@ -410,8 +411,8 @@ void WorldMap_BoardShip(void) {
   gMainRoutineWork.movementMode = 7;
   gMainRoutineWork.ownerOverride = 1;
   Event_SetFlag(0x176);
-  gMainRoutineWork.savedX = ship->x;
-  gMainRoutineWork.savedZ = ship->z;
+  gMainRoutineWork.savedX = ship->x.fixed;
+  gMainRoutineWork.savedZ = ship->z.fixed;
   gMainRoutineWork.unk280 = ship->facing;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Import_ActorSelectAnimation(leader, 6);
@@ -424,7 +425,7 @@ void WorldMap_BoardShip(void) {
   leader->velocityY = px(4);
   leader->groundHeight = px(4);
   Actor_StartIdle(leader);
-  FieldActor_SetMoveTargetFixed(leader, ship->x, 0, ship->z);
+  FieldActor_SetMoveTargetFixed(leader, ship->x.fixed, 0, ship->z.fixed);
   FieldActor_WaitForMove(leader);
   Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
@@ -445,7 +446,7 @@ void WorldMap_LeaveShip(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ship = Actor_GetById(8);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 cell = WorldMap_GetCollision(&ship->x);
+  s32 cell = WorldMap_GetCollision(&ship->x.fixed);
   s32 position[3];
   s32 shore = 0;
   s32 blocked;
@@ -453,9 +454,9 @@ void WorldMap_LeaveShip(void) {
   u8 *blocks = gMapBlocks;
   u8 flags;
 
-  position[0] = ship->x;
-  position[1] = ship->y;
-  position[2] = ship->z;
+  position[0] = ship->x.fixed;
+  position[1] = ship->y.fixed;
+  position[2] = ship->z.fixed;
   Vector_AddPolarOffset(0x180000, ship->facing, position);
   blocked = 0;
   block = blocks + ((((position[0] / 0x200000) & 31) +
@@ -490,13 +491,13 @@ void WorldMap_LeaveShip(void) {
     gMainRoutineWork.movementMode = 1;
     gMainRoutineWork.ownerOverride = 0;
     Event_ClearFlag(0x176);
-    gMainRoutineWork.savedX = ship->x;
-    gMainRoutineWork.savedZ = ship->z;
+    gMainRoutineWork.savedX = ship->x.fixed;
+    gMainRoutineWork.savedZ = ship->z.fixed;
     gMainRoutineWork.unk280 = ship->facing;
     flags = leader->motionFlags;
-    leader->x = ship->x;
-    leader->y = px(4);
-    leader->z = ship->z;
+    leader->x.fixed = ship->x.fixed;
+    leader->y.fixed = px(4);
+    leader->z.fixed = ship->z.fixed;
     leader->motionFlags = 0;
     Actor_SetSpriteFlags(leader, 0);
     Import_ActorSelectAnimation(leader, 6);
@@ -532,8 +533,8 @@ void Func_02000918(void) {
     WorldMap_SetUpShip();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gMainRoutineWork.savedX = leader->x;
-  gMainRoutineWork.savedZ = leader->z;
+  gMainRoutineWork.savedX = leader->x.fixed;
+  gMainRoutineWork.savedZ = leader->z.fixed;
   gMainRoutineWork.unk280 = 0;
   gMainRoutineWork.ownerOverride = 0;
   Event_ClearFlag(0x176);
@@ -548,7 +549,8 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   Actor_SetAnimation(actor, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(actor, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(actor, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_WaitForMoveById(actor);
   Actor_SetPosition(actor, 0, 0);
 }
@@ -562,8 +564,8 @@ void WorldMap_RefuseToRunAway(void) {
 
   if (Event_GetFlag(0xa21) && !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
     object = Actor_Get(gMainRoutineWork.leaderActorId);
-    x = object->x;
-    z = object->z;
+    x = object->x.fixed;
+    z = object->z.fixed;
     x >>= 20;
     z >>= 20;
     Event_Start();
@@ -656,9 +658,9 @@ void WorldMap_GazeIntoPond(void) {
 
     // "There are some coins in the shallows!"
     Message_ShowCentered((s32)MsgThereAreSome, 1);
-    position[0] = leader->x;
-    position[1] = leader->y;
-    position[2] = leader->z;
+    position[0] = leader->x.fixed;
+    position[1] = leader->y.fixed;
+    position[2] = leader->z.fixed;
     FieldVector_AddPolarOffset(px(16), leader->facing, position);
     object = Actor_Get(79);
     x = position[0];
@@ -668,9 +670,9 @@ void WorldMap_GazeIntoPond(void) {
         return;
       work->actors[slot] = object;
     } else {
-      object->x = x;
-      object->y = position[1];
-      object->z = position[2];
+      object->x.fixed = x;
+      object->y.fixed = position[1];
+      object->z.fixed = position[2];
     }
     FieldActor_ShowItemIconById(79, amount);
     /* FAKEMATCH(dead): the store and the call in a once-only block. */
@@ -731,8 +733,8 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
     struct Actor *ship = Actor_GetById(8);
 
-    ship->x = gMainRoutineWork.savedX;
-    ship->z = gMainRoutineWork.savedZ;
+    ship->x.fixed = gMainRoutineWork.savedX;
+    ship->z.fixed = gMainRoutineWork.savedZ;
     ship->facing = gMainRoutineWork.unk280;
     ship->timer = 0;
     ship->userValue = 0;
@@ -1321,8 +1323,8 @@ void WorldMap_MeetEcho(void) {
 
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  x = (leader->x - px(10120)) / 2 + 0x27880000;
-  z = (leader->z - px(8356)) / 2 + 0x20a40000;
+  x = (leader->x.fixed - px(10120)) / 2 + 0x27880000;
+  z = (leader->z.fixed - px(8356)) / 2 + 0x20a40000;
   /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result, then
    * flag 0x175's result for MsgHey2. */
   flag = 0x16e;
@@ -1693,8 +1695,8 @@ void Func_020028cc(void) {
   if ((gFrameCount & 15) != 0)
     return;
   leader = Actor_Get(8);
-  obj =
-      FieldActor_Create(285, leader->x - px(32), leader->y, leader->z - px(16));
+  obj = FieldActor_Create(285, leader->x.fixed - px(32), leader->y.fixed,
+                          leader->z.fixed - px(16));
   if (obj == NULL)
     return;
   obj->scaleX = Q16_ONE / 2;
@@ -1703,13 +1705,13 @@ void Func_020028cc(void) {
   if ((Random16() * 2) >> 16) {
     s32 back = ((Random16() * 48) >> 16) << 16;
 
-    obj->x -= back >> 1;
-    obj->z -= back;
+    obj->x.fixed -= back >> 1;
+    obj->z.fixed -= back;
   } else {
     value = ((Random16() << 5) >> 16) << 16;
-    obj->x += value;
+    obj->x.fixed += value;
     value = (s32)value >> 1;
-    obj->z += value;
+    obj->z.fixed += value;
   }
   spr->nextFrame = 0;
   spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
@@ -1775,7 +1777,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   boat->timer = 0;
   boat->acceleration = px(1) / 8;
   boat->speedLimit = px(1) / 8;
-  FieldActor_SetMoveTargetFixed(boat, px(10239), boat->y, px(7884));
+  FieldActor_SetMoveTargetFixed(boat, px(10239), boat->y.fixed, px(7884));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   WorldMap_Freeze();
@@ -1784,7 +1786,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   // "So it would seem..."
   Event_ShowMessage(8, 0);
-  FieldActor_SetMoveTargetFixed(boat, px(10255), boat->y, px(7868));
+  FieldActor_SetMoveTargetFixed(boat, px(10255), boat->y.fixed, px(7868));
   // "Wait..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "What is it?"
@@ -2000,8 +2002,8 @@ void WorldMap_TakeOff(void) {
   Event_SetFlag(0xa78);
   Actor_MoveToAndWait(8, 7158, 8532);
   WorldMap_SetUpShip();
-  x = Actor_Get(8)->x / 0x10000;
-  z = Actor_Get(8)->z / 0x10000;
+  x = Actor_Get(8)->x.fixed / 0x10000;
+  z = Actor_Get(8)->z.fixed / 0x10000;
   i = 0;
   {
     do {
@@ -2141,9 +2143,9 @@ extern s32 gData_02004f70[];
 
 void Func_0200343c(struct Actor *parent) {
   if ((gFrameCount & 7) == 0) {
-    s32 x = parent->x;
-    s32 y = parent->y;
-    s32 z = parent->z;
+    s32 x = parent->x.fixed;
+    s32 y = parent->y.fixed;
+    s32 z = parent->z.fixed;
     struct Actor *object = (FieldActor_Create(673, x, y, z));
 
     if (object != NULL) {
@@ -2433,7 +2435,8 @@ void Func_02004634(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
+    child = (FieldActor_Create(271, parent->x.fixed, parent->y.fixed,
+                               parent->z.fixed));
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -2489,7 +2492,7 @@ void Func_020048f4(void) {
   u32 attributes;
 
   if ((gInput.held & (KEY_A | KEY_B)) != 0 &&
-      Event_GetFlag(FLAG_MENU_OPEN) == 0 && leader->y > px(4)) {
+      Event_GetFlag(FLAG_MENU_OPEN) == 0 && leader->y.fixed > px(4)) {
     if (--gData_02006e10 <= 0) {
       Party_DrainPp(1);
       gData_02006e10 = 10;
@@ -2497,7 +2500,8 @@ void Func_020048f4(void) {
   }
   Gauge_Draw(Party_GetPpRatio());
   attributes = 0x80004000;
-  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
+  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x.fixed),
+        (s32)(screen));
   {
     s32 x = screen[0] - 16;
     s32 y = screen[1] - 32;

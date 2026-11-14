@@ -222,8 +222,8 @@ void MadraCatacombs_DropPillarIntoHole(void) {
   struct Actor *object = Actor_GetById(ACTOR_HOLE_PILLAR);
   s32 z;
 
-  if ((object->x >> 20) == 40) {
-    z = object->z >> 20;
+  if ((object->x.fixed >> 20) == 40) {
+    z = object->z.fixed >> 20;
     if (z == 13) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -244,7 +244,7 @@ void MadraCatacombs_FinishMovingPushedPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_PUSHED_PILLAR);
 
   Actor_PlaceMovedBlock();
-  if ((object->x >> 20) == 44 && (object->z >> 20) == 26)
+  if ((object->x.fixed >> 20) == 44 && (object->z.fixed >> 20) == 26)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED);
 }
 
@@ -266,10 +266,10 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   Event_ResolvePendingActions(0);
   Event_PlaySound(SE_STONE_RUMBLE);
   for (i = 0; i < 120; i++) {
-    left->x += -0x1999;
+    left->x.fixed += -0x1999;
     /* FAKEMATCH(signature): read and written as long, another alias set than
      * the left door's int store. */
-    *(long *)&right->x += 0x1999;
+    *(long *)&right->x.fixed += 0x1999;
     wait(1);
   }
   FieldCamera_SetSpeed(3.2);
@@ -372,7 +372,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
 
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0) {
     object = Actor_GetById(ACTOR_SHAKEN_CHEST);
-    x = object->x;
+    x = object->x.fixed;
     if (x < (186 << 16)) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -388,7 +388,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
 
 void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
   HeldActor_RaiseCell();
-  if ((object->x >> 20) == 35 && (object->z >> 20) == 17)
+  if ((object->x.fixed >> 20) == 35 && (object->z.fixed >> 20) == 17)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED);
 }
 
@@ -449,7 +449,7 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
   animation->frame = ((struct AnimationRecord18 *)bookshelf->sprite)->frame;
   if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0 && animation->frame == 0) {
     Event_PlaySound(SE_535);
-    chest->x += px(-2);
+    chest->x.fixed += px(-2);
     chest->velocityY = px(2);
     Event_ClearFlag(FLAG_SCENE_TEMP_04);
   }
@@ -471,9 +471,9 @@ void MadraCatacombs_EnterDoorway(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
-  cell = object->x >> 16;
-  Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
-                      object->z);
+  cell = object->x.fixed >> 16;
+  Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
+                      object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetScript(party->leaderActorId, gMadraCatacombs_WalkIntoDoorway);
@@ -501,9 +501,9 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (mode == 1) {
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    cell = object->x >> 16;
-    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
-                        object->z);
+    cell = object->x.fixed >> 16;
+    Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
+                        object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
@@ -650,7 +650,7 @@ void MadraCatacombs_SetUpBookshelfRoom(void) {
     object = Actor_GetById(ACTOR_SHAKEN_CHEST);
     object->collisionFlags = 8;
     object->motionFlags = 2;
-    object->y = px(32);
+    object->y.fixed = px(32);
     object->groundHeight = px(32);
     object->update = MadraCatacombs_RockChestWithBookshelf;
     Actor_GetById(ACTOR_BOOKSHELF)->scaleY = Q16_ONE * 4 / 5;
@@ -668,12 +668,12 @@ void MadraCatacombs_SetUpTabletRoom(void) {
   right->scaleX = -0x14000;
   left->motionFlags = 0;
   right->motionFlags = 0;
-  left->y = 0;
-  right->y = 0;
+  left->y.fixed = 0;
+  right->y.fixed = 0;
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_TABLET_DOOR_OPEN) != 0) {
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-      left->x += px(-12);
-      right->x += px(12);
+      left->x.fixed += px(-12);
+      right->x.fixed += px(12);
     }
     MadraCatacombs_LightFlames();
   }

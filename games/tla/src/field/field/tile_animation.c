@@ -1029,8 +1029,8 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
 /// its whole-pixel halves) on the actor's layer, against its ground height.
 s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
-  s32 x = ((union FieldCoordinate *)&position->x)->part.pixel;
-  s32 z = ((union FieldCoordinate *)&position->z)->part.pixel;
+  s32 x = ((struct FieldCoordinate *)&position->x)->part[0].pixel;
+  s32 z = ((struct FieldCoordinate *)&position->z)->part[0].pixel;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
@@ -1070,8 +1070,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 /// it, else 0.
 s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
                                 struct FieldPosition *position) {
-  s32 x = ((union FieldCoordinate *)&position->x)->part.pixel;
-  s32 z = ((union FieldCoordinate *)&position->z)->part.pixel;
+  s32 x = ((struct FieldCoordinate *)&position->x)->part[0].pixel;
+  s32 z = ((struct FieldCoordinate *)&position->z)->part[0].pixel;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
@@ -1097,7 +1097,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
     return 2;
   code = Ram_MapCollision + *shapes * 4;
   if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-          actor->y >
+          actor->y.fixed >
       px(8))
     return 1;
   return 0;

@@ -776,8 +776,8 @@ s32 Scene_Initialize(void) {
       Loho_PlaceFacing(16, px(459), px(254), FACING_NORTHEAST);
       Loho_PlaceFacing(18, px(442), px(203), FACING_WEST);
       Loho_PlaceFacing(17, px(490), px(188), FACING_SOUTHEAST);
-      Actor_GetById(17)->timer = Actor_GetById(17)->x >> 16;
-      Actor_GetById(17)->userValue = Actor_GetById(17)->z >> 16;
+      Actor_GetById(17)->timer = Actor_GetById(17)->x.fixed >> 16;
+      Actor_GetById(17)->userValue = Actor_GetById(17)->z.fixed >> 16;
       Actor_SetScript(17, 2);
     }
   }

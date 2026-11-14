@@ -75,8 +75,8 @@ s32 CrackedTiles_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 leaderX = leader->x >> 20;
-    s32 leaderZ = leader->z >> 20;
+    s32 leaderX = leader->x.fixed >> 20;
+    s32 leaderZ = leader->z.fixed >> 20;
 
     entry = table->entries;
     k = 0;

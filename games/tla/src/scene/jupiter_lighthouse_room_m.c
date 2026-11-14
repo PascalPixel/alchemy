@@ -266,7 +266,7 @@ extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Call4(MapGrid_SetCellHeight, object->x, object->z, 0, -8);
+  Call4(MapGrid_SetCellHeight, object->x.fixed, object->z.fixed, 0, -8);
 }
 
 static __inline__ void JupiterLighthouse_SetCellHeight(s32 x, s32 z, s32 a,
@@ -286,18 +286,19 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   s32 x;
   s32 i;
 
-  if (object->x >> 20 == 63 && object->z >> 20 == 15) {
+  if (object->x.fixed >> 20 == 63 && object->z.fixed >> 20 == 15) {
     Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
     object->motionFlags = 3;
     System_Wait(2);
     i = 0;
-    if (object->y > object->groundHeight || object->velocityY != 0) {
+    if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
       do {
         System_Wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y > object->groundHeight || object->velocityY != 0);
+      } while (object->y.fixed > object->groundHeight ||
+               object->velocityY != 0);
     }
     object->motionFlags = 0;
     Event_PlaySound(SE_HEAVY_IMPACT);
@@ -306,7 +307,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     Camera_MoveWithinMapBounds_(254 << 18, -1, 232 << 16, 1);
     FieldCamera_WaitForArrival();
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
-    x = leader->x >> 20;
+    x = leader->x.fixed >> 20;
     if (x == 64) {
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1032, 232);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 232);
@@ -362,7 +363,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     PaletteCycle_SetPausesInEvents(1);
     Event_End();
   }
-  JupiterLighthouse_SetCellHeight(object->x, object->z, 0, -6);
+  JupiterLighthouse_SetCellHeight(object->x.fixed, object->z.fixed, 0, -6);
 }
 
 /// Standing on the button opens the floor by the aerie, until the lid is off;
@@ -388,7 +389,7 @@ void JupiterLighthouse_OpenFloor(void) {
   MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
   Event_Wait(6);
   MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
-  x = object->x >> 20;
+  x = object->x.fixed >> 20;
   if (x == 49)
     spot = 1;
   if (x == 50)
@@ -397,7 +398,7 @@ void JupiterLighthouse_OpenFloor(void) {
     spot = 3;
   if (x == 52)
     spot = 4;
-  if (object->y != 0)
+  if (object->y.fixed != 0)
     spot = 0;
   if (Event_GetFlag(FLAG_GREY_BLOCK_DROPPED))
     spot = 0;
@@ -412,13 +413,13 @@ void JupiterLighthouse_OpenFloor(void) {
     object->motionFlags = 2;
     object->groundHeight = px(-80);
     i = 0;
-    if (object->y > object->groundHeight) {
+    if (object->y.fixed > object->groundHeight) {
       do {
         System_Wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y > object->groundHeight);
+      } while (object->y.fixed > object->groundHeight);
     }
     MapGrid_SetShake(3, 3, 0.95);
     Sound_Play(SE_HEAVY_IMPACT);
@@ -1101,22 +1102,22 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   object = Actor_Get(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestination(ACTOR_PIERS, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_PIERS, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
   object = Actor_Get(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestination(ACTOR_SHEBA, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_SHEBA, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   object = Actor_Get(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestination(ACTOR_JENNA, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_JENNA, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   Actor_SetAnimation(28, 2);
   object = Actor_Get(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestination(28, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
+    Actor_SetDestination(28, object->x.part[0].pixel, object->z.part[0].pixel);
   Actor_SetScript(ACTOR_PIERS, gJupiterLighthouse_PiersStepsBackScript);
   Actor_SetScript(ACTOR_SHEBA, gJupiterLighthouse_PiersStepsBackScript);
   Actor_SetScript(ACTOR_JENNA, gJupiterLighthouse_PiersStepsBackScript);
@@ -1655,11 +1656,11 @@ s32 Scene_Initialize(void) {
   gWhirlwindRiding = 0;
   object = Actor_Get(24);
   object->motionFlags = 0;
-  object->y = 0;
+  object->y.fixed = 0;
   object->groundHeight = 0;
   object = Actor_Get(25);
   object->motionFlags = 0;
-  object->y = px(32);
+  object->y.fixed = px(32);
   object->groundHeight = px(32);
   if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
     MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
@@ -1727,7 +1728,7 @@ s32 Scene_PrepareMap(void) {
     /* FAKEMATCH(barrier): the last call's zero is built before the position
      * loads. */
     __asm__("" : : "r"(zero));
-    MapGrid_SetCellHeight(object->x, object->z, zero, -6);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, zero, -6);
   }
   return 0;
 }

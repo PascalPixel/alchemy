@@ -42,16 +42,16 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (obj == 0 || (obj->collisionFlags & 8) != 0)
         continue;
 
-      if (obj->y - src->y >= 0) {
-        if (obj->y - src->y >= px(48))
+      if (obj->y.fixed - src->y.fixed >= 0) {
+        if (obj->y.fixed - src->y.fixed >= px(48))
           continue;
-      } else if (src->y - obj->y >= px(48)) {
+      } else if (src->y.fixed - obj->y.fixed >= px(48)) {
         continue;
       }
 
-      dx = (obj->x - src->x) / Q16_ONE;
-      dy = (obj->y - src->y) / Q16_ONE;
-      dz = (obj->z - src->z) / Q16_ONE;
+      dx = (obj->x.fixed - src->x.fixed) / Q16_ONE;
+      dy = (obj->y.fixed - src->y.fixed) / Q16_ONE;
+      dz = (obj->z.fixed - src->z.fixed) / Q16_ONE;
 
       xx = dx * dx;
       yy = dy * dy;
@@ -65,7 +65,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (dist >= bestDist)
         continue;
 
-      angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
+      angle = (u16)ArcTan2(obj->z.fixed - src->z.fixed,
+                           obj->x.fixed - src->x.fixed);
       if (dist > 11) {
         s32 diff = (s16)(angle - src->facing);
 
@@ -138,7 +139,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
     if (ABS(other->groundHeight - self->groundHeight) > height)
       return -1;
   } else {
-    if (ABS(other->y - self->y) > height)
+    if (ABS(other->y.fixed - self->y.fixed) > height)
       return -1;
   }
 
@@ -147,8 +148,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   range = rule->range + 1;
   if ((other->collisionFlags & 0x10) != 0)
     range = range * 3 / 2;
-  dx = (other->x - self->x) / Q16_ONE;
-  dz = (other->z - self->z) / Q16_ONE;
+  dx = (other->x.fixed - self->x.fixed) / Q16_ONE;
+  dz = (other->z.fixed - self->z.fixed) / Q16_ONE;
   distance = Iwram_Sqrt(dx * dx + dz * dz);
   if (distance > range)
     return -1;
@@ -161,7 +162,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
     if (distance > 19)
       width = width * 2 / 3;
     facing = (self->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
-    angle = (u16)ArcTan2(other->z - self->z, other->x - self->x);
+    angle = (u16)ArcTan2(other->z.fixed - self->z.fixed,
+                         other->x.fixed - self->x.fixed);
     diff = (s16)(angle - facing);
     if (diff < 0)
       diff = -diff;
@@ -226,10 +228,10 @@ s32 Leader_CanPushObjectAhead(void) {
   s32 angle = owner->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position[0] = owner->x;
+  position[0] = owner->x.fixed;
   half = 128;
-  position[1] = (owner->y + (half << 11)) & 0xfff80000;
-  position[2] = owner->z;
+  position[1] = (owner->y.fixed + (half << 11)) & 0xfff80000;
+  position[2] = owner->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
   target = Actor_FindAtCell(position, 1);
   if (target == 0)
@@ -241,16 +243,16 @@ s32 Leader_CanPushObjectAhead(void) {
   if (id != 1 && target == Actor_GetById(id))
     return 0;
 #endif
-  position[0] = target->x;
-  position[1] = target->y;
-  position[2] = target->z;
+  position[0] = target->x.fixed;
+  position[1] = target->y.fixed;
+  position[2] = target->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
-  above[0] = target->x;
-  above[1] = target->y + 0x100000;
-  above[2] = target->z;
+  above[0] = target->x.fixed;
+  above[1] = target->y.fixed + 0x100000;
+  above[2] = target->z.fixed;
   hit = Actor_FindAtCell(above, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
@@ -278,14 +280,14 @@ void Leader_PushObjectAhead(void) {
   s32 angle = owner->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position[0] = owner->x;
-  position[1] = (owner->y + 0x40000) & 0xfff80000;
-  position[2] = owner->z;
+  position[0] = owner->x.fixed;
+  position[1] = (owner->y.fixed + 0x40000) & 0xfff80000;
+  position[2] = owner->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
   target = Actor_FindAtCell(position, 1);
-  position[0] = target->x;
-  position[1] = target->y;
-  position[2] = target->z;
+  position[0] = target->x.fixed;
+  position[1] = target->y.fixed;
+  position[2] = target->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
   terrain = target->layer;
   target->layer = 2;
@@ -309,8 +311,8 @@ void Leader_PushObjectAhead(void) {
     Event_NoOp();
     Actor_SetPositionAndResetMotionFar(target, position[0], position[1],
                                        position[2]);
-    Actor_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16, owner->y,
-                                       S16_AT(owner, 18) << 16);
+    Actor_SetPositionAndResetMotionFar(owner, S16_AT(owner, 10) << 16,
+                                       owner->y.fixed, S16_AT(owner, 18) << 16);
     Actor_SelectAnimationFar(owner, 1);
     owner->speedLimit = speed;
     owner->acceleration = acceleration;

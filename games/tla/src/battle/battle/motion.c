@@ -66,8 +66,8 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   s32 x;
   s32 z;
 
-  x = start->x + (end->x - start->x) * progress / 100;
-  z = start->z + (end->z - start->z) * progress / 100;
+  x = start->x.fixed + (end->x.fixed - start->x.fixed) * progress / 100;
+  z = start->z.fixed + (end->z.fixed - start->z.fixed) * progress / 100;
   REG_BLDCNT = 0;
   start->acceleration = px(2);
   start->speedLimit = px(8);

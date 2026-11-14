@@ -63,8 +63,8 @@ void EasternAlhafraShip_StartMovingCrate(void) {}
 
 void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   if (x == 24 && z == 40)
     GameFlag_Set(FLAG_CRATE_MOVED);
@@ -125,7 +125,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   flags = &object->motionFlags;
   *flags = 4;
   for (i = 39; i >= 0; i--) {
-    object->y += 0x3333;
+    object->y.fixed += 0x3333;
     Event_Wait(1);
   }
   Event_Wait(70);
@@ -188,7 +188,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(14)->priorityFlags |= 128;
       object = Actor_GetById(15);
       object->priorityFlags |= 64;
-      object->y += px(16);
+      object->y.fixed += px(16);
       object->groundHeight += px(16);
     }
   } else {
@@ -240,20 +240,24 @@ extern s32 EasternAlhafraShip_SpawnNote__s0438(
 void Actor_EmitNotes(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  EasternAlhafraShip_SpawnNote__s0438(object->x + px(8), object->y + px(28),
-                                      object->z, 0x1000, 15);
+  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed + px(8),
+                                      object->y.fixed + px(28), object->z.fixed,
+                                      0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x - px(8), object->y + px(28),
-                                      object->z, 0xf000, 15);
+  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed - px(8),
+                                      object->y.fixed + px(28), object->z.fixed,
+                                      0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x + px(8), object->y + px(28),
-                                      object->z, 0x1000, 15);
+  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed + px(8),
+                                      object->y.fixed + px(28), object->z.fixed,
+                                      0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x - px(8), object->y + px(28),
-                                      object->z, 0xf000, 15);
+  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed - px(8),
+                                      object->y.fixed + px(28), object->z.fixed,
+                                      0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
 }
@@ -703,8 +707,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
   result7 = (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   result7->update = 0;
-  Actor_SetPositionAndResetMotion(result7, (result7->x + px(22)),
-                                  (result7->y + px(8)), result7->z);
+  Actor_SetPositionAndResetMotion(result7, (result7->x.fixed + px(22)),
+                                  (result7->y.fixed + px(8)), result7->z.fixed);
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
   Actor_FaceDirection(10, FACING_WEST, 0);
@@ -750,8 +754,8 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   result8 =
       (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   result8->update = 0;
-  Actor_SetPositionAndResetMotion(result8, (result8->x + px(22)),
-                                  (result8->y + px(8)), result8->z);
+  Actor_SetPositionAndResetMotion(result8, (result8->x.fixed + px(22)),
+                                  (result8->y.fixed + px(8)), result8->z.fixed);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -937,11 +941,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   result9 =
       (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   {
-    s32 x = result9->x;
-    s32 y = result9->y;
+    s32 x = result9->x.fixed;
+    s32 y = result9->y.fixed;
     result9->update = 0;
     Actor_SetPositionAndResetMotion(result9, x + 0x160000, y + 0x80000,
-                                    result9->z);
+                                    result9->z.fixed);
   }
   Event_Wait(50);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 344, 1);

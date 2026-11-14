@@ -117,7 +117,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *object = Actor_Get(ACTOR_GATES_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED) &&
-      object->x >> 20 == 17 && object->z >> 20 == 33) {
+      object->x.fixed >> 20 == 17 && object->z.fixed >> 20 == 33) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }

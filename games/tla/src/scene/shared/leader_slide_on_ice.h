@@ -31,15 +31,15 @@ top:
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + px(8);
-  position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + px(8);
+  position->x = startX = (actor->x.fixed & 0xfff00000) + px(8);
+  position->y = actor->y.fixed;
+  position->z = startZ = (actor->z.fixed & 0xfff00000) + px(8);
   x = startX;
   z = startZ;
   layer = &actor->layer;
   startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);
-  dz = z - actor->z;
-  dx = x - actor->x;
+  dz = z - actor->z.fixed;
+  dx = x - actor->x.fixed;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
   if (distance < px(4)) {
     heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
@@ -47,20 +47,20 @@ top:
       return;
     }
   } else {
-    heading = (s16)ArcTan2(z - actor->z, x - actor->x);
+    heading = (s16)ArcTan2(z - actor->z.fixed, x - actor->x.fixed);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
   FieldVector_AddPolarOffset(px(16), heading, &probe);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
+      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y.fixed >
           px(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    actor->x = startX;
-    actor->z = startZ;
+    actor->x.fixed = startX;
+    actor->z.fixed = startZ;
     goto done;
   }
   position->x = startX;
@@ -68,14 +68,14 @@ top:
   actor->speedLimit = px(2);
   actor->acceleration = 0x1999;
   actor->timer = 0;
-  FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);
+  FieldActor_SetMoveTargetFixed(actor, startX, actor->y.fixed, startZ);
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   FieldActor_WaitForMove(actor);
   actor->update = Actor_SteerByPad;
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -90,7 +90,7 @@ body:
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
           : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x, radius, &probe,
+      if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &probe,
                                     other->radius - 2) >= 0) {
         goto stop;
       }
@@ -123,7 +123,7 @@ test:
 stop:
   actor->speedLimit = px(2);
   actor->acceleration = px(1);
-  FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
+  FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
   goto top;

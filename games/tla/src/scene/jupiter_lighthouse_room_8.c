@@ -135,11 +135,11 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
   s32 y;
   s32 floor;
 
-  if (object->x >> 20 == 6 && object->z >> 20 == 14) {
+  if (object->x.fixed >> 20 == 6 && object->z.fixed >> 20 == 14) {
     Event_SetFlag(FLAG_PILLAR_DROPPED);
     System_Wait(10);
     Event_PlaySound(SE_HEAVY_IMPACT);
-    y = object->y;
+    y = object->y.fixed;
     floor = object->groundHeight;
     /* FAKEMATCH(dead): the height and the floor are read before the counter is
      * cleared and again at the end of each pass. */
@@ -151,7 +151,7 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
       System_Wait(1);
       if (++i > 29)
         break;
-      y = object->y;
+      y = object->y.fixed;
       floor = object->groundHeight;
     test:;
     } while (y > floor || object->velocityY != 0);
@@ -159,9 +159,9 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
       s32 cleared = 0;
 
       object->motionFlags = cleared;
-      MapGrid_SetCellHeight(object->x, object->z, 0, 0);
+      MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
     }
-    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
   }
 }
 
@@ -202,10 +202,10 @@ s32 Scene_PrepareMap(void) {
 
     object->motionFlags = 0;
     object->groundHeight = -px(32);
-    object->y = -px(32);
+    object->y.fixed = -px(32);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
-    MapGrid_SetCellHeight(object->x, object->z, 0, 0);
-    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
   }
   return 0;
 }
@@ -324,8 +324,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = (object->x + (gPushFootprints[j][0] << 16)) >> 20;
-  z = (object->z + (gPushFootprints[j][1] << 16)) >> 20;
+  x = (object->x.fixed + (gPushFootprints[j][0] << 16)) >> 20;
+  z = (object->z.fixed + (gPushFootprints[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
   i = mapX;
   mapZ = *(s32 *)(map + 332) >> 20;
@@ -380,10 +380,10 @@ void PushTarget_PushFill(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x;
-  from[2] = object->z;
-  cell[0] = (object->x + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z + (gPushFootprints[footprint][1] << 16)) >> 20;
+  from[0] = object->x.fixed;
+  from[2] = object->z.fixed;
+  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -425,7 +425,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   FieldActor_WaitForMove(object);
   Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+                                       target.z);
   Import_ActorSelectAnimation(object, 1);
   target.x = target.x + (gPushFootprints[footprint][0] << 16);
   target.z = target.z + (gPushFootprints[footprint][1] << 16);
@@ -453,9 +454,9 @@ void PushTarget_UpdatePusher(struct Actor *object) {
   s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  position.x = object->x.fixed;
+  position.y = object->y.fixed;
+  position.z = object->z.fixed;
   FieldVector_AddPolarOffset(px(16), angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
@@ -466,15 +467,15 @@ void PushTarget_UpdatePusher(struct Actor *object) {
     i++;
     if (i <= 5)
       goto next;
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
   }
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  position.x = object->x.fixed;
+  position.y = object->y.fixed;
+  position.z = object->z.fixed;
   if (MapGrid_CheckCollision(object, &position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
 }
 
 extern s16 gLightSpriteTile;

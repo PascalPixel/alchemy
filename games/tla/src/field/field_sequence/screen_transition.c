@@ -75,13 +75,14 @@ void Leader_StepAwayFromNearbyActor(void) {
   leader = ObjectTable_Get(Party_GetLeaderActor());
   for (i = 0; i <= 15; i++) {
     other = ObjectTable_Get(i + 64);
-    dx = leader->x - other->x;
-    dz = leader->z - other->z;
+    dx = leader->x.fixed - other->x.fixed;
+    dz = leader->z.fixed - other->z.fixed;
     if (dx > -0x100000 && dx < 0x100000)
       if (dz > -0x100000 && dz < 0x100000) {
-        leader->x = other->x;
-        leader->z = other->z;
-        Vector_AddPolarOffset__f0cf050(0x140000, ArcTan2(dz, dx), &leader->x);
+        leader->x.fixed = other->x.fixed;
+        leader->z.fixed = other->z.fixed;
+        Vector_AddPolarOffset__f0cf050(0x140000, ArcTan2(dz, dx),
+                                       &leader->x.fixed);
         leader->targetX = TARGET_UNSET;
         leader->targetY = TARGET_UNSET;
         leader->targetZ = TARGET_UNSET;
@@ -154,9 +155,9 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
 
   if (picture == NULL)
     return NULL;
-  position[0] = picture->x;
-  position[1] = picture->y;
-  position[2] = picture->z;
+  position[0] = picture->x.fixed;
+  position[1] = picture->y.fixed;
+  position[2] = picture->z.fixed;
   if (actor == Party_GetLeaderActor()) {
     Vector_AddPolarOffset(px(16), picture->facing, position);
     position[0] = (position[0] & 0xfff00000) + 0x80000;
@@ -213,8 +214,8 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
     for (j = 0; j <= 63; j++, marker++) {
       if (marker->script != NULL &&
           marker->script == (s32 *)gBattleEffect_MarkerParticleScript &&
-          marker->x >> 20 == picture->x >> 20 &&
-          marker->z >> 20 == picture->z >> 20) {
+          marker->x.fixed >> 20 == picture->x.fixed >> 20 &&
+          marker->z.fixed >> 20 == picture->z.fixed >> 20) {
         Actor_ReleaseFar(marker);
         break;
       }
@@ -247,7 +248,8 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
     actor->motionFlags = 0;
     owner = found;
   }
-  Actor_SetMoveTargetFar(actor, owner->x, owner->y + 0x240000, owner->z);
+  Actor_SetMoveTargetFar(actor, owner->x.fixed, owner->y.fixed + 0x240000,
+                         owner->z.fixed);
   Actor_SetSpritePriorityDirectFar(actor, 1);
   wait(3);
   Actor_SelectAnimationFar(owner, 28);
@@ -297,8 +299,8 @@ struct EffectVisual__rising {
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  struct Actor *object =
-      Actor_CreateFar(489, owner->x, owner->y + 0x240000, owner->z);
+  struct Actor *object = Actor_CreateFar(
+      489, owner->x.fixed, owner->y.fixed + 0x240000, owner->z.fixed);
 
   if (object != 0) {
     struct EffectVisual__rising *visual = object->sprite;
@@ -418,9 +420,9 @@ void FieldEffect_SpawnRevealMarkers(void) {
         continue;
       if (type == 130 || type == 132 || type == 133 || type == 131)
         continue;
-      x = object->x;
-      y = object->y;
-      z = object->z;
+      x = object->x.fixed;
+      y = object->y.fixed;
+      z = object->z.fixed;
     }
     dx = x - originX;
     dz = z - originZ - y;
@@ -683,8 +685,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewInverse[0] & 0xffff0000;
     cameraY = viewInverse[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / Q16_ONE;
-    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
+    centerX = (object->x.fixed - ax) / Q16_ONE;
+    centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
     value = state->value;
@@ -774,8 +776,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / Q16_ONE;
-    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 16;
+    centerX = (object->x.fixed - ax) / Q16_ONE;
+    centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
@@ -812,8 +814,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeaderLow[0] & 0xffff0000;
     cameraY = viewLeaderLow[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - ax) / Q16_ONE;
-    centerY = ((object->z - object->y) - cameraY) / Q16_ONE - 8;
+    centerX = (object->x.fixed - ax) / Q16_ONE;
+    centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 8;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;

@@ -17,9 +17,9 @@
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
   struct Actor *target = object->watchedActor;
 
-  object->x += (target->x - object->x) / 2;
-  object->y += (target->y - object->y) / 2;
-  object->z += (target->z - object->z) / 2;
+  object->x.fixed += (target->x.fixed - object->x.fixed) / 2;
+  object->y.fixed += (target->y.fixed - object->y.fixed) / 2;
+  object->z.fixed += (target->z.fixed - object->z.fixed) / 2;
 }
 
 /* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740;

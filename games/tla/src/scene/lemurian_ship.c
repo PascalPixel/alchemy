@@ -280,10 +280,10 @@ void LemurianShip_WalkIntoPassage(void) {
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
     Actor_SetSpeed(party->leaderActorId, 0.5);
-    x = leader->x;
+    x = leader->x.fixed;
     cell = x >> 16;
-    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y,
-                        leader->z);
+    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y.fixed,
+                        leader->z.fixed);
     FieldActor_WaitForMove(leader);
     leader->facing = FACING_NORTH;
     Actor_SetScript(party->leaderActorId, gLemurianShip_IntoPassage);
@@ -398,7 +398,7 @@ void LemurianShip_PushCrateOffLedge(void) {
 
   Actor_PlaceMovedBlock();
   object = ((struct Actor *)Actor_GetById(8));
-  x = object->x >> 20;
+  x = object->x.fixed >> 20;
   if (x == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -627,9 +627,9 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
   done = Event_GetFlag(FLAG_RIGHT_PILLAR_SUNK);
   if (!done && Event_GetFlag(FLAG_RIGHT_PILLAR_FULL)) {
     object = ((struct Actor *)Actor_GetById(8));
-    column = object->x >> 20;
+    column = object->x.fixed >> 20;
     if (column == 35) {
-      row = object->z >> 20;
+      row = object->z.fixed >> 20;
       if (row == 9) {
         leader =
             ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -641,17 +641,17 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         MapGrid_CopyCellAttributes(35, 0, 1, 1, column, row);
         object->motionFlags = done;
         Actor_SetSpritePriority(8, 3);
-        if (object->z > leader->z)
+        if (object->z.fixed > leader->z.fixed)
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
         for (i = 0; i < 128; i++) {
-          object->y += 0xffffe000;
+          object->y.fixed += 0xffffe000;
           wait(1);
         }
         Actor_SetAnimation(8, 3);
         Actor_SetPosition(10, 568, 152);
         Event_Wait(20);
         Event_SetFlag(FLAG_RIGHT_PILLAR_SUNK);
-        if (object->z > leader->z) {
+        if (object->z.fixed > leader->z.fixed) {
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
           ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
               ->priorityFlags |= 1;
@@ -663,9 +663,9 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
   done = Event_GetFlag(FLAG_LEFT_PILLAR_SUNK);
   if (!done && Event_GetFlag(FLAG_LEFT_PILLAR_FULL)) {
     object = ((struct Actor *)Actor_GetById(9));
-    column = object->x >> 20;
+    column = object->x.fixed >> 20;
     if (column == 29) {
-      row = object->z >> 20;
+      row = object->z.fixed >> 20;
       if (row == 9) {
         leader =
             ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -677,17 +677,17 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         MapGrid_CopyCellAttributes(35, 0, 1, 1, column, row);
         object->motionFlags = done;
         Actor_SetSpritePriority(9, 3);
-        if (object->z > leader->z)
+        if (object->z.fixed > leader->z.fixed)
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
         for (i = 0; i < 128; i++) {
-          object->y += 0xffffe000;
+          object->y.fixed += 0xffffe000;
           wait(1);
         }
         Actor_SetAnimation(9, 3);
         Actor_SetPosition(11, 472, 152);
         Event_Wait(20);
         Event_SetFlag(FLAG_LEFT_PILLAR_SUNK);
-        if (object->z > leader->z) {
+        if (object->z.fixed > leader->z.fixed) {
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
           ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
               ->priorityFlags |= 1;
@@ -751,7 +751,7 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
     Event_Wait(20);                                                            \
     Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);                                       \
     for (i = 0; i <= 63; i++) {                                                \
-      object->y += 0x4000;                                                     \
+      object->y.fixed += 0x4000;                                               \
       wait(1);                                                                 \
     }                                                                          \
     Actor_SetSpritePriority(n1, 2);                                            \
@@ -780,10 +780,10 @@ void LemurianShip_ParchHold(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
-  Actor_SetPositionFixed(gMainRoutineWork.leaderActorId, leader->x,
-                         leader->z + 0xfed00000);
+  Actor_SetPositionFixed(gMainRoutineWork.leaderActorId, leader->x.fixed,
+                         leader->z.fixed + 0xfed00000);
   object = ((struct Actor *)Actor_GetById(64));
-  Actor_SetPositionFixed(64, object->x, object->z + 0xfed00000);
+  Actor_SetPositionFixed(64, object->x.fixed, object->z.fixed + 0xfed00000);
   FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
   wait(10);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
@@ -853,8 +853,8 @@ void LemurianShip_KeepPillarRoomPuddles(void) {
 void LemurianShip_RippleAroundLeader(void) {
   struct Actor *leader =
       ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
-  s32 x = leader->x >> 20;
-  s32 z = leader->z >> 20;
+  s32 x = leader->x.fixed >> 20;
+  s32 z = leader->z.fixed >> 20;
 
   MapGrid_CopyCellsTo(74, 105, 4, 85, 8, 6);
   if (z == 25) {
@@ -884,14 +884,14 @@ void LemurianShip_WatchPillarPuddles(void) {
 
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_SUNK)) {
     object = ((struct Actor *)Actor_GetById(10));
-    if ((object->x | object->z) == 0) {
+    if ((object->x.fixed | object->z.fixed) == 0) {
       work->raisedTrigger = 200;
       Actor_SetAnimation(8, 1);
     }
   }
   if (Event_GetFlag(FLAG_LEFT_PILLAR_SUNK)) {
     object = ((struct Actor *)Actor_GetById(11));
-    if ((object->x | object->z) == 0) {
+    if ((object->x.fixed | object->z.fixed) == 0) {
       work->raisedTrigger = 201;
       Actor_SetAnimation(9, 1);
     }
@@ -1196,7 +1196,7 @@ void LemurianShip_SetUpRaisedJelly(s32 id) {
   ((struct Actor *)Actor_GetById(id))->priorityFlags |= 0x20;
   Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
-  object->y = -px(32);
+  object->y.fixed = -px(32);
   object->groundHeight = -px(32);
 }
 
@@ -1265,7 +1265,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 10);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 8);
     RAISE(17, 190 << 18, 152 << 16)
-    if (block->x >> 20 == 47 && block->z >> 20 == 8)
+    if (block->x.fixed >> 20 == 47 && block->z.fixed >> 20 == 8)
       Actor_PlaceBlocks(gLemurianShip_Crate);
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 4)))
       Actor_SetPosition(11, 0, 0);
@@ -1274,8 +1274,8 @@ void LemurianShip_SetUpSixJellyRoom(void) {
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 5))) {
     struct Actor *block = ((struct Actor *)Actor_GetById(8));
-    s32 x = block->x >> 20;
-    s32 z = block->z >> 20;
+    s32 x = block->x.fixed >> 20;
+    s32 z = block->z.fixed >> 20;
 
     MapGrid_CopyCellAttributes(42, 0, 1, 1, 49, 7);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 49, 6);
@@ -1358,7 +1358,7 @@ void LemurianShip_SetUpJelly(s32 id) {
   ((struct Actor *)Actor_GetById(id))->priorityFlags |= 0x20;
   Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
-  object->y = 0;
+  object->y.fixed = 0;
   object->groundHeight = 0;
 }
 
@@ -1487,7 +1487,7 @@ void LemurianShip_SetUpHold(void) {
   if (Event_GetFlag(FLAG_HOLD_PARCHED)) {
     struct Actor *marker = ((struct Actor *)Actor_GetById(64));
 
-    Actor_SetPositionFixed(64, marker->x, marker->z + 0xfed00000);
+    Actor_SetPositionFixed(64, marker->x.fixed, marker->z.fixed + 0xfed00000);
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
     MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
@@ -1538,7 +1538,7 @@ void LemurianShip_SetUpPillarRoom(void) {
     MapGrid_CopyCellsTo(29, 68, 29, 69, 1, 1);
     MapGrid_CopyCellAttributes(35, 0, 1, 1, 29, 9);
     object->motionFlags = 0;
-    object->y = 0xfff00000;
+    object->y.fixed = 0xfff00000;
     Actor_SetSpritePriority(9, 3);
     Event_SetFlag(FLAG_LEFT_PILLAR_FULL);
     Actor_SetPosition(11, 472, 152);

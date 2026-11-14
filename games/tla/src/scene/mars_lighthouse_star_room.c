@@ -188,10 +188,10 @@ void MarsLighthouseStarRoom_ScatterIceChips(s32 id) {
   i = 5;
 next:
   {
-    s32 x = source->x + (Random16() << 4) - (Random16() << 4);
-    struct Actor *object =
-        ObjectCreate_(ICE_CHIP_SPRITE, x, (Random16() << 3) + source->y + px(4),
-                      source->z + (Random16() << 4) - (Random16() << 4));
+    s32 x = source->x.fixed + (Random16() << 4) - (Random16() << 4);
+    struct Actor *object = ObjectCreate_(
+        ICE_CHIP_SPRITE, x, (Random16() << 3) + source->y.fixed + px(4),
+        source->z.fixed + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
       s32 angle;
@@ -236,8 +236,8 @@ void MarsLighthouseStarRoom_WestFireballCracksIce(void) {
       Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
     Event_PlaySound(SE_ICE_CRACK);
-    object->x = object->timer << 16;
-    object->z = *(s16 *)((u8 *)object + 0x66) << 16;
+    object->x.fixed = object->timer << 16;
+    object->z.fixed = *(s16 *)((u8 *)object + 0x66) << 16;
     if (Event_GetFlag(FLAG_DRAGON_ICE_CRACKED) == 0) {
       object->scaleX = 0x9999;
       object->scaleY = 0x9999;
@@ -261,8 +261,8 @@ void MarsLighthouseStarRoom_EastFireballCracksIce(void) {
 #endif
     Event_PlaySound(SE_ICE_CRACK);
     Event_SetFlag(FLAG_DRAGON_ICE_BURSTABLE);
-    object->x = object->timer << 16;
-    object->z = *(s16 *)((u8 *)object + 0x66) << 16;
+    object->x.fixed = object->timer << 16;
+    object->z.fixed = *(s16 *)((u8 *)object + 0x66) << 16;
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
     Event_SetFlag(FLAG_DRAGON_ICE_CRACKED);
@@ -335,11 +335,11 @@ s32 Scene_Initialize(void) {
       s32 x;
 
       x = (column << 20) + 0x80000;
-      leader->x = x;
-      leader->z = (row << 20) - 0x1280000;
+      leader->x.fixed = x;
+      leader->z.fixed = (row << 20) - 0x1280000;
       other = work->camera;
-      other->x = x;
-      other->z = leader->z;
+      other->x.fixed = x;
+      other->z.fixed = leader->z.fixed;
       Map_CenterOnFollowedPoint();
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
@@ -376,7 +376,7 @@ s32 Scene_Initialize(void) {
             MarsLighthouseStarRoom_LayDownAdept(ACTOR_KARST);
           }
         }
-        if (Actor_GetById(ACTOR_AGATIO)->x > px(400)) {
+        if (Actor_GetById(ACTOR_AGATIO)->x.fixed > px(400)) {
           MapGrid_CopyCellAttributes(39, 22, 2, 1, 43, 13);
           MapGrid_CopyCellAttributes(31, 21, 2, 2, 40, 12);
         }
@@ -732,8 +732,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     object->motionFlags = 0;
     object->speedLimit = px(4);
     object->acceleration = px(2);
-    FieldActor_SetMoveTargetFixed(object, leader->x, leader->y + px(32),
-                                  leader->z);
+    FieldActor_SetMoveTargetFixed(object, leader->x.fixed,
+                                  leader->y.fixed + px(32), leader->z.fixed);
     FieldActor_WaitForMove(gMarsLighthouseStarRoom_MarsStar);
     Event_PlaySound(MUS_TREASURE_FOUND);
     PartyInventory_Remove(ITEM_MYTHRIL_BAG);
@@ -1142,7 +1142,7 @@ void MarsLighthouseStarRoom_UpdateThawSpark(struct Actor *object) {
 
   s32 growth;
 
-  object->y += 0x8000;
+  object->y.fixed += 0x8000;
   growth = 0x51e;
   object->scaleX += growth;
   object->scaleY += growth;
@@ -1304,9 +1304,9 @@ void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
 DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnLandingBackward, Flame_UpdateLanding)
 
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
-  if (DIFF(a->x, b->x) < 0xc0000) {
-    if ((u32)(a->y - b->y - 1) <= 0xffffe) {
-      if (DIFF(a->z, b->z) < 0x80000)
+  if (DIFF(a->x.fixed, b->x.fixed) < 0xc0000) {
+    if ((u32)(a->y.fixed - b->y.fixed - 1) <= 0xffffe) {
+      if (DIFF(a->z.fixed, b->z.fixed) < 0x80000)
         return 1;
     }
   }
@@ -1757,14 +1757,15 @@ s32 Fireball_CarryLeader(void) {
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
-      leader->x += ((s32 *)ride->car->unk70)[0];
-      leader->z += ((s32 *)ride->car->unk70)[2];
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
+                                                leader->z.fixed) != 7) {
+      leader->x.fixed += ((s32 *)ride->car->unk70)[0];
+      leader->z.fixed += ((s32 *)ride->car->unk70)[2];
     } else {
       if (((s32 *)ride->car->unk70)[0] != 0)
-        leader->x = (leader->x & 0xfff00000) + 0x80000;
+        leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
       if (((s32 *)ride->car->unk70)[2] != 0)
-        leader->z = (leader->z & 0xfff00000) + 0x80000;
+        leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
     System_Wait(1);
@@ -1835,13 +1836,13 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
 
     a = Random16();
     b = Random16();
-    x = actor->x + a * 16;
+    x = actor->x.fixed + a * 16;
     x -= b * 16;
     c = Random16();
     d = Random16();
     e = Random16();
-    z = actor->z + d * 16 - e * 16;
-    y = c * 8 + actor->y + px(4);
+    z = actor->z.fixed + d * 16 - e * 16;
+    y = c * 8 + actor->y.fixed + px(4);
     object = (struct Actor *)Import_ActorCreate(BLANK_SPRITE, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
@@ -1932,9 +1933,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       flag |= 1;
     actor->paused = flag;
 
-    position.x = actor->x;
-    position.y = actor->y;
-    position.z = actor->z;
+    position.x = actor->x.fixed;
+    position.y = actor->y.fixed;
+    position.z = actor->z.fixed;
     FieldVector_AddPolarOffset(px(8), actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
@@ -1951,8 +1952,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
 
     map = Ram_HeapSlots->mapGrid;
-    tileX = actor->x >> 20;
-    tileZ = actor->z >> 20;
+    tileX = actor->x.fixed >> 20;
+    tileZ = actor->z.fixed >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
     widthA = *(s32 *)&map->layers[1].unk08[0] >> 20;
@@ -1973,7 +1974,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
@@ -1982,7 +1983,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_572);
-          Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }
       }
@@ -1997,9 +1998,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     work2 = Ram_HeapSlots->fieldWork;
     other = RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x - target->x) < 0x140000 &&
-        (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z - target->z) < 0x140000) {
+    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+        (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
+        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
       other->active = 2;
       other->car = actor;
       work2->stepTrigger = other->value0a + 2;
@@ -2011,9 +2012,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->scaleY -= Q16_ONE / 16;
       MarsLighthouseStarRoom_ScatterCrumbs(actor);
     } else {
-      actor->z = 0;
-      actor->y = 0;
-      actor->x = 0;
+      actor->z.fixed = 0;
+      actor->y.fixed = 0;
+      actor->x.fixed = 0;
       actor->velocityZ = 0;
       actor->velocityY = 0;
       actor->velocityX = 0;
@@ -2030,7 +2031,8 @@ void Actor_Attach(s32 sourceId, s32 id, s32 kind, s32 value,
   struct Actor *source = Actor_Get(sourceId);
   struct Actor *object = Actor_Get(id);
 
-  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
+                                       source->z.fixed);
   Actor_StartScript(object, script);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -2207,8 +2209,8 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
   struct CellTarget *work = &gCrackedTiles;
   struct CellTargetEntry *entry = work->entries;
   s32 i;
@@ -2244,11 +2246,11 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 
     GameFlag_SetByte(gCrackedTiles.flagByte, 0);
     GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x = ((dx + x) << 20) + 0x80000;
-    leader->z = ((dz + z) << 20) + 0x80000;
+    leader->x.fixed = ((dx + x) << 20) + 0x80000;
+    leader->z.fixed = ((dz + z) << 20) + 0x80000;
     marker = work->camera;
-    marker->x = leader->x;
-    marker->z = leader->z;
+    marker->x.fixed = leader->x.fixed;
+    marker->z.fixed = leader->z.fixed;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = effect;

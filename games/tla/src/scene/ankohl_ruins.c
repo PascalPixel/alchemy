@@ -139,7 +139,7 @@ void AnkohlRuins_LandFromFall(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  leader->y = px(130);
+  leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
@@ -162,8 +162,8 @@ loop:
   velocity[0] += velocity[0] >> 1;
   velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
   velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
-  FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                    velocity[2], 0x1090001, &options);
+  FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                    velocity[0], velocity[1], velocity[2], 0x1090001, &options);
   i++;
   if (i <= 16)
     goto loop;
@@ -191,7 +191,7 @@ s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *object) {
   ((struct FieldSprite *)object->sprite)->priority = 2;
   object->priorityFlags &= 0xfe;
   object->motionFlags = 0;
-  object->y -= px(4);
+  object->y.fixed -= px(4);
   return 0;
 }
 
@@ -278,7 +278,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 8 && gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1) {
-    if (object->x >> 20 == 4) {
+    if (object->x.fixed >> 20 == 4) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
       Event_SetFlag(0x9c6);
     }
@@ -288,7 +288,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   if (id == 8 && gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     MapGrid_CopyCellAttributes(31, 70, 1, 1, 32, 70);
-    if (object->x >> 20 == 32) {
+    if (object->x.fixed >> 20 == 32) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
       Event_SetFlag(0x9c7);
     }
@@ -296,18 +296,18 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(3, 114, 1, 1, 3, 113);
-      if (object->x >> 20 == 2)
+      if (object->x.fixed >> 20 == 2)
         Event_SetFlag(0x9c8);
     }
     if (id == 18) {
       MapGrid_CopyCellAttributes(40, 94, 1, 1, 40, 93);
-      if (object->x >> 20 == 39)
+      if (object->x.fixed >> 20 == 39)
         Event_SetFlag(0x9c9);
     }
     if (id == 19) {
       MapGrid_CopyCellAttributes(36, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(37, 74, 1, 1, 37, 73);
-      if (object->x >> 20 == 38) {
+      if (object->x.fixed >> 20 == 38) {
         MapGrid_CopyCellAttributes(37, 70, 1, 1, 37, 71);
         Event_SetFlag(0x9ca);
       }
@@ -317,7 +317,7 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
-    if (object->x >> 20 == 17) {
+    if (object->x.fixed >> 20 == 17) {
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
       Event_SetFlag(0x9cb);
     }
@@ -329,7 +329,7 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   struct Actor *object = Actor_Get(id);
   s16 frames = 60;
 
-  if (object->z >> 20 == 31) {
+  if (object->z.fixed >> 20 == 31) {
     object->motionFlags = 3;
     Actor_SetSpritePriorityDirect(object, 3);
     Event_PlaySound(SE_DUST_PUFF);
@@ -432,8 +432,8 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
 // AnkohlRuins_PlaceFacePiece does for object 8.
 void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 column = object->x >> 20;
-  s32 row = object->z >> 20;
+  s32 column = object->x.fixed >> 20;
+  s32 row = object->z.fixed >> 20;
   s32 toColumn;
   s32 lowRow;
   s32 highRow;
@@ -489,8 +489,8 @@ void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
 // AnkohlRuins_PourSand place four objects between them.
 void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
-  s32 column = pillar->x >> 20;
-  s32 row = pillar->z >> 20;
+  s32 column = pillar->x.fixed >> 20;
+  s32 row = pillar->z.fixed >> 20;
 
   if (id != 8 || column != 12 || row != 5)
     return;
@@ -528,18 +528,18 @@ void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
 
 void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   if (id == 10 && x == 15 && z == 24) {
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
-    object->y -= px(2);
+    object->y.fixed -= px(2);
     FieldEvent_Wait(1);
-    object->y -= px(2);
+    object->y.fixed -= px(2);
     FieldEvent_Wait(1);
-    object->y -= px(4);
+    object->y.fixed -= px(4);
     FieldEvent_Wait(1);
-    object->y -= px(8);
+    object->y.fixed -= px(8);
     FieldEvent_Wait(1);
     Actor_SetAnimation(9, 3);
     Actor_SetPosition(10, 0, 0);
@@ -572,20 +572,20 @@ void AnkohlRuins_FlowWithSand(void) {
     ground = map->layers[0].cells;
     upper = map->layers[2].cells;
   }
-  index = (leader->x >> 20) + ((leader->z >> 20) << 7);
+  index = (leader->x.fixed >> 20) + ((leader->z.fixed >> 20) << 7);
   ground += index;
   upper += index;
   if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
     return;
   if (gMainRoutineWork.movementMode == 5)
     return;
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z + px(8);
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed + px(8);
   if (MapGrid_CheckCollision(leader, position) < 0)
     work->stepTrigger = 66;
-  leader->z += 0x8000;
-  companion->z += 0x8000;
+  leader->z.fixed += 0x8000;
+  companion->z.fixed += 0x8000;
 }
 
 void AnkohlRuins_PushedOffLedge(void) {
@@ -836,10 +836,10 @@ void AnkohlRuins_RaiseFirstSand(void) {
       FieldEvent_Wait(1);
     work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
-    cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
+    cells += leader->x.fixed / 0x100000 + ((leader->z.fixed / 0x100000) << 7);
     if (cells->collisionCode == 232) {
-      leader->y += gAnkohlRuins_SandStep;
-      leader->groundHeight = leader->y;
+      leader->y.fixed += gAnkohlRuins_SandStep;
+      leader->groundHeight = leader->y.fixed;
     }
     FieldEvent_Wait(1);
     if (m == 2 && i == 0) {
@@ -918,10 +918,10 @@ void AnkohlRuins_RaiseSecondSand(void) {
       FieldEvent_Wait(1);
     work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
-    cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
+    cells += leader->x.fixed / 0x100000 + ((leader->z.fixed / 0x100000) << 7);
     if (cells->collisionCode == 232) {
-      leader->y += gAnkohlRuins_SandStep;
-      leader->groundHeight = leader->y;
+      leader->y.fixed += gAnkohlRuins_SandStep;
+      leader->groundHeight = leader->y.fixed;
     }
     FieldEvent_Wait(1);
     if (level == 2 && i == 0) {
@@ -1053,23 +1053,25 @@ void AnkohlRuins_RideRaftDown(void) {
 
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && work->stepTrigger != 40)
     return;
-  raft->z += 0xcccc;
-  column = leader->x >> 20;
+  raft->z.fixed += 0xcccc;
+  column = leader->x.fixed >> 20;
   if (gMainRoutineWork.movementMode != 5 && column > 12 && column <= 15) {
     /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
      * before the leader's in the second test. */
     struct Actor *player = leader;
 
-    if (raft->z + px(24) >= player->z && player->z >= raft->z) {
-      player->z = raft->z + px(24);
-      rider->z = raft->z + px(24);
+    if (raft->z.fixed + px(24) >= player->z.fixed &&
+        player->z.fixed >= raft->z.fixed) {
+      player->z.fixed = raft->z.fixed + px(24);
+      rider->z.fixed = raft->z.fixed + px(24);
     }
-    if (raft->z >= player->z && player->z >= raft->z - px(16)) {
-      player->z = raft->z - px(16);
-      rider->z = raft->z - px(16);
+    if (raft->z.fixed >= player->z.fixed &&
+        player->z.fixed >= raft->z.fixed - px(16)) {
+      player->z.fixed = raft->z.fixed - px(16);
+      rider->z.fixed = raft->z.fixed - px(16);
     }
   }
-  row = raft->z >> 20;
+  row = raft->z.fixed >> 20;
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
     MapGrid_CopyCellAttributes(35, 83, 5, 4, 12, 96);
     Event_SetFlag(0x146);
@@ -1090,7 +1092,7 @@ void AnkohlRuins_RideRaftDown(void) {
 }
 
 void AnkohlRuins_BoardRaft(void) {
-  s32 z = Actor_Get(9)->z >> 20;
+  s32 z = Actor_Get(9)->z.fixed >> 20;
 
   if (Event_GetFlag(0x9dd) != 0 && z == 24) {
     s32 found = Task_Find(AnkohlRuins_RideRaftDown);
@@ -1117,7 +1119,7 @@ void AnkohlRuins_BoardRaft(void) {
 }
 
 void AnkohlRuins_BoardRaftAgain(void) {
-  s32 z = Actor_Get(9)->z >> 20;
+  s32 z = Actor_Get(9)->z.fixed >> 20;
 
   if (Event_GetFlag(0x9dd) != 0 && z == 24) {
     void (*func)(void) = AnkohlRuins_RideRaftDown;
@@ -1146,7 +1148,7 @@ extern struct Trigger gAnkohlRuins_Room8Triggers[];
 void AnkohlRuins_PushStatueIntoGap(void) {
   struct Actor *object = Actor_Get(9);
 
-  if (object->x >> 20 == 26 && object->z >> 20 == 35) {
+  if (object->x.fixed >> 20 == 26 && object->z.fixed >> 20 == 35) {
     Event_SetFlag(0x9db);
     Event_PlaySound(SE_DUST_PUFF);
     AnkohlRuins_SettleObject(9, 0);
@@ -1211,9 +1213,9 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = 673;
-    FieldEffect_Spawn(object->x + ((dx - 8) << 16),
-                      object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,
-                      0x100000, &params);
+    FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
+                      object->y.fixed + ((dy - 8) << 16), object->z.fixed, 0,
+                      0x8000, phase, 0x100000, &params);
   }
 }
 
@@ -1409,7 +1411,7 @@ s32 Scene_Initialize(s32 a0) {
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
         Actor_SetPosition(10, 328, 760);
-        object->y += px(128);
+        object->y.fixed += px(128);
         frames = 60;
         object->motionFlags = 3;
         for (; frames != 0; frames--) {
@@ -1494,7 +1496,7 @@ s32 Scene_Initialize(s32 a0) {
       }
       object = Actor_GetById(work->leaderActorId);
       object->groundHeight = level;
-      object->y = level;
+      object->y.fixed = level;
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
     }
@@ -1503,7 +1505,7 @@ s32 Scene_Initialize(s32 a0) {
     if (object != NULL) {
       object->motionFlags = 0;
       object->groundHeight = px(72);
-      object->y = px(72);
+      object->y.fixed = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }
@@ -1675,7 +1677,7 @@ s32 Scene_Initialize(s32 a0) {
         FieldEvent_Wait(15);
         object = Actor_GetById(10);
         Actor_SetPosition(10, 328, 760);
-        object->y += px(128);
+        object->y.fixed += px(128);
         frames = 60;
         object->motionFlags = 3;
         for (; frames != 0; frames--) {
@@ -1760,7 +1762,7 @@ s32 Scene_Initialize(s32 a0) {
       }
       object = Actor_GetById(work->leaderActorId);
       object->groundHeight = level;
-      object->y = level;
+      object->y.fixed = level;
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
     }
@@ -1769,7 +1771,7 @@ s32 Scene_Initialize(s32 a0) {
     if (object != NULL) {
       object->motionFlags = 0;
       object->groundHeight = px(72);
-      object->y = px(72);
+      object->y.fixed = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
   }

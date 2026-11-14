@@ -9,17 +9,17 @@ void Flame_UpdateLanding(struct Actor *object) {
   s32 i;
   struct RideDirection *direction;
 
-  object->z += dx;
-  object->y += object->gravity;
+  object->z.fixed += dx;
+  object->y.fixed += object->gravity;
   dz = object->riseBaseY;
-  object->x += dz;
+  object->x.fixed += dz;
   object->bounce = dx - dx / 18;
   object->riseBaseY = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (other->y == other->groundHeight && Actor_IsTouching(object, other) &&
-      gMainRoutineWork.movementMode == 0) {
+  if (other->y.fixed == other->groundHeight &&
+      Actor_IsTouching(object, other) && gMainRoutineWork.movementMode == 0) {
     if (object->riseBaseY != 0) {
       work->direction.z = 0;
       direction = &work->direction;
@@ -29,7 +29,7 @@ void Flame_UpdateLanding(struct Actor *object) {
         direction->x = 0xffff;
     }
     object->priorityFlags = 2;
-    object->z -= object->bounce;
+    object->z.fixed -= object->bounce;
     object->gravity += object->bounce >> 2;
     object->riseBaseY = 0;
     work->active = 1;
@@ -41,10 +41,11 @@ void Flame_UpdateLanding(struct Actor *object) {
     if (id == 0)
       break;
     other = Actor_Get(id);
-    if (other->y == other->groundHeight && Actor_IsBeside(object, other)) {
+    if (other->y.fixed == other->groundHeight &&
+        Actor_IsBeside(object, other)) {
       if (work->slots[i].blocked == 0) {
         object->priorityFlags = 2;
-        object->z -= object->riseBaseY;
+        object->z.fixed -= object->riseBaseY;
         object->gravity += object->riseBaseY >> 2;
         object->riseBaseY = 0;
       } else {

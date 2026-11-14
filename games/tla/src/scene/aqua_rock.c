@@ -229,9 +229,9 @@ again:
   tries++;
   if (tries <= 3) {
     p = &spot;
-    p->x = object->x;
-    p->y = object->y;
-    p->z = object->z;
+    p->x = object->x.fixed;
+    p->y = object->y.fixed;
+    p->z = object->z.fixed;
     distance = Iwram_MulQ16(Random16(), 0x80000) + 0x40000;
     a = Random16();
     b = Random16();
@@ -289,13 +289,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void AquaRock_SinkOrFlow(struct Actor *object) {
-  if (Map_GetTerrainHeight(0, object->x, object->z) > object->y)
-    object->y += px(2);
+  if (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >
+      object->y.fixed)
+    object->y.fixed += px(2);
   else
-    object->z -= px(2);
-  if (object->y >> 20 == 23)
+    object->z.fixed -= px(2);
+  if (object->y.fixed >> 20 == 23)
     Actor_Release(object);
-  if (object->z >> 20 == 48)
+  if (object->z.fixed >> 20 == 48)
     Actor_Release(object);
 }
 
@@ -303,10 +304,11 @@ void AquaRock_DripAtRandom(struct Actor *object) {
   if ((u32)Random16() < 0x1000) {
     struct Actor *child;
     s32 spread = Random16();
-    s32 x = object->x;
+    s32 x = object->x.fixed;
 
     x += spread * 48;
-    child = Import_ActorCreate(0x2a2, x - 0x180000, object->y, object->z);
+    child = Import_ActorCreate(0x2a2, x - 0x180000, object->y.fixed,
+                               object->z.fixed);
     if (child != 0) {
       Actor_SetSpriteFlags(child, 0);
       child->update = (void (*)(void))AquaRock_SinkOrFlow;
@@ -556,8 +558,8 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
 
     struct Actor *first = Actor_GetById(24);
 
-    column = first->x >> 20;
-    row = first->z >> 20;
+    column = first->x.fixed >> 20;
+    row = first->z.fixed >> 20;
     GameFlag_SetByte(0x310, column);
     GameFlag_SetByte(0x318, row);
     GameFlag_ClearBit_(0x320);
@@ -569,9 +571,9 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
   } else if (id == 25) {
     struct Actor *object = Actor_GetById(25);
 
-    if (object->x >> 20 == 32) {
+    if (object->x.fixed >> 20 == 32) {
       wait(30);
-      object->z += px(1);
+      object->z.fixed += px(1);
       GameFlag_Set(0x950);
     }
   }
@@ -583,7 +585,7 @@ void AquaRock_WaitToRiseTo(struct Actor *object, s32 limit) {
   while (frames != 0) {
     wait(1);
     frames--;
-    if (object->y <= limit)
+    if (object->y.fixed <= limit)
       break;
   }
 }
@@ -602,29 +604,30 @@ void AquaRock_RideStreamUp(void) {
     leader = Actor_GetById(owner);
     if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->groundHeight == 0)
       return;
-    ahead.x = leader->x;
-    ahead.y = leader->y;
-    ahead.z = leader->z + px(2);
+    ahead.x = leader->x.fixed;
+    ahead.y = leader->y.fixed;
+    ahead.z = leader->z.fixed + px(2);
     result = MapGrid_CheckCollision(leader, &ahead);
     if ((gFrameCount & 4) == 0)
       AquaRock_SpawnSplash(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z - px(8));
+      Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
+                          leader->z.fixed - px(8));
       Actor_SelectAnimation(leader, 7);
       Actor_WaitForMove(leader);
       do
         wait(1);
-      while (leader->y != leader->groundHeight);
+      while (leader->y.fixed != leader->groundHeight);
       AquaRock_SpawnSplash(leader);
       Actor_SelectAnimation(leader, 6);
       wait(3);
       return;
     }
-    ahead.x = leader->x;
-    ahead.y = leader->y;
-    ahead.z = leader->z - px(8);
+    ahead.x = leader->x.fixed;
+    ahead.y = leader->y.fixed;
+    ahead.z = leader->z.fixed - px(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
       if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1)
@@ -637,7 +640,7 @@ void AquaRock_RideStreamUp(void) {
       AquaRock_SpawnSplash(leader);
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
-        leader->y += px(2);
+        leader->y.fixed += px(2);
         leader->facing += 0x1000;
         if (Random16() <= 0xfff)
           AquaRock_SpawnSplash(leader);
@@ -648,20 +651,20 @@ void AquaRock_RideStreamUp(void) {
       Import_EventSetExitRequest(6);
       return;
     }
-    ahead.x = leader->x + 0x5b333;
-    ahead.y = leader->y;
-    ahead.z = leader->z - 0x5b333;
+    ahead.x = leader->x.fixed + 0x5b333;
+    ahead.y = leader->y.fixed;
+    ahead.z = leader->z.fixed - 0x5b333;
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    ahead.x = leader->x - 0x5b333;
-    ahead.y = leader->y;
-    ahead.z = leader->z - 0x5b333;
+    ahead.x = leader->x.fixed - 0x5b333;
+    ahead.y = leader->y.fixed;
+    ahead.z = leader->z.fixed - 0x5b333;
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    carried->z += -px(2);
-    leader->z += -px(2);
+    carried->z.fixed += -px(2);
+    leader->z.fixed += -px(2);
   } else
     AquaRock_FlowWithStream();
 }
@@ -679,13 +682,13 @@ void AquaRock_StepIntoCurrent(void) {
   s32 row;
 
   if (gMainRoutineWork.movementMode == 2) {
-    col = object->x >> 20;
-    row = (object->z - object->y - px(12)) >> 20;
+    col = object->x.fixed >> 20;
+    row = (object->z.fixed - object->y.fixed - px(12)) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       work->raisedTrigger = 44;
   } else {
-    col = object->x >> 20;
-    row = (object->z - object->y) >> 20;
+    col = object->x.fixed >> 20;
+    row = (object->z.fixed - object->y.fixed) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       AquaRock_FlowWithStream();
   }
@@ -714,7 +717,7 @@ void AquaRock_DropDownFalls(void) {
   object->motionFlags = 3;
   for (i = 0; i < 180; i++) {
     wait(1);
-    if (object->y <= object->groundHeight)
+    if (object->y.fixed <= object->groundHeight)
       break;
   }
   state = &gMainRoutineWork;
@@ -745,11 +748,11 @@ DEFINE_AQUA_ROCK_SET_MOVED(AquaRock_FreezeThirdPuddle, 44, 44, 46, 0x223)
 #define DEFINE_AQUA_ROCK_DROP_AT_COLUMN(name, n1, n2)                          \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *object = Actor_GetById(id);                                  \
-    s32 column = object->x >> 20;                                              \
+    s32 column = object->x.fixed >> 20;                                        \
                                                                                \
     if (column == 53) {                                                        \
       wait(30);                                                                \
-      object->z += px(1);                                                      \
+      object->z.fixed += px(1);                                                \
       GameFlag_Set(n1);                                                        \
       Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
     }                                                                          \
@@ -850,10 +853,10 @@ void AquaRock_SpinOut(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = -px(16);
+  object->y.fixed = -px(16);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   for (i = 15; i >= 0; i--) {
-    object->y += px(1);
+    object->y.fixed += px(1);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -883,10 +886,10 @@ void AquaRock_DropIn(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y = -px(64);
+  object->y.fixed = -px(64);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   for (i = 23; i >= 0; i--) {
-    object->y += px(2);
+    object->y.fixed += px(2);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -1135,8 +1138,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void AquaRock_SpawnSplash(struct Actor *object) {
-  struct Actor *child =
-      Import_ActorCreate(14, object->x, object->y + px(4), object->z + px(4));
+  struct Actor *child = Import_ActorCreate(
+      14, object->x.fixed, object->y.fixed + px(4), object->z.fixed + px(4));
   struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {
@@ -1171,46 +1174,47 @@ void AquaRock_FlowWithStream(void) {
   leader = Actor_GetById(owner);
   if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->groundHeight == 0)
     return;
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z + px(2);
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed + px(2);
   result = MapGrid_CheckCollision(leader, position);
   if ((gFrameCount & 4) == 0)
     AquaRock_SpawnSplash(leader);
   if (result < 0) {
     Actor_SetAttachedEffect(owner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_SetMoveTarget(leader, leader->x, leader->y, leader->z + px(8));
+    Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
+                        leader->z.fixed + px(8));
     Actor_SelectAnimation(leader, 49);
     Actor_WaitForMove(leader);
     do {
       wait(1);
-    } while (leader->y != leader->groundHeight);
+    } while (leader->y.fixed != leader->groundHeight);
     AquaRock_SpawnSplash(leader);
     Actor_SelectAnimation(leader, 49);
     wait(3);
     return;
   }
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z + px(8);
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed + px(8);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  position[0] = leader->x + 0x5b333;
-  position[1] = leader->y;
-  position[2] = leader->z + 0x5b333;
+  position[0] = leader->x.fixed + 0x5b333;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed + 0x5b333;
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  position[0] = leader->x - 0x5b333;
-  position[1] = leader->y;
-  position[2] = leader->z + 0x5b333;
+  position[0] = leader->x.fixed - 0x5b333;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed + 0x5b333;
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  anchor->z += px(2);
-  leader->z += px(2);
+  anchor->z.fixed += px(2);
+  leader->z.fixed += px(2);
   leader->facing = FACING_SOUTH;
 }
 
@@ -1243,7 +1247,7 @@ void AquaRock_SpinUpAndAway(s32 arg0) {
   for (i = 0; i < 60; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
-    object->y -= 0x4000;
+    object->y.fixed -= 0x4000;
     angle = object->facing;
     angle += 0x1000;
     object->facing = angle;
@@ -1293,9 +1297,9 @@ void AquaRock_ArriveFromPassage(void) {
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = flag;
-    Actor_SetHorizontalPositionWithTerrain(*owner, ((s16 *)&leader->x)[1] << 16,
-                                           (((s16 *)&leader->z)[1] << 16) -
-                                               0x100000);
+    Actor_SetHorizontalPositionWithTerrain(
+        *owner, leader->x.part[0].pixel << 16,
+        (leader->z.part[0].pixel << 16) - 0x100000);
     Actor_SetSpriteColor(Actor_GetById(*owner), 9);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
@@ -1339,9 +1343,9 @@ void AquaRock_DrawRisingCellMarkers(void) {
 
   if (Random16() < 0x1000 && (source = work->object) != 0) {
     entry = &work->bubbles[work->next];
-    entry->x = source->x + Random16() * 3 * 16 - (24 << 16);
-    entry->y = source->y;
-    entry->z = source->z;
+    entry->x = source->x.fixed + Random16() * 3 * 16 - (24 << 16);
+    entry->y = source->y.fixed;
+    entry->z = source->z.fixed;
     entry->age = 0;
     if (++work->next > 63)
       work->next = 0;
@@ -1403,9 +1407,9 @@ void AquaRock_DrawFallingCellMarkers(void) {
 
   if (Random16() < 0x1000 && (source = work->object) != 0) {
     bubble = &work->bubbles[work->next];
-    bubble->x = source->x + Random16() * 3 * 8 - 0xc0000;
-    bubble->y = source->y;
-    bubble->z = source->z;
+    bubble->x = source->x.fixed + Random16() * 3 * 8 - 0xc0000;
+    bubble->y = source->y.fixed;
+    bubble->z = source->z.fixed;
     bubble->age = 0;
     if (++work->next > 63)
       work->next = 0;
@@ -1530,7 +1534,7 @@ void AquaRock_SetSparkleAnchor(s32 id) {
 
   *slot = 0;
   if (id != 0 && object != 0)
-    *slot = (s32)&object->x;
+    *slot = (s32)&object->x.fixed;
 }
 
 // clang-format off

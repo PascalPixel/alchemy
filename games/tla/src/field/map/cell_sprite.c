@@ -35,7 +35,8 @@ void CrackedTiles_Update(void) {
     return;
   entry = &table->entries[table->current];
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if ((leader->x >> 20) != entry->x || (leader->z >> 20) != entry->z)
+  if ((leader->x.fixed >> 20) != entry->x ||
+      (leader->z.fixed >> 20) != entry->z)
     table->current = -1;
   {
     s16 current = table->current;

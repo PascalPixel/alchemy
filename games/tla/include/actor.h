@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_ACTOR_H
 #define ALCHEMY_ACTOR_H
 
+#include "field/field_coordinate.h"
 #include "types.h"
 
 /// Actor.targetX, targetY and targetZ when it has no movement target.
@@ -8,6 +9,11 @@
 
 /// A field object's sprite animation, which Actor.sprite points to
 /// when animationKind is 1.
+/// Sets an actor's position in one statement, as SET_POSITION does for a
+/// particle.
+#define SET_ACTOR_POSITION(p, fixedX, fixedY, fixedZ)                          \
+  ((p)->x.fixed = (fixedX), (p)->y.fixed = (fixedY), (p)->z.fixed = (fixedZ))
+
 struct ObjectAnimationState {
   u8 unk00[0x28];
   s16 *value28;
@@ -16,17 +22,17 @@ struct ObjectAnimationState {
 /// A field object: its script, position, motion toward a target, sprites and
 /// update hook.
 struct Actor {
-  const s32 *script; ///< the object script it runs; null when it is free
-  s16 scriptCursor;  ///< the script cursor, in words
-  u16 facing;        ///< 1/65536 turns
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  s32 groundHeight;  ///< 16.16 fixed-point pixels
-  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
-  u16 radius;        ///< collision radius in pixels
-  u8 layer;          ///< the map layer its ground height is read from
+  const s32 *script;        ///< the object script it runs; null when it is free
+  s16 scriptCursor;         ///< the script cursor, in words
+  u16 facing;               ///< 1/65536 turns
+  struct FieldCoordinate x; ///< 16.16 fixed-point pixels
+  struct FieldCoordinate y; ///< 16.16 fixed-point pixels
+  struct FieldCoordinate z; ///< 16.16 fixed-point pixels
+  s32 groundHeight;         ///< 16.16 fixed-point pixels
+  s32 scaleX;               ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;               ///< 16.16 fixed point, 0x10000 full size
+  u16 radius;               ///< collision radius in pixels
+  u8 layer;                 ///< the map layer its ground height is read from
   /// Bit 0 is cleared when Actor_SetSpritePriorityDirect fixes its
   /// sprite's priority.
   u8 priorityFlags;

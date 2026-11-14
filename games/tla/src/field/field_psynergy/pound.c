@@ -94,7 +94,7 @@ void FieldPsynergy_UpdatePound(void) {
   }
   switch (work->state) {
   case 0:
-    work->object->y -= px(7) / 2;
+    work->object->y.fixed -= px(7) / 2;
     if (work->timer == 8) {
       blend->scaleX = Q16_ONE / 8;
       blend->scaleY = Q16_ONE / 8;
@@ -134,7 +134,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 4:
-    work->object->y += px(3) / 2;
+    work->object->y.fixed += px(3) / 2;
     if (work->timer == 13)
       work->state = 999;
     break;
@@ -169,7 +169,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
   if (work->done == 0) {
     struct Actor *object = work->object;
 
-    object->y += -(px(5) / 2);
+    object->y.fixed += -(px(5) / 2);
     object->scaleX += -0x400;
     object->scaleY += -0x400;
     if (work->timer == 8)
@@ -239,14 +239,14 @@ void FieldPsynergy_Pound(void) {
 
   lift = 0x200000;
   if (child == NULL) {
-    SET_POSITION(scene, caster->x, caster->y, caster->z);
+    SET_POSITION(scene, caster->x.fixed, caster->y.fixed, caster->z.fixed);
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
   } else if (child->motionFlags & 4) {
     /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
     if (child->groundHeight == 300)
       lift = 0;
     scene->y = child->groundHeight;
-    lift = child->y - child->groundHeight + 0x200000;
+    lift = child->y.fixed - child->groundHeight + 0x200000;
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.
@@ -257,7 +257,7 @@ void FieldPsynergy_Pound(void) {
         object = event->objects[j];
         if (object != NULL && object->script != NULL &&
             (object->collisionFlags & 1) &&
-            FieldPsynergy_CheckOverlap(&scene->x, 4, &object->x,
+            FieldPsynergy_CheckOverlap(&scene->x, 4, &object->x.fixed,
                                        object->radius - 2) >= 0)
           goto outOfReach;
       }
@@ -355,7 +355,7 @@ void FieldPsynergy_Pound(void) {
   wait(15);
   rise = 24;
   do {
-    shine->y += px(1) / 2;
+    shine->y.fixed += px(1) / 2;
     rise--;
     wait(1);
   } while (rise >= 0);
@@ -369,7 +369,8 @@ void FieldPsynergy_Pound(void) {
       wait(1);
     Task_Remove(BattleEffect_SinkAndShrinkObject);
     for (j = 15; j >= 0; j--)
-      BattleEffect_SpawnScatterParticle(shine->x, shine->y, shine->z);
+      BattleEffect_SpawnScatterParticle(shine->x.fixed, shine->y.fixed,
+                                        shine->z.fixed);
     Sound_PlayFar(SE_MENU_ERROR);
     wait(1);
   } else {
@@ -391,7 +392,8 @@ void FieldPsynergy_Pound(void) {
     Task_Remove(FieldPsynergy_UpdatePound);
     wait(10);
     Sound_PlayFar(SE_MENU_ERROR);
-    FieldPsynergy_ShrinkToCaster(shine, shine->x, shine->y, shine->z);
+    FieldPsynergy_ShrinkToCaster(shine, shine->x.fixed, shine->y.fixed,
+                                 shine->z.fixed);
   }
   Actor_ReleaseFar(shine);
   VramCache_FreeEntry(starEntry);

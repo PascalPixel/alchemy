@@ -108,7 +108,8 @@ void PsynergyTest2_ScatterRocks(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   PsynergyTest2_StartRocks();
-  PsynergyTest2_SpawnRocks(object->x, object->y, object->z, 20);
+  PsynergyTest2_SpawnRocks(object->x.fixed, object->y.fixed, object->z.fixed,
+                           20);
   System_Wait(20);
   PsynergyTest2_EndRocks();
 }
@@ -309,7 +310,7 @@ UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   object = Actor_Get(id);
   if (mode == 2) {
     Actor_SetPositionFixed(id, px(x), px(z));
-    object->y = px(32);
+    object->y.fixed = px(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;
     System_Wait(50);

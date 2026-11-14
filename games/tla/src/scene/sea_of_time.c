@@ -202,18 +202,18 @@ void SeaOfTime_CircleSwirl(void) {
   s32 x;
   s32 z;
 
-  center[0] = ((object->x >> 21) << 21) + 0x100000;
-  center[2] = ((object->z >> 21) << 21) + 0x100000;
-  pos = &object->x;
+  center[0] = ((object->x.fixed >> 21) << 21) + 0x100000;
+  center[2] = ((object->z.fixed >> 21) << 21) + 0x100000;
+  pos = &object->x.fixed;
   if (Position_FlatDistance(pos, center) > 4) {
     if (*pos < center[0])
       *pos += 0x3333;
     else
       *pos -= 0x3333;
-    if (object->z < center[2])
-      object->z += 0x3333;
+    if (object->z.fixed < center[2])
+      object->z.fixed += 0x3333;
     else
-      object->z -= 0x3333;
+      object->z.fixed -= 0x3333;
     if (SeaOfTime_GetCellCode(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
       turn[0] = SeaOfTime_Cos(-0x200);
       sine = Trig_Sin(-0x200);
@@ -221,14 +221,14 @@ void SeaOfTime_CircleSwirl(void) {
       turn[0] = SeaOfTime_Cos(0x200);
       sine = Trig_Sin(0x200);
     }
-    dx = object->x - center[0];
-    dz = object->z - center[2];
+    dx = object->x.fixed - center[0];
+    dz = object->z.fixed - center[2];
     x = Iwram_MulQ16(dx, turn[0]) - Iwram_MulQ16(dz, sine);
     z = Iwram_MulQ16(dx, sine) + Iwram_MulQ16(dz, turn[0]);
     x += center[0];
     z += center[2];
-    object->x = x;
-    object->z = z;
+    object->x.fixed = x;
+    object->z.fixed = z;
   }
 }
 
@@ -291,18 +291,18 @@ void SeaOfTime_RideCurrent(void) {
     center.z = -1;
     break;
   }
-  center.x = (((object->x >> 21) + center.x) << 21) + 0x100000;
-  center.z = (((object->z >> 21) + center.z) << 21) + 0x100000;
-  pos = &object->x;
+  center.x = (((object->x.fixed >> 21) + center.x) << 21) + 0x100000;
+  center.z = (((object->z.fixed >> 21) + center.z) << 21) + 0x100000;
+  pos = &object->x.fixed;
   if (Position_FlatDistance(pos, &center) > 46) {
     if (*pos < center.x)
       *pos += 0x8000;
     else
       *pos -= 0x8000;
-    if (object->z < center.z)
-      object->z += 0x8000;
+    if (object->z.fixed < center.z)
+      object->z.fixed += 0x8000;
     else
-      object->z -= 0x8000;
+      object->z.fixed -= 0x8000;
   }
   if (SeaOfTime_GetCellCode(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
     turn[0] = SeaOfTime_Cos(-0x200);
@@ -311,8 +311,8 @@ void SeaOfTime_RideCurrent(void) {
     turn[0] = SeaOfTime_Cos(0x200);
     s = Trig_Sin(0x200);
   }
-  dx = object->x - center.x;
-  dz = object->z - center.z;
+  dx = object->x.fixed - center.x;
+  dz = object->z.fixed - center.z;
   {
     s32 (*mul)(s32 a, s32 b) = Iwram_MulQ16;
     x = mul(dx, turn[0]);
@@ -322,8 +322,8 @@ void SeaOfTime_RideCurrent(void) {
   }
   x += center.x;
   z += center.z;
-  object->x = x;
-  object->z = z;
+  object->x.fixed = x;
+  object->z.fixed = z;
 
   counter = &gFrameCount;
   frame = *counter;
@@ -344,27 +344,27 @@ void SeaOfTime_RideCurrent(void) {
       ends[2] = -(c * 10);
       ends[3] = -(sine * 10);
     }
-    ends[0] += object->x;
-    ends[1] += object->z;
+    ends[0] += object->x.fixed;
+    ends[1] += object->z.fixed;
     speed = 0x8000;
-    ends[2] += object->x;
-    ends[3] += object->z;
-    if (ends[1] != object->z) {
+    ends[2] += object->x.fixed;
+    ends[3] += object->z.fixed;
+    if (ends[1] != object->z.fixed) {
       ends[1] += -0xc0000;
       ends[3] += -0xc0000;
     }
     flip = *counter & 4;
     px = ends[0];
-    py = object->y;
+    py = object->y.fixed;
     pz = ends[1];
     if (flip) {
       FieldEffect_Spawn(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
-      FieldEffect_Spawn(ends[2] - 0x30000, object->y, ends[3], -speed, 0, 0,
-                        0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] - 0x30000, object->y.fixed, ends[3], -speed, 0,
+                        0, 0xb0000, &spark);
     } else {
       FieldEffect_Spawn(px - 0x30000, py, pz, -speed, 0, 0, 0xb0000, &spark);
-      FieldEffect_Spawn(ends[2] + 0x30000, object->y, ends[3], speed, 0, 0,
-                        0xb0000, &spark);
+      FieldEffect_Spawn(ends[2] + 0x30000, object->y.fixed, ends[3], speed, 0,
+                        0, 0xb0000, &spark);
     }
   }
 }
@@ -386,8 +386,8 @@ void SeaOfTime_FollowChannel(void) {
   angle = (work->stepTrigger - 45) << 14;
   Event_Start();
   Event_ResolvePendingActions(0);
-  x = actor->x >> 20;
-  z = actor->z >> 20;
+  x = actor->x.fixed >> 20;
+  z = actor->z.fixed >> 20;
   dx = Trig_Cos(angle) >> 16;
   dz = Trig_Sin(angle) >> 16;
   actor->speedLimit = px(4);
@@ -408,7 +408,7 @@ void SeaOfTime_FollowChannel(void) {
     z += dz;
     targetX += dx << 20;
     targetZ += dz << 20;
-    Actor_SetMoveTarget(actor, targetX, actor->y, targetZ);
+    Actor_SetMoveTarget(actor, targetX, actor->y.fixed, targetZ);
     while (Actor_HasArrived(actor) == 0) {
       s32 phase = 3;
       phase &= gFrameCount;
@@ -426,28 +426,28 @@ void SeaOfTime_FollowChannel(void) {
         pos[1] = sine * 12;
         pos[2] = -(cosine * 12);
         pos[3] = -(sine * 12);
-        pos[0] += actor->x;
-        pos[1] += actor->z;
-        pos[2] += actor->x;
-        pos[3] += actor->z;
-        if (pos[1] != actor->z) {
+        pos[0] += actor->x.fixed;
+        pos[1] += actor->z.fixed;
+        pos[2] += actor->x.fixed;
+        pos[3] += actor->z.fixed;
+        if (pos[1] != actor->z.fixed) {
           pos[1] -= 0xc0000;
           pos[3] -= 0xc0000;
         }
         flip = gFrameCount & 4;
-        y0 = actor->y;
+        y0 = actor->y.fixed;
         x0 = pos[0];
         z0 = pos[1];
         if (flip) {
           FieldEffect_Spawn(x0 + 0x40000, y0, z0, 0x8000, 0, 0, 0xb0000,
                             &spark);
-          FieldEffect_Spawn(pos[2] - 0x40000, actor->y, pos[3], -0x8000, 0, 0,
-                            0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] - 0x40000, actor->y.fixed, pos[3], -0x8000,
+                            0, 0, 0xb0000, &spark);
         } else {
           FieldEffect_Spawn(x0 - 0x40000, y0, z0, -0x8000, 0, 0, 0xb0000,
                             &spark);
-          FieldEffect_Spawn(pos[2] + 0x40000, actor->y, pos[3], 0x8000, 0, 0,
-                            0xb0000, &spark);
+          FieldEffect_Spawn(pos[2] + 0x40000, actor->y.fixed, pos[3], 0x8000, 0,
+                            0, 0xb0000, &spark);
         }
       }
       wait(1);
@@ -477,7 +477,10 @@ void SeaOfTime_CountLaps(void) {
   u32 *frame;
   u32 *stamp;
 
-  index = (SeaOfTime_GetCellCode(0, actor->x >> 20, actor->z >> 20) >> 8) - 1;
+  index =
+      (SeaOfTime_GetCellCode(0, actor->x.fixed >> 20, actor->z.fixed >> 20) >>
+       8) -
+      1;
   frame = &gFrameCount;
   stamp = &gSeaOfTime_LapStamp;
 
@@ -710,7 +713,8 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   actor = Actor_GetById(8);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetMoveTarget(actor, actor->x, actor->y, actor->z + px(8));
+  Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
+                      actor->z.fixed + px(8));
   while (Actor_HasArrived(actor) == 0) {
     if ((gFrameCount & 3) == 0) {
       options.priority = 2;
@@ -723,19 +727,19 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
       sides[1] = sine * 12;
       sides[2] = -(cosine * 12);
       sides[3] = -(sine * 12);
-      sides[0] += actor->x;
-      sides[1] += actor->z;
-      sides[2] += actor->x;
-      sides[3] += actor->z;
+      sides[0] += actor->x.fixed;
+      sides[1] += actor->z.fixed;
+      sides[2] += actor->x.fixed;
+      sides[3] += actor->z.fixed;
       velocity = 0x8000;
-      if (sides[1] != actor->z) {
+      if (sides[1] != actor->z.fixed) {
         sides[1] -= 0xc0000;
         sides[3] -= 0xc0000;
       }
       alternate = gFrameCount & 4;
       reverseVelocity = -velocity;
       x = sides[0];
-      y = actor->y;
+      y = actor->y.fixed;
       z = sides[1];
       if (alternate) {
         FieldEffect_Spawn(x + 0x40000, y, z, velocity, 0, 0,
@@ -743,7 +747,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
                               EFFECT_USE_START_SCALE,
                           &options);
         FieldEffect_Spawn(
-            sides[2] - 0x40000, actor->y, sides[3], reverseVelocity, 0, 0,
+            sides[2] - 0x40000, actor->y.fixed, sides[3], reverseVelocity, 0, 0,
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
             &options);
       } else {
@@ -752,7 +756,7 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
                               EFFECT_USE_START_SCALE,
                           &options);
         FieldEffect_Spawn(
-            sides[2] + 0x40000, actor->y, sides[3], velocity, 0, 0,
+            sides[2] + 0x40000, actor->y.fixed, sides[3], velocity, 0, 0,
             EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
             &options);
       }
@@ -787,8 +791,8 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
     spark.startScaleY = 0xb333;
     spark.palette = 7;
     spark.priority = 1;
-    FieldEffect_Spawn(object->x + dx, 0, object->z + px(16), 0, even, even,
-                      0xb0000, &spark);
+    FieldEffect_Spawn(object->x.fixed + dx, 0, object->z.fixed + px(16), 0,
+                      even, even, 0xb0000, &spark);
   }
 }
 
@@ -945,7 +949,7 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
     object = Actor_GetById(n1);                                                \
-    SeaOfTime_RemoveRock(object->x, Actor_GetById(n1)->z, n1);                 \
+    SeaOfTime_RemoveRock(object->x.fixed, Actor_GetById(n1)->z.fixed, n1);     \
     GameFlag_Set(n2);                                                          \
     Event_End();                                                               \
   }

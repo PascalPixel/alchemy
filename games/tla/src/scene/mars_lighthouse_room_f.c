@@ -425,19 +425,19 @@ void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
   u32 facing = object->facing;
 
   if (facing == 0 || facing == 0x8000) {
-    s32 x = object->x >> 20;
-    s32 z = object->z >> 20;
+    s32 x = object->x.fixed >> 20;
+    s32 z = object->z.fixed >> 20;
 
     if (facing != 0)
       x--;
     else
       x++;
     object = Actor_Get(ACTOR_FIRST_STONE);
-    if (object->x >> 20 != x || object->z >> 20 != z) {
+    if (object->x.fixed >> 20 != x || object->z.fixed >> 20 != z) {
       object = Actor_Get(ACTOR_SECOND_STONE);
-      if (object->x >> 20 != x || object->z >> 20 != z) {
+      if (object->x.fixed >> 20 != x || object->z.fixed >> 20 != z) {
         object = Actor_Get(ACTOR_THIRD_STONE);
-        if (object->x >> 20 != x || object->z >> 20 != z) {
+        if (object->x.fixed >> 20 != x || object->z.fixed >> 20 != z) {
           Field_TryJumpForward();
           return;
         }
@@ -461,15 +461,15 @@ void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
   s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x;
-  position[1] = (object->y + px(4)) & 0xfff80000;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = (object->y.fixed + px(4)) & 0xfff80000;
+  position[2] = object->z.fixed;
   FieldVector_AddPolarOffset(px(16), angle, position);
   object = Actor_FindAtCell(position, 1);
   if (object != NULL) {
-    position[0] = object->x;
-    position[1] = object->y;
-    position[2] = object->z;
+    position[0] = object->x.fixed;
+    position[1] = object->y.fixed;
+    position[2] = object->z.fixed;
     FieldVector_AddPolarOffset(px(16), angle, position);
     if (Actor_FindAtCell(position, 1) != NULL)
       return;
@@ -489,7 +489,7 @@ extern s16 gMarsLighthouseRoomF_StatueFlameThrowers[];
 void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->x >> 20 == 50) {
+  if (object->x.fixed >> 20 == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
     object->motionFlags = 3;
   }
@@ -500,7 +500,7 @@ void MarsLighthouseRoomF_PushVenusStatueIntoFlames(void) {
   struct Actor *object = Actor_Get(ACTOR_PUSHED_STATUE);
 
   Leader_PushObjectAhead();
-  if (object->x >> 20 == 50) {
+  if (object->x.fixed >> 20 == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
     object->motionFlags = 3;
   }
@@ -544,7 +544,7 @@ void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
   s32 kind;
 
   table = gMarsLighthouseRoomF_StatueFlameThrowers;
-  x = object->x;
+  x = object->x.fixed;
   offset = (id - 18) * 2;
   kind = *(s16 *)((u8 *)table + offset);
   if (x >> 20 == object->timer >> 4)
@@ -565,21 +565,21 @@ void MarsLighthouseRoomF_FillGapsWithStones(void) {
   MapGrid_CopyCellAttributes(53, 8, 1, 1, 47, 8);
   for (id = ACTOR_FIRST_STONE; id <= ACTOR_THIRD_STONE; id++) {
     object = Actor_Get(id);
-    x = object->x >> 20;
-    z = object->z >> 20;
+    x = object->x.fixed >> 20;
+    z = object->z.fixed >> 20;
     if (x == 38 && z == 8)
       MapGrid_CopyCellAttributes(54, 72, 1, 1, 38, 72);
   }
   for (id = ACTOR_FIRST_STONE; id <= ACTOR_THIRD_STONE; id++) {
     object = Actor_Get(id);
-    x = object->x >> 20;
-    z = object->z >> 20;
+    x = object->x.fixed >> 20;
+    z = object->z.fixed >> 20;
     if (x == 43 && z == 8)
       MapGrid_CopyCellAttributes(54, 72, 1, 1, 43, 72);
   }
   object = Actor_Get(ACTOR_FIRST_STONE);
-  x = object->x >> 20;
-  z = object->z >> 20;
+  x = object->x.fixed >> 20;
+  z = object->z.fixed >> 20;
   if (x == 47 && z == 8)
     MapGrid_CopyCellAttributes(54, 8, 1, 1, 47, 8);
 }
@@ -588,14 +588,14 @@ void MarsLighthouseRoomF_FillGapsWithStones(void) {
 /// Where the two pipes stand decides which of the pipe room's flame throwers
 /// burn.
 void MarsLighthouseRoomF_RouteFireThroughPipes(void) {
-  if (Actor_Get(ACTOR_MARS_PIPE_A)->z >> 20 == 14) {
+  if (Actor_Get(ACTOR_MARS_PIPE_A)->z.fixed >> 20 == 14) {
     Ride_SetEntry(0, 65);
     Ride_SetEntry(2, 19);
   } else {
     Ride_SetEntry(0, 17);
     Ride_SetEntry(2, 67);
   }
-  if (Actor_Get(ACTOR_MARS_PIPE_B)->x >> 20 == 6) {
+  if (Actor_Get(ACTOR_MARS_PIPE_B)->x.fixed >> 20 == 6) {
     Ride_SetEntry(1, 65);
     Ride_SetEntry(3, 3);
   } else {
@@ -665,11 +665,11 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
 
   for (i = 11; i >= 0; i--) {
     s32 a = Random16();
-    s32 x = origin->x + (a << 4) - (Random16() << 4);
+    s32 x = origin->x.fixed + (a << 4) - (Random16() << 4);
     s32 b = Random16();
     s32 c = Random16();
-    struct Actor *object =
-        FieldActor_Create(0x149, x, (b << 3) + origin->y, (c << 4) + origin->z);
+    struct Actor *object = FieldActor_Create(
+        0x149, x, (b << 3) + origin->y.fixed, (c << 4) + origin->z.fixed);
 
     if (object != NULL) {
       s32 angle = (Random16() >> 2) + 0xe000;
@@ -773,14 +773,15 @@ void MarsLighthouseRoomF_CycloneToExit14(void) {
 void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->x >> 20 == 13) {
+  if (object->x.fixed >> 20 == 13) {
     object->motionFlags = 3;
-    if (object->groundHeight !=
-        Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z)) {
+    if (object->groundHeight != Map_GetTerrainHeight(BYTE_AT(object, 34),
+                                                     object->x.fixed,
+                                                     object->z.fixed)) {
       s32 frames;
 
       System_Wait(2);
-      for (frames = 0; frames < 30 && object->y > object->groundHeight;
+      for (frames = 0; frames < 30 && object->y.fixed > object->groundHeight;
            frames++)
         System_Wait(1);
       Event_PlaySound(SE_IMPACT);
@@ -796,7 +797,7 @@ void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
 
 /// Moved to cell x 7, the statue blocks the flames in the big room.
 void MarsLighthouseRoomF_MoveJupiterStatueIntoFlames(s32 unused, s32 id) {
-  if (Actor_Get(id)->x >> 20 == 7)
+  if (Actor_Get(id)->x.fixed >> 20 == 7)
     Flag_Set(FLAG_JUPITER_STATUE_BLOCKS_FLAMES);
 }
 
@@ -831,7 +832,7 @@ step:
   object->motionFlags = 0;
   object->scaleX += (-0x400);
   object->scaleY += -0x300;
-  object->y += -0x9999;
+  object->y.fixed += -0x9999;
   System_Wait(1);
   if (++frame <= 39)
     goto step;
@@ -850,16 +851,16 @@ void MarsLighthouseRoomF_RouteFireThroughPipeline(void) {
   Ride_SetEntry(1, 65);
   Ride_SetEntry(0, 65);
   Flag_Clear(FLAG_PIPELINE_MENDED);
-  if (Actor_Get(ACTOR_MERCURY_PIPE_C)->z >> 20 != 15 &&
-      Actor_Get(ACTOR_MERCURY_PIPE_B)->z >> 20 != 15) {
+  if (Actor_Get(ACTOR_MERCURY_PIPE_C)->z.fixed >> 20 != 15 &&
+      Actor_Get(ACTOR_MERCURY_PIPE_B)->z.fixed >> 20 != 15) {
     Ride_SetEntry(1, 33);
     return;
   }
-  if (Actor_Get(ACTOR_MERCURY_PIPE_B)->z >> 20 != 13) {
+  if (Actor_Get(ACTOR_MERCURY_PIPE_B)->z.fixed >> 20 != 13) {
     Ride_SetEntry(0, 17);
     return;
   }
-  if (Actor_Get(ACTOR_MERCURY_PIPE_A)->x >> 20 != 37) {
+  if (Actor_Get(ACTOR_MERCURY_PIPE_A)->x.fixed >> 20 != 37) {
     Ride_SetEntry(2, 49);
     return;
   }
@@ -943,8 +944,8 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
       s32 z;
       u8 *cells;
 
-      SET_VECTOR(position, (leader->x & 0xfff00000) + 0x80000, leader->y,
-                 (leader->z & 0xfff00000) + 0x80000);
+      SET_VECTOR(position, (leader->x.fixed & 0xfff00000) + 0x80000,
+                 leader->y.fixed, (leader->z.fixed & 0xfff00000) + 0x80000);
       FieldVector_AddPolarOffset(px(16), angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;
@@ -969,8 +970,8 @@ void Leader_SlideOnIceFromEdge(void);
 void MarsLighthouseRoomF_FreezePuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
-  s32 row = (object->z >> 20) << 7;
-  s32 x = object->x;
+  s32 row = (object->z.fixed >> 20) << 7;
+  s32 x = object->x.fixed;
   u8 *cell = map->layers[2].cells;
   s32 offset = (x >> 20) + row;
 
@@ -983,8 +984,8 @@ void MarsLighthouseRoomF_FreezePuddle(s32 id) {
 void MarsLighthouseRoomF_MeltPuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
   struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
-  s32 row = (object->z >> 20) << 7;
-  s32 x = object->x;
+  s32 row = (object->z.fixed >> 20) << 7;
+  s32 x = object->x.fixed;
   u8 *cell = map->layers[2].cells;
   s32 offset = (x >> 20) + row;
 
@@ -1235,7 +1236,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(ACTOR_PUSHED_STATUE)->motionFlags = 0;
     if (Flag_IsSet(FLAG_VENUS_STATUE_BLOCKS_FLAMES)) {
       Actor_SetPosition(ACTOR_PUSHED_STATUE, 808, 312);
-      Actor_GetById(ACTOR_PUSHED_STATUE)->y = 0;
+      Actor_GetById(ACTOR_PUSHED_STATUE)->y.fixed = 0;
       Actor_GetById(ACTOR_PUSHED_STATUE)->groundHeight = 0;
     }
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
@@ -1387,9 +1388,9 @@ UNUSED void Whirlwind_CarryLeader(void) {
   Actor_SetSpriteFlags(actor, 0);
   flag = (u8 *)linked + 0x63;
   while (*flag != 0) {
-    actor->x = linked->x;
-    actor->y = linked->y + i;
-    actor->z = linked->z;
+    actor->x.fixed = linked->x.fixed;
+    actor->y.fixed = linked->y.fixed + i;
+    actor->z.fixed = linked->z.fixed;
     if (i <= 0x3ffff)
       i += 0x1999;
     actor->facing = (u8)gFrameCount << 12;
@@ -1398,11 +1399,11 @@ UNUSED void Whirlwind_CarryLeader(void) {
   }
   work->glow = 1;
   work->glowHeld = 1;
-  x = (linked->x >> 19) & ~1;
+  x = (linked->x.fixed >> 19) & ~1;
   facing = linked->facing;
   facing >>= 13;
-  actor->x = (x + facing - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
+  actor->x.fixed = (x + facing - 1) << 19;
+  actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - (facing & 2) + 1) << 19;
   actor->velocityY = px(6);
   *(u8 *)&actor->priorityFlags = 1;
   *motion = 3;
@@ -1413,13 +1414,14 @@ UNUSED void Whirlwind_CarryLeader(void) {
   shadow->acceleration = px(1);
   *(u8 *)&shadow->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(
-      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
+      shadow, actor->x.fixed,
+      Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed), actor->z.fixed);
   i = 0;
-  if (actor->y > actor->groundHeight + px(16)) {
+  if (actor->y.fixed > actor->groundHeight + px(16)) {
   fall:
     System_Wait(1);
     i++;
-    if (i <= 59 && actor->y > actor->groundHeight + px(16))
+    if (i <= 59 && actor->y.fixed > actor->groundHeight + px(16))
       goto fall;
   }
   Event_PlaySound(SE_LANDING_THUD);
@@ -1464,10 +1466,10 @@ void Whirlwind_Update(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+    position[0] = self->x.fixed;
+    position[1] = self->y.fixed;
+    position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
@@ -1476,11 +1478,11 @@ void Whirlwind_Update(struct Actor *self) {
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
+        distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
-          distance = self->y - leader->y;
+          distance = self->y.fixed - leader->y.fixed;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
@@ -1505,9 +1507,9 @@ void Whirlwind_Update(struct Actor *self) {
         do {
           multiply = Iwram_MulQ16;
         } while (0);
-        self->x += multiply(cosine, speed);
+        self->x.fixed += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }
@@ -2030,8 +2032,8 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
     actor->facing = TRIG_TURN / 4;
     Actor_SelectAnimation(actor, 49);
     for (;;) {
-      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->layer, actor->x,
-                                                  actor->z) == 7) {
+      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->layer, actor->x.fixed,
+                                                  actor->z.fixed) == 7) {
         s32 i;
 
         /* FAKEMATCH(temporary): velocityX stored through a union. */
@@ -2043,9 +2045,9 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         actor->velocityZ = work->unk6a << 17;
         actor->acceleration = Q16_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x + (work->unk68 << 19);
-          position.y = actor->y;
-          position.z = actor->z + (work->unk6a << 19);
+          position.x = actor->x.fixed + (work->unk68 << 19);
+          position.y = actor->y.fixed;
+          position.z = actor->z.fixed + (work->unk6a << 19);
           if (MapGrid_CheckCollisionOfActor(actor) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
@@ -2066,9 +2068,9 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         s32 x, z, off, oldZ;
 #endif
 
-        position.x = actor->x + (work->unk68 << 19);
-        position.y = actor->y;
-        position.z = actor->z + (work->unk6a << 19);
+        position.x = actor->x.fixed + (work->unk68 << 19);
+        position.y = actor->y.fixed;
+        position.z = actor->z.fixed + (work->unk6a << 19);
         result = MapGrid_CheckCollisionOfActor(actor);
         if (result > 0)
           break;
@@ -2085,37 +2087,38 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
           /* FAKEMATCH(wrapper): Import_FieldCheckSpheresOverlap forwarded
            * through Value4. */
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Import_FieldCheckSpheresOverlap, (s32)&other->x,
-                     radius, (s32)&position, other->radius - 2) >= 0) {
+              Value4((s32 (*)())Import_FieldCheckSpheresOverlap,
+                     (s32)&other->x.fixed, radius, (s32)&position,
+                     other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
           }
         }
 #endif
         do {
-          x = actor->x += work->unk68 << 17;
+          x = actor->x.fixed += work->unk68 << 17;
         } while (0);
 #if TLA_PATCH_1
-        z = actor->z + (work->unk6a << 17);
+        z = actor->z.fixed + (work->unk6a << 17);
 #else
         do {
-          oldZ = actor->z;
+          oldZ = actor->z.fixed;
         } while (0);
         z = oldZ + (work->unk6a << 17);
 #endif
-        actor->z = z;
+        actor->z.fixed = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > Q16_ONE)
           off = Q16_ONE;
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
-        actor->x = x - off;
+        actor->x.fixed = x - off;
         off = (z & 0xfffff) + 0xfff80000;
         if (off > Q16_ONE)
           off = Q16_ONE;
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
-        actor->z = z - off;
+        actor->z.fixed = z - off;
         work->unk04 = 0;
         System_Wait(1);
       }
@@ -2182,14 +2185,15 @@ s32 Fireball_CarryLeader(void) {
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->timer == 0) {
-    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
-      leader->x += ((s32 *)ride->car->unk70)[0];
-      leader->z += ((s32 *)ride->car->unk70)[2];
+    if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
+                                                leader->z.fixed) != 7) {
+      leader->x.fixed += ((s32 *)ride->car->unk70)[0];
+      leader->z.fixed += ((s32 *)ride->car->unk70)[2];
     } else {
       if (((s32 *)ride->car->unk70)[0] != 0)
-        leader->x = (leader->x & 0xfff00000) + 0x80000;
+        leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
       if (((s32 *)ride->car->unk70)[2] != 0)
-        leader->z = (leader->z & 0xfff00000) + 0x80000;
+        leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
     System_Wait(1);
@@ -2263,13 +2267,13 @@ void MarsLighthouseRoomF_ScatterCrumbs(struct Actor *actor) {
 
     a = Random16();
     b = Random16();
-    x = actor->x + a * 16;
+    x = actor->x.fixed + a * 16;
     x -= b * 16;
     c = Random16();
     d = Random16();
     e = Random16();
-    z = actor->z + d * 16 - e * 16;
-    y = c * 8 + actor->y + Q16_ONE * 4;
+    z = actor->z.fixed + d * 16 - e * 16;
+    y = c * 8 + actor->y.fixed + Q16_ONE * 4;
     object = (struct Actor *)Import_ActorCreate(489, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
@@ -2383,9 +2387,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       flag |= 1;
     actor->paused = flag;
 
-    position.x = actor->x;
-    position.y = actor->y;
-    position.z = actor->z;
+    position.x = actor->x.fixed;
+    position.y = actor->y.fixed;
+    position.z = actor->z.fixed;
     FieldVector_AddPolarOffset(px(8), actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
@@ -2402,8 +2406,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
 
     map = Ram_HeapSlots->mapGrid;
-    tileX = actor->x >> 20;
-    tileZ = actor->z >> 20;
+    tileX = actor->x.fixed >> 20;
+    tileZ = actor->z.fixed >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
     widthA = *(s32 *)&map->layers[1].unk08[0] >> 20;
@@ -2424,7 +2428,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
@@ -2433,7 +2437,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_572);
-          Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }
       }
@@ -2448,9 +2452,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4__s2f80 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x - target->x) < 0x140000 &&
-        (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z - target->z) < 0x140000) {
+    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+        (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
+        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
       other->unk04 = 2;
       other->unk6c = actor;
       work2->stepTrigger = other->unk0a + 2;
@@ -2462,9 +2466,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->scaleY -= Q16_ONE / 16;
       MarsLighthouseRoomF_ScatterCrumbs(actor);
     } else {
-      actor->z = 0;
-      actor->y = 0;
-      actor->x = 0;
+      actor->z.fixed = 0;
+      actor->y.fixed = 0;
+      actor->x.fixed = 0;
       actor->velocityZ = 0;
       actor->velocityY = 0;
       actor->velocityX = 0;
@@ -2480,7 +2484,8 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   struct Actor *source = Actor_Get(id);
   struct Actor *object = Actor_Get(target);
 
-  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
+                                       source->z.fixed);
   Actor_StartScript(object, script);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -2502,9 +2507,9 @@ void Actor_LaunchAhead(struct Actor *self) {
   struct FieldSprite *sprite = actor->sprite;
   volatile s32 position[3];
 
-  position[0] = self->x;
-  position[1] = self->y - px(12);
-  position[2] = self->z;
+  position[0] = self->x.fixed;
+  position[1] = self->y.fixed - px(12);
+  position[2] = self->z.fixed;
   FieldVector_AddPolarOffset(px(32), angle, (struct Vector3 *)position);
   actor->facing = angle;
   actor->motionFlags = 0;
@@ -2535,7 +2540,7 @@ void Actor_SetupScriptedFor(struct Actor *object, s32 unused);
 
 s32 Actor_Park(struct Actor *object) {
   Actor_LaunchAhead(object);
-  SET_POSITION(object, 0, 0, 0);
+  SET_ACTOR_POSITION(object, 0, 0, 0);
   SET_VELOCITY(object, 0, 0, 0);
   return 0;
 }
@@ -2671,8 +2676,8 @@ void GameFlag_SetByte(s32 flag, s32 value);
 /// way and he falls through.
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
   struct WarpWork *work = &gCrackedTiles;
   struct WarpEntry *entry = work->entries;
   s32 index;
@@ -2717,11 +2722,11 @@ UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->positionFlag, 0);
     GameFlag_SetByte(work->positionFlag + 8, 0);
-    object->x = ((x + dx) << 20) + 0x80000;
-    object->z = ((z + dz) << 20) + 0x80000;
+    object->x.fixed = ((x + dx) << 20) + 0x80000;
+    object->z.fixed = ((z + dz) << 20) + 0x80000;
     other = *(struct Actor **)(event + 460);
-    other->x = object->x;
-    other->z = object->z;
+    other->x.fixed = object->x.fixed;
+    other->z.fixed = object->z.fixed;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     WORD_AT(Ram_HeapSlots->fieldWork, 428) = value;
@@ -2781,8 +2786,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = (object->x + (gPushFootprints[j][0] << 16)) >> 20;
-  z = (object->z + (gPushFootprints[j][1] << 16)) >> 20;
+  x = (object->x.fixed + (gPushFootprints[j][0] << 16)) >> 20;
+  z = (object->z.fixed + (gPushFootprints[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
   i = mapX;
   mapZ = *(s32 *)(map + 332) >> 20;
@@ -2851,10 +2856,10 @@ void PushTarget_Push(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x;
-  from[2] = object->z;
-  cell[0] = (object->x + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z + (gPushFootprints[footprint][1] << 16)) >> 20;
+  from[0] = object->x.fixed;
+  from[2] = object->z.fixed;
+  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2896,7 +2901,8 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_WaitForMove(object);
   Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+                                       target.z);
   Actor_SelectAnimation(object, 1);
   target.x = target.x + (gPushFootprints[footprint][0] << 16);
   target.z = target.z + (gPushFootprints[footprint][1] << 16);
@@ -2944,13 +2950,13 @@ void LightSprites_Draw(void) {
 
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x != 0) {
+    if (actor != 0 && actor->x.fixed != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
       u32 *word;
-      ox = actor->x - viewX;
-      y = actor->y - viewY + 0x80000;
-      z = actor->z - viewZ - viewY;
+      ox = actor->x.fixed - viewX;
+      y = actor->y.fixed - viewY + 0x80000;
+      z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
       big = gLightSpritesLarge;

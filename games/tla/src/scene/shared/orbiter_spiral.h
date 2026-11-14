@@ -4,9 +4,9 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   s16 *angle;
 
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
-  orbiter->x = anchor->x;
-  orbiter->y = anchor->y + px(8);
-  orbiter->z = anchor->z;
+  orbiter->x = anchor->x.fixed;
+  orbiter->y = anchor->y.fixed + px(8);
+  orbiter->z = anchor->z.fixed;
   FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
   /* FAKEMATCH(temporary): the angle's address, taken after the first push,
    * sets r2 from r8 before the second push reads it. */
@@ -18,9 +18,9 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   AquaRockInside_SpawnSpark(orbiter);
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
-  orbiter->x = anchor->x;
-  orbiter->y = anchor->y + px(8);
-  orbiter->z = anchor->z;
+  orbiter->x = anchor->x.fixed;
+  orbiter->y = anchor->y.fixed + px(8);
+  orbiter->z = anchor->z.fixed;
   FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
   AquaRockInside_SpawnSpark(orbiter);
   orbiter->radius -= 0x40000;

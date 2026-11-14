@@ -101,11 +101,11 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
     object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 30) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 296, 600);
-      object->y = 0;
+      object->y.fixed = 0;
       object->facing = FACING_WEST;
     } else if (id == 31) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 136, 680);
-      object->y = 0;
+      object->y.fixed = 0;
       object->facing = 0;
     }
     Whirlwind_SpawnUpper(object);
@@ -118,23 +118,23 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct GustObject *motion;
 
   if (gWhirlwindRiding == 0 &&
-      Actor_Get(gMainRoutineWork.leaderActorId)->y > 0) {
+      Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > 0) {
     object = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
     if (id == 50) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
-      object->y = px(32);
+      object->y.fixed = px(32);
       object->facing = FACING_WEST;
     } else if (id == 51) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 472, 184);
-      object->y = px(32);
+      object->y.fixed = px(32);
       object->facing = FACING_WEST;
     } else if (id == 52) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 616, 280);
-      object->y = px(32);
+      object->y.fixed = px(32);
       object->facing = 0;
     } else if (id == 53) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 632, 184);
-      object->y = px(32);
+      object->y.fixed = px(32);
       object->facing = 0;
     }
     motion = Whirlwind_SpawnUpper(object);
@@ -145,7 +145,7 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
 }
 
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0 &&
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTiles_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
@@ -155,10 +155,10 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   s32 x;
   s32 z;
 
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    x = leader->x >> 20;
-    z = leader->z >> 20;
+    x = leader->x.fixed >> 20;
+    z = leader->z.fixed >> 20;
     if (x == 18 && z == 34)
       FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
     if (x == 8 && z == 39)
@@ -174,11 +174,11 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   s32 z;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (leader->y <= 0) {
+  if (leader->y.fixed <= 0) {
     JupiterLighthouse_StepOnLowerCrackedTile(arg);
   } else {
-    x = leader->x >> 20;
-    z = leader->z >> 20;
+    x = leader->x.fixed >> 20;
+    z = leader->z.fixed >> 20;
     if (x == 25) {
       if (z == 17)
         JupiterLighthouse_RaiseUpperWhirlwind(50);

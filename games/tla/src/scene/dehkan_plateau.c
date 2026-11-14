@@ -237,7 +237,7 @@ void DehkanPlateau_StepOnRoom2Pillars(void) {
 
   CrumblingPillars_StepWithStandIn(gDehkanPlateau_Room2CrumblingPillars);
   DehkanPlateau_SetRoom2StandingPillarCells();
-  y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
+  y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
   if (y < 0x80000) {
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
@@ -255,7 +255,7 @@ void DehkanPlateau_SetRoom3StandingPillarCells(void) {
 void DehkanPlateau_StepOnRoom3Pillars(void) {
   CrumblingPillars_Step(gDehkanPlateau_Room3CrumblingPillars);
   DehkanPlateau_SetRoom3StandingPillarCells();
-  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y < -px(24)) {
+  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -px(24)) {
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   }
@@ -265,7 +265,7 @@ void DehkanPlateau_StepOnRoom6Pillar(void) {
   s32 y;
 
   CrumblingPillars_Step(gDehkanPlateau_Room6CrumblingPillar);
-  y = Actor_GetById(gMainRoutineWork.leaderActorId)->y;
+  y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
   if (y < 0x180000)
     DehkanPlateau_LeaveConeCell();
 }
@@ -336,8 +336,8 @@ void DehkanPlateau_DropRoom1PillarIntoGap(void) {
   struct Actor *object = Actor_GetById(ACTOR_ROOM1_PILLAR);
   s32 x;
 
-  x = object->x >> 20;
-  if (x == 56 && (object->z >> 20) == 32) {
+  x = object->x.fixed >> 20;
+  if (x == 56 && (object->z.fixed >> 20) == 32) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_DropAndWait(object);
@@ -353,7 +353,7 @@ void DehkanPlateau_LiftRoom2Pillar(void) {
 
 void DehkanPlateau_PlaceRoom2Pillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_ROOM2_PILLAR);
-  s32 x = object->x >> 20;
+  s32 x = object->x.fixed >> 20;
 
   Actor_PlaceMovedBlock();
   if (x == 52) {
@@ -374,7 +374,7 @@ void DehkanPlateau_LiftRoom3Pillar(void) {
 
 void DehkanPlateau_PlaceRoom3Pillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_ROOM3_PILLAR);
-  s32 x = object->x >> 20;
+  s32 x = object->x.fixed >> 20;
 
   Actor_PlaceMovedBlock();
   if (x == 47) {
@@ -400,14 +400,14 @@ void DehkanPlateau_SetRoom3SecondPillarInPlace(void) {
 }
 
 void DehkanPlateau_MoveRoom3SecondPillar(void) {
-  if ((Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x >> 20) == 37)
+  if ((Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x.fixed >> 20) == 37)
     DehkanPlateau_SetRoom3SecondPillarInPlace();
 }
 
 void DehkanPlateau_PushRoom3SecondPillar(void) {
   u8 *flags;
 
-  if ((Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x >> 20) == 38) {
+  if ((Actor_GetById(ACTOR_ROOM3_SECOND_PILLAR)->x.fixed >> 20) == 38) {
     flags = &Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -529,8 +529,8 @@ extern s32 gDehkanPlateau_CrackZ;
 void DehkanPlateau_StepOnCrack(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 cellX = ((leader->x >> 20) << 1) + 1;
-  s32 cellZ = ((leader->z >> 20) << 1) + 1;
+  s32 cellX = ((leader->x.fixed >> 20) << 1) + 1;
+  s32 cellZ = ((leader->z.fixed >> 20) << 1) + 1;
   s32 n, flag;
   u16 *record, *next;
 
@@ -560,9 +560,10 @@ void DehkanPlateau_StepOnCrack(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 4);
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, cellX << 3,
                           cellZ << 3);
-  Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y, cellZ << 19);
+  Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y.fixed,
+                                  cellZ << 19);
   Event_Wait(4);
-  FieldCamera_GetActor()->y += -px(8);
+  FieldCamera_GetActor()->y.fixed += -px(8);
   next = record + 1;
   if (GameFlag_Get(flag)) {
     s32 x, y, index, toX, toZ;
@@ -661,7 +662,7 @@ void DehkanPlateau_StepOnCrack(void) {
         Sound_Play(SE_DUST_PUFF);
       leader->scaleX += -0x400;
       leader->scaleY += -0x300;
-      leader->y += -0x9999;
+      leader->y.fixed += -0x9999;
       wait(1);
     }
     gFieldWork->transition = 0x209;
@@ -699,8 +700,8 @@ void DehkanPlateau_StepOnCrack(void) {
     {
       s16 scene = gMainRoutineWork.next;
       if (scene == SCENE(DehkanPlateau5) || scene == SCENE(DehkanPlateau3)) {
-        gDehkanPlateau_CrackX = leader->x >> 20;
-        gDehkanPlateau_CrackZ = leader->z >> 20;
+        gDehkanPlateau_CrackX = leader->x.fixed >> 20;
+        gDehkanPlateau_CrackZ = leader->z.fixed >> 20;
       }
     }
     Event_End();
@@ -714,8 +715,8 @@ void DehkanPlateau_ForgetCrackOnLeaving(void) {
 
   if (Flag_Test(FLAG_STANDING_ON_OPENED_CRACK) != 0) {
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (gDehkanPlateau_CrackX != (object->x >> 20) ||
-        gDehkanPlateau_CrackZ != (object->z >> 20))
+    if (gDehkanPlateau_CrackX != (object->x.fixed >> 20) ||
+        gDehkanPlateau_CrackZ != (object->z.fixed >> 20))
       GameFlag_Clear(FLAG_STANDING_ON_OPENED_CRACK);
   }
 }
@@ -785,7 +786,7 @@ void DehkanPlateau_PlaceRaisedPillar(struct Actor *object) {
   u8 *cell;
 
   HeldActor_RaiseCell(object);
-  x = object->x >> 20;
+  x = object->x.fixed >> 20;
   if (x == 12) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -859,10 +860,10 @@ void DehkanPlateau_JoltCamera(void) {
   struct Actor *object = FieldCamera_GetActor();
   u32 i;
 
-  object->y += -px(8);
+  object->y.fixed += -px(8);
   wait(1);
   for (i = 0; i <= 7; i++) {
-    object->y += px(1);
+    object->y.fixed += px(1);
     wait(1);
   }
 }
@@ -1060,9 +1061,10 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
     s32 y;
 
     /* FAKEMATCH(temporary): the form kept. */
-    y = leader->y - ((((Random16() * 7) << 1) >> 16) << 16);
+    y = leader->y.fixed - ((((Random16() * 7) << 1) >> 16) << 16);
     object = ((struct Actor *)Import_ActorCreate(
-        285, (i << 17) + leader->x - Q16_ONE * 8, y - Q16_ONE * 2, leader->z));
+        285, (i << 17) + leader->x.fixed - Q16_ONE * 8, y - Q16_ONE * 2,
+        leader->z.fixed));
     if (object != NULL) {
       effect = (struct EffectView *)object;
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -1185,7 +1187,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
       Sound_Play(SE_DUST_PUFF);
     leader->scaleX -= 0x400;
     leader->scaleY -= 0x300;
-    leader->y -= 0x9999;
+    leader->y.fixed -= 0x9999;
     wait(1);
   }
   gFieldWork->transition = 0x209;
@@ -1256,7 +1258,7 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = px(130);
+  leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
@@ -1519,7 +1521,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   DehkanPlateau_InitializeRopes();
   Rope_Place(0, 520, 12, 13);
   Actor_PlaceBlocks(gDehkanPlateau_Room3MovablePillars);
-  if (Actor_GetById(ACTOR_ROOM3_PILLAR)->y > (s32)0xfff80000)
+  if (Actor_GetById(ACTOR_ROOM3_PILLAR)->y.fixed > (s32)0xfff80000)
     Actor_SetSpritePriority(ACTOR_ROOM3_PILLAR, 1);
   else
     Actor_SetSpritePriority(ACTOR_ROOM3_PILLAR, 2);
@@ -1535,7 +1537,7 @@ void DehkanPlateau_InitializeRoom3(void) {
   Actor_GetById(ACTOR_ROOM6_CANNON)->priorityFlags &= ~1;
   Actor_GetById(17)->priorityFlags &= ~1;
   Pillars_Raise(gDehkanPlateau_Room3RaisedPillars);
-  value = Actor_GetById(17)->x;
+  value = Actor_GetById(17)->x.fixed;
   zero = 0;
   if ((value >> 20) == 54) {
     struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[0].cells;
@@ -1581,7 +1583,7 @@ void DehkanPlateau_InitializeRoom3(void) {
     struct Actor *last = Actor_GetById(27);
 
     *((u8 *)last + 85) = zero;
-    last->y = zero;
+    last->y.fixed = zero;
   }
   gDehkanPlateau_CrackX = zero;
   gDehkanPlateau_CrackZ = zero;
@@ -1675,7 +1677,7 @@ void DehkanPlateau_LandFromFall(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = px(130);
+  leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
@@ -1709,8 +1711,9 @@ loop:
       velocity[0] += ((Random16() * 3) << 14) >> 16;
       velocity[0] += -0x6000;
       velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
-      FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0],
-                        velocity[1], velocity[2], 0x01090001, opts);
+      FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                        velocity[0], velocity[1], velocity[2], 0x01090001,
+                        opts);
     }
     i++;
   }

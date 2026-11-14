@@ -18,9 +18,9 @@ void Whirlwind_CarryLeader(void) {
   Actor_SetSpriteFlags(actor, 0);
 
   while (*((u8 *)linked + 0x63) != 0) {
-    actor->x = linked->x;
-    actor->y = linked->y + i;
-    actor->z = linked->z;
+    actor->x.fixed = linked->x.fixed;
+    actor->y.fixed = linked->y.fixed + i;
+    actor->z.fixed = linked->z.fixed;
     if (i <= 0x3ffff)
       i += 0x1999;
     actor->facing = (u8)gFrameCount << 12;
@@ -31,8 +31,9 @@ void Whirlwind_CarryLeader(void) {
   work->glow = 1;
   work->glowHeld = 1;
   angle = linked->facing;
-  actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
+  actor->x.fixed = (((linked->x.fixed >> 19) & ~1) + (angle >> 13) - 1) << 19;
+  actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - ((angle >> 13) & 2) + 1)
+                   << 19;
   actor->velocityY = px(6);
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
@@ -43,15 +44,16 @@ void Whirlwind_CarryLeader(void) {
   shadow->acceleration = px(1);
   shadow->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(
-      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
+      shadow, actor->x.fixed,
+      Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed), actor->z.fixed);
   i = 0;
-  if (actor->y > actor->groundHeight + px(16)) {
+  if (actor->y.fixed > actor->groundHeight + px(16)) {
     do {
       System_Wait(1);
       i++;
       if (i > 59)
         break;
-    } while (actor->y > actor->groundHeight + px(16));
+    } while (actor->y.fixed > actor->groundHeight + px(16));
   }
   Event_PlaySound(SE_LANDING_THUD);
   i = 0;

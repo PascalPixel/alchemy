@@ -55,7 +55,7 @@ void Scoop_Update(void) {
       if (work->timer == 8)
         Actor_SelectAnimationFar(anchor, 3);
       if (work->timer <= 15)
-        anchor->y += 0x24ccc;
+        anchor->y.fixed += 0x24ccc;
       if (work->timer == 28)
         NEXT_PHASE(work);
       break;
@@ -98,7 +98,7 @@ void Scoop_Update(void) {
       if (work->timer == 8)
         Actor_SelectAnimationFar(work->anchor, 3);
       if (work->timer <= 15)
-        anchor->y += 0x24ccc;
+        anchor->y.fixed += 0x24ccc;
       if (work->timer == 28)
         NEXT_PHASE(work);
       break;
@@ -132,7 +132,7 @@ void Scoop_Update(void) {
     case 1:
       if (work->timer == 0)
         Actor_SelectAnimationFar(work->anchor, 4);
-      anchor->y += 0x24ccc;
+      anchor->y.fixed += 0x24ccc;
       if (work->timer == 15)
         NEXT_PHASE(work);
       break;
@@ -150,7 +150,7 @@ void Scoop_Update(void) {
     case 1:
       if (work->timer == 0)
         Actor_SelectAnimationFar(work->anchor, 4);
-      anchor->y += 0x24ccc;
+      anchor->y.fixed += 0x24ccc;
       if (work->timer == 15)
         NEXT_PHASE(work);
       break;
@@ -230,8 +230,8 @@ void FieldPsynergy_Scoop(void) {
   s32 i;
 
   if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
-    SET_POSITION(scene, (caster->x & 0xfff00000) + 0x80000, caster->y,
-                 (caster->z & 0xfff00000) + 0x80000);
+    SET_POSITION(scene, (caster->x.fixed & 0xfff00000) + 0x80000,
+                 caster->y.fixed, (caster->z.fixed & 0xfff00000) + 0x80000);
     Vector_AddPolarOffset(px(16), scene->facing, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
@@ -260,7 +260,7 @@ void FieldPsynergy_Scoop(void) {
   work->other = other;
   if (other == NULL)
     goto end;
-  other->z += px(3);
+  other->z.fixed += px(3);
   other->motionFlags = 0;
   other->priorityFlags = 1;
   other->scaleX = 0;
@@ -272,7 +272,7 @@ void FieldPsynergy_Scoop(void) {
   Actor_SelectAnimationFar(object, 1);
   wait(15);
   for (i = 9; i >= 0; i--) {
-    object->y += -(px(5) / 2);
+    object->y.fixed += -(px(5) / 2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, 2);
@@ -284,7 +284,7 @@ void FieldPsynergy_Scoop(void) {
     if (target != NULL && target->script != NULL &&
         (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
         target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
-        FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x,
+        FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                    target->radius - 2) >= 0) {
       failed = 1;
       break;
@@ -299,7 +299,8 @@ void FieldPsynergy_Scoop(void) {
   if (failed) {
     wait(2);
     for (i = 15; i >= 0; i--)
-      BattleEffect_SpawnScatterParticle(object->x, object->y, object->z);
+      BattleEffect_SpawnScatterParticle(object->x.fixed, object->y.fixed,
+                                        object->z.fixed);
     Sound_PlayFar(SE_MENU_ERROR);
     wait(1);
     goto end;
@@ -400,9 +401,9 @@ void FieldPsynergy_Scoop(void) {
     sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainObject);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    pos[0] = object->x;
-    pos[1] = object->y + 0x200000;
-    pos[2] = object->z;
+    pos[0] = object->x.fixed;
+    pos[1] = object->y.fixed + 0x200000;
+    pos[2] = object->z.fixed;
     Camera_WorldToScreen(pos);
     sprite->x = pos[0];
     sprite->y = pos[2];
@@ -457,7 +458,8 @@ void FieldPsynergy_Scoop(void) {
   }
   Task_Remove(Scoop_Update);
   Sound_PlayFar(SE_MENU_ERROR);
-  FieldPsynergy_ShrinkToCaster(object, object->x, object->y, object->z);
+  FieldPsynergy_ShrinkToCaster(object, object->x.fixed, object->y.fixed,
+                               object->z.fixed);
   if (particleEntry != 96)
     VramCache_FreeEntry(particleEntry);
   if (pictureEntry != 96)
@@ -490,7 +492,8 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   anchor = ((struct AnchorWork *)Ram_HeapSlots->battleEffect)->anchor;
   object = Actor_GetById(id);
   if (anchor != NULL) {
-    SET_POSITION(object, anchor->x, anchor->y, anchor->z);
+    SET_ACTOR_POSITION(object, anchor->x.fixed, anchor->y.fixed,
+                       anchor->z.fixed);
   }
   if (*((s8 *)event + 394) == 3) {
     object->motionFlags = 2;
@@ -530,7 +533,8 @@ void Scoop_DigUpItem(void) {
 
   object = Actor_GetById(id);
   if (object == NULL) {
-    object = Actor_CreateFar(489, anchor->x, anchor->y, anchor->z);
+    object =
+        Actor_CreateFar(489, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
     if (object == NULL)
       return;
     event->actors[id] = object;
@@ -542,7 +546,7 @@ void Scoop_DigUpItem(void) {
   } else {
     item = (((Random16() * unit->level) * 2) >> 16) + 1 | 0x8000;
   }
-  SET_POSITION(object, anchor->x, anchor->y, anchor->z);
+  SET_ACTOR_POSITION(object, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
   Actor_ShowItemIconById(id, item);
   ((struct DropEvent *)event)->item = item;
   BattleEffect_DropObjectAtAnchor(id);

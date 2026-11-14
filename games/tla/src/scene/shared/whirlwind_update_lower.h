@@ -16,10 +16,10 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     Event_PlaySound(SE_WATER_LEVEL);
   ((struct FieldSprite *)self->sprite)->priority =
       ((struct FieldSprite *)leader->sprite)->priority;
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+    position[0] = self->x.fixed;
+    position[1] = self->y.fixed;
+    position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
@@ -28,11 +28,11 @@ void Whirlwind_UpdateLower(struct Actor *self) {
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
+        distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
-          distance = self->y - leader->y;
+          distance = self->y.fixed - leader->y.fixed;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
@@ -50,9 +50,9 @@ void Whirlwind_UpdateLower(struct Actor *self) {
       /* the address is a linked word read after the cosine, as the native
        */
       /* reads it after the speed (at Iwram_MulQ16 it is built before). */
-      self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
+      self->x.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
           Trig_Cos(self->facing), self->speedLimit);
-      self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
+      self->z.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
           Math_Sin(self->facing), self->speedLimit);
       return;
     }

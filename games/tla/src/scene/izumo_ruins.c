@@ -200,11 +200,13 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 // are written back and MapGrid_SetCellHeight is given the cell's position and
 // height.
 void IzumoRuins_ShowPillarState(struct Actor *object) {
-  s32 column = object->x >> 20;
-  s32 row = object->z >> 20;
+  s32 column = object->x.fixed >> 20;
+  s32 row = object->z.fixed >> 20;
   s32 lower = MapGrid_GetCellWord(0, column, row);
   s32 upper = MapGrid_GetCellWord(2, column, row);
-  s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
+  s32 height =
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed) >>
+      19;
 
   if (Event_GetFlag(object->timer)) {
     upper |= 0xff00;
@@ -301,7 +303,8 @@ void IzumoRuins_SinkIntoSand(void) {
   s32 result1;
 
   object0 = Actor_Get(gMainRoutineWork.leaderActorId);
-  result1 = MapGrid_GetCellWord(2, (object0->x >> 20), (object0->z >> 20));
+  result1 = MapGrid_GetCellWord(2, (object0->x.fixed >> 20),
+                                (object0->z.fixed >> 20));
   if (!((result1 >> 8) != 232)) {
     object0->layer = 2;
   }
@@ -374,10 +377,10 @@ s32 Scene_Initialize(void) {
       System_Wait(1);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
         object = Actor_Get(gMainRoutineWork.leaderActorId);
-        height = Map_GetTerrainHeight(object->layer, object->x,
-                                      object->z - object->y);
+        height = Map_GetTerrainHeight(object->layer, object->x.fixed,
+                                      object->z.fixed - object->y.fixed);
         object->groundHeight = height;
-        object->y = height;
+        object->y.fixed = height;
         EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }
     }

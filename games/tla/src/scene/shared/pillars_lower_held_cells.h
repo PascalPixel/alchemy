@@ -22,8 +22,8 @@ void Pillars_LowerHeldCells(u16 *list) {
       u8 *cell = (u8 *)Ram_HeapSlots->mapGrid->layers[*layer].cells;
       u8 *shape =
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
-      s32 kind = MapGrid_GetTerrainKind(*layer, held->x, held->z);
-      s32 height = Map_GetTerrainHeight(*layer, held->x, held->z);
+      s32 kind = MapGrid_GetTerrainKind(*layer, held->x.fixed, held->z.fixed);
+      s32 height = Map_GetTerrainHeight(*layer, held->x.fixed, held->z.fixed);
       s32 index = Actor_GetCellIndex(held);
       s32 result = MapCollision_FindOrAddTag(*layer, kind, (height >> 19) - 4);
 

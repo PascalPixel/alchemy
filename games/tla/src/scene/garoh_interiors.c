@@ -420,13 +420,13 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED), 0);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER)->motionFlags = 0;
-      Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER)->y = 0;
+      Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER)->y.fixed = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELER)->motionFlags = 0;
-      Actor_GetById(ACTOR_STUBBORN_TRAVELER)->y = 0;
+      Actor_GetById(ACTOR_STUBBORN_TRAVELER)->y.fixed = 0;
       Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->motionFlags = 0;
-      Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->y = 0;
+      Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->y.fixed = 0;
       Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->motionFlags = 0;
-      Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->y = 0;
+      Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED)->y.fixed = 0;
       Actor_SetSpriteRotationById(ACTOR_DISAPPOINTED_TRAVELER, 0xe000);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELER), 0);
       Actor_SetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);

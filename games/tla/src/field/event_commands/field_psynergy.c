@@ -214,13 +214,13 @@ void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
 
   if (scene->mode != 0xc000)
     Actor_SetSpritePriorityDirectFar(object, 0);
-  start[0] = mainObject->x;
-  start[1] = mainObject->y + 0x100000;
-  start[2] = mainObject->z;
+  start[0] = mainObject->x.fixed;
+  start[1] = mainObject->y.fixed + 0x100000;
+  start[2] = mainObject->z.fixed;
   do {
-    SET_POSITION(object, start[0] + (x - start[0]) * i / 10,
-                 start[1] + (y - start[1]) * i / 10,
-                 start[2] + (z - start[2]) * i / 10);
+    SET_ACTOR_POSITION(object, start[0] + (x - start[0]) * i / 10,
+                       start[1] + (y - start[1]) * i / 10,
+                       start[2] + (z - start[2]) * i / 10);
     object->scaleY = object->scaleX = i * (Q16_ONE * 3 / 4) / 10 + Q16_ONE / 4;
     wait(1);
     i++;
@@ -238,12 +238,13 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 i;
 
   i = 0;
-  start[0] = mainObject->x;
-  start[1] = mainObject->y + PIXELS(16);
-  start[2] = mainObject->z;
+  start[0] = mainObject->x.fixed;
+  start[1] = mainObject->y.fixed + PIXELS(16);
+  start[2] = mainObject->z.fixed;
   do {
-    SET_POSITION(object, x + (start[0] - x) * i / 10,
-                 y + (start[1] - y) * i / 10, z + (start[2] - z) * i / 10);
+    SET_ACTOR_POSITION(object, x + (start[0] - x) * i / 10,
+                       y + (start[1] - y) * i / 10,
+                       z + (start[2] - z) * i / 10);
     object->scaleY = object->scaleX = i * -(Q16_ONE * 3 / 4) / 10 + Q16_ONE;
     wait(1);
     i++;

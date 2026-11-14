@@ -138,11 +138,13 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 /// cell, the object's terrain and the terrain height in half cells, 4 lower or
 /// higher.
 void TundariaTower_SetColumnCell(struct Actor *object) {
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
   s32 attr0 = MapCell_GetAttributes(0, x, z);
   s32 attr2 = MapCell_GetAttributes(2, x, z);
-  s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
+  s32 height =
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed) >>
+      19;
 
   if (GameFlag_Get(object->timer)) {
     attr2 &= 0xffff00ff;
@@ -279,11 +281,11 @@ void TundariaTower_OpenDoor(void) {
   owner += 133;
   Actor_SetSpeed(*owner, 0.5);
   ((struct Actor *)((s32)Actor_GetById(*owner)))->motionFlags = 0;
-  cell = (((struct Actor *)((s32)Actor_GetById(*owner)))->x >> 19) | one;
+  cell = (((struct Actor *)((s32)Actor_GetById(*owner)))->x.fixed >> 19) | one;
   Actor_WalkToAndWait(*owner, cell << 3,
                       *(s16 *)((u8 *)((s32)Actor_GetById(*owner)) + 18) | one);
   Event_PlaySound(SE_MAP_EXIT);
-  cell = ((struct Actor *)((s32)Actor_GetById(*owner)))->x;
+  cell = ((struct Actor *)((s32)Actor_GetById(*owner)))->x.fixed;
   Actor_WalkTo(*owner, (cell >> 19) << 3,
                (*(s16 *)((u8 *)((s32)Actor_GetById(*owner)) + 18) | one) - 16);
   FieldEvent_Wait(5);
@@ -376,9 +378,9 @@ void TundariaTower_SparkleCenterProng(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = 673;
-    FieldEffect_Spawn(object->x + ((dx - 8) << 16),
-                      object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,
-                      0x100000, &params);
+    FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
+                      object->y.fixed + ((dy - 8) << 16), object->z.fixed, 0,
+                      0x8000, phase, 0x100000, &params);
   }
 }
 
@@ -460,19 +462,20 @@ void TundariaTower_ShrinkIceColumn(s32 arg0, s32 arg1) {
     options.targetScaleX = 0x8000;
     options.rotation = (Random16() & 15) << 12;
     velocityX = ((Random16() & 15) - 8) << 13;
-    FieldEffect_Spawn(object->x, object->y - ((arg1 * 3) << 16) + 0x100000,
-                      object->z, velocityX, 0, 0, 0x5a0000, &options);
+    FieldEffect_Spawn(object->x.fixed,
+                      object->y.fixed - ((arg1 * 3) << 16) + 0x100000,
+                      object->z.fixed, velocityX, 0, 0, 0x5a0000, &options);
     object->scaleY -= 7936;
   }
   if (arg0 == 1) {
     object->scaleY = Q16_ONE;
     GameFlag_Set(object->timer);
     TundariaTower_SetColumnCell(Actor_GetById(effectWork[13]));
-    MapGrid_CopyCellPictureIndicesRect(67, 23, (object->x >> 20) + 64,
-                                       object->z >> 20, 1, 1);
-    object->z = 0;
-    object->y = 0;
-    object->x = 0;
+    MapGrid_CopyCellPictureIndicesRect(67, 23, (object->x.fixed >> 20) + 64,
+                                       object->z.fixed >> 20, 1, 1);
+    object->z.fixed = 0;
+    object->y.fixed = 0;
+    object->x.fixed = 0;
   }
 }
 
@@ -517,7 +520,8 @@ void TundariaTower_LiftPillar(void) {
 
     Actor_LiftTargetBlock(gTundariaTower_Room6Pillars);
     object = *(struct Actor **)((u8 *)work + 0xcbc);
-    object->timer = ((object->x >> 20) << 8) | ((object->z >> 20) & 0xff);
+    object->timer =
+        ((object->x.fixed >> 20) << 8) | ((object->z.fixed >> 20) & 0xff);
   } else if (party->next == SCENE_TUNDARIA_TOWER_7) {
     Actor_LiftTargetBlock(gTundariaTower_Room7Pillar);
   }
@@ -536,23 +540,23 @@ void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
   object = *(struct Actor **)(work + 0xcbc);
   Event_Start();
   Event_ResolvePendingActions(0);
-  dx = (object->x >> 20) - (object->timer >> 8);
-  dz = (object->z >> 20) - (object->timer & 0xff);
+  dx = (object->x.fixed >> 20) - (object->timer >> 8);
+  dz = (object->z.fixed >> 20) - (object->timer & 0xff);
   object->speedLimit = px(1) / 2;
-  while ((MapCell_GetAttributes(1, (object->x >> 20) + dx,
-                                (object->z >> 20) + dz) >>
+  while ((MapCell_GetAttributes(1, (object->x.fixed >> 20) + dx,
+                                (object->z.fixed >> 20) + dz) >>
           8) == 50 &&
-         (MapCell_GetAttributes(2, (object->x >> 20) + dx,
-                                (object->z >> 20) + dz) >>
+         (MapCell_GetAttributes(2, (object->x.fixed >> 20) + dx,
+                                (object->z.fixed >> 20) + dz) >>
           8) != 255) {
-    Actor_SetMoveTarget(object, (dx << 20) + object->x, object->y,
-                        (dz << 20) + object->z);
+    Actor_SetMoveTarget(object, (dx << 20) + object->x.fixed, object->y.fixed,
+                        (dz << 20) + object->z.fixed);
     FieldCamera_FollowActor(actor, 1);
     Actor_WaitForMove(object);
     wait(1);
   }
-  object->x = ((object->x >> 19) | 1) << 19;
-  object->z = ((object->z >> 19) | 1) << 19;
+  object->x.fixed = ((object->x.fixed >> 19) | 1) << 19;
+  object->z.fixed = ((object->z.fixed >> 19) | 1) << 19;
   Actor_PlaceMovedBlock();
   Event_End();
 }
@@ -567,7 +571,8 @@ void TundariaTower_SetDownPillar(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
+  if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
+      object->y.fixed) {
     object->layer = 2;
     object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
@@ -581,9 +586,9 @@ void TundariaTower_SetDownPillar(void) {
     /* FAKEMATCH(temporary): the copy makes each column test reload X. */
     struct Actor *o = object;
 
-    if (o->x >> 19 == 27)
+    if (o->x.fixed >> 19 == 27)
       GameFlag_Set(FLAG_FIRST_LEDGE_PILLAR_SET);
-    if (o->x >> 19 == 25 && GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
+    if (o->x.fixed >> 19 == 25 && GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
       GameFlag_Set(FLAG_SECOND_LEDGE_PILLAR_SET);
   }
   Event_End();
@@ -595,7 +600,7 @@ void TundariaTower_EndRevealIcyWall(void) {
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
-    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z >> 20 == 38) {
+    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 20 == 38) {
       s16 angle = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
       s32 owner = gMainRoutineWork.leaderActorId;
 
@@ -614,7 +619,7 @@ void TundariaTower_RevealIcyWall(void) {
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
-    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z >> 20 > 38)
+    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 20 > 38)
       MapCell_SetAttributes(0, 54, 37, 0x1f00);
     else
       MapCell_SetAttributes(0, 54, 39, 0x1f00);
@@ -696,24 +701,25 @@ void TundariaTower_ReflectLeader(struct Actor *object) {
   struct ReflectionAnimation *leaderAnimation = leader->sprite;
   struct ReflectionAnimation *animation = object->sprite;
 
-  if (leader->z <= object->riseBaseY) {
-    object->z = 0;
-    object->x = 0;
+  if (leader->z.fixed <= object->riseBaseY) {
+    object->z.fixed = 0;
+    object->x.fixed = 0;
     REG_BG2CNT &= 0xfffc;
     REG_BG2CNT |= 1;
   } else {
     REG_BG2CNT &= 0xfffc;
     REG_BG2CNT |= 2;
     if (GameFlag_Get(FLAG_ICY_WALL_REVEALED)) {
-      object->z = 0;
-      object->x = 0;
+      object->z.fixed = 0;
+      object->x.fixed = 0;
     } else {
       struct ReflectionSprite *sprite = animation->sprite;
       struct ReflectionSprite *source;
 
-      object->x = leader->x;
-      object->y = leader->y;
-      object->z = object->riseBaseY - (leader->z - object->riseBaseY);
+      object->x.fixed = leader->x.fixed;
+      object->y.fixed = leader->y.fixed;
+      object->z.fixed =
+          object->riseBaseY - (leader->z.fixed - object->riseBaseY);
       object->facing = ~leader->facing;
       source = leaderAnimation->sprite;
       sprite->unk10 = source->unk10;
@@ -796,7 +802,7 @@ void TundariaTower_LandFromSlide(void) {
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   wait(1);
-  leader->y = px(130);
+  leader->y.fixed = px(130);
   leader->gravity = px(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
@@ -821,8 +827,9 @@ void TundariaTower_LandFromSlide(void) {
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
     velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
-    FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                      velocity[2], 0x01090001, &options);
+    FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                      velocity[0], velocity[1], velocity[2], 0x01090001,
+                      &options);
     i++;
   } while (i <= 16);
   Sound_Play(SE_THUMP);
@@ -841,7 +848,7 @@ void TundariaTower_LandFromSlide(void) {
 }
 
 void TundariaTower_UpdateLedgeCell(void) {
-  if ((Actor_GetById(gMainRoutineWork.leaderActorId)->y >> 19) != 0)
+  if ((Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed >> 19) != 0)
     MapCell_SetAttributes(0, 14, 17, 0);
   else
     MapCell_SetAttributes(0, 14, 17, 0x3200);
@@ -878,7 +885,7 @@ s32 Scene_Initialize(void) {
         object->collisionFlags = 0;
         object->motionFlags = 0;
         object->groundHeight = px(8);
-        object->y = px(8);
+        object->y.fixed = px(8);
         Actor_SetItemIcon(object, ITEM_CENTER_PRONG);
         if (GameFlag_Get(FLAG_CRYSTAL_BROKEN)) {
           MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
@@ -1110,8 +1117,10 @@ next:
     index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
-    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
+    shape =
+        MapGrid_GetTerrainKind(object->layer, object->x.fixed, object->z.fixed);
+    height =
+        Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
     Actor_DisableById(id);
     cell->attributeB = 128;
     *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
@@ -1123,10 +1132,11 @@ next:
     goto next;
 done:
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  ground = Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
-  if (leader->y < ground) {
+  ground =
+      Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
+  if (leader->y.fixed < ground) {
     leader->groundHeight = ground;
-    leader->y = ground;
+    leader->y.fixed = ground;
   }
 }
 
@@ -1141,9 +1151,9 @@ UNUSED void TundariaTower_CheckCrumblingStep(const u16 *table) {
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
   if (trap != 0)
     goto test;
@@ -1298,8 +1308,10 @@ next:
     index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
-    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
+    shape =
+        MapGrid_GetTerrainKind(object->layer, object->x.fixed, object->z.fixed);
+    height =
+        Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
     Actor_DisableById(id);
     cell->attributeB = 128;
     *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
@@ -1314,7 +1326,8 @@ done:
 }
 
 void TundariaTower_TakePlaceOf(struct Actor *object, struct Actor *target) {
-  Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
+  Actor_SetPositionAndResetMotion(object, target->x.fixed, target->y.fixed,
+                                  target->z.fixed);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
@@ -1332,9 +1345,9 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   partner = Actor_GetById(8);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
   if (trap != 0) {
     goto test;
@@ -1418,10 +1431,11 @@ void TundariaTower_SpawnRubble(s32 spread) {
   do {
     {
       /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
+      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x - px(8), y - 0x20000, leader->z);
+          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
+          leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -1459,7 +1473,7 @@ void TundariaTower_SpawnDustRing(void) {
     state = 0;
     for (i = 0; i < 17; i++) {
       struct FieldEffect *effect = ((struct FieldEffect *)Import_ActorCreate(
-          285, leader->x, leader->y, leader->z));
+          285, leader->x.fixed, leader->y.fixed, leader->z.fixed));
 
       if (effect != NULL) {
         s32 angle;

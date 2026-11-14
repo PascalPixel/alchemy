@@ -112,8 +112,8 @@ void Izumo_StartMovingStone(void) {
 
 void Izumo_FinishMovingStone(void) {
   struct Actor *actor = Actor_GetById(12);
-  s32 x = actor->x >> 20;
-  s32 z = actor->z >> 20;
+  s32 x = actor->x.fixed >> 20;
+  s32 z = actor->z.fixed >> 20;
 
   /* FAKEMATCH(wrapper): the flag commands go through flag_call.h's inlines. */
   Actor_PlaceMovedBlock();
@@ -179,7 +179,7 @@ void Izumo_CycloneSecondPatch(void) {
   if (!GameFlag_Get(3999)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, px(456),
           px(584));
-    if (object->x >> 20 == 28 && object->z >> 20 == 36) {
+    if (object->x.fixed >> 20 == 28 && object->z.fixed >> 20 == 36) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -199,7 +199,7 @@ void Izumo_CycloneThirdPatch(void) {
   if (!GameFlag_Get(4000)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, px(472),
           px(552));
-    if (object->x >> 20 == 29 && object->z >> 20 == 34) {
+    if (object->x.fixed >> 20 == 29 && object->z.fixed >> 20 == 34) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -232,7 +232,7 @@ void Izumo_CycloneSeventhPatch(void) {
   if (!GameFlag_Get(4001)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, px(168),
           px(328));
-    if (object->x >> 20 == 10 && object->z >> 20 == 20) {
+    if (object->x.fixed >> 20 == 10 && object->z.fixed >> 20 == 20) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -553,8 +553,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Izumo_RevealTheStoneCircle(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   GameFlag_Set(FLAG_REVEALING);
   if (GameFlag_Get(FLAG_STONE_IN_PLACE)) {

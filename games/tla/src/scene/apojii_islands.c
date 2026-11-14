@@ -433,7 +433,7 @@ void ApojiiIslands_ClearFirstBush(void) {
     ApojiiIslands_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);                 \
     if (Event_GetFlag(n5) == 0) {                                              \
       Actor_SetPositionFixed(n6, px(n7), px(n8));                              \
-      if (leader->x >> 20 == n9 && leader->z >> 20 == n10) {                   \
+      if (leader->x.fixed >> 20 == n9 && leader->z.fixed >> 20 == n10) {       \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
         Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,                \
@@ -662,8 +662,8 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
   struct FieldSprite *parent;
   struct FieldSprite *sprite;
 
-  child =
-      (FieldActor_Create(14, object->x, object->y + px(4), object->z + px(4)));
+  child = (FieldActor_Create(14, object->x.fixed, object->y.fixed + px(4),
+                             object->z.fixed + px(4)));
   parent = object->sprite;
   if (child != NULL) {
     sprite = child->sprite;
@@ -690,43 +690,43 @@ void ApojiiIslands_FlowWithStream(void) {
   s32 result;
 
   if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1 || leader->groundHeight != 0) {
-    position[0] = leader->x;
-    position[1] = leader->y;
-    position[2] = leader->z + px(2);
+    position[0] = leader->x.fixed;
+    position[1] = leader->y.fixed;
+    position[2] = leader->z.fixed + px(2);
     result = MapGrid_CheckCollision(leader, position);
     if ((gFrameCount & 4) == 0)
       ApojiiIslands_SpawnSplash(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      FieldActor_SetMoveTargetFixed(leader, leader->x, leader->y,
-                                    leader->z + px(8));
+      FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
+                                    leader->z.fixed + px(8));
       Actor_SelectAnimation(leader, 49);
       FieldActor_WaitForMove(leader);
       do {
         System_Wait(1);
-      } while (leader->y != leader->groundHeight);
+      } while (leader->y.fixed != leader->groundHeight);
       ApojiiIslands_SpawnSplash(leader);
       Actor_SelectAnimation(leader, 49);
       System_Wait(3);
     } else {
-      position[0] = leader->x;
-      position[1] = leader->y;
-      position[2] = leader->z + px(8);
+      position[0] = leader->x.fixed;
+      position[1] = leader->y.fixed;
+      position[2] = leader->z.fixed + px(8);
       result = MapGrid_CheckCollision(leader, position);
       if (result <= 0) {
-        position[0] = leader->x + 0x5b333;
-        position[1] = leader->y;
-        position[2] = leader->z + 0x5b333;
+        position[0] = leader->x.fixed + 0x5b333;
+        position[1] = leader->y.fixed;
+        position[2] = leader->z.fixed + 0x5b333;
         result = MapGrid_CheckCollision(leader, position);
         if (result <= 0) {
-          position[0] = leader->x - 0x5b333;
-          position[1] = leader->y;
-          position[2] = leader->z + 0x5b333;
+          position[0] = leader->x.fixed - 0x5b333;
+          position[1] = leader->y.fixed;
+          position[2] = leader->z.fixed + 0x5b333;
           result = MapGrid_CheckCollision(leader, position);
           if (result <= 0) {
-            anchor->z += px(2);
-            leader->z += px(2);
+            anchor->z.fixed += px(2);
+            leader->z.fixed += px(2);
             leader->facing = FACING_SOUTH;
           }
         }
@@ -934,7 +934,7 @@ void ApojiiIslands_SetSparkleAnchor(s32 id) {
 
   *slot = 0;
   if (id != 0 && object != 0)
-    *slot = (s32)&object->x;
+    *slot = (s32)&object->x.fixed;
 }
 
 #include "text/msg_ids.h"

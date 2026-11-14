@@ -413,7 +413,7 @@ s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values) {
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
     if (entry->script != NULL && (1 & *flags) && entry != object) {
-      if (Field_CheckSpheresOverlap(&entry->x, entry->radius - 2, values,
+      if (Field_CheckSpheresOverlap(&entry->x.fixed, entry->radius - 2, values,
                                     object->radius - 2) >= 0)
         return -1;
     }
@@ -430,7 +430,7 @@ struct Actor *ActorScript_FindOverlappingEntry(struct Actor *object,
   flags = &entry->collisionFlags;
   for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
     if (entry->script != NULL && (1 & *flags) && entry != object) {
-      if (Field_CheckSpheresOverlap(&entry->x, entry->radius - 2, values,
+      if (Field_CheckSpheresOverlap(&entry->x.fixed, entry->radius - 2, values,
                                     object->radius - 2) >= 0)
         return entry;
     }
@@ -526,8 +526,8 @@ s32 ActorScript_ApplyWatchedActorPosition(struct ActorScriptView *object) {
 s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *object) {
   s32 offset[3];
 
-  Actor_SetMoveTarget(object, object->x + offset[0], object->y + offset[1],
-                      object->z + offset[2]);
+  Actor_SetMoveTarget(object, object->x.fixed + offset[0],
+                      object->y.fixed + offset[1], object->z.fixed + offset[2]);
   object->scriptCursor += 3;
   return 1;
 }
@@ -555,14 +555,14 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   bounds = Ram_HeapSlots->mapGrid;
   leader = cameraObject->watchedActor;
   minX = bounds->minX + 0x780000;
-  minZ = bounds->minZ + leader->y + 0x600000;
+  minZ = bounds->minZ + leader->y.fixed + 0x600000;
   maxX = bounds->maxX - 0x780000;
-  maxZ = bounds->maxZ + leader->y - 0x400000;
+  maxZ = bounds->maxZ + leader->y.fixed - 0x400000;
   cameraObject->motionFlags = 0;
   if (leader != NULL && leader->script != NULL) {
-    x = leader->x;
-    y = leader->y;
-    z = leader->z;
+    x = leader->x.fixed;
+    y = leader->y.fixed;
+    z = leader->z.fixed;
     cameraObject->targetX = TARGET_UNSET;
     cameraObject->targetY = TARGET_UNSET;
     cameraObject->targetZ = TARGET_UNSET;
@@ -578,9 +578,9 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       region = *(s16 **)bounds->unk0fc;
       while (region[0] != -1) {
         minX = (region[0] << 16) - 0x780000;
-        minZ = (region[1] << 16) + leader->y - 0x400000;
+        minZ = (region[1] << 16) + leader->y.fixed - 0x400000;
         maxX = (region[2] << 16) + 0x780000;
-        maxZ = (region[3] << 16) + leader->y + 0x600000;
+        maxZ = (region[3] << 16) + leader->y.fixed + 0x600000;
         if (x >= minX && z >= minZ && x <= maxX && z <= maxZ) {
           dx = minX;
           if (DISTANCE(minX, x) > DISTANCE(maxX, x))
@@ -598,24 +598,24 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       }
     }
     if (cameraObject->timer != 0) {
-      SET_POSITION(cameraObject, x, y, z);
+      SET_ACTOR_POSITION(cameraObject, x, y, z);
     } else {
-      dx = (x - cameraObject->x) / Q16_ONE;
+      dx = (x - cameraObject->x.fixed) / Q16_ONE;
       /* FAKEMATCH(dead): this dy, overwritten below, as in The Broken Seal's
        * twin. */
-      dy = (y - cameraObject->y) / Q16_ONE;
-      dz = (z - cameraObject->z) / Q16_ONE;
+      dy = (y - cameraObject->y.fixed) / Q16_ONE;
+      dz = (z - cameraObject->z.fixed) / Q16_ONE;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
-      dx = x - cameraObject->x;
-      dy = y - cameraObject->y;
-      dz = z - cameraObject->z;
+      dx = x - cameraObject->x.fixed;
+      dy = y - cameraObject->y.fixed;
+      dz = z - cameraObject->z.fixed;
       if (distance < 0x400000)
         distance = FixedSqrt(IwramMulQ16(dx, dx) + IwramMulQ16(dz, dz));
       if ((moveStep = distance / 8) > cameraObject->speedLimit)
         moveStep = cameraObject->speedLimit;
       if (distance < 0x4000) {
-        cameraObject->x = x;
-        cameraObject->z = z;
+        cameraObject->x.fixed = x;
+        cameraObject->z.fixed = z;
       } else {
         if (distance > moveStep) {
           s32 ratio = Iwram_RatioMulQ14(distance, dx);
@@ -623,12 +623,12 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
           dx = mulQ16(ratio, moveStep);
           dz = mulQ16(Iwram_RatioMulQ14(distance, dz), moveStep);
         }
-        cameraObject->x += dx;
-        cameraObject->z += dz;
+        cameraObject->x.fixed += dx;
+        cameraObject->z.fixed += dz;
       }
       if ((dy < 0 ? -dy : dy) > 0x8000)
         dy /= 4;
-      cameraObject->y += dy;
+      cameraObject->y.fixed += dy;
     }
   }
   cameraObject->scriptCursor++;
@@ -659,9 +659,9 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
   maxZ = bounds->maxZ - 0x400000;
   cameraObject->motionFlags = 0;
   if (leader != NULL && leader->script != NULL) {
-    x = leader->x;
-    y = leader->y;
-    z = leader->z;
+    x = leader->x.fixed;
+    y = leader->y.fixed;
+    z = leader->z.fixed;
     cameraObject->targetX = TARGET_UNSET;
     cameraObject->targetY = TARGET_UNSET;
     cameraObject->targetZ = TARGET_UNSET;
@@ -674,34 +674,34 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
     if (z > maxZ)
       z = maxZ;
     if (cameraObject->timer != 0) {
-      SET_POSITION(cameraObject, x, y, z);
+      SET_ACTOR_POSITION(cameraObject, x, y, z);
     } else {
-      dx = (x - cameraObject->x) / Q16_ONE;
+      dx = (x - cameraObject->x.fixed) / Q16_ONE;
       /* FAKEMATCH(dead): dy computed and overwritten below. */
-      dy = (y - cameraObject->y) / Q16_ONE;
-      dz = (z - cameraObject->z) / Q16_ONE;
+      dy = (y - cameraObject->y.fixed) / Q16_ONE;
+      dz = (z - cameraObject->z.fixed) / Q16_ONE;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
-      dx = x - cameraObject->x;
-      dy = y - cameraObject->y;
-      dz = z - cameraObject->z;
+      dx = x - cameraObject->x.fixed;
+      dy = y - cameraObject->y.fixed;
+      dz = z - cameraObject->z.fixed;
       if (distance < 0x400000)
         distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
       if ((moveStep = distance / 8) > cameraObject->speedLimit)
         moveStep = cameraObject->speedLimit;
       if (distance < 0x4000) {
-        cameraObject->x = x;
-        cameraObject->z = z;
+        cameraObject->x.fixed = x;
+        cameraObject->z.fixed = z;
       } else {
         if (distance > moveStep) {
           dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), moveStep);
           dz = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dz), moveStep);
         }
-        cameraObject->x += dx;
-        cameraObject->z += dz;
+        cameraObject->x.fixed += dx;
+        cameraObject->z.fixed += dz;
       }
       if ((dy < 0 ? -dy : dy) > 0x8000)
         dy /= 4;
-      cameraObject->y += dy;
+      cameraObject->y.fixed += dy;
     }
   }
   cameraObject->scriptCursor++;
@@ -725,8 +725,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
   watchedObject = object->watchedActor;
   object->speedLimit = watchedObject->speedLimit;
   object->acceleration = watchedObject->acceleration;
-  dx = watchedObject->x - object->x;
-  dz = watchedObject->z - object->z;
+  dx = watchedObject->x.fixed - object->x.fixed;
+  dz = watchedObject->z.fixed - object->z.fixed;
   deltaXPixels = dx >> 16;
   deltaZPixels = dz >> 16;
   distancePixels =
@@ -735,8 +735,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
     remainingDistance = distancePixels - 0x10;
     moveX = dx * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
-    Actor_SetMoveTarget(object, object->x + moveX, object->y,
-                        object->z + moveZ);
+    Actor_SetMoveTarget(object, object->x.fixed + moveX, object->y.fixed,
+                        object->z.fixed + moveZ);
     Actor_SelectAnimation(object, 2);
     object->scriptCursor = (object->scriptCursor + 1);
     return 1;
@@ -1646,25 +1646,29 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
     collision |= 4;
   } else {
     collision = 0;
-    SET_POSITION(&position, object->x, object->y, object->z);
+    SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)angle, &position);
     if (gDebugMode != 0 && (gInput.held & KEY_L)) {
       heading = angle;
     } else {
       if (MapGrid_CheckCollisionAbove(object, &position) == 0) {
-        SET_POSITION(&testPosition, object->x, object->y, object->z);
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
-          SET_POSITION(&testPosition, object->x, object->y, object->z);
+          SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                       object->z.fixed);
           Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16,
                                 &testPosition);
           if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
-            SET_POSITION(&testPosition, object->x, object->y, object->z);
+            SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                         object->z.fixed);
             Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8,
                                   &testPosition);
             if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
-              SET_POSITION(&testPosition, object->x, object->y, object->z);
+              SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                           object->z.fixed);
               Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8,
                                     &testPosition);
               if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0) {
@@ -1685,36 +1689,42 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
       angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
       for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
         heading = angleOffsets[angleIndex];
-        SET_POSITION(&position, object->x, object->y, object->z);
+        SET_POSITION(&position, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)heading, &position);
         if (MapGrid_CheckCollisionAbove(object, &position) != 0)
           continue;
-        SET_POSITION(&testPosition, object->x, object->y, object->z);
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
-        SET_POSITION(&testPosition, object->x, object->y, object->z);
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
-        SET_POSITION(&testPosition, object->x, object->y, object->z);
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) != 0)
           continue;
-        SET_POSITION(&testPosition, object->x, object->y, object->z);
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(object, &testPosition) == 0)
           goto check_objects;
       }
-      SET_POSITION(&position, object->x, object->y, object->z);
+      SET_POSITION(&position, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       collision |= 1;
 
     check_objects:
-      SET_POSITION(&contact, object->x, object->y, object->z);
+      SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
       Vector_AddPolarOffset(px(4), (u16)heading, &contact);
       other = Ram_HeapSlots->actors;
       for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, other++) {
@@ -1727,7 +1737,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
           continue;
         if (other == object)
           continue;
-        if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
+        if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &contact.x,
                                       other->radius - 2) < 0)
           continue;
         collision |= 2;
@@ -1790,8 +1800,8 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
   if (pressed) {
     Sound_PlayFar(SE_MENU_CANCEL);
   } else {
-    object->groundHeight =
-        MapGrid_GetTerrainHeight(object->layer, object->x, object->z);
+    object->groundHeight = MapGrid_GetTerrainHeight(
+        object->layer, object->x.fixed, object->z.fixed);
     object->scriptCursor++;
   }
   return 1;

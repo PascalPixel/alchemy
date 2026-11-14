@@ -13,13 +13,13 @@ void LightSprites_Draw(void) {
 
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x != 0) {
+    if (actor != 0 && actor->x.fixed != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
       u32 *word;
-      ox = actor->x - viewX;
-      y = actor->y - viewY + 0x80000;
-      z = actor->z - viewZ - viewY;
+      ox = actor->x.fixed - viewX;
+      y = actor->y.fixed - viewY + 0x80000;
+      z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
       big = gLightSpritesLarge;

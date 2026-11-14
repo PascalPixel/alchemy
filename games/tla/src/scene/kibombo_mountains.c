@@ -160,22 +160,22 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
     s32 z;
     s32 cell;
 
-    if (!Event_GetFlag(FLAG_SCENE_TEMP_23) && (x = block->x >> 20) == 47 &&
-        (z = block->z >> 20) == 28) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_23) &&
+        (x = block->x.fixed >> 20) == 47 && (z = block->z.fixed >> 20) == 28) {
       Actor_WaitToLand(14);
       MapGrid_CopyCellAttributes(49, 28, 1, 1, x, z);
       Event_SetFlag(FLAG_SCENE_TEMP_23);
       Actor_SetSpritePriority(14, 2);
       other = Actor_GetById(10);
-      cell = other->z >> 20;
+      cell = other->z.fixed >> 20;
       if (cell == 27) {
         Sound_Play(SE_VOICE_ANIMAL_2);
-        other->z = 220 << 17;
+        other->z.fixed = 220 << 17;
       } else if (cell == 28 || cell == 29) {
         Sound_Play(SE_VOICE_ANIMAL_3);
-        other->z = 236 << 17;
+        other->z.fixed = 236 << 17;
       }
-      if (block->z < other->z)
+      if (block->z.fixed < other->z.fixed)
         Event_SetFlag(FLAG_DOG_SHUT_SOUTH);
       else
         Event_SetFlag(FLAG_DOG_SHUT_NORTH);
@@ -187,23 +187,24 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
     struct Actor *block = Actor_GetById(15);
     struct Actor *other;
 
-    if (!Event_GetFlag(FLAG_SCENE_TEMP_24) && block->x >> 20 == 53 &&
-        block->z >> 20 == 36) {
+    if (!Event_GetFlag(FLAG_SCENE_TEMP_24) && block->x.fixed >> 20 == 53 &&
+        block->z.fixed >> 20 == 36) {
       s32 dx;
 
       Actor_WaitToLand(15);
       Actor_SetSpritePriority(15, 2);
       other = Actor_GetById(9);
-      dx = block->x - other->x;
-      if (dx >= 0 ? dx < 0x80000 : other->x - block->x < px(8)) {
+      dx = block->x.fixed - other->x.fixed;
+      if (dx >= 0 ? dx < 0x80000 : other->x.fixed - block->x.fixed < px(8)) {
         other->motionFlags = 0;
         other->speedLimit = px(1);
-        FieldActor_SetMoveTargetFixed(other, block->x, block->y, block->z);
+        FieldActor_SetMoveTargetFixed(other, block->x.fixed, block->y.fixed,
+                                      block->z.fixed);
         FieldActor_WaitForMove(other);
         Actor_StartScript(block, gKibomboMountains_BobScript);
         Actor_StartIdle(other);
-        other->x = 0;
-        other->z = 0;
+        other->x.fixed = 0;
+        other->z.fixed = 0;
         Event_SetFlag(FLAG_GUARD_KNOCKED_OUT);
       } else {
         Iwram_CopyWords((s32)&saved, (s32)other, 128);
@@ -284,8 +285,8 @@ void KibomboMountains_StartPushingRoom2Crate(s32 unused, s32 cell) {
 
 void KibomboMountains_SetCrateCell(s32 id, s32 a, s32 b) {
   struct Actor *object = Actor_Get(id);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   MapGrid_CopyCellAttributes(a, b, 1, 1, x, z);
 }
@@ -295,7 +296,7 @@ void KibomboMountains_FinishPushingRoom2Crate(s32 unused, s32 cell) {
     struct Actor *object = Actor_Get(20);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_FIRST_CRATE_DROPPED)) {
-      s32 x = object->x >> 20;
+      s32 x = object->x.fixed >> 20;
 
       if (x == 4) {
         Actor_WaitToLand(20);
@@ -308,10 +309,10 @@ void KibomboMountains_FinishPushingRoom2Crate(s32 unused, s32 cell) {
     struct Actor *object = Actor_Get(13);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_SECOND_CRATE_DROPPED)) {
-      s32 x = object->x >> 20;
+      s32 x = object->x.fixed >> 20;
 
       if (x == 28) {
-        s32 z = object->z >> 20;
+        s32 z = object->z.fixed >> 20;
 
         if (z == 30) {
           Actor_WaitToLand(13);
@@ -392,7 +393,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(16)->priorityFlags |= 0x80;
       lift = Actor_GetById(17);
       lift->priorityFlags |= 0x40;
-      lift->y = px(224);
+      lift->y.fixed = px(224);
       lift->groundHeight = px(224);
       lift->collisionFlags = flag;
     } else {
@@ -417,18 +418,18 @@ s32 Scene_Initialize(void) {
       object = Actor_GetById(20);
       Actor_SetPosition(20, 72, 456);
       object->motionFlags = 0;
-      height = Map_GetTerrainHeight(0, object->x, object->z);
+      height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
       object->groundHeight = height;
-      object->y = height;
+      object->y.fixed = height;
       MapGrid_CopyCellAttributes(3, 28, 1, 1, 4, 28);
     }
     if (GameFlag_Get(FLAG_KIBOMBO_SECOND_CRATE_DROPPED)) {
       object = Actor_GetById(13);
       Actor_SetPosition(13, 456, 488);
       object->motionFlags = 0;
-      height = Map_GetTerrainHeight(0, object->x, object->z);
+      height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
       object->groundHeight = height;
-      object->y = height;
+      object->y.fixed = height;
       MapGrid_CopyCellAttributes(32, 30, 1, 2, 28, 30);
     }
     MapGrid_CopyCellAttributes(8, 15, 16, 4, 112, 15);
@@ -653,9 +654,10 @@ void KibomboMountains_StepWestOfCrate(void) {
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *guard = Actor_Get(14);
 
-  if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <
-          0x100000 &&
-      guard->x > owner->x)
+  if ((guard->z.fixed - owner->z.fixed >= 0
+           ? guard->z.fixed - owner->z.fixed
+           : owner->z.fixed - guard->z.fixed) < 0x100000 &&
+      guard->x.fixed > owner->x.fixed)
     return;
   KibomboMountains_GuardSpotsParty(10);
 }
@@ -664,9 +666,10 @@ void KibomboMountains_StepEastOfCrate(void) {
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *guard = Actor_Get(15);
 
-  if ((guard->z - owner->z >= 0 ? guard->z - owner->z : owner->z - guard->z) <
-          0x100000 &&
-      guard->x < owner->x)
+  if ((guard->z.fixed - owner->z.fixed >= 0
+           ? guard->z.fixed - owner->z.fixed
+           : owner->z.fixed - guard->z.fixed) < 0x100000 &&
+      guard->x.fixed < owner->x.fixed)
     return;
   KibomboMountains_GuardSpotsParty(10);
 }

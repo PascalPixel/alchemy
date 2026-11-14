@@ -11,11 +11,11 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 
     GameFlag_SetByte(gCrackedTiles.flagByte, 0);
     GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x = ((dx + x) << 20) + 0x80000;
-    leader->z = ((dz + z) << 20) + 0x80000;
+    leader->x.fixed = ((dx + x) << 20) + 0x80000;
+    leader->z.fixed = ((dz + z) << 20) + 0x80000;
     marker = work->camera;
-    marker->x = leader->x;
-    marker->z = leader->z;
+    marker->x.fixed = leader->x.fixed;
+    marker->z.fixed = leader->z.fixed;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = effect;

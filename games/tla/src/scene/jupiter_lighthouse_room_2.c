@@ -179,22 +179,22 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   }
   EventCamera_FollowActor(owner, 1);
   for (i = 35; i >= 0; i--) {
-    leader->y += -px(1);
+    leader->y.fixed += -px(1);
     System_Wait(1);
   }
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
+  effect = Actor_Spawn(280, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(effect, 2);
   effect->scaleX = Q16_ONE * 3 / 2;
   effect->scaleY = Q16_ONE;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
-  while (leader->y > px(32)) {
-    leader->y += -px(1);
+  while (leader->y.fixed > px(32)) {
+    leader->y.fixed += -px(1);
     leader->facing += 0x2000;
-    effect->x = leader->x;
-    effect->y = leader->y + -0x60000;
-    effect->z = leader->z;
+    effect->x.fixed = leader->x.fixed;
+    effect->y.fixed = leader->y.fixed + -0x60000;
+    effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
   Actor_SelectAnimation(effect, 6);
@@ -243,24 +243,24 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   EventCamera_FollowActor(owner, 1);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
+  effect = Actor_Spawn(280, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(effect, 2);
   effect->scaleX = Q16_ONE * 3 / 2;
   effect->scaleY = Q16_ONE;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
-  while (leader->y < px(108)) {
-    leader->y += px(1);
+  while (leader->y.fixed < px(108)) {
+    leader->y.fixed += px(1);
     leader->facing += 0x2000;
-    effect->x = leader->x;
-    effect->y = leader->y + -0x60000;
-    effect->z = leader->z;
+    effect->x.fixed = leader->x.fixed;
+    effect->y.fixed = leader->y.fixed + -0x60000;
+    effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
   leader->scaleX = 0;
   effect->scaleX = 0;
-  while (leader->y < px(144)) {
-    leader->y += px(1);
-    effect->y += px(1);
+  while (leader->y.fixed < px(144)) {
+    leader->y.fixed += px(1);
+    effect->y.fixed += px(1);
     System_Wait(1);
   }
   effect->scaleX = Q16_ONE / 2;
@@ -289,7 +289,7 @@ spin:
   leader->facing = FACING_SOUTH;
   leader->layer = 1;
   leader->motionFlags = 3;
-  leader->y = px(144);
+  leader->y.fixed = px(144);
   leader->groundHeight = px(144);
   FieldTask_Remove(JupiterLighthouse_DrawGlow);
   JupiterLighthouse_SetLayerCellsByLeader();
@@ -327,7 +327,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   s32 angle;
   s32 y;
 
-  y = object->y;
+  y = object->y.fixed;
   if (y >= 0x200000) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
@@ -335,7 +335,7 @@ void JupiterLighthouse_RideTheBeam(void) {
     Actor_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
-      object->y += px(3);
+      object->y.fixed += px(3);
       angle = object->facing;
       angle += 0x1800;
       object->facing = angle;
@@ -370,18 +370,18 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   Actor_Get(id)->priorityFlags |= 1;
   party = &gMainRoutineWork;
   Actor_Get(party->leaderActorId)->priorityFlags |= 1;
-  if (object->x >> 20 == 20 && object->z >> 20 == 39)
+  if (object->x.fixed >> 20 == 20 && object->z.fixed >> 20 == 39)
     FieldActor_SetSpritePriority(id, 3);
   if (object->groundHeight !=
-      Map_GetTerrainHeight(object->layer, object->x, object->z)) {
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed)) {
     System_Wait(2);
-    for (i = 0; i <= 29 &&
-                (object->y > object->groundHeight || object->velocityY != 0);
+    for (i = 0; i <= 29 && (object->y.fixed > object->groundHeight ||
+                            object->velocityY != 0);
          i++)
       System_Wait(1);
     Event_PlaySound(SE_THUMP);
   }
-  if (object->x >> 20 == 20 && object->z >> 20 == 39) {
+  if (object->x.fixed >> 20 == 20 && object->z.fixed >> 20 == 39) {
     Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_Get(id), 0);
     FieldActor_SetSpritePriority(id, 3);
@@ -413,10 +413,10 @@ void JupiterLighthouse_RaiseBridgeBlock(s32 unused, s32 id) {
   s32 i;
 
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) &&
-      object->x >> 20 == 18 && object->z >> 20 == 6) {
+      object->x.fixed >> 20 == 18 && object->z.fixed >> 20 == 6) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y += px(2);
+      object->y.fixed += px(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -444,13 +444,13 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *object) {
   s16 angle = object->timer;
   s16 height = object->userValue;
 
-  SET_POSITION(object,
-               Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (214 << 16),
-               (height * 3 << 16) + 0x80000, 170 << 18);
+  SET_ACTOR_POSITION(
+      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (214 << 16),
+      (height * 3 << 16) + 0x80000, 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->userValue == 0)
     Actor_SelectAnimation(object, 7);
-  if (object->y > 170 << 17)
+  if (object->y.fixed > 170 << 17)
     object->userValue = 0xffff;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -581,11 +581,13 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y = height + 0x200000;
+  object->y.fixed = height + 0x200000;
   object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(object->layer, object->x, object->z);
-  MapGrid_SetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
-  MapGrid_SetAttributeBAt__room_2(object->x, object->z, 0, 128);
+  height =
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
+                        (height >> 19) + 6);
+  MapGrid_SetAttributeBAt__room_2(object->x.fixed, object->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"

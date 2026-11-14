@@ -321,10 +321,10 @@ next:
   dir.x += dir.x >> 1;
   dir.x += ((Random16() * 3) << 14 >> 16) - 0x6000;
   dir.z += ((Random16() * 3) << 13 >> 16) - 0x3000;
-  FieldEffect_Spawn(object->x, object->y, object->z, dir.x, dir.y, dir.z,
-                    EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                        EFFECT_USE_PRIORITY | 1,
-                    &options);
+  FieldEffect_Spawn(
+      object->x.fixed, object->y.fixed, object->z.fixed, dir.x, dir.y, dir.z,
+      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
+      &options);
   i++;
   if (i <= count)
     goto next;
@@ -382,7 +382,7 @@ s32 Scene_Initialize(void) {
       FieldCamera_SetSpeed(0.1);
       FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
     }
-    ACTOR(8)->z -= px(1);
+    ACTOR(8)->z.fixed -= px(1);
     System_Wait(30);
     i++;
     if (i != 10)
@@ -438,7 +438,7 @@ s32 Scene_Initialize(void) {
     }
     if (i == 19)
       Event_FinishScreenTransition();
-    ACTOR(8)->z -= px(2);
+    ACTOR(8)->z.fixed -= px(2);
     System_Wait(8);
     i++;
     if (i != 20)
@@ -454,8 +454,8 @@ s32 Scene_Initialize(void) {
     object = ACTOR(8);
     scale = 0;
     object->facing = scale;
-    ACTOR(8)->x = px(248);
-    ACTOR(8)->z = px(152);
+    ACTOR(8)->x.fixed = px(248);
+    ACTOR(8)->z.fixed = px(152);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x27f, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1000, 0x20000);
     REG_DISPCNT &= 0xfdff;
@@ -673,7 +673,7 @@ s32 Scene_Initialize(void) {
   L11:
     if (i == 16)
       Actor_SetAnimation(8, 18);
-    ACTOR(8)->y += 0x2666;
+    ACTOR(8)->y.fixed += 0x2666;
     FieldEvent_Wait(1);
     i++;
     if (i != 64)
@@ -683,7 +683,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 5);
     i = 0;
   L12:
-    ACTOR(8)->y += px(1);
+    ACTOR(8)->y.fixed += px(1);
     FieldEvent_Wait(1);
     i++;
     if (i != 32)
@@ -691,7 +691,7 @@ s32 Scene_Initialize(void) {
     ACTOR(8)->motionFlags = 1;
     i = 0;
   L13:
-    ACTOR(8)->y -= 0x851eb;
+    ACTOR(8)->y.fixed -= 0x851eb;
     FieldEvent_Wait(1);
     i++;
     if (i != 5)
@@ -759,7 +759,7 @@ s32 Scene_Initialize(void) {
     if (j >= 30 && j <= 46) {
       ACTOR(9)->scaleX = Q16_ONE - scale;
       ACTOR(9)->scaleY = scale + 0x10000;
-      ACTOR(9)->z -= px(2);
+      ACTOR(9)->z.fixed -= px(2);
     }
     if (j == 47)
       Actor_SetPosition(9, 0, 0);
@@ -768,7 +768,7 @@ s32 Scene_Initialize(void) {
       PaletteFade_Interpolate(64);
     }
     FIELD(slots, 332) -= 0x10000;
-    ACTOR(8)->z += px(1);
+    ACTOR(8)->z.fixed += px(1);
     System_Wait(1);
     j++;
     scale += 0x1000;

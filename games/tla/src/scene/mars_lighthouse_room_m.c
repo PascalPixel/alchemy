@@ -204,7 +204,7 @@ void MarsLighthouseRoomM_ShowFlame(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);
 
   object->motionFlags = 0;
-  object->y = px(14);
+  object->y.fixed = px(14);
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, value);
 }
@@ -729,7 +729,7 @@ s32 Scene_Initialize(void) {
         FieldEvent_Wait(40);
         actor = Actor_Get(ACTOR_STATUE_MOUTH);
         actor->motionFlags = unset;
-        actor->y = px(16);
+        actor->y.fixed = px(16);
         actor->groundHeight = px(16);
         ((u8 *)actor)[98] = ACTOR_FIREBALL;
         actor->userValue = 0x4000;
@@ -833,7 +833,7 @@ s32 Scene_PrepareMap(void) {
     }
     object = Actor_Get(ACTOR_LEDGE_BLAZE_TARGET);
     object->motionFlags = 0;
-    object->z = px(104);
+    object->z.fixed = px(104);
     FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, 0x480);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
@@ -1303,10 +1303,12 @@ void Ride_SpawnLandingBackward(struct MarsLighthouseRoomMVector *position,
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   s32 height;
 
-  if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0xc0000) {
-    height = a->y - b->y;
+  if ((a->x.fixed - b->x.fixed >= 0 ? a->x.fixed - b->x.fixed
+                                    : b->x.fixed - a->x.fixed) < 0xc0000) {
+    height = a->y.fixed - b->y.fixed;
     if (height > 0 && height < 0x100000) {
-      if ((a->z - b->z >= 0 ? a->z - b->z : b->z - a->z) < 0x80000)
+      if ((a->z.fixed - b->z.fixed >= 0 ? a->z.fixed - b->z.fixed
+                                        : b->z.fixed - a->z.fixed) < 0x80000)
         return 1;
     }
   }
@@ -1321,10 +1323,10 @@ void Ride_UpdateDrift(struct Actor *object) {
   struct MarsLighthouseRoomMAnimation *animation;
 
   vx = object->bounce;
-  object->x += vx;
-  object->y += object->gravity;
+  object->x.fixed += vx;
+  object->y.fixed += object->gravity;
   vz = object->riseBaseY;
-  object->z += vz;
+  object->z.fixed += vz;
   object->bounce = vx - vx / 18;
   object->riseBaseY = vz - vz / 16;
   rate = object->speedLimit;
@@ -1332,8 +1334,9 @@ void Ride_UpdateDrift(struct Actor *object) {
   animation = object->sprite;
   object->scaleY += object->acceleration;
   animation->angle += object->timer;
-  if (target->y == target->groundHeight && Actor_IsAbove(object, target)) {
-    object->z -= object->riseBaseY;
+  if (target->y.fixed == target->groundHeight &&
+      Actor_IsAbove(object, target)) {
+    object->z.fixed -= object->riseBaseY;
     object->gravity += object->riseBaseY >> 2;
     object->riseBaseY = 0;
   }
@@ -1644,16 +1647,17 @@ s32 Fireball_CarryLeader(void) {
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->timer == 0) {
-    s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z);
+    s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
+                                                       leader->z.fixed);
 
     if (kind != 7) {
-      leader->x += ((s32 *)ride->car->unk70)[0];
-      leader->z += ((s32 *)ride->car->unk70)[2];
+      leader->x.fixed += ((s32 *)ride->car->unk70)[0];
+      leader->z.fixed += ((s32 *)ride->car->unk70)[2];
     } else {
       if (((s32 *)ride->car->unk70)[0] != 0)
-        leader->x = (leader->x & 0xfff00000) + 0x80000;
+        leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
       if (((s32 *)ride->car->unk70)[2] != 0)
-        leader->z = (leader->z & 0xfff00000) + 0x80000;
+        leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
     System_Wait(1);
@@ -1728,13 +1732,13 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
 
     a = Random16();
     b = Random16();
-    x = actor->x + a * 16;
+    x = actor->x.fixed + a * 16;
     x -= b * 16;
     c = Random16();
     d = Random16();
     e = Random16();
-    z = actor->z + d * 16 - e * 16;
-    y = c * 8 + actor->y + Q16_ONE * 4;
+    z = actor->z.fixed + d * 16 - e * 16;
+    y = c * 8 + actor->y.fixed + Q16_ONE * 4;
     object = (struct Actor *)Import_ActorCreate(489, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
@@ -1809,7 +1813,8 @@ void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
   struct Actor *source = Actor_Get(sourceId);
   struct Actor *object = Actor_Get(id);
 
-  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
+                                       source->z.fixed);
   Actor_StartScript(object, script);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;

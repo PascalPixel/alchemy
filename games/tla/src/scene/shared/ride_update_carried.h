@@ -11,17 +11,17 @@ void Flame_UpdateForward(struct Actor *object) {
   s32 direction;
   s32 id;
 
-  object->x += dx;
-  object->y += object->gravity;
+  object->x.fixed += dx;
+  object->y.fixed += object->gravity;
   dz = object->riseBaseY;
-  object->z += dz;
+  object->z.fixed += dz;
   object->bounce = dx - dx / 18;
   object->riseBaseY = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->groundHeight && Actor_IsTouching(object, actor) &&
-      gMainRoutineWork.movementMode == 0) {
+  if (actor->y.fixed == actor->groundHeight &&
+      Actor_IsTouching(object, actor) && gMainRoutineWork.movementMode == 0) {
     if (object->riseBaseY != 0) {
       work->direction.x = 0;
       {
@@ -41,7 +41,7 @@ void Flame_UpdateForward(struct Actor *object) {
       s32 speed = object->riseBaseY;
 
       object->riseBaseY = 0;
-      object->z -= speed;
+      object->z.fixed -= speed;
       object->gravity += speed >> 2;
     }
     work->active = 1;
@@ -50,14 +50,15 @@ void Flame_UpdateForward(struct Actor *object) {
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
     actor = Actor_Get(id);
 
-    if (actor->y == actor->groundHeight && Actor_IsBeside(object, actor)) {
+    if (actor->y.fixed == actor->groundHeight &&
+        Actor_IsBeside(object, actor)) {
       if (work->slots[i].blocked == 0) {
         s32 speed;
 
         object->priorityFlags = 2;
         speed = object->riseBaseY;
         object->riseBaseY = 0;
-        object->z -= speed;
+        object->z.fixed -= speed;
         object->gravity += speed >> 2;
       } else {
         work->blocked = 1;

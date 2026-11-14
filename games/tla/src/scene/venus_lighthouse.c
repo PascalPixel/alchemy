@@ -256,8 +256,8 @@ void VenusLighthouse_PushBlockOnto(void) {
   lead->targetZ = 0x80000000;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.fixed = lead->x.part.pixel << 16;
-  lead->z.fixed = lead->z.part.pixel << 16;
+  lead->x.fixed = lead->x.part[0].pixel << 16;
+  lead->z.fixed = lead->z.part[0].pixel << 16;
   Import_ActorSelectAnimation(lead, 1);
 }
 
@@ -390,14 +390,14 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetSpriteColor(Actor_GetById(leader), 6);
   actor->velocityY = px(4);
   Actor_SetSpeed(leader, 4);
-  if (actor->z >> 20 <= 54) {
+  if (actor->z.fixed >> 20 <= 54) {
     Actor_GetById(leader)->steeringFlags &= ~1;
     z = 210;
   } else {
     Actor_GetById(leader)->steeringFlags &= ~1;
     z = 238;
   }
-  Actor_WalkToAndWaitById(leader, ((s16 *)&actor->x)[1], z * 4);
+  Actor_WalkToAndWaitById(leader, actor->x.part[0].pixel, z * 4);
   Event_Wait(1);
   Actor_GetById(leader)->steeringFlags |= 1;
   Event_Wait(20);
@@ -418,15 +418,15 @@ void VenusLighthouse_RepelLeader(void) {
 
 void VenusLighthouse_StepOnFloorSwitch(void) {
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
-  s32 z = ((s16 *)&leader->z)[1];
+  s32 z = leader->z.part[0].pixel;
 
-  if ((u32)(((s16 *)&leader->x)[1] - 676) > 7 || z < 788 || z >= 796) {
+  if ((u32)(leader->x.part[0].pixel - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
     leader->motionFlags |= 1;
     leader->groundHeight = 0;
-    leader->y = 0;
+    leader->y.fixed = 0;
   } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -437,7 +437,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~1;
     leader->groundHeight = -px(2);
-    leader->y = -px(2);
+    leader->y.fixed = -px(2);
     Event_End();
   }
 }
@@ -455,13 +455,13 @@ void VenusLighthouse_SinkStatue(void) {
   obj = Actor_Get(ACTOR_MOVED_STATUE);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (obj->x >> 20 == 42) {
+  if (obj->x.fixed >> 20 == 42) {
     FieldEvent_Wait(30);
     Event_PlaySound(SE_THUMP);
     obj->motionFlags = 0;
     val = -px(2);
     obj->groundHeight = val;
-    obj->y = val;
+    obj->y.fixed = val;
     Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK);
     a = 3;
     b = 5;
@@ -1125,16 +1125,16 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   actor = (struct Actor *)Actor_Get(ACTOR_JENNA);
   if (actor != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&actor->x)[1],
-                         ((s16 *)&actor->z)[1]);
+    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_ALEX, 1.2);
   Actor_SetAnimation(ACTOR_ALEX, ANIM_WALK);
   actor = (struct Actor *)Actor_Get(ACTOR_JENNA);
   if (actor != NULL)
-    Actor_SetDestination(ACTOR_ALEX, ((s16 *)&actor->x)[1],
-                         ((s16 *)&actor->z)[1]);
+    Actor_SetDestination(ACTOR_ALEX, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   FieldActor_WaitForMoveById(ACTOR_ALEX);
   Actor_SetPosition(ACTOR_ALEX, 0, 0);
   FieldEvent_Wait(10);

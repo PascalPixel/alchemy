@@ -66,7 +66,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   }
   // DEAD: collision is already 0 here.
   collision = 0;
-  SET_POSITION(&position, object->x, object->y, object->z);
+  SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(8), angle, &position);
   if (object->priorityFlags & 0x40) {
     s32 withinHalfCell;
@@ -84,15 +84,17 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
         continue;
       if (other == object)
         continue;
-      delta = object->y - other->y;
+      delta = object->y.fixed - other->y.fixed;
       dy = delta - 0x100000;
       if (dy < 0)
         dy = 0x100000 - delta;
       if (dy > withinHalfCell)
         continue;
-      if (SAME_CELL(object->x, other->x) && SAME_CELL(object->z, other->z))
+      if (SAME_CELL(object->x.fixed, other->x.fixed) &&
+          SAME_CELL(object->z.fixed, other->z.fixed))
         onObject = 1;
-      if (SAME_CELL(position.x, other->x) && SAME_CELL(position.z, other->z))
+      if (SAME_CELL(position.x, other->x.fixed) &&
+          SAME_CELL(position.z, other->z.fixed))
         goto clear;
     }
     if (onObject && !MapGrid_CheckCollision(object, &position)) {
@@ -110,16 +112,20 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
     goto counted;
   }
   if (!MapGrid_CheckCollision(object, &position)) {
-    SET_POSITION(&testPosition, object->x, object->y, object->z);
+    SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                 object->z.fixed);
     Vector_AddPolarOffset(px(8), angle + TRIG_TURN / 16, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
-      SET_POSITION(&testPosition, object->x, object->y, object->z);
+      SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), angle - TRIG_TURN / 16, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
-        SET_POSITION(&testPosition, object->x, object->y, object->z);
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), angle + TRIG_TURN / 8, &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
-          SET_POSITION(&testPosition, object->x, object->y, object->z);
+          SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                       object->z.fixed);
           Vector_AddPolarOffset(px(8), angle - TRIG_TURN / 8, &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
             heading = angle;
@@ -143,25 +149,30 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
       goto clear;
     for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
       heading = angleOffsets[angleIndex];
-      SET_POSITION(&position, object->x, object->y, object->z);
+      SET_POSITION(&position, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), (u16)heading, &position);
       if (MapGrid_CheckCollision(object, &position))
         continue;
-      SET_POSITION(&testPosition, object->x, object->y, object->z);
+      SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16,
                             &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
-      SET_POSITION(&testPosition, object->x, object->y, object->z);
+      SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16,
                             &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
-      SET_POSITION(&testPosition, object->x, object->y, object->z);
+      SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8, &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
-      SET_POSITION(&testPosition, object->x, object->y, object->z);
+      SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition))
         goto push_objects;
@@ -175,11 +186,11 @@ clear:
   goto counted;
 
 blocked:
-  SET_POSITION(&position, object->x, object->y, object->z);
+  SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   collision |= 1;
 
 push_objects:
-  SET_POSITION(&contact, object->x, object->y, object->z);
+  SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(4), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->actors;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
@@ -192,29 +203,34 @@ push_objects:
       continue;
     if (other == object)
       continue;
-    if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
+    if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->paused == 0) {
       u16 direction;
 
-      direction = ArcTan2(other->z - object->z, other->x - object->x);
-      SET_POSITION(&testPosition, other->x, other->y, other->z);
+      direction = ArcTan2(other->z.fixed - object->z.fixed,
+                          other->x.fixed - object->x.fixed);
+      SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                   other->z.fixed);
       Vector_AddPolarOffset(px(1) / 4, direction, &testPosition);
       if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
-        SET_POSITION(&testPosition, other->x, other->y, other->z);
+        SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                     other->z.fixed);
         Vector_AddPolarOffset(px(10), direction, &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
-          SET_POSITION(&testPosition, other->x, other->y, other->z);
+          SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                       other->z.fixed);
           Vector_AddPolarOffset(px(10), direction + 0x1000, &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
-            SET_POSITION(&testPosition, other->x, other->y, other->z);
+            SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                         other->z.fixed);
             Vector_AddPolarOffset(px(10), direction - 0x1000, &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
-                                    (struct FieldPosition *)&other->x);
+                                    (struct FieldPosition *)&other->x.fixed);
               other->targetX = TARGET_UNSET;
               other->targetY = TARGET_UNSET;
               other->targetZ = TARGET_UNSET;
@@ -368,7 +384,8 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   struct Actor *created;
   struct Child *sprite;
 
-  created = Actor_Create(14, object->x, object->y + 0x40000, object->z);
+  created = Actor_Create(14, object->x.fixed, object->y.fixed + 0x40000,
+                         object->z.fixed);
   sprite = object->sprite;
   if (!(object->userValue & 1))
     Sound_PlayFar(SE_WADE);
@@ -441,7 +458,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
     goto counted;
   }
   collision = 0;
-  SET_POSITION(&position, object->x, object->y, object->z);
+  SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(8), (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
     // Standing on another object a cell below: the step is clear when the
@@ -464,16 +481,19 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
         continue;
       if (other == object)
         continue;
-      dy = object->y - other->y;
+      dy = object->y.fixed - other->y.fixed;
       if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
         continue;
-      if (SAME_CELL(object->x, other->x) && SAME_CELL(object->z, other->z))
+      if (SAME_CELL(object->x.fixed, other->x.fixed) &&
+          SAME_CELL(object->z.fixed, other->z.fixed))
         onObject = 1;
-      if (SAME_CELL(position.x, other->x) && SAME_CELL(position.z, other->z) &&
+      if (SAME_CELL(position.x, other->x.fixed) &&
+          SAME_CELL(position.z, other->z.fixed) &&
 #if TLA_PATCH_1
-          SAME_CELL(testPosition.x, other->x) &&
-          SAME_CELL(testPosition.z, other->z) &&
-          SAME_CELL(contact.x, other->x) && SAME_CELL(contact.z, other->z) &&
+          SAME_CELL(testPosition.x, other->x.fixed) &&
+          SAME_CELL(testPosition.z, other->z.fixed) &&
+          SAME_CELL(contact.x, other->x.fixed) &&
+          SAME_CELL(contact.z, other->z.fixed) &&
 #endif
           other->targetX == TARGET_UNSET && other->targetZ == other->targetX)
         goto clear;
@@ -490,16 +510,20 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
     goto counted;
   }
   if (!MapGrid_CheckCollision(object, &position)) {
-    SET_POSITION(&testPosition, object->x, object->y, object->z);
+    SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                 object->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
-      SET_POSITION(&testPosition, object->x, object->y, object->z);
+      SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
-        SET_POSITION(&testPosition, object->x, object->y, object->z);
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8, &testPosition);
         if (!MapGrid_CheckCollision(object, &testPosition)) {
-          SET_POSITION(&testPosition, object->x, object->y, object->z);
+          SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                       object->z.fixed);
           Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8,
                                 &testPosition);
           if (!MapGrid_CheckCollision(object, &testPosition)) {
@@ -520,28 +544,32 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
-    SET_POSITION(&position, object->x, object->y, object->z);
+    SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading, &position);
     if (MapGrid_CheckCollision(object, &position))
       continue;
-    SET_POSITION(&testPosition, object->x, object->y, object->z);
+    SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                 object->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
-    SET_POSITION(&testPosition, object->x, object->y, object->z);
+    SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                 object->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
-    SET_POSITION(&testPosition, object->x, object->y, object->z);
+    SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                 object->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8, &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
-    SET_POSITION(&testPosition, object->x, object->y, object->z);
+    SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                 object->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition))
       goto push_objects;
   }
-  SET_POSITION(&position, object->x, object->y, object->z);
+  SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   collision |= 1;
   goto push_objects;
 
@@ -552,7 +580,7 @@ clear:
 push_objects:
   // Push the movable objects just ahead a quarter pixel further, when they
   // have room; any other solid object there blocks the step.
-  SET_POSITION(&contact, object->x, object->y, object->z);
+  SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(4), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->actors;
   for (angleIndex = 63; angleIndex >= 0; angleIndex--, other++) {
@@ -565,28 +593,33 @@ push_objects:
       continue;
     if (other == object)
       continue;
-    if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
+    if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->paused == 0) {
-      direction = ArcTan2(other->z - object->z, other->x - object->x);
-      SET_POSITION(&testPosition, other->x, other->y, other->z);
+      direction = ArcTan2(other->z.fixed - object->z.fixed,
+                          other->x.fixed - object->x.fixed);
+      SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                   other->z.fixed);
       heading = direction;
       Vector_AddPolarOffset(px(1) / 4, direction, &testPosition);
       if (!ActorScript_CheckOverlap(other, &testPosition.x)) {
-        SET_POSITION(&testPosition, other->x, other->y, other->z);
+        SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                     other->z.fixed);
         Vector_AddPolarOffset(px(10), direction, &testPosition);
         if (!MapGrid_CheckCollision(other, &testPosition)) {
-          SET_POSITION(&testPosition, other->x, other->y, other->z);
+          SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                       other->z.fixed);
           Vector_AddPolarOffset(px(10), direction + 0x1000, &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
-            SET_POSITION(&testPosition, other->x, other->y, other->z);
+            SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
+                         other->z.fixed);
             Vector_AddPolarOffset(px(10), direction - 0x1000, &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
-                                    (struct FieldPosition *)&other->x);
+                                    (struct FieldPosition *)&other->x.fixed);
               other->targetX = TARGET_UNSET;
               other->targetY = TARGET_UNSET;
               other->targetZ = TARGET_UNSET;
@@ -667,7 +700,7 @@ counted:
       cells = ((struct MapWork *)map)->layers[object->layer].cells;
     else
       cells = gMapGridCellBuffer;
-    cells += object->x / 0x100000 + (object->z / 0x100000) * 128;
+    cells += object->x.fixed / 0x100000 + (object->z.fixed / 0x100000) * 128;
     /* FAKEMATCH(temporary): the cell attribute read into a local before the
      * flags. */
     attribute = cells->attributeB;
@@ -697,7 +730,8 @@ counted:
   if ((map->groundEffects & 3) && object->timer == 0 && collision == 0) {
     struct Actor *effect;
 
-    effect = Actor_Create(0x10e, object->x, object->y, object->z);
+    effect =
+        Actor_Create(0x10e, object->x.fixed, object->y.fixed, object->z.fixed);
     if (effect != NULL) {
       struct PlayerSprite *effectSprite;
 

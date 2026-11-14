@@ -475,13 +475,23 @@ struct GustObject {
   void (*update)(struct GustObject *object);
 };
 
+/// A coordinate as the scenes' actor views read it: struct FieldCoordinate's
+/// layout as a union, whose members may alias anything.
+union ViewCoordinate {
+  s32 fixed;
+  struct {
+    u16 fraction;
+    s16 pixel;
+  } part[1];
+};
+
 /// struct Actor as this function reads it, its coordinates as
 /// FieldCoordinate.
 struct PositionedActor {
   u8 unk00[8];
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
+  union ViewCoordinate x;
+  union ViewCoordinate y;
+  union ViewCoordinate z;
   s32 terrainHeight;
   s32 scaleX;
   u8 unk1c[0x34];
@@ -630,9 +640,9 @@ struct EventObjects {
 struct StagedActor {
   u8 unk00[6];
   u16 facing;
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
+  union ViewCoordinate x;
+  union ViewCoordinate y;
+  union ViewCoordinate z;
   u8 unk14[0x0e];
   u8 transitionMode;
   u8 unk23;
@@ -912,9 +922,9 @@ struct SparkState {
 struct BobbingMarker {
   u8 unk00[6];
   u16 facing;
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
+  union ViewCoordinate x;
+  union ViewCoordinate y;
+  union ViewCoordinate z;
   u8 unk14[80];
   s16 angle;
   s16 stopped;

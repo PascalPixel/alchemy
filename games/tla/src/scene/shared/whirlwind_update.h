@@ -21,10 +21,10 @@ void Whirlwind_Update(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+    position[0] = self->x.fixed;
+    position[1] = self->y.fixed;
+    position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
@@ -33,11 +33,11 @@ void Whirlwind_Update(struct Actor *self) {
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
+        distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
-          distance = self->y - leader->y;
+          distance = self->y.fixed - leader->y.fixed;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
@@ -62,9 +62,9 @@ void Whirlwind_Update(struct Actor *self) {
         do {
           multiply = Iwram_MulQ16;
         } while (0);
-        self->x += multiply(cosine, speed);
+        self->x.fixed += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }

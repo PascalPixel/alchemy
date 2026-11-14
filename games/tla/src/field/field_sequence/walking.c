@@ -67,9 +67,9 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
   if (object == NULL)
     return 0;
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   Vector_AddPolarOffset(px(16), object->facing, position);
   if (block->mode == 3) {
     s32 x, z;
@@ -100,7 +100,7 @@ s32 Field_GetCollisionUnderLeader(void) {
 
   if (object == NULL)
     return 0;
-  SET_POSITION(&position, object->x, object->y, object->z);
+  SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   if (block->mode == 3) {
     // The block table at its fixed address: as the linked gMapBlocks it loads
     cell =
@@ -227,7 +227,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     if (GameFlag_Get(0x167))
       speed <<= 1;
     if (*((s8 *)work + 0x18a) == 3) {
-      work->encounter = Encounter_RollWorldMap((s32)&leader->x, speed);
+      work->encounter = Encounter_RollWorldMap((s32)&leader->x.fixed, speed);
     } else {
       if (attributes & 4)
         zone = 1;

@@ -44,8 +44,10 @@ next:
     index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
-    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
+    shape =
+        MapGrid_GetTerrainKind(object->layer, object->x.fixed, object->z.fixed);
+    height =
+        Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
     Actor_DisableById(id);
     cell->attributeB = 128;
     *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);

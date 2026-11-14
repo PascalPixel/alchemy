@@ -52,7 +52,7 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
   struct Actor *actor = Actor_Get(target);
 
   if (actor != NULL)
-    Actor_SetDestination(id, ((s16 *)&actor->x)[1], ((s16 *)&actor->z)[1]);
+    Actor_SetDestination(id, actor->x.part[0].pixel, actor->z.part[0].pixel);
 }
 
 // The town's own story, which no other scene reads.
@@ -124,7 +124,7 @@ void Champa_RevealTreasureSpot(void) {
 
   TreasureSpot_SetPosition(0x40, 0x1880000, 0x2380000);
   Actor_Get(64)->motionFlags = 0;
-  Actor_Get(64)->y = px(32);
+  Actor_Get(64)->y.fixed = px(32);
 }
 
 void Champa_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, 0, 0); }
@@ -573,18 +573,21 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   s32 rise = 0x1c0000;
   s32 y;
 
-  y = first->y;
-  Champa_SpawnGlareSpark(first->x, y + rise, first->z, 0x1000, 15);
+  y = first->y.fixed;
+  Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed, 0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  y = second->y;
-  Champa_SpawnGlareSpark(second->x, y + rise, second->z, 0xf000, 15);
+  y = second->y.fixed;
+  Champa_SpawnGlareSpark(second->x.fixed, y + rise, second->z.fixed, 0xf000,
+                         15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Champa_SpawnGlareSpark(first->x, first->y + rise, first->z, 0x1000, 15);
+  Champa_SpawnGlareSpark(first->x.fixed, first->y.fixed + rise, first->z.fixed,
+                         0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Champa_SpawnGlareSpark(second->x, second->y + rise, second->z, 0xf000, 15);
+  Champa_SpawnGlareSpark(second->x.fixed, second->y.fixed + rise,
+                         second->z.fixed, 0xf000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }

@@ -801,14 +801,14 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             (struct Actor *)BattleObject_GetFar(args->user)->object;
         struct Actor *to =
             (struct Actor *)BattleObject_GetFar(args->targets[0])->object;
-        s32 x = caster->x;
+        s32 x = caster->x.fixed;
         s32 z;
-        s32 dx = (to->x - x) * 80 / 100;
+        s32 dx = (to->x.fixed - x) * 80 / 100;
         s32 dz;
         s32 speed;
 
-        z = caster->z;
-        dz = (to->z - z) * 80 / 100;
+        z = caster->z.fixed;
+        dz = (to->z.fixed - z) * 80 / 100;
         x += dx;
         z += dz;
         dx >>= 8;

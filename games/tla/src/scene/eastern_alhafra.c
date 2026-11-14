@@ -189,9 +189,9 @@ void EasternAlhafra_PoundCone(s32 mode, s32 arg) {
     a->acceleration = px(1) / 2;
     b->acceleration = px(1) / 2;
     b->speedLimit = px(4);
-    FieldActor_SetPositionAndResetMotion(a, px(488), a->y, px(312));
+    FieldActor_SetPositionAndResetMotion(a, px(488), a->y.fixed, px(312));
     FieldActor_SetMoveTarget(a, 440, 0, 312);
-    FieldActor_SetPositionAndResetMotion(b, px(488), b->y, px(312));
+    FieldActor_SetPositionAndResetMotion(b, px(488), b->y.fixed, px(312));
     FieldActor_SetMoveTarget(b, 440, 0, 376);
     Tightrope_Release(1);
     Tightrope_Release(2);
@@ -220,9 +220,9 @@ void EasternAlhafra_StartPushingBlock(s32 unused, s32 id) {
   object = Actor_Get(id);
   object->motionFlags = 0;
   if (id == 10) {
-    leaderX = leader->x >> 20;
-    x = object->x >> 20;
-    z = object->z >> 20;
+    leaderX = leader->x.fixed >> 20;
+    x = object->x.fixed >> 20;
+    z = object->z.fixed >> 20;
     if (x == 34 && z == 32 && leaderX == 33)
       FieldMapGrid_SetCellBehavior(px(528), px(512), 2, 255);
     if (x == 33 && z == 32 && leaderX == 32)
@@ -248,9 +248,9 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
   s32 i;
 
   object = Actor_Get(id);
-  x = object->x >> 20;
+  x = object->x.fixed >> 20;
   hit = 0;
-  z = object->z >> 20;
+  z = object->z.fixed >> 20;
   if (id == 10) {
     FieldMapGrid_SetCellBehavior(px(528), px(512), 2, 0);
     FieldMapGrid_SetCellBehavior(px(512), px(512), 2, 0);
@@ -278,7 +278,7 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     object->motionFlags = 3;
     Actor_SetSpriteFlags(Actor_Get(id), 1);
     System_Wait(5);
-    for (i = 0; i < 60 && object->y > 0; i++)
+    for (i = 0; i < 60 && object->y.fixed > 0; i++)
       System_Wait(1);
     Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
     System_Wait(1);
@@ -288,7 +288,8 @@ void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
     Actor_SelectAnimation(object, 4);
     i = 0;
   create:
-    spark = (FieldActor_Create(276, object->x, object->y, object->z));
+    spark = (FieldActor_Create(276, object->x.fixed, object->y.fixed,
+                               object->z.fixed));
     sparks[i] = spark;
     spark->scaleX = 0xa666;
     Actor_SelectAnimation(spark, 1);
@@ -326,8 +327,8 @@ void EasternAlhafra_FinishPushingLastCrate(s32 mode, s32 id) {
   s32 open;
 
   object = Actor_Get(id);
-  x = object->x >> 20;
-  z = object->z >> 20;
+  x = object->x.fixed >> 20;
+  z = object->z.fixed >> 20;
   open = 0;
   if (x == 21 && z == 33)
     open = 1;
@@ -367,7 +368,7 @@ void EasternAlhafra_RollLog(void) {
   facing =
       (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (actor16 != NULL && Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0)
-    MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 255);
+    MapGrid_SetCellBehavior(actor16->x.fixed, actor16->z.fixed, 2, 255);
   if (PushTarget_FindSlide(&unk) != 0) {
     if (Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0 || facing == 0xc000) {
       PushTarget_Push__log(unk);
@@ -377,23 +378,26 @@ void EasternAlhafra_RollLog(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
       PushTarget_Push__log(unk);
-      MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 0, 0);
-      MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 0, 0);
-      MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x - px(8), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x + px(24), actor15->z, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x.fixed - px(24), actor15->z.fixed, 0,
+                              0);
+      MapGrid_SetCellBehavior(actor15->x.fixed + px(8), actor15->z.fixed, 0, 0);
+      MapGrid_SetCellBehavior(actor15->x.fixed - px(24), actor15->z.fixed, 2,
+                              0);
+      MapGrid_SetCellBehavior(actor15->x.fixed - px(8), actor15->z.fixed, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x.fixed + px(8), actor15->z.fixed, 2, 0);
+      MapGrid_SetCellBehavior(actor15->x.fixed + px(24), actor15->z.fixed, 2,
+                              0);
       Actor_SetAnimation(15, 3);
       Actor_SetDestinationOffset(15, 0, 16);
       FieldEvent_Wait(20);
       actor15->gravity = 0xccc;
       actor15->motionFlags = 3;
       i = 0;
-      if (actor15->y > 0) {
+      if (actor15->y.fixed > 0) {
         do {
           System_Wait(1);
           i++;
-        } while (i <= 59 && actor15->y > 0);
+        } while (i <= 59 && actor15->y.fixed > 0);
       }
       EasternAlhafra_PlaceClearedDebris();
       Event_PlaySound(SE_LOG_FALL);
@@ -404,7 +408,7 @@ void EasternAlhafra_RollLog(void) {
     }
   }
   if (actor16 != NULL && Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0)
-    MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 0);
+    MapGrid_SetCellBehavior(actor16->x.fixed, actor16->z.fixed, 2, 0);
 }
 
 void EasternAlhafra_PushAhead(s32 mode) {
@@ -700,14 +704,14 @@ s32 Scene_Initialize(void) {
     } while (0);
     object = OBJECT(19);
     object->motionFlags = flag;
-    object->y = px(16);
+    object->y.fixed = px(16);
     Tightrope_Place(1, 18, 19);
     Tightrope_Settle(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
     object->motionFlags = flag;
-    object->y = px(16);
+    object->y.fixed = px(16);
     Tightrope_Place(2, 20, 21);
   }
   Actor_SetSpriteFlags(Actor_Get(16), 0);
@@ -743,7 +747,7 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     object->priorityFlags |= 2;
     object->motionFlags = 2;
     object->velocityY = 0;
-    object->y = -px(4);
+    object->y.fixed = -px(4);
     object->groundHeight = -px(4);
     FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 0);
     FieldMapGrid_SetCellBehavior(px(336), px(528), 0, 0);
@@ -765,8 +769,8 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     do {
     } while (0);
     object->priorityFlags |= 2;
-    FieldMapGrid_SetCellBehavior(object->x, object->z, 0, 0);
-    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
   }
   if (Event_GetFlag(FLAG_SECOND_BLOCK_SUNK)) {
     object = Actor_Get(11);
@@ -778,8 +782,8 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     do {
     } while (0);
     object->priorityFlags |= 2;
-    FieldMapGrid_SetCellBehavior(object->x, object->z, 0, 0);
-    MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed, 0, 0);
+    MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
   }
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     MapGrid_CopyCells(32, 24, 2, 2, 30, 24);
@@ -1212,20 +1216,24 @@ EasternAlhafra_SpawnPuff__puffs(s32 x, s32 y, s32 z, s32 rotation,
 void EasternAlhafra_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  EasternAlhafra_SpawnPuff__puffs(object->x + px(8), object->y + px(28),
-                                  object->z, 0x1000, 15);
+  EasternAlhafra_SpawnPuff__puffs(object->x.fixed + px(8),
+                                  object->y.fixed + px(28), object->z.fixed,
+                                  0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff__puffs(object->x - px(8), object->y + px(28),
-                                  object->z, 0xf000, 15);
+  EasternAlhafra_SpawnPuff__puffs(object->x.fixed - px(8),
+                                  object->y.fixed + px(28), object->z.fixed,
+                                  0xf000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff__puffs(object->x + px(8), object->y + px(28),
-                                  object->z, 0x1000, 15);
+  EasternAlhafra_SpawnPuff__puffs(object->x.fixed + px(8),
+                                  object->y.fixed + px(28), object->z.fixed,
+                                  0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  EasternAlhafra_SpawnPuff__puffs(object->x - px(8), object->y + px(28),
-                                  object->z, 0xf000, 15);
+  EasternAlhafra_SpawnPuff__puffs(object->x.fixed - px(8),
+                                  object->y.fixed + px(28), object->z.fixed,
+                                  0xf000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
@@ -1692,8 +1700,8 @@ void EasternAlhafra_BriggsStealsShip(void) {
   {
     struct Actor *center = gFieldWork->camera;
 
-    FieldActor_SetPositionAndResetMotion(center, center->x, center->y,
-                                         center->z);
+    FieldActor_SetPositionAndResetMotion(center, center->x.fixed,
+                                         center->y.fixed, center->z.fixed);
   }
   FieldEvent_Wait(50);
   FieldActor_SetSpritePriority(22, 1);
@@ -1900,9 +1908,9 @@ turn:
 scroll:
   *(s32 *)(map->layers[0].unk08 + 4) += step;
   *(s32 *)(map->layers[1].unk08 + 4) += 0x10000;
-  Actor_GetById(22)->z -= step;
+  Actor_GetById(22)->z.fixed -= step;
   i--;
-  Actor_GetById(23)->z -= step;
+  Actor_GetById(23)->z.fixed -= step;
   System_Wait(1);
   if (i >= 0)
     goto scroll;
@@ -1923,8 +1931,8 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   {
     struct Actor *center = gFieldWork->camera;
 
-    FieldActor_SetPositionAndResetMotion(center, center->x, center->y,
-                                         center->z);
+    FieldActor_SetPositionAndResetMotion(center, center->x.fixed,
+                                         center->y.fixed, center->z.fixed);
   }
   FieldEvent_Wait(30);
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -2356,8 +2364,8 @@ s32 PushTarget_FillFootprint(s32 id) {
   width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
   b = gPushFootprints[fromX][1];
   height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
-  x = actor->x + (a << 16);
-  z = actor->z + (b << 16);
+  x = actor->x.fixed + (a << 16);
+  z = actor->z.fixed + (b << 16);
   b = *(s32 *)(map + 0x148) >> 20;
   x >>= 20;
   z >>= 20;
@@ -2404,9 +2412,9 @@ s32 PushTarget_FindSlide(struct PushState *push) {
     steps = 0;
     layer = &actor->layer;
     *layer = 2;
-    push->x = actor->x + dx;
-    push->z = actor->z + dz;
-    cell.y = actor->y;
+    push->x = actor->x.fixed + dx;
+    push->z = actor->z.fixed + dz;
+    cell.y = actor->y.fixed;
     for (;;) {
       cell.z = push->z + (gPushFootprints[kind][1] << 16);
       for (j = 0; j < height; j++) {
@@ -2430,10 +2438,10 @@ s32 PushTarget_FindSlide(struct PushState *push) {
     {
       s32 move = dx * steps;
 
-      push->x = actor->x + move;
+      push->x = actor->x.fixed + move;
     }
-    push->y = actor->y;
-    push->z = actor->z + dz * steps;
+    push->y = actor->y.fixed;
+    push->z = actor->z.fixed + dz * steps;
     return 1;
   }
   return 0;
@@ -2474,10 +2482,10 @@ void PushTarget_Push(struct PushTarget target) {
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  from[0] = object->x;
-  from[2] = object->z;
-  cell[0] = (object->x + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z + (gPushFootprints[footprint][1] << 16)) >> 20;
+  from[0] = object->x.fixed;
+  from[2] = object->z.fixed;
+  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2519,7 +2527,8 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_WaitForMove(object);
   Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
-  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
+                                       target.z);
   Actor_SelectAnimation(object, 1);
   target.x = target.x + (gPushFootprints[footprint][0] << 16);
   target.z = target.z + (gPushFootprints[footprint][1] << 16);

@@ -34,9 +34,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       flag |= 1;
     actor->paused = flag;
 
-    position.x = actor->x;
-    position.y = actor->y;
-    position.z = actor->z;
+    position.x = actor->x.fixed;
+    position.y = actor->y.fixed;
+    position.z = actor->z.fixed;
     FieldVector_AddPolarOffset(px(8), actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
@@ -53,8 +53,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
 
     map = Ram_HeapSlots->mapGrid;
-    tileX = actor->x >> 20;
-    tileZ = actor->z >> 20;
+    tileX = actor->x.fixed >> 20;
+    tileZ = actor->z.fixed >> 20;
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
     widthA = *(s32 *)&map->layers[1].unk08[0] >> 20;
@@ -75,7 +75,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
@@ -84,7 +84,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_572);
-          Embers_Spawn((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
                        actor->facing);
         }
       }
@@ -99,9 +99,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     work2 = Ram_HeapSlots->fieldWork;
     other = (struct Work020023c4 *)(gInventorySnapshot + 0x188);
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x - target->x) < 0x140000 &&
-        (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z - target->z) < 0x140000) {
+    if (ABS(actor->x.fixed - target->x.fixed) < 0x140000 &&
+        (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
+        ABS(actor->z.fixed - target->z.fixed) < 0x140000) {
       other->unk04 = 2;
       other->unk6c = actor;
       work2->stepTrigger = other->unk0a + 2;
@@ -113,9 +113,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->scaleY -= Q16_ONE / 16;
       MarsLighthouseRoomM_ScatterCrumbs(actor);
     } else {
-      actor->z = 0;
-      actor->y = 0;
-      actor->x = 0;
+      actor->z.fixed = 0;
+      actor->y.fixed = 0;
+      actor->x.fixed = 0;
       actor->velocityZ = 0;
       actor->velocityY = 0;
       actor->velocityX = 0;

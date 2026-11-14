@@ -57,7 +57,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   work->encounter = Encounter_GetDjinnFormation(djinn);
   if (work->mode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
-        &ObjectTable_Get(Party_GetLeaderActor())->x);
+        &ObjectTable_Get(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(0, 0);
 }
 

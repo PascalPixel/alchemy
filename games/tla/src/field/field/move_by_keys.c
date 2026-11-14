@@ -61,14 +61,14 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     collisionFlags = 0;
     SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(px(8), angle, &position);
-    position.x += object->x;
+    position.x += object->x.fixed;
     deltaZ = position.z;
     if (deltaZ < 0)
       object->facing = TRIG_TURN * 3 / 4;
     if (deltaZ > 0)
       object->facing = TRIG_TURN / 4;
-    position.y = object->y - position.z;
-    position.z = object->z;
+    position.y = object->y.fixed - position.z;
+    position.z = object->z.fixed;
     map = Ram_HeapSlots->mapGrid;
     sourceCell =
         &map->layers[object->layer].cells[Actor_GetCellIndexFar(object)];
@@ -82,12 +82,12 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     } else if (gInput.held & 64) {
       terrainHeight = MapGrid_GetTerrainHeight(object->layer, position.x,
                                                position.z - 0x100000);
-      if (terrainHeight - object->y < 0x100000)
+      if (terrainHeight - object->y.fixed < 0x100000)
         goto refused;
     } else if (gInput.held & 128) {
       terrainHeight =
           MapGrid_GetTerrainHeight(object->layer, position.x, position.z);
-      if (terrainHeight - object->y > -0x80000) {
+      if (terrainHeight - object->y.fixed > -0x80000) {
       refused:
         collisionFlags = 1;
         animation = 12;
@@ -152,9 +152,9 @@ s32 Actor_CrossRope(struct Actor *object) {
     value = 16;
     SET_POSITION(&position, 0, 0, 0);
     Vector_AddPolarOffset(px(8), angle, &position);
-    position.x += object->x;
-    position.y = object->y - position.z;
-    position.z = object->z;
+    position.x += object->x.fixed;
+    position.y = object->y.fixed - position.z;
+    position.z = object->z.fixed;
     rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
     node = rope->nodes;
     best = NULL;
@@ -188,18 +188,19 @@ s32 Actor_CrossRope(struct Actor *object) {
     slot = &rope->slots[best->slot - 1];
     first = Actor_GetByIdFar(slot->first);
     second = Actor_GetByIdFar(slot->second);
-    if (first->x > second->x)
+    if (first->x.fixed > second->x.fixed)
       speed = -speed;
     first = Actor_GetByIdFar(slot->first);
     second = Actor_GetByIdFar(slot->second);
-    if (first->y > second->y) {
+    if (first->y.fixed > second->y.fixed) {
       speed = -speed;
       turn = 0xc000;
     } else {
       turn = 0x4000;
     }
     object->scaleX = speed;
-    if (best->x == object->x && best->y == object->y && best->z == object->z) {
+    if (best->x == object->x.fixed && best->y == object->y.fixed &&
+        best->z == object->z.fixed) {
       collisionFlags = 1;
     } else {
       slot->swinging = 1;
@@ -271,9 +272,9 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   if (angle == 0xffff) {
     collisionFlags = 4;
     best = (struct TightropeNode *)object->watchedActor;
-    SET_POSITION(&position, object->x, best->y, object->z);
+    SET_POSITION(&position, object->x.fixed, best->y, object->z.fixed);
   } else {
-    SET_POSITION(&position, object->x, object->y, object->z);
+    SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(px(8), angle, &position);
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->tightrope;
     point = tightrope->nodes;
@@ -300,8 +301,8 @@ s32 Actor_CrossTightrope(struct Actor *object) {
       }
       if (best == NULL) {
         collisionFlags |= 1;
-      } else if (best->x == object->x && best->y == object->y &&
-                 best->z == object->z) {
+      } else if (best->x == object->x.fixed && best->y == object->y.fixed &&
+                 best->z == object->z.fixed) {
         collisionFlags = 1;
       } else {
         if (best->slot != 0) {
@@ -340,11 +341,11 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     object->velocityZ = 0;
     if (collisionFlags & 3)
       TurnToward(object, angle);
-    object->y = position.y;
+    object->y.fixed = position.y;
   } else {
-    object->y = position.y;
+    object->y.fixed = position.y;
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
-    if (object->x == position.x && object->z == position.z)
+    if (object->x.fixed == position.x && object->z.fixed == position.z)
       TurnToward(object, angle);
   }
   object->scriptCursor++;
@@ -363,11 +364,11 @@ void Sand_JitterGrain(struct Actor *object) {
   HALF_AT(object->sprite, 18) += 0x400;
   first = Random16();
   second = Random16();
-  x = object->x;
+  x = object->x.fixed;
 
   second >>= 1;
   first >>= 1;
-  object->x = x + (first - second);
+  object->x.fixed = x + (first - second);
 }
 
 /// When one of three party key sets is pressed: plays cue 113 if the far call
@@ -425,9 +426,9 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
 
   heading = 0;
   count = 0;
-  cellX = actor->x & 0xfff00000;
-  cellZ = actor->z & 0xfff00000;
-  y = actor->y;
+  cellX = actor->x.fixed & 0xfff00000;
+  cellZ = actor->z.fixed & 0xfff00000;
+  y = actor->y.fixed;
   terrainId = &actor->layer;
   groundHere = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ);
   groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ + 0xfff00000);
@@ -441,11 +442,11 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     if (groundAhead < y) {
       s32 topZ = cellZ + 0xfff80000;
 
-      if (MapGrid_CheckCollisionAt(actor->x, topZ, *terrainId,
+      if (MapGrid_CheckCollisionAt(actor->x.fixed, topZ, *terrainId,
                                    actor->groundHeight) == 2) {
-        actor->y -= px(1);
+        actor->y.fixed -= px(1);
       } else {
-        Actor_SetMoveTarget(actor, actor->x, groundAhead, topZ);
+        Actor_SetMoveTarget(actor, actor->x.fixed, groundAhead, topZ);
         actor->timer = 1;
         actor->userValue = 0;
         goto done;
@@ -468,43 +469,43 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     if ((u16)angle == 0xffff) {
       collision = 4;
     } else {
-      SET_POSITION(&position, actor->x, 0, 0);
+      SET_POSITION(&position, actor->x.fixed, 0, 0);
       Vector_AddPolarOffset(px(8), (u16)angle, &position);
-      position.y = actor->y - position.z;
-      position.z = actor->z;
+      position.y = actor->y.fixed - position.z;
+      position.z = actor->z.fixed;
       Actor_SelectAnimation(actor, 3);
-      SET_POSITION(&testPosition, actor->x, 0, 0);
+      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
       Vector_AddPolarOffset(px(8), (u16)angle, &testPosition);
-      testPosition.y = actor->y - testPosition.z;
-      testPosition.z = actor->z;
+      testPosition.y = actor->y.fixed - testPosition.z;
+      testPosition.z = actor->z.fixed;
       if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x, 0, 0);
+      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
       Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16, &testPosition);
-      testPosition.y = actor->y - testPosition.z;
-      testPosition.z = actor->z;
+      testPosition.y = actor->y.fixed - testPosition.z;
+      testPosition.z = actor->z.fixed;
       if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x, 0, 0);
+      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
       Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16, &testPosition);
-      testPosition.y = actor->y - testPosition.z;
-      testPosition.z = actor->z;
+      testPosition.y = actor->y.fixed - testPosition.z;
+      testPosition.z = actor->z.fixed;
       if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x, 0, 0);
+      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
       Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8, &testPosition);
-      testPosition.y = actor->y - testPosition.z;
-      testPosition.z = actor->z;
+      testPosition.y = actor->y.fixed - testPosition.z;
+      testPosition.z = actor->z.fixed;
       if (MapGrid_CheckCollision(actor, &testPosition))
         goto climb_blocked;
-      SET_POSITION(&testPosition, actor->x, 0, 0);
+      SET_POSITION(&testPosition, actor->x.fixed, 0, 0);
       Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8, &testPosition);
-      testPosition.y = actor->y - testPosition.z;
-      testPosition.z = actor->z;
+      testPosition.y = actor->y.fixed - testPosition.z;
+      testPosition.z = actor->z.fixed;
       if (!MapGrid_CheckCollision(actor, &testPosition))
         goto climb_moved;
     climb_blocked:
-      SET_POSITION(&position, actor->x, actor->y, actor->z);
+      SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
       collision |= 1;
     }
   climb_moved:
@@ -530,8 +531,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
     // Every 16th frame, a bit of rubble drops beside the climber.
     if ((gFrameCount & 15) == 0) {
-      SET_POSITION(&spawn, actor->x - Random16() * 6 + 0x30000, actor->y,
-                   actor->z);
+      SET_POSITION(&spawn, actor->x.fixed - Random16() * 6 + 0x30000,
+                   actor->y.fixed, actor->z.fixed);
       effect = Actor_Create(0x11d, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
         effect->groundHeight = actor->groundHeight;
@@ -565,23 +566,26 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     collision = 4;
     goto counted;
   }
-  SET_POSITION(&position, actor->x, actor->y, actor->z);
+  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(px(8), (u16)angle, &position);
   if (gDebugMode != 0 && (gInput.held & KEY_L)) {
     heading = (s16)angle;
     goto counted;
   }
   if (!MapGrid_CheckCollision(actor, &position)) {
-    SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16, &testPosition);
     if (!MapGrid_CheckCollision(actor, &testPosition)) {
-      SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16, &testPosition);
       if (!MapGrid_CheckCollision(actor, &testPosition)) {
-        SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+        SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                     actor->z.fixed);
         Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 8, &testPosition);
         if (!MapGrid_CheckCollision(actor, &testPosition)) {
-          SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+          SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
+                       actor->z.fixed);
           Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 8,
                                 &testPosition);
           if (!MapGrid_CheckCollision(actor, &testPosition)) {
@@ -604,28 +608,28 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   }
   for (angleIndex = 0; angleIndex < count; angleIndex++) {
     heading = angleOffsets[angleIndex];
-    SET_POSITION(&position, actor->x, actor->y, actor->z);
+    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading, &position);
     if (MapGrid_CheckCollision(actor, &position))
       continue;
-    SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
-    SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16, &testPosition);
     if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
-    SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 8, &testPosition);
     if (MapGrid_CheckCollision(actor, &testPosition))
       continue;
-    SET_POSITION(&testPosition, actor->x, actor->y, actor->z);
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8, &testPosition);
     if (!MapGrid_CheckCollision(actor, &testPosition))
       goto counted;
   }
-  SET_POSITION(&position, actor->x, actor->y, actor->z);
+  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   collision |= 1;
   // Up against a face more than 8 pixels high: start climbing it.
   if ((gInput.held & KEY_UP) && groundAhead > y + 0x80000) {
@@ -634,7 +638,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
 
     if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
-      actor->y += px(1);
+      actor->y.fixed += px(1);
       actor->userValue = 1;
       actor->velocityX = 0;
       actor->velocityY = 0;
@@ -645,13 +649,14 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   }
   // Down at a drop: climb down the face south of the cell.
   if (gInput.held & KEY_DOWN) {
-    cellX = (actor->x & 0xfff00000) + 0x80000;
-    cellZ = (actor->z & 0xfff00000) + 0x180000;
+    cellX = (actor->x.fixed & 0xfff00000) + 0x80000;
+    cellZ = (actor->z.fixed & 0xfff00000) + 0x180000;
 
     if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
         MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
-      Actor_SetMoveTarget(actor, actor->x, groundHere + 0xfffe0000, cellZ);
+      Actor_SetMoveTarget(actor, actor->x.fixed, groundHere + 0xfffe0000,
+                          cellZ);
       actor->timer = 1;
       actor->userValue = 1;
       actor->velocityX = 0;
@@ -711,7 +716,8 @@ counted:
   // The retest reads through the actor, not wakeTimer: that keeps its
   // zero path from skipping it.
   if (((u8 *)actor)[98] == 0 && collision == 0) {
-    effect = Actor_Create(0x164, actor->x, actor->y, actor->z - 0x20000);
+    effect = Actor_Create(0x164, actor->x.fixed, actor->y.fixed,
+                          actor->z.fixed - 0x20000);
     if (effect != NULL) {
       effect->groundHeight = actor->groundHeight;
       sprite = effect->sprite;
@@ -784,19 +790,20 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   if (direction == 0xffff) {
     collision |= 4;
   } else {
-    SET_POSITION(&position, object->x, object->y, object->z);
+    SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(px(8), direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
-      SET_POSITION(&leftPosition, object->x, object->y, object->z);
+      SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
+                   object->z.fixed);
       Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
-      rightPosition.x = object->x;
+      rightPosition.x = object->x.fixed;
       /* FAKEMATCH(temporary): y read into its own local before the block. */
-      y = object->y;
+      y = object->y.fixed;
       /* FAKEMATCH(dead): the right probe's y stored in a once-only block. */
       do {
         rightPosition.y = y;
       } while (0);
-      rightPosition.z = object->z;
+      rightPosition.z = object->z.fixed;
       Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
@@ -809,11 +816,14 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
         angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
         for (angleIndex = 0; angleIndex < count; angleIndex++) {
           direction = angleOffsets[angleIndex];
-          SET_POSITION(&position, object->x, object->y, object->z);
+          SET_POSITION(&position, object->x.fixed, object->y.fixed,
+                       object->z.fixed);
           Vector_AddPolarOffset(px(8), direction, &position);
-          SET_POSITION(&leftPosition, object->x, object->y, object->z);
+          SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
+                       object->z.fixed);
           Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
-          SET_POSITION(&rightPosition, object->x, object->y, object->z);
+          SET_POSITION(&rightPosition, object->x.fixed, object->y.fixed,
+                       object->z.fixed);
           Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
@@ -883,14 +893,15 @@ update_object:
   if (object->spriteStorageKind == 1) {
     playerSprite = object->sprite;
     terrainCollision =
-        WorldMap_GetCollision((struct WorldPosition *)&object->x);
+        WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
     if (terrainCollision == 9)
       playerSprite->entry[6] = 1;
     else
       playerSprite->entry[6] = 9;
   }
   if (*timer == 0 && collision == 0) {
-    ripple = Actor_Create(0x164, object->x, object->y, object->z - 0x20000);
+    ripple = Actor_Create(0x164, object->x.fixed, object->y.fixed,
+                          object->z.fixed - 0x20000);
     if (ripple != 0) {
       ripple->groundHeight = object->groundHeight;
       rippleSprite = ripple->sprite;

@@ -3,7 +3,8 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   struct Actor *source = Actor_Get(id);
   struct Actor *object = Actor_Get(target);
 
-  FieldActor_SetPositionAndResetMotion(object, source->x, source->y, source->z);
+  FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
+                                       source->z.fixed);
   Actor_StartScript(object, script);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;

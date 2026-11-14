@@ -11,9 +11,9 @@ void MagmaRockInside_CheckCrumblingStep(const u16 *table) {
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   trap = Actor_FindAtCell(position, 0);
   if (trap != 0)
     goto test;

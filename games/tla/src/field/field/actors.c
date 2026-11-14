@@ -718,7 +718,7 @@ void ActorSystem_PlaceSprites(void) {
   for (objectIndex = 0; objectIndex < 64; objectIndex++, object++) {
     if (object->script == NULL)
       continue;
-    if (object->x != 0 || object->z != 0) {
+    if (object->x.fixed != 0 || object->z.fixed != 0) {
       kind = object->spriteStorageKind & 15;
       if (kind == 0)
         continue;
@@ -732,9 +732,9 @@ void ActorSystem_PlaceSprites(void) {
         continue;
       }
       sprite = object->sprite;
-      dx = object->x - viewX;
-      dz = object->z - viewZ;
-      screenTop = dz - object->y;
+      dx = object->x.fixed - viewX;
+      dz = object->z.fixed - viewZ;
+      screenTop = dz - object->y.fixed;
       if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
           screenTop < 0xe00000 &&
           (priorityFlags = &object->priorityFlags, !(*priorityFlags & 16))) {
@@ -742,8 +742,8 @@ void ActorSystem_PlaceSprites(void) {
         layer = *terrainId & 3;
         cells = (u32 *)map->layers[layer].cells;
         if (*priorityFlags & 1) {
-          probeX = object->x - 0x70000;
-          feetZ = object->z + 0x20000;
+          probeX = object->x.fixed - 0x70000;
+          feetZ = object->z.fixed + 0x20000;
           objectHeight = object->groundHeight >> 16;
           priority = 0;
           leftPriority = 0;
@@ -825,13 +825,13 @@ void ActorSystem_PlaceSprites(void) {
             placed->shadowPriority = priority;
           }
         }
-        layerPlusOne = CELL_LAYER(cells, object->x, object->z);
+        layerPlusOne = CELL_LAYER(cells, object->x.fixed, object->z.fixed);
         if (layerPlusOne != 0)
           *terrainId = layerPlusOne - 1;
         scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
         scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
         point.x = dx;
-        point.height = object->y - originY;
+        point.height = object->y.fixed - originY;
         point.y = dz - originY;
         point.groundHeight = object->groundHeight - originY;
         if (*priorityFlags & 2) {

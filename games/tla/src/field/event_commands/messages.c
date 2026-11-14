@@ -408,10 +408,10 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
   target = work->camera;
   map = Ram_HeapSlots->mapGrid;
   if (obj != 0) {
-    map->origin = &target->x;
+    map->origin = &target->x.fixed;
     Actor_StartCameraFar(target, obj);
     if (flag == 0) {
-      SET_POSITION(target, obj->x, obj->y, obj->z);
+      SET_ACTOR_POSITION(target, obj->x.fixed, obj->y.fixed, obj->z.fixed);
       wait(1);
       if (work->mode != 3)
         Map_CenterOnFollowedPointFar();

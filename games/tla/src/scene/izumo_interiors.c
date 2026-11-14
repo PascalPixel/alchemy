@@ -49,8 +49,8 @@ extern s32 gIzumoInteriors_RockingScript[];
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
-    if ((u32)(object->x - n2) <= 0x80000) {                                    \
-      s32 z = object->z;                                                       \
+    if ((u32)(object->x.fixed - n2) <= 0x80000) {                              \
+      s32 z = object->z.fixed;                                                 \
                                                                                \
       if (z >= 0x26c0000) {                                                    \
         if (z <= 0x2740000)                                                    \
@@ -1090,29 +1090,29 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetModeById(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_JENNA, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, 0, 0);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_SHEBA, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
   Actor_SetModeById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_PIERS, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   Actor_SetModeById(23, 2);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(23, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(23, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(23);
   Actor_SetHorizontalPositionWithTerrain(23, 0, 0);
   GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);

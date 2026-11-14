@@ -2,9 +2,9 @@
 s32 Actor_StepToWatched(struct Actor *object) {
   u8 left;
 
-  object->x += object->bounce;
-  object->y += object->riseBaseY;
-  object->z += object->gravity;
+  object->x.fixed += object->bounce;
+  object->y.fixed += object->riseBaseY;
+  object->z.fixed += object->gravity;
   left = --BYTE_AT(object, 98);
   return left != 0;
 }

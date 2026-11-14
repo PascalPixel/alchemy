@@ -393,7 +393,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
   if (BYTE_AT(self, 99) == 1)
     goto near;
   other = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (Lemuria_Distance(&self->x, &other->x) <= 11)
+  if (Lemuria_Distance(&self->x.fixed, &other->x.fixed) <= 11)
     goto far;
   if (BYTE_AT(self, 98) == 1)
     other = Actor_GetById(15);
@@ -961,7 +961,7 @@ void Contigo_ClearBushesBySalt(void) {
   Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Get(0xfc7) == 0) {
     Actor_SetPosition(66, 280, 664);
-    if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
+    if (leader->x.fixed >> 20 == 17 && leader->z.fixed >> 20 == 41) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -1061,8 +1061,9 @@ void Contigo_ForceFreesDjinni(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
-    FieldEffect_Spawn(object->x, object->y, object->z, velocity[0],
-                      velocity[1] + 0x1999, velocity[2], 0x20000, &options);
+    FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
+                      velocity[0], velocity[1] + 0x1999, velocity[2], 0x20000,
+                      &options);
   }
   Actor_SetSpriteColor(Actor_GetById(17), 0);
   Actor_SetSpriteFlags(Actor_GetById(17), 1);
@@ -1071,8 +1072,8 @@ void Contigo_ForceFreesDjinni(void) {
   Actor_MoveToAndWait(17, 40, 680);
   Event_Wait(10);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object->x >> 20 == leader->x >> 20 &&
-      object->z >> 20 == leader->z >> 20) {
+  if (object->x.fixed >> 20 == leader->x.fixed >> 20 &&
+      object->z.fixed >> 20 == leader->z.fixed >> 20) {
     Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 68, 680);
@@ -1102,7 +1103,7 @@ void Contigo_PlaceStatue(s32 id) {
   object->collisionFlags = 8;
   object->priorityFlags |= 2;
   object->motionFlags = 0;
-  object->y = px(64);
+  object->y.fixed = px(64);
 }
 
 // Sets up actors 19 to 33: their modes, Contigo_PlaceStatue for 19 to 26, and
@@ -2483,9 +2484,9 @@ void Contigo_RaiseSparkle(struct Actor *object) {
     sine = Trig_Sin(work->unka0[i] << 10);
     if (work->unka0[i] >= 0) {
       if (work->unka0[i] <= 31) {
-        position.x = object->x;
-        position.y = object->y + (work->unka0[i] << 16);
-        position.z = object->z;
+        position.x = object->x.fixed;
+        position.y = object->y.fixed + (work->unka0[i] << 16);
+        position.z = object->z.fixed;
         Camera_WorldToScreen(&position);
         x = position.x;
         z = position.z;

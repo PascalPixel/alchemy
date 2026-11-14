@@ -1175,11 +1175,11 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
   struct BattleObj *targetSlot = BattleObject_GetFar(targetId);
   struct Actor *obj = (struct Actor *)slot->object;
   struct Actor *target = (struct Actor *)targetSlot->object;
-  s32 diffX = target->x - obj->x;
-  s32 startX = obj->x;
+  s32 diffX = target->x.fixed - obj->x.fixed;
+  s32 startX = obj->x.fixed;
   s32 dx = rate * diffX / 100;
-  s32 diffZ = target->z - obj->z;
-  s32 startZ = obj->z;
+  s32 diffZ = target->z.fixed - obj->z.fixed;
+  s32 startZ = obj->z.fixed;
   s32 dz = rate * diffZ / 100;
   s32 x = startX + dx;
   s32 z = startZ + dz;

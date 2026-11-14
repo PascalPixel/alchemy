@@ -15,8 +15,8 @@ void HeldActor_RaiseCell(void) {
   cells = (u8 *)Ram_HeapSlots->mapGrid->layers[*layer].cells;
   shapes = Ram_MapShapeGrid +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
-  shape = MapGrid_GetTerrainKind(*layer, held->x, held->z);
-  level = Map_GetTerrainHeight(*layer, held->x, held->z);
+  shape = MapGrid_GetTerrainKind(*layer, held->x.fixed, held->z.fixed);
+  level = Map_GetTerrainHeight(*layer, held->x.fixed, held->z.fixed);
   index = Actor_GetCellIndex(held);
   level >>= 19;
   level += 4;

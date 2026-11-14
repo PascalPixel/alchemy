@@ -243,7 +243,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   struct FieldSprite *sprite, *splashSprite, *sparkSprite;
   s32 i, x, z, k, zero;
 
-  if (actor->x >> 20 != 12)
+  if (actor->x.fixed >> 20 != 12)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -251,7 +251,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   System_Wait(5);
   actor->motionFlags = 0;
   actor->velocityY = 0;
-  actor->y = px(4);
+  actor->y.fixed = px(4);
   sprite = actor->sprite;
   i = 0;
   do {
@@ -262,9 +262,9 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
     sprite->unk19 = 1;
     k &= 3;
     if (k == 0) {
-      x = actor->x + Random16() * 2 - Random16() * 2;
-      z = actor->z + Random16() * 2 - Random16() * 2;
-      splash = (FieldActor_Create(14, x, actor->y, z));
+      x = actor->x.fixed + Random16() * 2 - Random16() * 2;
+      z = actor->z.fixed + Random16() * 2 - Random16() * 2;
+      splash = (FieldActor_Create(14, x, actor->y.fixed, z));
       if (splash != 0) {
         splashSprite = splash->sprite;
         splash->groundHeight = actor->groundHeight;
@@ -284,9 +284,10 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   } while (i <= 24);
 
   actor->spriteStorageKind = 0;
-  actor->y = 0;
+  actor->y.fixed = 0;
   for (i = 1; i >= 0; i--) {
-    spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
+    spark = (FieldActor_Create(269, actor->x.fixed, actor->y.fixed,
+                               actor->z.fixed));
     if (spark != 0) {
       sparkSprite = spark->sprite;
       Actor_StartScript(spark, gTaopoSwamp_SplashFades);
@@ -333,7 +334,7 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
   TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
   if (Event_GetFlag(0xf99) == 0) {
     Actor_SetPosition(64, 264, 664);
-    if (leader->x >> 20 == 16 && leader->z >> 20 == 41) {
+    if (leader->x.fixed >> 20 == 16 && leader->z.fixed >> 20 == 41) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -378,14 +379,14 @@ void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 9) {
-    if (object->x >> 20 == 17) {
-      object->z += px(1);
+    if (object->x.fixed >> 20 == 17) {
+      object->z.fixed += px(1);
       Vent_SetGust(2, 0x80000);
       Event_SetFlag(0xa6d);
     }
   } else if (id == 10) {
-    if (object->x >> 20 == 29) {
-      object->z += px(1);
+    if (object->x.fixed >> 20 == 29) {
+      object->z.fixed += px(1);
       Vent_SetGust(8, 0x80000);
       Event_SetFlag(0xa6e);
     }
@@ -437,8 +438,8 @@ sink:
     TaopoSwamp_FallThroughHole(hole);
     return;
   }
-  leader->z += px(2);
-  slip = (leader->x & 0xfffff) + 0xfff80000;
+  leader->z.fixed += px(2);
+  slip = (leader->x.fixed & 0xfffff) + 0xfff80000;
   {
     s32 limit = 0x10001;
 
@@ -448,13 +449,13 @@ sink:
     if (slip <= limit)
       slip = -0x10000;
   }
-  leader->x -= slip;
+  leader->x.fixed -= slip;
   leader->facing += 0x1000;
   System_Wait(1);
 test:
-  position.x = leader->x;
-  position.y = leader->y;
-  position.z = leader->z + px(8);
+  position.x = leader->x.fixed;
+  position.y = leader->y.fixed;
+  position.z = leader->z.fixed + px(8);
   result = MapGrid_CheckCollision(leader, &position);
   if (result <= 0)
     goto sink;
@@ -499,7 +500,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
 void TaopoSwamp_DropPillarIntoGap(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (id == 9 && object->x >> 20 == 16) {
+  if (id == 9 && object->x.fixed >> 20 == 16) {
     Actor_WaitToLand(9);
     MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     Event_SetFlag(0xa6f);
@@ -546,8 +547,8 @@ void TaopoSwamp_ShatterIcePillar(s32 id) {
   Event_ClearFlag(FLAG_SCENE_TEMP_22);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
-  if (object->x >> 20 == leader->x >> 20 &&
-      object->z >> 20 == leader->z >> 20) {
+  if (object->x.fixed >> 20 == leader->x.fixed >> 20 &&
+      object->z.fixed >> 20 == leader->z.fixed >> 20) {
     Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
@@ -600,8 +601,8 @@ void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   GameFlag_SetByte(0x230, 0);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
-  if (object->x >> 20 == leader->x >> 20 &&
-      object->z >> 20 == leader->z >> 20) {
+  if (object->x.fixed >> 20 == leader->x.fixed >> 20 &&
+      object->z.fixed >> 20 == leader->z.fixed >> 20) {
     Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
@@ -638,7 +639,7 @@ void TaopoSwamp_CoolLavaRock(s32 a, s32 id) {
 void TaopoSwamp_PushLavaRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->x >> 20 == 7) {
+  if (object->x.fixed >> 20 == 7) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -661,7 +662,7 @@ void TaopoSwamp_CoolPillarRock(s32 a, s32 id) {
 void TaopoSwamp_PushPillarRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->z >> 20 == 16) {
+  if (object->z.fixed >> 20 == 16) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -735,7 +736,8 @@ void TaopoSwamp_TremorPillar(void) {
   for (i = 9; i >= 0; i--) {
     System_Wait(1);
     ((struct FieldSprite *)rock->sprite)->rotation += turn;
-    rock->x -= Trig_Cos(((struct FieldSprite *)rock->sprite)->rotation) / 2;
+    rock->x.fixed -=
+        Trig_Cos(((struct FieldSprite *)rock->sprite)->rotation) / 2;
     rock->targetX = 0x80000000;
   }
   rock->update = TaopoSwamp_SpinBoulder;
@@ -746,7 +748,7 @@ void TaopoSwamp_TremorPillar(void) {
   rock->layer = 0;
   FieldActor_WaitForMoveById(19);
   rock->velocityY = 0;
-  rock->y = rock->groundHeight;
+  rock->y.fixed = rock->groundHeight;
   Actor_SetPosition(19, 480, 248);
   ((struct FieldSprite *)rock->sprite)->rotation = 0;
   Event_PlaySound(SE_THUMP);
@@ -759,7 +761,8 @@ void TaopoSwamp_TremorPillar(void) {
   rock->update = 0;
   i = 15;
 burst:
-  clod = (FieldActor_Create(255, rock->x, rock->y + px(16), rock->z));
+  clod = (FieldActor_Create(255, rock->x.fixed, rock->y.fixed + px(16),
+                            rock->z.fixed));
   if (clod == 0)
     goto next;
   angle = Random16();
@@ -817,7 +820,7 @@ void TaopoSwamp_CoolChestRock(s32 a, s32 id) {
 void TaopoSwamp_PushChestRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->z >> 20 == 21) {
+  if (object->z.fixed >> 20 == 21) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -840,7 +843,7 @@ void TaopoSwamp_CoolExitRock(s32 a, s32 id) {
 void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->x >> 20 == 31) {
+  if (object->x.fixed >> 20 == 31) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -927,12 +930,12 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// A falling drop splashes where it lands.
 s32 TaopoSwamp_LandDrop(struct Actor *object) {
-  s32 y = object->y;
+  s32 y = object->y.fixed;
   struct Actor *spark;
   s32 scale;
 
   if (y + object->velocityY < object->groundHeight) {
-    spark = TaopoSwamp_CreateActor(0x10d, object->x, y, object->z);
+    spark = TaopoSwamp_CreateActor(0x10d, object->x.fixed, y, object->z.fixed);
     scale = 0x8ccc;
     if (spark) {
       spark->scaleX = scale;
@@ -942,7 +945,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
       Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(SE_DRIP);
-    object->y = object->groundHeight;
+    object->y.fixed = object->groundHeight;
     object->velocityY = 0;
     return 0;
   }
@@ -1091,13 +1094,14 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
   struct Actor *spark;
   s32 scale;
 
-  if (object->y + object->velocityY < object->groundHeight) {
+  if (object->y.fixed + object->velocityY < object->groundHeight) {
     flag = Event_GetFlag(FLAG_SCENE_TEMP_21);
     if (flag) {
       Event_PlaySound(SE_DRIP);
       return 0;
     }
-    spark = TaopoSwamp_CreateActor(0x10d, object->x, object->y, object->z);
+    spark = TaopoSwamp_CreateActor(0x10d, object->x.fixed, object->y.fixed,
+                                   object->z.fixed);
     scale = 0x8ccc;
     if (spark) {
       spark->scaleX = scale;
@@ -1107,7 +1111,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
       Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(SE_DRIP);
-    object->y = object->groundHeight;
+    object->y.fixed = object->groundHeight;
     object->velocityY = 0;
     if (Event_GetFlag(0x104) == 0) {
       count = FieldGameFlag_GetByte(0x230);
@@ -1147,7 +1151,7 @@ void TaopoSwamp_DripFromCeiling(void) {
 
 /// A drop's script test: whether it is still above the floor.
 s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
-  if (object->y + object->velocityY < -px(48))
+  if (object->y.fixed + object->velocityY < -px(48))
     return 0;
   return 1;
 }
@@ -1262,7 +1266,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa6f)) {
       Actor_SetPositionFixed(9, px(264), px(424));
       piece->groundHeight = 0;
-      piece->y = 0;
+      piece->y.fixed = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
   } else if (scene == SCENE_TAOPO_SWAMP_8) {
@@ -1321,7 +1325,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCells(50, 59, 13, 5, 18, 15);
     } else {
       piece->motionFlags = 0;
-      piece->y = px(32);
+      piece->y.fixed = px(32);
     }
     if (!Event_GetFlag(FLAG_AREA_TEMP_31)) {
       Event_SetFlag(FLAG_AREA_TEMP_32);
@@ -1460,7 +1464,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(0xa6f)) {
       Actor_SetPositionFixed(9, px(264), px(424));
       piece->groundHeight = 0;
-      piece->y = 0;
+      piece->y.fixed = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
   } else if (scene == SCENE_TAOPO_SWAMP_8) {
@@ -1522,7 +1526,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCells(50, 59, 13, 5, 18, 15);
     } else {
       piece->motionFlags = 0;
-      piece->y = px(32);
+      piece->y.fixed = px(32);
     }
     if (!Event_GetFlag(FLAG_AREA_TEMP_31)) {
       Event_SetFlag(FLAG_AREA_TEMP_32);
@@ -1721,7 +1725,8 @@ void TaopoSwamp_SinkInMud(void) {
   FieldEvent_ResolvePendingActions(0);
   actor->spriteStorageKind = 0;
   for (i = 1; i >= 0; i--) {
-    spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
+    spark = (FieldActor_Create(269, actor->x.fixed, actor->y.fixed,
+                               actor->z.fixed));
     if (spark != 0) {
       sparkSprite = spark->sprite;
       Actor_StartScript(spark, gTaopoSwamp_SplashFades);
@@ -1740,8 +1745,8 @@ void TaopoSwamp_SinkInMud(void) {
   sprite->level = 0;
   sprite->mode = 0;
   Event_End();
-  actor->x = state->x;
-  actor->z = state->z;
+  actor->x.fixed = state->x;
+  actor->z.fixed = state->z;
   state->mode = 0;
   state->timer = 0;
 }
@@ -1757,9 +1762,9 @@ void TaopoSwamp_RiseOnBubble(void) {
     sprite = object->sprite;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    FieldActor_SetMoveTargetFixed(object, (object->x & 0xfff00000) + 0x80000,
-                                  object->y,
-                                  (object->z & 0xfff00000) + 0x80000);
+    FieldActor_SetMoveTargetFixed(
+        object, (object->x.fixed & 0xfff00000) + 0x80000, object->y.fixed,
+        (object->z.fixed & 0xfff00000) + 0x80000);
     FieldActor_WaitForMove(object);
     while (sprite->level != 0) {
       sprite->level--;
@@ -1797,8 +1802,8 @@ void TaopoSwamp_SaveFirmGround(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
 
-  state->x = (object->x & 0xfff00000) + 0x80000;
-  state->z = (object->z & 0xfff00000) + 0x80000;
+  state->x = (object->x.fixed & 0xfff00000) + 0x80000;
+  state->z = (object->z.fixed & 0xfff00000) + 0x80000;
 }
 
 #define VENT_TOUCHING Vent_IsTouching

@@ -77,7 +77,7 @@ void GroundParticles_Start(void) {
 void RisingParticles_Update(void) {
   struct RisingParticleWork *work = Ram_HeapSlots->weather;
   struct RisingParticle *particle = work->particles;
-  union FieldCoordinate screen[3];
+  struct FieldCoordinate screen[3];
   u32 i;
   s32 x;
   s32 y;
@@ -96,8 +96,8 @@ void RisingParticles_Update(void) {
     screen[1].fixed = particle->posY;
     screen[2].fixed = particle->posZ;
     Camera_WorldToScreen(screen);
-    x = screen[0].part.pixel;
-    y = screen[2].part.pixel - particle->timer - 8;
+    x = screen[0].part[0].pixel;
+    y = screen[2].part[0].pixel - particle->timer - 8;
     particle->drift += Random16() + Q16_ONE / 2;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       if (particle->timer < 60)

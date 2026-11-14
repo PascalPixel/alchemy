@@ -77,7 +77,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   object = BattleObject_GetFar(args->targets[0])->object;
   for (i = 0; i != 56; i++) {
     step = &work->particles[8 + i];
-    SET_POSITION(step, object->x, 0, object->z);
+    SET_POSITION(step, object->x.fixed, 0, object->z.fixed);
     if (i >= gDragonCloud_SparkCounts[args->variant]) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 12;
@@ -98,7 +98,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     SPARKS[i].variant = -1;
   for (i = 0; i != 128; i++) {
     step = &SPARKS[i];
-    SET_POSITION(step, object->x, 0, object->z);
+    SET_POSITION(step, object->x.fixed, 0, object->z.fixed);
     step->velocityX = ((Random16() & 63) - 32) << 14;
     step->velocityY = (Random16() & 63) << 12;
     step->velocityZ = ((Random16() & 63) - 32) << 14;

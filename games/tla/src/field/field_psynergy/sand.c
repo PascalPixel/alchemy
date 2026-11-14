@@ -29,7 +29,7 @@ void FieldPsynergy_WatchSandGround(void) {
 
   if ((s8)party->unk2c3 != 0)
     reason = 1;
-  if (MapGrid_IsSandCell(object->x, object->z, object->layer) == 0)
+  if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) == 0)
     reason = 2;
   if (party->movementMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
@@ -37,10 +37,10 @@ void FieldPsynergy_WatchSandGround(void) {
     s32 z;
     s32 back;
 
-    if (MapGrid_IsClimbableCell(object->x, object->z, 2) == 0)
+    if (MapGrid_IsClimbableCell(object->x.fixed, object->z.fixed, 2) == 0)
       reason = 3;
-    x = object->x & 0xfff00000;
-    z = object->z & 0xfff00000;
+    x = object->x.fixed & 0xfff00000;
+    z = object->z.fixed & 0xfff00000;
     back = -0x80000;
     /* FAKEMATCH(barrier): back through an empty asm. */
     asm("" : "+l"(back));
@@ -181,9 +181,9 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
     sprite->scaleX = scene->mainObject->scaleX;
     sprite->scaleY = scene->mainObject->scaleY;
   }
-  position[0] = scene->mainObject->x;
-  position[1] = scene->mainObject->y;
-  position[2] = scene->mainObject->z;
+  position[0] = scene->mainObject->x.fixed;
+  position[1] = scene->mainObject->y.fixed;
+  position[2] = scene->mainObject->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
@@ -203,9 +203,9 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   s32 position[3];
   s32 y;
 
-  position[0] = mainObject->x;
-  position[1] = y = mainObject->y;
-  position[2] = mainObject->z;
+  position[0] = mainObject->x.fixed;
+  position[1] = y = mainObject->y.fixed;
+  position[2] = mainObject->z.fixed;
   if (high) {
     position[1] = y + 0x20000;
     Vector_AddPolarOffset(px(2), Random16(), position);
@@ -319,8 +319,8 @@ void FieldPsynergy_EndSand(void) {
   *motionFlags = 0;
   // Set before the move: 63 is held in a saved register across both calls.
   mask = 63;
-  Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
-                                     owner->z);
+  Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed,
+                                     owner->y.fixed + 0xa0000, owner->z.fixed);
   party = &gMainRoutineWork;
   Actor_SetFirstSpriteAnimationFar(owner, party->leaderActorId);
   ((u8 *)owner->sprite)[5] &= mask;
@@ -425,14 +425,14 @@ void FieldPsynergy_Sand(void) {
   s32 i;
 
   owner = effect->mainObject;
-  savedY = owner->y;
+  savedY = owner->y.fixed;
   motionFlags = &owner->motionFlags;
   savedFlags = *motionFlags;
   if (*(u16 *)((u8 *)owner->sprite + 20) != 0x2020)
     goto end;
   FieldPsynergy_MarkWorldMapTilesUsed();
   Actor_SetOthersPaused(owner, 1, 0);
-  if (MapGrid_IsSandCell(owner->x, owner->z, owner->layer) == 0)
+  if (MapGrid_IsSandCell(owner->x.fixed, owner->z.fixed, owner->layer) == 0)
     event->standing = 1;
   else
     event->standing = 0;
@@ -453,12 +453,13 @@ void FieldPsynergy_Sand(void) {
   }
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   BattleEffect_SetObjectUpdateMode(effect->mainObject, 0);
-  Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
+  Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
+                                     owner->z.fixed);
   *motionFlags = 0;
   wait(2);
   for (frame = 0; frame < 40; frame++) {
     if (frame > 0)
-      owner->y += 0x3999;
+      owner->y.fixed += 0x3999;
     if (frame & 31)
       Sound_PlayFar(SE_566);
     owner->facing += TRIG_TURN / 8;
@@ -496,7 +497,7 @@ void FieldPsynergy_Sand(void) {
       Actor_SelectAnimationFar(owner, 1);
       Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstObjectId), 0);
       FieldCamera_FollowActor(effect->firstObjectId, 1);
-      owner->y = savedY;
+      owner->y.fixed = savedY;
       *motionFlags = savedFlags;
     }
     if (frame == 61)

@@ -123,7 +123,7 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(0xf53) == 0) {
     Actor_SetPosition(64, 392, 344);
-    if (leader->x >> 20 == 24 && leader->z >> 20 == 21) {
+    if (leader->x.fixed >> 20 == 24 && leader->z.fixed >> 20 == 21) {
       LEADER_HOP();
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
       leader->velocityY = px(6);
@@ -156,7 +156,7 @@ void GabombaCatacombs_TakeThirdTeleporter(void) {
                                                                                \
     GabombaCatacombs_ClearBushes(n1, n2, 0, n3, 3, 56, n4);                    \
     Actor_SetPosition(n5, n6, n7);                                             \
-    if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
+    if (leader->x.fixed >> 20 == n8 && leader->z.fixed >> 20 == n9) {          \
       LEADER_HOP();                                                            \
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);   \
       leader->velocityY = px(6);                                               \
@@ -176,7 +176,7 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
 
   GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(10, 152, 264);
-  if (leader->x >> 20 == 9 && leader->z >> 20 == 16) {
+  if (leader->x.fixed >> 20 == 9 && leader->z.fixed >> 20 == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -205,7 +205,7 @@ void GabombaCatacombs_UncoverRoom5Puddle(void) {
 
   GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
   Actor_SetPosition(8, 280, 296);
-  if (leader->x >> 20 == 17 && leader->z >> 20 == 18) {
+  if (leader->x.fixed >> 20 == 17 && leader->z.fixed >> 20 == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -283,24 +283,24 @@ void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
 
   follower = gFieldWork->camera;
 
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z + dz;
+  position.x = object->x.fixed;
+  position.y = object->y.fixed;
+  position.z = object->z.fixed + dz;
   MapGrid_CheckCollision(object, &position);
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z + px(8);
+  position.x = object->x.fixed;
+  position.y = object->y.fixed;
+  position.z = object->z.fixed + px(8);
   if (MapGrid_CheckCollision(object, &position) <= 0) {
-    position.x = object->x + 0x5b333;
-    position.y = object->y;
-    position.z = object->z + 0x5b333;
+    position.x = object->x.fixed + 0x5b333;
+    position.y = object->y.fixed;
+    position.z = object->z.fixed + 0x5b333;
     if (MapGrid_CheckCollision(object, &position) <= 0) {
-      position.x = object->x - 0x5b333;
-      position.y = object->y;
-      position.z = object->z + 0x5b333;
+      position.x = object->x.fixed - 0x5b333;
+      position.y = object->y.fixed;
+      position.z = object->z.fixed + 0x5b333;
       if (MapGrid_CheckCollision(object, &position) <= 0) {
         follower->z += dz;
-        object->z += dz;
+        object->z.fixed += dz;
       }
     }
   }
@@ -313,8 +313,8 @@ void GabombaCatacombs_WadeStream(void) {
   struct Actor *steam;
 
   if ((gFrameCount & 7) == 0) {
-    steam = ((struct Actor *)Import_ActorCreate(14, leader->x,
-                                                leader->y + px(6), leader->z));
+    steam = ((struct Actor *)Import_ActorCreate(
+        14, leader->x.fixed, leader->y.fixed + px(6), leader->z.fixed));
     if (steam) {
       Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
@@ -368,15 +368,15 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
-  glow->x = statue->x;
-  glow->y = statue->y + px(8);
-  glow->z = statue->z;
+  glow->x.fixed = statue->x.fixed;
+  glow->y.fixed = statue->y.fixed + px(8);
+  glow->z.fixed = statue->z.fixed;
   glow->groundHeight = statue->groundHeight;
   glow->update = GabombaCatacombs_ShrinkSpray;
   Event_Wait(15);
-  glow->x = 0;
-  glow->y = 0;
-  glow->z = 0;
+  glow->x.fixed = 0;
+  glow->y.fixed = 0;
+  glow->z.fixed = 0;
   glow->update = 0;
   TALK();
   Actor_SetDestinationById(gMainRoutineWork.leaderActorId, 166, 188);
@@ -435,7 +435,8 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_SetModeById(9, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(9, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(9, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(9);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
   Actor_WaitForMoveById(9);
@@ -451,7 +452,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
 void GabombaCatacombs_TalkToStatue(void) {
   struct Actor *object = Actor_GetById(64);
 
-  if (object != NULL && object->x != 0)
+  if (object != NULL && object->x.fixed != 0)
     Scene_TalkToActor(4160);
 }
 

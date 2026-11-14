@@ -34,15 +34,15 @@ retry:
   object->velocityX = 0;
   object->velocityZ = 0;
   p = position;
-  p[0] = x = (object->x & 0xfff00000) + 0x80000;
-  p[1] = object->y;
-  p[2] = z = (object->z & 0xfff00000) + 0x80000;
+  p[0] = x = (object->x.fixed & 0xfff00000) + 0x80000;
+  p[1] = object->y.fixed;
+  p[2] = z = (object->z.fixed & 0xfff00000) + 0x80000;
   targetZ = z;
   targetX = x;
   layer = &object->layer;
   startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
-  dz = targetZ - object->z;
-  dx = targetX - object->x;
+  dz = targetZ - object->z.fixed;
+  dx = targetX - object->x.fixed;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
     angle = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
@@ -53,18 +53,18 @@ retry:
       goto end;
 #endif
   } else {
-    angle = ArcTan2(targetZ - object->z, targetX - object->x);
+    angle = ArcTan2(targetZ - object->z.fixed, targetX - object->x.fixed);
     angle = (angle + 0x2000) & 0xc000;
   }
   FieldVector_AddPolarOffset(px(16), angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > px(8)) {
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y.fixed > px(8)) {
     object->facing = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
+    object->x.fixed = x;
+    object->z.fixed = z;
     goto end;
   }
   p[0] = x;
@@ -72,7 +72,7 @@ retry:
   object->speedLimit = px(2);
   object->acceleration = 0x1999;
   object->timer = 0;
-  Actor_SetMoveTarget(object, x, object->y, z);
+  Actor_SetMoveTarget(object, x, object->y.fixed, z);
   Actor_SelectAnimation(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 #if !TLA_PATCH_1
@@ -87,7 +87,7 @@ retry:
   object->update = (void (*)(void))Actor_SteerByPad;
   goto walk;
 walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > px(8))
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y.fixed > px(8))
     goto blocked;
   if (gSlideOnIce_Stopped != 0)
 #if !TLA_PATCH_1
@@ -102,8 +102,8 @@ walkNext:
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
     /* FAKEMATCH(wrapper): the overlap call goes through Value4. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x, radius,
-               (s32)position, entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x.fixed,
+               radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -140,7 +140,7 @@ walk:
 blocked:
   object->speedLimit = px(2);
   object->acceleration = px(1);
-  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
+  Actor_SetMoveTarget(object, targetX, object->y.fixed, targetZ);
   FieldActor_WaitForMove(object);
   System_Wait(2);
   goto retry;

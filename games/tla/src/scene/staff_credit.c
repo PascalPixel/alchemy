@@ -770,7 +770,8 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; i++) {
-    child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
+    child = (FieldActor_Create(271, parent->x.fixed, parent->y.fixed,
+                               parent->z.fixed));
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -922,7 +923,7 @@ void Gauge_Update(void) {
   u32 attributes;
 
   if ((gInput & 3) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
-      leader->y > px(4)) {
+      leader->y.fixed > px(4)) {
     if (--gGauge_Countdown <= 0) {
       Party_DrainPp(1);
       gGauge_Countdown = 10;
@@ -930,7 +931,8 @@ void Gauge_Update(void) {
   }
   Gauge_Draw(Party_GetPpRatio());
   attributes = 0x80004000;
-  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
+  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x.fixed),
+        (s32)(screen));
   {
     s32 x = screen[0] - 16;
     s32 y = screen[1] - 32;

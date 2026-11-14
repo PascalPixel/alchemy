@@ -294,8 +294,8 @@ void AlhafraManor_CountAnswer(void);
     Actor_SetModeById((id), 2);                                                \
     leader_ = Actor_GetById(gMainRoutineWork.leaderActorId);                   \
     if (leader_ != 0)                                                          \
-      Actor_SetDestinationById((id), ((s16 *)&leader_->x)[1],                  \
-                               ((s16 *)&leader_->z)[1]);                       \
+      Actor_SetDestinationById((id), leader_->x.part[0].pixel,                 \
+                               leader_->z.part[0].pixel);                      \
     Actor_WaitForMoveById((id));                                               \
     Actor_SetHorizontalPositionWithTerrain((id), 0, 0);                        \
   }

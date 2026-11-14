@@ -113,7 +113,7 @@ s32 LinkLobby_PollPeerReady(void) {
 
   work = Ram_HeapSlots->fieldWork;
   result = 1;
-  z = Actor_GetById(ACTOR_FELIX)->z;
+  z = Actor_GetById(ACTOR_FELIX)->z.fixed;
 
   if (z > 0xe00000)
     Event_ClearFlag(FLAG_AREA_TEMP_04);

@@ -318,8 +318,8 @@ void Settlements_CutLeftBush(void) { Window(5, 70, 9, 7, 5, 43, 1); }
 
 void Settlements_CutStairsBush(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   if (x == 5 && z == 17) {
     FieldActor_Jump(gMainRoutineWork.leaderActorId, 2, 0);
@@ -414,9 +414,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 void Settlements_DriftSmoke(struct Actor *object) {
   s32 step;
 
-  object->x += object->timer << 8;
+  object->x.fixed += object->timer << 8;
 
-  object->y += 0x8000;
+  object->y.fixed += 0x8000;
 
   step = 0x51e;
   object->scaleX += step;
@@ -732,21 +732,21 @@ void Settlements_SplashCrate(s32 id);
 
 void Settlements_SinkPillar(void) {
   struct Actor *object = Actor_GetById(9);
-  s32 column = object->x >> 20;
-  s32 row = object->z >> 20;
+  s32 column = object->x.fixed >> 20;
+  s32 row = object->z.fixed >> 20;
   s32 i;
 
   if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
-      object->y -= px(2);
+      object->y.fixed -= px(2);
       Event_Wait(1);
     }
     Settlements_SplashCrate(9);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(21, 184, 184);
     Actor_GetById(21)->motionFlags = 0;
-    Actor_GetById(21)->y -= px(64);
+    Actor_GetById(21)->y.fixed -= px(64);
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
@@ -754,8 +754,8 @@ void Settlements_SinkPillar(void) {
 
 void Settlements_SlideCrateDownFalls(void) {
   struct Actor *object = Actor_GetById(10);
-  s32 column = object->x >> 20;
-  s32 row = object->z >> 20;
+  s32 column = object->x.fixed >> 20;
+  s32 row = object->z.fixed >> 20;
   s32 i;
   u8 *flags;
 
@@ -764,7 +764,7 @@ void Settlements_SlideCrateDownFalls(void) {
     i = 8;
   sink:
     FieldEvent_Wait(1);
-    object->y -= px(2);
+    object->y.fixed -= px(2);
     i--;
     if (i > 0)
       goto sink;
@@ -860,8 +860,8 @@ void Settlements_StepOffWall(void) {
 
 void Settlements_UnblockCrate(void) {
   struct Actor *object = Actor_Get(10);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   Settlements_SaveWallCells();
   Actor_LiftTargetBlock(gSettlements_WallCrate);
@@ -885,7 +885,7 @@ extern s32 gSettlements_CrateDropScript[];
   i = (frames);                                                                \
   do {                                                                         \
     FieldEvent_Wait(1);                                                        \
-    object->y -= px(2);                                                        \
+    object->y.fixed -= px(2);                                                  \
     i--;                                                                       \
   } while (i > 0)
 
@@ -899,8 +899,8 @@ void Settlements_DropCrate(void) {
   FieldEvent_ResolvePendingActions(0);
   EventCamera_FollowActor(10, 1);
   object = Actor_Get(10);
-  column = object->x >> 20;
-  row = object->z >> 20;
+  column = object->x.fixed >> 20;
+  row = object->z.fixed >> 20;
   if (column == 12 && row == 15) {
     Event_SetFlag(FLAG_SCENE_TEMP_21);
     object->motionFlags = 0;
@@ -963,7 +963,8 @@ void Settlements_SplashCrate(s32 id) {
   spawn.acceleration = px(1);
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
-  FieldEffect_Spawn(object->x, object->y, object->z, 0, 0, 0, 0x1c0000, &spawn);
+  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, 0, 0,
+                    0x1c0000, &spawn);
 }
 
 #include "../field/field_effect/advance_motion.c"
@@ -998,8 +999,8 @@ void Settlements_SpawnSplashRing(s32 objectId) {
     vec.z = z;
     x += x / 3;
     vec.x = x;
-    FieldEffect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
-                      &params);
+    FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
+                      vec.y, z, 0x01000001, &params);
   }
 }
 

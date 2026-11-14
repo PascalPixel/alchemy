@@ -294,25 +294,25 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_1) {
-    if (id == 8 && object->x >> 20 == 16)
+    if (id == 8 && object->x.fixed >> 20 == 16)
       Event_SetFlag(FLAG_AREA_TEMP_00);
-    if (id == 9 && object->x >> 20 == 20)
+    if (id == 9 && object->x.fixed >> 20 == 20)
       Event_SetFlag(FLAG_AREA_TEMP_01);
-    if (id == 10 && object->x >> 20 == 27)
+    if (id == 10 && object->x.fixed >> 20 == 27)
       Event_SetFlag(FLAG_AREA_TEMP_02);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_2) {
-    if (id == 10 && object->x >> 19 == 33)
+    if (id == 10 && object->x.fixed >> 19 == 33)
       Event_SetFlag(FLAG_AREA_TEMP_08);
-    if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
+    if (id == 11 && object->x.fixed >> 19 == 85 && object->z.fixed >> 19 == 83)
       TreasureIsle_RaiseLastSpikyRock();
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_3) {
-    if (id == 10 && object->x >> 19 == 83)
+    if (id == 10 && object->x.fixed >> 19 == 83)
       Event_SetFlag(FLAG_AREA_TEMP_09);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_4) {
-    if (id == 8 && object->x >> 19 == 87)
+    if (id == 8 && object->x.fixed >> 19 == 87)
       Event_SetFlag(FLAG_AREA_TEMP_0D);
   }
 }

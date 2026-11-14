@@ -483,8 +483,10 @@ void YampiDesert_StepOntoStakeTops(void) {
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       s32 index = Actor_GetCellIndex(object);
-      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
-      s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
+      s32 shape =
+          MapGrid_GetTerrainKind(layer, object->x.fixed, object->z.fixed);
+      s32 height =
+          Map_GetTerrainHeight(layer, object->x.fixed, object->z.fixed);
 
       cells += index;
       shapes += index;
@@ -527,8 +529,10 @@ next:
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
       /* FAKEMATCH(pin): the index in r10. */
       register s32 index asm("r10") = Actor_GetCellIndex(object);
-      s32 shape = MapGrid_GetTerrainKind(layer, object->x, object->z);
-      s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
+      s32 shape =
+          MapGrid_GetTerrainKind(layer, object->x.fixed, object->z.fixed);
+      s32 height =
+          Map_GetTerrainHeight(layer, object->x.fixed, object->z.fixed);
       struct MapCell *cell = cells + index;
 
       object->motionFlags = set;
@@ -873,7 +877,7 @@ loop_3:
 step_13:
   leader->scaleX += -0x400;
   leader->scaleY += -0x400;
-  leader->y += -px(2);
+  leader->y.fixed += -px(2);
   wait(1);
   i++;
   if (i <= 13)
@@ -889,7 +893,7 @@ step_13:
 step_5:
   partner->scaleX += -0x800;
   partner->scaleY += -0x800;
-  partner->y += -px(7);
+  partner->y.fixed += -px(7);
   wait(1);
   i++;
   if (i <= 5)
@@ -910,8 +914,8 @@ void YampiDesert_ScoopCenterPit(s32 mode) {
     object = Actor_GetById(9);
     MapGrid_CopyCellPictureIndicesRect(35, 39, 13, 11, 3, 3);
     Actor_SetPositionFixed(9, px(232), px(200));
-    height = Map_GetTerrainHeight(0, object->x, object->z);
-    object->y = height;
+    height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
+    object->y.fixed = height;
     object->groundHeight = height;
     GameFlag_Set(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP);
   }
@@ -931,8 +935,8 @@ s32 YampiDesert_CellCenter(s32 cell) { return cell * 16 + 8; }
 void YampiDesert_RevealRockHint(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *object = Actor_GetById(64);
-  s32 column = leader->x >> 20;
-  s32 row = leader->z >> 20;
+  s32 column = leader->x.fixed >> 20;
+  s32 row = leader->z.fixed >> 20;
 
   if (object != NULL)
     Actor_SetPositionFixed(64, 154 << 18, 222 << 17);
@@ -970,8 +974,8 @@ void YampiDesert_RevealRockHint(void) {
 
 void YampiDesert_HideRockHint(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 column = leader->x >> 20;
-  s32 row = leader->z >> 20;
+  s32 column = leader->x.fixed >> 20;
+  s32 row = leader->z.fixed >> 20;
 
   if (Actor_GetById(64) != NULL)
     Actor_SetHorizontalPositionWithTerrain(64, 0, 0);
@@ -998,8 +1002,8 @@ void YampiDesert_RevealMedalSpot(void) {
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     Actor_SetPositionFixed(64, px(288), px(240));
-    if ((leader->x + px(8)) >> 20 == (object->x + px(8)) >> 20 &&
-        (leader->z + px(8)) >> 20 == (object->z + px(8)) >> 20)
+    if ((leader->x.fixed + px(8)) >> 20 == (object->x.fixed + px(8)) >> 20 &&
+        (leader->z.fixed + px(8)) >> 20 == (object->z.fixed + px(8)) >> 20)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
                                              px(288), px(256));
   }
@@ -1306,8 +1310,8 @@ void YampiDesert_RippleFollowsScorpion(void) {
       object = Actor_GetById(21);
     else
       return;
-    gYampiDesert_SandRipple->x = object->x;
-    gYampiDesert_SandRipple->z = object->z;
+    gYampiDesert_SandRipple->x.fixed = object->x.fixed;
+    gYampiDesert_SandRipple->z.fixed = object->z.fixed;
     gYampiDesert_SandRipple->facing = object->facing;
   }
 }
@@ -1327,7 +1331,8 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
 
     if (odd == 0) {
       struct Actor *dust = (struct Actor *)Value4(
-          (s32 (*)())Import_ActorCreate, 285, object->x, object->y, object->z);
+          (s32 (*)())Import_ActorCreate, 285, object->x.fixed, object->y.fixed,
+          object->z.fixed);
 
       if (dust != NULL) {
         struct DustSprite *sprite;
@@ -1365,18 +1370,18 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
     }
   }
   if (dx != 0) {
-    object->x += dx;
+    object->x.fixed += dx;
     if (!(gInput.held & KEYS_DPAD)) {
-      s32 z = object->z >> 16;
+      s32 z = object->z.fixed >> 16;
 
-      object->z += ((8 - z % 16) << 16) >> 3;
+      object->z.fixed += ((8 - z % 16) << 16) >> 3;
     }
   } else {
-    object->z += dz;
+    object->z.fixed += dz;
     if (!(gInput.held & KEYS_DPAD)) {
-      s32 x = object->x >> 16;
+      s32 x = object->x.fixed >> 16;
 
-      object->x += ((8 - x % 16) << 16) >> 3;
+      object->x.fixed += ((8 - x % 16) << 16) >> 3;
     }
   }
 }
@@ -1400,8 +1405,8 @@ void YampiDesert_UpdateSandSlide(void) {
   }
   map = Ram_HeapSlots->mapGrid;
   index = Actor_GetCellIndex(leader);
-  column = leader->x / 0x100000;
-  row = (leader->z + px(4)) / 0x100000;
+  column = leader->x.fixed / 0x100000;
+  row = (leader->z.fixed + px(4)) / 0x100000;
   cells = map->layers[0].cells;
   here = cells + index;
   ahead = cells + (column + row * 128);
@@ -1464,7 +1469,7 @@ void YampiDesert_TrackUpperLevel(void) {
   s32 y;
   s32 z;
 
-  y = leader->y;
+  y = leader->y.fixed;
   if (y > 0x100000)
     gMainRoutineWork.unk2c3 = 1;
   else
@@ -1472,12 +1477,12 @@ void YampiDesert_TrackUpperLevel(void) {
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_3) {
     Actor_SetSpritePriority(18,
                             ((struct FieldSprite *)leader->sprite)->priority);
-    x = leader->x;
+    x = leader->x.fixed;
     if (x > 0x1d80000) {
-      z = leader->z;
+      z = leader->z.fixed;
       if (z <= 0x1e80000)
         return;
-      if (leader->y > (s32)0xfff00000)
+      if (leader->y.fixed > (s32)0xfff00000)
         gMainRoutineWork.unk2c3 = 1;
       else
         gMainRoutineWork.unk2c3 = 0;
@@ -1488,7 +1493,7 @@ void YampiDesert_TrackUpperLevel(void) {
 void YampiDesert_TrackUpperLevelFromBelow(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  if (leader->y > -px(16))
+  if (leader->y.fixed > -px(16))
     gMainRoutineWork.unk2c3 = 1;
   else
     gMainRoutineWork.unk2c3 = 0;
@@ -1503,7 +1508,7 @@ void YampiDesert_TrackUpperLevelOnRamp(void) {
   s32 y;
 
   if (cell->collisionCode == 20) {
-    y = leader->y;
+    y = leader->y.fixed;
     if (y > 0x100000) {
       gMainRoutineWork.unk2c3 = 1;
       return;
@@ -1515,8 +1520,8 @@ void YampiDesert_TrackUpperLevelOnRamp(void) {
 
 void YampiDesert_TrackLeaderInPitArea(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  u32 x = leader->x >> 20;
-  u32 z = leader->z >> 20;
+  u32 x = leader->x.fixed >> 20;
+  u32 z = leader->z.fixed >> 20;
 
   if (x > 12 && z > 10 && x <= 15 && z <= 13)
     GameFlag_Set(FLAG_MENUS_RAISE_TRIGGER);
@@ -1893,7 +1898,8 @@ void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   Actor_FaceDirectionAndRefreshById(party->leaderActorId, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 0);
   Actor_SetModeById(party->leaderActorId, 13);
-  Actor_SetMoveTarget(object, object->x, object->y - px(10), object->z);
+  Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed - px(10),
+                      object->z.fixed);
   Actor_WaitForMove(object);
   Actor_SetModeById(party->leaderActorId, 10);
   Sound_Play(SE_MAP_EXIT);
@@ -1909,8 +1915,8 @@ void YampiDesert_ClimbRevealedLadder(void) {
 
   if (GameFlag_Get(FLAG_YAMPI_DESERT_LADDER_DUG_UP)) {
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    x = object->x >> 20;
-    z = object->z >> 20;
+    x = object->x.fixed >> 20;
+    z = object->z.fixed >> 20;
     if (x == 8) {
       if (z == 31 && !(gInput.held & KEY_DOWN))
         return;
@@ -1952,7 +1958,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   wait(1);
   Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 0);
   leader->motionFlags = 0;
-  leader->y = px(130);
+  leader->y.fixed = px(130);
   leader->gravity = Q16_ONE / 2;
   leader->bounce = 0;
   Actor_SetSpriteFlags(Actor_GetById(8), 0);
@@ -1965,7 +1971,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
           angle);
   }
   actor8->motionFlags = 0;
-  actor8->y = px(130);
+  actor8->y.fixed = px(130);
   actor8->gravity = Q16_ONE / 2;
   actor8->bounce = 0;
   wait(1);
@@ -1976,7 +1982,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   leader->motionFlags = 3;
   Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 1);
   FieldEvent_Wait(24);
-  YampiDesert_BurstSand(leader->x, leader->y, leader->z);
+  YampiDesert_BurstSand(leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(party->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -1985,7 +1991,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   actor8->motionFlags = 3;
   Actor_SetSpriteFlags(Actor_GetById(8), 1);
   FieldEvent_Wait(24);
-  YampiDesert_BurstSand(actor8->x, actor8->y, actor8->z);
+  YampiDesert_BurstSand(actor8->x.fixed, actor8->y.fixed, actor8->z.fixed);
   Sound_Play(SE_THUMP);
   Actor_FaceDirectionById(party->leaderActorId, TRIG_TURN * 3 / 4, 0);
   FieldEvent_Wait(40);
@@ -2363,7 +2369,7 @@ void YampiDesert_UpdateRisingSand(void) {
     if (entry->id == 0)
       continue;
     object = Actor_GetById(entry->id);
-    if (object->x == 0 && object->z == 0)
+    if (object->x.fixed == 0 && object->z.fixed == 0)
       continue;
     if (entry->timer == entry->riseAt) {
       Sound_Play(SE_CURSE_FALL);
@@ -2390,9 +2396,9 @@ void YampiDesert_UpdateRisingSand(void) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }
-    index = (object->x >> 20) + (object->z >> 20) * 128;
+    index = (object->x.fixed >> 20) + (object->z.fixed >> 20) * 128;
     terrain[index] = (u8)work->value + i;
-    *collision = ((PIXELS__s3910(object->y) + entry->height) / 8) << 8;
+    *collision = ((PIXELS__s3910(object->y.fixed) + entry->height) / 8) << 8;
     cell = &cells[index];
     if (entry->step != 0)
       cell->attributeB = 0;
@@ -2406,16 +2412,16 @@ void YampiDesert_UpdateRisingSand(void) {
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
-      rider->y = object->y + -0x100000;
+      rider->y.fixed = object->y.fixed + -0x100000;
     } else {
       s32 wave;
 
       entry->phase += 0x1000;
       wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
-      rider->y = object->y + (entry->height << 16) + wave;
+      rider->y.fixed = object->y.fixed + (entry->height << 16) + wave;
     }
-    rider->x = object->x;
-    rider->z = object->z;
+    rider->x.fixed = object->x.fixed;
+    rider->z.fixed = object->z.fixed;
   }
 }
 
@@ -2452,9 +2458,9 @@ void YampiDesert_DrawRisingSand(void) {
   again:
     if (count > 79)
       goto next;
-    x = object->x - viewX;
-    y = object->y + (h << 16) - originY;
-    z = object->z - viewZ - originY;
+    x = object->x.fixed - viewX;
+    y = object->y.fixed + (h << 16) - originY;
+    z = object->z.fixed - viewZ - originY;
     sy = z - y;
     x = (x >> 16) - 8;
     sy = (sy >> 16) - 16;
@@ -2477,9 +2483,9 @@ void YampiDesert_DrawRisingSand(void) {
   top:
     if (count > 79)
       continue;
-    x = object->x - viewX;
-    y = object->y + (entry->height << 16) - originY;
-    z = object->z - viewZ - originY;
+    x = object->x.fixed - viewX;
+    y = object->y.fixed + (entry->height << 16) - originY;
+    z = object->z.fixed - viewZ - originY;
     sy = z - y;
     x = (x >> 16) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
@@ -2552,7 +2558,8 @@ struct RideEntry *YampiDesert_AddRisingSand(s32 slot, s32 id, s32 timer,
     entry->unk14 = 0;
     object->priorityFlags |= 2;
   }
-  rider = Import_ActorCreate(0x8000, object->x, object->y, object->z);
+  rider = Import_ActorCreate(0x8000, object->x.fixed, object->y.fixed,
+                             object->z.fixed);
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= 128;

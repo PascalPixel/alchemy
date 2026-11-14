@@ -189,8 +189,8 @@ L_020081f8:
   Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
   v7 = 4;
 L_0200821a:
-  v6 = (v8->x >> 20);
-  v5 = (v8->z >> 20);
+  v6 = (v8->x.fixed >> 20);
+  v5 = (v8->z.fixed >> 20);
   if (v6 != 35)
     goto L_02008244;
   if (v5 != 15)
@@ -290,8 +290,8 @@ s32 JupiterLighthouse_IsOnWestPath(struct Actor *actor) {
   s32 i;
 
   for (i = 0; gJupiterLighthouse_WestPathCells[i][0] != -1; i++) {
-    if (gJupiterLighthouse_WestPathCells[i][0] == actor->x >> 20 &&
-        gJupiterLighthouse_WestPathCells[i][1] == actor->z >> 20)
+    if (gJupiterLighthouse_WestPathCells[i][0] == actor->x.fixed >> 20 &&
+        gJupiterLighthouse_WestPathCells[i][1] == actor->z.fixed >> 20)
       return 1;
   }
   return 0;
@@ -317,7 +317,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
       if (JupiterLighthouse_IsOnWestPath(object)) {
         object->motionFlags = 0;
-        object->y -= px(2);
+        object->y.fixed -= px(2);
       }
       if (++i <= 5)
         goto L_0200864e;
@@ -331,7 +331,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
     object->motionFlags = 3;
     i++;
-    object->y = object->groundHeight;
+    object->y.fixed = object->groundHeight;
     if (i <= 5)
       goto L_02008684;
     /* FAKEMATCH(dead): an empty once-only block keeps the loop's exit branch
@@ -353,7 +353,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
       if (JupiterLighthouse_IsOnWestPath(object)) {
         object->motionFlags = 0;
-        object->y += px(2);
+        object->y.fixed += px(2);
       }
       if (++i <= 5)
         goto L_0200870c;
@@ -367,7 +367,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
     if (JupiterLighthouse_IsOnWestPath(object)) {
       object->motionFlags = 4;
-      object->y = 0x208000;
+      object->y.fixed = 0x208000;
     }
     if (++i <= 5)
       goto L_02008744;
@@ -378,8 +378,8 @@ void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == ACTOR_THIRD_PATH_BLOCK) {
-    MapGrid_SetCellHeight(object->x, object->z, 0, 6);
-    MapGrid_ClearAttributeBBitsAt(object->x, object->z, 0, 128);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 6);
+    MapGrid_ClearAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 128);
   }
 }
 
@@ -396,17 +396,18 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   s32 i;
 
   if (object->groundHeight !=
-      Map_GetTerrainHeight(object->layer, object->x, object->z)) {
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed)) {
     object->motionFlags = 3;
     wait(2);
     i = 0;
-    if (object->y > object->groundHeight || object->velocityY != 0) {
+    if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
       do {
         wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y > object->groundHeight || object->velocityY != 0);
+      } while (object->y.fixed > object->groundHeight ||
+               object->velocityY != 0);
     }
     Event_PlaySound(SE_THUMP);
     object->motionFlags = 0;
@@ -442,7 +443,8 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
-    FieldMapGrid_SetCellBehavior(object->x, object->z, object->layer, 255);
+    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed,
+                                 object->layer, 255);
     Event_Wait(30);
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
     FieldCamera_WaitForArrival();
@@ -451,7 +453,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   }
   if (id != ACTOR_THIRD_PATH_BLOCK)
     return;
-  if (object->x >> 20 == 8 && *(s32 *)&object->z >> 20 == 12) {
+  if (object->x.fixed >> 20 == 8 && *(s32 *)&object->z.fixed >> 20 == 12) {
     Event_SetFlag(FLAG_THIRD_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_PATH_BLOCK), 0);
     Event_Wait(30);
@@ -465,10 +467,11 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
-    FieldMapGrid_SetCellBehavior(object->x, object->z, object->layer, 255);
+    FieldMapGrid_SetCellBehavior(object->x.fixed, object->z.fixed,
+                                 object->layer, 255);
   } else {
-    MapGrid_SetCellHeight(object->x, object->z, 0, 8);
-    MapGrid_SetAttributeBBitsAt(object->x, object->z, 0, 128);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 8);
+    MapGrid_SetAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 128);
   }
 }
 
@@ -485,7 +488,7 @@ void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   Actor_SetPositionFixed(id, (x << 20) + px(8), (z << 20) + px(8));
   object->motionFlags = 3;
   object->groundHeight = px(-16);
-  object->y = px(-16);
+  object->y.fixed = px(-16);
   object->velocityY = px(8);
   Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
@@ -531,24 +534,24 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   System_Wait(2);
   object = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
   i = 0;
-  if (object->y > object->groundHeight || object->velocityY != 0) {
+  if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
       if (i > 29)
         break;
-    } while (object->y > object->groundHeight || object->velocityY != 0);
+    } while (object->y.fixed > object->groundHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
   object = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
   i = 0;
-  if (object->y > object->groundHeight || object->velocityY != 0) {
+  if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
       if (i > 29)
         break;
-    } while (object->y > object->groundHeight || object->velocityY != 0);
+    } while (object->y.fixed > object->groundHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
   FieldEvent_Wait(30);
@@ -568,7 +571,7 @@ void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
   System_Wait(2);
   object = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
   for (i = 0; i < 30; i++) {
-    if (object->y <= object->groundHeight && object->velocityY == 0)
+    if (object->y.fixed <= object->groundHeight && object->velocityY == 0)
       break;
     System_Wait(1);
   }
@@ -590,15 +593,17 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   s32 facing;
 
   facing = (leader->facing + 0x2000) & 0xc000;
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   FieldVector_AddPolarOffset(px(16), facing, position);
   x = position[0] >> 20;
   z = position[2] >> 20;
-  if (first->y == 0 && x == first->x >> 20 && z == first->z >> 20)
+  if (first->y.fixed == 0 && x == first->x.fixed >> 20 &&
+      z == first->z.fixed >> 20)
     found = 1;
-  if (second->y == 0 && x == second->x >> 20 && z == second->z >> 20)
+  if (second->y.fixed == 0 && x == second->x.fixed >> 20 &&
+      z == second->z.fixed >> 20)
     found = 1;
   if (found == 0) {
     if (x == 35 && z == 15 &&
@@ -741,9 +746,9 @@ s32 Scene_PrepareMap(void) {
   JupiterLighthouse_DrawBlocksInGaps();
   if (!Event_GetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
     object = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
-    value = MapGrid_GetCellHeight(object->x, object->z, 0);
-    MapGrid_SetCellHeight(object->x, object->z, 0, value + 2);
-    MapGrid_SetAttributeBBitsAt(object->x, object->z, 0, 0x80);
+    value = MapGrid_GetCellHeight(object->x.fixed, object->z.fixed, 0);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, value + 2);
+    MapGrid_SetAttributeBBitsAt(object->x.fixed, object->z.fixed, 0, 0x80);
   }
   JupiterLighthouse_LightWestPath(0);
   return 0;
@@ -817,10 +822,10 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+    position[0] = self->x.fixed;
+    position[1] = self->y.fixed;
+    position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
@@ -829,11 +834,11 @@ void Whirlwind_UpdateLower(struct Actor *self) {
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
+        distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
-          distance = self->y - leader->y;
+          distance = self->y.fixed - leader->y.fixed;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -858,9 +863,9 @@ void Whirlwind_UpdateLower(struct Actor *self) {
         do {
           multiply = Iwram_MulQ16;
         } while (0);
-        self->x += multiply(cosine, speed);
+        self->x.fixed += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }

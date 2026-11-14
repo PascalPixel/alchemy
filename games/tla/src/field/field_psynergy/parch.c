@@ -84,9 +84,9 @@ void FieldPsynergy_Parch(void) {
   fade = -1;
   pending = NULL;
   FieldPsynergy_FadeToCastColor();
-  pos[0] = caster->x;
-  pos[1] = caster->y;
-  pos[2] = caster->z;
+  pos[0] = caster->x.fixed;
+  pos[1] = caster->y.fixed;
+  pos[2] = caster->z.fixed;
   Vector_AddPolarOffset(px(32), scene->facing, pos);
 
   i = 0;
@@ -97,8 +97,8 @@ void FieldPsynergy_Parch(void) {
     animation = object->sprite;
     if (object->script != NULL && animation->definition[0] == kind &&
         animation->unk18 == 1 &&
-        FieldPsynergy_CheckOverlap(pos, 4, &object->x, object->radius - 2) >=
-            0) {
+        FieldPsynergy_CheckOverlap(pos, 4, &object->x.fixed,
+                                   object->radius - 2) >= 0) {
       result = 2;
       found = i;
       Actor_GetById(i)->priorityFlags |= 2;
@@ -347,7 +347,7 @@ loaded:
 
   if (found != -1) {
     struct Actor *marked = Actor_GetById(found);
-    MapGrid_SetCellBehavior(marked->x, marked->z, marked->layer, 0);
+    MapGrid_SetCellBehavior(marked->x.fixed, marked->z.fixed, marked->layer, 0);
     Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)

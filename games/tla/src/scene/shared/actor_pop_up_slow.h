@@ -3,7 +3,8 @@ s32 Actor_PopUpSlow(struct Actor *object) {
   s32 frame = object->timer;
 
   if (frame == 0) {
-    object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
+    object->y.fixed =
+        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + 0x100000;
     object->scaleX = frame;
     object->scaleY = frame;
     object->speedLimit = px(1);
@@ -25,7 +26,7 @@ s32 Actor_PopUpSlow(struct Actor *object) {
   } else {
     Actor_SelectAnimation(object->watchedActor, 1);
     Event_PlaySound(SE_POP_UP);
-    object->y = Map_GetTerrainHeight(0, object->x, object->z);
+    object->y.fixed = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
     object->watchedActor = 0;
     return 0;
   }

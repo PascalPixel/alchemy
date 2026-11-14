@@ -294,7 +294,7 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 #include "shared/scene_turn_actor_and_run.h"
 
 void Mikasalla_StepOntoLadderFacingNorth(void) {
-  s32 x = ((s16 *)&Actor_GetById(ACTOR_FELIX)->x)[1];
+  s32 x = Actor_GetById(ACTOR_FELIX)->x.part[0].pixel;
 
   Event_Start();
   Event_ResolvePendingActions(0);

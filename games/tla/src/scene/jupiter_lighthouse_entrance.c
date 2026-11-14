@@ -110,7 +110,7 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   if (!Event_GetFlag(0xfe2)) {
     Actor_SetPosition(64, 280, 440);
-    if (leader->x >> 20 == 17 && leader->z >> 20 == 27) {
+    if (leader->x.fixed >> 20 == 17 && leader->z.fixed >> 20 == 27) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,

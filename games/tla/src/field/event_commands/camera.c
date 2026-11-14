@@ -36,20 +36,20 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   // either side, 96 from the top and 64 from the bottom, the z limits moved
   // down the map by its height.
   minimumX = map->minX + 0x780000;
-  objectZOffset = object->y;
+  objectZOffset = object->y.fixed;
   minimumZ = map->minZ + objectZOffset + 0x600000;
   maximumX = map->maxX + 0xFF880000;
   maximumZ = map->maxZ + objectZOffset + 0xFFC00000;
-  map->origin = &object->x;
+  map->origin = &object->x.fixed;
   Actor_StartIdleFar(object);
   if (positionX == -1) {
-    positionX = object->x;
+    positionX = object->x.fixed;
   }
   if (positionY == -1) {
-    positionY = object->y;
+    positionY = object->y.fixed;
   }
   if (positionZ == -1) {
-    positionZ = object->z;
+    positionZ = object->z.fixed;
   }
   if (positionX < minimumX) {
     positionX = minimumX;
@@ -64,7 +64,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
     positionZ = maximumZ;
   }
   if (shouldUseSetter == 0) {
-    SET_POSITION(object, positionX, positionY, positionZ);
+    SET_ACTOR_POSITION(object, positionX, positionY, positionZ);
     wait(1);
     if (runtimeBlock->mode != 3) {
       Map_CenterOnFollowedPointFar();
@@ -80,7 +80,7 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
-    FieldCamera_MoveWithinMapBounds(obj->x, -1, obj->z, use_setter);
+    FieldCamera_MoveWithinMapBounds(obj->x.fixed, -1, obj->z.fixed, use_setter);
 }
 
 /// As FieldCamera_MoveToActorById, to the actor's height too.
@@ -97,7 +97,8 @@ void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
   struct Actor *obj = ObjectTable_Get(id);
 
   if (obj != NULL)
-    FieldCamera_MoveWithinMapBounds(obj->x, obj->y, obj->z, use_setter);
+    FieldCamera_MoveWithinMapBounds(obj->x.fixed, obj->y.fixed, obj->z.fixed,
+                                    use_setter);
 }
 
 /// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
@@ -125,7 +126,8 @@ void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
     Actor_StartCameraFar(object, NULL);
     object->watchedActor = target;
     if (keepCurrentPosition == 0) {
-      SET_POSITION(object, target->x, target->y, target->z);
+      SET_ACTOR_POSITION(object, target->x.fixed, target->y.fixed,
+                         target->z.fixed);
     }
   }
 }

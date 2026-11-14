@@ -107,10 +107,10 @@ void BattleEffect_LandFallingObject(struct FallingObject *object) {
 void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
   s32 r;
 
-  object->y -= 0x4ccc;
+  object->y.fixed -= 0x4ccc;
   r = Random16();
-  object->x += r - Random16();
-  if (object->y <= object->groundHeight) {
+  object->x.fixed += r - Random16();
+  if (object->y.fixed <= object->groundHeight) {
     Actor_StartScriptFar((struct Actor *)object,
                          (u32)gBattleEffect_SharedParticleScript);
   }
@@ -147,12 +147,13 @@ void FieldPsynergy_Douse(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   if (work->anchor == 0) {
-    work->x = target->x;
-    work->z = target->z;
+    work->x = target->x.fixed;
+    work->z = target->z.fixed;
     Vector_AddPolarOffset(px(16), work->angle, (struct EffectVector *)&work->x);
   }
   from = &start;
-  SET_POSITION(from, target->x, target->y + px(16), target->z);
+  SET_POSITION(from, target->x.fixed, target->y.fixed + px(16),
+               target->z.fixed);
   to = &end;
   to->x = work->x;
   y = work->y;
@@ -176,15 +177,15 @@ void FieldPsynergy_Douse(void) {
       e = b->x;
       t = a->x;
       t += (e - t) * i / 10;
-      orb->x = t;
+      orb->x.fixed = t;
       e = b->y;
       t = a->y;
       t += (e - t) * i / 10;
-      orb->y = t;
+      orb->y.fixed = t;
       e = b->z;
       t = a->z;
       t += (e - t) * i / 10;
-      orb->z = t;
+      orb->z.fixed = t;
     }
     scale = Lerp10(Q16_ONE / 4, Q16_ONE, i);
     orb->scaleX = scale;
@@ -198,20 +199,20 @@ void FieldPsynergy_Douse(void) {
     if ((s8)work->highArc == 0)
       count = 24;
     for (n = 0; n < count; n++) {
-      SET_POSITION(&pos, orb->x, orb->y, orb->z);
+      SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
       Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       if (n == count - 1) {
         wait(20);
-        SET_POSITION(&pos, orb->x, orb->y, orb->z);
+        SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
       }
       mote = Actor_Spawn(301, pos.x, pos.y, pos.z);
       if (mote != 0) {
         struct Actor *ground = work->anchor;
 
         if (ground != 0) {
-          mote->groundHeight = ground->y;
+          mote->groundHeight = ground->y.fixed;
           if (raised == 1)
-            mote->groundHeight = ground->y + px(32);
+            mote->groundHeight = ground->y.fixed + px(32);
         } else {
           mote->groundHeight = pos.y - px(32);
         }
@@ -235,7 +236,7 @@ void FieldPsynergy_Douse(void) {
     else
       count = 30;
     for (n = 0; n < count; n++) {
-      SET_POSITION(&pos, orb->x, orb->y, orb->z);
+      SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
       Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       mote = Actor_Spawn(672, pos.x, pos.y, pos.z);
       if (mote != 0) {
@@ -262,15 +263,15 @@ void FieldPsynergy_Douse(void) {
       e = b->x;
       t = a->x;
       t += (e - t) * i / 10;
-      orb->x = t;
+      orb->x.fixed = t;
       e = b->y;
       t = a->y;
       t += (e - t) * i / 10;
-      orb->y = t;
+      orb->y.fixed = t;
       e = b->z;
       t = a->z;
       t += (e - t) * i / 10;
-      orb->z = t;
+      orb->z.fixed = t;
     }
     scale = Lerp10(Q16_ONE, Q16_ONE / 4, i);
     orb->scaleX = scale;
@@ -291,7 +292,8 @@ void FieldEffect_SpawnFallingParticles(void) {
   u32 dist;
 
   src = ((struct BattleFxScene *)Ram_HeapSlots->fieldEffectWork)->child;
-  SET_POSITION(&pos, src->x, src->y - Random16() * 16 + px(24), src->z);
+  SET_POSITION(&pos, src->x.fixed, src->y.fixed - Random16() * 16 + px(24),
+               src->z.fixed);
 
   dist = Random16() * 3;
   Vector_AddPolarOffset(dist * 16, Random16(), &pos);

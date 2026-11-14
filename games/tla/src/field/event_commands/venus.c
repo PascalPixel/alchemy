@@ -158,12 +158,12 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   state = *statePointer;
 
   if (state == 0) {
-    position.x = source->x;
-    position.y = source->y + Random16() * 5 + 0xf0000;
+    position.x = source->x.fixed;
+    position.y = source->y.fixed + Random16() * 5 + 0xf0000;
     {
       struct EffectVector *p = &position;
 
-      position.z = source->z;
+      position.z = source->z.fixed;
       Camera_WorldToScreen(p);
     }
     Vector_AddPolarOffset(Random16() * 6 + 0x20000, Random16(), &position);

@@ -142,7 +142,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   rise:
     if (i == 20)
       Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    gGabombaStatueChamber_ShownItem->y += 0x8000;
+    gGabombaStatueChamber_ShownItem->y.fixed += 0x8000;
     wait(1);
     if (++i <= 79)
       goto rise;
@@ -331,7 +331,8 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
     leader = OBJECT(gMainRoutineWork.leaderActorId);
     object = gGabombaStatueChamber_ShownItem;
     object->motionFlags = 0;
-    Actor_SetMoveTarget((s32)object, leader->x, leader->y + px(36), leader->z);
+    Actor_SetMoveTarget((s32)object, leader->x.fixed, leader->y.fixed + px(36),
+                        leader->z.fixed);
     Actor_WaitForMove((s32)gGabombaStatueChamber_ShownItem);
   }
   PartyInventory_GiveItem(ITEM_BLACK_CRYSTAL, 0);
@@ -573,7 +574,7 @@ void GabombaStatueChamber_AkafubuReachesChamber(void) {
 }
 
 void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
-  object->x = Actor_GetById(8)->x;
+  object->x.fixed = Actor_GetById(8)->x.fixed;
 }
 #undef EVENT_WORK
 #undef OBJECT
@@ -1068,7 +1069,7 @@ void GabombaStatueChamber_InitializeRoom3(void) {
   for (i = 0; i <= 17; i++)
     Actor_SetSpritePriority(i + 15, 2);
   Actor_DisableById(8);
-  Actor_GetById(8)->y = 0;
+  Actor_GetById(8)->y.fixed = 0;
   if (GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     GabombaStatueChamber_OpenTheLap();
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);

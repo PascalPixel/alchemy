@@ -235,7 +235,7 @@ s32 FieldSequence_Run(void) {
     GameFlag_Set(FLAG_FIELD_HANDLING_REQUESTS);
     leader = WorldMap_Unfreeze();
     Actor_StartIdleFar(leader);
-    SET_POSITION(party, leader->x, 0, leader->z);
+    SET_POSITION(party, leader->x.fixed, 0, leader->z.fixed);
     party->heading = leader->facing;
     *turn = leader->layer;
     while (Field_CountRequests() != 0) {
@@ -473,7 +473,8 @@ s32 FieldSequence_Run(void) {
       if (gDebugMode == 0 || !GameFlag_Get(FLAG_DEBUG_STEPS_OFF)) {
         if (*pending == 0 ||
             (leader->timer == 0 && *(s16 *)&leader->userValue == 0))
-          Field_UpdateWalking(leader->layer, leader->x, leader->y, leader->z);
+          Field_UpdateWalking(leader->layer, leader->x.fixed, leader->y.fixed,
+                              leader->z.fixed);
       }
     } while (Field_CountRequests() == 0);
   }

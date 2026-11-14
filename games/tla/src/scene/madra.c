@@ -790,8 +790,8 @@ void Madra_InspectPartyAtGate(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_SetFlag(0x910);
@@ -1138,8 +1138,8 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
-                         ((s16 *)&object->z)[1]);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
+                         object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
@@ -1662,32 +1662,32 @@ void Madra_MeetKarst(void) {
   SET_MODE(32, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_KRADEN, ((s16 *)&object->x)[1],
-                             ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
+                             object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   SET_MODE(5, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_JENNA, ((s16 *)&object->x)[1],
-                             ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(ACTOR_JENNA, object->x.part[0].pixel,
+                             object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   SET_MODE(6, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_SHEBA, ((s16 *)&object->x)[1],
-                             ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].pixel,
+                             object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   SET_MODE(7, 2);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_PIERS, ((s16 *)&object->x)[1],
-                             ((s16 *)&object->z)[1]);
+    Actor_SetDestinationById(ACTOR_PIERS, object->x.part[0].pixel,
+                             object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   GameFlag_Set(0x980);

@@ -285,11 +285,11 @@ growBall:
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(9);
   Event_PlaySound(SE_CRASH);
-  t59 = v_r6->x;
+  t59 = v_r6->x.fixed;
   from[0] = (t59 - 0x20000);
-  t60 = v_r6->y;
+  t60 = v_r6->y.fixed;
   from[1] = t60;
-  t61 = v_r6->z;
+  t61 = v_r6->z.fixed;
   from[2] = (t61 - 0x80000);
   to[0] = 0x1900000;
   to[1] = 0;

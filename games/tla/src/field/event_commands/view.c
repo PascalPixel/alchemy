@@ -83,15 +83,16 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   link = object->watchedActor;
   if (link != NULL) {
     object->motionFlags = 0;
-    object->x = link->x;
-    object->y = link->y +
-                ((s8)Resource_GetMetadataRecordFarFar(
-                     *(s16 *)Scene_FindActorPlacement((s16)object->userValue))
-                     ->boxX
-                 << 16) +
-                0x80000;
+    object->x.fixed = link->x.fixed;
+    object->y.fixed =
+        link->y.fixed +
+        ((s8)Resource_GetMetadataRecordFarFar(
+             *(s16 *)Scene_FindActorPlacement((s16)object->userValue))
+             ->boxX
+         << 16) +
+        0x80000;
     object->groundHeight = link->groundHeight;
-    object->z = link->z;
+    object->z.fixed = link->z.fixed;
   }
   return 0;
 }

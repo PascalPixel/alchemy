@@ -42,14 +42,14 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
-    Func_080ea8a8__f0ea8d4(object->x + 0x100000, object->z, object->layer,
-                           object->groundHeight);
-    Func_080ea8a8__f0ea8d4(object->x - 0x100000, object->z, object->layer,
-                           object->groundHeight);
-    Func_080ea8a8__f0ea8d4(object->x, object->z + 0x100000, object->layer,
-                           object->groundHeight);
-    Func_080ea8a8__f0ea8d4(object->x, object->z - 0x100000, object->layer,
-                           object->groundHeight);
+    Func_080ea8a8__f0ea8d4(object->x.fixed + 0x100000, object->z.fixed,
+                           object->layer, object->groundHeight);
+    Func_080ea8a8__f0ea8d4(object->x.fixed - 0x100000, object->z.fixed,
+                           object->layer, object->groundHeight);
+    Func_080ea8a8__f0ea8d4(object->x.fixed, object->z.fixed + 0x100000,
+                           object->layer, object->groundHeight);
+    Func_080ea8a8__f0ea8d4(object->x.fixed, object->z.fixed - 0x100000,
+                           object->layer, object->groundHeight);
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(object, 0);
       GameFlag_Clear(flag);
@@ -59,10 +59,10 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
   }
   FlagBlock_ApplyFlags(first);
   owner = Actor_GetById(Party_GetLeaderActor());
-  if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->layer,
+  if (Func_08020310__f0ea8d4(owner->x.fixed, owner->z.fixed, owner->layer,
                              owner->groundHeight))
-    owner->groundHeight = owner->y =
-        MapGrid_GetTerrainHeightFar(owner->layer, owner->x, owner->z);
+    owner->groundHeight = owner->y.fixed = MapGrid_GetTerrainHeightFar(
+        owner->layer, owner->x.fixed, owner->z.fixed);
 }
 
 struct SwitchCell {
@@ -115,10 +115,11 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       slot = Actor_GetCellIndex(object);
-      key = MapGrid_GetTerrainKindFar(object->layer, object->x, object->z);
-      height =
-          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z) >>
-          19;
+      key = MapGrid_GetTerrainKindFar(object->layer, object->x.fixed,
+                                      object->z.fixed);
+      height = MapGrid_GetTerrainHeightFar(object->layer, object->x.fixed,
+                                           object->z.fixed) >>
+               19;
 
       *(struct Actor **)(event + 0xcbc) = object;
       if (GameFlag_Get(flag)) {
@@ -128,7 +129,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
         height += 4;
         GameFlag_Set(flag);
       }
-      if ((object->x | object->z) != 0) {
+      if ((object->x.fixed | object->z.fixed) != 0) {
 
         cells += slot;
         shapes += slot;
@@ -151,7 +152,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
 /// Returns the index of object's cell in a 128-cell-wide map layer.
 s32 Actor_GetCellIndex(struct Actor *object) {
-  return object->x / 0x100000 + (object->z / 0x100000) * 128;
+  return object->x.fixed / 0x100000 + (object->z.fixed / 0x100000) * 128;
 }
 
 /// Finds the tag (key, value) in the 4-byte entries at gMapCollision, or adds

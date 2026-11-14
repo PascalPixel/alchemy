@@ -6,7 +6,7 @@ void Leader_Search(void) {
   Event_PlaySound(SE_POWER_UP);
   Actor_SetFlightMode(object, 1);
   for (i = 0; i < 20; i++) {
-    s32 hit = WorldMap_GetBlockPlace(&object->x);
+    s32 hit = WorldMap_GetBlockPlace(&object->x.fixed);
 
     if (hit != 0 && SceneEvent_FindActiveRecord(2, hit) != 0)
       break;

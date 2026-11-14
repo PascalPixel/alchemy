@@ -10,8 +10,8 @@ void Leader_RiseFromWater(void) {
     FieldEvent_ResolvePendingActions(0);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     leader->motionFlags = flag;
-    Actor_SetPositionFixed(*owner, ((s16 *)&leader->x)[1] << 16,
-                           (((s16 *)&leader->z)[1] << 16) - 0x100000);
+    Actor_SetPositionFixed(*owner, leader->x.part[0].pixel << 16,
+                           (leader->z.part[0].pixel << 16) - 0x100000);
     FieldActor_SetSpriteColor(Actor_Get(*owner), 9);
     Actor_SetSpriteFlags(Actor_Get(*owner), 0);
     Event_StartScreenTransition();

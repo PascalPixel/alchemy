@@ -193,7 +193,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 void AlhafranCave_TrackLeadersLevel(void) {
-  s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y;
+  s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y < 0x80000)
     gMainRoutineWork.unk2c3 = 0;
@@ -204,8 +204,9 @@ void AlhafranCave_TrackLeadersLevel(void) {
 s32 AlhafranCave_DrawCrateSprite(void) {
   struct Actor *object = Actor_Get(8);
 
-  BattleEffect_DrawSpriteAtWorldPosition(gAlhafranCave_CrateSprite, object->x,
-                                         object->y + px(28), object->z);
+  BattleEffect_DrawSpriteAtWorldPosition(
+      gAlhafranCave_CrateSprite, object->x.fixed, object->y.fixed + px(28),
+      object->z.fixed);
   return 0;
 }
 
@@ -248,22 +249,22 @@ void AlhafranCave_SetUpCave(void) {
     AlhafranCave_OpenWayToJail();
   object = Actor_Get(8);
   object->motionFlags = 0;
-  object->y = px(12);
+  object->y.fixed = px(12);
   object = Actor_Get(9);
   object->motionFlags = 0;
-  object->y = px(12);
+  object->y.fixed = px(12);
   object = Actor_Get(10);
   object->motionFlags = 0;
-  object->y = px(12);
+  object->y.fixed = px(12);
   Actor_SetSpriteColorMode(Actor_Get(8), 6);
   Actor_SetSpriteColorMode(Actor_Get(9), 6);
   Actor_SetSpriteColorMode(Actor_Get(10), 6);
   object = Actor_Get(12);
   object->motionFlags = 0;
-  object->y = px(16);
+  object->y.fixed = px(16);
   object = Actor_Get(11);
   object->motionFlags = 0;
-  object->y = px(16);
+  object->y.fixed = px(16);
   FieldActor_SetSpriteRotationById(13, 0x1000);
   Actor_SetAnimation(11, 2);
   Actor_SetAnimation(12, 3);
@@ -284,13 +285,13 @@ void AlhafranCave_SetUpCave(void) {
   object = Actor_Get(14);
   object->motionFlags = 0;
   object->groundHeight = 0;
-  object->y = 0;
-  MapGrid_SetCellHeight(object->x, object->z, 0, 4);
+  object->y.fixed = 0;
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
   object = Actor_Get(15);
   object->motionFlags = 0;
   object->groundHeight = 0;
-  object->y = 0;
-  MapGrid_SetCellHeight(object->x, object->z, 0, 4);
+  object->y.fixed = 0;
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
   Actor_SetActionCallback(Actor_Get(16), 9);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
@@ -500,10 +501,10 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
   effect = FieldEffect_SpawnMoveHand(actor21);
-  position[0] = actor15->x;
+  position[0] = actor15->x.fixed;
   effect->watchedActor = actor15;
-  position[1] = actor15->y + px(16);
-  position[2] = actor15->z;
+  position[1] = actor15->y.fixed + px(16);
+  position[2] = actor15->z.fixed;
   FieldVector_AddPolarOffset(px(16), 0xc000, position);
   FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);

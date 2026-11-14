@@ -258,7 +258,7 @@ void Islets_PushLogIntoWater(void) {
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->velocityY = 0;
-    object->y = px(-8);
+    object->y.fixed = px(-8);
     object->groundHeight = px(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 8, 4, 1, 9, 9);
@@ -490,15 +490,16 @@ void Islets_TradeWithBird(void) {
     // "Oh my! That stone you have! It's divine! Simply divine! I must have..."
     Event_ShowMessage(10, 0);
     Actor_SetAnimation(10, 4);
-    FieldActor_SetPositionAndResetMotion(object, (leader->x + object->x) / 2,
-                                         leader->y,
-                                         (leader->z + object->z) / 2);
+    FieldActor_SetPositionAndResetMotion(
+        object, (leader->x.fixed + object->x.fixed) / 2, leader->y.fixed,
+        (leader->z.fixed + object->z.fixed) / 2);
     System_Wait(20);
     FieldActor_SetPositionAndResetMotion(object, px(120), px(128), px(312));
     Actor_SetAnimation(10, 5);
     System_Wait(10);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-    spawned = FieldActor_Create(0x1e9, leader->x, px(152), leader->z);
+    spawned =
+        FieldActor_Create(0x1e9, leader->x.fixed, px(152), leader->z.fixed);
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
       FieldActor_SetItemIcon(spawned, 453);
@@ -546,7 +547,8 @@ void Islets_TradeWithBird(void) {
     Event_Wait(20);                                                            \
     Actor_SetSpeed(10, 1.6);                                                   \
     STEP(10, 108, 168);                                                        \
-    given = FieldActor_Create(489, leader->x, leader->y + px(24), leader->z);  \
+    given = FieldActor_Create(489, leader->x.fixed, leader->y.fixed + px(24),  \
+                              leader->z.fixed);                                \
     if (given != 0) {                                                          \
       Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);                   \
       given->motionFlags = off;                                                \
@@ -707,7 +709,8 @@ void Islets_TradeWithCow(void) {
 struct Actor *Islets_ShowItemAbove(struct Actor *object, s32 value) {
   struct Actor *spawned;
 
-  spawned = FieldActor_Create(489, object->x, object->y + px(24), object->z);
+  spawned = FieldActor_Create(489, object->x.fixed, object->y.fixed + px(24),
+                              object->z.fixed);
   if (spawned != 0) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
     spawned->motionFlags = 0;
@@ -722,7 +725,8 @@ void Actor_EmitSmoke(struct Actor *object) {
   struct Actor *spawned;
 
   if ((gFrameCount & 3) == 0) {
-    spawned = FieldActor_Create(14, object->x, object->y, object->z);
+    spawned = FieldActor_Create(14, object->x.fixed, object->y.fixed,
+                                object->z.fixed);
     if (spawned != 0) {
       Actor_SetSpriteFlags(spawned, 0);
       Actor_SelectAnimation(spawned, 1);
@@ -760,7 +764,7 @@ void Islets_TradeWithDog(void) {
     Event_SetMessageId(MsgSniffSniffI);
     // "Sniff! Sniff! I smell fresh milk!"
     Event_ShowMessage(11, 0);
-    if (leader->x > trader->x)
+    if (leader->x.fixed > trader->x.fixed)
       right = 1;
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
     Actor_SetSpeed(11, 1.6);
@@ -855,8 +859,8 @@ void Islets_TradeWithDog(void) {
 void Islets_RideOnLonesomeGeorge(struct Actor *object) {
   struct Actor *source = Actor_Get(9);
 
-  FieldActor_SetPositionAndResetMotion(object, source->x, source->y + px(16),
-                                       source->z);
+  FieldActor_SetPositionAndResetMotion(
+      object, source->x.fixed, source->y.fixed + px(16), source->z.fixed);
   object->facing = source->facing;
 }
 
@@ -1199,7 +1203,7 @@ void Islets_OpenFieldMenu(void) {
 }
 
 void Islets_SetLedgeBlocksByHeight(void) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y < px(40)) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed < px(40)) {
     Actor_Get(11)->collisionFlags |= 8;
     Actor_Get(12)->collisionFlags |= 8;
   } else {
@@ -1268,9 +1272,9 @@ void Islets_PengusGivesPrettyStone(void) {
   struct Actor *item;
   s32 z;
 
-  if (object->x < px(228) || object->x > px(236))
+  if (object->x.fixed < px(228) || object->x.fixed > px(236))
     return;
-  z = object->z;
+  z = object->z.fixed;
   if (z < 0xa40000)
     return;
   if (z > 0xac0000)
@@ -1301,8 +1305,8 @@ void Islets_PengusGivesPrettyStone(void) {
   item = Actor_GetById(20);
   item->motionFlags = 0;
   FieldActor_SetItemIcon(item, 452);
-  FieldActor_SetPositionAndResetMotion(item, leader->x, leader->y + px(24),
-                                       leader->z);
+  FieldActor_SetPositionAndResetMotion(
+      item, leader->x.fixed, leader->y.fixed + px(24), leader->z.fixed);
   FieldEvent_Wait(20);
   FieldPsynergy_RestoreMindReadPalette();
   Party_GiveItem(ITEM_PRETTY_STONE, 0);
@@ -1334,7 +1338,7 @@ void Islets_BirdReturnsToNest(void) {
   System_Wait(1);
   object->groundHeight = px(128);
   System_Wait(1);
-  object->y = px(160);
+  object->y.fixed = px(160);
   System_Wait(1);
   FieldTask_AddFrame(Islets_PlayFootsteps, 0x480);
   FieldActor_SetMoveTarget(object, 132, 128, 320);
@@ -1407,15 +1411,15 @@ void Islets_StartPushingCrate(void) {
   object = Actor_Get(12);
   x0 = &gIslets_FirstCrateX;
   z0 = &gIslets_FirstCrateZ;
-  *x0 = object->x;
-  *z0 = object->z;
+  *x0 = object->x.fixed;
+  *z0 = object->z.fixed;
   object = Actor_Get(13);
-  gIslets_SecondCrateX = x1 = object->x;
+  gIslets_SecondCrateX = x1 = object->x.fixed;
   {
     /* FAKEMATCH(pin): object 13's z in r2. */
     register s32 z asm("r2");
 
-    z = object->z;
+    z = object->z.fixed;
     gIslets_SecondCrateZ = z;
     z1 = z;
   }
@@ -1429,10 +1433,10 @@ void Islets_StartPushingCrate(void) {
 void Islets_FinishPushingCrate(void) {
   struct Actor *first = Actor_Get(12);
   struct Actor *second = Actor_Get(13);
-  s32 firstX = first->x >> 20;
-  s32 firstZ = first->z >> 20;
-  s32 secondX = second->x >> 20;
-  s32 secondZ = second->z >> 20;
+  s32 firstX = first->x.fixed >> 20;
+  s32 firstZ = first->z.fixed >> 20;
+  s32 secondX = second->x.fixed >> 20;
+  s32 secondZ = second->z.fixed >> 20;
   s32 both;
 
   if (gIslets_FirstCrateX >> 20 == 12 && gIslets_FirstCrateZ >> 20 == 24) {
@@ -1451,8 +1455,8 @@ void Islets_FinishPushingCrate(void) {
 
     Islets_SetCellCollision(gIslets_SecondCrateX, *z, 3, 0);
   }
-  Islets_SetCellCollision(first->x, first->z, 3, 255);
-  Islets_SetCellCollision(second->x, second->z, 3, 255);
+  Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 255);
+  Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 255);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_10) && firstX == 12 && firstZ == 26) {
     both = 0;
     Event_Start();
@@ -1468,8 +1472,8 @@ void Islets_FinishPushingCrate(void) {
     first->motionFlags = 0;
     Event_SetFlag(FLAG_SCENE_TEMP_10);
     if (both) {
-      Islets_SetCellCollision(first->x, first->z, 3, 0);
-      Islets_SetCellCollision(second->x, second->z, 3, 0);
+      Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
+      Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
       Event_SetFlag(FLAG_SCENE_TEMP_12);
       ((u8 *)first)[0x62] = 1;
@@ -1492,8 +1496,8 @@ void Islets_FinishPushingCrate(void) {
     second->motionFlags = 0;
     Event_SetFlag(FLAG_SCENE_TEMP_11);
     if (both) {
-      Islets_SetCellCollision(first->x, first->z, 3, 0);
-      Islets_SetCellCollision(second->x, second->z, 3, 0);
+      Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
+      Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
       Event_SetFlag(FLAG_SCENE_TEMP_12);
       ((u8 *)first)[0x62] = 1;
@@ -1507,10 +1511,10 @@ void Islets_SaveCratePositions(void) {
   struct Actor *first = Actor_Get(12);
   struct Actor *second = Actor_Get(13);
 
-  gIslets_FirstCrateX = first->x;
-  gIslets_FirstCrateZ = first->z;
-  gIslets_SecondCrateX = second->x;
-  gIslets_SecondCrateZ = second->z;
+  gIslets_FirstCrateX = first->x.fixed;
+  gIslets_FirstCrateZ = first->z.fixed;
+  gIslets_SecondCrateX = second->x.fixed;
+  gIslets_SecondCrateZ = second->z.fixed;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (gIslets_FirstCrateX >> 20 == 7 && gIslets_FirstCrateZ >> 20 == 29 &&
@@ -1618,8 +1622,8 @@ void Islets_OpenDoorAndEnter(void) {
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFixed(
-      object, ((8 - (object->x >> 16) % 16) << 16) + object->x, object->y,
-      object->z);
+      object, ((8 - (object->x.fixed >> 16) % 16) << 16) + object->x.fixed,
+      object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   exit = &work->stepTrigger;
@@ -1661,8 +1665,8 @@ void Islets_EnterDoor(void) {
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFixed(
-      object, ((8 - (object->x >> 16) % 16) << 16) + object->x, object->y,
-      object->z);
+      object, ((8 - (object->x.fixed >> 16) % 16) << 16) + object->x.fixed,
+      object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Actor_SetScript(party->leaderActorId, gIslets_EnterDoorScript);
@@ -1804,7 +1808,7 @@ s32 Scene_Initialize(void) {
 }
 
 void Islets_SetDockBlocksByHeight(void) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y > px(8)) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > px(8)) {
     Actor_Get(9)->collisionFlags &= ~8;
     Actor_Get(10)->collisionFlags &= ~8;
   } else {
@@ -1855,7 +1859,7 @@ void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   s32 x = (column * 32 + object->timer) << 16;
   s32 z = (row * 32 + (s16)object->userValue) << 16;
 
-  FieldActor_SetMoveTargetFixed(object, x, object->y, z);
+  FieldActor_SetMoveTargetFixed(object, x, object->y.fixed, z);
 }
 
 // The Islets' marching guards (objects 11 to 18): while the event work is busy
@@ -1878,7 +1882,7 @@ void Islets_DriftIcebergs(void) {
   }
   for (i = 11; i <= 18; i++)
     Actor_GetById(i)->paused = 0;
-  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y < -px(12)) {
+  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -px(12)) {
     work = Ram_HeapSlots->fieldWork;
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->paused = 1;
@@ -1955,7 +1959,7 @@ void Islets_InitializeRoom2(void) {
     Actor_SetAnimation(10, 4);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
-    object->y = px(-8);
+    object->y.fixed = px(-8);
     object->groundHeight = px(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
@@ -2047,8 +2051,8 @@ void Islets_InitializeRoom4(void) {
 
     first->motionFlags = 0;
     second->motionFlags = 0;
-    Islets_SetCellCollision(first->x, first->z, 3, 255);
-    Islets_SetCellCollision(second->x, second->z, 3, 255);
+    Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 255);
+    Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 255);
   }
   Actor_DisableById(14);
   last = Actor_Get(14);
@@ -2058,7 +2062,7 @@ void Islets_InitializeRoom4(void) {
     ((u8 *)last)[0x62] = 1;
     last->motionFlags = still;
   }
-  Islets_SetCellCollision(last->x, last->z, 1, 255);
+  Islets_SetCellCollision(last->x.fixed, last->z.fixed, 1, 255);
   if (Event_GetFlag(FLAG_SCENE_TEMP_13))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
@@ -2393,8 +2397,8 @@ s32 PushTarget_FillFootprint(s32 id) {
   width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
   b = gPushFootprints[fromX][1];
   height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
-  x = actor->x + (a << 16);
-  z = actor->z + (b << 16);
+  x = actor->x.fixed + (a << 16);
+  z = actor->z.fixed + (b << 16);
   b = *(s32 *)(map + 0x148) >> 20;
   x >>= 20;
   z >>= 20;
@@ -2462,9 +2466,9 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
       steps = 0;
       layer = &object->layer;
       *layer = 2;
-      push->x = object->x + dx;
-      push->z = object->z + dz;
-      cell.y = object->y;
+      push->x = object->x.fixed + dx;
+      push->z = object->z.fixed + dz;
+      cell.y = object->y.fixed;
       for (;;) {
         s8 *table = gPushFootprints[0];
 
@@ -2490,10 +2494,10 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
     }
     result = 0;
     if (steps != 0) {
-      push->x = object->x + dx * steps;
+      push->x = object->x.fixed + dx * steps;
       result = 1;
-      push->y = object->y;
-      push->z = object->z + dz * steps;
+      push->y = object->y.fixed;
+      push->z = object->z.fixed + dz * steps;
     }
   } else
     result = 0;
@@ -2520,21 +2524,21 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gPushKinds[k]) {
-    x = (HI(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
-    z = (HI(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left = (HI(object->x) + gPushFootprints[k][0]) >> 4;
-    top = (HI(object->z) + gPushFootprints[k][1]) >> 4;
-    right = (HI(object->x) + gPushFootprints[k][2]) >> 4;
-    bottom = (HI(object->z) + gPushFootprints[k][3]) >> 4;
+    x = (HI(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
+    z = (HI(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >> 4;
+    left = (HI(object->x.fixed) + gPushFootprints[k][0]) >> 4;
+    top = (HI(object->z.fixed) + gPushFootprints[k][1]) >> 4;
+    right = (HI(object->x.fixed) + gPushFootprints[k][2]) >> 4;
+    bottom = (HI(object->z.fixed) + gPushFootprints[k][3]) >> 4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
-        if (left != leader->x >> 20) {
+        if (left != leader->x.fixed >> 20) {
           *slot = i;
           return object;
         }
       } else {
-        if (top != leader->z >> 20) {
+        if (top != leader->z.fixed >> 20) {
           *slot = i;
           return object;
         }
@@ -2564,9 +2568,9 @@ void Actor_StopAtPushTarget(struct Actor *object) {
   s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  position.x = object->x.fixed;
+  position.y = object->y.fixed;
+  position.z = object->z.fixed;
   FieldVector_AddPolarOffset(px(16), angle, &position);
   hit = Actor_FindAtCell(&position, 1);
   if (hit != 0) {
@@ -2577,15 +2581,15 @@ void Actor_StopAtPushTarget(struct Actor *object) {
     i++;
     if (i <= 5)
       goto next;
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
   }
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  position.x = object->x.fixed;
+  position.y = object->y.fixed;
+  position.z = object->z.fixed;
   if (MapGrid_CheckCollision(object, &position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
 }
 
 #undef TLA_ISLETS_H

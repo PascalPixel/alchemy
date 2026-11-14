@@ -154,23 +154,24 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   u8 *sprite = lid->sprite;
   s32 i;
 
-  FieldActor_SetPositionAndResetMotion(lid, lid->x, lid->y, lid->z);
+  FieldActor_SetPositionAndResetMotion(lid, lid->x.fixed, lid->y.fixed,
+                                       lid->z.fixed);
   if (mode == 0 || mode == 2) {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
-      left->y += 0x1999;
-      lid->y += 0x7ae;
+      left->y.fixed += 0x1999;
+      lid->y.fixed += 0x7ae;
       // Through a union, so this store may alias the sprite read after it.
-      ((union ActorCoordinate *)&lid->x)->value += -0xa3d;
+      ((union ActorCoordinate *)&lid->x.fixed)->value += -0xa3d;
       *(u16 *)(sprite + 18) += 32;
       System_Wait(1);
     }
   } else {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
-      right->y += 0x1999;
-      lid->y += 0x7ae;
-      lid->x += 0xa3d;
+      right->y.fixed += 0x1999;
+      lid->y.fixed += 0x7ae;
+      lid->x.fixed += 0xa3d;
       *(u16 *)(sprite + 18) += 0xffe0;
       System_Wait(1);
     }
@@ -182,9 +183,9 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   JupiterLighthouse_StartBeamFlicker(right);
   Event_PlaySound(SE_522);
   for (i = 255; i >= 0; i--) {
-    Actor_Get(ACTOR_LEFT_ANGEL)->y += 0x1999;
-    Actor_Get(ACTOR_RIGHT_ANGEL)->y += 0x1999;
-    lid->y += 0x1999;
+    Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += 0x1999;
+    Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += 0x1999;
+    lid->y.fixed += 0x1999;
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -268,18 +269,19 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   s32 i;
 
   if (id == ACTOR_LEFT_PATH_BLOCK) {
-    if (object->x >> 20 == 6 && *(s32 *)&object->z >> 20 == 12) {
+    if (object->x.fixed >> 20 == 6 && *(s32 *)&object->z.fixed >> 20 == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED);
       object->motionFlags = 3;
       System_Wait(2);
       i = 0;
-      if (object->y > object->groundHeight || object->velocityY != 0) {
+      if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
         do {
           System_Wait(1);
           i++;
           if (i > 29)
             break;
-        } while (object->y > object->groundHeight || object->velocityY != 0);
+        } while (object->y.fixed > object->groundHeight ||
+                 object->velocityY != 0);
       }
       object->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
@@ -294,22 +296,23 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       FieldEvent_Wait(20);
       JupiterLighthouse_EnergizeLeftAngel();
     } else {
-      MapGrid_SetCellHeight(object->x, object->z, 0, 6);
+      MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 6);
     }
   }
   if (id == ACTOR_RIGHT_PATH_BLOCK) {
-    if (object->x >> 20 == 57 && *(s32 *)&object->z >> 20 == 12) {
+    if (object->x.fixed >> 20 == 57 && *(s32 *)&object->z.fixed >> 20 == 12) {
       Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED);
       object->motionFlags = 3;
       System_Wait(2);
       i = 0;
-      if (object->y > object->groundHeight || object->velocityY != 0) {
+      if (object->y.fixed > object->groundHeight || object->velocityY != 0) {
         do {
           System_Wait(1);
           i++;
           if (i > 29)
             break;
-        } while (object->y > object->groundHeight || object->velocityY != 0);
+        } while (object->y.fixed > object->groundHeight ||
+                 object->velocityY != 0);
       }
       object->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
@@ -324,7 +327,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       FieldEvent_Wait(20);
       JupiterLighthouse_EnergizeRightAngel();
     } else {
-      MapGrid_SetCellHeight(object->x, object->z, 0, 6);
+      MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 6);
     }
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
@@ -374,7 +377,7 @@ s32 Scene_PrepareMap(void) {
   {
     s32 last = 6;
 
-    MapGrid_SetCellHeight(object->x, object->z, 0, last);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, last);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     Actor_SetPosition(ACTOR_RIGHT_PATH_BLOCK, 0, 0);
@@ -391,7 +394,7 @@ s32 Scene_PrepareMap(void) {
   {
     s32 last = 6;
 
-    MapGrid_SetCellHeight(object->x, object->z, 0, last);
+    MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, last);
   }
   BYTE_AT(Actor_Get(ACTOR_LEFT_ARCHER), 0x62) = 1;
   BYTE_AT(Actor_Get(ACTOR_RIGHT_ARCHER), 0x62) = 1;
@@ -441,9 +444,9 @@ void JupiterLighthouse_RideTheBeam(void) {
   actor->motionFlags = 4;
   Actor_SetSpriteFlags(actor, 0);
   while (*((u8 *)linked + 0x63) != 0) {
-    actor->x = linked->x;
-    actor->y = linked->y + i;
-    actor->z = linked->z;
+    actor->x.fixed = linked->x.fixed;
+    actor->y.fixed = linked->y.fixed + i;
+    actor->z.fixed = linked->z.fixed;
     if (i <= 0x3ffff)
       i += 0x1999;
     actor->facing = (u8)gFrameCount << 12;
@@ -453,8 +456,9 @@ void JupiterLighthouse_RideTheBeam(void) {
   work->glow = 1;
   work->glowHeld = 1;
   facing = linked->facing;
-  actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
+  actor->x.fixed = (((linked->x.fixed >> 19) & ~1) + (facing >> 13) - 1) << 19;
+  actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - ((facing >> 13) & 2) + 1)
+                   << 19;
   actor->velocityY = px(6);
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
@@ -465,9 +469,10 @@ void JupiterLighthouse_RideTheBeam(void) {
   shadow->acceleration = px(1);
   shadow->motionFlags = 0;
   FieldActor_SetMoveTargetFixed(
-      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
+      shadow, actor->x.fixed,
+      Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed), actor->z.fixed);
   i = 0;
-  while (i <= 59 && actor->y > actor->groundHeight + px(16)) {
+  while (i <= 59 && actor->y.fixed > actor->groundHeight + px(16)) {
     i++;
     System_Wait(1);
   }
@@ -514,10 +519,10 @@ void Whirlwind_Update(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+    position[0] = self->x.fixed;
+    position[1] = self->y.fixed;
+    position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
@@ -526,11 +531,11 @@ void Whirlwind_Update(struct Actor *self) {
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
+        distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
-          distance = self->y - leader->y;
+          distance = self->y.fixed - leader->y.fixed;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -555,9 +560,9 @@ void Whirlwind_Update(struct Actor *self) {
         do {
           multiply = Iwram_MulQ16;
         } while (0);
-        self->x += multiply(cosine, speed);
+        self->x.fixed += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }
@@ -612,10 +617,10 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
     spark.startScaleX = 0xb333;
     spark.startScaleY = 0xb333;
     spark.palette = 14;
-    x = object->x + (((((u32)Random16() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - (((u32)Random16() * 20) >> 16)) << 16);
+    x = object->x.fixed + (((((u32)Random16() * 9) >> 16) - 4) << 16);
+    y = object->y.fixed + ((32 - (((u32)Random16() * 20) >> 16)) << 16);
     speed = (s32)(((((u32)Random16() * 5) >> 16) << 16) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z, 0, speed, frame, 0xb0000, &spark);
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, 0xb0000, &spark);
   }
   return 0;
 }
@@ -1112,8 +1117,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
   struct CellTarget *work = &gCrackedTiles;
   struct CellTargetEntry *entry = work->entries;
   s32 i;
@@ -1150,11 +1155,11 @@ void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
-    object->x = ((x + dx) << 20) + 0x80000;
-    object->z = ((z + dz) << 20) + 0x80000;
+    object->x.fixed = ((x + dx) << 20) + 0x80000;
+    object->z.fixed = ((z + dz) << 20) + 0x80000;
     shadow = *(struct Actor **)(event + 460);
-    shadow->x = object->x;
-    shadow->z = object->z;
+    shadow->x.fixed = object->x.fixed;
+    shadow->z.fixed = object->z.fixed;
     Map_CenterOnFollowedPoint();
     CrackedTile_DropIn();
     gFieldWork->transition = value;

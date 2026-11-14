@@ -17,21 +17,22 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gPushKinds[k]) {
-    x = (PIXEL_PART(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
-    z = (PIXEL_PART(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left = (PIXEL_PART(object->x) + gPushFootprints[k][0]) >> 4;
-    top = (PIXEL_PART(object->z) + gPushFootprints[k][1]) >> 4;
-    right = (PIXEL_PART(object->x) + gPushFootprints[k][2]) >> 4;
-    bottom = (PIXEL_PART(object->z) + gPushFootprints[k][3]) >> 4;
+    x = (PIXEL_PART(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >>
+        4;
+    z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >> 4;
+    left = (PIXEL_PART(object->x.fixed) + gPushFootprints[k][0]) >> 4;
+    top = (PIXEL_PART(object->z.fixed) + gPushFootprints[k][1]) >> 4;
+    right = (PIXEL_PART(object->x.fixed) + gPushFootprints[k][2]) >> 4;
+    bottom = (PIXEL_PART(object->z.fixed) + gPushFootprints[k][3]) >> 4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
-        if (left != leader->x >> 20) {
+        if (left != leader->x.fixed >> 20) {
           *slot = i;
           return object;
         }
       } else {
-        if (top != leader->z >> 20) {
+        if (top != leader->z.fixed >> 20) {
           *slot = i;
           return object;
         }

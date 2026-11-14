@@ -163,7 +163,7 @@ void JupiterLighthouse_RestartSpark(struct Actor *object) {
     radius = Random16();
     angle = Random16();
     FieldVector_AddPolarOffset((radius << 5) + 0x80000, angle, position);
-    SET_POSITION(object, position[0], position[1], position[2]);
+    SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
   }
   object->userValue = object->timer;
   if (object->timer == 212)
@@ -201,8 +201,9 @@ void JupiterLighthouse_UpdateSpark(struct Actor *object) {
    * scheduling block. */
   do {
   } while (0);
-  object->x += Trig_Cos(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
-  object->y += object->speedLimit;
+  object->x.fixed +=
+      Trig_Cos(((object->z.fixed >> 14) + (object->y.fixed >> 15)) << 8) / 2;
+  object->y.fixed += object->speedLimit;
 }
 
 /// Places the side room's sixteen sparks, each starting a little later and
@@ -307,11 +308,13 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y = height + 0x200000;
+  object->y.fixed = height + 0x200000;
   object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(object->layer, object->x, object->z);
-  Import_MapGridSetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+  height =
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
+  Import_MapGridSetCellHeight(object->x.fixed, object->z.fixed, 0,
+                              (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"
@@ -341,9 +344,9 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     params.startScaleX = 0xb333;
     params.startScaleY = 0xb333;
     params.palette = 14;
-    x = object->x + ((((Random16() * 9) >> 16) - 4) << 16);
-    y = object->y + ((32 - ((Random16() * 20) >> 16)) << 16);
-    FieldEffect_Spawn(x, y, object->z, 0,
+    x = object->x.fixed + ((((Random16() * 9) >> 16) - 4) << 16);
+    y = object->y.fixed + ((32 - ((Random16() * 20) >> 16)) << 16);
+    FieldEffect_Spawn(x, y, object->z.fixed, 0,
                       (s32)((((Random16() * 5) >> 16) << 16) + 0x50000) / 10, 0,
                       0xb0000, &params);
   }
@@ -367,13 +370,13 @@ void LightSprites_Draw(void) {
 
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x != 0) {
+    if (actor != 0 && actor->x.fixed != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
       u32 *word;
-      ox = actor->x - viewX;
-      y = actor->y - viewY + 0x80000;
-      z = actor->z - viewZ - viewY;
+      ox = actor->x.fixed - viewX;
+      y = actor->y.fixed - viewY + 0x80000;
+      z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
       big = gLightSpriteLargeOam;

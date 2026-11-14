@@ -98,7 +98,8 @@ void HoverGlow_Update(void) {
   struct EffectSprite *sprite;
 
   // The glow's strength.
-  if (MapGrid_IsHoverCell(player->x, player->z, player->layer) == 0) {
+  if (MapGrid_IsHoverCell(player->x.fixed, player->z.fixed, player->layer) ==
+      0) {
     if (event->glowHeld != 0)
       event->glow--;
   } else {
@@ -134,9 +135,9 @@ void HoverGlow_Update(void) {
   sprite->oam.index = work->tile + ((gFrameCount >> 1) & 1) * 32;
   sprite->oam.priority = BattleEffect_GetObjectPriority(player);
   sprite->depth = BattleEffect_GetObjectDepth(player) - 1;
-  position[0] = player->x;
-  position[1] = player->y;
-  position[2] = player->z;
+  position[0] = player->x.fixed;
+  position[1] = player->y.fixed;
+  position[2] = player->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
@@ -196,7 +197,8 @@ void FieldPsynergy_Hover(void) {
   EffectSprite_Init(sprite, 15, 15, 0x80000000, (s16)work->tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
-  Actor_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
+  Actor_SetPositionAndResetMotionFar(player, player->x.fixed, player->y.fixed,
+                                     player->z.fixed);
   BattleEffect_SetObjectUpdateMode(player, 0);
   Actor_SelectAnimationFar(player, 5);
   Sound_PlayFar(SE_PSYNERGY_START);
@@ -207,17 +209,19 @@ void FieldPsynergy_Hover(void) {
   Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
 
   found = 0;
-  if (MapGrid_IsHoverCell(player->x, player->z, player->layer) == 0) {
+  if (MapGrid_IsHoverCell(player->x.fixed, player->z.fixed, player->layer) ==
+      0) {
     found = 1;
   } else {
     for (n = 0; n < 80; n++) {
       other = event->actors[n];
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject) {
-        position[0] = other->x;
+        position[0] = other->x.fixed;
         position[1] = other->groundHeight;
-        position[2] = other->z;
-        if (FieldPsynergy_CheckOverlap(&player->x, player->radius, &other->x,
+        position[2] = other->z.fixed;
+        if (FieldPsynergy_CheckOverlap(&player->x.fixed, player->radius,
+                                       &other->x.fixed,
                                        other->radius - 2) >= 0) {
           found = 1;
           break;
@@ -246,19 +250,19 @@ void FieldPsynergy_Hover(void) {
     HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   } else {
     player->motionFlags = 0;
-    player->y = player->groundHeight;
+    player->y.fixed = player->groundHeight;
     work->scale = 0;
     event->glowHeld = 0;
     event->glow = 100;
     for (i = 0; i < 32; i++) {
       if (i == 10)
         Sound_PlayFar(SE_GLITTER);
-      player->y += px(1);
+      player->y.fixed += px(1);
       work->scale = i << 11;
       wait(1);
     }
     player->motionFlags = 4;
-    player->y = player->groundHeight + 0x248000;
+    player->y.fixed = player->groundHeight + 0x248000;
     player->gravity = px(3);
     gMainRoutineWork.movementMode = 10;
     work->fading = 1;
@@ -276,31 +280,32 @@ void FieldPsynergy_EndHover(void) {
   s32 i;
 
   Task_Remove(HoverGlow_Update);
-  Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
+  Actor_SetPositionAndResetMotionFar(object, object->x.fixed, object->y.fixed,
+                                     object->z.fixed);
   object->motionFlags = 3;
   gMainRoutineWork.movementMode = 0;
   for (i = 0; i < 60; i++) {
-    if (object->y <= object->groundHeight)
+    if (object->y.fixed <= object->groundHeight)
       break;
     wait(1);
   }
   Sound_PlayFar(SE_WATER);
   wait(1);
   for (i = 0; i < 20; i++) {
-    if (object->y <= object->groundHeight)
+    if (object->y.fixed <= object->groundHeight)
       break;
     wait(1);
   }
   wait(1);
   for (i = 0; i < 20; i++) {
-    if (object->y <= object->groundHeight)
+    if (object->y.fixed <= object->groundHeight)
       break;
     wait(1);
   }
   wait(1);
   object->bounce = 0;
   object->velocityY = 0;
-  object->y = object->groundHeight;
+  object->y.fixed = object->groundHeight;
   object->gravity = px(1);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);

@@ -35,12 +35,12 @@ top:
   actor->velocityX = zero;
   actor->velocityZ = zero;
   /* FAKEMATCH(temporary): cell holds the masked x. */
-  cell = actor->x & 0xfff00000;
+  cell = actor->x.fixed & 0xfff00000;
   i = px(8);
   position = &probe;
   position->x = startX = cell + i;
-  position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + i;
+  position->y = actor->y.fixed;
+  position->z = startZ = (actor->z.fixed & 0xfff00000) + i;
   x = startX;
   z = startZ;
   startBehavior =
@@ -49,12 +49,13 @@ top:
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
+      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y.fixed >
+          i) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    actor->x = startX;
-    actor->z = startZ;
+    actor->x.fixed = startX;
+    actor->z.fixed = startZ;
     goto done;
   }
   position->x = x;
@@ -70,7 +71,7 @@ top:
   asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed > px(8)) {
     goto stop;
   }
   radius = actor->radius - 2;
@@ -85,7 +86,7 @@ body:
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
           : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x, radius, &probe,
+      if (Field_CheckSpheresOverlap(&other->x.fixed, radius, &probe,
                                     other->radius - 2) >= 0) {
         goto stop;
       }
@@ -116,7 +117,7 @@ test:
 stop:
   actor->speedLimit = px(2);
   actor->acceleration = px(1);
-  FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
+  FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
   goto top;

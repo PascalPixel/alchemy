@@ -96,7 +96,7 @@ void Actor_SetDestinationById(u32 objectId, s32 x, s32 z) {
   if (object != NULL) {
     object->paused = 0;
     Actor_StartIdleFar(object);
-    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
   }
 }
 
@@ -106,7 +106,7 @@ void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
   if (object != NULL) {
     object->paused = 0;
     Actor_StartIdleFar(object);
-    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
     Actor_WaitForMoveFar(object);
   }
 }
@@ -118,7 +118,7 @@ void Actor_WalkToById(s32 actorId, s32 x, s32 z) {
     object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 2);
-    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
   }
 }
 
@@ -129,7 +129,7 @@ void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z) {
     object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 2);
-    Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
+    Actor_SetMoveTargetFar(object, x << 16, object->y.fixed, z << 16);
     Actor_WaitForMoveFar(object);
     Actor_SelectAnimationFar(object, 1);
   }
@@ -156,14 +156,14 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
     object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 2);
-    x = object->x;
+    x = object->x.fixed;
     eight = 8;
     Actor_SetMoveTargetFar(object, x + ((eight - angleRemainder) << 16),
-                           object->y, object->z);
+                           object->y.fixed, object->z.fixed);
     Actor_WaitForMoveFar(object);
     Actor_SetSpritePriority(objectId, action);
-    Actor_SetMoveTargetFar(object, object->x, object->y,
-                           object->z + (zOffset << 16));
+    Actor_SetMoveTargetFar(object, object->x.fixed, object->y.fixed,
+                           object->z.fixed + (zOffset << 16));
   }
 }
 
@@ -173,8 +173,8 @@ void Actor_SetDestinationOffsetById(s32 actorId, s32 xOffset, s32 zOffset) {
   if (object != NULL) {
     object->paused = 0;
     Actor_StartIdleFar(object);
-    Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
-                           object->z + (zOffset << 16));
+    Actor_SetMoveTargetFar(object, object->x.fixed + (xOffset << 16),
+                           object->y.fixed, object->z.fixed + (zOffset << 16));
   }
 }
 
@@ -185,8 +185,8 @@ void Actor_WalkByById(u32 objectId, s32 xOffset, s32 zOffset) {
     object->paused = 0;
     Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
     Actor_SelectAnimationFar(object, 2);
-    Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
-                           object->z + (zOffset << 16));
+    Actor_SetMoveTargetFar(object, object->x.fixed + (xOffset << 16),
+                           object->y.fixed, object->z.fixed + (zOffset << 16));
   }
 }
 
@@ -206,8 +206,8 @@ void Actor_LaunchFromLeader(s32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   if (object != NULL) {
     Actor_SetSpeedParameters(actorId, 0xcccc, 0x6666);
     Actor_MoveToObject(actorId, gMainRoutineWork.leaderActorId);
-    Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
-                                       object->z - 0x10000);
+    Actor_SetPositionAndResetMotionFar(object, object->x.fixed, object->y.fixed,
+                                       object->z.fixed - 0x10000);
     object->paused = 0;
     Actor_SelectAnimationFar(object, 2);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
@@ -234,11 +234,11 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     Actor_StartIdleFar(object);
-    Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
+    Actor_SetPositionAndResetMotionFar(object, x, object->y.fixed, z);
     if (object->motionFlags & 1) {
-      terrainHeight =
-          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z);
-      object->y = object->y - object->groundHeight + terrainHeight;
+      terrainHeight = MapGrid_GetTerrainHeightFar(
+          object->layer, object->x.fixed, object->z.fixed);
+      object->y.fixed = object->y.fixed - object->groundHeight + terrainHeight;
       object->groundHeight = terrainHeight;
     }
   }
@@ -265,12 +265,12 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
 
   if (object != NULL) {
     Actor_StartIdleFar(object);
-    Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
+    Actor_SetPositionAndResetMotionFar(object, x, object->y.fixed, z);
     object->facing = angle;
     if (object->motionFlags & 1) {
-      terrainHeight =
-          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z);
-      object->y = object->y - object->groundHeight + terrainHeight;
+      terrainHeight = MapGrid_GetTerrainHeightFar(
+          object->layer, object->x.fixed, object->z.fixed);
+      object->y.fixed = object->y.fixed - object->groundHeight + terrainHeight;
       object->groundHeight = terrainHeight;
     }
   }
@@ -284,9 +284,9 @@ void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
     Actor_StartIdleFar(object);
     Actor_SetPositionAndResetMotionFar(object, x, y, z);
     if (object->motionFlags & 1) {
-      terrainHeight =
-          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z);
-      object->y = object->y - object->groundHeight + terrainHeight;
+      terrainHeight = MapGrid_GetTerrainHeightFar(
+          object->layer, object->x.fixed, object->z.fixed);
+      object->y.fixed = object->y.fixed - object->groundHeight + terrainHeight;
       object->groundHeight = terrainHeight;
     }
   }
@@ -297,7 +297,8 @@ void Actor_MoveToObject(u32 objectId, u32 otherId) {
   struct Actor *other = ObjectTable_Get(otherId);
 
   if (object != NULL && other != NULL) {
-    Actor_SetPositionAndResetMotionFar(object, other->x, other->y, other->z);
+    Actor_SetPositionAndResetMotionFar(object, other->x.fixed, other->y.fixed,
+                                       other->z.fixed);
     object->groundHeight = other->groundHeight;
   }
 }
@@ -392,11 +393,11 @@ void FieldEffect_UpdateDustPuff(struct Actor *object) {
   s32 pos;
 
   driftX = object->speedLimit;
-  pos = object->x;
+  pos = object->x.fixed;
   driftZ = object->acceleration;
-  object->x = pos + driftX;
-  object->z += driftZ;
-  object->y += 0x400;
+  object->x.fixed = pos + driftX;
+  object->z.fixed += driftZ;
+  object->y.fixed += 0x400;
   object->speedLimit = driftX - driftX / 18;
   object->acceleration = driftZ - driftZ / 16;
 }
@@ -423,7 +424,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   s32 speed;
   s32 rate = -0x1999;
 
-  object = Actor_CreateFar(285, source->x, source->y, source->z);
+  object =
+      Actor_CreateFar(285, source->x.fixed, source->y.fixed, source->z.fixed);
   if (object != NULL) {
     child = object->sprite;
     switch (Random16() & 1) {
@@ -463,8 +465,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// Broken Seal's twin is Actor_JumpDownLedge.
 void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   struct Actor *object = Actor_GetById(id);
-  s32 z = object->z;
-  s32 x = (object->x & 0xfff00000) + 0x80000;
+  s32 z = object->z.fixed;
+  s32 x = (object->x.fixed & 0xfff00000) + 0x80000;
   s32 frame;
   u32 i;
 
@@ -477,33 +479,33 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
   Actor_SetSpriteFlagsFar(object, 0);
   object->motionFlags |= 2;
   object->velocityY = px(4);
-  Actor_SetMoveTargetFar(object, x, object->y, z + 0xc0000);
+  Actor_SetMoveTargetFar(object, x, object->y.fixed, z + 0xc0000);
   wait(6);
   Sound_PlayFar(SE_FLOOR_SWITCH);
   Actor_FaceDirectionById(id, 0x5000, 0);
   object->motionFlags = 0;
   for (i = 0; i < 14; i++) {
-    object->y -= px(2);
-    object->targetY = object->y;
+    object->y.fixed -= px(2);
+    object->targetY = object->y.fixed;
     wait(1);
     if (particle != -1 && (i & 1))
       FieldEffect_SpawnDustPuff(object, particle);
   }
   object->motionFlags = 3;
   object->velocityY = px(3);
-  Actor_SetMoveTargetFar(object, x, object->y, z + 0x100000);
+  Actor_SetMoveTargetFar(object, x, object->y.fixed, z + 0x100000);
   Actor_WaitForMoveFar(object);
   if (particle & 0x1000) {
     wait(4);
     return;
   }
   i = 0;
-  if (object->y > object->groundHeight) {
+  if (object->y.fixed > object->groundHeight) {
     do {
       wait(1);
       if (++i >= 180)
         break;
-    } while (object->y > object->groundHeight);
+    } while (object->y.fixed > object->groundHeight);
   }
   Actor_SetSpriteFlagsFar(object, frame);
   wait(2);

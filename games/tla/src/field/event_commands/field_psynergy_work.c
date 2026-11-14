@@ -206,13 +206,13 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
     scene->savedScript = target->script;
     scene->savedPalette =
         ((struct AnimationObject *)target->sprite)->entries[0]->param;
-    scene->x = target->x;
-    scene->z = target->z;
-    scene->y = target->y;
+    scene->x = target->x.fixed;
+    scene->z = target->z.fixed;
+    scene->y = target->y.fixed;
   } else {
-    scene->x = user->x;
-    scene->z = user->z;
-    scene->y = user->y;
+    scene->x = user->x.fixed;
+    scene->z = user->z.fixed;
+    scene->y = user->y.fixed;
     Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
 }
@@ -229,11 +229,11 @@ void EventObject_Initialize(void) {
   /* FAKEMATCH(dead): the stores in a once-only block keep them all ahead of the
    * sound's read. */
   do {
-    object->targetX = object->x;
+    object->targetX = object->x.fixed;
     object->velocityX = 0;
-    object->targetY = object->y;
+    object->targetY = object->y.fixed;
     object->velocityY = 0;
-    object->targetZ = object->z;
+    object->targetZ = object->z.fixed;
     object->velocityZ = 0;
   } while (0);
   sound = work->sound;

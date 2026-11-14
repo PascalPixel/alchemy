@@ -295,8 +295,8 @@ void ChampaCliffCaves_CloseWall(void) {
   MapGrid_CopyCellPictureCellsRect(50, 97, 1, 4, 41, 77);
   Map_CopyCellAttributeRect(46, 33, 1, 4, 41, 13);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  x = object->x >> 20;
-  z = object->z >> 20;
+  x = object->x.fixed >> 20;
+  z = object->z.fixed >> 20;
   if (gMainRoutineWork.next == SCENE_CHAMPA_CLIFF_CAVES_4 && x == 41 &&
       (u32)(z - 13) <= 4)
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
@@ -607,9 +607,9 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     Actor_SetDestinationOffsetById(10, 0, 40);
     Sound_Play(SE_310);
     Event_Wait(34);
-    landing[0] = thrown->x;
-    landing[1] = thrown->y;
-    landing[2] = thrown->z;
+    landing[0] = thrown->x.fixed;
+    landing[1] = thrown->y.fixed;
+    landing[2] = thrown->z.fixed;
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
     Event_Wait(20);
     Sound_Play(SE_HEAVY_IMPACT);
@@ -670,7 +670,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_SetPositionFixed(10, 0x2980000, 0xe80000);
   Actor_SetSpritePriority(10, 1);
   thrown->motionFlags = 2;
-  thrown->y = px(24);
+  thrown->y.fixed = px(24);
   thrown->update = ChampaCliffCaves_GrowThrown;
   thrown->groundHeight = 0;
   thrown->scaleX = 0;
@@ -679,10 +679,10 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Field_StartPaletteTransition(8);
   ChampaCliffCaves_UpdateSparks();
   MapGrid_SetShakeFixed(-1, -1, 0xe666);
-  while (thrown->y > 0)
+  while (thrown->y.fixed > 0)
     wait(1);
   thrown->gravity = px(1);
-  thrown->y = 0;
+  thrown->y.fixed = 0;
   thrown->motionFlags = 4;
   Scene_PlayMusic();
   Event_Wait(20);
@@ -715,7 +715,7 @@ void ChampaCliffCaves_ObabaOffersHelp(s32 actor) {
   /* FAKEMATCH(dead): each owner stored and never read. */
   s32 owner;
 
-  if ((Actor_GetById(gMainRoutineWork.leaderActorId)->x >> 20) <= 41)
+  if ((Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed >> 20) <= 41)
     goto first;
   gFieldWork->fieldMenu = 1;
   return;
@@ -972,7 +972,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
     object->groundHeight = 0;
-    object->y = px(32);
+    object->y.fixed = px(32);
     WORD_AT(object, 24) = 0x4000;
     WORD_AT(object, 108) = (s32)ChampaCliffCaves_GrowThrownSlowly;
     WORD_AT(object, 28) = 0x4000;
@@ -1558,32 +1558,32 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   owner = (s32 *)(party + 532);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_JENNA, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, 0, 0);
   Actor_SetSpeedFixed(ACTOR_SHEBA, 0x13333, 0x9999);
   Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_SHEBA, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeedFixed(ACTOR_PIERS, 0x13333, 0x9999);
   Actor_SetModeById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_PIERS, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_PIERS, 0, 0);
   Actor_SetSpeedFixed(15, 0x13333, 0x9999);
   Actor_SetModeById(15, 2);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(15, ((s16 *)&leader->x)[1],
-                             ((s16 *)&leader->z)[1]);
+    Actor_SetDestinationById(15, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   Actor_WaitForMoveById(15);
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   GameFlag_Set(FLAG_CHAMPA_AVIMANDER_BEATEN);
@@ -1628,9 +1628,9 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   sprite->priority = 1;
   sprite->fullColor = 0;
   sprite->palette = 15;
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->z = z = position[2];

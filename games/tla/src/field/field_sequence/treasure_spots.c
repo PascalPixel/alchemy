@@ -11,8 +11,8 @@ void Actor_SnapToTerrain(void *object) {
   struct Actor *state = object;
   s32 height;
 
-  height = MapGrid_GetTerrainHeightFar(0, state->x, state->z);
-  state->y = height;
+  height = MapGrid_GetTerrainHeightFar(0, state->x.fixed, state->z.fixed);
+  state->y.fixed = height;
   state->groundHeight = height;
 }
 
@@ -96,11 +96,11 @@ void Field_PlaceTreasureSpots(void) {
         if (work->mode == 3) {
           object->motionFlags = 2;
           object->groundHeight = 0;
-          object->y = 0;
+          object->y.fixed = 0;
         } else {
           object->groundHeight =
-              MapGrid_GetTerrainHeightFar(0, object->x, object->z);
-          object->y += object->groundHeight;
+              MapGrid_GetTerrainHeightFar(0, object->x.fixed, object->z.fixed);
+          object->y.fixed += object->groundHeight;
           if (buried) {
             u8 *motionFlags = &object->motionFlags;
             struct MapWork *map;
@@ -110,10 +110,10 @@ void Field_PlaceTreasureSpots(void) {
 
             *motionFlags = 2;
             object->groundHeight += 0xfff00000;
-            object->y = object->groundHeight;
+            object->y.fixed = object->groundHeight;
             map = Ram_HeapSlots->mapGrid;
-            x = object->x >> 20;
-            z = object->z >> 20;
+            x = object->x.fixed >> 20;
+            z = object->z.fixed >> 20;
             cells = (struct MapCell *)gMapGridCellBuffer;
             if (map != NULL)
               cells = map->layers[0].cells;
@@ -127,8 +127,8 @@ void Field_PlaceTreasureSpots(void) {
         if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
-        object->timer = object->x / Q16_ONE;
-        object->userValue = object->z / Q16_ONE;
+        object->timer = object->x.fixed / Q16_ONE;
+        object->userValue = object->z.fixed / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
         work->objects[i] = object;
@@ -169,8 +169,8 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   if (object == 0)
     return;
   if (mode == 0) {
-    object->x = 0;
-    object->z = 0;
+    object->x.fixed = 0;
+    object->z.fixed = 0;
     object->riseBaseY = 0x31415927;
     return;
   }

@@ -14,10 +14,11 @@ void Rubble_Spray(s32 spread) {
   do {
     {
       /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y - (((Random16() * 14) >> 16) << 16);
+      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x - px(8), y - 0x20000, leader->z);
+          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
+          leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -60,8 +61,8 @@ void Rubble_Burst(void) {
   frame = 0;
   i = 0;
   do {
-    effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
-                                                     leader->z);
+    effect = (struct FieldEffect *)FieldActor_Create(
+        285, leader->x.fixed, leader->y.fixed, leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;

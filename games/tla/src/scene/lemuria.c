@@ -69,10 +69,10 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   s32 *to;
   s32 *from;
 
-  to = &other->x;
-  from = &self->x;
+  to = &other->x.fixed;
+  from = &self->x.fixed;
   if (Position_Distance(to, from) < range) {
-    u32 angle = (u16)ArcTan2(other->z - self->z, *to - *from);
+    u32 angle = (u16)ArcTan2(other->z.fixed - self->z.fixed, *to - *from);
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
@@ -106,7 +106,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   if (self->timer == 1)
     goto near;
   other = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (Position_Distance(&self->x, &other->x) <= 11)
+  if (Position_Distance(&self->x.fixed, &other->x.fixed) <= 11)
     goto far;
   if (Actor_IsFacingNear(self, self->watchedActor, 18) != 0)
     goto near;
@@ -303,7 +303,7 @@ void Lemuria_DigFifthSpot(void) {
   TileCopies_CopyTouchedCells_(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(0xfbb) == 0) {
     Actor_SetPosition(69, 808, 1176);
-    if (leader->x >> 20 == 50 && leader->z >> 20 == 73) {
+    if (leader->x.fixed >> 20 == 50 && leader->z.fixed >> 20 == 73) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -399,7 +399,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   s32 v5;
   struct Actor *object;
 
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y > px(96) ||
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > px(96) ||
       Event_GetFlag(0x969)) {
     gFieldWork->fieldMenu = 1;
     return;
@@ -486,7 +486,7 @@ void Party_RestoreHpPp(s32 value);
 /// "Felix and the others drank of the spring. Their HP and PP were fully
 /// replenished!"
 void Lemuria_DrinkFromSpring(void) {
-  s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y;
+  s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
   if (y < 0x5a0000) {
     // "Felix and the others drank of the spring. Their HP and PP were..."
@@ -695,7 +695,7 @@ s32 Scene_Initialize(void) {
   actor = Actor_Get(31);
   actor->motionFlags = 0;
   actor->groundHeight = px(64);
-  actor->y = px(64);
+  actor->y.fixed = px(64);
   return 0;
 }
 
@@ -763,7 +763,7 @@ void Lemuria_AdmirePalace(s32 id) {
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, leader->x.part[0].pixel, leader->z.part[0].pixel);
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   FieldEvent_Wait(10);
@@ -792,7 +792,7 @@ void Lemuria_KeepLookingAround(void) {
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, leader->x.part[0].pixel, leader->z.part[0].pixel);
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   FieldEvent_Wait(10);
@@ -1084,15 +1084,15 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_PIERS, ((s16 *)&leader->x)[1],
-                         ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(ACTOR_PIERS, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, leader->x.part[0].pixel, leader->z.part[0].pixel);
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   Lemuria_PoseActor12();

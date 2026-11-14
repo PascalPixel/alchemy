@@ -333,8 +333,8 @@ void SuhallaGate_FightPunchAnt(void) {
   Actor_Jump(ACTOR_PUNCH_ANT, 4, 0);
   owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (owner != NULL)
-    Actor_SetDestination(ACTOR_PUNCH_ANT, ((s16 *)&owner->x)[1],
-                         ((s16 *)&owner->z)[1]);
+    Actor_SetDestination(ACTOR_PUNCH_ANT, owner->x.part[0].pixel,
+                         owner->z.part[0].pixel);
   Event_Wait(20);
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_3, ENTRANCE_AFTER_BATTLE);
   Party_SetFields1f2And1f4(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
@@ -428,8 +428,8 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Actor_SetAnimation(ACTOR_CAVE_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader)
-    Actor_SetDestination(ACTOR_CAVE_KRADEN, ((s16 *)&leader->x)[1],
-                         ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(ACTOR_CAVE_KRADEN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_CAVE_KRADEN);
   Actor_SetPosition(ACTOR_CAVE_KRADEN, 0, 0);
   Event_Wait(10);
@@ -452,8 +452,8 @@ void SuhallaGate_PointToMeetingSpot(void) {
   Actor_SetAnimation(ACTOR_CLIFFS_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader)
-    Actor_SetDestination(ACTOR_CLIFFS_KRADEN, ((s16 *)&leader->x)[1],
-                         ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(ACTOR_CLIFFS_KRADEN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_CLIFFS_KRADEN);
   Actor_SetPosition(ACTOR_CLIFFS_KRADEN, 0, 0);
   Event_Wait(10);

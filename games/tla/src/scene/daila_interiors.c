@@ -423,7 +423,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
   saved48 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity;
   item = 458;
   saved28 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY;
-  savedY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->y;
+  savedY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->y.fixed;
   Event_Start();
   Event_ResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
@@ -449,7 +449,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
       FieldEvent_Wait(1);
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY = saved28;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->y = savedY;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->y.fixed = savedY;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity = saved48;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->update = NULL;
       Actor_StartIdle(Actor_GetById(ACTOR_SEA_GODS_TEAR));

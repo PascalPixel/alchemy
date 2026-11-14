@@ -431,9 +431,9 @@ void Actor_MoveWithCarriers(void) {
 
   for (i = 63; i >= 0; i--, object++) {
     if (object->script != NULL) {
-      s32 x = object->x;
-      s32 y = object->y;
-      s32 z = object->z;
+      s32 x = object->x.fixed;
+      s32 y = object->y.fixed;
+      s32 z = object->z.fixed;
 
       if (object->priorityFlags & 64) {
         struct Actor *carrier = (struct Actor *)WORD_AT(object, 0x7c);
@@ -441,7 +441,7 @@ void Actor_MoveWithCarriers(void) {
         if (carrier != NULL) {
           if (WORD_AT(carrier, 0x74) != 0) {
             if (y == object->groundHeight) {
-              object->groundHeight = carrier->y + 0x100000;
+              object->groundHeight = carrier->y.fixed + 0x100000;
               y = object->groundHeight;
             } else {
               object->groundHeight += WORD_AT(carrier, 0x74);
@@ -452,7 +452,7 @@ void Actor_MoveWithCarriers(void) {
           z += WORD_AT(carrier, 0x78);
         }
       }
-      SET_POSITION(object, x, y, z);
+      SET_ACTOR_POSITION(object, x, y, z);
     }
   }
 }
@@ -463,12 +463,12 @@ void Actor_MoveWithCarriers(void) {
 /// obj: object.
 /// x, y, z: 16.16 fixed-point position.
 void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z) {
-  obj->z = z;
+  obj->z.fixed = z;
   obj->targetX = TARGET_UNSET; // No destination.
   obj->targetY = TARGET_UNSET;
   obj->targetZ = TARGET_UNSET;
-  obj->x = x;
-  obj->y = y;
+  obj->x.fixed = x;
+  obj->y.fixed = y;
   SET_VELOCITY(obj, 0, 0, 0);
 }
 
@@ -480,20 +480,20 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 dy;
   u8 *arrivalAxis;
 
-  dx = (x - object->x) / Q16_ONE;
-  dy = (y - object->y) / Q16_ONE;
-  dz = (z - object->z) / Q16_ONE;
+  dx = (x - object->x.fixed) / Q16_ONE;
+  dy = (y - object->y.fixed) / Q16_ONE;
+  dz = (z - object->z.fixed) / Q16_ONE;
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + dy * dy + squaredZ) << 16;
   if (distance < 0x100000) {
-    dx = x - object->x;
-    dy = y - object->y;
-    dz = z - object->z;
+    dx = x - object->x.fixed;
+    dy = y - object->y.fixed;
+    dz = z - object->z.fixed;
     distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                          Iwram_MulQ16(dz, dz));
   }
   if (distance < 0x10000) {
-    SET_POSITION(object, x, y, z);
+    SET_ACTOR_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
@@ -511,16 +511,16 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
     else
       brakingDistance = distance / 2;
     ratio = Iwram_RatioMulQ14(distance, brakingDistance);
-    x = object->x + Iwram_MulQ16(x - object->x, ratio);
-    y = object->y + Iwram_MulQ16(y - object->y, ratio);
-    z = object->z + Iwram_MulQ16(z - object->z, ratio);
+    x = object->x.fixed + Iwram_MulQ16(x - object->x.fixed, ratio);
+    y = object->y.fixed + Iwram_MulQ16(y - object->y.fixed, ratio);
+    z = object->z.fixed + Iwram_MulQ16(z - object->z.fixed, ratio);
   }
   object->targetX = x;
   object->targetY = y;
   object->targetZ = z;
-  dx = x - object->x;
-  dy = y - object->y;
-  dz = z - object->z;
+  dx = x - object->x.fixed;
+  dy = y - object->y.fixed;
+  dz = z - object->z.fixed;
   arrivalAxis = &object->arrivalAxis;
   *arrivalAxis = 16;
   if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {

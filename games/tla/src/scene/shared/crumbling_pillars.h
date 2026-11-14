@@ -33,8 +33,10 @@ void CrumblingPillars_Place(u16 *list) {
 
       cell = cells + index;
       slot = shapes + index;
-      shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
-      ground = Map_GetTerrainHeight(object->layer, object->x, object->z);
+      shape = MapGrid_GetTerrainKind(object->layer, object->x.fixed,
+                                     object->z.fixed);
+      ground =
+          Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
 
       Actor_DisableById(id);
       cell->attributeB = 128;
@@ -46,10 +48,11 @@ void CrumblingPillars_Place(u16 *list) {
     list += 2;
   }
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  height = Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
-  if (leader->y < height) {
+  height =
+      Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
+  if (leader->y.fixed < height) {
     leader->groundHeight = height;
-    leader->y = height;
+    leader->y.fixed = height;
   }
 }
 
@@ -61,9 +64,9 @@ void CrumblingPillars_Step(u16 *list) {
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   pillar = Actor_FindAtCell(position, 0);
   if (pillar == 0)
     return;
@@ -201,8 +204,10 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
       u8 *shape = shapes + index;
       s32 kind, ground;
 
-      kind = MapGrid_GetTerrainKind(actor->layer, actor->x, actor->z);
-      ground = Map_GetTerrainHeight(actor->layer, actor->x, actor->z);
+      kind =
+          MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
+      ground =
+          Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 
       Actor_DisableById(id);
       cell->attributeB = 128;
@@ -217,7 +222,8 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
 }
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *target) {
-  FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
+  FieldActor_SetPositionAndResetMotion(object, target->x.fixed, target->y.fixed,
+                                       target->z.fixed);
   FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
@@ -231,9 +237,9 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   helper = Actor_GetById(8);
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   pillar = Actor_FindAtCell(position, 0);
   if (pillar == 0)
     return;

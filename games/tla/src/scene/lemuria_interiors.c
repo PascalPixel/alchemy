@@ -216,11 +216,11 @@ s32 Scene_Initialize(void) {
   object = Actor_GetById(15);
   object->motionFlags = 0;
   object->groundHeight = 0;
-  object->y = 0;
+  object->y.fixed = 0;
   object = Actor_GetById(17);
   object->motionFlags = 0;
   object->groundHeight = 0;
-  object->y = 0;
+  object->y.fixed = 0;
   if (Event_GetFlag(0x966)) {
     Actor_WalkToAndWait(10, 100, 112);
     Actor_GetById(10)->facing = FACING_SOUTH_SOUTHEAST;
@@ -621,9 +621,9 @@ visited:
   Actor_SetAnimation(11, 3);
   actor->motionFlags = 0;
   start = startBuf;
-  start[0] = actor->x;
-  start[1] = actor->y;
-  start[2] = actor->z;
+  start[0] = actor->x.fixed;
+  start[1] = actor->y.fixed;
+  start[2] = actor->z.fixed;
   target = targetBuf;
   target[0] = 0x740000;
   target[1] = 0;
@@ -639,9 +639,9 @@ visited:
     pos[1] = start[1] + (target[1] - start[1]) * i / 192 + sine * 56;
     pos[2] = start[2] + (target[2] - start[2]) * i / 192;
     Vector_AddPolarOffset(radius, angle, pos);
-    actor->x = pos[0];
-    actor->y = pos[1];
-    actor->z = pos[2];
+    actor->x.fixed = pos[0];
+    actor->y.fixed = pos[1];
+    actor->z.fixed = pos[2];
     actor->facing = angle + 16384;
     if (i == 128) {
       Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
@@ -683,9 +683,9 @@ visited:
   Actor_SetAnimation(11, 3);
   FieldEvent_Wait(40);
   actor->motionFlags = 0;
-  start[0] = actor->x;
-  start[1] = actor->y;
-  start[2] = actor->z;
+  start[0] = actor->x.fixed;
+  start[1] = actor->y.fixed;
+  start[2] = actor->z.fixed;
   target[0] = 0x840000;
   target[1] = 0x200000;
   target[2] = 0x640000;
@@ -698,9 +698,9 @@ visited:
     pos[1] = start[1] + (target[1] - start[1]) * i / 192 + (sine <<= 5);
     pos[2] = start[2] + (target[2] - start[2]) * i / 192;
     Vector_AddPolarOffset(radius, angle, pos);
-    actor->x = pos[0];
-    actor->y = pos[1];
-    actor->z = pos[2];
+    actor->x.fixed = pos[0];
+    actor->y.fixed = pos[1];
+    actor->z.fixed = pos[2];
     actor->facing = angle + 16384;
     if (i == 153) {
       Actor_FaceDirection(10, FACING_WEST_SOUTHWEST, 0);
@@ -709,16 +709,16 @@ visited:
   }
   Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 0);
   actor->facing = FACING_NORTH_NORTHEAST;
-  start[0] = actor->x;
-  start[1] = actor->y;
-  start[2] = actor->z;
+  start[0] = actor->x.fixed;
+  start[1] = actor->y.fixed;
+  start[2] = actor->z.fixed;
   target[0] = 0x5a0000;
   target[1] = 0x40000;
   target[2] = 0x400000;
   for (i = 0; i <= 15; i++) {
-    actor->x = start[0] + (target[0] - start[0]) * i / 16;
-    actor->y = start[1] + (target[1] - start[1]) * i / 16;
-    actor->z = start[2] + (target[2] - start[2]) * i / 16;
+    actor->x.fixed = start[0] + (target[0] - start[0]) * i / 16;
+    actor->y.fixed = start[1] + (target[1] - start[1]) * i / 16;
+    actor->z.fixed = start[2] + (target[2] - start[2]) * i / 16;
     System_Wait(1);
   }
   Actor_SetPosition(11, 0, 0);
@@ -1298,23 +1298,23 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(12, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, leader->x.part[0].pixel, leader->z.part[0].pixel);
   Actor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_JENNA, ((s16 *)&leader->x)[1],
-                         ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_SHEBA, ((s16 *)&leader->x)[1],
-                         ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(ACTOR_SHEBA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_End();

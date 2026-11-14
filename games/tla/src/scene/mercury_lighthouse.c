@@ -113,9 +113,9 @@ void MercuryLighthouse_SpawnMotes(void) {
        * stored. */
       z = 0x2b80000;
       object->motionFlags = phase;
-      object->x = x;
-      object->y = px(160);
-      object->z = z;
+      object->x.fixed = x;
+      object->y.fixed = px(160);
+      object->z.fixed = z;
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags &= ~1;
       sprite->priority = 2;

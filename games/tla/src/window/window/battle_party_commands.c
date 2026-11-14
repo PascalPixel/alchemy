@@ -116,8 +116,8 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           place = (struct Actor *)from->object;
           object = (struct Actor *)to->object;
           to->anchorZ = from->anchorZ;
-          Actor_SetPositionAndResetMotionFar(object, place->x, place->y,
-                                             place->z);
+          Actor_SetPositionAndResetMotionFar(object, place->x.fixed,
+                                             place->y.fixed, place->z.fixed);
           PartyStatus_Draw(Ram_HeapSlots->battleWork->partyStatus);
           BattleObject_PutFar();
           selected[0] = newId;

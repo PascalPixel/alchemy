@@ -70,7 +70,7 @@ void LemuriaDock_MovePiers(void) {
   if (party->entrance == 2) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (Actor_GetById(8)->x == 0) {
+    if (Actor_GetById(8)->x.fixed == 0) {
       Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
       FieldActor_LaunchFromLeader(8, 0, -16, FACING_SOUTH_SOUTHEAST);
       Actor_WaitForMoveById(8);
@@ -121,7 +121,7 @@ void LemuriaDock_AskSettingOff(void) {
     Actor_FaceDirectionAndWait(8, FACING_EAST);
     Event_Wait(5);
     party = &gMainRoutineWork;
-    z = Actor_GetById(party->leaderActorId)->z;
+    z = Actor_GetById(party->leaderActorId)->z.fixed;
     limit = 0x1880000;
     id = party->leaderActorId;
     if (z < limit)

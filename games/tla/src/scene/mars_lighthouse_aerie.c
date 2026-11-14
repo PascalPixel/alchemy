@@ -186,13 +186,13 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *object) {
     struct Actor *a;
 
     a = anchor;
-    along = a->x + cosine * (radius + 6);
+    along = a->x.fixed + cosine * (radius + 6);
   }
-  object->x = along;
+  object->x.fixed = along;
   sine = Math_Sin(angle);
-  across = anchor->z + sine * (*counter + 4);
-  object->z = across;
-  object->targetX = object->x;
+  across = anchor->z.fixed + sine * (*counter + 4);
+  object->z.fixed = across;
+  object->targetX = object->x.fixed;
   object->targetZ = across;
   *pangle -= 0x800;
 }
@@ -246,14 +246,14 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 1);
   object = Actor_Get(ACTOR_BEACON_FIRE);
   object->motionFlags = 4;
-  object->y = px(112);
+  object->y.fixed = px(112);
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(9, 2);
   object = Actor_Get(9);
   object->motionFlags = 4;
-  object->y = px(112);
+  object->y.fixed = px(112);
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Actor_SetSpriteColorMode(object, 5);
@@ -335,8 +335,9 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
 
   if (anchor != NULL &&
       (phase = gMarsLighthouseAerie_BeaconFlameFrame & 15) == 0) {
-    object = FieldActor_Create(0x2a0, anchor->x + px(8),
-                               anchor->y + offset + 0x80000, anchor->z);
+    object =
+        FieldActor_Create(0x2a0, anchor->x.fixed + px(8),
+                          anchor->y.fixed + offset + 0x80000, anchor->z.fixed);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
       u8 zero;
@@ -370,11 +371,12 @@ void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object) {
   u16 angle = *pangle;
   struct Actor *parent = object->watchedActor;
 
-  object->x = parent->x + Trig_Cos(angle) * (object->speedLimit + 28);
-  object->z = (Math_Sin(angle) << 4) + 0x1080000;
-  object->targetX = object->x;
-  object->targetZ = object->z;
-  if (object->z < px(264))
+  object->x.fixed =
+      parent->x.fixed + Trig_Cos(angle) * (object->speedLimit + 28);
+  object->z.fixed = (Math_Sin(angle) << 4) + 0x1080000;
+  object->targetX = object->x.fixed;
+  object->targetZ = object->z.fixed;
+  if (object->z.fixed < px(264))
     ((struct FieldSprite *)object->sprite)->priority = 2;
   else
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -1848,12 +1850,12 @@ void Orbs_UpdateRising(struct Actor *self) {
   s32 x;
   s32 z;
 
-  self->x = centre->x + Trig_Cos(angle) * (self->speedLimit + 3);
+  self->x.fixed = centre->x.fixed + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
-  z = centre->z;
-  x = self->x;
+  z = centre->z.fixed;
+  x = self->x.fixed;
   z += sine * 2;
-  self->z = z;
+  self->z.fixed = z;
   self->targetX = x;
   self->targetZ = z;
   self->timer += -0x800;
@@ -1880,16 +1882,18 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(
-        0x2a0, center->x,
-        (s32)((u32)(random << 8) >> 16 << 16) + center->y - px(28), center->z);
+    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y.fixed - px(28),
+                               center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(
-        0x2a0, center->x,
-        (s32)((u32)(random << 6) >> 16 << 16) + center->y - px(28), center->z);
+    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y.fixed - px(28),
+                               center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -1944,9 +1948,9 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
     MapGrid_SetShake(1, 1, 1);
     break;
   case 24:
-    anchor->x = px(512);
-    anchor->y = -px(360);
-    anchor->z = px(204);
+    anchor->x.fixed = px(512);
+    anchor->y.fixed = -px(360);
+    anchor->z.fixed = px(204);
     anchor->scaleX = Q16_ONE;
     anchor->scaleY = Q16_ONE;
     SceneActor_ParkRecord(anchor);
@@ -1954,7 +1958,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
     break;
   case 25:
     gMarsLighthouseAerie_BeaconFireFrame--;
-    if (anchor->y > 0) {
+    if (anchor->y.fixed > 0) {
       PaletteFade_ApplyTarget(0x203210, 0);
       PaletteFade_Interpolate(16);
       gMarsLighthouseAerie_BeaconFireFrame++;
@@ -1962,26 +1966,27 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
       spawn = 1;
-      anchor->y += 0x24000;
+      anchor->y.fixed += 0x24000;
     }
     break;
   case 26:
     gMarsLighthouseAerie_BeaconFireFrame--;
-    if (anchor->y > px(20)) {
+    if (anchor->y.fixed > px(20)) {
       gMarsLighthouseAerie_BeaconFireFrame = 999;
       FieldTask_Remove(MarsLighthouseAerie_RaiseBeaconFire);
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
-      anchor->y += 0x24000;
+      anchor->y.fixed += 0x24000;
       spawn = 1;
     }
     break;
   }
   if (spawn) {
-    object = FieldActor_Create(
-        0x2a0, anchor->x, anchor->y - ((Random16() * 80 >> 16) << 16) - 0x80000,
-        anchor->z);
+    object = FieldActor_Create(0x2a0, anchor->x.fixed,
+                               anchor->y.fixed -
+                                   ((Random16() * 80 >> 16) << 16) - 0x80000,
+                               anchor->z.fixed);
     if (object != NULL) {
       u8 zero;
       s32 mask;
@@ -2022,8 +2027,9 @@ void MarsLighthouseAerie_StepBackLeft(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x - px(16), object->y,
-                                       object->z + px(32));
+  FieldActor_SetPositionAndResetMotion(object, object->x.fixed - px(16),
+                                       object->y.fixed,
+                                       object->z.fixed + px(32));
 }
 
 /// The actor steps back from the beam, to the right.
@@ -2031,8 +2037,9 @@ void MarsLighthouseAerie_StepBackRight(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x + px(16), object->y,
-                                       object->z + px(32));
+  FieldActor_SetPositionAndResetMotion(object, object->x.fixed + px(16),
+                                       object->y.fixed,
+                                       object->z.fixed + px(32));
 }
 
 /// The actor keeps to the ground as the beacon's beam rises.
@@ -3120,9 +3127,9 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
       if (work->unka0[i] <= 31) {
         struct Vector3 *p = &position;
 
-        p->x = object->x;
-        p->y = object->y + (work->unka0[i] << 16);
-        p->z = object->z;
+        p->x = object->x.fixed;
+        p->y = object->y.fixed + (work->unka0[i] << 16);
+        p->z = object->z.fixed;
         Camera_WorldToScreen(p);
         x = p->x;
         j = 0;

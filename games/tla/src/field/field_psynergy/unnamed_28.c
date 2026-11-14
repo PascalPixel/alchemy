@@ -58,9 +58,9 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   u16 *tile;
   s32 red;
 
-  pos[0] = actor->x;
-  pos[1] = actor->y + 0x100000;
-  pos[2] = actor->z;
+  pos[0] = actor->x.fixed;
+  pos[1] = actor->y.fixed + 0x100000;
+  pos[2] = actor->z.fixed;
   if (work->unk2985 != 0)
     Vector_AddPolarOffset(px(2), -(event->unkcae << 11), pos);
   Camera_WorldToScreen(pos);
@@ -115,9 +115,9 @@ void FieldPsynergy_UpdateUnnamed28(void) {
       }
       if (timer >= 0) {
         sprite->oam.index = *tile + ((timer >> 2) & 3) * 4;
-        pos[0] = actor->x + entry->x;
-        pos[1] = actor->y + entry->y;
-        pos[2] = actor->z + entry->z;
+        pos[0] = actor->x.fixed + entry->x;
+        pos[1] = actor->y.fixed + entry->y;
+        pos[2] = actor->z.fixed + entry->z;
         EffectSprite_DrawAtWorldPosition(sprite, pos);
         timer = entry->timer;
       }
@@ -198,9 +198,9 @@ void FieldPsynergy_Unnamed28(void) {
     canvas = Ram_HeapSlots->canvasSprite;
     canvas->mode = angle;
     pos = position;
-    pos[0] = scene->mainObject->x;
-    pos[1] = scene->mainObject->y + 0x100000;
-    pos[2] = scene->mainObject->z;
+    pos[0] = scene->mainObject->x.fixed;
+    pos[1] = scene->mainObject->y.fixed + 0x100000;
+    pos[2] = scene->mainObject->z.fixed;
     Camera_WorldToScreen(pos);
     {
       s32 x = *((s16 *)pos + 1);
@@ -283,7 +283,8 @@ void FieldPsynergy_Unnamed28(void) {
         if (mote->timer == 0) {
           s32 heading = angle + ((i & 1) << 15);
 
-          SET_POSITION(mote, caster->x, caster->y + 0x100000, caster->z);
+          SET_POSITION(mote, caster->x.fixed, caster->y.fixed + 0x100000,
+                       caster->z.fixed);
           Vector_AddPolarOffset(px(55), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
         }
@@ -352,9 +353,9 @@ void FieldPsynergy_Unnamed28(void) {
         sprite->oam.palette = 15;
         sprite->angle = heading + TRIG_TURN / 4;
         place = position;
-        place[0] = scene->mainObject->x;
-        place[1] = scene->mainObject->y + 0x100000;
-        place[2] = scene->mainObject->z;
+        place[0] = scene->mainObject->x.fixed;
+        place[1] = scene->mainObject->y.fixed + 0x100000;
+        place[2] = scene->mainObject->z.fixed;
         Camera_WorldToScreen(place);
         Vector_AddPolarOffset(px(64), heading, place);
         mote->x = place[0];
@@ -452,7 +453,8 @@ void FieldPsynergy_EndUnnamed28(void) {
   sprite = work->sprites;
   for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
-    SET_POSITION(mote, actor->x, actor->y + 0x100000, actor->z);
+    SET_POSITION(mote, actor->x.fixed, actor->y.fixed + 0x100000,
+                 actor->z.fixed);
     Vector_AddPolarOffset(Random16() * 4 + 0x340000, angle, &mote->x);
     mote->vx = 0;
     mote->vy = -0x40000;
@@ -563,7 +565,7 @@ void ViewMove_Start(s32 direction) {
   right = maxX * 8;
   top = minZ * 8;
   bottom = maxZ * 8;
-  SET_POSITION(work, center->x, center->y, center->z);
+  SET_POSITION(work, center->x.fixed, center->y.fixed, center->z.fixed);
 
   work->edgeX = 0;
   if (viewX < left + VIEW_EDGE_MARGIN)
@@ -642,7 +644,7 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
     z = work->z;
   }
 
-  SET_POSITION(center, x, work->y, z);
+  SET_ACTOR_POSITION(center, x, work->y, z);
 }
 
 // Ends a view move: gives the map back the view bounds ViewMove_Start kept

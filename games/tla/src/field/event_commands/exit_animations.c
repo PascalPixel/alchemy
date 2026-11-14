@@ -36,8 +36,8 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   cameraX = camera[0] & 0xffff0000;
   cameraZ = camera[1] & 0xffff0000;
 #endif
-  x = object->x - cameraX;
-  z = object->z - cameraZ - object->y;
+  x = object->x.fixed - cameraX;
+  z = object->z.fixed - cameraZ - object->y.fixed;
   *position++ = x / Q16_ONE;
   *position = z / Q16_ONE;
   if ((object->spriteStorageKind & 15) == 1)
@@ -107,8 +107,8 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   *&context->flags = zero;
   kind = 15;
   effect->param = kind;
-  object->x = (object->x & 0xFFF00000) + 0x80000;
-  object->z = (object->z & 0xFFF00000) + 0x100000;
+  object->x.fixed = (object->x.fixed & 0xFFF00000) + 0x80000;
+  object->z.fixed = (object->z.fixed & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
   object->targetX = TARGET_UNSET;
@@ -142,8 +142,8 @@ void Exit_PrepareAnimation(s32 animation) {
   } while (0);
   param = 15;
   effect->param = param;
-  object->x = (object->x & 0xFFF00000) + 0x80000;
-  object->z = (object->z & 0xFFF00000) + 0x100000;
+  object->x.fixed = (object->x.fixed & 0xFFF00000) + 0x80000;
+  object->z.fixed = (object->z.fixed & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
   object->targetX = TARGET_UNSET;
@@ -171,8 +171,8 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   zero = 0;
   ctx->flags = zero;
   eff->param = 15;
-  obj->x = (obj->x & 0xfff00000) + 0x80000;
-  obj->z &= 0xfff00000;
+  obj->x.fixed = (obj->x.fixed & 0xfff00000) + 0x80000;
+  obj->z.fixed &= 0xfff00000;
   Actor_SelectAnimationFar(obj, mode);
   wait(30);
   ctx->count = 1;
@@ -186,7 +186,8 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   }
   obj->acceleration = px(1);
   obj->speedLimit = px(1);
-  Actor_SetMoveTargetFar(obj, obj->x, obj->y, obj->z + 0x80000);
+  Actor_SetMoveTargetFar(obj, obj->x.fixed, obj->y.fixed,
+                         obj->z.fixed + 0x80000);
   Actor_WaitForMoveFar(obj);
 }
 
@@ -213,13 +214,13 @@ s32 Entrance_PlayArrival(void) {
         GameFlag_Clear(flag);
         id = gMainRoutineWork.leaderActorId;
         object = ObjectTable_Get(id);
-        object->y += px(160);
+        object->y.fixed += px(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-        while (object->y + object->velocityY > object->groundHeight) {
+        while (object->y.fixed + object->velocityY > object->groundHeight) {
           wait(1);
         }
         Sound_PlayFar(SE_DOOR_CLOSE);
-        object->y = object->groundHeight;
+        object->y.fixed = object->groundHeight;
         Actor_SelectAnimationFar(object, 22);
         Event_Wait(15);
         FieldCamera_FollowActor(id, 1);

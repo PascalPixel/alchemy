@@ -435,8 +435,8 @@ s32 Scene_TalkToActor(s32 id) {
     savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
       leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-      Actor_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
-                                         leader->z);
+      Actor_SetPositionAndResetMotionFar(leader, leader->x.fixed,
+                                         leader->y.fixed, leader->z.fixed);
       Actor_TurnToFaceEachOther(id, gMainRoutineWork.leaderActorId, 0);
     }
   }

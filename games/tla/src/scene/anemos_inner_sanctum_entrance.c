@@ -170,8 +170,8 @@ void AnemosInnerSanctumEntrance_PlaceStatues(void) {
 }
 
 void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *object) {
-  if ((object->groundHeight = Map_GetTerrainHeight(0, object->x, object->z)) >=
-      -0x200000)
+  if ((object->groundHeight = Map_GetTerrainHeight(
+           0, object->x.fixed, object->z.fixed)) >= -0x200000)
     Actor_SetSpriteFlags(object, 1);
   else
     Actor_SetSpriteFlags(object, 0);
@@ -188,14 +188,14 @@ void AnemosInnerSanctumEntrance_MoveStatue(s32 a, s32 b) {
   for (i = 9; i <= 14; i++) {
     struct Actor *object = Actor_GetById(i);
 
-    if (object->x >> 20 != *x)
+    if (object->x.fixed >> 20 != *x)
       return;
     {
       s32 cellZ = *z;
 
       z += 2;
       x += 2;
-      if (object->z >> 20 != cellZ)
+      if (object->z.fixed >> 20 != cellZ)
         return;
     }
   }
@@ -216,7 +216,7 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
       AnemosInnerSanctumEntrance_MoveStatue(0, a);
     }
   } else {
-    if (Actor_GetById(party->leaderActorId)->y > -px(28))
+    if (Actor_GetById(party->leaderActorId)->y.fixed > -px(28))
       Field_TryJumpForward();
   }
 }
@@ -226,17 +226,19 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   s32 shift = 0x1300000;
   s32 i;
 
-  if (object->z >> 20 <= 9)
+  if (object->z.fixed >> 20 <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
   if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
     return;
-  if (MapGrid_GetCellBehaviorAt(object->layer, object->x, object->z) != 77)
+  if (MapGrid_GetCellBehaviorAt(object->layer, object->x.fixed,
+                                object->z.fixed) != 77)
     return;
   Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTargetFixed(object, (object->x & 0xfff00000) + 0x80000,
-                                object->y, (object->z & 0xfff00000) + 0x80000);
+  FieldActor_SetMoveTargetFixed(
+      object, (object->x.fixed & 0xfff00000) + 0x80000, object->y.fixed,
+      (object->z.fixed & 0xfff00000) + 0x80000);
 #endif
   {
     s32 id = gMainRoutineWork.leaderActorId;
@@ -252,11 +254,11 @@ next:
   {
     object = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
     object->motionFlags = 0;
-    object->y += 0x8000;
+    object->y.fixed += 0x8000;
     object->acceleration = px(1) / 16;
     object->speedLimit = px(2);
     Actor_SetSpriteFlags(object, 1);
-    Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
+    Actor_SetMoveTarget(object, object->x.fixed, 0xfff80000, object->z.fixed);
     object->update = AnemosInnerSanctumEntrance_ShowByHeight;
     Sound_Play(SE_JUMP);
     wait((Random16() * 4 >> 16) + 3);
@@ -270,9 +272,9 @@ lower:
   {
     object = Actor_GetById(i);
     {
-      s32 z = object->z - shift;
+      s32 z = object->z.fixed - shift;
 
-      Actor_SetMoveTarget(object, object->x, 0xfff80000, z);
+      Actor_SetMoveTarget(object, object->x.fixed, 0xfff80000, z);
     }
   }
   if (++i <= 14)
@@ -283,7 +285,7 @@ lower:
 land:
   {
     object = Actor_GetById(i);
-    object->z = (object->z & 0xfff00000) + 0x80000;
+    object->z.fixed = (object->z.fixed & 0xfff00000) + 0x80000;
     object->motionFlags = 3;
     object->update = 0;
   }
@@ -382,10 +384,10 @@ void LightSprites_Draw(void) {
   for (i = 0; i < gLightSpriteCount; i++) {
     struct Actor *actor = gLightSpriteActors[i];
 
-    if (actor != 0 && actor->x != 0) {
-      s32 ox = actor->x - viewX;
-      s32 y = actor->y - viewY + 0x80000;
-      s32 z = actor->z - viewZ - viewY;
+    if (actor != 0 && actor->x.fixed != 0) {
+      s32 ox = actor->x.fixed - viewX;
+      s32 y = actor->y.fixed - viewY + 0x80000;
+      s32 z = actor->z.fixed - viewZ - viewY;
       s32 oy = z - y;
       s32 depth = ((y + z) >> 16) + 58;
       s32 mode = gLightSpriteLargeOam;

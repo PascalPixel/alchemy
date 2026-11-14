@@ -31,9 +31,11 @@ void Actor_PlaceBlocks(u16 *actors) {
 
   for (; *actors != 0xffff; actors++) {
     struct Actor *object = Actor_GetById(*actors);
-    u32 key = MapGrid_GetTerrainKindFar(object->layer, object->x, object->z);
-    s32 level =
-        MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z) >> 19;
+    u32 key = MapGrid_GetTerrainKindFar(object->layer, object->x.fixed,
+                                        object->z.fixed);
+    s32 level = MapGrid_GetTerrainHeightFar(object->layer, object->x.fixed,
+                                            object->z.fixed) >>
+                19;
     s32 slot = Actor_GetCellIndex(object);
     struct SwitchCell__f0eabd0 *cells = map->layers[object->layer].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
@@ -59,9 +61,10 @@ void Actor_PlaceBlocks(u16 *actors) {
     cell->block = 0xff;
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x, leader->z);
-  if (leader->y < height)
-    leader->y = leader->groundHeight = height;
+  height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x.fixed,
+                                       leader->z.fixed);
+  if (leader->y.fixed < height)
+    leader->y.fixed = leader->groundHeight = height;
 }
 
 // Only so the shape store has an alias set of its own; the grid holds bytes.
@@ -94,9 +97,10 @@ void Actor_LiftTargetBlock(u16 *actors) {
       struct SwitchCell__f0eabd0 *cells = map->layers[target->layer].cells;
       struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
-      u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x, target->z);
-      s32 level =
-          MapGrid_GetTerrainHeightFar(target->layer, target->x, target->z);
+      u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
+                                          target->z.fixed);
+      s32 level = MapGrid_GetTerrainHeightFar(target->layer, target->x.fixed,
+                                              target->z.fixed);
       s32 slot = Actor_GetCellIndex(target);
       s32 tag;
 
@@ -113,7 +117,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
 }
 
 // Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
-static inline s32 ActorX(struct Actor *actor) { return actor->x; }
+static inline s32 ActorX(struct Actor *actor) { return actor->x.fixed; }
 
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the
 /// cell it has moved to, as Actor_PlaceBlocks places each.
@@ -141,10 +145,11 @@ void Actor_PlaceMovedBlock(void) {
      * blocks. */
     asm("" : "+l"(index) : "l"(blocks));
     shapes = &grid[index];
-    key = MapGrid_GetTerrainKindFar(target->layer, target->x, target->z);
+    key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
+                                    target->z.fixed);
     /* FAKEMATCH(wrapper): x read through ActorX for the height call. */
-    level =
-        MapGrid_GetTerrainHeightFar(target->layer, ActorX(target), target->z);
+    level = MapGrid_GetTerrainHeightFar(target->layer, ActorX(target),
+                                        target->z.fixed);
     slot = Actor_GetCellIndex(target);
     shapes += slot;
     tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) + 4);
@@ -168,16 +173,16 @@ struct Actor *Leader_FindActorAhead(void) {
   s32 angle = ((leader->facing >> 12) + 2) & 12;
   struct Actor *found;
 
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   Vector_AddPolarOffset(px(16), angle << 12, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
-  position[0] = leader->x;
-  position[1] = leader->y;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed;
+  position[2] = leader->z.fixed;
   Vector_AddPolarOffset(px(32), angle << 12, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
@@ -195,13 +200,13 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
     struct Actor *object = event->actors[i];
 
     if (checkY) {
-      if (position[0] >> 20 == object->x >> 20 &&
-          position[1] / Q16_ONE == object->y / Q16_ONE &&
-          position[2] >> 20 == object->z >> 20)
+      if (position[0] >> 20 == object->x.fixed >> 20 &&
+          position[1] / Q16_ONE == object->y.fixed / Q16_ONE &&
+          position[2] >> 20 == object->z.fixed >> 20)
         return object;
     } else {
-      if (position[0] >> 20 == object->x >> 20 &&
-          position[2] >> 20 == object->z >> 20)
+      if (position[0] >> 20 == object->x.fixed >> 20 &&
+          position[2] >> 20 == object->z.fixed >> 20)
         return object;
     }
   }

@@ -113,18 +113,18 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   Event_Wait(23);
   Sound_PlayFar(SE_ENEMY_CRY);
 
-  from[0] = object->x;
-  from[1] = object->y;
-  from[2] = object->z;
-  to[0] = owner->x;
-  to[1] = owner->y;
-  to[2] = owner->z;
+  from[0] = object->x.fixed;
+  from[1] = object->y.fixed;
+  from[2] = object->z.fixed;
+  to[0] = owner->x.fixed;
+  to[1] = owner->y.fixed;
+  to[2] = owner->z.fixed;
   steps = 20;
   for (i = 0; i < steps; i++) {
-    object->x = from[0] + i * (to[0] - from[0]) / 20;
-    object->y =
+    object->x.fixed = from[0] + i * (to[0] - from[0]) / 20;
+    object->y.fixed =
         from[1] + i * (to[1] - from[1]) / 20 + Trig_Sin((i << 15) / 20) * 40;
-    object->z = from[2] + i * (to[2] - from[2]) / 20;
+    object->z.fixed = from[2] + i * (to[2] - from[2]) / 20;
     wait(1);
   }
 }
@@ -153,8 +153,8 @@ void ParticleBurst_Start(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainObject;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
-  s32 dx = (cell->x << 20) - owner->x + 0x80000;
-  s32 dz = (cell->z << 20) - owner->z + 0x80000;
+  s32 dx = (cell->x << 20) - owner->x.fixed + 0x80000;
+  s32 dz = (cell->z << 20) - owner->z.fixed + 0x80000;
   s32 heading = (u16)ArcTan2(dz, dx);
   struct EffectSprite *sprite;
   struct BurstParticle *particle;
@@ -177,7 +177,7 @@ void ParticleBurst_Start(void) {
     sprite->oam.priority = 0;
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
-    SET_POSITION(particle, owner->x, owner->y, owner->z);
+    SET_POSITION(particle, owner->x.fixed, owner->y.fixed, owner->z.fixed);
     Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
     particle->heading = heading;
     particle->speed = Random16() + 0x10000;

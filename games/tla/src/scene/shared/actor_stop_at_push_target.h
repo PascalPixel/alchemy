@@ -6,9 +6,9 @@ void Actor_StopAtPushTarget(struct Actor *object) {
   s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   FieldVector_AddPolarOffset(px(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0) {
@@ -19,13 +19,13 @@ void Actor_StopAtPushTarget(struct Actor *object) {
     i++;
     if (i <= 5)
       goto next;
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
   }
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   if (MapGrid_CheckCollision(object, position) > 0)
-    FieldActor_SetPositionAndResetMotion(object, object->x, object->y,
-                                         object->z);
+    FieldActor_SetPositionAndResetMotion(object, object->x.fixed,
+                                         object->y.fixed, object->z.fixed);
 }

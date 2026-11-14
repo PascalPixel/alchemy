@@ -697,7 +697,7 @@ void Garoh_RaiseBlock(s32 id, struct Actor *object) {
   object->motionFlags = 0;
   saved = id;
   for (i = 16; i > 0; i--) {
-    object->y -= px(2);
+    object->y.fixed -= px(2);
     FieldEvent_Wait(1);
   }
   Event_PlaySound(SE_WHOOSH);
@@ -707,11 +707,11 @@ void Garoh_RaiseBlock(s32 id, struct Actor *object) {
 #define DEFINE_GAROH_TRIGGER_AT_CELL(name, n1, n2, n3, n4)                     \
   void name(void) {                                                            \
     struct Actor *object = Actor_Get(n1);                                      \
-    s32 x = object->x >> 20;                                                   \
+    s32 x = object->x.fixed >> 20;                                             \
     s32 raw;                                                                   \
     s32 z;                                                                     \
                                                                                \
-    raw = object->z;                                                           \
+    raw = object->z.fixed;                                                     \
     z = raw >> 20;                                                             \
     if (!Flag_IsSet(n2) && x == n3 && z == n4) {                               \
       Garoh_RaiseBlock(n1, object);                                            \
@@ -732,8 +732,8 @@ void Garoh_CheckThirdBlock(void) {
 
 void Garoh_RaiseFourthBlockOnCell(void) {
   struct Actor *object = Actor_Get(11);
-  s32 x = object->x >> 20;
-  s32 z = object->z >> 20;
+  s32 x = object->x.fixed >> 20;
+  s32 z = object->z.fixed >> 20;
 
   if (!Flag_IsSet(FLAG_FOURTH_BLOCK_RAISED) && x == 15 && z == 25) {
     Garoh_RaiseBlock(11, object);
@@ -889,8 +889,8 @@ burst:
   vec.z = z;
   x += x / 3;
   vec.x = x;
-  FieldEffect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
-                    &params);
+  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x, vec.y,
+                    z, 0x01000001, &params);
   angleStep += 2;
   if (angleStep <= 16)
     goto burst;
@@ -946,12 +946,12 @@ extern void Garoh_SpawnPuff__puffs(s32 x, s32 y, s32 z, s32 value,
 void Garoh_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Garoh_SpawnPuff__puffs(object->x + px(8), object->y + px(28), object->z,
-                         0x1000, 20);
+  Garoh_SpawnPuff__puffs(object->x.fixed + px(8), object->y.fixed + px(28),
+                         object->z.fixed, 0x1000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
-  Garoh_SpawnPuff__puffs(object->x - px(8), object->y + px(28), object->z,
-                         0xf000, 20);
+  Garoh_SpawnPuff__puffs(object->x.fixed - px(8), object->y.fixed + px(28),
+                         object->z.fixed, 0xf000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }
@@ -1086,8 +1086,8 @@ loop1:
   FieldEvent_Wait(20);
   EventCamera_FollowActor(ACTOR_WEREWOLF, 1);
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
-  x = bird->x;
-  z = bird->z;
+  x = bird->x.fixed;
+  z = bird->z.fixed;
   toX = 0x800000;
   toZ = 0xb80000;
   i = 0;

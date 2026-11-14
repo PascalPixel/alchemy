@@ -314,7 +314,7 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
   s32 values[3];
 
   if (object != 0) {
-    SET_VECTOR(values, object->x, object->y, object->z);
+    SET_VECTOR(values, object->x.fixed, object->y.fixed, object->z.fixed);
     Vector_AddPolarOffset(magnitude, angle, values);
     Actor_SetMoveTargetFar(object, values[0], values[1], values[2]);
   }
@@ -342,10 +342,10 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
   s32 *out;
 
   if (gFieldWork->mode == 3) {
-    point[0] = object->x;
+    point[0] = object->x.fixed;
     out = screen;
-    point[1] = object->y;
-    point[2] = object->z;
+    point[1] = object->y.fixed;
+    point[2] = object->z.fixed;
     Render_ProjectPoint(point, out);
     depth = (0x200 - out[2]) / 2 + 128;
     if (depth <= 0)
@@ -356,7 +356,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
     s32 bias = scroll->offset & 0xffff0000;
     s32 base = map->base->base;
 
-    depth = ((object->y - base + object->z - base - bias) >> 16) + 62;
+    depth =
+        ((object->y.fixed - base + object->z.fixed - base - bias) >> 16) + 62;
   }
   return depth;
 }
@@ -395,8 +396,8 @@ void Func_080dba5c(void) {
     sprite->layer = 0;
     sprite->scale = Q16_ONE * 2;
     position[0] = scene->x;
-    position[1] = mainObject->y + 0x1c0000;
-    position[2] = mainObject->z;
+    position[1] = mainObject->y.fixed + 0x1c0000;
+    position[2] = mainObject->z.fixed;
     Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];

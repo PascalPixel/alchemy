@@ -221,17 +221,17 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 startZ = 30 * Q16_ONE;
 
   Field_StartColorTransition(8, gFieldEffect_TargetColors[gFrameCount & 7]);
-  pos[0] = owner->x;
-  pos[1] = owner->y + 24 * Q16_ONE;
-  pos[2] = owner->z;
+  pos[0] = owner->x.fixed;
+  pos[1] = owner->y.fixed + 24 * Q16_ONE;
+  pos[2] = owner->z.fixed;
   Camera_WorldToScreen(pos);
   ownerX = pos[0];
   ownerZ = pos[2];
   work->targetX = ownerX;
   work->targetZ = ownerZ;
-  pos[0] = target->x;
-  pos[1] = target->y;
-  pos[2] = target->z;
+  pos[0] = target->x.fixed;
+  pos[1] = target->y.fixed;
+  pos[2] = target->z.fixed;
   Camera_WorldToScreen(pos);
   targetX = pos[0];
   targetZ = pos[2];
@@ -413,9 +413,9 @@ void SummonTablet_PlayRunes(s32 targetId) {
       angle = Random16();
       mote = &work->sparks[nextSpark];
       mote->timer = 0;
-      mote->x = target->x;
-      mote->z = target->y + 12 * Q16_ONE;
-      mote->unk08 = target->z;
+      mote->x = target->x.fixed;
+      mote->z = target->y.fixed + 12 * Q16_ONE;
+      mote->unk08 = target->z.fixed;
       Vector_AddPolarOffset(Random16() * 4 + 2 * Q16_ONE, angle, &mote->x);
       mote->targetX = 0;
       mote->targetZ = Q16_ONE * 9 / 2;
@@ -479,9 +479,10 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   }
   FlagBlock_ApplyFlags(list);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x, leader->z);
-  if (leader->y < height)
-    leader->y = leader->groundHeight = height;
+  height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x.fixed,
+                                       leader->z.fixed);
+  if (leader->y.fixed < height)
+    leader->y.fixed = leader->groundHeight = height;
 }
 
 struct MenuFlagWork {

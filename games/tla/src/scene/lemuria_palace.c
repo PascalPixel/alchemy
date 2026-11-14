@@ -164,18 +164,20 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
   Actor_SetAnimation(13, 5);
   FieldEvent_Wait(28);
   Event_PlaySound(SE_MENU_CONFIRM);
-  first = Actor_Spawn(674, object->x + px(10), object->y + px(16), object->z);
+  first = Actor_Spawn(674, object->x.fixed + px(10), object->y.fixed + px(16),
+                      object->z.fixed);
   first->speedLimit = px(2);
   first->acceleration = px(2);
   first->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(first, first->x + px(6), first->y + px(8),
-                                first->z);
-  second = Actor_Spawn(674, object->x + px(10), object->y + px(16), object->z);
+  FieldActor_SetMoveTargetFixed(first, first->x.fixed + px(6),
+                                first->y.fixed + px(8), first->z.fixed);
+  second = Actor_Spawn(674, object->x.fixed + px(10), object->y.fixed + px(16),
+                       object->z.fixed);
   second->speedLimit = px(2);
   second->acceleration = px(2);
   second->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(second, first->x + px(8), first->y - px(4),
-                                first->z);
+  FieldActor_SetMoveTargetFixed(second, first->x.fixed + px(8),
+                                first->y.fixed - px(4), first->z.fixed);
   FieldActor_WaitForMove(first);
   Actor_Release(first);
   FieldActor_WaitForMove(second);
@@ -1065,7 +1067,7 @@ grow:
   }
   v24 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v24 != 0) {
-    Actor_SetDestination(17, ((s16 *)&v24->x)[1], ((s16 *)&v24->z)[1]);
+    Actor_SetDestination(17, v24->x.part[0].pixel, v24->z.part[0].pixel);
   }
   Actor_WaitForMoveById(17);
   Actor_SetPosition(17, 0, 0);
@@ -1073,7 +1075,8 @@ grow:
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   v25 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v25 != 0) {
-    Actor_SetDestination(ACTOR_JENNA, ((s16 *)&v25->x)[1], ((s16 *)&v25->z)[1]);
+    Actor_SetDestination(ACTOR_JENNA, v25->x.part[0].pixel,
+                         v25->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
@@ -1081,7 +1084,8 @@ grow:
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
   v26 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v26 != 0) {
-    Actor_SetDestination(ACTOR_SHEBA, ((s16 *)&v26->x)[1], ((s16 *)&v26->z)[1]);
+    Actor_SetDestination(ACTOR_SHEBA, v26->x.part[0].pixel,
+                         v26->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
@@ -1099,7 +1103,8 @@ grow:
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   v27 = Actor_GetById(FIELD_AT(r5_5, s32, 0));
   if (v27 != 0) {
-    Actor_SetDestination(ACTOR_PIERS, ((s16 *)&v27->x)[1], ((s16 *)&v27->z)[1]);
+    Actor_SetDestination(ACTOR_PIERS, v27->x.part[0].pixel,
+                         v27->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);

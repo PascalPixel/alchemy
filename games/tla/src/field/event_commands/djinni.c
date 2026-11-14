@@ -26,18 +26,18 @@ void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
 void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
   struct Actor *target = obj->watchedActor;
 
-  obj->x += (target->x - obj->x) / 2;
+  obj->x.fixed += (target->x.fixed - obj->x.fixed) / 2;
   {
-    s32 position = obj->y;
+    s32 position = obj->y.fixed;
 
-    position += (target->y - position) / 2;
-    obj->y = position;
+    position += (target->y.fixed - position) / 2;
+    obj->y.fixed = position;
   }
   {
-    s32 position = obj->z;
+    s32 position = obj->z.fixed;
 
-    position += (target->z - position) / 2;
-    obj->z = position;
+    position += (target->z.fixed - position) / 2;
+    obj->z.fixed = position;
   }
 }
 
@@ -110,7 +110,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < 8; i++) {
-    copy = Actor_CreateFar(sprite, djinni->x, djinni->y, djinni->z);
+    copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
+                           djinni->z.fixed);
     // DEAD: nothing reads copies; the source keeps the store.
     copies[i] = copy;
     if (copy != NULL) {
@@ -139,7 +140,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_Jump(djinniId, 6, 5);
   wait(24);
   for (i = 0; i < 120; i++) {
-    if (ABS(djinni->y - leader->y) < 0x140000)
+    if (ABS(djinni->y.fixed - leader->y.fixed) < 0x140000)
       break;
     wait(1);
   }
@@ -243,8 +244,9 @@ void Djinn_RestoreActorAfterBattle(void) {
         } else {
           struct Actor *selection = ObjectTable_Get(*owner);
 
-          Actor_SetPositionAndResetMotionFar(obj, selection->x, selection->y,
-                                             selection->z - px(32));
+          Actor_SetPositionAndResetMotionFar(obj, selection->x.fixed,
+                                             selection->y.fixed,
+                                             selection->z.fixed - px(32));
         }
         Actor_SelectAnimationFar(obj, 1);
       }
@@ -381,7 +383,8 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     }
   } else if (particle->state == 2) {
     particle->orbitAngle += 1;
-    SET_POSITION(&position, owner->x, owner->y + 20 * Q16_ONE, owner->z);
+    SET_POSITION(&position, owner->x.fixed, owner->y.fixed + 20 * Q16_ONE,
+                 owner->z.fixed);
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;

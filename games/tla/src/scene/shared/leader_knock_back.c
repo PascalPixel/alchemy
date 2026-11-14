@@ -30,7 +30,8 @@ void KNOCK_BACK(void) {
     actor->facing = TRIG_TURN / 4;
     KNOCK_BACK_SET_ANIMATION(actor, 49);
     for (;;) {
-      if (KNOCK_BACK_CELL_ATTRIBUTE(actor->layer, actor->x, actor->z) == 7) {
+      if (KNOCK_BACK_CELL_ATTRIBUTE(actor->layer, actor->x.fixed,
+                                    actor->z.fixed) == 7) {
         s32 i;
 
         /* FAKEMATCH(temporary): velocityX stored through a union. */
@@ -42,15 +43,15 @@ void KNOCK_BACK(void) {
         actor->velocityZ = work->unk6a << 17;
         actor->acceleration = Q16_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x + (work->unk68 << 19);
-          position.y = actor->y;
+          position.x = actor->x.fixed + (work->unk68 << 19);
+          position.y = actor->y.fixed;
 #if TLA_PATCH_1
-          position.z = actor->z + (work->unk6a << 19);
+          position.z = actor->z.fixed + (work->unk6a << 19);
 #else
           // A once-only block: its start holds position's first two stores
           // ahead of the work read.
           do {
-            position.z = actor->z + (work->unk6a << 19);
+            position.z = actor->z.fixed + (work->unk6a << 19);
           } while (0);
 #endif
           if (KNOCK_BACK_CHECK_COLLISION(actor, &position) != 0) {
@@ -73,16 +74,16 @@ void KNOCK_BACK(void) {
         s32 x, z, off, oldZ;
 #endif
 
-        position.x = actor->x + (work->unk68 << 19);
-        position.y = actor->y;
+        position.x = actor->x.fixed + (work->unk68 << 19);
+        position.y = actor->y.fixed;
 #if TLA_PATCH_1
-        position.z = actor->z + (work->unk6a << 19);
+        position.z = actor->z.fixed + (work->unk6a << 19);
         result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
 #else
         // A once-only block, as in the loop above, with the call inside so
         // the call reuses position's address.
         do {
-          position.z = actor->z + (work->unk6a << 19);
+          position.z = actor->z.fixed + (work->unk6a << 19);
           result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
         } while (0);
 #endif
@@ -100,39 +101,40 @@ void KNOCK_BACK(void) {
         /* FAKEMATCH(wrapper): the overlap test forwarded through Value4. */
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())KNOCK_BACK_SPHERES_OVERLAP, (s32)&other->x,
-                     radius, (s32)&position, other->radius - 2) >= 0) {
+              Value4((s32 (*)())KNOCK_BACK_SPHERES_OVERLAP,
+                     (s32)&other->x.fixed, radius, (s32)&position,
+                     other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
           }
         }
         do {
-          x = actor->x += work->unk68 << 17;
+          x = actor->x.fixed += work->unk68 << 17;
         } while (0);
-        z = actor->z + (work->unk6a << 17);
+        z = actor->z.fixed + (work->unk6a << 17);
 #else
-        x = actor->x += work->unk68 << 17;
+        x = actor->x.fixed += work->unk68 << 17;
         // The old z read in a once-only block, whose end keeps the read
         // between x's store and the work read.
         /* FAKEMATCH(temporary): oldZ carries the z read out of the block. */
         do {
-          oldZ = actor->z;
+          oldZ = actor->z.fixed;
         } while (0);
         z = oldZ + (work->unk6a << 17);
 #endif
-        actor->z = z;
+        actor->z.fixed = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > Q16_ONE)
           off = Q16_ONE;
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
-        actor->x = x - off;
+        actor->x.fixed = x - off;
         off = (z & 0xfffff) + 0xfff80000;
         if (off > Q16_ONE)
           off = Q16_ONE;
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
-        actor->z = z - off;
+        actor->z.fixed = z - off;
         work->unk04 = 0;
         System_Wait(1);
       }

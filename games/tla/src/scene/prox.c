@@ -278,11 +278,12 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
     object->paused = 1;
     return 1;
   }
-  targetPos = &target->x;
-  objectPos = &object->x;
+  targetPos = &target->x.fixed;
+  objectPos = &object->x.fixed;
   if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
       force != 0) {
-    u32 angle = (u16)ArcTan2(target->z - object->z, *targetPos - *objectPos);
+    u32 angle = (u16)ArcTan2(target->z.fixed - object->z.fixed,
+                             *targetPos - *objectPos);
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
@@ -321,7 +322,8 @@ s32 Prox_PlayTag(struct Actor *actor) {
   struct Actor *target;
 
   target = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (SceneActor_CalculateFixedPointDistance(&target->x, &actor->x) <= 11) {
+  if (SceneActor_CalculateFixedPointDistance(&target->x.fixed,
+                                             &actor->x.fixed) <= 11) {
     actor->paused = flag;
     Actor_SelectAnimation(actor, 2);
     return 0;
@@ -1014,7 +1016,7 @@ void Prox_MoldHidesInSnow(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_PlaySound(SE_RATTLE);
   object = (struct Actor *)((s32)FieldCamera_GetActor());
-  object->y += px(2);
+  object->y.fixed += px(2);
   object = Actor_Get(20);
   object->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(20, 408, 200);
@@ -1151,9 +1153,10 @@ void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (mode == 1) {
     object = Actor_Get(gMainRoutineWork.leaderActorId);
-    cell = object->x >> 16;
-    FieldActor_SetMoveTargetFixed(object, ((8 - cell % 16) << 16) + object->x,
-                                  object->y, object->z);
+    cell = object->x.fixed >> 16;
+    FieldActor_SetMoveTargetFixed(object,
+                                  ((8 - cell % 16) << 16) + object->x.fixed,
+                                  object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
@@ -1189,9 +1192,10 @@ void Prox_ClimbStairs(void) {
   s32 id;
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  cell = object->x >> 16;
-  FieldActor_SetMoveTargetFixed(object, ((8 - cell % 16) << 16) + object->x,
-                                object->y, object->z - px(4));
+  cell = object->x.fixed >> 16;
+  FieldActor_SetMoveTargetFixed(object,
+                                ((8 - cell % 16) << 16) + object->x.fixed,
+                                object->y.fixed, object->z.fixed - px(4));
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Event_PlaySound(SE_STAIRS_UP);
@@ -1215,14 +1219,16 @@ void Prox_ComeDownStairs(s32 a0) {
   FieldEvent_ResolvePendingActions(0);
   if (a0 != 0) {
     Actor_SetSpriteFlags(((s32)Actor_Get(gMainRoutineWork.leaderActorId)), 0);
-    FieldActor_SetPositionAndResetMotion(object, (object->x + -65536),
-                                         object->y, (object->z + -393216));
+    FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + -65536),
+                                         object->y.fixed,
+                                         (object->z.fixed + -393216));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 0x17);
   } else {
-    FieldActor_SetPositionAndResetMotion(object, (object->x + px(1)), object->y,
-                                         (object->z + -393216));
+    FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + px(1)),
+                                         object->y.fixed,
+                                         (object->z.fixed + -393216));
     System_Wait(1);
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 0x18);

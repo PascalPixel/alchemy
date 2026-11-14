@@ -16,7 +16,7 @@ void Leader_SpinAway(s32 entrance) {
 
     if (i == 30)
       Event_FinishScreenTransition();
-    leader->y -= 0x4000;
+    leader->y.fixed -= 0x4000;
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)

@@ -188,20 +188,22 @@ loop:
   object->collisionFlags = 0;
   object->bounce = 0;
   Actor_SetSpriteFlags((struct Actor *)object, 0);
-  height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
-  MapGrid_SetCellHeight(object->x, object->z, 0, height);
-  MapGrid_SetCellHeight(object->x, object->z, 2, height);
-  cell = MapCell_GetAttributes(0, object->x >> 20, object->z >> 20);
+  height =
+      (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
+  cell = MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20);
   object->riseBaseY = cell;
-  MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, cell | 0x80);
+  MapCell_SetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20,
+                        cell | 0x80);
   ids++;
   if (*ids != 0xffff)
     goto loop;
 done:
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     wait(1);
-    leader->y = leader->groundHeight =
-        Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
+    leader->y.fixed = leader->groundHeight =
+        Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
     leader->velocityY = 0;
     leader->targetY = 0x80000000;
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
@@ -274,17 +276,17 @@ void Caverns_StartMovingAngaraBlock(void) {
   } else {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     angle = (leader->facing + 0x2000) & 0xc000;
-    position[0] = leader->x;
-    position[1] = leader->y;
-    position[2] = leader->z;
+    position[0] = leader->x.fixed;
+    position[1] = leader->y.fixed;
+    position[2] = leader->z.fixed;
     Vector_AddPolarOffset(0x100000, angle, position);
     if (*ids == 0xffff)
       goto search_done;
   search:
     object = Actor_GetById(*ids);
-    if (position[0] >> 20 == object->x >> 20 &&
-        position[1] / 0x10000 == object->y / 0x10000 &&
-        position[2] >> 20 == object->z >> 20)
+    if (position[0] >> 20 == object->x.fixed >> 20 &&
+        position[1] / 0x10000 == object->y.fixed / 0x10000 &&
+        position[2] >> 20 == object->z.fixed >> 20)
       goto search_done;
     ids++;
     object = NULL;
@@ -296,17 +298,19 @@ void Caverns_StartMovingAngaraBlock(void) {
     WORD_AT(work, 0xcbc) = (s32)object;
     Caverns_ShiftAngaraCellHeights(1);
   }
-  height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) - 2;
-  MapGrid_SetCellHeight(object->x, object->z, 0, height);
-  MapGrid_SetCellHeight(object->x, object->z, 2, height);
-  MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, object->riseBaseY);
+  height =
+      (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) - 2;
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
+  MapCell_SetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20,
+                        object->riseBaseY);
 }
 
 // A dust puff's step: drifts, slows, grows and turns.
 void Caverns_DriftDust(struct Actor *object) {
-  object->x += object->bounce;
-  object->y += object->gravity;
-  object->z += object->riseBaseY;
+  object->x.fixed += object->bounce;
+  object->y.fixed += object->gravity;
+  object->z.fixed += object->riseBaseY;
   object->bounce -= object->bounce / 12;
   object->riseBaseY -= object->riseBaseY / 10;
   object->scaleX += object->speedLimit;
@@ -318,8 +322,8 @@ void Caverns_DriftDust(struct Actor *object) {
 // south of it.
 void Caverns_LayerLeaderByStack(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 leaderZ = leader->z;
-  s32 z = object->z;
+  s32 leaderZ = leader->z.fixed;
+  s32 z = object->z.fixed;
   u8 *flags = &leader->priorityFlags;
 
   if (leaderZ > z) {
@@ -372,24 +376,25 @@ void Caverns_FinishMovingAngaraBlock(void) {
   } else {
     Caverns_ShiftAngaraCellHeights(-1);
   }
-  if (Map_GetTerrainHeight(0, object->x, object->z) != object->y) {
+  if (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) !=
+      object->y.fixed) {
     object->layer = 2;
     object->motionFlags = 3;
     object->bounce = 0;
     wait(1);
-    kind = MapGrid_GetCellBehaviorAt(2, object->x, object->z);
+    kind = MapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
     if (kind != 0) {
       object->priorityFlags |= 2;
       REG_BLDALPHA = 0x1000;
       blendControl = (u16 *)&REG_BLDCNT;
       *blendControl = 0x3f10;
       sum = kind + 2;
-      spawned = OverlayObject_PrepareObject(object->x, 0,
-                                            object->z + (sum << 20), 312);
+      spawned = OverlayObject_PrepareObject(object->x.fixed, 0,
+                                            object->z.fixed + (sum << 20), 312);
       Sound_Play(SE_DUST_PUFF);
       OverlayObject_WaitUntilIdle(object);
       OverlayObject_WaitUntilIdle(object);
-      object->x = object->y = object->z = 0;
+      object->x.fixed = object->y.fixed = object->z.fixed = 0;
       Actor_Release(spawned);
       wait(1);
       *blendControl = 0;
@@ -414,8 +419,9 @@ void Caverns_FinishMovingAngaraBlock(void) {
         velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
          * call's arguments. */
-        FieldEffect_Spawn(object->x, object->y, object->z, velocity[0],
-                          velocity[1], velocity[2], sum = 0x10b0000, &options);
+        FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
+                          velocity[0], velocity[1], velocity[2],
+                          sum = 0x10b0000, &options);
         i++;
       }
       if (i <= 16)
@@ -425,9 +431,9 @@ void Caverns_FinishMovingAngaraBlock(void) {
     object->layer = 0;
     // The velocity array is reused for the position under the object.
     {
-      velocity[0] = object->x;
-      velocity[1] = object->y - (16 << 16);
-      velocity[2] = object->z;
+      velocity[0] = object->x.fixed;
+      velocity[1] = object->y.fixed - (16 << 16);
+      velocity[2] = object->z.fixed;
       other = Actor_FindAtCell(velocity, 1);
       if (other != NULL) {
         object->update = (void (*)(void))Caverns_LayerLeaderByStack;
@@ -437,12 +443,15 @@ void Caverns_FinishMovingAngaraBlock(void) {
       }
     }
   }
-  height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
-  MapGrid_SetCellHeight(object->x, object->z, 0, height);
-  MapGrid_SetCellHeight(object->x, object->z, 2, height);
-  value = MapCell_GetAttributes(0, object->x >> 20, object->z >> 20);
+  height =
+      (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >> 19) + 2;
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, height);
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 2, height);
+  value =
+      MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20);
   object->riseBaseY = value;
-  MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, value | 128);
+  MapCell_SetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20,
+                        value | 128);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -490,7 +499,7 @@ void Caverns_InitializeIndra(void) {
   object->motionFlags = 0;
 
   arg = 10;
-  Map_CopyCellAttributeRect(16, arg, 1, 1, object->x >> 20, arg);
+  Map_CopyCellAttributeRect(16, arg, 1, 1, object->x.fixed >> 20, arg);
 }
 
 void Caverns_MoveIndraPillar(s32 unused, s32 id) {
@@ -498,7 +507,7 @@ void Caverns_MoveIndraPillar(s32 unused, s32 id) {
 
   object->motionFlags = 0;
   Map_CopyCellAttributeRect(13, 12, 2, 1, 13, 10);
-  Map_CopyCellAttributeRect(16, 10, 1, 1, object->x >> 20, 10);
+  Map_CopyCellAttributeRect(16, 10, 1, 1, object->x.fixed >> 20, 10);
 }
 
 s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
@@ -540,9 +549,9 @@ void Caverns_JumpEastAcrossGap(void) {
   s32 position[3];
   s32 x;
 
-  x = leader->x;
+  x = leader->x.fixed;
   x += 0x200000;
-  SET_VECTOR(position, x, leader->y, leader->z);
+  SET_VECTOR(position, x, leader->y.fixed, leader->z.fixed);
   Caverns_JumpAcross(leader, (s16 *)position);
 }
 

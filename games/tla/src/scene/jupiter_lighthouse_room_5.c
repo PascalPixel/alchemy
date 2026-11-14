@@ -163,11 +163,11 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
   object = Actor_Get(id);
   if (id == ACTOR_MOVED_GREY_BLOCK) {
     if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
-        object->x >> 20 != 13 || object->z >> 20 != 34)
+        object->x.fixed >> 20 != 13 || object->z.fixed >> 20 != 34)
       return;
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y += px(2);
+      object->y.fixed += px(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -197,12 +197,12 @@ void Orb_Update(struct Actor *self) {
   s32 x;
   s32 z;
 
-  self->x = centre->x + Trig_Cos(angle) * (self->speedLimit + 3);
+  self->x.fixed = centre->x.fixed + Trig_Cos(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
-  z = centre->z;
-  x = self->x;
+  z = centre->z.fixed;
+  x = self->x.fixed;
   z += sine * 2;
-  self->z = z;
+  self->z.fixed = z;
   self->targetX = x;
   self->targetZ = z;
   self->timer += -0x800;
@@ -279,7 +279,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   s32 to[3];
   s32 i;
 
-  if (leader->x >> 20 != 42 || leader->z >> 20 != 41)
+  if (leader->x.fixed >> 20 != 42 || leader->z.fixed >> 20 != 41)
     return;
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
   FieldEvent_ResolvePendingActions(0);
@@ -294,9 +294,9 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   leader->timer = 0;
   leader->update = Actor_CyclePictures;
   FieldEvent_Wait(30);
-  from[0] = leader->x;
-  from[1] = leader->y + px(20);
-  from[2] = leader->z;
+  from[0] = leader->x.fixed;
+  from[1] = leader->y.fixed + px(20);
+  from[2] = leader->z.fixed;
   to[0] = 170 << 18;
   to[1] = 0;
   to[2] = 0x23e0000;
@@ -367,10 +367,10 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   c->motionFlags = 0;
   d->motionFlags = 0;
   for (i = 0; i < 16; i++) {
-    a->y += px(2);
-    b->y += px(2);
-    c->y += px(2);
-    d->y += px(2);
+    a->y.fixed += px(2);
+    b->y.fixed += px(2);
+    c->y.fixed += px(2);
+    d->y.fixed += px(2);
     System_Wait(1);
   }
   Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK);
@@ -594,12 +594,12 @@ s32 Scene_Initialize(void) {
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
+  SET_ACTOR_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LOWER_BEAM), 0);
   object = Actor_Get(ACTOR_UPPER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
+  SET_ACTOR_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_BEAM), 0);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
@@ -680,10 +680,10 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
-  if (MapGrid_GetCellBehavior(self->x, self->z, 2) != 255) {
-    position[0] = self->x;
-    position[1] = self->y;
-    position[2] = self->z;
+  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
+    position[0] = self->x.fixed;
+    position[1] = self->y.fixed;
+    position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
     distance = position[0];
     if (distance > 0x1100000)
@@ -692,11 +692,11 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
       goto stop;
     {
       if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y - self->y;
+        distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
-          distance = self->y - leader->y;
+          distance = self->y.fixed - leader->y.fixed;
         near = 0;
-        if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
+        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
@@ -721,9 +721,9 @@ void JupiterLighthouse_UpdateOrb(struct Actor *self) {
         do {
           multiply = Iwram_MulQ16;
         } while (0);
-        self->x += multiply(cosine, speed);
+        self->x.fixed += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }
@@ -776,10 +776,10 @@ s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   options.startScaleX = 0xb333;
   options.startScaleY = 0xb333;
   options.palette = 14;
-  x = object->x + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
-  y = object->y + ((32 - (s32)((u32)(Random16() * 20) >> 16)) << 16);
+  x = object->x.fixed + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
+  y = object->y.fixed + ((32 - (s32)((u32)(Random16() * 20) >> 16)) << 16);
   speed = (((s32)((u32)(Random16() * 5) >> 16) << 16) + 0x50000) / 10;
-  FieldEffect_Spawn(x, y, object->z, 0, speed, phase,
+  FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
                     EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                         EFFECT_USE_START_SCALE,
                     &options);

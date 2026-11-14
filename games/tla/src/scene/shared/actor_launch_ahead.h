@@ -7,9 +7,9 @@ void Actor_LaunchAhead(struct Actor *self) {
   /* array, 2 of 86 differ in tla-en). */
   volatile s32 position[3];
 
-  position[0] = self->x;
-  position[1] = self->y - px(12);
-  position[2] = self->z;
+  position[0] = self->x.fixed;
+  position[1] = self->y.fixed - px(12);
+  position[2] = self->z.fixed;
   FieldVector_AddPolarOffset(px(32), angle, (struct Vector3 *)position);
   actor->facing = angle;
   actor->motionFlags = 0;

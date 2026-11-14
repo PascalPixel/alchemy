@@ -117,11 +117,12 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
     object->paused = 1;
     return 1;
   }
-  targetPos = &target->x;
-  objectPos = &object->x;
+  targetPos = &target->x.fixed;
+  objectPos = &object->x.fixed;
   if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
       force != 0) {
-    u32 angle = (u16)ArcTan2(target->z - object->z, *targetPos - *objectPos);
+    u32 angle = (u16)ArcTan2(target->z.fixed - object->z.fixed,
+                             *targetPos - *objectPos);
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
@@ -152,7 +153,8 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
+  if (SceneActor_CalculateFixedPointDistance(&leader->x.fixed,
+                                             &object->x.fixed) <= 11) {
     u8 *state = &object->paused;
     /* FAKEMATCH(temporary): the call's argument copied before the barrier
      * below. */
@@ -284,7 +286,7 @@ void Yallam_DigThirdHole(void) {
   Yallam_EditMap(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(0xf62) == 0) {
     Actor_SetPosition(66, 424, 232);
-    if (leader->x >> 20 == 26 && leader->z >> 20 == 14) {
+    if (leader->x.fixed >> 20 == 26 && leader->z.fixed >> 20 == 14) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -305,7 +307,7 @@ void Yallam_DigFifthHole(void) {
   Yallam_EditMap(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(0xf60) == 0) {
     Actor_SetPosition(64, 680, 344);
-    if (leader->x >> 20 == 42 && leader->z >> 20 == 21) {
+    if (leader->x.fixed >> 20 == 42 && leader->z.fixed >> 20 == 21) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -1436,8 +1438,8 @@ void Yallam_ShowSongGame(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0) {
-    Actor_SetDestination(ACTOR_JENNA, ((s16 *)(&leader->x))[1],
-                         ((s16 *)(&leader->z))[1]);
+    Actor_SetDestination(ACTOR_JENNA, ((s16 *)(&leader->x.fixed))[1],
+                         ((s16 *)(&leader->z.fixed))[1]);
   }
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
@@ -1746,7 +1748,7 @@ waitFourthVerse:
 /// Once Force has pushed it (flag 0x300), the pillar lies where it fell.
 void Yallam_PlaceFallenPillar(void) {
   if (Event_GetFlag(FLAG_AREA_TEMP_00)) {
-    SET_POSITION(Actor_Get(9), 0xa80000, 0, 0xc00000);
+    SET_ACTOR_POSITION(Actor_Get(9), 0xa80000, 0, 0xc00000);
   }
 }
 
@@ -1800,9 +1802,9 @@ void Yallam_ForcePillarDown(void) {
   Event_PlaySound(SE_LOG_FALL);
   i = 0;
   sprite->tile = i;
-  object->x = px(168);
-  object->z = px(192);
-  object->y = i;
+  object->x.fixed = px(168);
+  object->z.fixed = px(192);
+  object->y.fixed = i;
   object->velocityY = i;
   object->velocityX = i;
   MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);

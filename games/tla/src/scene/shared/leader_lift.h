@@ -6,7 +6,7 @@ void Leader_Lift(s32 height) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     object->motionFlags = 0;
     Actor_SetSpriteFlags(object, 0);
-    object->y += height;
+    object->y.fixed += height;
     object->speedLimit = px(1);
     object->velocityY = 0;
     gMainRoutineWork.movementMode = 2;

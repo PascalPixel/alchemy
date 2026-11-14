@@ -118,7 +118,7 @@ void Cyclone_CarryLeader(void) {
                   (Trig_Sin(timer << 8) << 6);
     position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    SET_POSITION(owner, position[0], position[1], position[2]);
+    SET_ACTOR_POSITION(owner, position[0], position[1], position[2]);
     if (timer > 127) {
       work->state++;
       work->timer = -1;
@@ -129,9 +129,9 @@ void Cyclone_CarryLeader(void) {
     break;
   }
   work->timer++;
-  work->follower->x = owner->x;
-  work->follower->y = owner->y;
-  work->follower->z = owner->z;
+  work->follower->x.fixed = owner->x.fixed;
+  work->follower->y.fixed = owner->y.fixed;
+  work->follower->z.fixed = owner->z.fixed;
 }
 
 /// Cyclone_CarryLeader for a kind 3 cell: the leader is carried there 32
@@ -151,14 +151,14 @@ void Cyclone_LiftLeader(void) {
     position[1] = work->from[1] + (work->to[1] - work->from[1]) * timer / 128;
     position[2] = work->from[2] + (work->to[2] - work->from[2]) * timer / 128;
     Vector_AddPolarOffset(work->radius, work->angle, position);
-    SET_POSITION(owner, position[0], position[1], position[2]);
+    SET_ACTOR_POSITION(owner, position[0], position[1], position[2]);
     if (timer > 127) {
       work->state++;
       work->timer = -1;
     }
     break;
   case 1:
-    owner->y -= 0x6666;
+    owner->y.fixed -= 0x6666;
     if (effect->childOption == 1) {
       if (timer == 40)
         work->state = 999;
@@ -168,15 +168,15 @@ void Cyclone_LiftLeader(void) {
     }
     break;
   case 2:
-    owner->y += 0x3cccc;
+    owner->y.fixed += 0x3cccc;
     if (timer == 40)
       work->state = 999;
     break;
   }
   work->timer++;
-  work->follower->x = owner->x;
-  work->follower->y = owner->y;
-  work->follower->z = owner->z;
+  work->follower->x.fixed = owner->x.fixed;
+  work->follower->y.fixed = owner->y.fixed;
+  work->follower->z.fixed = owner->z.fixed;
 }
 
 void BattleEffect_SpinObject(struct MotionObject *object) {
@@ -237,9 +237,9 @@ void FieldPsynergy_Cyclone(void) {
   }
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
-  pos[0] = effect->mainObject->x;
-  pos[1] = effect->mainObject->y;
-  pos[2] = effect->mainObject->z;
+  pos[0] = effect->mainObject->x.fixed;
+  pos[1] = effect->mainObject->y.fixed;
+  pos[2] = effect->mainObject->z.fixed;
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
@@ -253,7 +253,8 @@ void FieldPsynergy_Cyclone(void) {
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleCanvas;
-  ring = Actor_Spawn(280, owner->x, owner->y - 0x60000, owner->z);
+  ring = Actor_Spawn(280, owner->x.fixed, owner->y.fixed - 0x60000,
+                     owner->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = 0;
@@ -277,12 +278,12 @@ void FieldPsynergy_Cyclone(void) {
   }
   FieldPsynergy_FadeFromCastColor();
   work->follower = ring;
-  work->from[0] = owner->x;
-  work->from[1] = owner->y;
-  work->from[2] = owner->z;
-  work->to[0] = owner->x;
-  work->to[1] = owner->y;
-  work->to[2] = owner->z;
+  work->from[0] = owner->x.fixed;
+  work->from[1] = owner->y.fixed;
+  work->from[2] = owner->z.fixed;
+  work->to[0] = owner->x.fixed;
+  work->to[1] = owner->y.fixed;
+  work->to[2] = owner->z.fixed;
   work->angle = 0;
   work->state = 0;
   work->timer = 0;
@@ -305,14 +306,15 @@ void FieldPsynergy_Cyclone(void) {
       wait(1);
     }
     FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-    Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
+    Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
+                                       owner->z.fixed);
     Actor_SetSpriteFlagsFar(owner, 0);
     Actor_SetSpritePriority(effect->firstObjectId, 1);
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
     work->to[0] = event->unkd40 << 16;
-    work->to[1] = owner->y + 0x200000;
+    work->to[1] = owner->y.fixed + 0x200000;
     work->to[2] = event->unkd42 << 16;
     Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
@@ -338,12 +340,13 @@ void FieldPsynergy_Cyclone(void) {
       wait(1);
     }
     FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-    Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
+    Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed, owner->y.fixed,
+                                       owner->z.fixed);
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
     work->to[0] = event->unkd3c << 16;
-    work->to[1] = owner->y;
+    work->to[1] = owner->y.fixed;
     work->to[2] = event->unkd3e << 16;
     Task_Add(Cyclone_CarryLeader, 0x480);
     frame = 0;
@@ -422,13 +425,13 @@ void Actor_DepartInRing(s32 actor) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   object->motionFlags = 0;
   object->update = BattleEffect_SpinObject;
-  ring = Actor_Spawn(280, object->x, object->y, object->z);
+  ring = Actor_Spawn(280, object->x.fixed, object->y.fixed, object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = Q16_ONE;
-  x = object->x;
-  y = object->y;
-  z = object->z;
+  x = object->x.fixed;
+  y = object->y.fixed;
+  z = object->z.fixed;
   spin = 0;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -438,9 +441,10 @@ void Actor_DepartInRing(s32 actor) {
     position[1] = y + Trig_Cos(i << 7) * 96;
     position[2] = z;
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
-    SET_POSITION(object, position[0], position[1], position[2]);
+    SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
     spin += 0x400;
-    SET_POSITION(ring, object->x, object->y - 0x60000, object->z);
+    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - 0x60000,
+                       object->z.fixed);
     wait(1);
   }
   Actor_SetPositionAndResetMotionFar(object, x, y, z);
@@ -474,7 +478,7 @@ void Actor_ArriveInRing(s32 actor) {
   Actor_SetSpriteFlagsFar(Actor_GetById(actor), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ring = Actor_Spawn(280, object->x, object->y, object->z);
+  ring = Actor_Spawn(280, object->x.fixed, object->y.fixed, object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE / 2;
   ring->scaleY = Q16_ONE * 3 / 4;
@@ -616,7 +620,7 @@ void Blaze_UpdateSpray(void) {
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject &&
           other != scene->otherObject &&
-          FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x,
+          FieldPsynergy_CheckOverlap(&particle->x, 2, &other->x.fixed,
                                      other->radius - 2) >= 0) {
         work->hit = 1;
         work->hitObject = j;

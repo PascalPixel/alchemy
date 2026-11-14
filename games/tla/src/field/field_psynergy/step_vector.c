@@ -413,9 +413,9 @@ void Actor_VanishInSparks(s32 objectId) {
         spark = &work->sparks[next];
 
         spark->age = 0;
-        spark->centre[0] = object->x;
-        spark->centre[1] = object->y + 0x140000;
-        spark->centre[2] = object->z;
+        spark->centre[0] = object->x.fixed;
+        spark->centre[1] = object->y.fixed + 0x140000;
+        spark->centre[2] = object->z.fixed;
         Vector_AddPolarOffset(Random16(), sparkAngle, spark->centre);
         next++;
         spark->angle = sparkAngle;
@@ -441,7 +441,7 @@ void Actor_VanishInSparks(s32 objectId) {
           pos[1] = spark->centre[1];
           pos[2] = spark->centre[2];
           Vector_AddPolarOffset(radius, sparkAngle, pos);
-          if (pos[2] > object->z)
+          if (pos[2] > object->z.fixed)
             sprite->depth = depth + 2;
           else
             sprite->depth = depth - 2;

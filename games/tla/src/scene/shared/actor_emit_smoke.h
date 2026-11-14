@@ -3,7 +3,8 @@ void Actor_EmitSmoke(struct Actor *object) {
   struct Actor *spawned;
 
   if ((gFrameCount & 7) == 0) {
-    spawned = FieldActor_Create(14, object->x, object->y, object->z);
+    spawned = FieldActor_Create(14, object->x.fixed, object->y.fixed,
+                                object->z.fixed);
     if (spawned != 0) {
       Actor_SetSpriteFlags(spawned, 0);
       Actor_SelectAnimation(spawned, 1);

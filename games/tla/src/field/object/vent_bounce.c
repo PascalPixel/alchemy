@@ -7,9 +7,9 @@
 /// Whether object a rests on object b: within 0xc0000 of it in x and 0x80000
 /// in z, and up to 0xfffff above it.
 s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
-  if (DIFF(a->x, b->x) < 0xc0000) {
-    if ((u32)(a->y - b->y - 1) <= 0xffffe) {
-      if (DIFF(a->z, b->z) < 0x80000)
+  if (DIFF(a->x.fixed, b->x.fixed) < 0xc0000) {
+    if ((u32)(a->y.fixed - b->y.fixed - 1) <= 0xffffe) {
+      if (DIFF(a->z.fixed, b->z.fixed) < 0x80000)
         return 1;
     }
   }
@@ -27,10 +27,10 @@ void VENT_BOUNCE(struct Actor *object) {
   struct FieldSprite *sprite;
   s32 i;
 
-  object->x += dx;
-  object->y += object->gravity;
+  object->x.fixed += dx;
+  object->y.fixed += object->gravity;
   dz = object->riseBaseY;
-  object->z += dz;
+  object->z.fixed += dz;
   object->bounce = dx - dx / 18;
   object->riseBaseY = dz - dz / 16;
   object->scaleX += object->speedLimit;
@@ -41,8 +41,8 @@ void VENT_BOUNCE(struct Actor *object) {
     object->scaleY += acceleration;
   }
   sprite->rotation += object->timer;
-  if (other->y == other->groundHeight && VENT_TOUCHING(object, other)) {
-    object->z -= object->riseBaseY;
+  if (other->y.fixed == other->groundHeight && VENT_TOUCHING(object, other)) {
+    object->z.fixed -= object->riseBaseY;
     object->gravity += object->riseBaseY >> 2;
     object->riseBaseY = 0;
   }
@@ -52,8 +52,8 @@ void VENT_BOUNCE(struct Actor *object) {
     if (id == 0)
       break;
     other = Actor_GetById(id);
-    if (other->y == other->groundHeight && VENT_TOUCHING(object, other)) {
-      object->z -= object->riseBaseY;
+    if (other->y.fixed == other->groundHeight && VENT_TOUCHING(object, other)) {
+      object->z.fixed -= object->riseBaseY;
       object->gravity += object->riseBaseY >> 2;
       object->riseBaseY = 0;
     }

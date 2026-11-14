@@ -10,7 +10,7 @@ void CrackedTile_DropIn(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y = px(130);
+  actor->y.fixed = px(130);
   actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
@@ -36,8 +36,9 @@ void CrackedTile_DropIn(void) {
     velocity[0] += velocity[0] >> 1;
     velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
     velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
-    FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                      velocity[2], 0x1090001, &options);
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                      velocity[0], velocity[1], velocity[2], 0x1090001,
+                      &options);
     i++;
   } while (i <= 16);
   Event_PlaySound(SE_THUMP);

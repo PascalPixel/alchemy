@@ -93,13 +93,13 @@ void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0 &&
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 value) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y == 0 &&
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(14);
 }
@@ -126,7 +126,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *object = Actor_Get(ACTOR_SHORTCUT_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED) &&
-      object->x >> 20 == 4 && object->z >> 20 == 37) {
+      object->x.fixed >> 20 == 4 && object->z.fixed >> 20 == 37) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -208,11 +208,13 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y = height + 0x200000;
+  object->y.fixed = height + 0x200000;
   object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(object->layer, object->x, object->z);
-  MapGrid_SetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
+  height =
+      Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
+  MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
+                        (height >> 19) + 6);
+  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader.h"

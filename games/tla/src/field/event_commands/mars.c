@@ -207,7 +207,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   state = effect->state;
 
   if (state == 0) {
-    SET_POSITION(&position, source->x, source->y, source->z);
+    SET_POSITION(&position, source->x.fixed, source->y.fixed, source->z.fixed);
 
     random = Random16() * 10 + 0xa0000;
     Vector_AddPolarOffset(random, Random16(), &position);

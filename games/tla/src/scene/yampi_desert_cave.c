@@ -108,8 +108,9 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   // cells below.
   i = gYampiDesertCave_LogFootprints[kind * 4 + 1];
   h = (ABS(i) + ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >> 4;
-  x = (object->x + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >> 20;
-  z = (object->z + (i << 16)) >> 20;
+  x = (object->x.fixed + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >>
+      20;
+  z = (object->z.fixed + (i << 16)) >> 20;
   i = *(s32 *)&map->layers[1].unk08[0] >> 20;
   az = *(s32 *)&map->layers[1].unk08[4] >> 20;
   bx = *(s32 *)&map->layers[2].unk08[0];
@@ -172,9 +173,9 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
     count = 0;
     state = &object->layer;
     *state = 2;
-    position[0] = object->x + dx;
-    position[2] = object->z + dz;
-    probe[1] = object->y;
+    position[0] = object->x.fixed + dx;
+    position[2] = object->z.fixed + dz;
+    probe[1] = object->y.fixed;
     // The row loop is built from labels: as a loop it grows by 14 bytes.
   next:
     offset = kind;
@@ -205,9 +206,9 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
     *state = 0;
     if (count == 0)
       return 0;
-    position[0] = object->x + dx * count;
-    position[1] = object->y;
-    position[2] = object->z + dz * count;
+    position[0] = object->x.fixed + dx * count;
+    position[1] = object->y.fixed;
+    position[2] = object->z.fixed + dz * count;
     return 1;
   } else {
     return 0;
@@ -237,26 +238,30 @@ outer:
 inner:
   if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gYampiDesertCave_LogSprites[k]) {
-    x = (PIXEL_PART(leader->x) + (gPushLeaderSteps[*direction] >> 16)) >> 4;
-    z = (PIXEL_PART(leader->z) + (s16)gPushLeaderSteps[*direction]) >> 4;
-    left = (PIXEL_PART(object->x) + gYampiDesertCave_LogFootprints[k * 4]) >> 4;
-    top = (PIXEL_PART(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
+    x = (PIXEL_PART(leader->x.fixed) + (gPushLeaderSteps[*direction] >> 16)) >>
+        4;
+    z = (PIXEL_PART(leader->z.fixed) + (s16)gPushLeaderSteps[*direction]) >> 4;
+    left =
+        (PIXEL_PART(object->x.fixed) + gYampiDesertCave_LogFootprints[k * 4]) >>
+        4;
+    top = (PIXEL_PART(object->z.fixed) +
+           gYampiDesertCave_LogFootprints[k * 4 + 1]) >>
           4;
-    right =
-        (PIXEL_PART(object->x) + gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
-        4;
-    bottom =
-        (PIXEL_PART(object->z) + gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
-        4;
+    right = (PIXEL_PART(object->x.fixed) +
+             gYampiDesertCave_LogFootprints[k * 4 + 2]) >>
+            4;
+    bottom = (PIXEL_PART(object->z.fixed) +
+              gYampiDesertCave_LogFootprints[k * 4 + 3]) >>
+             4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
-        if (left != leader->x >> 20) {
+        if (left != leader->x.fixed >> 20) {
           *slot = i;
           return object;
         }
       } else {
-        if (top != leader->z >> 20) {
+        if (top != leader->z.fixed >> 20) {
           *slot = i;
           return object;
         }
@@ -320,12 +325,14 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   s32 offset;
   s32 ax, az, bx, bz;
 
-  from[0] = object->x;
-  from[2] = object->z;
+  from[0] = object->x.fixed;
+  from[2] = object->z.fixed;
   cell[0] =
-      (object->x + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >> 20;
-  cell[2] =
-      (object->z + (gYampiDesertCave_LogFootprints[kind * 4 + 1] << 16)) >> 20;
+      (object->x.fixed + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >>
+      20;
+  cell[2] = (object->z.fixed +
+             (gYampiDesertCave_LogFootprints[kind * 4 + 1] << 16)) >>
+            20;
   w = (ABS(gYampiDesertCave_LogFootprints[kind * 4]) +
        ABS(gYampiDesertCave_LogFootprints[kind * 4 + 2])) >>
       4;
@@ -367,7 +374,7 @@ void YampiDesertCave_PushLog(struct YampiDesertCaveRect rect) {
   FieldActor_WaitForMove(object);
   Event_PlaySound(SE_STOP_MUSIC_PLAYER_5);
   Event_PlaySound(SE_HEAVY_STOP);
-  Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
+  Actor_SetPositionAndResetMotion(object, rect.word[0], object->y.fixed,
                                   rect.word[2]);
   Actor_SelectAnimation(object, 1);
   rect.word[0] =
@@ -403,9 +410,9 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
   s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   Vector_AddPolarOffset(0x100000, angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0) {
@@ -417,13 +424,15 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
     i++;
     if (i <= 5)
       goto next;
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x.fixed, object->y.fixed,
+                                    object->z.fixed);
   }
-  position[0] = object->x;
-  position[1] = object->y;
-  position[2] = object->z;
+  position[0] = object->x.fixed;
+  position[1] = object->y.fixed;
+  position[2] = object->z.fixed;
   if (MapGrid_CheckCollision(object, position) > 0)
-    Actor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
+    Actor_SetPositionAndResetMotion(object, object->x.fixed, object->y.fixed,
+                                    object->z.fixed);
 }
 
 /// Records the four palette lists, writes each listed palette entry from its
@@ -647,8 +656,8 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
     if (id == 13) {
       struct Actor *object = Actor_GetById(13);
 
-      s32 column = object->x >> 20;
-      s32 row = object->z >> 20;
+      s32 column = object->x.fixed >> 20;
+      s32 row = object->z.fixed >> 20;
 
       MapGrid_CopyCellAttributes(7, 10, 1, 1, column, row);
     }
@@ -661,7 +670,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2) {
-    s32 row = object->z >> 20;
+    s32 row = object->z.fixed >> 20;
 
     if (row == 13) {
       object->motionFlags = 0;
@@ -679,7 +688,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       s32 column;
 
       MapGrid_CopyCellAttributes(103, 16, 1, 1, 103, 15);
-      column = object->x >> 20;
+      column = object->x.fixed >> 20;
       if (column == 38) {
         Event_SetFlag(FLAG_AREA_TEMP_05);
         MapGrid_CopyCellAttributes(38, 15, 1, 1, column, 16);
@@ -688,10 +697,10 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       }
     }
     if (id == 13) {
-      if (object->x >> 20 == 10 && object->z >> 20 == 11)
+      if (object->x.fixed >> 20 == 10 && object->z.fixed >> 20 == 11)
         Event_SetFlag(FLAG_AREA_TEMP_04);
-      MapGrid_CopyCellAttributes(12, 11, 1, 1, object->x >> 20,
-                                 object->z >> 20);
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, object->x.fixed >> 20,
+                                 object->z.fixed >> 20);
     }
   }
 }
@@ -772,8 +781,8 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 x = 0, z = 0;
 
   if (tracked != NULL) {
-    x = tracked->x >> 20;
-    z = tracked->z >> 20;
+    x = tracked->x.fixed >> 20;
+    z = tracked->z.fixed >> 20;
   }
   if (px / 16 != x || pz / 16 != z)
     return;
@@ -785,7 +794,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     struct Actor *chest = Actor_GetById(17);
 
     Actor_SetPositionFixed(17, column << 19, row << 19);
-    chest->y = px(32);
+    chest->y.fixed = px(32);
     chest->motionFlags = 3;
     chest->gravity = 0x170a;
     wait(50);
@@ -934,7 +943,8 @@ s32 Scene_Initialize(void) {
 #if TLA_PATCH_1
       struct Actor *actor = Actor_GetById(13);
 
-      MapGrid_CopyCellAttributes(12, 11, 1, 1, actor->x >> 20, actor->z >> 20);
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, actor->x.fixed >> 20,
+                                 actor->z.fixed >> 20);
 #else
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 8, 10);
 #endif

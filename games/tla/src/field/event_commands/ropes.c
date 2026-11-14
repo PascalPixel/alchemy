@@ -199,8 +199,8 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
     slot->priority = priority;
     lift = 128;
     lift <<= 12;
-    Rope_LayTied(index, first->x, first->y + lift, first->z, second->x,
-                 second->y + lift, second->z);
+    Rope_LayTied(index, first->x.fixed, first->y.fixed + lift, first->z.fixed,
+                 second->x.fixed, second->y.fixed + lift, second->z.fixed);
   }
   Actor_SelectAnimationFar(first, 2);
   Actor_SelectAnimationFar(second, 2);
@@ -272,8 +272,8 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = ObjectTable_Get(to);
 
   if (a != NULL && b != NULL)
-    Rope_LayBowed(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000, b->z,
-                  mode);
+    Rope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
+                  b->x.fixed, b->y.fixed + 0x80000, b->z.fixed, mode);
 }
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
@@ -332,8 +332,8 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
     slot->priority = priority;
     lift = 128;
     lift <<= 12;
-    Rope_LayCoil(index, first->x, first->y + lift, first->z, second->x,
-                 second->y + lift, second->z);
+    Rope_LayCoil(index, first->x.fixed, first->y.fixed + lift, first->z.fixed,
+                 second->x.fixed, second->y.fixed + lift, second->z.fixed);
   }
 }
 
@@ -405,9 +405,9 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
   struct Actor *to = ObjectTable_Get(toId);
 
   if (from != NULL && to != NULL) {
-    s32 toX = to->x;
-    s32 toY = to->y;
-    s32 toZ = to->z;
+    s32 toX = to->x.fixed;
+    s32 toY = to->y.fixed;
+    s32 toZ = to->z.fixed;
     struct RopeSlot *slot = &work->slots[index];
     s32 x, y = 0, z; // Default: y.
     s32 xx, yy, length, segments, count;
@@ -415,9 +415,9 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
 
     if (((u8 *)to)[99] == 99)
       (*(TargetHook *)((u8 *)to + 104))(to, &toX, &toZ);
-    x = (toX - from->x) >> 8;
-    y = (toY - from->y) >> 8;
-    z = (toZ - from->z) >> 8;
+    x = (toX - from->x.fixed) >> 8;
+    y = (toY - from->y.fixed) >> 8;
+    z = (toZ - from->z.fixed) >> 8;
     mul = Iwram_MulQ16;
     xx = mul(x, x);
     yy = mul(y, y);
@@ -426,19 +426,20 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     count = slot->segments;
     if (segments > count) {
       count++;
-      x = from->x + (toX - from->x) * count / segments;
+      x = from->x.fixed + (toX - from->x.fixed) * count / segments;
       y = toY;
-      z = from->z + (toZ - from->z) * count / segments;
+      z = from->z.fixed + (toZ - from->z.fixed) * count / segments;
 
-      Rope_Throw(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000, z,
-                 Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
+                 x, y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
       slot->swinging = 0;
       wait(1);
-      Rope_Recoil(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000, z,
-                  Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Recoil(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
+                  x, y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
     } else {
-      Rope_Throw(index, from->x, from->y + 0x80000, from->z, to->x,
-                 to->y + 0x80000, to->z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
+                 to->x.fixed, to->y.fixed + 0x80000, to->z.fixed,
+                 Trig_Sin(gRope_LashPhase) << 2);
       gRope_LashPhase += 0x1000;
       wait(6);
       Actor_SelectAnimationFar(from, 2);
@@ -544,8 +545,9 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->recoilFrom = from;
     work->recoilTo = to;
-    Rope_Recoil(index, from->x, from->y + 0x80000, from->z, to->x,
-                to->y + 0x80000, to->z, Trig_Sin(gRope_UntiePhase) * 4);
+    Rope_Recoil(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
+                to->x.fixed, to->y.fixed + 0x80000, to->z.fixed,
+                Trig_Sin(gRope_UntiePhase) * 4);
     gRope_UntiePhase += 0x1000;
   }
 }
@@ -658,15 +660,15 @@ s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
-  s32 x = owner->x >> 20;
-  s32 y = owner->y >> 20;
-  s32 z = owner->z >> 20;
-  s32 firstX = first->x >> 20;
-  s32 firstY = first->y >> 20;
-  s32 firstZ = first->z >> 20;
-  s32 secondX = second->x >> 20;
-  s32 secondY = second->y >> 20;
-  s32 secondZ = second->z >> 20;
+  s32 x = owner->x.fixed >> 20;
+  s32 y = owner->y.fixed >> 20;
+  s32 z = owner->z.fixed >> 20;
+  s32 firstX = first->x.fixed >> 20;
+  s32 firstY = first->y.fixed >> 20;
+  s32 firstZ = first->z.fixed >> 20;
+  s32 secondX = second->x.fixed >> 20;
+  s32 secondY = second->y.fixed >> 20;
+  s32 secondZ = second->z.fixed >> 20;
 
   if (y == firstY) {
     if (x == firstX) {
@@ -901,8 +903,9 @@ void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
 
     slot->first = firstId;
     slot->second = secondId;
-    Tightrope_Lay(slotNo, first->x, first->y + 0x80000, first->z, second->x,
-                  second->y + 0x80000, second->z);
+    Tightrope_Lay(slotNo, first->x.fixed, first->y.fixed + 0x80000,
+                  first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
+                  second->z.fixed);
     Actor_SelectAnimationFar(first, 4);
     Actor_SelectAnimationFar(second, 4);
   }
@@ -955,8 +958,8 @@ void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = ObjectTable_Get(to);
 
   if (a != NULL && b != NULL)
-    Tightrope_LayBowed(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000,
-                       b->z, mode);
+    Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
+                       b->x.fixed, b->y.fixed + 0x80000, b->z.fixed, mode);
 }
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
@@ -1000,8 +1003,8 @@ void Tightrope_Coil(s32 index, s32 from, s32 to) {
 
     slot->first = from;
     slot->second = to;
-    Tightrope_LayCoil(index, a->x, a->y + 0x80000, a->z, b->x, b->y + 0x80000,
-                      b->z);
+    Tightrope_LayCoil(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
+                      b->x.fixed, b->y.fixed + 0x80000, b->z.fixed);
   }
 }
 
@@ -1054,9 +1057,9 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    Tightrope_Throw(arg, first->x, first->y + 0x80000, first->z, second->x,
-                    second->y + 0x80000, second->z,
-                    Trig_Sin(gTightrope_LashPhase) << 2);
+    Tightrope_Throw(arg, first->x.fixed, first->y.fixed + 0x80000,
+                    first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
+                    second->z.fixed, Trig_Sin(gTightrope_LashPhase) << 2);
     gTightrope_LashPhase += 0x1000;
     wait(6);
     Actor_SelectAnimationFar(first, 2);
@@ -1158,9 +1161,9 @@ void Tightrope_Untie(s32 arg, s32 firstId, s32 secondId) {
   if (first != NULL && second != NULL) {
     work->recoilFrom = first;
     work->recoilTo = second;
-    Tightrope_Recoil(arg, first->x, first->y + 0x80000, first->z, second->x,
-                     second->y + 0x80000, second->z,
-                     Trig_Sin(gTightrope_UntiePhase) << 2);
+    Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + 0x80000,
+                     first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
+                     second->z.fixed, Trig_Sin(gTightrope_UntiePhase) << 2);
     gTightrope_UntiePhase += 0x1000;
   }
 }
@@ -1442,10 +1445,10 @@ void HangingVine_Update(void) {
 
     // Swing less while the leader stands within 8 pixels across, a pixel
     // deep, and between 8 above and 80 below the anchor.
-    if ((x - leader->x >= 0 ? x - leader->x <= 0x7ffff
-                            : leader->x - x <= 0x7ffff) &&
-        (u32)(z - leader->z + 0xfffff) <= 0xffffe && y + px(8) > leader->y &&
-        y - px(80) < leader->y)
+    if ((x - leader->x.fixed >= 0 ? x - leader->x.fixed <= 0x7ffff
+                                  : leader->x.fixed - x <= 0x7ffff) &&
+        (u32)(z - leader->z.fixed + 0xfffff) <= 0xffffe &&
+        y + px(8) > leader->y.fixed && y - px(80) < leader->y.fixed)
       target = 32;
 
     // Hang the five links below the anchor.
@@ -1654,7 +1657,7 @@ void HangingVine_Swing(s32 id) {
     return;
   motionFlags = leader->motionFlags;
   heldSprite = leader->sprite;
-  if (leader->x < anchor->x)
+  if (leader->x.fixed < anchor->x.fixed)
     side = 1;
   slot = (void *)HangingVine_FindSlot(id);
   if (slot == NULL)
@@ -1756,10 +1759,10 @@ void HangingVine_Swing(s32 id) {
       sine = Trig_Sin(slot->s.phase - 4000);
     } while (0);
     angle = Iwram_MulQ16(sine, slot->s.swing + slot->s.swing * 5 / 2);
-    leader->x = rootX - Iwram_MulQ16(Trig_Sin(angle), radius);
-    leader->y = rootY - Iwram_MulQ16(Trig_Cos(angle), radius);
-    leader->targetX = leader->x;
-    leader->targetY = leader->y;
+    leader->x.fixed = rootX - Iwram_MulQ16(Trig_Sin(angle), radius);
+    leader->y.fixed = rootY - Iwram_MulQ16(Trig_Cos(angle), radius);
+    leader->targetX = leader->x.fixed;
+    leader->targetY = leader->y.fixed;
     heldSprite->unk12 = angle;
     wait(1);
   }
@@ -1791,9 +1794,9 @@ void HangingVine_Place(s32 id, s32 force) {
   if (object != NULL) {
     if (object->motionFlags == 0) {
       zero = 0;
-      object->z += 0xfff00000;
-      y = object->y;
-      object->y = y + 0x400000;
+      object->z.fixed += 0xfff00000;
+      y = object->y.fixed;
+      object->y.fixed = y + 0x400000;
       HangingVine_Hang(id, zero);
     } else if (force) {
       HangingVine_Hang(id, 0);

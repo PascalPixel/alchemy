@@ -4,17 +4,17 @@
 	.global Data_02006878
 Data_02006878:
 	.space 0x00000004
-	.global gData_0200687c
-gData_0200687c:
+	.global gPaletteCycle_Flash
+gPaletteCycle_Flash:
 	.space 0x00000004
 	.global Data_02006880
 Data_02006880:
 	.space 0x00000004
-	.global gData_02006884
-gData_02006884:
+	.global gPaletteCycle_Countdown
+gPaletteCycle_Countdown:
 	.space 0x00000004
-	.global gData_0200e888
-gData_0200e888:
+	.global gPaletteCycle_Period
+gPaletteCycle_Period:
 	.space 0x00000004
 	.global gData_0200e88c
 gData_0200e88c:
@@ -25,20 +25,20 @@ gData_02006890:
 	.global Data_02006894
 Data_02006894:
 	.space 0x00000004
-	.global gData_02006898
-gData_02006898:
+	.global gPaletteCycle_Count
+gPaletteCycle_Count:
 	.space 0x00000004
-	.global gData_0200689c
-gData_0200689c:
+	.global gPaletteCycle_Step
+gPaletteCycle_Step:
 	.space 0x00000004
-	.global gData_020068a0
-gData_020068a0:
+	.global gMarsLighthouseEntrance_DragonFireTimer
+gMarsLighthouseEntrance_DragonFireTimer:
 	.space 0x00000002
-	.global gData_020068a2
-gData_020068a2:
+	.global gMarsLighthouseEntrance_HoleMaskVram
+gMarsLighthouseEntrance_HoleMaskVram:
 	.space 0x00000002
-	.global Data_020068a4
-Data_020068a4:
+	.global gMarsLighthouseEntrance_HoleMaskSprite
+gMarsLighthouseEntrance_HoleMaskSprite:
 	.space 0x0000000c
 	.global gSlideOnIce_Stopped
 gSlideOnIce_Stopped:

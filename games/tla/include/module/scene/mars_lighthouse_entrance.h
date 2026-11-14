@@ -39,39 +39,39 @@ void Func_02001c74();
 
 s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value);
 
-void Func_02000798(void);
+void MarsLighthouseEntrance_DrawRoom3CrackedSheet(void);
 
-void Func_020019c4(void);
+void MarsLighthouseEntrance_ShootFireballAtRoom5IceSheet(void);
 
-void Func_020046b4(void);
-void Func_02004718(void);
+void Teleport_StartShimmer(void);
+void Teleport_StopShimmer(void);
 
-void Func_02001a00(void);
+void MarsLighthouseEntrance_ShootFireballAtRoom3IceSheet(void);
 
-void Func_020019e0(void);
+void MarsLighthouseEntrance_ShootFireballThroughIce(void);
 
-void Func_02000fe0(const struct MapCell *cell);
+void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell);
 
-void Func_020012e4(struct Actor *object);
+void MarsLighthouseEntrance_FlingIceCone(struct Actor *object);
 
 void Actor_Attach(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
 void Leader_SlideOnIceFromEdge(void);
 
-s32 Func_020029a0(void);
+s32 MarsLighthouseEntrance_SlideIfRiding(void);
 
 void Leader_SlideOnIceAhead(void);
 
-void Func_02000d18(void);
+void MarsLighthouseEntrance_DrawHoleMask(void);
 
-s32 Func_020029bc(void);
+s32 Ride_IsActive(void);
 
 void Leader_SetSlideStopped(s32 value);
 
-void Func_02000414(s32 value);
+void MarsLighthouseEntrance_ScatterIceChips(s32 value);
 
-void Func_02001988(void);
-void Func_020019a4(void);
+void MarsLighthouseEntrance_ShootRoom6LowerFireball(void);
+void MarsLighthouseEntrance_ShootRoom4Fireball(void);
 
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 
@@ -82,8 +82,6 @@ void Func_02001ef0();
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
-extern struct CellTarget Data_020068b4;
-
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern u16 *Data_02006894;
@@ -91,24 +89,22 @@ extern u16 *Data_02006880;
 
 void Func_020048e8(void);
 
-extern u16 gData_0200687c;
-extern u16 gData_02006884;
-extern u16 gData_0200689c;
-extern u16 gData_0200e888;
+extern u16 gPaletteCycle_Flash;
+extern u16 gPaletteCycle_Countdown;
+extern u16 gPaletteCycle_Step;
+extern u16 gPaletteCycle_Period;
 
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-s32 Func_02004db8(struct Actor *object);
+void MarsLighthouseEntrance_CrackRoom3IceSheet(void);
 
-void Func_02000808(void);
+void MarsLighthouseEntrance_CrackRoom5IceSheet(void);
 
-void Func_02000a24(void);
+void MarsLighthouseEntrance_MeltIceInPath(void);
 
-void Func_02000c1c(void);
-
-void Func_02000c68(void);
+void MarsLighthouseEntrance_ClearFireballRow(void);
 
 void MarsLighthouseEntrance_StartPoundIceCone(void);
 
@@ -116,37 +112,37 @@ void MarsLighthouseEntrance_CheckIce(void);
 
 void MarsLighthouseEntrance_Teleport(void);
 
-void Func_02000710(void);
+void MarsLighthouseEntrance_BlazeRoom3Statue(void);
 
-void Func_02000930(void);
+void MarsLighthouseEntrance_BlockRetreatAtChest(void);
 
-void Func_0200093c(void);
+void MarsLighthouseEntrance_TeleportFromRoom4(void);
 
-void Func_020009c0(void);
+void MarsLighthouseEntrance_BlazeRoom5WestStatue(void);
 
-void Func_020009e8(void);
+void MarsLighthouseEntrance_WatchFireballCrackRoom5Ice(void);
 
-void Func_02000a74(void);
+void MarsLighthouseEntrance_BlazeRoom5EastStatue(void);
 
-void Func_02000a7c(void);
+void MarsLighthouseEntrance_WatchFireballMeltIce(void);
 
-void Func_02000af4(void);
+void MarsLighthouseEntrance_TeleportFromRoom5(void);
 
-void Func_02000b54(void);
+void MarsLighthouseEntrance_HideTeleportCircle(void);
 
-void Func_02000c84(void);
+void MarsLighthouseEntrance_TeleportFromRoom6West(void);
 
-void Func_02000cb4(void);
+void MarsLighthouseEntrance_TeleportFromRoom6East(void);
 
-void Func_02000fa4(void);
+void MarsLighthouseEntrance_WakeDragonFace(void);
 
-void Func_02000fd4(void);
+void MarsLighthouseEntrance_SlideFromEdge(void);
 
 int MarsLighthouseEntrance_SlideOnIce(void);
 void Leader_SlideOnIce(void);
 
 void Leader_StopIfPending(void);
 
-void Func_02000b24(void);
+void MarsLighthouseEntrance_RevealTeleportCircle(void);
 
 #endif

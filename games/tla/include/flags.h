@@ -243,6 +243,10 @@
 #define FLAG_ISAAC_AND_IVAN_FELL 0xa23
 /// Set as the Jupiter Star lights the beacon; Contigo's people speak of it.
 #define FLAG_JUPITER_BEACON_LIT 0xa21
+/// Set at the end of the reunion in Contigo, where the two parties hear what
+/// happened on Mt. Aleph; the shipwrights at Atteka Inlet then wait with the
+/// wings.
+#define FLAG_REUNITED_AT_CONTIGO 0x9d0
 
 /// Set once Felix has woken on Idejima's shore.
 #define FLAG_IDEJIMA_FELIX_WOKE 0x844

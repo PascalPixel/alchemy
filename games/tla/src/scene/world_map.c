@@ -559,7 +559,7 @@ void WorldMap_RefuseToRunAway(void) {
   s32 southwest = FACING_SOUTHWEST;
   s32 west = FACING_WEST;
 
-  if (Event_GetFlag(0xa21) && !Event_GetFlag(0x9d0)) {
+  if (Event_GetFlag(0xa21) && !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
     object = Actor_Get(gMainRoutineWork.currentOwner);
     x = object->x;
     z = object->z;

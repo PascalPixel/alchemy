@@ -438,7 +438,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
       if (GameFlag_Get(0x9b2) != 0)
         return gContigo_Room2Placements;
       if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
-          GameFlag_Get(0x9d0) == 0)
+          GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) == 0)
         return gContigo_Room2PlacementsReunion;
     }
     return gContigo_Room2PlacementsBeforeReunion;
@@ -1778,7 +1778,7 @@ void Contigo_TheReunion(void) {
   Actor_SetMovementTypeById(6, gContigo_IsaacLeavesScript);
   Actor_SetMovementTypeAndWaitById(7, gContigo_IsaacLeavesScript);
   Party_AddIsaacsParty();
-  GameFlag_Set(2512);
+  GameFlag_Set(FLAG_REUNITED_AT_CONTIGO);
   Event_End();
 }
 
@@ -2132,7 +2132,8 @@ struct ContigoEventWork {
 void Contigo_InitializeRoom2(void) {
   gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 4) {
-    if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9d0) == 0)
+    if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
+        GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) == 0)
       Contigo_TheReunion();
   } else if (gMainRoutineWork.entrance == 21) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -2141,7 +2142,7 @@ void Contigo_InitializeRoom2(void) {
     Actor_SetSpriteFlags(Actor_GetById(17), 0);
     if (GameFlag_Get(0x9b2) != 0)
       Actor_SetMovementTypeById(11, gContigo_Room2WatcherScript);
-    if (GameFlag_Get(0x9d0) != 0) {
+    if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) != 0) {
       Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(26, 0, 0);

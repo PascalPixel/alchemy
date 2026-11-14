@@ -71,12 +71,12 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_AttekaInlet1) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       return gAttekaInlet_HarbourActorPlacementsOnceFlown;
-    if (GameFlag_Get(0x9d0))
+    if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
       return gAttekaInlet_HarbourActorPlacementsOnceWinged;
     return gAttekaInlet_HarbourActorPlacements;
   }
   if (scene == (s32)&SceneId_AttekaInlet2) {
-    if (GameFlag_Get(0x9d0))
+    if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
       return gAttekaInlet_ShoreActorPlacementsOnceWinged;
     return gAttekaInlet_ShoreActorPlacements;
   }
@@ -95,9 +95,9 @@ const struct Trigger *Scene_GetEvents(void) {
   return gAttekaInlet_Triggers;
 }
 
-/// Object 18 asks whether to set out: a yes sets the owner override and, once
-/// flag 0x9d0 is set, flags FLAG_SHIP_FLIES and FLAG_SET_OUT_WITH_WINGS; a no
-/// counts the refusal and object 18 walks back to the party leader.
+/// Piers asks whether to set out: a yes boards the ship, with its wings once
+/// the parties are reunited (FLAG_SHIP_FLIES, FLAG_SET_OUT_WITH_WINGS); a no is
+/// counted and he walks back to the leader.
 void AttekaInlet_AskPiersToSetSail(void) {
   struct Actor *object;
 
@@ -109,7 +109,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
     Actor_SetModeById(18, 3);
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
-    if (Event_GetFlag(0x9d0)) {
+    if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
       GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
@@ -130,11 +130,11 @@ void AttekaInlet_AskPiersToSetSail(void) {
   }
 }
 
-/// Once flag 0x9d0 is set and while flag FLAG_SET_OUT_WITH_WINGS is clear,
-/// objects 9 and 10 are placed, jump in and talk, four cells of the map change
-/// and flag FLAG_SHIPWRIGHTS_STOPPED_PARTY is set.
+/// After the reunion, until the ship sets out with its wings, two shipwrights
+/// jump in to stop the party at the pier.
 void AttekaInlet_ShipwrightsStopTheParty(void) {
-  if (GameFlag_Get(0x9d0) && !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
+  if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) &&
+      !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
@@ -185,11 +185,9 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
   }
 }
 
-/// Once flag 0x9d0 is set, the camera pans over object 23, who greets the
-/// party, turns, talks and walks to its place; flag FLAG_HAMMA_SHOWED_THE_WINGS
-/// is set.
+/// After the reunion, Hamma greets the party at the ship and shows the wings.
 void AttekaInlet_HammaShowsTheWings(void) {
-  if (GameFlag_Get(0x9d0)) {
+  if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -272,7 +270,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     Actor_SetModeById(18, 3);
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
-    if (Event_GetFlag(0x9d0)) {
+    if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
       GameFlag_Set(FLAG_SHIP_FLIES);
       GameFlag_Set(FLAG_SET_OUT_WITH_WINGS);
     }
@@ -493,7 +491,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.scene;
 
-  if (scene == (s32)&SceneId_AttekaInlet1 && GameFlag_Get(0x9d0)) {
+  if (scene == (s32)&SceneId_AttekaInlet1 &&
+      GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
@@ -713,18 +712,20 @@ struct Trigger gAttekaInlet_HarbourTriggers[] = {
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(AttekaInlet_PiersAsksToSetSail)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
      EVENT(AttekaInlet_CheckForHammetsMessenger)},
-    {TRIGGER_TALK, 13, 0x9d0, MSGNO(MsgWeVeMade)},
+    {TRIGGER_TALK, 13, FLAG_REUNITED_AT_CONTIGO, MSGNO(MsgWeVeMade)},
     {TRIGGER_TALK, 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgHammaReturnedTo)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgIVeBeenWatching)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9d0, MSGNO(MsgWeFirstHeard)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_REUNITED_AT_CONTIGO,
+     MSGNO(MsgWeFirstHeard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_SET_OUT_WITH_WINGS,
      MSGNO(MsgWeVeBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgWheneverILook)},
-    {TRIGGER_TALK, 14, 0x9d0, MSGNO(MsgWeMustBe)},
+    {TRIGGER_TALK, 14, FLAG_REUNITED_AT_CONTIGO, MSGNO(MsgWeMustBe)},
     {TRIGGER_TALK, 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgWasYourBoat)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIWonderWhat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9d0, MSGNO(MsgTheseWingsAre)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_REUNITED_AT_CONTIGO,
+     MSGNO(MsgTheseWingsAre)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_SET_OUT_WITH_WINGS,
      MSGNO(MsgWhoBuiltThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
@@ -732,10 +733,11 @@ struct Trigger gAttekaInlet_HarbourTriggers[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgWeBroughtThese)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgIDoubtAnyone)},
-    {TRIGGER_TALK, 16, 0x9d0, MSGNO(MsgIWonderIfThese)},
+    {TRIGGER_TALK, 16, FLAG_REUNITED_AT_CONTIGO, MSGNO(MsgIWonderIfThese)},
     {TRIGGER_TALK, 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgAMassiveRock)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgYouReGoingNorth)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9d0, MSGNO(MsgItSKind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_REUNITED_AT_CONTIGO,
+     MSGNO(MsgItSKind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_SET_OUT_WITH_WINGS,
      MSGNO(MsgIfThatBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,

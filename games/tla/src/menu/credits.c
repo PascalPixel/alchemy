@@ -134,7 +134,6 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   u32 paletteOffset;
   void *tileDestination;
   PackedDecoder decoder;
-  u32 size;
   s32 i;
 
   if (resourceId == 0) {
@@ -151,10 +150,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     tileDestination = (void *)BG_CHAR_BLOCK(2);
     paletteDestination = 0x05000100;
   }
-  size = (u32)BattleEffect_ExpandCodeSize;
-  decoder = (PackedDecoder)Heap_Alloc(size);
-  Dma_Set(BattleEffect_ExpandCode, decoder, DMA_COPY_WORDS(size >> 2),
-          REG_DMA3);
+  RamCode_Load(decoder, BattleEffect_ExpandCode, BattleEffect_ExpandCodeSize);
   decoder(resourceData + 256, tileDestination, paletteOffset);
   Heap_Release(decoder);
 

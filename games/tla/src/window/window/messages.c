@@ -605,15 +605,8 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
 
 void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
-  u32 size;
 
-  /* FAKEMATCH(dead): the size's load in a once-only block. */
-  do {
-    size = (u32)Text_LookupSymbolCodeSize;
-  } while (0);
-  routine = (void (*)(struct TextReader *, s32))Heap_Alloc(size);
-  Dma_Set((const void *)Text_LookupSymbolCode, routine,
-          DMA_COPY_WORDS(size >> 2), REG_DMA3);
+  RamCode_Load(routine, Text_LookupSymbolCode, Text_LookupSymbolCodeSize);
   routine(reader, message);
   Heap_Release(routine);
 }

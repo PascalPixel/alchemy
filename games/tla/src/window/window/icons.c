@@ -323,37 +323,13 @@ extern u8 Tile_ExpandOpaqueCodeSize[];
 void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
   void *code;
 
-  {
-    u32 size;
-
-    /* FAKEMATCH(dead): the size's load in a once-only block. */
-    do {
-      size = (u32)Tile_Decompress4bppCodeSize;
-    } while (0);
-    code = Heap_Alloc(size);
-    size >>= 2;
-    Dma_Set((const void *)Tile_Decompress4bppCode, code, DMA_COPY_WORDS(size),
-            REG_DMA3);
-  }
+  RamCode_Load(code, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))code)(glyph->encoded, glyph->input);
   Heap_Release(code);
-  if (outlined) {
-    u32 size;
-
-    size = (u32)Tile_ExpandMaskedCodeSize;
-    code = Heap_Alloc(size);
-    size >>= 2;
-    Dma_Set((const void *)Tile_ExpandMaskedCode, code, DMA_COPY_WORDS(size),
-            REG_DMA3);
-  } else {
-    u32 size;
-
-    size = (u32)Tile_ExpandOpaqueCodeSize;
-    code = Heap_Alloc(size);
-    size >>= 2;
-    Dma_Set((const void *)Tile_ExpandOpaqueCode, code, DMA_COPY_WORDS(size),
-            REG_DMA3);
-  }
+  if (outlined)
+    RamCode_Load(code, Tile_ExpandMaskedCode, Tile_ExpandMaskedCodeSize);
+  else
+    RamCode_Load(code, Tile_ExpandOpaqueCode, Tile_ExpandOpaqueCodeSize);
   ((void (*)(u8 *, u8 *, u32, u32))code)(glyph->input, glyph->tiles,
                                          (u16)glyph->width, (u16)glyph->height);
   Heap_Release(code);

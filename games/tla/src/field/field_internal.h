@@ -28,6 +28,7 @@
 #include "lib.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
+#include "system/ram_code.h"
 
 struct Actor;
 struct FieldPosition;

@@ -215,23 +215,21 @@ those few routines into the console's fast memory and runs them there.
   in [`field_sequence/`](field_sequence): set-up, the walk, requests, the
   screen transitions, the event commands, triggers, encounters and the
   treasure spots.
-- [`object/visual_attributes.c`](object/visual_attributes.c) is the actors'
-  stock behaviours and field Psynergy, its parts in
-  [`object/visual_attributes/`](object/visual_attributes): the ropes,
-  tightropes and hanging vines (`ropes.c`), each element's casts and the
-  choice of which plays (`psynergy_dispatch.c`). The rest of `object/` is
-  the placement, its scripts and tables.
+- [`event_commands.c`](event_commands.c) is the actors' stock behaviours
+  and field Psynergy, its parts in
+  [`event_commands/`](event_commands), beside the event commands' tables:
+  the ropes, tightropes and hanging vines (`ropes.c`), each element's casts
+  and the choice of which plays (`psynergy_dispatch.c`). `object/` holds the
+  placement, its scripts and tables.
 - A scene's work is one struct, `FieldWork`, in
   [`field_work.h`](../../include/field/field_work.h): The Broken Seal's,
   with the Psynergy state the sequel adds at its end. The field sequence,
   the event commands and every scene read it through
   `Ram_HeapSlots->fieldWork` or `gFieldWork`.
-- [`event_commands/radial.c`](event_commands/radial.c) is most of the
-  Psynergy the sequel adds, its parts in
-  [`event_commands/radial/`](event_commands/radial), and the event
-  commands' tables are the assembly rows beside it. The parts share one
-  effect scene, `FxScene` in
-  [`radial_internal.h`](event_commands/radial_internal.h): the caster, the
+- [`field_psynergy.c`](field_psynergy.c) is most of the Psynergy the sequel
+  adds, its parts in [`field_psynergy/`](field_psynergy). The parts share
+  one effect scene, `FxScene` in
+  [`field_psynergy_internal.h`](field_psynergy_internal.h): the caster, the
   target and where the Psynergy takes place. Each part is one Psynergy
   or one family of its helpers, named for it.
 - `field_effect/` is the field's small effects: particles, sparkles and

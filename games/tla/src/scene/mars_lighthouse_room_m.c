@@ -1088,94 +1088,14 @@ void Func_0200183c(void) {
   work->transition = saved;
 }
 
-s32 Func_020018c4(struct Actor *a, struct Actor *b) {
-  if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0x80000 &&
-      (a->y - b->y >= 0 ? a->y - b->y : b->y - a->y) < 0x80000 &&
-      (a->z - b->z >= 0 ? a->z - b->z : b->z - a->z) < 0x80000)
-    return 1;
-  return 0;
-}
+#include "shared/actor_is_touching.h"
 
-s32 Func_02001928(struct Actor *a, struct Actor *b) {
-  s32 height;
+#include "shared/actor_is_beside.h"
 
-  if ((a->x - b->x >= 0 ? a->x - b->x : b->x - a->x) < 0xc0000) {
-    height = a->y - b->y;
-    if (height > -0x80000 && height < 0x180000) {
-      if ((a->z - b->z >= 0 ? a->z - b->z : b->z - a->z) < 0xc0000)
-        return 1;
-    }
-  }
-  return 0;
-}
+s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
+s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
-s32 Func_020018c4(struct Actor *a, struct Actor *b);
-s32 Func_02001928(struct Actor *a, struct Actor *b);
-
-void Ride_UpdateCarried(struct Actor *object) {
-  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
-  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  s32 direction;
-  s32 id;
-
-  object->x += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->z += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->terrainHeight && Func_020018c4(object, actor) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->direction.x = 0;
-      {
-        u16 *cell = &work->direction.z;
-
-        if (object->unk4c > 0) {
-          direction = 1;
-          *cell = direction;
-        } else {
-          direction = 0xffff;
-          *cell = direction;
-        }
-      }
-    }
-    object->priorityFlags = 2;
-    {
-      s32 speed = object->unk4c;
-
-      object->unk4c = 0;
-      object->z -= speed;
-      object->gravity += speed >> 2;
-    }
-    work->active = 1;
-    event->stepTrigger = work->value0a;
-  }
-  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
-    actor = Actor_Get(id);
-
-    if (actor->y == actor->terrainHeight && Func_02001928(object, actor)) {
-      if (work->slots[i].blocked == 0) {
-        s32 speed;
-
-        object->priorityFlags = 2;
-        speed = object->unk4c;
-        object->unk4c = 0;
-        object->z -= speed;
-        object->gravity += speed >> 2;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+#include "shared/ride_update_carried.h"
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
@@ -1208,62 +1128,10 @@ void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value,
 
 extern u8 gInventorySnapshot[];
 
-s32 Func_020018c4(struct Actor *a, struct Actor *b);
-s32 Func_02001928(struct Actor *a, struct Actor *b);
+s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
+s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
 
-void Ride_UpdateLanding(struct Actor *object) {
-  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
-  struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  s32 dx = object->bounce;
-  s32 dz;
-  s32 i;
-  struct RideDirection *direction;
-
-  object->z += dx;
-  object->y += object->gravity;
-  dz = object->unk4c;
-  object->x += dz;
-  object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
-  object->scaleX += object->speedLimit;
-  object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (other->y == other->terrainHeight && Func_020018c4(object, other) &&
-      gMainRoutineWork.renderMode == 0) {
-    if (object->unk4c != 0) {
-      work->direction.z = 0;
-      direction = &work->direction;
-      if (object->unk4c > 0)
-        direction->x = 1;
-      else
-        direction->x = 0xffff;
-    }
-    object->priorityFlags = 2;
-    object->z -= object->bounce;
-    object->gravity += object->bounce >> 2;
-    object->unk4c = 0;
-    work->active = 1;
-    event->stepTrigger = work->value0a;
-  }
-  for (i = 0; i < 4; i++) {
-    s32 id = work->slots[i].id;
-
-    if (id == 0)
-      break;
-    other = Actor_Get(id);
-    if (other->y == other->terrainHeight && Func_02001928(object, other)) {
-      if (work->slots[i].blocked == 0) {
-        object->priorityFlags = 2;
-        object->z -= object->unk4c;
-        object->gravity += object->unk4c >> 2;
-        object->unk4c = 0;
-      } else {
-        work->blocked = 1;
-      }
-    }
-  }
-}
+#include "shared/ride_update_landing.h"
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 

@@ -169,7 +169,7 @@ s32 StatusScreen_RunPages(void) {
   s32 result = 0;
   u32 changed;
 
-  while (!finished && !GameFlag_Get(0x150)) {
+  while (!finished && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     switch (step) {
     case 0:
       state->selectedSlots[0] = finished;
@@ -209,7 +209,7 @@ s32 StatusScreen_RunPages(void) {
     }
   }
 
-  if (GameFlag_Get(0x150))
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED))
     result = -1;
 
   return result;
@@ -239,7 +239,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   cursor->active = 1;
   cursor->animStep = 0;
   WindowSprite_RedrawSavedRectFar(menu->auxiliaryWindow);
-  if (GameFlag_Get(0x172))
+  if (GameFlag_Get(FLAG_LINK_BATTLE_ARRANGED))
     Window_DrawDividerLineFar(menu->auxiliaryWindow, 9, 1, 9, 3);
   Window_DrawDividerLineFar(menu->auxiliaryWindow, 0, 3, 12, 3);
   if (index == -1)
@@ -285,7 +285,7 @@ void DjinnMenu_ShowCurrentList(void) {
     menu->memberY[i] = 26;
   }
   wait(1);
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       window = menu->window;
       WindowSprite_RedrawSavedRectFar(window);
@@ -399,7 +399,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
           REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp, menu->selectorWindow, 0, 0);
@@ -722,7 +722,7 @@ s32 StatusScreen_SelectCommand(void) {
   done = 0;
   MenuCursor_Slide(-10, 88);
 
-  while (done == 0 && !GameFlag_Get(0x150)) {
+  while (done == 0 && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     Unit_Get(menu->selectedIds[0]);
     StatusScreen_DrawStatusAilments(window, menu->selectedIds[0], 1);
     count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
@@ -733,7 +733,7 @@ s32 StatusScreen_SelectCommand(void) {
       hasAilments = 1;
     redraw = 1;
 
-    while (!GameFlag_Get(0x150)) {
+    while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
       if (redraw) {
         s32 limit;
 
@@ -1010,7 +1010,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
-  Text_SetColorFar(15);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   if (mode == 1 || hasDjinn == 1) {
     Window_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
     Window_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
@@ -1090,7 +1090,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   Text_DrawMessageAsTilesFar(unit->classIndex + (s32)MsgClassName, window, 0,
                              32);
   DRAW_STAT_LABEL(gMenu_LvString, window, 104, 0);
-  Text_SetColorFar(15);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   Text_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
   DRAW_STAT_LABEL(gMenu_HpString, window, 40, 16);
   Text_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
@@ -1532,7 +1532,7 @@ s32 PsynergyMenu_SelectAction(void) {
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
   Menu_BuildPatternTiles();
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (refresh) {
       if (refresh == 2) {
         menu->psynergyCount = PsynergyMenu_CollectActions(
@@ -1837,7 +1837,7 @@ s32 ItemMenu_SelectItem(void) {
   Menu_SpawnIconEntries(menu, menu->messageWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, window, 64, -24);
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (refresh) {
       if (refresh == 2) {
         owner = Unit_Get(menu->paneOwner[0]);

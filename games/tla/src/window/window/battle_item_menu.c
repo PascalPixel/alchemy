@@ -217,14 +217,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
           if (item == 0)
             break;
           Item_GetDirectFar(item);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           if (Item_ClassifyUseAbility(member, item) != 0)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (item & ITEM_BROKEN)
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName, window, 16,
                                   i * 16);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;

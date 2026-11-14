@@ -9,6 +9,19 @@
 #include "types.h"
 #include "battle/battle.h"
 #include "module/window/window.h"
+#include "flags.h"
+
+// The Broken Seal's flags of the same numbers, read and set by the same
+// routines here (for flags.h).
+/// Holds the field's palette blend still while a menu is open
+/// (Menu_SuspendFieldTasks).
+#define FLAG_PALETTE_BLEND_HELD 0x152
+/// Holds the field's weather still while a menu is open
+/// (Menu_SuspendFieldTasks).
+#define FLAG_WEATHER_HELD 0x166
+/// A linked battle has been arranged in the Battle Arena: only the first three
+/// party members take part.
+#define FLAG_LINK_BATTLE_ARRANGED 0x172
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"

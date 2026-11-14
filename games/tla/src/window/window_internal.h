@@ -84,6 +84,11 @@
 #define WINDOW_OPEN_FRAMES 8
 #define WINDOW_CLOSE_FRAMES 4
 
+/// Set when the cleared game's menu goes to the Battle Arena: there the Pause
+/// menu offers only Change settings (The Broken Seal's flag of the same
+/// number; for flags.h).
+#define FLAG_IN_BATTLE_ARENA 0x17e
+
 /// The ring of decoded text (WindowWork.entries): 512 codes, 256 in Japanese.
 #define TEXT_BUFFER_MASK (UI_TEXT_ENTRY_COUNT - 1)
 

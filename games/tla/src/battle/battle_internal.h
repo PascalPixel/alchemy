@@ -294,6 +294,16 @@ struct BattleLinkedActionState {
 /// Select the whole party (BattleActionRun_Build); The Broken Seal's flag.
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
 
+// The Broken Seal's flags of the same numbers, read and set by the same
+// routines here (for flags.h).
+#define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
+/// The party fights each turn with no command menu; the debug battle menu sets
+/// it, and clears it again for its chooser.
+#define FLAG_AUTO_BATTLE 0x16a
+#define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
+/// Lets the monster battles choose enemies the party has never defeated.
+#define FLAG_MONSTER_BATTLE_ANY_ENEMY 0x174
+
 /// The camera's yaw while a party member acts, and while an enemy does, in
 /// 1/65536 turns: an eighth of a turn either side of 0.
 #define YAW_PARTY_ACTION (TRIG_TURN / 8)

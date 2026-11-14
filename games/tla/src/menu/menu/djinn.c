@@ -623,7 +623,7 @@ void DjinnMenu_DrawEntry(s32 window, s32 x, s32 y, s32 entry) {
   Text_DrawMessageAsTilesFar((s32)MsgDjinnName + element * 20 + (entry & 31),
                              window, x + 8, y);
   Window_SetTilemapEntryFar(window, element + 0x5001, x / 8, y / 8, 0);
-  Text_SetColorFar(15);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
 }
 
 struct DjinnMenuState {
@@ -665,13 +665,13 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
           if (element == (entries[i] & 0xe0) >> 5) {
             switch (DjinnMenu_GetEntryState(entries[i])) {
             case 0:
-              Text_SetColorFar(2);
+              Text_SetColorFar(TEXT_COLOR_RED);
               break;
             case 1:
-              Text_SetColorFar(15);
+              Text_SetColorFar(TEXT_COLOR_WHITE);
               break;
             default:
-              Text_SetColorFar(4);
+              Text_SetColorFar(TEXT_COLOR_YELLOW);
               break;
             }
             DjinnMenu_DrawEntry(window, x, y, entries[i]);
@@ -1920,11 +1920,11 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
                                     actions[first] & 0x3fff);
       if (actions[first] & 0x8000)
-        Text_SetColorFar(4);
+        Text_SetColorFar(TEXT_COLOR_YELLOW);
       else if (actions[first] & 0x4000)
-        Text_SetColorFar(2);
+        Text_SetColorFar(TEXT_COLOR_RED);
       else
-        Text_SetColorFar(15);
+        Text_SetColorFar(TEXT_COLOR_WHITE);
       Text_DrawMessageAsTilesFar((s32)MsgAbilityNothing +
                                      (actions[first] & 0x3fff),
                                  window, x * 8 + 16, (y + line * 2) * 8 + 8);
@@ -1932,7 +1932,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                                  x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }
-    Text_SetColorFar(15);
+    Text_SetColorFar(TEXT_COLOR_WHITE);
     Text_DrawMessageAsTilesFar((s32)MsgPsynergyPp, window, x * 8 + PP_HEADING_X,
                                y * 8);
     if (previewMode != 3) {
@@ -1940,20 +1940,20 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
 
       lines = 0;
       if (gained) {
-        Text_SetColorFar(4);
+        Text_SetColorFar(TEXT_COLOR_YELLOW);
         Text_DrawMessageAsTilesFar(MSG_PSYNERGY_GAINED, window, x * 8,
                                    y * 8 + 88);
         lines = 1;
       }
       if (lost) {
-        Text_SetColorFar(2);
+        Text_SetColorFar(TEXT_COLOR_RED);
         Text_DrawMessageAsTilesFar(MSG_PSYNERGY_LOST, window, x * 8,
                                    (y + lines) * 8 + 88);
         lines++;
       }
       if (lines == 0)
         Text_DrawMessageAsTilesFar(MSG_NO_CHANGE, window, x * 8, y * 8 + 88);
-      Text_SetColorFar(15);
+      Text_SetColorFar(TEXT_COLOR_WHITE);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
     ((struct WindowWork *)Ram_HeapSlots->windowTiles)->dirty = 1;

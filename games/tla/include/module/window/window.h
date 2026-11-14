@@ -96,6 +96,17 @@ enum {
   WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(127),
 };
 
+/// Text colours (Text_SetColor), named as both the window palette and the basic
+/// sprite palette show them, as The Broken Seal's.
+enum TextColor {
+  TEXT_COLOR_RED = 2,
+  TEXT_COLOR_YELLOW = 4,
+  TEXT_COLOR_PINK =
+      9, ///< in the basic colours' palette; the window palette's white
+  TEXT_COLOR_GREY = 14,
+  TEXT_COLOR_WHITE = 15, ///< a message's colour at start
+};
+
 /// The flags of a UI window (struct Window.flags), which Window_Create takes as
 /// its attributes, as The Broken Seal's.
 enum {

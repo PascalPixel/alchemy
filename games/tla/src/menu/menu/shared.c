@@ -18,13 +18,13 @@ s32 GameFlag_Set(s32 flag_no);
 void Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
   TilesetAnim_ResumeAllFar();
-  GameFlag_Clear(0x166);
-  GameFlag_Clear(0x152);
+  GameFlag_Clear(FLAG_WEATHER_HELD);
+  GameFlag_Clear(FLAG_PALETTE_BLEND_HELD);
 }
 
 s32 Menu_SuspendFieldTasks(void) {
-  GameFlag_Set(0x152);
-  GameFlag_Set(0x166);
+  GameFlag_Set(FLAG_PALETTE_BLEND_HELD);
+  GameFlag_Set(FLAG_WEATHER_HELD);
   TilesetAnim_SuspendAllFar();
   return Task_SuspendOverlayTasks();
 }
@@ -396,13 +396,13 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   Text_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    Text_SetColorFar(4);
+    Text_SetColorFar(TEXT_COLOR_YELLOW);
   }
   if (value == 0) {
-    Text_SetColorFar(2);
+    Text_SetColorFar(TEXT_COLOR_RED);
   }
   Text_DrawNumberRightAligned(value, window, 48, 40);
-  Text_SetColorFar(15);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   Text_DrawStringAtOffsetFar(gStatusPanel_PpString, window, 0, 48);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
   value = unit->pp;
@@ -420,13 +420,13 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
   if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
-    Text_SetColorFar(4);
+    Text_SetColorFar(TEXT_COLOR_YELLOW);
   }
   if (value == 0) {
-    Text_SetColorFar(2);
+    Text_SetColorFar(TEXT_COLOR_RED);
   }
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  Text_SetColorFar(15);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
   value = unit->pp;
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
@@ -1149,7 +1149,7 @@ void Menu_UpdateCancelSound(void) {
   mask = 8;
   if (input->pressed & mask) {
     Sound_PlayFar(SE_MENU_CANCEL);
-    GameFlag_Set(0x150);
+    GameFlag_Set(FLAG_MENU_START_PRESSED);
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
   node = (u32 *)(Ram_HeapSlots->windowTiles + 0xE30);
@@ -1158,21 +1158,21 @@ void Menu_UpdateCancelSound(void) {
 }
 
 void Menu_StartWatchingStart(void) {
-  GameFlag_Clear(0x150);
+  GameFlag_Clear(FLAG_MENU_START_PRESSED);
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }
 
 void Menu_StopWatchingStart(void) {
-  if (GameFlag_Get(0x150) == 0) {
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));
   }
 }
 
-void UiPalette_SetColor15(void) { Text_SetColorFar(15); }
+void UiPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_WHITE); }
 
-void UiPalette_SetColor2(void) { Text_SetColorFar(2); }
+void UiPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_RED); }
 
-void UiPalette_SetColor4(void) { Text_SetColorFar(4); }
+void UiPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_YELLOW); }
 
 #undef DRAW_LEVEL_LABEL
 #undef STATUS_PANEL_LEARN_NOTE_Y

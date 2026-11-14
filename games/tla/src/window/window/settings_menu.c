@@ -643,7 +643,7 @@ struct RenderInput *PauseMenu_Open(void) {
 
   rows = 3;
   work = Ram_HeapSlots->unkd0[0];
-  settingsOnly = GameFlag_Get(0x17e);
+  settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
@@ -749,7 +749,7 @@ s32 PauseMenu_Choose(s32 initial) {
   redraw = -1;
   selected = initial;
   rows = 3;
-  settingsOnly = GameFlag_Get(0x17e);
+  settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   PauseMenu_Initialize();
   work = Ram_HeapSlots->unkd0[0];

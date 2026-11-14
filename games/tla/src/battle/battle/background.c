@@ -214,7 +214,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   groundEndLine =
       (Iwram_RatioMulQ14((s16)affine->pd, 0x4000 - affine->y) >> 16) + 1;
   scanline = 0;
-  if (!GameFlag_Get(0x16b)) {
+  if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < 16; scanline++)
       *line++ = 0x3f8e;
   }
@@ -1080,7 +1080,8 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     enemy = Enemy_GetDefinitionFar(enemyId + 8);
     if (enemy == 0)
       continue;
-    if (!GameFlag_Get(0x174) && !GameFlag_Get(enemyId + 0x608))
+    if (!GameFlag_Get(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&
+        !GameFlag_Get(enemyId + 0x608))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;

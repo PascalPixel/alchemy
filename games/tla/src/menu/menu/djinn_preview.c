@@ -177,15 +177,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   if (mode == 1)
     row = 1;
   if ((entry0 & 0x8000) == 0)
-    Text_SetColorFar(2);
+    Text_SetColorFar(TEXT_COLOR_RED);
   DjinnMenu_DrawEntry(help, 40, row * 8, entry0);
   if (mode == 0) {
     if ((entry1 & 0x8000) == 0)
-      Text_SetColorFar(2);
+      Text_SetColorFar(TEXT_COLOR_RED);
     DjinnMenu_DrawEntry(help, 40, 16, entry1);
   } else if (mode - 2 <= 1) {
     if ((entry0 & 0x8000) != 0)
-      Text_SetColorFar(2);
+      Text_SetColorFar(TEXT_COLOR_RED);
     DjinnMenu_DrawEntry(help, 40, 16, entry0);
     Window_SetTilemapEntryFar(help, 0xf296, 7, 1, 0);
   }

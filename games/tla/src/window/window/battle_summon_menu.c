@@ -208,7 +208,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
             if (!affordable)
-              Text_SetColor(2);
+              Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->nameMessageId +
                                         (s32)MsgAbilityNothing,
                                     window, 16, index * 16);
@@ -221,7 +221,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                 col++;
               }
             }
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)

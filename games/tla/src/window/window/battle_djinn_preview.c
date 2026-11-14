@@ -151,9 +151,6 @@ s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
 #endif
 
 // Text colours (Text_SetColor).
-#define PREVIEW_RED 2
-#define PREVIEW_YELLOW 4
-#define PREVIEW_WHITE 15
 
 /// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
 /// index) would change for `member`: closes the preview window `win`, opens a
@@ -280,9 +277,9 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
 
     Window_DrawDividerLine(window, 0, 8, 19, 8);
     if (gained != 0 || lost != 0)
-      Text_SetColor(PREVIEW_RED);
+      Text_SetColor(TEXT_COLOR_RED);
     Text_DrawMessageAsTiles((s32)MsgKey0d0d, window, PSYNERGY_PROMPT_X, 64);
-    Text_SetColor(PREVIEW_WHITE);
+    Text_SetColor(TEXT_COLOR_WHITE);
   }
 
   if (page > 0) {
@@ -307,11 +304,11 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
                                      visibleRow * 16 - 4,
                                      changedAbilities[i] & 0x3fff);
       if (changedAbilities[i] & 0x8000)
-        Text_SetColor(PREVIEW_YELLOW);
+        Text_SetColor(TEXT_COLOR_YELLOW);
       else if (changedAbilities[i] & 0x4000)
-        Text_SetColor(PREVIEW_RED);
+        Text_SetColor(TEXT_COLOR_RED);
       else
-        Text_SetColor(PREVIEW_WHITE);
+        Text_SetColor(TEXT_COLOR_WHITE);
       Text_DrawMessageAsTiles((changedAbilities[i] & 0x3fff) +
                                   (s32)MsgAbilityNothing,
                               window, 16, visibleRow * 16);
@@ -323,20 +320,20 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
                               window, 104, visibleRow * 16);
     }
     if (gained != 0) {
-      Text_SetColor(PREVIEW_YELLOW);
+      Text_SetColor(TEXT_COLOR_YELLOW);
       Text_DrawMessageAsTiles((s32)MsgKey10d3, window, TOTAL_LABEL_X, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
-      Text_SetColor(PREVIEW_RED);
+      Text_SetColor(TEXT_COLOR_RED);
       Text_DrawMessageAsTiles((s32)MsgKey10d4, window, TOTAL_LABEL_X,
                               summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
       Text_DrawMessageAsTiles((s32)MsgKey10d9, window, TOTAL_LABEL_X, 80);
-    Text_SetColor(PREVIEW_WHITE);
-    Text_SetColor(PREVIEW_WHITE);
+    Text_SetColor(TEXT_COLOR_WHITE);
+    Text_SetColor(TEXT_COLOR_WHITE);
     Window_DrawDividerLine(window, 0, 10, 19, 10);
   }
 
@@ -412,6 +409,3 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
 #undef OLD_DEFENSE_AGILITY_TEXT
 #undef OLD_DEFENSE_AGILITY_X
 #undef PSYNERGY_PROMPT_X
-#undef PREVIEW_RED
-#undef PREVIEW_YELLOW
-#undef PREVIEW_WHITE

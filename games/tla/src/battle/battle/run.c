@@ -330,7 +330,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
 
     Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->promptSlot);
-    if (GameFlag_Get(0x16a) == 0)
+    if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
       actionCount = AutoBattle_BuildActions(
@@ -344,7 +344,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       actingUnit = battle->actions[i].unitId;
       battle->pendingUnit = -1;
       battle->actionEnded = 0;
-      if (GameFlag_Get(0x16a) == 0) {
+      if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0) {
         if (BattleStaging_DispatchAction(&battle->actions[i],
                                          i == 0 ? 10 : 0) == 1)
           goto fled;

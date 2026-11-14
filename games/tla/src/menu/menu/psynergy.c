@@ -1007,19 +1007,19 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
       ability = Ability_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {
-        Text_SetColorFar(2);
+        Text_SetColorFar(TEXT_COLOR_RED);
       } else if (PsynergyMenu_IsActionRestricted(
                      0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
-        Text_SetColorFar(4);
+        Text_SetColorFar(TEXT_COLOR_YELLOW);
       } else {
-        Text_SetColorFar(15);
+        Text_SetColorFar(TEXT_COLOR_WHITE);
       }
 
       Text_DrawMessageAsTilesFar((0x3fff & *(const u16 *)(cursor + (s32)menu)) +
                                      (s32)MsgAbilityNothing,
                                  window, NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
-      Text_SetColorFar(15);
+      Text_SetColorFar(TEXT_COLOR_WHITE);
 
       row++;
       cursor += 2;

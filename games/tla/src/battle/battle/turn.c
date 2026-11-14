@@ -471,7 +471,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   BattleUnit_ResetGuardLevels();
   Palette_CopyWithBrightnessOffset(8);
   // Flag set while commands are being selected.
-  GameFlag_Set(363);
+  GameFlag_Set(FLAG_CHOOSING_COMMANDS);
   mode = &work->encounterMode;
   BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
@@ -521,7 +521,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   }
 
 finish:
-  GameFlag_Clear(363);
+  GameFlag_Clear(FLAG_CHOOSING_COMMANDS);
   Camera_InitializeDefaultTransform();
   Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
   return cnt;

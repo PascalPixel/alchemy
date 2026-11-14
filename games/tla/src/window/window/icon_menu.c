@@ -474,14 +474,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         state->iconShown[1] = 1;
         work->level = 5;
         if (ability->ppCost > unit->pp)
-          Text_SetColor(2);
+          Text_SetColor(TEXT_COLOR_RED);
         else if (unit->psySeal != 0)
-          Text_SetColor(9);
+          Text_SetColor(TEXT_COLOR_PINK);
         Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityNothing,
                                 commandWindow, 16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         work->level = 15;
-        Text_SetColor(15);
+        Text_SetColor(TEXT_COLOR_WHITE);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
                                0);
@@ -545,7 +545,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             summon->nameMessageId & 0x3fff, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
-          Text_SetColor(2);
+          Text_SetColor(TEXT_COLOR_RED);
         Text_DrawMessageAsTiles(SummonDefinition_Get(mode)->nameMessageId +
                                     (s32)MsgAbilityNothing,
                                 commandWindow, 16, 0);
@@ -633,11 +633,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         commandWindow = Window_Create(11, 17, 10, 3, 6);
         COMMAND_ICON_X(state) = 64;
-        Text_SetColor(2);
+        Text_SetColor(TEXT_COLOR_RED);
         Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
         Text_DrawMessageAsTiles(element * 20 + index + (s32)MsgDjinnName,
                                 commandWindow, 16, 0);
-        Text_SetColor(15);
+        Text_SetColor(TEXT_COLOR_WHITE);
         command->range = 1;
         wait(1);
         Sound_PlayFar(SE_MENU_CONFIRM);

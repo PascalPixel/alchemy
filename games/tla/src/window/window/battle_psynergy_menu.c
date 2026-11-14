@@ -180,16 +180,16 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
                             1);
           sprites[i].oam.f.tile = glyph;
           if ((action->flags & 0x80) == 0)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (action->ppCost > unit->pp)
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           else if (unit->psySeal != 0)
-            Text_SetColor(9);
+            Text_SetColor(TEXT_COLOR_PINK);
           work->textPalette = 5;
           Text_DrawMessageAsTiles(encodedAction + (s32)MsgAbilityNothing,
                                   window, 16, i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           work->textPalette = 15;
           if (action->element != 4)
             Window_SetTilemapEntry(window, action->element + 0x5001,

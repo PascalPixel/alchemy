@@ -207,7 +207,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   state = 0;
   menu = Ram_HeapSlots->menuRuntime;
 
-  while (done == 0 && GameFlag_Get(0x150) == 0) {
+  while (done == 0 && GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     switch (state) {
     case 0:
       menu->selectedSlots[0] = 0;
@@ -487,7 +487,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
       }
-      if (GameFlag_Get(0x150) != 0) {
+      if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0) {
         break;
       }
       ItemMenu_RefreshMember(menu->sideMember[1], 1);
@@ -611,7 +611,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedItems[0] &= 0x1ff;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
-        if (GameFlag_Get(0x150) == 0) {
+        if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
           WindowSprite_ClearListFar(menu->infoWindow);
           ItemMenu_SetItemWindowRow5();
           ItemMenu_RefreshMember(menu->sideMember[1], 1);
@@ -717,7 +717,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     }
   }
 
-  if (GameFlag_Get(0x150) != 0) {
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0) {
     ret = -1;
   }
   return ret;
@@ -992,7 +992,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
                              menu->buttonHelpWindow, 0, 8);
 #endif
   menu->sideIcons[0]->active = 1;
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       sortMode = 0;
       window = menu->statusWindow;
@@ -1154,7 +1154,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   Unit_Get(menu->ownerIds[menu->paneIndex[0]]);
   Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, 0x480);
   redraw = 2;
-  while (!GameFlag_Get(0x150)) {
+  while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       window = menu->itemWindow;
       Unit_Get(menu->ownerIds[selection]);
@@ -1711,7 +1711,7 @@ s32 ItemMenu_ChooseCommand(void) {
                    COMMAND_CURSOR_Y(column, row));
 
   for (;;) {
-    if (GameFlag_Get(0x150) != 0)
+    if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0)
       break;
     if (redraw != 0) {
       redraw = 0;
@@ -1876,9 +1876,6 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 /// An item command's state when the selected item refuses it.
 #define ITEM_COMMAND_STATE_DISABLED (-1)
 
-#define TEXT_COLOR_NORMAL 15   ///< the window text's default colour
-#define TEXT_COLOR_DISABLED 14 ///< the grey of a command that refuses A
-
 // The x of the command grid's middle column: German, Spanish and French
 // draw Equip and Remove 8 pixels further left.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
@@ -1894,43 +1891,43 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
   s32 useState;
   u32 firstCommandMessage;
 
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   useState = commandStates[ITEM_COMMAND_USE];
   disabled = ITEM_COMMAND_STATE_DISABLED;
   if (useState == disabled)
-    Text_SetColorFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_GREY);
 
   firstCommandMessage = (u32)MsgItemCommandUse;
   // "Use"
   Text_DrawMessageAsTilesFar(firstCommandMessage, window, 0, 24);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
-    Text_SetColorFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_GREY);
   // "Equip"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 1, window,
                              ITEM_COMMAND_TEXT_X, 24);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   if (commandStates[ITEM_COMMAND_GIVE] == disabled)
-    Text_SetColorFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_GREY);
   // "Give"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 2, window, 0, 32);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   if (commandStates[ITEM_COMMAND_DROP] == disabled)
-    Text_SetColorFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_GREY);
   // "Drop"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80, 32);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
-    Text_SetColorFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_GREY);
   // "Details"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80, 24);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
   if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
-    Text_SetColorFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_GREY);
   // "Remove"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 5, window,
                              ITEM_COMMAND_TEXT_X, 32);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_WHITE);
 }
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
@@ -2551,7 +2548,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
     arrow = WindowSprite_CreateFar(entry, 0x40004000, window, 80, 32);
     arrow->tile = arrow->tile + 4;
     MenuCursor_Slide(CURSOR_X, 40);
-    while (!GameFlag_Get(0x150)) {
+    while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
       if (changed) {
         changed = 0;
         value = (value + quantityRange) % quantityRange;
@@ -2612,7 +2609,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   WindowSprite_ClearListFar(window);
   HeapSlot_Release(56);
   menu->selectedItemIcon->state = 13;
-  if (GameFlag_Get(0x150))
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED))
     value = -1;
   return value;
 }
@@ -3062,7 +3059,7 @@ s32 ItemMenu_RunList(s32 pane) {
   window = menu->listWindow;
   done = 0;
 
-  while (done == 0 && GameFlag_Get(0x150) == 0) {
+  while (done == 0 && GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     owner = Unit_Get(menu->paneOwner[pane]);
     menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
     ItemMenu_DrawIcons(menu->items, 0);
@@ -3072,7 +3069,7 @@ s32 ItemMenu_RunList(s32 pane) {
     changed = 1;
     redraw = 1;
 
-    while (GameFlag_Get(0x150) == 0) {
+    while (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
       MenuCursor_Position(98, state.row * 16 + 36);
 
       if (changed != 0) {
@@ -3177,7 +3174,7 @@ s32 ItemMenu_RunList(s32 pane) {
   menu->selectedSlots[pane] = state.selectedIndex;
   menu->selectedIndexByOwner[menu->paneOwner[pane]] = state.selectedIndex;
   menu->selectedItems[pane] = result;
-  if (GameFlag_Get(0x150) != 0)
+  if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0)
     result = -1;
   wait(1);
   return result;

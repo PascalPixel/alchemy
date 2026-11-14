@@ -267,11 +267,11 @@ void PartyStatus_Draw(s32 flags) {
     s32 current;
 
     if (hp == 0)
-      Text_SetColor(2);
+      Text_SetColor(TEXT_COLOR_RED);
     else if (hp <= maxHp / 4)
-      Text_SetColor(4);
+      Text_SetColor(TEXT_COLOR_YELLOW);
     else
-      Text_SetColor(15);
+      Text_SetColor(TEXT_COLOR_WHITE);
     work->level = 14;
     if (work->menuState != 0)
       work->level = 5;
@@ -280,7 +280,7 @@ void PartyStatus_Draw(s32 flags) {
     work->level = 15;
     Text_DrawStringAtOffset(unit->name, (struct RenderInput *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    Text_SetColor(15);
+    Text_SetColor(TEXT_COLOR_WHITE);
     if (unit->maxHp != 0) {
       current = unit->hp;
       barLength = (current * 40) / unit->maxHp;

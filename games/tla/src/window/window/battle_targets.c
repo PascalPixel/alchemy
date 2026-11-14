@@ -371,9 +371,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow =
                 Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
 #endif
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles((s32)MsgSetDjinni, conditionWindow, 0, 0);
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             break;
           case 1:
             TARGET_HELP_COLUMN(7, 6, 17);
@@ -549,9 +549,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               break;
           }
           no_condition:
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles((s32)MsgEffectNone, conditionWindow, 0, 0);
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             break;
           }
         }

@@ -553,14 +553,14 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
         for (j = 0; j <= 3 && (item = entries[rowBase + j]) != 0; j++) {
           Item_GetDirectFar(item);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           if (Item_ClassifyUseAbility(member, item) != 0)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (item & 0x400)
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName,
                                   statusWindow, 32, 64 + j * 16);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
@@ -624,18 +624,18 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             iconSprites[j].oam.f.tile =
                 Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
             if (!(ability->flags & 0x80))
-              Text_SetColor(4);
+              Text_SetColor(TEXT_COLOR_YELLOW);
             else if (ability->ppCost > unit->pp)
-              Text_SetColor(2);
+              Text_SetColor(TEXT_COLOR_RED);
             else if (unit->psySeal != 0)
-              Text_SetColor(9);
+              Text_SetColor(TEXT_COLOR_PINK);
             tileFlags = 0;
             work->textColor = 5;
             Text_DrawMessageAsTiles(id + (s32)MsgAbilityNothing, statusWindow,
                                     16, 64 + j * 16);
             Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
                                     64 + j * 16);
-            Text_SetColor(15);
+            Text_SetColor(TEXT_COLOR_WHITE);
             work->textColor = 15;
             if (ability->element != 4)
               Window_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
@@ -745,9 +745,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Window_SetTilemapEntry(statusWindow, ((shown & 0xf00) >> 8) + 0x5001,
                                  column, tileRow, 0);
           if (shown & 0x3e0000)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (shown & 0x10000)
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           Text_DrawMessageAsTiles(((shown & 0xf00) >> 8) * 20 + (shown & 0xff) +
                                       (s32)MsgDjinnName,
                                   statusWindow, column * 8 + 8, tileRow * 8);
@@ -757,7 +757,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Text_DrawNumberAtOffset((shown & 0x3e0000) >> 17, 2, statusWindow,
                                     column * 8 + 40, tileRow * 8);
 #endif
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
         }
       }
       /* FAKEMATCH(dead): a never-true arm, pages 1 and 3's scroll marks with

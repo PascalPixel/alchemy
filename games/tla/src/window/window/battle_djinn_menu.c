@@ -264,9 +264,9 @@ s32 BattleDjinnMenu_Run(s32 member) {
           Window_SetTilemapEntry(
               listWindow, ((encodedDjinn & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
-            Text_SetColor(4);
+            Text_SetColor(TEXT_COLOR_YELLOW);
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
-            Text_SetColor(2);
+            Text_SetColor(TEXT_COLOR_RED);
           Text_DrawMessageAsTiles(((encodedDjinn & 0xf00) >> 8) * 20 +
                                       (encodedDjinn & 0xff) + (s32)MsgDjinnName,
                                   listWindow, 8, j * 16);
@@ -275,7 +275,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                     DJINN_ENTRY_RECOVERY_SHIFT,
                 2, listWindow, DJINN_TURNS_X, j * 16);
-          Text_SetColor(15);
+          Text_SetColor(TEXT_COLOR_WHITE);
           j++;
           if (j > 4)
             break;

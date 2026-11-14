@@ -360,7 +360,7 @@ void WorldMap_SetUpFlyingShip(void) {
     *(u16 *)(work + 346) = zero = 0;
     *(u16 *)(work + 350) = zero;
     *(u16 *)(work + 348) = zero;
-    *(u16 *)(work + 356) = zero;
+    ((struct EventWork *)work)->encounterEnemyGroup = zero;
     *(u16 *)(work + 358) = zero;
   }
 }

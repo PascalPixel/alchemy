@@ -836,9 +836,9 @@ void Kibombo_PiersJoinsParty(void) {
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
     Motion_SetModeAndWaitAnimation(5, 4);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 5, 0);
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
   } else {
-    *(u16 *)(EVENT_WORK + 0x1c4) += 2;
+    ((struct EventWork *)EVENT_WORK)->messageId += 2;
     Motion_SetModeAndWaitAnimation(26, 3);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
   }
@@ -991,9 +991,9 @@ void Kibombo_PiersJoinsParty(void) {
     Actor_FaceDirection(6, FACING_NORTHEAST, 20);
     Actor_SetModeById(5, 3);
     Motion_SetModeAndWaitAnimation(6, 3);
-    *(u16 *)(EVENT_WORK + 0x1c4) += 3;
+    ((struct EventWork *)EVENT_WORK)->messageId += 3;
   } else {
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
     Actor_ShowEmoteById(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 26, 0);
     Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
@@ -1167,7 +1167,7 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_FaceDirection(6, FACING_WEST, 0);
 ask:
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
   } else {
     Event_ShowMessageAndWait(26, 0);
     *(s16 *)(EVENT_WORK + 0x1c4) -= 2;

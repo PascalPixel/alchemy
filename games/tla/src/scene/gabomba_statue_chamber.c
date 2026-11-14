@@ -236,7 +236,8 @@ void Func_02000184(void) {
   wait(10);
   *color = 0x7fff;
   wait(1);
-  FieldMessage_ShowCentered((s16)(*(u16 *)(EVENT_WORK + 0x1c4))++, 0, 2);
+  FieldMessage_ShowCentered(
+      (s16)(((struct EventWork *)EVENT_WORK)->messageId)++, 0, 2);
   PaletteFade_ApplyTarget(0x10000, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -336,9 +337,9 @@ void Func_02000184(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(9, 4);
     Event_ShowMessageAndWait(9, 0);
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
   } else {
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
     Actor_SetModeById(9, 3);
     Event_ShowMessageAndWait(9, 0);
   }
@@ -349,9 +350,9 @@ void Func_02000184(void) {
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Event_ShowMessageAndWait(9, 0);
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
   } else {
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
     Event_ShowMessageAndWait(9, 0);
   }
   Actor_SetModeById(9, 4);
@@ -369,12 +370,12 @@ void Func_02000184(void) {
   BattleEffect_ApplyColorToTargetBuffer(0, 0);
   PaletteFade_StartInterpolation(60);
   wait(64);
-  *(s32 *)(EVENT_WORK + 0x1ac) = 513;
-  *(s32 *)(EVENT_WORK + 0x1b4) = 10;
+  ((struct EventWork *)EVENT_WORK)->screenEffect = 513;
+  ((struct EventWork *)EVENT_WORK)->delay = 10;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
-  *(s32 *)(EVENT_WORK + 0x1b4) = 1;
+  ((struct EventWork *)EVENT_WORK)->delay = 1;
   PaletteFade_StartInterpolation(1);
   ActorSystem_SuspendProjectionAndShowSprites();
   FieldMessage_ShowCentered(MsgCarriedTheMessage, 0, 3);
@@ -655,7 +656,7 @@ void Func_020010d4(void) {
     HeapSlot_Release(68);
   }
   Func_02001010();
-  *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
+  ((struct EventWork *)EVENT_WORK)->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -752,9 +753,9 @@ void Func_020010d4(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(20);
     Event_ShowMessageAndWait(12, 0);
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
   } else {
-    *(u16 *)(EVENT_WORK + 0x1c4) += 1;
+    ((struct EventWork *)EVENT_WORK)->messageId += 1;
     Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     Event_ShowMessageAndWait(12, 0);
   }
@@ -787,7 +788,7 @@ void Func_020010d4(void) {
   Event_Wait(10);
   Actor_SetMovementTypeById(12, gData_02001f18);
   Event_Wait(60);
-  *(s32 *)(EVENT_WORK + 0x1ac) = 514;
+  ((struct EventWork *)EVENT_WORK)->screenEffect = 514;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);

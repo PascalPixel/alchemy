@@ -1892,7 +1892,7 @@ void DehkanPlateau_LeaveRoom(void) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(*(s16 *)(work + 0x154));
+  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
 }
 
 s32 Scene_Initialize(void) {

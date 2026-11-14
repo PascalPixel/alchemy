@@ -259,7 +259,7 @@ void Izumo_EnterDoor(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
-  Func_02000db0(*(s16 *)(work + 340));
+  Func_02000db0(((struct EventWork *)work)->exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

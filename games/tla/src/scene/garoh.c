@@ -214,7 +214,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  index = *(s16 *)(work + 0x154);
+  index = ((struct EventWork *)work)->exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gData_02005de0[index].steps, gData_02005de0[index].x,
@@ -230,7 +230,7 @@ loop:
       Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(6);
-  FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
+  FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

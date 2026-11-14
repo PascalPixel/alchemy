@@ -212,7 +212,7 @@ void Func_020003e8(void) {
 
   if (*(s16 *)(work + 0x166) != 0)
     return;
-  if (*(s8 *)(work + 0xca4) != 0)
+  if (((struct EventWork *)work)->pendingFirst != 0)
     return;
   if (gData_020024c4 == -1) {
     Iwram_CopyWords(Data_02002958, (void *)0x05000060, 32);
@@ -247,7 +247,7 @@ void Func_02000540(void) {
 
   if (*(s16 *)(work + 0x166) != 0)
     return;
-  busy = *(s8 *)(work + 0xca4);
+  busy = ((struct EventWork *)work)->pendingFirst;
   if (busy != 0)
     return;
   if (gData_020024c8 == -1) {
@@ -464,7 +464,7 @@ void ApojiiIslands_EnterDoor(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterOnColumn_(gMainRoutineWork.currentOwner, 2, -6);
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
+  FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

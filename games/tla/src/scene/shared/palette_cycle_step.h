@@ -12,7 +12,7 @@ void PaletteCycle_Step(void) {
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (*(s8 *)(work + 0xca4) != 0)
+    if (((struct EventWork *)work)->pendingFirst != 0)
       return;
     if (*(s16 *)(work + 350) != 0)
       return;

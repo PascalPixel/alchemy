@@ -561,7 +561,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 flag;
 
-  *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
+  ((struct EventWork *)EVENT_WORK)->screenEffect = 0x100;
   Func_02000af8();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {

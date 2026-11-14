@@ -370,7 +370,7 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  index = *(s16 *)(work + 0x154) - 1;
+  index = ((struct EventWork *)work)->exit - 1;
   Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
   {
@@ -387,7 +387,7 @@ loop:
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_Wait(6);
-  Import_EventSetExitRequest(*(s16 *)(work + 0x154));
+  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

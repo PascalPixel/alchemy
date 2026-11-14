@@ -241,7 +241,7 @@ void Yallam_EnterDoor(void) {
       *flags = zero;
     }
   }
-  index = *(s16 *)(event + 340);
+  index = ((struct EventWork *)event)->exit;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
@@ -257,7 +257,7 @@ void Yallam_EnterDoor(void) {
       Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(*(s16 *)(event + 340));
+  FieldEvent_SetExitRequest(((struct EventWork *)event)->exit);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

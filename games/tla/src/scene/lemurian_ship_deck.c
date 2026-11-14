@@ -86,7 +86,7 @@ void LemurianShipDeck_EnterCabin(void) {
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
     Event_PlaySound(SE_MAP_EXIT);
-    FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
+    FieldEvent_SetExitRequest(((struct EventWork *)work)->exit);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Event_End();

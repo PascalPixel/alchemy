@@ -505,7 +505,7 @@ void SeaOfTime_CountLaps(void) {
     gSeaOfTime_LapTurn = 0;
   }
   last = gSeaOfTime_LastLapCell;
-  now = *(s16 *)(work + 340);
+  now = ((struct EventWork *)work)->exit;
   nowRaw = *(u16 *)(work + 340);
   if (last != now) {
     s16 *delta = &gSeaOfTime_LapTurn;

@@ -1701,7 +1701,7 @@ void Func_020029c4(void) {
   Actor_SetAnimation(9, 3);
   System_Wait(1);
 #if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
-  *(s32 *)(EVENT_WORK + 0x1ac) = 513;
+  ((struct EventWork *)EVENT_WORK)->screenEffect = 513;
 #endif
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1734,7 +1734,7 @@ void Func_020029c4(void) {
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
   Func_020034d8();
 #if TLA_PATCH_1
-  *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
+  ((struct EventWork *)EVENT_WORK)->screenEffect = 0x100;
 #endif
 }
 

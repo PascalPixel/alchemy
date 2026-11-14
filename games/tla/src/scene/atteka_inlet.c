@@ -476,7 +476,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   Event_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(*(s16 *)(work + 340));
+  Import_EventSetExitRequest(((struct EventWork *)work)->exit);
 }
 
 s32 Scene_Initialize(void) {

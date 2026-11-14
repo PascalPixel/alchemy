@@ -118,7 +118,7 @@ s32 ItemMenu_Run(void) {
   result = ItemMenu_RunCommands(&member, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct FieldWork *selection = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+    struct FieldWork *selection = gFieldWork;
 
     selection->item = (member << 10) | (item & INVENTORY_ITEM_ID_MASK);
     selection->itemSlot = screen->selectedSlots[0];

@@ -777,7 +777,7 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TreeRooms_ApplyFlaggedMapPatches();
-  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  grid = gMapGridWork[0];
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
   layer->offsetX += Iwram_MulQ16(grid->minX + px(160), Q16_ONE / 10);
@@ -792,7 +792,7 @@ s32 Scene_Initialize(void) {
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN);
   wait(1);
   TreeRooms_ApplyPostBattleState(0);
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   entrance = gMainRoutineWork.entrance;
@@ -853,8 +853,8 @@ static void TretPalette_UpdateMapTint(void) {
   struct FieldWork *work;
   struct PaletteFade *paletteWork;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
+  work = gFieldWork;
+  paletteWork = gPaletteFadeWork;
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)
     return;

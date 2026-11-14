@@ -356,7 +356,7 @@ void WorldMap_ApplyAffinePage(void) {
           ->pages;
   s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
-  struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct WorldMapView *perspective = gMapGridWork[0];
   volatile u16 *dma0 = REG_DMA0;
   u32 *affineSource;
   u32 mode;
@@ -468,10 +468,10 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
 /// follows the player, draws the BG row or column that scrolls into view, moves
 /// the camera, and builds the ground plane's scanline table.
 void WorldMap_UpdateView(void) {
-  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  struct BattleCamera *camera = gBattleCamera;
   struct WorldMapAffineWork *affineWork =
       HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
-  struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct WorldMapView *perspective = gMapGridWork[0];
   s32 *cameraPosition = camera->focus;
   s32 *followedPosition = perspective->origin;
   struct WorldMapAffinePair(*affinePages)[160] = affineWork->pages;
@@ -649,7 +649,7 @@ void WorldMap_PresentStillPicture(void) {
 void WorldMap_StartStillPicture(void) {
   struct WorldMapAffineWork *affineWork =
       HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
-  struct WorldMapView *perspective = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct WorldMapView *perspective = gMapGridWork[0];
 
   perspective->animationActive = 1;
   Task_SuspendAll(TilesetAnim_Update);

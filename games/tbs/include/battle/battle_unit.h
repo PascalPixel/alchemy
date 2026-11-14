@@ -282,6 +282,14 @@ enum AbilityUse {
 /// How many actions a unit's list holds (Unit.psynergy).
 #define PSYNERGY_SLOTS 32
 
+/// An enemy's memory of its action choice (BattleAI_ChooseAction).
+struct BattleAIState {
+  /// ACTION_STRATEGY_RANDOM_START has drawn its start.
+  unsigned initialized : 1;
+  unsigned selection : 3;  ///< the place in its action list, 0 to 7
+  unsigned remaining : 28; ///< not used here
+};
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
 struct Unit {
@@ -348,7 +356,7 @@ struct Unit {
   /// Copied from the enemy's definition, where it is 0 in every row. During
   /// a battle the enemy's action choice keeps its place in its action list
   /// here (BattleAI_ChooseAction).
-  u32 aiActionIndex;
+  struct BattleAIState aiState;
   u32 experience; ///< a character's experience points
   /// Who the unit is: a character's id (ISAAC to JENNA, below 8) or an
   /// enemy's id (BattleUnit_Set). The class tables are indexed by classIndex.
@@ -400,7 +408,7 @@ struct Unit {
   /// (7 when cast). Psynergy is sealed while any bit is set.
   u8 psySeal;
   u8 regenerate; ///< Regenerate's turns left, 7 when cast
-  s8 reflect;    ///< Reflect's turns left, 7 when cast
+  u8 reflect;    ///< Reflect's turns left, 7 when cast
   u8 haunt;      ///< set while an evil spirit grips the unit
   /// The Grim Reaper's countdown: 7 when cursed, down one at the end of each
   /// of the unit's own actions (BattleUnit_ProcessActionEnd); at 0 it falls.
@@ -435,7 +443,7 @@ STATIC_ASSERT(offsetof(struct Unit, baseAttack) == 0x18);
 STATIC_ASSERT(offsetof(struct Unit, psynergy) == 0x58);
 STATIC_ASSERT(offsetof(struct Unit, djinnHeld) == 0xf8);
 STATIC_ASSERT(offsetof(struct Unit, djinnSet) == 0x108);
-STATIC_ASSERT(offsetof(struct Unit, aiActionIndex) == 0x120);
+STATIC_ASSERT(offsetof(struct Unit, aiState) == 0x120);
 STATIC_ASSERT(offsetof(struct Unit, hp) == 0x038);
 STATIC_ASSERT(offsetof(struct Unit, baseElement) == 0x024);
 STATIC_ASSERT(offsetof(struct Unit, level) == 0x00f);

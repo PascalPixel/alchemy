@@ -10,7 +10,6 @@
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   s32 i;
-  s32 channelMask = 31;
 
   for (i = 0; i < 16; i++) {
     // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
@@ -18,9 +17,9 @@ void Palette_UpdatePulseBrightness(void) {
     u32 angle = (gFrameCount * 3U) << 10;
     u32 color = palette[16];
     s32 brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
-    s32 blue = (color >> 10) & channelMask;
-    s32 green = (color >> 5) & channelMask;
-    s32 red = color & channelMask;
+    s32 blue = (color >> 10) & 0x1f;
+    s32 green = (color >> 5) & 0x1f;
+    s32 red = color & 0x1f;
 
     blue += brightness;
     green += brightness;
@@ -345,8 +344,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
-      (struct BattleLinkedActionState *)Heap_AllocEwram(
-          sizeof(struct BattleLinkedActionState));
+      Heap_AllocEwram(sizeof(struct BattleLinkedActionState));
   s32 index;
 
   // Sends the header, then this console's actions. Both transfers share one

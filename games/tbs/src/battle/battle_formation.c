@@ -19,7 +19,7 @@
 /// negative reason it may not be chosen.
 s32 BattleFormation_AverageLevel(s32 recordId) {
   const struct Formation *record;
-  struct EnemyDefinition *enemy;
+  const struct EnemyDefinition *enemy;
   u32 memberIndex;
   s32 enemyId;
   s32 levelTotal;
@@ -43,8 +43,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     if (record->maximumCounts[memberIndex] == 0)
       continue;
     enemyId = record->memberIds[memberIndex];
-    enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(enemyId +
-                                                             ENEMY_ID_FIRST);
+    enemy = Enemy_GetDefinitionFar(enemyId + ENEMY_ID_FIRST);
     if (enemy == 0)
       continue;
     if (enemy->level > 3 && !GameFlag_GetFar(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&
@@ -307,8 +306,7 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   s32 terminatorIndex;
   u8 nameByte;
 
-  enemyIndex = 0;
-  for (; enemyIndex <= 5; enemyIndex++) {
+  for (enemyIndex = 0; enemyIndex <= 5; enemyIndex++) {
     unit = Unit_GetFar(enemyIndex + FIRST_ENEMY_UNIT);
     nameByte = unit->side;
     if (nameByte != BATTLE_SIDE_ENEMY)

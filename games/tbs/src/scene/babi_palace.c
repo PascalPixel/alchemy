@@ -85,7 +85,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern u16 gBabiPalace_DoorCells[];
 extern s32 gBabiPalace_IndigestionScript[];
 extern struct SceneEntrance gBabiPalace_Entrances[];
@@ -1167,12 +1166,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   work->transitionFrames = 12;
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
-  // UB: the transition's slot is read past gFieldWork, a single pointer.
-#ifdef UBFIX
   state = gScreenTransitionWork;
-#else
-  state = ((void **)&gFieldWork)[HEAP_SLOT_SCREEN_TRANSITION - HEAP_SLOT_FIELD];
-#endif
   state->value = 0;
   state->mask = 0x1f1f;
   state->active = 1;

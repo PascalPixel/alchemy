@@ -25,7 +25,6 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
   struct Particle *sparks;
   struct Particle *spark;
-  s32 *particleLife;
   s32 frame;
   s32 i;
 
@@ -41,11 +40,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  particleLife = &PARTICLES->variant;
-  for (i = 0; i != HELM_SPLITTER_CLEARED_SLOTS; i++) {
-    *particleLife = 0;
-    particleLife += 7;
-  }
+  for (i = 0; i != HELM_SPLITTER_CLEARED_SLOTS; i++)
+    PARTICLES[i].variant = 0;
   sparks = PARTICLES;
 
   {
@@ -314,8 +310,8 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 #endif
     }
 
-    for (i = 0, particle = work->particles; i != IMPACT_BURST_DRAWN_LARGE;
-         i++, particle++) {
+    for (i = 0; i != IMPACT_BURST_DRAWN_LARGE; i++) {
+      particle = &work->particles[i];
       if (frame > i / 2 && particle->variant > 0) {
         s32 size;
         s32 drawX;

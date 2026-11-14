@@ -232,15 +232,6 @@ const u16 gFileScreen_ExtraButtonCode[] = {
 };
 // clang-format on
 
-// The actual arrays have four and fifteen entries. The original one-element
-// view makes the second key an out-of-bounds access.
-#ifdef UBFIX
-#define FILE_SCREEN_BUTTON_CODE_KEYS(code) (code)
-#else
-#define FILE_SCREEN_BUTTON_CODE_KEYS(code)                                     \
-  (((struct { u16 key[1]; } *)(code))->key)
-#endif
-
 /// The task that follows the two hidden codes each frame while the File
 /// Screen runs.
 static void FileScreen_CheckButtonCodes(void) {
@@ -249,12 +240,10 @@ static void FileScreen_CheckButtonCodes(void) {
       if (gKeysHeld == 0)
         gFileScreen_CodeHeld = 0;
     } else if (gKeysHeld != 0) {
-      if (gKeysHeld == FILE_SCREEN_BUTTON_CODE_KEYS(
-                           gFileScreen_ButtonCode)[gFileScreen_CodeProgress]) {
+      if (gKeysHeld == gFileScreen_ButtonCode[gFileScreen_CodeProgress]) {
         gFileScreen_CodeProgress++;
         gFileScreen_CodeHeld = 1;
-        if (FILE_SCREEN_BUTTON_CODE_KEYS(
-                gFileScreen_ButtonCode)[gFileScreen_CodeProgress] == 0) {
+        if (gFileScreen_ButtonCode[gFileScreen_CodeProgress] == 0) {
           gFileScreen_CodeUnlocked = 1;
           Sound_Play(SE_CHIME);
         }
@@ -269,13 +258,10 @@ static void FileScreen_CheckButtonCodes(void) {
         EXTRA_CODE_HELD = 0;
     } else if (gKeysHeld != 0) {
       if (gKeysHeld ==
-          FILE_SCREEN_BUTTON_CODE_KEYS(
-              gFileScreen_ExtraButtonCode)[gFileScreen_ExtraCodeProgress]) {
+          gFileScreen_ExtraButtonCode[gFileScreen_ExtraCodeProgress]) {
         gFileScreen_ExtraCodeProgress++;
         EXTRA_CODE_HELD = 1;
-        if (FILE_SCREEN_BUTTON_CODE_KEYS(
-                gFileScreen_ExtraButtonCode)[gFileScreen_ExtraCodeProgress] ==
-            0) {
+        if (gFileScreen_ExtraButtonCode[gFileScreen_ExtraCodeProgress] == 0) {
           gFileScreen_ExtraCodeUnlocked = 1;
           Sound_Play(SE_CHIME);
         }
@@ -285,8 +271,6 @@ static void FileScreen_CheckButtonCodes(void) {
     }
   }
 }
-
-#undef FILE_SCREEN_BUTTON_CODE_KEYS
 
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
 static void FileScreen_NameEntryCharacter(s32 cell, u8 *text) {
@@ -1250,21 +1234,16 @@ static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 byteIndex;
   u32 bitIndex;
 
-  byteIndex = 0;
   crc = 0xFFFF;
-  if (byteCount != 0) {
-    do {
-      crc ^= *data << 8;
-      for (bitIndex = 0; bitIndex != 8; bitIndex++) {
-        if ((crc & 0x8000) != 0) {
-          crc = (crc << 1) + 0xFFFFEFDF;
-        } else {
-          crc <<= 1;
-        }
+  for (byteIndex = 0; byteIndex != byteCount; byteIndex++, data++) {
+    crc ^= *data << 8;
+    for (bitIndex = 0; bitIndex != 8; bitIndex++) {
+      if ((crc & 0x8000) != 0) {
+        crc = (crc << 1) - 0x1021;
+      } else {
+        crc <<= 1;
       }
-      byteIndex++;
-      data++;
-    } while (byteIndex != byteCount);
+    }
   }
   return ~crc;
 }

@@ -225,9 +225,6 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 /// Initializes the backdrop transition and installs BG3's line scroll
 /// split. Returns 0 for the overlay initialization entry point.
 s32 Scene_Initialize(void) {
-#ifndef UBFIX
-  u8 **eventSlot = (u8 **)&gFieldWork;
-#endif
   struct ScreenTransitionState *state;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -237,12 +234,7 @@ s32 Scene_Initialize(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork.
-#ifdef UBFIX
   state = gScreenTransitionWork;
-#else
-  state = (struct ScreenTransitionState *)eventSlot[4];
-#endif
   TretTreeBranch_SetRevealWindow(state);
 
   TretTreeBranch_StartBg3Split();

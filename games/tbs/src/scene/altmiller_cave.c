@@ -92,7 +92,6 @@
 
 struct LightWheel;
 
-s32 Scene_Initialize(void);
 extern struct LightWheel *gAltmillerCave_LightWheel;
 extern struct SceneEntrance gAltmillerCave_Entrances[];
 extern u32 gAltmillerCave_Exits[];
@@ -372,21 +371,14 @@ static void AltmillerCave_DarkenToLevel5(void) {
 /// Darkens the cave on entry. AltmillerCaveEntrance darkens by its levels, the
 /// other dark rooms evenly.
 static void AltmillerCave_InitializeDarkness(void) {
-  // The heap slots from the field's on.
-  void **slots = (void **)&gFieldWork;
-  struct FieldWork *work = slots[0];
+  struct FieldWork *work = gFieldWork;
   struct ScreenTransitionState *state;
 
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
   wait(1);
   ScreenTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER_LOW);
-  // UB: the transition's slot is read past gFieldWork, a single pointer.
-#ifdef UBFIX
   state = gScreenTransitionWork;
-#else
-  state = slots[HEAP_SLOT_SCREEN_TRANSITION - HEAP_SLOT_FIELD];
-#endif
   state->value = ALTMILLER_CAVE_LIGHT_STEPS;
   if (GameFlag_Get(FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS) != 0) {
     state->mask = ALTMILLER_CAVE_STEPS_LIGHT_WININ;

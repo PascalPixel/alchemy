@@ -72,7 +72,7 @@ void UpdateLinkSessionCountdown(void) {
     if (state->linkTimer == 0)
       return;
 
-    runtime = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+    runtime = gBattleWork;
     if (runtime->linkPaused == 0)
       goto load_timer;
     state->timer = 0;
@@ -139,7 +139,7 @@ s32 Battle_RefuseFlee(void) {
   struct BattleWork *battle;
   s32 mode;
 
-  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  battle = gBattleWork;
   mode = gMainRoutineWork.battleType;
   if (gMainRoutineWork.battleType == 2 || mode <= 2 || (result = 1, mode > 4)) {
     result = 0;

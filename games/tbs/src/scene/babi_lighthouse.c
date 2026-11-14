@@ -84,7 +84,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];
 extern struct SceneEntrance gBabiLighthouse_LuffEntrances[];
 extern struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[];
@@ -332,10 +331,10 @@ static void BabiLighthouse_JumpFromLedge(void) {
     {
       u16 facing = leader->facing;
       // Facing roughly north or south, he steps aside to the east.
-      if ((u16)(facing - (FACING_NORTH_NORTHWEST + 1)) <
-              FACING_NORTH_NORTHEAST - FACING_NORTH_NORTHWEST ||
-          (u16)(facing - (FACING_SOUTH_SOUTHEAST + 1)) <
-              FACING_SOUTH_SOUTHWEST - FACING_SOUTH_SOUTHEAST) {
+      if ((facing > FACING_NORTH_NORTHWEST &&
+           facing <= FACING_NORTH_NORTHEAST) ||
+          (facing > FACING_SOUTH_SOUTHEAST &&
+           facing <= FACING_SOUTH_SOUTHWEST)) {
         Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 16, 0);
         Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);

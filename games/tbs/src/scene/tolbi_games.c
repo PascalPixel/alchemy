@@ -850,13 +850,9 @@ prompt:
       prizeIndex = 0;
       if (prizeIndex < result * 3 + 3) {
         do {
-          /* FAKEMATCH(temporary): the weight read as a byte from the work's
-           * start. */
-          u8 weight =
-              ((u8 *)routine)[prizeIndex +
-                              offsetof(struct MainRoutineWork, prizeWeights)];
+          s8 weight = *(routine->prizeWeights + prizeIndex);
 
-          totalWeight += (s8)weight;
+          totalWeight += weight;
           prizeIndex++;
         } while (prizeIndex < result * 3 + 3);
       }
@@ -1003,13 +999,11 @@ static void TolbiSpring_UpdateTossSimulation(void) {
 
   toss = &sToss;
   // Retain the previous three positions for the visible toss trail.
-  index = 3;
-  do {
+  for (index = 3; index != 0; index--) {
     toss->trail[index].x = toss->trail[index - 1].x;
     toss->trail[index].y = toss->trail[index - 1].y;
     toss->trail[index].z = toss->trail[index - 1].z;
-    index--;
-  } while (index != 0);
+  }
 
   // Delay motion until the leader's launch animation has played.
   if (toss->launchFrame > 31) {

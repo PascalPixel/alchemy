@@ -181,7 +181,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     index++;
   } while (index != 64);
 
-  Iwram_CopyWords((void *)&BG_PLTT[1], palette, sizeof(palette));
+  Iwram_CopyWords(&BG_PLTT[1], palette, sizeof(palette));
 }
 
 #undef PRISM_GROUND_Y

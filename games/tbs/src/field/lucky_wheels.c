@@ -347,9 +347,8 @@ struct LuckyWheelsWork {
 #endif
 };
 
-/// gMainRoutineWork seen from +12, the base the bytes load: wonPrizes is
-/// gMainRoutineWork.wonPrizes (through the field itself LuckyWheels_Update
-/// differs 12)
+/// gMainRoutineWork seen from +12, where Djinn_GetRecoveryTable's table starts:
+/// wonPrizes is gMainRoutineWork.wonPrizes.
 struct LuckyWheelsWonPrizesView {
   u8 beforeWonPrizes[288]; ///< gMainRoutineWork from summonMask to
                            ///< wonPrizes
@@ -470,6 +469,8 @@ void LuckyWheels_Update(void) {
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
+        /* FAKEMATCH(temporary): wonPrizes read through a view of
+         * gMainRoutineWork from +12, here and below. */
         struct LuckyWheelsWonPrizesView *save =
             (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
 
@@ -1049,6 +1050,8 @@ void LuckyWheels_Run(void) {
   void *canvas;
   struct BattleEffectWork *work;
   struct LuckyWheelsWork *state;
+  /* FAKEMATCH(temporary): wonPrizes read through a view of gMainRoutineWork
+   * from +12. */
   struct LuckyWheelsWonPrizesView *save;
   u8 *entry;
   u8 *tiles;

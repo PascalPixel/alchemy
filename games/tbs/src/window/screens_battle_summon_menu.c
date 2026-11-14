@@ -16,7 +16,7 @@
 #define SUMMON_END 32
 
 /// The battle summon list: the summons the party holds enough Djinn for
-/// (Summon_ListLearnedFar, BattleSummonState.availableMask), four to a page,
+/// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element, the
 /// others in TEXT_COLOR_RED.
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
@@ -113,9 +113,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     /* FAKEMATCH(temporary): cur holds &cursorStorage. */
     cur = &cursorStorage;
 
-    //------------------------------------------------------------------
     // Redraw when the page or row changes.
-    //------------------------------------------------------------------
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
@@ -216,12 +214,10 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
       work->holdTilemapUpload = 0;
     }
 
-    //------------------------------------------------------------------
-    // Per-frame display
-    //------------------------------------------------------------------
+    // Each frame: the row icons and the cursor.
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Oam_AddSpriteAtDepth((s32 *)&sprites[index], 240);
+        Oam_AddSpriteAtDepth(&sprites[index], 240);
     }
 
     // The cursor wobbles every four frames.
@@ -264,9 +260,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
       Window_MarkTilemapRow(work, window->y - 1);
     }
 
-    //------------------------------------------------------------------
-    // Input
-    //------------------------------------------------------------------
+    // The keys.
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = gBattleMenuWork;
     pressed = gKeysPressed;

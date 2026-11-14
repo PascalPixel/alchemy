@@ -70,7 +70,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gItemIcon_GrowScript[];
 extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];
@@ -909,15 +908,13 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Event_Wait(20);
   starCount = 0;
   inventoryEntry = Unit_Get(GARET)->inventory;
-  remainingSlots = 14;
-  do {
+  for (remainingSlots = 14; remainingSlots >= 0; remainingSlots--) {
     u32 item = *inventoryEntry & 0x1ff;
     inventoryEntry++;
     if (item == ITEM_VENUS_STAR || item == ITEM_MERCURY_STAR ||
         item == ITEM_JUPITER_STAR)
       starCount++;
-    remainingSlots--;
-  } while (remainingSlots >= 0);
+  }
   Event_OpenMessage(ACTOR_GARET, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     messageA = MsgSolSanctumGuessTakeElemental;

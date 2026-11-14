@@ -155,7 +155,7 @@ extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
 extern u32 gColosseumSatrageMatchExits[];
 extern struct ActorPlacement gColosseumSatrageMatchActorPlacements[];
 extern s32 gColosseumSatrageMatch_LiftPhase;
-extern s32 gColosseumSatrageMatch_LiftTimer;
+extern u32 gColosseumSatrageMatch_LiftTimer;
 extern struct Trigger gColosseumSatrageMatchTriggers[];
 extern s16 gColosso_LetteringTitle[];
 extern s16 gColosso_LetteringGo[];
@@ -740,7 +740,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     }
   }
   gColosseumSatrageMatch_LiftTimer++;
-  if ((u32)gColosseumSatrageMatch_LiftTimer >=
+  if (gColosseumSatrageMatch_LiftTimer >=
       COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES) {
     if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
       gColosseumSatrageMatch_LiftTimer = 0;
@@ -814,11 +814,9 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Event_Start();
   opponentFinishedFirst = Colosso_TakePrize(ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   Colosso_WaitForOpponentToFinish();
-  refreshCount = 9;
-  do {
+  for (refreshCount = 9; refreshCount >= 0; refreshCount--) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
-    refreshCount = refreshCount - 1;
-  } while (refreshCount >= 0);
+  }
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 88, 256);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -1648,7 +1646,7 @@ struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
 
 s32 gColosseumSatrageMatch_LiftPhase = 0;
 
-s32 gColosseumSatrageMatch_LiftTimer = 0;
+u32 gColosseumSatrageMatch_LiftTimer = 0;
 
 struct Trigger gColosseumSatrageMatchTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_JumpDownLedge) },

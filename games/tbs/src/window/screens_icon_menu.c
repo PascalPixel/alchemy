@@ -154,7 +154,6 @@ void IconMenu_DrawIcons(void) {
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
 void *IconMenu_Open(void) {
-  // The matching allocation size is the complete six-entry work block.
   void *work;
   work = HeapSlot_AllocEwram(HEAP_SLOT_ICON_MENU, sizeof(struct IconMenuWork));
   Dma_Fill32(0, work, sizeof(struct IconMenuWork));
@@ -469,7 +468,7 @@ s32 FileList_SelectAction(void) {
     IconMenu_AddIcon(COMMAND_ICON_COPY);
   }
   IconMenu_AddIcon(COMMAND_ICON_ERASE);
-  if ((*(s16 *)gTitleBattleOptionEnabled) != 0) {
+  if (gTitleBattleOptionEnabled != 0) {
     IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   }
   if (gTitleSendOptionEnabled != 0) {

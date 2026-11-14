@@ -145,11 +145,7 @@ s32 Battle_ShiftVramTiles(void) {
 }
 
 /// Nothing in the source calls it.
-void Battle_ClearBg0Vofs(void) {
-  u32 top = 0;
-
-  REG_BG0VOFS = top;
-}
+void Battle_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set
 /// up.
@@ -218,9 +214,9 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
       for (djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
         if (Djinn_CanSetFar(unitId, element, djinni) != 0) {
           struct DjinnRecoveryList *list =
-              &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                    (unitId < 0 || unitId > ALLY_MAX) ? DJINN_RECOVERY_OPPONENT
-                                                      : DJINN_RECOVERY_PARTY))
+              &Djinn_GetRecoveryTableFar((unitId < 0 || unitId > ALLY_MAX)
+                                             ? DJINN_RECOVERY_OPPONENT
+                                             : DJINN_RECOVERY_PARTY)
                    ->list;
           s32 j;
 
@@ -242,9 +238,7 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
 
   {
     struct DjinnRecoveryList *list =
-        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-              DJINN_RECOVERY_PARTY))
-             ->list;
+        &Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->list;
 
     for (i = 0; i < list->count; i++) {
       struct DjinnRecoveryEntry *entry = &list->entries[i];
@@ -268,7 +262,7 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
 /// Works out which summons the party can call, by the Djinn it holds of each
 /// element, set or not; whether enough are on standby is checked when one is
 /// chosen.
-struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
+struct DjinnRecoveryTable *BattleSummon_UpdateAvailability(void) {
   u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];
   s32 partySize;
@@ -319,10 +313,10 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   }
 
   {
-    struct BattleSummonState *state =
+    struct DjinnRecoveryTable *table =
         Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY);
-    state->availableMask = availableMask;
-    return state;
+    table->summonMask = availableMask;
+    return table;
   }
 }
 

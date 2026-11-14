@@ -155,7 +155,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       entry->tile.bits.index = VramCache_Reload(
           (u8)sprite->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));
-      WindowSprite_AppendToList((struct WindowSpriteList *)win, sprite);
+      WindowSprite_AppendToList(&win->sprites, sprite);
     }
   }
 

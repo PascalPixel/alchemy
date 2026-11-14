@@ -142,7 +142,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, work->sheet, 1, 0);
     palette = Resource_GetTableEntry(RESOURCE_VORTEX_SHEET);
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   if (mode == TARGET_MOTES_HEARTRENDER)
     Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
@@ -374,9 +374,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
                                  SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
                                  0);
     }
-    current = sheep;
-    for (particleIndex = 0; particleIndex != SLEEP_SHEEP;
-         particleIndex++, current++) {
+    for (particleIndex = 0; particleIndex != SLEEP_SHEEP; particleIndex++) {
+      current = &sheep[particleIndex];
       if (frame > particleIndex * 4 && current->y <= px(128) - 1) {
         s32 picture;
 

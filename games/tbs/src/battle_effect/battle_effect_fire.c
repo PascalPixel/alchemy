@@ -25,7 +25,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   if (args->side == EFFECT_SIDE_PARTY)

@@ -45,7 +45,7 @@ void BattleSpoils_Clear(void) {
 /// Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided
 /// die for every ten levels and one more, at least 30 percent of its own.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
-                                                      u16 *reward) {
+                                                      const u16 *reward) {
   s32 rollIndex;
   s32 bonus = 0;
   s32 base;
@@ -63,7 +63,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
 /// Returns an enemy's experience with the Djinn bonus: its own plus a die for
 /// every ten levels, at least 30 percent more.
 static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
-                                                            u16 *reward) {
+                                                            const u16 *reward) {
   s32 rollIndex;
   s32 bonus = 0;
   s32 base;
@@ -83,7 +83,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
 /// party member fought as an enemy, else 0.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
-  struct EnemyDefinition *enemy;
+  const struct EnemyDefinition *enemy;
   struct BattleWork *battle;
   struct BattleSpoils *spoils;
   s32 i;
@@ -123,7 +123,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   if (GameFlag_GetFar(FLAG_MONSTER_BATTLE))
     return 0;
   GameFlag_SetFar(ENEMY_DEFEATED_FLAG(unit->id));
-  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->id);
+  enemy = Enemy_GetDefinitionFar(unit->id);
   if (djinnBonus != 0) {
     if (enemy->coins != 0)
       spoils->coins += BattleEnemy_CalculateCoinReward(unit, &enemy->coins);

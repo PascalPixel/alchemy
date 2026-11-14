@@ -106,9 +106,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   for (i = 0; i != 1024; i++) {
     PARTICLES[i].variant = -1;
   }
-  for (i = 0, flareSeed = work->particles; i != 32; i++, flareSeed++) {
+  for (i = 0; i != 32; i++) {
     s32 a = (Random16() & 0x3fff) + TRIG_TURN / 2;
     s32 r = (Random16() & 127) + 255;
+
+    flareSeed = &work->particles[i];
     flareSeed->x = (Trig_Sin(a) * r) >> 2;
     flareSeed->y = (Trig_Cos(a) * r) >> 2;
     flareSeed->velocityX = -flareSeed->x / 32;
@@ -225,7 +227,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     // Flares converge on Neptune's head.
     t = frame - 152;
     if (t >= 0 && t < 88) {
-      for (i = 0, flare = work->particles; i != 32; i++, flare++) {
+      for (i = 0; i != 32; i++) {
+        flare = &work->particles[i];
         if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
           s32 fx = Q_16_16_TO_INT(flare->x) + 112;
           s32 fy = Q_16_16_TO_INT(flare->y) + 62;

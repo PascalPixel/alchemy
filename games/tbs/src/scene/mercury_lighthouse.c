@@ -126,7 +126,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-s32 Scene_Initialize(void);
 extern s32 gMercuryLighthouse_RippleScript[];
 extern s32 gGlint_TwinkleScript[];
 extern s32 gMercuryLighthouse_PushScriptA[];
@@ -333,8 +332,7 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 /// 18).
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  struct FadeOverlayWork *effectWork =
-      *(struct FadeOverlayWork **)Ram_ActorEffectWork;
+  struct FadeOverlayWork *effectWork = gFadeOverlayWork;
 
   if (leader->layer == 0 && FIELD_CELL(leader->z.fixed) > 12 &&
       leader->z.fixed >> 20 <= 18)
@@ -668,22 +666,18 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   if (delayFrames != 0) {
     Sound_Play(SE_GUSH);
   }
-  step = firstStep;
-  if (step < endStep) {
-    do {
-      MapGrid_CopyCellsTo(45 - (step << 1), 32, 44 - (step << 1), 32,
-                          (step + 1), 6);
-      MapGrid_CopyCellsTo(45 - step, 51, 45 - step, 32, 1, 6);
-      sourceColumn = 109 - step;
-      MapGrid_CopyCellsTo(sourceColumn, 32, 108 - step, 32, 1, 4);
-      MapGrid_CopyCellsTo(sourceColumn, 51, sourceColumn, 32, 1, 4);
-      if (delayFrames != 0) {
-        MapGrid_SetShake(5, 5, 1);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-        Event_Wait(delayFrames);
-      }
-      step++;
-    } while (step < endStep);
+  for (step = firstStep; step < endStep; step++) {
+    MapGrid_CopyCellsTo(45 - (step << 1), 32, 44 - (step << 1), 32, (step + 1),
+                        6);
+    MapGrid_CopyCellsTo(45 - step, 51, 45 - step, 32, 1, 6);
+    sourceColumn = 109 - step;
+    MapGrid_CopyCellsTo(sourceColumn, 32, 108 - step, 32, 1, 4);
+    MapGrid_CopyCellsTo(sourceColumn, 51, sourceColumn, 32, 1, 4);
+    if (delayFrames != 0) {
+      MapGrid_SetShake(5, 5, 1);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+      Event_Wait(delayFrames);
+    }
   }
   MapGrid_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
@@ -746,8 +740,6 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   u32 particleIndex;
   s32 sparkleOffset;
   s32 rowShift;
-  s32 randomX;
-  s32 randomZ;
   s32 velocityX;
   s32 velocityZ;
   u32 nextRow;
@@ -767,11 +759,9 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
     particleX = px(728) + rowShift;
     do {
       if ((particleIndex & 1) != 0) {
-        randomX = Random_Next();
-        velocityX = ((u32)randomX * 8 >> 16) * (px(1) / 5) - px(4) / 5;
+        velocityX = Random_Below(8) * (px(1) / 5) - px(4) / 5;
         sparkleOffset = -particleIndex;
-        randomZ = Random_Next();
-        velocityZ = ((u32)randomZ * 8 >> 16) * (px(1) / 5) - px(4) / 5;
+        velocityZ = Random_Below(8) * (px(1) / 5) - px(4) / 5;
         FieldEffect_Spawn(particleX, 0, px(584), velocityX, 0, velocityZ,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
@@ -987,9 +977,7 @@ enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 
 /// Chooses the random speed component used by stone-door particles.
 static inline s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
-  u32 drift = Random_Next();
-
-  return ((drift << 3) >> 16) * (px(1) / 5);
+  return Random_Below(8) * (px(1) / 5);
 }
 
 /// Opens the selected stone door with particles along its moving edge.
@@ -1695,7 +1683,6 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 /// darkens and stops, sparkles rise and the way behind it opens.
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
-  u32 random;
   u32 wave;
   u32 particleIndex;
   s32 particleX;
@@ -1738,8 +1725,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     }
     particleX = px(Random_Below(48)) + px(768);
     z = px(Random_Below(56)) + px(152);
-    random = Random_Next();
-    particleSpeed = -((random * 10 >> 16) * (px(1) / 5)) - px(1) / 5;
+    particleSpeed = -(Random_Below(10) * (px(1) / 5)) - px(1) / 5;
     FieldEffect_Spawn(particleX, 0, z, 0, 0, particleSpeed,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
@@ -2111,8 +2097,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   u32 particleIndex;
 
   Sound_Play(SE_BURST);
-  particleIndex = 0;
-  do {
+  for (particleIndex = 0; particleIndex <= 11; particleIndex++) {
     if ((particleIndex & 1) != 0) {
       options.palette = 7;
       if ((particleIndex & 2) != 0)
@@ -2132,8 +2117,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
       }
     }
     wait(2);
-    particleIndex++;
-  } while (particleIndex <= 11);
+  }
 }
 
 /// Restores each lighthouse scene's puzzle state and plays its

@@ -60,8 +60,6 @@ CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc "
 static __inline__ void Dma_Set(const volatile void *source,
                                volatile void *destination, u32 control,
                                volatile u32 *channel) {
-  // The channel is an input only, so callers keep it in a register across
-  // adjacent transfers and form nearby I/O addresses from it.
   register volatile u32 *dma __asm__("r3") = channel;
   register u32 src __asm__("r0") = (u32)source;
   register u32 dst __asm__("r1") = (u32)destination;

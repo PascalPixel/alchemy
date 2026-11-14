@@ -309,8 +309,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress(RESOURCE_VIOLET_MOTE_SHEET,
                              work->sheet + THOR_MOTE_PICTURE, 1, 0);
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRYSTAL_SHEET), 128);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_B, sprites, 0, 0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
@@ -450,7 +449,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         // Sparks fly off the bolts.
         j = 0;
-        for (i = 0, spark = THOR_PARTICLES; i != 910; i++, spark++) {
+        for (i = 0; i != 910; i++) {
+          spark = &THOR_PARTICLES[i];
           if (spark->variant == 0) {
             s32 speed = (Random16() & 63) + 64;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -474,7 +474,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         // Sparks slow and bounce off the ground, shrinking as they die.
         DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
         struct Particle *spark;
-        for (i = 0, spark = THOR_PARTICLES; i != 910; i++, spark++) {
+        for (i = 0; i != 910; i++) {
+          spark = &THOR_PARTICLES[i];
           if (spark->variant > 0) {
             spark->variant--;
             Particle_AdvanceWithGravity2D(spark, 60, 0);

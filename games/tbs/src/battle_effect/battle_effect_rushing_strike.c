@@ -123,7 +123,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     paletteId = RESOURCE_BLAST_SHEET;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Send the user in, and ready the sparks at the target.

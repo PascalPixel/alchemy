@@ -226,7 +226,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     s32 pressedKeys;
     s32 repeatedKeys;
 
-    work = (struct WindowWork *)gWindowWork[0];
+    work = WINDOW_WORK;
     backdrop = menu->backdrop;
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
@@ -515,7 +515,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   DjinnFigures_SetSlotPhase(1, 0);
   Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
 
-  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
+  WINDOW_WORK->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
@@ -528,7 +528,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   WindowSprite_RedrawSavedRectFar((struct Window *)menu->unopenedWindow);
 #endif
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
+  WINDOW_WORK->holdTilemapUpload = 0;
   wait(1);
   return result;
 }
@@ -597,7 +597,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   Text_DrawMessageAsTilesFar(MsgCurrentStatus + 2, menu->statusWindow, 0, 16);
   side = 0;
   while (1) {
-    work = (struct WindowWork *)gWindowWork[0];
+    work = WINDOW_WORK;
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
     if (redraw) {
@@ -672,7 +672,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     wait(1);
   }
   Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
-  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 1;
+  WINDOW_WORK->holdTilemapUpload = 1;
   Window_CloseIfOpen(&menu->helpWindow, 1);
   wait(1);
   Window_UpdateOrCreate(&menu->helpWindow, 13, 0, 17, 5, 2);
@@ -685,7 +685,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   WindowSprite_RedrawSavedRectFar((struct Window *)menu->unopenedWindow);
 #endif
   WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-  ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
+  WINDOW_WORK->holdTilemapUpload = 0;
   wait(1);
   return result;
 }

@@ -94,8 +94,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetActorPlacements(void);
-s32 Scene_Initialize(void);
 extern s32 gKolima_GaretWalksIn[];
 extern s32 gKolima_IvanWalksIn[];
 extern s32 gKolima_MiaWalksIn[];

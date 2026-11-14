@@ -205,21 +205,22 @@ static inline s32 Serial_AddErrorFlag(s32 status) {
 static __inline__ void Serial_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;
-  u32 zero;
 
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
-  /* FAKEMATCH(temporary): zero holds the stores' 0. */
-  zero = 0;
-  /* FAKEMATCH(dead): state set again. */
-  state = &gSerialTransfer;
-  Io_Write8(SERIAL_STATUS_RUNNING, &state->status);
-  gSerialSendSource = zero;
-  gSerialSendSize = zero;
-  gSerialReceiveDestination = zero;
-  state->peerFlags = zero;
-  state->flags = zero;
-  gSerialReceivedSize = zero;
+  {
+    u32 clear = 0;
+
+    /* FAKEMATCH(dead): state set again. */
+    state = &gSerialTransfer;
+    Io_Write8(SERIAL_STATUS_RUNNING, &state->status);
+    gSerialSendSource = clear;
+    gSerialSendSize = clear;
+    gSerialReceiveDestination = clear;
+    state->peerFlags = clear;
+    state->flags = clear;
+    gSerialReceivedSize = clear;
+  }
   IRQ_UNLOCK(saved);
 }
 

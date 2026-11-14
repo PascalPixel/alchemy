@@ -100,7 +100,6 @@ u8 gHeatGauge_TileBuffer[2304] BSS_DATA;
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
 s16 gHeatGauge_Held BSS_DATA;
 
-s32 Scene_Initialize(void);
 void HeatGauge_Start(void);
 /// The middles of the oases, where a leader stepping into one bathes: x and z
 /// of each, in 16.16 fixed-point pixels.
@@ -360,11 +359,9 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
   Actor_SetPosition(ACTOR_FIRST_PIT + 2, 0, 0);
   Actor_SetPosition(ACTOR_LAST_PIT, 0, 0);
   Actor_SetPosition(ACTOR_SMOG, 0, 0);
-  markerId = 100;
-  do {
+  for (markerId = 100; markerId <= 107; markerId++) {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
-    markerId = markerId + 1;
-  } while (markerId <= 107);
+  }
   if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
     LineScroll_StartWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
                          Q16_ONE / 2, Q16_ONE / 4);
@@ -451,11 +448,9 @@ static void LamakanDesert_FightManticore(void) {
 /// Garet, Ivan or Mia complains about the heat.
 static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
-  s32 quarter;
   s32 flag;
   s32 member;
 
-  quarter = mark;
   for (tries = 0; tries <= 2; tries++) {
     member = Random_Below(3);
     flag = member + FLAG_GARET_COMPLAINED;
@@ -469,9 +464,9 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   // Crossing's signpost (`North: Altin Mine West: Lama Temple`) and have no
   // names of their own, so they count from a Fuchin Temple message two before
   // it.
-  Event_SetMessageId((((quarter << 1) + quarter) + member) +
+  Event_SetMessageId(mark * 3 + member +
                      MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
-  Event_ShowMessage((member + 1), 0);
+  Event_ShowMessage(member + 1, 0);
   Event_End();
 }
 
@@ -1018,7 +1013,7 @@ static void HeatGauge_Draw(void) {
   }
 
   // Window 1's left edge follows the gauge on lines 8 to 151.
-  transition = *Ram_DisplayWork;
+  transition = gScreenTransitionWork;
   if (transition != NULL) {
     u16 *edge = transition->pages[transition->page];
     s32 left = (s16)(slide << 3);

@@ -51,7 +51,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   // The party's standing places, else the enemies' places in use.
   if (requireLivingUnit != 0) {
     index = 0;
-    slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
+    slot = offsetof(struct BattleWork, partyUnits) / sizeof(s16);
     if (order->items[slot] != BATTLE_UNIT_LIST_END) {
       entry = order->items;
       // The walk leaves by a break, so its loop's end note lies just before
@@ -72,8 +72,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     }
   } else {
     index = 0;
-    slot = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
-    tail = (u32)&((struct BattleWork *)0)->enemyIds / sizeof(s16) - 1;
+    slot = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
+    tail = offsetof(struct BattleWork, enemyIds) / sizeof(s16) - 1;
     offset = tail * 2;
     entry = (order->items + 1);
     if (*(s16 *)((char *)entry + offset) != BATTLE_UNIT_LIST_END) {
@@ -374,9 +374,8 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     return TARGET_PICK_NONE;
 
   if (action->targetMode == ABILITY_TARGET_FOES && action->range == 1 &&
-      ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-           Unit_GetFar(userId)->id))
-              ->targetStrategy != TARGET_STRATEGY_RANDOM &&
+      Enemy_GetDefinitionFar(Unit_GetFar(userId)->id)->targetStrategy !=
+          TARGET_STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
           ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
     // Sort the targets by HP, the most first.
@@ -388,9 +387,8 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
            innerIndex++) {
         thisUnit = Unit_GetFar(unitIds[innerIndex]);
         nextUnit = Unit_GetFar(unitIds[innerIndex + 1]);
-        if (((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-                 Unit_GetFar(userId)->id))
-                ->targetStrategy == TARGET_STRATEGY_MOST_HP) {
+        if (Enemy_GetDefinitionFar(Unit_GetFar(userId)->id)->targetStrategy ==
+            TARGET_STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
         } else {

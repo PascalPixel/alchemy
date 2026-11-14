@@ -1951,8 +1951,8 @@ static void WorldMap_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH(dead): the motion flags cleared again, as the icon set-up
-     * that follows the sprite resets clears them. */
+    /* LEFTOVER(template): the motion flags cleared again after the sprite
+     * resets, as ImilFuchinFalls_PlaceDragonsEye clears them. */
     orb->motionFlags = 0;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Item_LoadIcon(ITEM_BLACK_ORB);
@@ -2585,7 +2585,7 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   FieldDecompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[14 * 16],
                       (u32)(gWorldMapPalettes + lighthouse * 32),
-                      DMA_ENABLE << 16 | 16);
+                      DMA_COPY_HALFWORDS(16));
   IO_WRITE_QUEUE_PUSH((u32)BG_CHAR_BLOCK(0) + 0x1000, (u32)buffer,
                       DMA_COPY_WORDS(1024));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
@@ -2657,7 +2657,7 @@ UNUSED static void WorldMap_UpdateBlinkingLinkedEffects(struct Actor *actor) {
 /// creates its attached effects.
 UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
-    Actor_SetColorMode(actor, ((u32)((gFrameCount >> 1)) % (u32)6));
+    Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
   }
   if ((gFrameCount & 15) == 0) {
     WorldMap_CreateAttachedEffects(actor);

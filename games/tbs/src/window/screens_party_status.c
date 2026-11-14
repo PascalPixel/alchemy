@@ -201,7 +201,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
 /// standby Djinn of each element.
 void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
-  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleWork *battle = gBattleWork;
   struct Window *window = layout->window;
   struct WindowWork *work = WINDOW_WORK;
   s32 x = 0;

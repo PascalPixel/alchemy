@@ -133,9 +133,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleUnit_RefreshPlacement();
   DjinnRecovery_Reconcile();
   BattleSummon_UpdateAvailability();
-  if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(
-           DJINN_RECOVERY_PARTY))
-          ->availableMask != 0)
+  if (Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
     battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
     battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
@@ -175,9 +173,7 @@ s32 Battle_Run(s32 enemyGroup) {
   for (;;) {
     Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
-    if (((struct BattleSummonState *)Djinn_GetRecoveryTableFar(
-             DJINN_RECOVERY_PARTY))
-            ->availableMask != 0)
+    if (Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
       battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
@@ -410,16 +406,16 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
       remaining = activeCount;
       do {
         unitId = *member;
-        member += 1;
+        member++;
         hp = Unit_GetFar(unitId)->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
-            output += 1;
+            output++;
           }
-          livingCount += 1;
+          livingCount++;
         }
-        remaining -= 1;
+        remaining--;
       } while (remaining != 0);
     }
   }
@@ -432,11 +428,11 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
         if ((unit->side != BATTLE_SIDE_NONE) && (unit->hp > 0)) {
           if (output != NULL) {
             *output = remaining;
-            output += 1;
+            output++;
           }
-          livingCount += 1;
+          livingCount++;
         }
-        remaining += 1;
+        remaining++;
       } while (remaining < lastEnemy);
     }
   }

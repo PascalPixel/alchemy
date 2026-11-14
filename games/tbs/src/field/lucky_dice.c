@@ -34,7 +34,7 @@ s32 LuckyDice_Start(void) {
 /// Puts the 3D camera back at its starting view: at the origin, unturned,
 /// pitched to 152 and 510 units away, following nothing.
 void Camera_ResetViewDefaults(void) {
-  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  struct BattleCamera *camera = gBattleCamera;
   s32 offset[3];
   u32 nearPlane;
 
@@ -65,8 +65,7 @@ UNUSED s32 FixedPoint_Multiply8_8(s16 left, s16 right) {
   s32 product;
   s32 roundedProduct;
 
-  // Rounded by hand: as left * right / 256, right is extended second and
-  // the rounding works in r0.
+  // Rounded toward zero, as a division by 256 rounds.
   product = left;
   product *= right;
   if (product >= 0)
@@ -78,12 +77,7 @@ UNUSED s32 FixedPoint_Multiply8_8(s16 left, s16 right) {
 
 /// Unused: divides two 8.8 fixed-point values.
 UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
-// UB: a signed numerator may be negative. All s16 values times 256 fit.
-#ifdef UBFIX
   return (numerator * 256) / denominator;
-#else
-  return (numerator << 8) / denominator;
-#endif
 }
 
 /// Unused: the reciprocal of an 8.8 fixed-point value.

@@ -102,11 +102,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   palette = Resource_GetTableEntry(RESOURCE_GOLD_SHELL_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_SMOKE_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
@@ -123,7 +123,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
   else
     palette = Resource_GetTableEntry(RESOURCE_GREEN_PALETTE);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
 
   // Each target's shell starts at the user.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
@@ -252,8 +252,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       } while (k != work->args->targetCount);
     }
     // The bursts.
-    for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
-         burst++, i++) {
+    for (i = 0; i != LOBBED_SHELLS_BURST_SLOTS; i++) {
+      burst = &LOBBED_SHELLS_BURSTS[i];
       if (burst->variant >= 0 && burst->variant <= 44 && burst->y >= 0) {
         Projection_Point(burst, &position);
         position.x >>= 1;

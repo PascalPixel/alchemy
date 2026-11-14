@@ -56,11 +56,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
                                     Q16_ONE - level * BACKGROUND_LEVEL_STEP,
                                 BATTLE_BG_PALETTE_COLORS);
   }
-  {
-    u32 saved = *savedInterruptEnable;
-
-    REG_IME = saved;
-  }
+  Io_Write16(*savedInterruptEnable, &REG_IME);
 }
 
 /// Switches the background's display mode, optionally fades its palette by
@@ -79,7 +75,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
 
   // The battle windows' second text palette takes the first sprite palette's
   // colours, over the window's background colour.
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
+  Dma_Set(OBJ_PLTT, &BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
@@ -160,7 +156,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
                                 battle->brightness =
                                     Q16_ONE - level * BACKGROUND_LEVEL_STEP,
                                 BATTLE_BG_PALETTE_COLORS);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
+  Dma_Set(OBJ_PLTT, &BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
@@ -423,9 +419,9 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
     for (;;) {
       battle = gBattleWork;
       if (gKeysRepeat & KEY_LEFT)
-        battle->debugValue -= 1;
+        battle->debugValue--;
       if (gKeysRepeat & KEY_RIGHT)
-        battle->debugValue += 1;
+        battle->debugValue++;
       if (gKeysRepeat & KEY_UP)
         battle->debugValue -= 100;
       if (gKeysRepeat & KEY_DOWN)

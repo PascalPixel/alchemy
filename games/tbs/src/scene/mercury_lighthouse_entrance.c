@@ -298,8 +298,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
     PaletteFade_StartInterpolation(60);
     Event_Wait(40);
-    sparkIndex = 0;
-    do {
+    for (sparkIndex = 0; sparkIndex <= 14; sparkIndex++) {
       options.priority = 1;
       options.type = SPRITE_GLINT;
       options.script = gGlint_TwinkleScript;
@@ -313,8 +312,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                             EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
                         &options);
       Event_Wait(4);
-      sparkIndex++;
-    } while (sparkIndex <= 14);
+    }
     Sound_Play(SE_SHIMMER);
     Event_Wait(60);
     // Persist the activated state and replace the pool's map cells.

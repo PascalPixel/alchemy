@@ -32,12 +32,12 @@ struct StatWork {
   struct {
     s32 power;
     s32 resistance;
-  } element[ELEMENT_COUNT];    ///< each element's power and resistance
-  s32 kind;                    ///< the item effect being applied
-  s32 unusedAfterKind[2];      ///< never written
-  s32 amount;                  ///< the amount of the item effect being applied
-  struct ItemDefinition *item; ///< the equipped item being applied
-  s32 unusedAfterItem;         ///< never written
+  } element[ELEMENT_COUNT]; ///< each element's power and resistance
+  s32 kind;                 ///< the item effect being applied
+  s32 unusedAfterKind[2];   ///< never written
+  s32 amount;               ///< the amount of the item effect being applied
+  const struct ItemDefinition *item; ///< the equipped item being applied
+  s32 unusedAfterItem;               ///< never written
 };
 
 /// The distance between `a` and `b`, |a - b|.
@@ -208,7 +208,7 @@ void Unit_Calculate(s32 unitId) {
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
         stats->amount = effectAmount;
-        switch (stats->kind) {
+        switch (effectKind) {
         case EQUIP_EFFECT_NONE:
           break;
         case EQUIP_EFFECT_ADD_HP:
@@ -448,7 +448,7 @@ void GameFlag_RefreshLureCap(void) {
     s32 slot;
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-      struct ItemDefinition *item;
+      const struct ItemDefinition *item;
       s32 effect;
 
       if (!(unit->inventory[slot] & INVENTORY_EQUIPPED))
@@ -495,19 +495,13 @@ void MainRoutineWork_InitializeDefaults(void) {
 
   // Clear the state up to the characters, the scene state with its snapshots,
   // and the flags.
-  zero = 0;
-  START_DMA(&zero, &gMainRoutineWork,
-            DMA_FILL_WORDS(sizeof(gMainRoutineWork) / 4));
-  zero = 0;
-  START_DMA(&zero, gSceneLocalState, DMA_FILL_WORDS(993));
+  Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
+  Dma_Fill32Cell(zero, 0, gSceneLocalState, 993 * 4);
   WAIT_DMA();
-  zero = 0;
-  START_DMA(&zero, gGameFlagBytes, DMA_FILL_WORDS(128));
+  Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
   ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
       ACTOR_SNAPSHOT_EMPTY;
-  zero = 0;
-  START_DMA(&zero, gCharacterUnits,
-            DMA_FILL_WORDS(sizeof(gCharacterUnits) / 4));
+  Dma_Fill32Cell(zero, 0, gCharacterUnits, sizeof(gCharacterUnits));
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;

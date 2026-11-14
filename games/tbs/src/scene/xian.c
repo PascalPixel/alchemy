@@ -78,7 +78,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetActorPlacements(void);
 s32 Scene_Initialize(void);
 extern s32 gXian_WaterCarrierRoute[];
 extern s32 gXian_TrainingTreeJump[];

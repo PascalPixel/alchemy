@@ -46,8 +46,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   caster = GetBattleObjectSlotFar(args->user)->actor;
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
-                  128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET), 128);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   Actor_SelectAnimationFar(caster, POSE_LEAP);
@@ -206,8 +205,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
-                  128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET), 128);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

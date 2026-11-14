@@ -462,16 +462,14 @@ static void KolimaForestTree_RestoreTret(void) {
   }
   Task_Remove(KolimaForestTree_UpdateHealingPalette);
   wait(10);
-  flash = 0;
-  do {
+  for (flash = 0; flash <= 3; flash++) {
     KolimaPalette_Restore(0);
     PaletteFade_StartInterpolation(6);
     wait(6);
     KolimaPalette_Restore(1);
     PaletteFade_StartInterpolation(6);
-    flash++;
     wait(6);
-  } while (flash <= 3);
+  }
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(40);
   wait(80);

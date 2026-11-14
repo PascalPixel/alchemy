@@ -26,7 +26,7 @@ void BattleEffect_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->bg2xLines, (void *)&REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
+  Dma_Set(work->bg2xLines, &REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
           (volatile u32 *)channel);
 }
 
@@ -155,7 +155,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         paletteId = RESOURCE_MARS_DJINN_SHEET;
         break;
       }
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+      Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
     }
   }
 
@@ -270,7 +270,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         }
         spark->x += spark->velocityX;
         spark->y += spark->velocityY;
-        spark->variant += 1;
+        spark->variant++;
         if (spark->variant == BURST_SHOWER_BURST_LIFE) {
           spark->variant = -1;
         }

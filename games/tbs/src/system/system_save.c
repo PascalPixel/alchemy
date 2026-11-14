@@ -365,10 +365,10 @@ s32 Save_LoadFileSummaries(void) {
     }
     index = Save_FindLatestSector(group + SAVE_FILE_COUNT);
     if (index < SAVE_SECTOR_COUNT)
-      ReadFlash(index, 0x110, summary->secondPartPlayTime,
+      ReadFlash(index, 0x110, (u8 *)&summary->secondPartPlayTime,
                 sizeof(summary->secondPartPlayTime));
     else
-      *(u32 *)summary->secondPartPlayTime = 0;
+      summary->secondPartPlayTime = 0;
     group++;
     summary++;
   } while (group < SAVE_FILE_COUNT);

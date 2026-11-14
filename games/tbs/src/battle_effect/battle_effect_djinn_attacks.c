@@ -267,7 +267,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
   u8 *data = Resource_GetTableEntry(id);
 
   if (copyPalette != 0)
-    Iwram_CopyWords((void *)BG_PLTT, data, 128);
+    Iwram_CopyWords(BG_PLTT, data, 128);
   if (skipPalette != 0)
     data += 128;
   Decompress_TaggedLz(data, dst);
@@ -406,7 +406,6 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   s32 index;
   s32 frame;
   s32 i;
-  s32 diveY;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -449,9 +448,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   } while (index != MARS_FLAMES);
 
   Sound_PlayFar(SE_WHOOSH);
-  frame = 0;
-  diveY = -172;
-  do {
+  for (frame = 0; frame != MARS_FRAMES; frame++) {
     if (frame == 56)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // A glowing orb flares, then the Djinni shows in it and dives down to the
@@ -460,12 +457,13 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       blitters[0](canvas, work->sheet + MARS_GLOW_ORB + (frame / 4) * (40 * 40),
                   40, 20, 40, 40);
     if (frame == 20)
-      Iwram_CopyWords((void *)BG_PLTT,
+      Iwram_CopyWords(BG_PLTT,
                       Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
                       128);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
-        blitters[1](canvas, work->sheet, 146 - frame * 4, diveY, 20, 40);
+        blitters[1](canvas, work->sheet, 146 - frame * 4, frame * 8 - 172, 20,
+                    40);
       else
         blitters[0](canvas, work->sheet, 50, 20, 20, 40);
     }
@@ -477,9 +475,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
                                  1);
     }
     if (frame > 31) {
-      index = 0;
-      step = work->particles;
-      do {
+      for (index = 0; index != MARS_FLAMES; index++) {
+        step = &work->particles[index];
         if (step->variant >= 0 && step->variant <= 47) {
           s32 picture = step->variant / 8;
           u32 width;
@@ -501,15 +498,12 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
               gBattleEffect_PuffArcPictureHeights[picture]);
 #endif
         }
-        index++;
         step->variant++;
-        step++;
-      } while (index != MARS_FLAMES);
+      }
     }
     // Embers rise from the flames, swaying.
-    step = PARTICLES;
-    index = 0;
-    do {
+    for (index = 0; index != MARS_FLAMES * MARS_EMBERS_PER_FLAME; index++) {
+      step = &PARTICLES[index];
       if (frame >= (index / MARS_EMBERS_PER_FLAME) * 2 + 40) {
         s32 size;
         s32 x;
@@ -523,9 +517,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         if (step->z > TRIG_ANGLE_MASK)
           step->z -= TRIG_TURN - 1;
       }
-      index++;
-      step++;
-    } while (index != MARS_FLAMES * MARS_EMBERS_PER_FLAME);
+    }
 
     if (frame == 38) {
       EFFECT_FOR_EACH_TARGET(index, work->args) {
@@ -534,9 +526,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
-    diveY += 8;
-    frame++;
-  } while (frame != MARS_FRAMES);
+  }
   EFFECT_FINISH_CANVAS();
 }
 

@@ -69,8 +69,6 @@
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
-const struct Trigger *Scene_GetTriggers(void);
-s32 Scene_Initialize(void);
 extern struct SceneEntrance gStuccoRoomsBEntrances[];
 extern u32 gStuccoRoomsBExits[];
 extern struct ActorPlacement gStuccoRoomsBActorPlacements[];

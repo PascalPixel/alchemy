@@ -69,7 +69,9 @@ struct DjinnRecoveryList {
 /// party's inside gMainRoutineWork from its byte 12, the enemies' over
 /// battle unit FIRST_ENEMY_UNIT + 3.
 struct DjinnRecoveryTable {
-  u32 summonMask; ///< BattleSummonState's availableMask; not named here
+  /// The summons the party can call, bit n for summon n; nonzero offers the
+  /// Summon command (BattleSummon_UpdateAvailability).
+  u32 summonMask;
   /// In the party's table, gMainRoutineWork.coins; not named here.
   u32 partyCoins;
   struct DjinnRecoveryList list;

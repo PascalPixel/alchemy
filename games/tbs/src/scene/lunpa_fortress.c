@@ -738,7 +738,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = gFieldWork;
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -828,7 +828,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = gFieldWork;
 
   FieldCamera_GetActor();
   if (gFrameCount & 1) {
@@ -902,7 +902,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
-  struct FieldWork *work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = gFieldWork;
 
   if (gFrameCount & 1) {
     patrolLayer->speedX = 1;
@@ -4066,7 +4066,7 @@ struct Trigger gLunpaFortressTriggersOther[] = {
     // Hammet stands in his cell, whose only way in is the row of five cells
     // of step trigger 20, so LunpaFortress_FindHammet starts before the
     // leader is beside him, and no ground outside the cell is within Mind
-    // Read's reach of him (render probe hammet). After the battle
+    // Read's reach of him. After the battle
     // LunpaFortress_DonpaJudgesDodonpa ends with the party leading him out,
     // and once Dodonpa is jailed he is put out of sight at (0, 0). Talking
     // to him would have shown Dodonpa's "I was wrong! I'll turn over a new

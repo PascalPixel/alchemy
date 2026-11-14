@@ -25,8 +25,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   delays = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   end = 0;
   speed = 16;
-  Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2),
-                  BATTLE_BACKGROUND_BYTES);
+  Iwram_CopyWords(BLUE_RAMP_PIXELS, BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
   for (x = 0; x != 256; x++) {
     delays[x] = Random16() & 63;
   }
@@ -55,7 +54,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
       }
       row++;
     }
-    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
+    Iwram_CopyWords(BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                     BATTLE_BACKGROUND_BYTES);
     wait(1);
     if (end > 248)
@@ -71,8 +70,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   for (i = 0; i != BATTLE_BACKGROUND_BYTES; i++) {
     BLUE_RAMP_PIXELS[i] += 64;
   }
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
-                  BATTLE_BACKGROUND_BYTES);
+  Iwram_CopyWords(BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, BATTLE_BACKGROUND_BYTES);
   wait(1);
 }
 
@@ -117,7 +115,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
 
   palette = Resource_GetTableEntry(RESOURCE_RUNE_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
@@ -259,7 +257,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(0);
 
   palette = Resource_GetTableEntry(RESOURCE_RUNE_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),

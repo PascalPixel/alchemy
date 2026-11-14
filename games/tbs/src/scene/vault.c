@@ -147,7 +147,7 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 static UNREAD_RESULT
 Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
-  struct FieldWork *field = FIELD_WORK_FROM(gWindowWork, HEAP_SLOT_WINDOW);
+  struct FieldWork *field = gFieldWork;
   s32 force = 0;
   s32 range = 18;
   struct Actor *leader;
@@ -1141,7 +1141,7 @@ struct ActorPlacement gVault_ActorPlacements[] = {
         168, 0, 312, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     // XXX (no evidence): what this ivy was for; it stands above the map's top
     // edge where no camera shows it, is not solid, and only the field's passes
-    // over every actor touch it (render probe vault-ivy).
+    // over every actor touch it.
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SAP), MOVEMENT_TYPE_STAND,

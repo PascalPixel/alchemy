@@ -131,7 +131,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_CYAN_PALETTE;
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource), 128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
@@ -303,7 +303,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_ORANGE_PALETTE_A;
   else
     resource = RESOURCE_EARTH_WALL_SHEET;
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource), 128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;

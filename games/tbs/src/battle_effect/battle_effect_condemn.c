@@ -52,7 +52,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
     sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
-    Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
+    Iwram_CopyWords(BG_PLTT, sheet, 128);
     sheet = sheet + 128;
     Decompress_TaggedLz(sheet, work->sheet);
     cells = Ram_MapGridCellBuffer;

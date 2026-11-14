@@ -47,7 +47,7 @@ s32 LinkBattle_ReceiveParty(void) {
     }
     Serial_WaitForReceive();
     if (opponent->side != 0) {
-      memberCount += 1;
+      memberCount++;
     }
     wait(2);
 
@@ -60,7 +60,7 @@ s32 LinkBattle_ReceiveParty(void) {
     }
 #if APPEND_NAME_SPACE
     label[i] = ' ';
-    i += 1;
+    i++;
 #endif
     labelLength = i;
     for (i = UNIT_NAME_LENGTH; i >= labelLength; i--) {
@@ -129,7 +129,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     // The Djinn recovery list, its units renumbered for the opponent.
     size = LINK_PARTY_OFFER_BYTES;
     Heap_Release(buffer);
-    buffer = (u8 *)Heap_AllocEwram(size);
+    buffer = Heap_AllocEwram(size);
     /* FAKEMATCH(dead): the copy in a once-only block. */
     do {
       Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),

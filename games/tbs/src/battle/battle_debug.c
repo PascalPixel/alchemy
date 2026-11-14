@@ -134,12 +134,9 @@ void DebugBattle_ViewMessages(void) {
   Sound_PlayFar(MUS_EMPTY);
   for (;;) {
     index = 0;
-    {
-      s32 control = DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
-                    DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1;
-
-      REG_DISPCNT = control;
-    }
+    Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
+                   DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
+               &REG_DISPCNT);
     // The fastest text speed (window/message_speed.c: 0 to 2, slowest first).
     gMainRoutineWork.messageSpeed = 2;
     for (;;) {

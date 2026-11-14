@@ -57,7 +57,7 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->sheet + PARTICLE_STREAMS_BACKDROP_LINES, (void *)BG_PLTT,
+  Dma_Set(work->sheet + PARTICLE_STREAMS_BACKDROP_LINES, BG_PLTT,
           DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
 }
 
@@ -183,10 +183,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords(colors,
                     Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
-  fill = CANVAS_FILL_WORD(1);
-  Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(256 * 128 / 4),
-          REG_DMA3);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
+  Dma_Fill32Cell(fill, CANVAS_FILL_WORD(1), Ram_MapGridCellBuffer, 256 * 128);
+  Iwram_CopyWords(BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                   BATTLE_BACKGROUND_BYTES);
   wait(1);
   REG_BLDCNT = 0;
@@ -202,8 +200,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     BG_PLTT_COLOR(8, i) = RGB(red, green, blue);
   }
-  fill = 0;
-  Dma_Set((void *)&fill, canvas, DMA_FILL_WORDS(CANVAS_BYTES / 4), REG_DMA3);
+  Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;
     s32 y = Random16() & 127;
@@ -211,7 +208,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
+  Iwram_CopyWords(BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   // The dissolve: the map is erased from the top in ragged columns.
   gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);

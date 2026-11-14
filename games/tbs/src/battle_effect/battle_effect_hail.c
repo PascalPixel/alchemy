@@ -80,7 +80,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     }
 
     // The chips fly up, odd ones mirrored.
-    for (i = 0, chip = PARTICLES; i != 64; i++, chip++) {
+    for (i = 0; i != 64; i++) {
+      chip = &PARTICLES[i];
       if (frame >= i / 4 + 4) {
         s32 picture;
         s32 width;

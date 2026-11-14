@@ -44,7 +44,7 @@
 ///
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH) the
 /// door no longer opens. The leader walks up to the door and stops, and
-/// searching it finds it "tightly locked" (render probe sol-entrance). Sol
+/// searching it finds it "tightly locked". Sol
 /// Entrance's setup does this with two changes. It makes the three wall cells
 /// across the door CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR, copied from the
 /// other door. And it makes the three CELL_BEHAVIOR_SOL_ENTRANCE_DOOR cells
@@ -72,7 +72,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-const struct ActorPlacement *Scene_GetActorPlacements(void);
 extern struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[];
 extern struct SceneEntrance gSolEntrance_Entrances[];
 extern struct SceneEntrance gSolSanctumReliefs_Entrances[];

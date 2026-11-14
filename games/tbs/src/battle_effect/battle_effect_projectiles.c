@@ -54,7 +54,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     break;
   }
   palette = Resource_GetTableEntry(sheetId);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   Decompress_TaggedLz(palette + 128, work->sheet);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (side == EFFECT_SIDE_PARTY) {
@@ -413,14 +413,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                  1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
-      Iwram_CopyWords((void *)BG_PLTT, pal, 128);
+      Iwram_CopyWords(BG_PLTT, pal, 128);
     }
     Resource_LoadAndDecompress(RESOURCE_WIND_STREAK_SHEET,
                                work->sheet + PROJECTILE_VOLLEY_STREAK_PICTURES,
                                1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
-      Iwram_CopyWords((void *)BG_PLTT, pal, 128);
+      Iwram_CopyWords(BG_PLTT, pal, 128);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
@@ -428,8 +428,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     REG_BLDCNT = 0;
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_COMET_SHEET_A), 128);
+    Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_COMET_SHEET_A),
+                    128);
     Resource_LoadAndDecompress(RESOURCE_PROJECTILE_VOLLEY_IMAGE, work->sheet, 0,
                                0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

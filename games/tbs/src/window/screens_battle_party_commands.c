@@ -90,7 +90,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
-  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  battle = gBattleWork;
   for (k = 0; k < 8; k++) {
     state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
   }
@@ -755,7 +755,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     // window, that is while the partner is still choosing; a timer window
     // was closed above and is only forgotten here. mode counts the frames
     // without the link: 25 give up (-1).
-    linkBattle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+    linkBattle = gBattleWork;
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
       state->timerWindow =

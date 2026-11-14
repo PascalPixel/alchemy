@@ -313,10 +313,9 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   void *palette;
   s32 i;
 
-  work = (struct BattleEffectWork *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT,
-                                                   sizeof *work);
-  canvas = (void *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = (u8 *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   camera = gBattleCamera;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
@@ -340,7 +339,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
 
   for (i = 0; i != 128; i++) {
     PARTICLES[i].y = 0;
@@ -543,7 +542,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     piece++;
   }
 
-  Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2),
+  Iwram_CopyWords(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(2),
                   BATTLE_BACKGROUND_BYTES);
   Iwram_FillWords(Ram_MapGridCellBuffer, BATTLE_BACKGROUND_BYTES,
                   CANVAS_FILL_WORD(1));
@@ -677,7 +676,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           octantY++;
         }
       }
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
+      Iwram_CopyWords(BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                       BATTLE_BACKGROUND_BYTES);
     }
 
@@ -815,7 +814,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_A);
     break;
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
 
   for (i = 0; i != 128; i++) {
     PARTICLES[i].y = px(128);
@@ -985,7 +984,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
     break;
   }
   palette = Resource_GetTableEntry(id);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   work->frame = 0;
   work->transferMode = CANVAS_COPY_AND_DARKEN;
   work->transferValue = CANVAS_FILL_WORD(6);

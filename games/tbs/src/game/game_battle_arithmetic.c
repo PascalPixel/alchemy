@@ -116,7 +116,7 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
 /// Returns the element the unit attacks with (ELEMENT_NONE for none): an
 /// enemy's comes from its kind, a character's from its equipped weapon.
 s32 Item_GetEquippedElement(s32 unitId) {
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
   struct Unit *unit;
 
   unit = Unit_Get(unitId);
@@ -134,7 +134,7 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
   s32 chanceBonus;
   s32 inventorySlot;
   s32 effectIndex;
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
 
   chanceBonus = 0;
   for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
@@ -154,7 +154,7 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 /// Rolls whether a character's weapon unleashes, 5 percent a point of its
 /// chance. Returns the unleash action, or 1 for a plain attack.
 s32 RollWeaponUnleash(struct Unit *unit) {
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
   s32 rate;
 
   if (unit->classId == CLASS_NONE) {

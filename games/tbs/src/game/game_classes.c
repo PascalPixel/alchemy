@@ -31,8 +31,8 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     cursor = output;
     // `source` points at the unit's Djinn bits; the counts of set Djinn by
     // element follow them in the unit.
-    source += (u8 *)&((struct Unit *)0)->djinnSetCounts -
-              (u8 *)&((struct Unit *)0)->djinnHeld;
+    source += offsetof(struct Unit, djinnSetCounts) -
+              offsetof(struct Unit, djinnHeld);
     for (i = 0; i < ELEMENT_COUNT; i++) {
       u32 count = *source++;
 

@@ -9,6 +9,7 @@
 #include "static_assert.h"
 #include "types.h"
 #include "battle/battle_action_run.h"
+#include "battle/battle_unit.h"
 #include "battle/playback_queue.h"
 #include "gamepak/far_call.h"
 
@@ -131,7 +132,7 @@ enum EnemyTargetStrategy {
 /// EnemyDefinition.actionStrategy: how BattleAI_ChooseAction picks a
 /// place in the enemy's eight actions. The first three roll against
 /// gBattleAI_ActionWeights; the next two remember the place in
-/// Unit.aiActionIndex. No row of enemy_table.c has a strategy past
+/// Unit.aiState. No row of enemy_table.c has a strategy past
 /// ACTION_STRATEGY_RANDOM_START.
 enum EnemyActionStrategy {
   ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
@@ -164,11 +165,12 @@ struct EnemyDefinition {
   u8 ppRegen;     ///< PP restored at each turn's end (Unit.basePpRegen)
   ///@}
   u8 reservedBeforeRewards[2]; ///< 0 in every entry
-  u32 aiActionIndex;           ///< 0 in every row; copied to Unit.aiActionIndex
-  u8 reservedAfterRewards[4];  ///< 0 in every entry
-  u16 items[4];                ///< items the enemy carries, 0 for none
-  u8 counts[4];                ///< how many of each item it carries
-  u8 elementPreset;            ///< row of gEnemy_ElementPresetTable, 0 to 43
+  /// 0 in every row; the unit's first Unit.aiState.
+  struct BattleAIState aiState;
+  u8 reservedAfterRewards[4]; ///< 0 in every entry
+  u16 items[4];               ///< items the enemy carries, 0 for none
+  u8 counts[4];               ///< how many of each item it carries
+  u8 elementPreset;           ///< row of gEnemy_ElementPresetTable, 0 to 43
   /// Whom a single-target attack favours: an enum EnemyTargetStrategy.
   s8 targetStrategy;
   /// How the action is chosen from `actions` (BattleAI_ChooseAction):
@@ -219,7 +221,7 @@ STATIC_ASSERT(offsetof(struct DjinnDefinition, abilityId) == 0);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, reservedAfterAbility) == 2);
 STATIC_ASSERT(offsetof(struct DjinnDefinition, hp) == 4);
 STATIC_ASSERT(sizeof(struct EnemyDefinition) == 0x54);
-STATIC_ASSERT(offsetof(struct EnemyDefinition, aiActionIndex) == 0x20);
+STATIC_ASSERT(offsetof(struct EnemyDefinition, aiState) == 0x20);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, actionStrategy) == 0x36);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, itemActions) == 0x37);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 0x38);

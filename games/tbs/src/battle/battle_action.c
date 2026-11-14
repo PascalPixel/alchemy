@@ -45,8 +45,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
     enemySide = DJINN_RECOVERY_OPPONENT;
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(enemySide))
-              ->list;
+  list = &Djinn_GetRecoveryTableFar(enemySide)->list;
   if (counts != 0)
     for (i = ELEMENT_COUNT - 1; i >= 0; i--)
       counts[i] = 0;
@@ -518,8 +517,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     side = DJINN_RECOVERY_PARTY;
     if ((u16)request->unitId > ALLY_MAX)
       side = DJINN_RECOVERY_OPPONENT;
-    list =
-        &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
+    list = &Djinn_GetRecoveryTableFar(side)->list;
     for (index = 0;
          index < ELEMENT_COUNT && counts[index] >= summon->djinnRequired[index];
          index++)

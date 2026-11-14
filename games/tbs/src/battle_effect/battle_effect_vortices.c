@@ -40,7 +40,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   palette = Resource_GetTableEntry(RESOURCE_VORTEX_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -165,7 +165,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   palette = Resource_GetTableEntry(RESOURCE_TORNADO_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,

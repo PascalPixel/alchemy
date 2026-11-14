@@ -691,7 +691,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Talking to ACTOR_KALAY_CREW_MEMBER on deck at Kalay.
 static void TolbiShipDeck_TalkToCrewMember(void) {
   struct Actor *crewMember;
-  s32 random;
   s32 frames;
 
   Event_Start();
@@ -706,8 +705,7 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
       // "Somebody stop them..."
       Event_ShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
       crewMember = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
-      random = Random_Next();
-      frames = ((u32)(90 * random) >> 16) + 60;
+      frames = Random_Below(90) + 60;
       crewMember->timer = frames;
       Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                       gTolbiShipDeck_SquashAndStretchActions);
@@ -726,7 +724,6 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
 /// The tour guide on deck at Kalay talks about the ship's delay.
 static void TolbiShipDeck_TalkToTourGuide(void) {
   struct Actor *guide;
-  s32 random;
   s32 frames;
 
   Event_Start();
@@ -741,8 +738,7 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
       // "They can't be planning a mutiny..."
       Event_ShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
       guide = Actor_Get(ACTOR_KALAY_TOUR_GUIDE);
-      random = Random_Next();
-      frames = ((u32)(90 * random) >> 16) + 60;
+      frames = Random_Below(90) + 60;
       guide->timer = frames;
       Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                       gTolbiShipDeck_SquashAndStretchActions);
@@ -821,8 +817,9 @@ static void TolbiShipDeck_GoBelow(void) {
 /// In the German, Spanish, French and Italian editions cell behavior 2 is a
 /// plain step trigger.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
-  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <
-      FACING_NORTHWEST - (FACING_SOUTHWEST + 1)) {
+  struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+
+  if (leader->facing > FACING_SOUTHWEST && leader->facing < FACING_NORTHWEST) {
     Event_Start();
     Actor_WalkTo(ACTOR_PARTY_LEADER, 214, 664);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -1043,7 +1040,7 @@ s32 Scene_Initialize(void) {
            ->layers[MAPGRID_LAYER_GROUND];
 
   GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
-  FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID)->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   sea->speedY = 0;
   sSwayAngleX = (u16)Random_Next();
@@ -2099,7 +2096,7 @@ static void TolbiShipDeck_RockDeck(void) {
 
   *origin++ += dx >> 1;
   *origin += dy;
-  sSwayAngleX += (u32)(Random_Next() * 3 << 7) >> 16;
+  sSwayAngleX += Random_Below(384);
   sSwayAngleY += Random_Below(512);
   sSwayAngleX &= 0xffff;
   sSwayAngleY &= 0xffff;

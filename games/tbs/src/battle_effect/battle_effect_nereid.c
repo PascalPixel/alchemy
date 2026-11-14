@@ -37,7 +37,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(0, draw);
 
   palette = Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET);
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, 128);
   palette += 128;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_FIRE_PILLAR_SHEET_A);

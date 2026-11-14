@@ -211,19 +211,13 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     // A column of fire blobs slides left.
     if (frame > 31) {
       s32 slide = (frame - 32) / 2;
-      s32 y;
 
       if (slide > 40) {
         slide = 40;
       }
-      i = 0;
-      y = 0;
-      do {
+      for (i = 0; i != 6; i++)
         blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-             120 - slide, y, 48, 32);
-        i++;
-        y += 18;
-      } while (i != 6);
+             120 - slide, i * 18, 48, 32);
     }
 
     if (work->shakeFrames > 0) {
@@ -356,17 +350,11 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       // The wall of fire slides off to the left and its smear dies away.
       if (frame > 40) {
         s32 slide = (frame - 40) * 12;
-        s32 y;
 
         EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
-        i = 0;
-        y = -8;
-        do {
+        for (i = 0; i != 16; i++)
           blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-               jitterRow[i] - slide + 120, y, 48, 32);
-          i++;
-          y += 8;
-        } while (i != 16);
+               jitterRow[i] - slide + 120, i * 8 - 8, 48, 32);
       }
       if (frame > 64) {
         work->transferMode = CANVAS_COPY_AND_FADE;

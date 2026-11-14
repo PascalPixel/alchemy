@@ -1169,14 +1169,12 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_SetSpeed(ACTOR_KRADEN, 0.3);
     actor = Actor_Get(ACTOR_KRADEN);
     {
-      /* FAKEMATCH(temporary): the mask built in steeringFlags and frame reused
-       * for the zero. */
-      s32 steeringFlags = 254;
+      s32 flags = (u8)~ACTOR_FACES_MOTION;
 
-      steeringFlags &= actor->steeringFlags;
+      flags &= actor->steeringFlags;
       frame = 0;
-      actor->steeringFlags = steeringFlags;
-      actor->motionFlags = frame;
+      actor->steeringFlags = flags;
+      actor->motionFlags = 0;
     }
     Sound_Play(SE_ASCEND);
     Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);

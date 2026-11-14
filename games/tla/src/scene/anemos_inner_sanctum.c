@@ -1,4 +1,9 @@
 /// @file
+/// The Anemos Inner Sanctum, the rooms beneath Contigo reached by Teleport from
+/// its entrance: blocks Moved onto switches, tiles that glow underfoot
+/// (AnemosInnerSanctum_StepOnTile), pillars of light
+/// (AnemosInnerSanctum_LightThePillar) and Sand, up to the guardian summoned at
+/// the end (AnemosInnerSanctum_SummonTheGuardian).
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
@@ -86,7 +91,7 @@ extern u16 *gPaletteColors;
 extern u16 *gPaletteCycleColors;
 extern u16 *gPaletteCycleSlots;
 
-void Func_02000328(void);
+void AnemosInnerSanctum_TeleportIn(void);
 
 extern u16 gPaletteCycleBright;
 extern u16 gPaletteCycleTimer;
@@ -108,7 +113,7 @@ extern char SceneId_AnemosInnerSanctum4;
 
 void Actor_PlaceMovedBlock(void);
 
-void Func_02000158(void);
+void AnemosInnerSanctum_StopPaletteCycle(void);
 
 void Actor_Release(struct Actor *object);
 
@@ -124,32 +129,32 @@ extern struct CellTarget gCrackedTiles;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void Func_02000ac8(void);
-void Func_02001090(void);
-void Func_0200109c(void);
-void Func_02001160(void);
-void Func_02001398(void);
-void Func_02001518(void);
-void Func_02001614(void);
+void AnemosInnerSanctum_LightThePillar(void);
+void AnemosInnerSanctum_StepOntoCenter(void);
+void AnemosInnerSanctum_StartMovingBlock(void);
+void AnemosInnerSanctum_FinishMovingBlock(void);
+void AnemosInnerSanctum_StepOnTile(void);
+void AnemosInnerSanctum_RaisePlatform(void);
+void AnemosInnerSanctum_SinkIntoSand(void);
 void Leader_SetLayerByte(void);
-void Func_02001660(void);
-void Func_020016fc(void);
-void Func_0200178c(void);
-void Func_020017a0(void);
+void AnemosInnerSanctum_PressFirstSwitch(void);
+void AnemosInnerSanctum_PressSecondSwitch(void);
+void AnemosInnerSanctum_LeaveByExit11(void);
+void AnemosInnerSanctum_LeaveByExit12(void);
 
-void Func_02001938(void);
-void Func_020019a8(void);
-void Func_02001a94(void);
-void Func_02001b88(void);
-void Func_02001c60(void);
+void AnemosInnerSanctum_StartFollower(void);
+void AnemosInnerSanctum_RaiseDust(void);
+void AnemosInnerSanctum_MarkEntrance(void);
+void AnemosInnerSanctum_SummonTheGuardian(void);
+void AnemosInnerSanctum_TeleportOut(void);
 
-extern u32 gData_020034c0[];
-extern u32 gData_020034fc[];
-extern u32 gData_02003538[];
-extern u32 gData_02003804[];
-extern s32 gData_020038fc[];
-extern s16 gData_020043fa[];
-extern s32 gData_02003584[];
+extern u32 gAnemosInnerSanctum_ShortScript[];
+extern u32 gAnemosInnerSanctum_MediumScript[];
+extern u32 gAnemosInnerSanctum_LongScript[];
+extern u32 gFieldEffect_LongScript[];
+extern s32 gAnemosInnerSanctum_StatueScript[];
+extern s16 gAnemosInnerSanctum_OtherDoorFrames[];
+extern s32 gAnemosInnerSanctum_OrbScript[];
 
 /// Writes one background palette entry from its red, green and blue.
 #define BG_PLTT_SET_RGB(index, r, g, b)                                        \
@@ -159,7 +164,7 @@ extern s32 gData_02003584[];
     BG_PLTT[index] = value;                                                    \
   } while (0)
 
-void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->block32;
 
   gPaletteSlots = slots;
@@ -183,17 +188,17 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_ApplyTarget(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
-    Func_02000328();
+    AnemosInnerSanctum_TeleportIn();
 }
 
 #include "shared/palette_cycle_start.h"
 
-void Func_02000158(void) {
+void AnemosInnerSanctum_StopPaletteCycle(void) {
   gFieldWork->transition = 0x100;
   FieldTask_Remove((s32)PaletteCycle_Fade);
 }
 
-void Func_02000178(void) {
+void AnemosInnerSanctum_StartFastPaletteCycle(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
   gPaletteCycleDelay = 2;
@@ -206,7 +211,7 @@ void Func_02000178(void) {
 
 #include "shared/palette_cycle_fade.h"
 
-void Func_02000328(void) {
+void AnemosInnerSanctum_TeleportIn(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
@@ -216,10 +221,10 @@ void Func_02000328(void) {
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02000178();
+  AnemosInnerSanctum_StartFastPaletteCycle();
   Teleport_PlayWhirl();
   System_Wait(40);
-  Func_02000158();
+  AnemosInnerSanctum_StopPaletteCycle();
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(16);
   System_Wait(16);
@@ -240,7 +245,7 @@ void Func_02000328(void) {
 #undef BG_PLTT_SET_RGB
 void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
-extern s32 gData_02003840[];
+extern s32 gAnemosInnerSanctum_DurationScripts[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -260,7 +265,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02003840[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(
+      effect, gAnemosInnerSanctum_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -291,7 +297,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_02003840[flags & EFFECT_SCRIPT_MASK];
+    script = gAnemosInnerSanctum_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {
@@ -319,7 +325,7 @@ s32 AnemosInnerSanctum_ClearScriptedActorSpriteFlags(s32 a0) {
   return 0;
 }
 
-s32 Func_02000660(struct Actor *object) {
+s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
   s32 radius;
 
   object->timer += object->unk66;
@@ -334,9 +340,9 @@ s32 Func_02000660(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-extern u32 gData_02003674[];
+extern u32 gAnemosInnerSanctum_MoteScript[];
 
-void Func_020006a4(struct Actor *source) {
+void AnemosInnerSanctum_SpawnMote(struct Actor *source) {
   struct Actor *object =
       (FieldActor_Create(672, source->x, source->y, source->z));
 
@@ -345,11 +351,11 @@ void Func_020006a4(struct Actor *source) {
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 1);
   Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gData_02003674);
+  Actor_StartScript(object, gAnemosInnerSanctum_MoteScript);
   Actor_SetBlendMode(object, 1);
 }
 
-s32 Func_020006f8(struct Mover *mover) {
+s32 AnemosInnerSanctum_SpiralMover(struct Mover *mover) {
   if (mover->radius < mover->step)
     return 0;
   mover->angle += mover->spin >> 1;
@@ -357,20 +363,20 @@ s32 Func_020006f8(struct Mover *mover) {
   mover->y = mover->height;
   mover->z = mover->originZ;
   FieldVector_AddPolarOffset(mover->radius, *(s16 *)&mover->angle, &mover->x);
-  Func_020006a4(mover);
+  AnemosInnerSanctum_SpawnMote(mover);
   mover->radius -= mover->step >> 1;
   mover->angle += mover->spin >> 1;
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
   FieldVector_AddPolarOffset(mover->radius, mover->angle, &mover->x);
-  Func_020006a4(mover);
+  AnemosInnerSanctum_SpawnMote(mover);
   mover->radius -= mover->step >> 1;
   mover->height -= mover->fall;
   return 1;
 }
 
-s32 Func_02000794(struct Actor *object) {
+s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
   struct SpawnParams params;
   s32 x;
   s32 y;
@@ -435,9 +441,10 @@ struct Work {
 };
 
 void Actor_StartScript();
-extern s32 gData_02003684[];
+extern s32 gAnemosInnerSanctum_SparkScript[];
 
-void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
+void AnemosInnerSanctum_SendSpark(struct Vector3 *from, struct Vector3 *to,
+                                  s16 part) {
   struct Work *actor;
   s32 x, z, distance;
 
@@ -461,13 +468,13 @@ void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {
   Actor_SelectAnimation(actor, 7);
   Actor_SetSpriteFlags(actor, 0);
   FieldVector_AddPolarOffset(actor->unk4c, actor->unk64, &actor->position);
-  Actor_StartScript(actor, gData_02003684);
-  Func_020006f8(actor);
+  Actor_StartScript(actor, gAnemosInnerSanctum_SparkScript);
+  AnemosInnerSanctum_SpiralMover(actor);
 }
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
+void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3) {
   s32 i;
 
   for (i = 0; i != 16;) {
@@ -488,12 +495,12 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     Scene_SetActorSpritePriority(object, 2);
     Actor_SelectAnimation(object, 7);
     Actor_SetSpriteFlags(object, 0);
-    Actor_StartScript(object, gData_02003584);
+    Actor_StartScript(object, gAnemosInnerSanctum_OrbScript);
     i += 2;
   }
 }
 
-void Func_02000a78(s32 a0, s32 a1, s16 a2) {
+void AnemosInnerSanctum_DropSpark(s32 a0, s32 a1, s16 a2) {
   struct Actor *object;
 
   object = FieldActor_Create(0x2a0, (a0 << 16), ((a1 + 3) << 16), px(152));
@@ -516,34 +523,42 @@ struct Work__s0ac8 {
   u16 room;
 };
 
-/* VIEW(s0ac8): routine Func_0200088c as void Func_0200088c(), with no
- * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
- * void Func_0200088c(struct Vector3 *, struct Vector3 *, s16); tried as the
- * definition's void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16
- * part), which the object already declares, Func_02000ac8 moves: 7 of 630
+/* VIEW(s0ac8): routine AnemosInnerSanctum_SendSpark as void
+ * AnemosInnerSanctum_SendSpark(), with no prototype, as the part calls it;
+ * scene/anemos_inner_sanctum/scene_tables has void
+ * AnemosInnerSanctum_SendSpark(struct Vector3 *, struct Vector3 *, s16); tried
+ * as the definition's void AnemosInnerSanctum_SendSpark(struct Vector3 *from,
+ * struct Vector3 *to, s16 part), which the object already declares,
+ * AnemosInnerSanctum_LightThePillar moves: 7 of 630 instructions in tla-ja. */
+void AnemosInnerSanctum_SendSpark__pillar() __asm__(
+    "AnemosInnerSanctum_SendSpark");
+#define AnemosInnerSanctum_SendSpark AnemosInnerSanctum_SendSpark__pillar
+/* VIEW(s0ac8): routine AnemosInnerSanctum_SparkRing as void
+ * AnemosInnerSanctum_SparkRing(), with no prototype, as the part calls it;
+ * scene/anemos_inner_sanctum/scene_tables has void
+ * AnemosInnerSanctum_SparkRing(s32, s32, s16, s16); tried as the definition's
+ * void AnemosInnerSanctum_SparkRing(s32 x, s32 y, s16 part, s16 a3), which the
+ * object already declares, AnemosInnerSanctum_LightThePillar moves: 10 of 630
  * instructions in tla-ja. */
-void Func_0200088c__s0ac8() __asm__("Func_0200088c");
-#define Func_0200088c Func_0200088c__s0ac8
-/* VIEW(s0ac8): routine Func_020009b8 as void Func_020009b8(), with no
- * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
- * void Func_020009b8(s32, s32, s16, s16); tried as the definition's void
- * Func_020009b8(s32 x, s32 y, s16 part, s16 a3), which the object already
- * declares, Func_02000ac8 moves: 10 of 630 instructions in tla-ja. */
-void Func_020009b8__s0ac8() __asm__("Func_020009b8");
-#define Func_020009b8 Func_020009b8__s0ac8
-/* VIEW(s0ac8): routine Func_02000a78 as void Func_02000a78(), with no
- * prototype, as the part calls it; scene/anemos_inner_sanctum/scene_tables has
- * void Func_02000a78(s32, s32, s16); tried as the definition's void
- * Func_02000a78(s32 a0, s32 a1, s16 a2), which the object already declares,
- * Func_02000ac8 moves: 1 of 630 instructions in tla-ja. */
-void Func_02000a78__s0ac8() __asm__("Func_02000a78");
-#define Func_02000a78 Func_02000a78__s0ac8
+void AnemosInnerSanctum_SparkRing__pillar() __asm__(
+    "AnemosInnerSanctum_SparkRing");
+#define AnemosInnerSanctum_SparkRing AnemosInnerSanctum_SparkRing__pillar
+/* VIEW(s0ac8): routine AnemosInnerSanctum_DropSpark as void
+ * AnemosInnerSanctum_DropSpark(), with no prototype, as the part calls it;
+ * scene/anemos_inner_sanctum/scene_tables has void
+ * AnemosInnerSanctum_DropSpark(s32, s32, s16); tried as the definition's void
+ * AnemosInnerSanctum_DropSpark(s32 a0, s32 a1, s16 a2), which the object
+ * already declares, AnemosInnerSanctum_LightThePillar moves: 1 of 630
+ * instructions in tla-ja. */
+void AnemosInnerSanctum_DropSpark__pillar() __asm__(
+    "AnemosInnerSanctum_DropSpark");
+#define AnemosInnerSanctum_DropSpark AnemosInnerSanctum_DropSpark__pillar
 void BlendScript_Resume(void);
-extern u32 gData_020035cc[];
-extern s32 gData_02003620[];
-extern s32 gData_020036fc[][2];
+extern u32 gAnemosInnerSanctum_PillarRisesScript[];
+extern s32 gAnemosInnerSanctum_PillarSparkScript[];
+extern s32 gAnemosInnerSanctum_SparkOffsets[][2];
 
-void Func_02000ac8(void) {
+void AnemosInnerSanctum_LightThePillar(void) {
   struct Work__s0ac8 *work = ((struct Globals *)Ram_HeapSlots)->work;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   volatile u16 alpha = REG_BLDALPHA;
@@ -636,7 +651,7 @@ void Func_02000ac8(void) {
   actor->scaleY = 0x1999;
   actor->scaleX = 0x1999;
   Actor_SetSpriteFlags((s32)actor, 0);
-  Actor_StartScript(actor, gData_020035cc);
+  Actor_StartScript(actor, gAnemosInnerSanctum_PillarRisesScript);
   Actor_SetBlendMode(actor, 1);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
@@ -678,10 +693,10 @@ void Func_02000ac8(void) {
     from.y = leader->y + ((Random16() & 15) << 16) + 0x80000;
     from.z = leader->z + ((Random16() & 15) << 16) - 0x80000;
     slot = order[i];
-    to.x = leader->x + (gData_020036fc[slot][0] << 16);
+    to.x = leader->x + (gAnemosInnerSanctum_SparkOffsets[slot][0] << 16);
     to.y = leader->y;
-    to.z = leader->z + (gData_020036fc[slot][1] << 16);
-    Func_0200088c(&from, &to, part);
+    to.z = leader->z + (gAnemosInnerSanctum_SparkOffsets[slot][1] << 16);
+    AnemosInnerSanctum_SendSpark(&from, &to, part);
     if (i & 1)
       Event_PlaySound(SE_195);
     i++;
@@ -690,7 +705,7 @@ void Func_02000ac8(void) {
 
   if (count != 18) {
     FieldEvent_Wait(96);
-    Actor_StartScript(actor, gData_02003620);
+    Actor_StartScript(actor, gAnemosInnerSanctum_PillarSparkScript);
     BlendScript_Suspend();
     alpha = REG_BLDALPHA & 255;
     PaletteFade_ApplyTarget(0x10000, 1);
@@ -705,15 +720,19 @@ void Func_02000ac8(void) {
 
       i++;
       MapGrid_CopyCellsTo(
-          64, 0, ((leader->x + (gData_020036fc[slot][0] << 16)) >> 20) + 64,
-          (leader->z + (gData_020036fc[slot][1] << 16)) >> 20, 1, 1);
+          64, 0,
+          ((leader->x + (gAnemosInnerSanctum_SparkOffsets[slot][0] << 16)) >>
+           20) +
+              64,
+          (leader->z + (gAnemosInnerSanctum_SparkOffsets[slot][1] << 16)) >> 20,
+          1, 1);
     }
     MapGrid_CopyCellsTo(64, 0, column + 63, row - 3, 3, 5);
     BlendScript_Resume();
     Event_WaitTransitionFrames();
   } else {
     Event_SetFlag((s16)work->room + 0xa55);
-    Actor_StartScript(actor, gData_02003620);
+    Actor_StartScript(actor, gAnemosInnerSanctum_PillarSparkScript);
     FieldEvent_Wait(60);
     FieldCamera_SetSpeed(4);
     FieldCamera_MoveTo(536, CAMERA_KEEP, 120, 1);
@@ -723,11 +742,11 @@ void Func_02000ac8(void) {
       s32 a = targetX << 16;
       s32 b = targetZ << 16;
 
-      Func_020009b8(a, b, part, 0x800);
+      AnemosInnerSanctum_SparkRing(a, b, part, 0x800);
       FieldEvent_Wait(10);
-      Func_020009b8(a, b, part, 0x900);
+      AnemosInnerSanctum_SparkRing(a, b, part, 0x900);
       FieldEvent_Wait(10);
-      Func_020009b8(a, b, part, 0xa00);
+      AnemosInnerSanctum_SparkRing(a, b, part, 0xa00);
     }
     FieldEvent_Wait(12);
     System_Wait(16);
@@ -737,7 +756,7 @@ void Func_02000ac8(void) {
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(32);
     Event_PlaySound(SE_574);
-    Func_02000a78(targetX, targetZ, part);
+    AnemosInnerSanctum_DropSpark(targetX, targetZ, part);
     FieldEvent_Wait(80);
     if (GameFlag_Get(0xa87) && GameFlag_Get(0xa88) && GameFlag_Get(0xa89) &&
         GameFlag_Get(0xa8a)) {
@@ -766,22 +785,24 @@ void Func_02000ac8(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001090(void) { GameFlag_Clear(FLAG_SCENE_TEMP_00); }
+void AnemosInnerSanctum_StepOntoCenter(void) {
+  GameFlag_Clear(FLAG_SCENE_TEMP_00);
+}
 
-extern s16 gData_020036e4[];
-extern s16 gData_020036ea[];
-extern s16 gData_020036f6[];
+extern s16 gAnemosInnerSanctum_Room2Blocks[];
+extern s16 gAnemosInnerSanctum_Room3Blocks[];
+extern s16 gAnemosInnerSanctum_Room4Blocks[];
 
-void Func_0200109c(void) {
-  if (gMainRoutineWork.scene == (s32)MsgHat) {
-    Actor_LiftTargetBlock((s32)gData_020036e4);
+void AnemosInnerSanctum_StartMovingBlock(void) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum2) {
+    Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room2Blocks);
   } else {
-    if (gMainRoutineWork.scene == (s32)MsgCrownBoostsLuck) {
-      Actor_LiftTargetBlock((s32)gData_020036ea);
+    if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum3) {
+      Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room3Blocks);
       Field_SetCellBehaviorAt(2, 0x480000, 0x1b80000, 0xff);
     } else {
-      if (gMainRoutineWork.scene == (s32)MsgHatBoostsAgility) {
-        Actor_LiftTargetBlock((s32)gData_020036f6);
+      if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum4) {
+        Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room4Blocks);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1580000, 0xff);
         Field_SetCellBehaviorAt(2, 0x1180000, 0x1780000, 0xff);
         Field_SetCellBehaviorAt(2, 0x1280000, 0x1680000, 0xff);
@@ -798,7 +819,7 @@ void Func_0200109c(void) {
 // 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
 // running the event at x 67, z 45 of room 3 and moving object 13 to object 12
 // at x 91, z 59 until flag 0xa84 is set.
-void Func_02001160(void) {
+void AnemosInnerSanctum_FinishMovingBlock(void) {
   struct Actor *leader = gFieldWork->movedBlock;
   s32 x;
   s32 z;
@@ -860,14 +881,14 @@ void Func_02001160(void) {
   Event_End();
 }
 
-extern s32 gData_02003574[];
+extern s32 gAnemosInnerSanctum_TileGlowScript[];
 
 // An event handler from the sanctum's event table (in s2f48.c):
 // changes the cells at the leader's place, spawns an effect of type 0x15d
 // there and sets the flag the event work's exit selects; once flags 0x200 to
 // 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and
 // sets flag 0x207.
-void Func_02001398(void) {
+void AnemosInnerSanctum_StepOnTile(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
@@ -890,7 +911,7 @@ void Func_02001398(void) {
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 3);
   Actor_SetSpriteFlags(object, 0);
-  Actor_StartScript(object, gData_02003574);
+  Actor_StartScript(object, gAnemosInnerSanctum_TileGlowScript);
   Event_SetFlag(work->stepTrigger + 0x1ce);
   all = Event_GetFlag(FLAG_SCENE_TEMP_00);
   for (i = 1; i != 7; i++)
@@ -918,7 +939,7 @@ void Func_02001398(void) {
 // Centres the party leader on its cell and raises actor 8 (in
 // AnemosInnerSanctum4) or actor 9 with cue 198, 4 pixels at once and then 128
 // more, before the screen transition finishes.
-void Func_02001518(void) {
+void AnemosInnerSanctum_RaisePlatform(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object;
 
@@ -957,7 +978,7 @@ void Func_02001518(void) {
   Event_End();
 }
 
-void Func_02001614(void) {
+void AnemosInnerSanctum_SinkIntoSand(void) {
   struct Actor *object;
   s32 t1;
 
@@ -975,7 +996,7 @@ void Leader_SetLayerByte(void) {
   FIELD_AT((t0 + 0x22), u8, 0) = 0;
 }
 
-void Func_02001660(void) {
+void AnemosInnerSanctum_PressFirstSwitch(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 536, 360);
@@ -993,7 +1014,7 @@ void Func_02001660(void) {
   Event_End();
 }
 
-void Func_020016fc(void) {
+void AnemosInnerSanctum_PressSecondSwitch(void) {
   struct Actor *object;
 
   object = Actor_Get(14);
@@ -1027,18 +1048,18 @@ s32 CrackedTiles_Step();
     }                                                                          \
   }
 
-DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_0200178c, 0xb)
+DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_LeaveByExit11, 0xb)
 
-DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(Func_020017a0, 0xc)
+DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_LeaveByExit12, 0xc)
 
-extern s32 gData_02003594[];
+extern s32 gAnemosInnerSanctum_DustScript[];
 
 // The update of an object that moves with the leader: once the leader is past
 // z 248 it settles on its cell and clears flag 0x200; otherwise it repeats the
 // leader's step, raising an effect of type 0x2a0 on each step, and stops where
 // the cell kind under it is 52 or 51, setting the event work's unk16a to 201
 // or 200. unk4c and acceleration hold the leader's last x and z.
-void Func_020017b4(struct Actor *self) {
+void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 next[2];
   s32 ahead[3];
@@ -1064,7 +1085,7 @@ void Func_020017b4(struct Actor *self) {
     Scene_SetActorSpritePriority(dust, 2);
     Actor_SelectAnimation(dust, 1);
     Actor_SetSpriteFlags(dust, 0);
-    Actor_StartScript(dust, gData_02003594);
+    Actor_StartScript(dust, gAnemosInnerSanctum_DustScript);
     self->unk4c = leader->x;
     self->acceleration = leader->z;
     if ((gFrameCount & 3) == 0)
@@ -1094,17 +1115,17 @@ void Func_020017b4(struct Actor *self) {
 
 #undef FIELD_AT
 
-#undef Func_0200088c
-#undef Func_020009b8
-#undef Func_02000a78
+#undef AnemosInnerSanctum_SendSpark
+#undef AnemosInnerSanctum_SparkRing
+#undef AnemosInnerSanctum_DropSpark
 
 #include "text/msg_ids.h"
 
 void Actor_PlaceBlocks(void);
 
-void Func_02000178(void);
+void AnemosInnerSanctum_StartFastPaletteCycle(void);
 
-void Func_02001938(void) {
+void AnemosInnerSanctum_StartFollower(void) {
   struct Actor *object;
 
   if (gMainRoutineWork.entrance == 1)
@@ -1115,7 +1136,7 @@ void Func_02001938(void) {
     object = Actor_Get(10);
   if (*(s16 *)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 18) <= 247) {
     object->motionFlags = 0;
-    object->update = Func_020017b4;
+    object->update = AnemosInnerSanctum_FollowLeader;
     object->unk4c = Actor_Get(gMainRoutineWork.currentOwner)->x;
     object->acceleration = Actor_Get(gMainRoutineWork.currentOwner)->z;
     Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -1132,7 +1153,7 @@ struct SpriteView {
   s32 unk14;
 };
 
-void Func_020019a8(void) {
+void AnemosInnerSanctum_RaiseDust(void) {
   struct Actor *object;
   struct Actor *effect;
   struct FieldSprite *sprite;
@@ -1173,7 +1194,7 @@ void Func_020019a8(void) {
 
 // By the entrance taken, sets that entrance's flag, moves its actor to the
 // middle of its cell and copies a cell picture column twice beside it.
-void Func_02001a94(void) {
+void AnemosInnerSanctum_MarkEntrance(void) {
   struct Actor *object;
   s32 column;
   s32 target[3];
@@ -1217,7 +1238,7 @@ void Func_02001a94(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001b88(void) {
+void AnemosInnerSanctum_SummonTheGuardian(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   PaletteFade_ApplySource(0x10000, 0);
@@ -1253,7 +1274,7 @@ const struct Trigger *Scene_GetEvents(void) {
   return gAnemosInnerSanctum_Triggers;
 }
 
-void Func_02001c60(void) {
+void AnemosInnerSanctum_TeleportOut(void) {
   PaletteCycle_Start();
   Teleport_PlaySparks();
   {
@@ -1264,19 +1285,20 @@ void Func_02001c60(void) {
   }
   Event_SetDestination((s32)&SceneId_Contigo1, 99);
   FieldEvent_Wait(40);
-  Func_02000158();
+  AnemosInnerSanctum_StopPaletteCycle();
 }
 
-extern s16 gData_020043e4[];
-extern struct MapGridCellAnimation gData_02004410[];
+extern s16 gAnemosInnerSanctum_DoorFrames[];
+extern struct MapGridCellAnimation gAnemosInnerSanctum_Doors[];
 
-static __inline__ void Func_02003320_(const void *data, s32 a, s32 b) {
+static __inline__ void AnemosInnerSanctum_PlayMapEdit(const void *data, s32 a,
+                                                      s32 b) {
   MapGrid_PlayMapEdit(data, a, b);
 }
 
 // The scene opening: clears the actors' motion flags, plays the entrance's
 // map edit and steps the leader in.
-void Func_02001c94(void) {
+void AnemosInnerSanctum_EnterTheRoom(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
@@ -1295,12 +1317,13 @@ loop:
     goto loop;
   Event_PlaySound(SE_DOOR_OPEN);
   if (gMainRoutineWork.scene == (s32)&SceneId_AnemosInnerSanctum1) {
-    MapGrid_AnimateCells(gData_020043e4, 33, 7);
+    MapGrid_AnimateCells(gAnemosInnerSanctum_DoorFrames, 33, 7);
   } else {
     s32 index = work->stepTrigger / 2 - 1;
 
-    Func_02003320_(gData_02004410[index].steps, gData_02004410[index].x,
-                   gData_02004410[index].y);
+    AnemosInnerSanctum_PlayMapEdit(gAnemosInnerSanctum_Doors[index].steps,
+                                   gAnemosInnerSanctum_Doors[index].x,
+                                   gAnemosInnerSanctum_Doors[index].y);
   }
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
@@ -1312,7 +1335,7 @@ loop:
   Event_End();
 }
 
-void Func_02001d68(void) {
+void AnemosInnerSanctum_RaiseFirstStatue(void) {
   struct Actor *object = Actor_Get(9);
 
   Event_Start();
@@ -1332,7 +1355,7 @@ void Func_02001d68(void) {
   Event_End();
 }
 
-void Func_02001df4(void) {
+void AnemosInnerSanctum_RaiseSecondStatue(void) {
   struct Actor *object = Actor_Get(11);
 
   Event_Start();
@@ -1351,10 +1374,10 @@ void Func_02001df4(void) {
 }
 
 s32 CrackedTiles_Find();
-extern s16 gData_0200384c[];
-extern s16 gData_0200385c[];
-extern s16 gData_02003888[];
-extern u16 gData_020038b4[];
+extern s16 gAnemosInnerSanctum_PaletteSlots[];
+extern s16 gAnemosInnerSanctum_PaletteColors[];
+extern s16 gAnemosInnerSanctum_DimColors[];
+extern u16 gAnemosInnerSanctum_CycleSlots[];
 
 s32 Scene_Initialize(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0;
@@ -1374,22 +1397,24 @@ s32 Scene_Initialize(void) {
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
   v_r1 = gMainRoutineWork.scene;
   if (v_r1 == (s32)&SceneId_AnemosInnerSanctum1) {
-    Func_02000038((s32)gData_0200384c, (s32)gData_0200385c, (s32)gData_02003888,
-                  (s32)gData_020038b4);
+    Palette_SetColors((s32)gAnemosInnerSanctum_PaletteSlots,
+                      (s32)gAnemosInnerSanctum_PaletteColors,
+                      (s32)gAnemosInnerSanctum_DimColors,
+                      (s32)gAnemosInnerSanctum_CycleSlots);
     if (Event_GetFlag(0xa87)) {
-      Func_02000a78(0x208, 48, 0);
+      AnemosInnerSanctum_DropSpark(0x208, 48, 0);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
     if (Event_GetFlag(0xa88)) {
-      Func_02000a78(0x228, 48, 3);
+      AnemosInnerSanctum_DropSpark(0x228, 48, 3);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
     if (Event_GetFlag(0xa89)) {
-      Func_02000a78(0x1f8, 40, 10);
+      AnemosInnerSanctum_DropSpark(0x1f8, 40, 10);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
     if (Event_GetFlag(0xa8a)) {
-      Func_02000a78(0x238, 40, 2);
+      AnemosInnerSanctum_DropSpark(0x238, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
     if (!Event_GetFlag(0xa8b))
@@ -1408,7 +1433,7 @@ s32 Scene_Initialize(void) {
   if ((Event_GetFlag(0xa81)) != 0) {
     Actor_SetPosition(10, 440, 760);
   }
-  Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036e4);
+  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_Room2Blocks);
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
   FIELD_AT(((s32)Actor_Get(9)), u8, 85) = 0;
   FIELD_AT(((s32)Actor_Get(9)), u8, 35) |= 128;
@@ -1420,7 +1445,7 @@ s32 Scene_Initialize(void) {
   Actor_SetPosition(9, 728, 120);
 L_0200a03c:
   if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
-    Func_02001d68();
+    AnemosInnerSanctum_RaiseFirstStatue();
   {
     struct MainRoutineWork *work = &gMainRoutineWork;
     if (work->entrance != 10)
@@ -1492,7 +1517,7 @@ L_0200a1b4:
 L_0200a2b8:
   Actor_SetPosition(12, 728, 472);
 L_0200a2c6:
-  Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036ea);
+  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_Room3Blocks);
   goto L_0200a6e6;
 L_0200a2ce:
   if (v_r1 != (s32)&SceneId_AnemosInnerSanctum4)
@@ -1500,7 +1525,7 @@ L_0200a2ce:
   if ((Event_GetFlag(0xa86)) != 0) {
     Actor_SetPosition(9, 264, 360);
   }
-  Call1((void (*)())Actor_PlaceBlocks, (s32)gData_020036f6);
+  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_Room4Blocks);
   v_r3 = (FIELD_AT(v_r6, u16, 482));
   v_r2 = (FIELD_AT(v_r6, s16, 482));
   if (v_r2 != 1)
@@ -1619,7 +1644,7 @@ L_0200a596:
     goto L_0200a5fa;
   if ((FIELD_AT(v_r6, s16, 482)) != 12)
     goto L_0200a5fa;
-  Func_02001df4();
+  AnemosInnerSanctum_RaiseSecondStatue();
   goto L_0200a6e6;
 L_0200a5fa:
   FIELD_AT(((s32)Actor_Get(11)), s32, 12) = 0xfff00000;
@@ -1786,9 +1811,9 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #undef FIELD_AT
 #undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Func_0200088c
-#undef Func_020009b8
-#undef Func_02000a78
+#undef AnemosInnerSanctum_SendSpark
+#undef AnemosInnerSanctum_SparkRing
+#undef AnemosInnerSanctum_DropSpark
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -1860,64 +1885,64 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "shared/cracked_tile_place_landing.h"
 
-extern u32 gData_0200378c[];
-extern u32 gData_020037c8[];
+extern u32 gFieldEffect_ShortScript[];
+extern u32 gFieldEffect_MediumScript[];
 
 // clang-format off
-u32 gData_020034c0[] = {
+u32 gAnemosInnerSanctum_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020034fc[] = {
+u32 gAnemosInnerSanctum_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003538[] = {
+u32 gAnemosInnerSanctum_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-s32 gData_02003574[] = {
+s32 gAnemosInnerSanctum_TileGlowScript[] = {
     0, 20, 38, 17,
 };
 
-s32 gData_02003584[] = {                                                               
+s32 gAnemosInnerSanctum_OrbScript[] = {                                                               
       46,                                                                      
-      (s32)Func_02000660,                                                              
+      (s32)AnemosInnerSanctum_CircleOrb,                                                              
       38,                                                                      
       17,                                                                      
   };
 
-s32 gData_02003594[] = {
+s32 gAnemosInnerSanctum_DustScript[] = {
     0x80010000, 23, 9, 0xffffe667, 23, 10,
     0xffffe667, 0, 1, 13, 8, 0xc0010000,
     38, 17,
 };
 
-u32 gData_020035cc[] = {
+u32 gAnemosInnerSanctum_PillarRisesScript[] = {
     0, 50, 0x80010000, 23, 9, 0x1999,
     23, 10, 0x1999, 23, 6, 0x30000,
     0, 2, 13, 10, 0xc0010000, 22,
     26, 4, 17,
 };
 
-s32 gData_02003620[] = {
+s32 gAnemosInnerSanctum_PillarSparkScript[] = {
     0, 30, 22, 26, 0, (s32)0x80010000,
     23, 9, (s32)0xffffe667, 23, 10, (s32)0xffffe667,
     23, 6, -0x30000, 0, 2, 13,
     10, (s32)0xc0010000, 17,
 };
 
-u32 gData_02003674[] = {
+u32 gAnemosInnerSanctum_MoteScript[] = {
     0, 3, 38, 17,
 };
 
-s32 gData_02003684[] = {
+s32 gAnemosInnerSanctum_SparkScript[] = {
     22,
     9,
     0x20000,
@@ -1937,77 +1962,77 @@ s32 gData_02003684[] = {
     10,
     (s32)0xc0010000,
     46,
-    (s32)Func_020006f8,
+    (s32)AnemosInnerSanctum_SpiralMover,
     46,
-    (s32)Func_02000794,
+    (s32)AnemosInnerSanctum_SpawnOrbitSparks,
     38,
     17,
 };
 
-s16 gData_020036e4[] = {
+s16 gAnemosInnerSanctum_Room2Blocks[] = {
     8, 10, -1,
 };
 
-s16 gData_020036ea[] = {
+s16 gAnemosInnerSanctum_Room3Blocks[] = {
     8, 10, 11, 12, 13, -1,
 };
 
-s16 gData_020036f6[] = {
+s16 gAnemosInnerSanctum_Room4Blocks[] = {
     9, 10, -1,
 };
 
-s32 gData_020036fc[][2] = {
+s32 gAnemosInnerSanctum_SparkOffsets[][2] = {
     {-48, -32}, {48, -32}, {-64, -16}, {64, -16}, {-32, -16}, {32, -16},
     {-48, 0}, {48, 0}, {-32, 0}, {32, 0}, {-64, 16}, {64, 16}, {-32, 16},
     {32, 16}, {-48, 32}, {48, 32}, {-16, 32}, {16, 32},
 };
 
-u32 gData_0200378c[] = {
+u32 gFieldEffect_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020037c8[] = {
+u32 gFieldEffect_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02003804[] = {
+u32 gFieldEffect_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-s32 gData_02003840[] = {
-    (s32)gData_020034c0,
-    (s32)gData_020034fc,
-    (s32)gData_02003538,
+s32 gAnemosInnerSanctum_DurationScripts[] = {
+    (s32)gAnemosInnerSanctum_ShortScript,
+    (s32)gAnemosInnerSanctum_MediumScript,
+    (s32)gAnemosInnerSanctum_LongScript,
 };
 
-s16 gData_0200384c[] = {
+s16 gAnemosInnerSanctum_PaletteSlots[] = {
     89, 90, 91, 92, 93, 94, 95, -1,
 };
 
-s16 gData_0200385c[] = {
+s16 gAnemosInnerSanctum_PaletteColors[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
     25, 22, 23, 25, 22, -1,
 };
 
-s16 gData_02003888[] = {
+s16 gAnemosInnerSanctum_DimColors[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,
 };
 
-u16 gData_020038b4[] = {                                                               
+u16 gAnemosInnerSanctum_CycleSlots[] = {                                                               
       94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91,  
       91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94, 89, 89, 90, 91, 92, 93, 94,  
   };
 
-s32 gData_020038fc[] = {
+s32 gAnemosInnerSanctum_StatueScript[] = {
     46,
     (s32)AnemosInnerSanctum_ClearScriptedActorSpriteFlags,
     17,
@@ -2098,7 +2123,7 @@ struct ActorPlacement gAnemosInnerSanctum_Room1Placements[] = {
 
 struct ActorPlacement gAnemosInnerSanctum_Room2Placements[] = {
     {272, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
-    {432, CONDITION_ALWAYS, (s32)gData_020038fc, 0x2, 0, 0, FACING_NORTH, 2, 2},
+    {432, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {272, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
     {SCENE_TABLE_END},
 };
@@ -2115,7 +2140,7 @@ struct ActorPlacement gAnemosInnerSanctum_Room3Placements[] = {
 };
 
 s32 gAnemosInnerSanctum_Room4Placements[] = {                                                               
-      (s32)0xffff01b0, (s32)gData_020038fc, 3, 0, 0, 0x202c000, (s32)0xffff0110, 7, 4, 0, 0, 0x202c000,    
+      (s32)0xffff01b0, (s32)gAnemosInnerSanctum_StatueScript, 3, 0, 0, 0x202c000, (s32)0xffff0110, 7, 4, 0, 0, 0x202c000,    
       (s32)0xffff0110, 7,         5, 0, 0, 0x202c000, 0xffff,          0,  0,  0, 0, 0,     
   };
 
@@ -2123,11 +2148,11 @@ struct ActorPlacement gAnemosInnerSanctum_Room5Placements[] = {
     {431, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {431, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
-    {432, CONDITION_ALWAYS, (s32)gData_020038fc, 0x4, 0, 0, FACING_NORTH, 2, 2},
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gData_020038fc, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    {432, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x4, 0, 0, FACING_NORTH, 2, 2},
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
     {SCENE_TABLE_END},
 };
 
@@ -2138,12 +2163,12 @@ struct Trigger gAnemosInnerSanctum_Triggers[] = {
 struct Trigger gAnemosInnerSanctum_Room1Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(Func_02001090)},
-    {TRIGGER_STEP, 50, 0x200, EVENT(Func_02000ac8)},
-    {TRIGGER_STEP, 51, 0x200, EVENT(Func_02000ac8)},
-    {TRIGGER_STEP, 52, 0x200, EVENT(Func_02000ac8)},
-    {TRIGGER_STEP, 53, 0x200, EVENT(Func_02000ac8)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(Func_02001c60)},
+    {TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StepOntoCenter)},
+    {TRIGGER_STEP, 50, 0x200, EVENT(AnemosInnerSanctum_LightThePillar)},
+    {TRIGGER_STEP, 51, 0x200, EVENT(AnemosInnerSanctum_LightThePillar)},
+    {TRIGGER_STEP, 52, 0x200, EVENT(AnemosInnerSanctum_LightThePillar)},
+    {TRIGGER_STEP, 53, 0x200, EVENT(AnemosInnerSanctum_LightThePillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_TeleportOut)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2164,20 +2189,20 @@ struct Trigger gAnemosInnerSanctum_Room2Triggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 11, IF_FLAG_SET(0x207), EVENT(Func_02001518)},
-    {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 51, 0x201, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 52, 0x202, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 53, 0x203, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 54, 0x204, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 55, 0x205, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 56, 0x206, EVENT(Func_02001398)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0xa80, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa80, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0xa81, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa81, EVENT(Func_02001160)},
+    {TRIGGER_STEP, 11, IF_FLAG_SET(0x207), EVENT(AnemosInnerSanctum_RaisePlatform)},
+    {TRIGGER_STEP, 50, 0x200, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 51, 0x201, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 52, 0x202, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 53, 0x203, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 54, 0x204, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 55, 0x205, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 56, 0x206, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0xa80, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa80, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0xa81, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa81, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2199,23 +2224,23 @@ struct Trigger gAnemosInnerSanctum_Room3Triggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02001614)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
-    {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001660)},
-    {TRIGGER_STEP, 51, IF_FLAG_SET(0x200), EVENT(Func_020016fc)},
+    {TRIGGER_STEP, 50, 0x200, EVENT(AnemosInnerSanctum_PressFirstSwitch)},
+    {TRIGGER_STEP, 51, IF_FLAG_SET(0x200), EVENT(AnemosInnerSanctum_PressSecondSwitch)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 9, CONDITION_ALWAYS, 0},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0xa82, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa82, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0xa83, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa83, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0xa85, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa85, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, 0xa84, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0xa84, EVENT(Func_02001160)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0xa82, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0xa82, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0xa83, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0xa83, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0xa85, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0xa85, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, 0xa84, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0xa84, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2230,26 +2255,26 @@ struct Trigger gAnemosInnerSanctum_Room4Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 11, IF_FLAG_SET(0x207), EVENT(Func_02001518)},
-    {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 51, 0x201, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 52, 0x202, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 53, 0x203, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 54, 0x204, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 55, 0x205, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 56, 0x206, EVENT(Func_02001398)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(Func_0200178c)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(Func_0200178c)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(Func_020017a0)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(Func_020017a0)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Func_02001614)},
+    {TRIGGER_STEP, 11, IF_FLAG_SET(0x207), EVENT(AnemosInnerSanctum_RaisePlatform)},
+    {TRIGGER_STEP, 50, 0x200, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 51, 0x201, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 52, 0x202, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 53, 0x203, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 54, 0x204, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 55, 0x205, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 56, 0x206, EVENT(AnemosInnerSanctum_StepOnTile)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit11)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit11)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit12)},
+    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit12)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0xa86, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa86, EVENT(Func_02001160)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_0200109c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_02001160)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0xa86, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0xa86, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2265,12 +2290,12 @@ struct Trigger gAnemosInnerSanctum_Room5Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 50, 0x200, EVENT(Func_02001938)},
-    {TRIGGER_STEP, 51, 0x200, EVENT(Func_02001938)},
-    {TRIGGER_STEP, 52, 0x200, EVENT(Func_02001938)},
-    {TRIGGER_STEP, 30, 0xa8c, EVENT(Func_02001b88)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_020019a8)},
-    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(Func_02001a94)},
+    {TRIGGER_STEP, 50, 0x200, EVENT(AnemosInnerSanctum_StartFollower)},
+    {TRIGGER_STEP, 51, 0x200, EVENT(AnemosInnerSanctum_StartFollower)},
+    {TRIGGER_STEP, 52, 0x200, EVENT(AnemosInnerSanctum_StartFollower)},
+    {TRIGGER_STEP, 30, 0xa8c, EVENT(AnemosInnerSanctum_SummonTheGuardian)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_RaiseDust)},
+    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_MarkEntrance)},
     {0xffffffff, 0, 0x0, 0},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -2280,25 +2305,25 @@ struct Trigger gAnemosInnerSanctum_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s16 gData_020043e4[] = {
+s16 gAnemosInnerSanctum_DoorFrames[] = {
     52, 7, 1, 2, 2, 54, 7, 1,
     2, 2, -1,
 };
 
-s16 gData_020043fa[] = {
+s16 gAnemosInnerSanctum_OtherDoorFrames[] = {
     18, 4, 1, 2, 2, 18, 7, 1,
     2, 2, -1,
 };
 // clang-format on
 
-struct MapGridCellAnimation gData_02004410[] = {
-    {gData_020043fa, 11, 4},
-    {gData_020043fa, 26, 4},
-    {gData_020043fa, 53, 4},
+struct MapGridCellAnimation gAnemosInnerSanctum_Doors[] = {
+    {gAnemosInnerSanctum_OtherDoorFrames, 11, 4},
+    {gAnemosInnerSanctum_OtherDoorFrames, 26, 4},
+    {gAnemosInnerSanctum_OtherDoorFrames, 53, 4},
 };
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_0200378c,
-    (s32)gData_020037c8,
-    (s32)gData_02003804,
+    (s32)gFieldEffect_ShortScript,
+    (s32)gFieldEffect_MediumScript,
+    (s32)gFieldEffect_LongScript,
 };

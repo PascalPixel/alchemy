@@ -4,20 +4,20 @@
 	.global gLightSpriteTile
 gLightSpriteTile:
 	.space 0x00000002
-	.global gData_02001cde
-gData_02001cde:
+	.global gLightSpriteCount
+gLightSpriteCount:
 	.space 0x00000002
 	.global gLightSpriteActors
 gLightSpriteActors:
 	.space 0x00000040
-	.global gData_02001d20
-gData_02001d20:
+	.global gLightSpriteOam
+gLightSpriteOam:
 	.space 0x000000c0
-	.global gData_02001de0
-gData_02001de0:
+	.global gLightSpriteLargeOam
+gLightSpriteLargeOam:
 	.space 0x00000002
-	.global gData_02001de2
-gData_02001de2:
+	.global gAnemosInnerSanctumEntrance_LightLevel
+gAnemosInnerSanctumEntrance_LightLevel:
 	.space 0x00000002
-	.global gData_02001de4
-gData_02001de4:
+	.global gAnemosInnerSanctumEntrance_LightPicture
+gAnemosInnerSanctumEntrance_LightPicture:

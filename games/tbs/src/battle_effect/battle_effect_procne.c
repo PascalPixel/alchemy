@@ -195,9 +195,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
     // The dust spirals in and up.
     if (frame <= 159) {
-      index = 0;
       point = work->particles;
-      do {
+      for (index = 0; index != 24; index++) {
         if (point[index].variant == 0) {
           world.x = point[index].z * Trig_Sin(point[index].velocityY);
           world.y = point[index].y;
@@ -229,8 +228,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         } else {
           point[index].variant--;
         }
-        index++;
-      } while (index != 24);
+      }
     }
 
     if (frame == 160) {
@@ -430,9 +428,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               Transform_ApplyRoll(-2048);
               Transform_ApplyYaw(-4096);
 
-              slot = 0;
               spark = &work->particles[32];
-              do {
+              for (slot = 0; slot != 28; slot++) {
                 struct Particle *step;
 
                 step = &spark[slot];
@@ -453,8 +450,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 span = 3 - (screen.depth - 170) / 90;
                 EFFECT_DRAW_MOTE(draw[0], canvas, graphics, screen.x, screen.y,
                                  span);
-                slot++;
-              } while (slot != 28);
+              }
             }
           }
         }

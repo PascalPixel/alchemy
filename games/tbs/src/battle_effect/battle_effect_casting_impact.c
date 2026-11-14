@@ -556,8 +556,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       duration = 80;
     }
     // Phase 3, the impact, for duration frames.
-    frame = 0;
-    while (frame != duration) {
+    for (frame = 0; frame != duration; frame++) {
       if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
         if (mode != CASTING_IMPACT_IMPACT_ASURA) {
           s32 base;
@@ -1207,7 +1206,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
-      frame++;
     }
   }
   // Phase 4: Meltdown hands the cleared canvas to the stat reduction (Impair),

@@ -28,10 +28,12 @@ struct Window;
 enum FieldRaisedTrigger {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_RAISED_TRIGGER_PARTY_FELL = -1,
-  /// R on the world map: the picture of the whole world (WorldPicture_Show).
-  FIELD_RAISED_TRIGGER_WORLD_PICTURE = -887,
-  /// R while the world picture is offered by an arrival.
-  FIELD_RAISED_TRIGGER_WORLD_PICTURE_LOOP = -888,
+  /// Teleport: the picture of the whole world, shown once to choose where to
+  /// go (FieldPsynergy_Teleport).
+  FIELD_RAISED_TRIGGER_TELEPORT = -887,
+  /// R on the world map: the picture of the whole world (WorldPicture_Show),
+  /// as The Broken Seal's.
+  FIELD_RAISED_TRIGGER_WORLD_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held.
   FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM = -889,
   FIELD_RAISED_TRIGGER_ROPE_OFF = -890,
@@ -39,6 +41,10 @@ enum FieldRaisedTrigger {
   FIELD_RAISED_TRIGGER_TIGHTROPE_OFF = -892,
   FIELD_RAISED_TRIGGER_TIGHTROPE_ON = -893
 };
+
+/// The raised trigger the menu keys pass to the scene while
+/// FLAG_MENUS_RAISE_TRIGGER is set, as The Broken Seal's.
+#define FIELD_RAISED_TRIGGER_MENUS 250
 
 /// A field scene's work: FieldSequence_Run allocates it in heap slot 108,
 /// zeroes it and frees it on the way out, and the field sequence, the event

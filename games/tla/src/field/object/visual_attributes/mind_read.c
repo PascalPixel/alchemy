@@ -193,13 +193,13 @@ void Actor_SetSpritePalette(void *object, s32 value) {
   s32 child = value - 1;
 
   if (value == 0)
-    child = gData_080f0e9c[(gFrameCount >> 1) & 7];
+    child = gAnim_ChildPaletteCycle[(gFrameCount >> 1) & 7];
   Actor_SetSpriteColorModeFar(object, child);
 }
 
 u16 BattleEffect_GetCycledTableWord(void) {
   struct InputState *input = &gInput;
-  u16 *words = gBattleEffect_CyclePatternWords;
+  u16 *words = gFieldEffect_CyclePatternWords;
 
   return *(u16 *)((u8 *)words + (((input->held >> 4) & 15) << 1));
 }
@@ -1313,7 +1313,7 @@ void FieldPsynergy_Force(void) {
     SET_POSITION(&pos, scene->x, scene->y + 0x100000, scene->z);
   }
   Actor_SetMoveTargetFar(object, pos.x, pos.y, pos.z);
-  Actor_StartScriptFar(object, gData_080f0ef8);
+  Actor_StartScriptFar(object, gBattleEffect_HeavyImpactScript);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {

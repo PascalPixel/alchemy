@@ -899,7 +899,7 @@ void Actor_PlaceSprites(struct PlacedObject *object, s32 angle) {
   s32 remaining;
 
   if (GameFlag_Get(363))
-    scale = gData_0802eb90;
+    scale = gActorSprite_FullScale;
   switch (object->kind & 15) {
   case 1:
     point = object->position;

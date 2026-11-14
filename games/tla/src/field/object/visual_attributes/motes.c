@@ -48,7 +48,7 @@ void FieldMotes_Start(void) {
   Dma_Set((void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x205, REG_DMA3);
   tiles = HeapSlot_AllocEwram(56, 0x400);
-  Resource_DecodeByteLzInRam(gData_080f385e, tiles);
+  Resource_DecodeByteLzInRam(gFieldEffect_MoteTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);
@@ -119,7 +119,7 @@ void Weather_StartRain(s32 withCue) {
   zero = 0;
   Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = HeapSlot_AllocEwram(56, 0x400);
-  Resource_DecodeByteLzInRam(Data_080f3901, tiles);
+  Resource_DecodeByteLzInRam(gFieldEffect_StreakTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);

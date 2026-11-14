@@ -140,7 +140,7 @@ void RisingParticles_Start(void) {
   zero = 0;
   Dma_Fill32Cell(fill, zero, work, 0x814);
   tiles = HeapSlot_AllocEwram(56, 0x400);
-  Resource_DecodeByteLzInRam(gData_080f385e, tiles);
+  Resource_DecodeByteLzInRam(gFieldEffect_MoteTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 0x300, tiles);
   HeapSlot_Release(56);

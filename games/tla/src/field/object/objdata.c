@@ -54,7 +54,7 @@ const u8 gAnimationFacing_SixPictures[64] = {
 };
 
 /// gAnimationFacing_Kind8
-const u8 gData_0802eb44[8] = {
+const u8 gAnimationFacing_EightPictures[8] = {
     0x02, 0x01, 0x00, 0x07, 0x06, 0x05, 0x04, 0x03,
 };
 
@@ -69,7 +69,7 @@ const u8 gSpriteDissolve_PixelOrder[64] = {
 const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
 /// Two 1.0s (Q16), The Lost Age's own.
-const s32 gData_0802eb90[2] = {
+const s32 gActorSprite_FullScale[2] = {
     0x10000, 0x10000,
 };
 
@@ -107,17 +107,17 @@ const u16 gWorldMap_KeyHeadings[16] = {
 
 /// Wait, then release the object.
 // As The Broken Seal's gWorldMap_FootprintActions do.
-const s32 gData_0802ec7c[] = {
+const s32 gActor_FootprintScript[] = {
     SC_WAIT(120),
     SC_FREE,
 };
 
-const s32 gData_0802ec88[] = {
+const s32 gActor_SplashScript[] = {
     SC_WAIT(20),
     SC_FREE,
 };
 
-const s32 gData_0802ec94[] = {
+const s32 gActor_RippleScript[] = {
     SC_WAIT(32),
     SC_FREE,
 };
@@ -133,7 +133,7 @@ const s32 gWorldMap_KeyYaws[16] = {
 
 /// Set the work byte at 0x63 to 15 and lower it by one every 5 frames, then
 /// clear the horizontal scale and release the object.
-const s32 gData_0802ece0[] = {
+const s32 gActor_WakeScript[] = {
     SC_SET(SW_BYTE_63, 15),
     SC_LABEL(1),
     SC_WAIT(5),
@@ -144,7 +144,7 @@ const s32 gData_0802ece0[] = {
     SC_FREE,
 };
 
-const s32 gData_0802ed28[] = {
+const s32 gSand_GrainScript[] = {
     SC_WAIT(60),
     SC_FREE,
 };

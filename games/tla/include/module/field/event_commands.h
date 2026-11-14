@@ -763,10 +763,10 @@ struct OwnerObject {
   u8 layer;
 };
 
-extern const u8 gData_080f0ef8[];
+extern const u8 gBattleEffect_HeavyImpactScript[];
 
 extern const u8 gData_080f0e58[];
-extern u8 gData_080f0e9c[];
+extern u8 gAnim_ChildPaletteCycle[];
 
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
                                                   struct Vec3 *position);

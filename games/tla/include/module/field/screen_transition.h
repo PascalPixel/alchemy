@@ -91,7 +91,7 @@ struct MapLayerFlags {
   u16 flags;
 };
 
-extern struct BattleFxDefinition gData_080f0308[];
+extern struct BattleFxDefinition gSpeakerDefinitions[];
 
 extern const u8 gFieldEffect_ParticleEmitterScript[];
 
@@ -99,11 +99,11 @@ extern const u8 gBattleEffect_MarkerParticleScript[];
 
 extern const u8 gFieldEffect_RisingPulseScript[];
 
-extern u16 Data_080f0246[];
+extern u16 gFieldEffect_ChannelCurve[];
 
-extern u16 Data_080f0286[];
+extern u16 gFieldEffect_ChannelCurveLight[];
 
-extern u16 Data_080f02c6[];
+extern u16 gFieldEffect_ChannelCurveContrast[];
 
 extern const u8 gScreenTransition_NoiseWidths[];
 

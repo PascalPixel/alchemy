@@ -1688,12 +1688,12 @@ void FieldPsynergy_Unnamed29(void) {
 }
 
 /// Looks at 21 map cells around the effect owner, at the tile offsets of
-/// Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell of
-/// kind 1, 2 or 3 that Field_MeasurePsynergyHeight accepts for the effect's id
-/// is listed as a tile in the event work's point list at 0xcc0, which ends with
-/// -1, -1; a kind-1 cell also stores its kind in the heap slot 0x5c work's byte
-/// 0x1b34, and the last kind-2 and kind-3 cells are kept in pixels, centred on
-/// their tile, at 0xd3c and 0xd40.
+/// gFieldPsynergy_NearbyCellOffsets (signed x, z byte pairs), on the owner's
+/// layer. Each cell of kind 1, 2 or 3 that Field_MeasurePsynergyHeight accepts
+/// for the effect's id is listed as a tile in the event work's point list at
+/// 0xcc0, which ends with -1, -1; a kind-1 cell also stores its kind in the
+/// heap slot 0x5c work's byte 0x1b34, and the last kind-2 and kind-3 cells are
+/// kept in pixels, centred on their tile, at 0xd3c and 0xd40.
 void FieldPsynergy_GatherNearbyCells(void) {
   struct FxScene *effect = Ram_HeapSlots->effectWork;
   struct PointWork *event = Ram_HeapSlots->fieldWork;
@@ -1712,8 +1712,8 @@ void FieldPsynergy_GatherNearbyCells(void) {
   event->unk_d40 = -1;
   event->unk_d42 = -1;
   for (i = 0; i <= 20; i++) {
-    x = owner->x + (Data_080f0f64[i * 2] << 20);
-    z = owner->z + (Data_080f0f64[i * 2 + 1] << 20);
+    x = owner->x + (gFieldPsynergy_NearbyCellOffsets[i * 2] << 20);
+    z = owner->z + (gFieldPsynergy_NearbyCellOffsets[i * 2 + 1] << 20);
     kind = MapGrid_GetCycloneCellKind(x, z, owner->terrainId);
     // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;

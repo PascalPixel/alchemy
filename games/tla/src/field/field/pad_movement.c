@@ -164,7 +164,7 @@ update_object:
       ripple = Actor_Create(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
-        Actor_StartScript(ripple, gData_0802ec94);
+        Actor_StartScript(ripple, gActor_RippleScript);
         ripple->motionFlags = collision;
         ripple->terrainId = 1;
         if (rippleSprite != 0) {
@@ -669,7 +669,7 @@ update_object:
       ripple = Actor_Create(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
-        Actor_StartScript(ripple, gData_0802ec94);
+        Actor_StartScript(ripple, gActor_RippleScript);
         ripple->motionFlags = 0;
         ripple->terrainId = kind;
         if (rippleSprite != 0) {
@@ -880,7 +880,7 @@ update_object:
         ripple = Actor_Create(0x10d, object->x, 0, object->z);
         if (ripple != 0) {
           rippleSprite = ripple->sprite;
-          Actor_StartScript(ripple, gData_0802ec94);
+          Actor_StartScript(ripple, gActor_RippleScript);
           ripple->motionFlags = 0;
           ripple->terrainId = kind;
           if (rippleSprite != 0) {

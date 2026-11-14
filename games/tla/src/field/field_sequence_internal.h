@@ -372,7 +372,7 @@ extern char ResourceId_BlizzardBackdrop;
 
 /// The battle music table: each song as 0x8000 | song, followed by the
 /// encounters that use it as (zone << 4) + slot, ended by 0.
-extern const s16 Data_080efd1c[];
+extern const s16 gEncounter_BattleMusic[];
 
 extern u8 Data_0202e004[];
 

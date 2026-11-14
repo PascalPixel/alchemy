@@ -33,6 +33,13 @@
 struct Actor;
 struct FieldPosition;
 
+/// The collision at an actor's probe point (tile_animation.c): 2 for a cell
+/// with no tile, 1 a rise of more than 8 pixels, -1 a drop of more than 12,
+/// else 0.
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
+                                struct FieldPosition *position);
+
 typedef void (*ConvertFn)(void *destination, void *source, void *saved);
 
 /// The words of an object's script. As in The Broken Seal's ActorScriptWords,
@@ -305,27 +312,6 @@ struct SpriteAngle {
   u16 angle;
 };
 
-struct LeaderUnit {
-  u8 unk00[0x38];
-  s16 hp;
-};
-
-/// The requests the configured keys raise.
-// Named as in ☀️'s FieldWork.
-struct EventPrompt {
-  u8 unk000[0x15a];
-  u16 menu;
-  u16 examine;
-  u16 start;
-  u8 unk160[6];
-  u16 choice[2];
-  u16 result;
-  u8 unk16c[30];
-  s8 mode;
-  u8 unk18b[0xb21];
-  s8 pendingSecond;
-};
-
 struct Child {
   u8 unk00[9];
   u8 low9 : 2;
@@ -357,11 +343,6 @@ struct WaitingActor {
 struct ScriptObject {
   u8 unk00[0x6c];
   s32 value;
-};
-
-struct UnitHp {
-  u8 unk00[0x38];
-  s16 hp;
 };
 
 enum { RESOURCE_SLOT_COUNT = 8 };

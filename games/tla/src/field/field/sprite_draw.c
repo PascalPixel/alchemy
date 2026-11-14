@@ -214,7 +214,8 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
       facing = gAnimationFacing_SixPictures[(dir >> 10) & 63];
       break;
     case 8:
-      facing = gData_0802eb44[((dir + TRIG_TURN / 16) >> 13) & 7];
+      facing =
+          gAnimationFacing_EightPictures[((dir + TRIG_TURN / 16) >> 13) & 7];
       break;
     default:
       facing = 0;
@@ -342,7 +343,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
         u32 rows = obj->depth;
         u32 height = obj->height;
         u32 width = obj->width;
-        const u8 *shade = Data_080209a8;
+        const u8 *shade = gSpriteColorShadeTables;
         u8 *p;
         s32 n;
 

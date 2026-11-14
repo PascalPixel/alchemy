@@ -163,7 +163,6 @@ struct BattleFxScene;
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define Actor_ReleaseFar Actor_ReleaseFar
-#define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the

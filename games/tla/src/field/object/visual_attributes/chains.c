@@ -1031,8 +1031,10 @@ void Tightrope_DebugSwing(struct Actor *object) {
 }
 
 // The four 256-byte pictures of each set (type-01 compressed).
-extern const u8 Data_080f0c1c[], Data_080f0c63[], Data_080f0cb8[];
-extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
+extern const u8 gHangingVine_VineTopPicture[], gHangingVine_VineUpperPicture[],
+    gHangingVine_VineLowerPicture[];
+extern const u8 gHangingVine_VineBottomPicture[],
+    gHangingVine_ChainTopPicture[], gHangingVine_ChainMiddlePicture[];
 
 #define TILE_EFFECT_SLOT 164
 #define TILE_EFFECT_KIND_ALT 372 // the kind that takes the first picture set
@@ -1060,16 +1062,21 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
   Dma_Fill32(0, work, sizeof(struct HangingVineWork));
   work->vramEntry = VramCache_FindFreeEntry();
   if (kind == TILE_EFFECT_KIND_ALT) {
-    Decompress_TaggedLz(Data_080f0c1c, pictures);
-    Decompress_TaggedLz(Data_080f0c63, pictures + PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_VineTopPicture, pictures);
+    Decompress_TaggedLz(gHangingVine_VineUpperPicture, pictures + PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_VineLowerPicture,
+                        pictures + 2 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_VineBottomPicture,
+                        pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
   } else {
-    Decompress_TaggedLz(Data_080f0d5e, pictures);
-    Decompress_TaggedLz(Data_080f0dbb, pictures + PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
-    Decompress_TaggedLz(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_ChainTopPicture, pictures);
+    Decompress_TaggedLz(gHangingVine_ChainMiddlePicture,
+                        pictures + PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_ChainMiddlePicture,
+                        pictures + 2 * PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_ChainBottomPicture,
+                        pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
   }
   {

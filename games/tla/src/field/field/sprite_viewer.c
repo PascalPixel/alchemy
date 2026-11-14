@@ -251,7 +251,7 @@ next:
     }
     if (gInput.pressed & KEY_B) {
       volatile u16 *palette = (volatile u16 *)BG_PLTT;
-      const u16 *colors = gData_0802f054;
+      const u16 *colors = gSpriteViewer_BackdropColors;
       backdrop++;
       backdrop &= 7;
       // Spelled as an address sum: colors[backdrop] swaps the load's registers.
@@ -261,12 +261,12 @@ next:
   }
 }
 
-extern const u16 gData_0802f064[];
+extern const u16 gSpriteViewer_SkipStops[];
 
 /// Steps a number from 0 to 715 by delta: a step of one wraps around the
 /// range, a larger step forward goes to the next stop above value and one back
-/// to the last stop below it (gData_0802f064, ended by 0xffff, from which a
-/// step forward wraps to 0). A delta of 0 returns value unchanged.
+/// to the last stop below it (gSpriteViewer_SkipStops, ended by 0xffff, from
+/// which a step forward wraps to 0). A delta of 0 returns value unchanged.
 s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
   s32 step;
 
@@ -284,21 +284,21 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 value, s32 delta) {
       u32 i;
 
       for (i = 0; i < 10; i++) {
-        if (value < gData_0802f064[i]) {
-          value = gData_0802f064[i];
+        if (value < gSpriteViewer_SkipStops[i]) {
+          value = gSpriteViewer_SkipStops[i];
           if (value == 0xffff)
             value = 0;
           break;
         }
       }
     } else if (value == 0) {
-      value = gData_0802f064[8];
+      value = gSpriteViewer_SkipStops[8];
     } else {
       s32 i;
 
       for (i = 8; i >= 0; i--) {
-        if (value > gData_0802f064[i]) {
-          value = gData_0802f064[i];
+        if (value > gSpriteViewer_SkipStops[i]) {
+          value = gSpriteViewer_SkipStops[i];
           break;
         }
       }

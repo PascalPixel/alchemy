@@ -876,7 +876,7 @@ extern const u8 Grid_DrawOutlineCode[];
 
 extern u8 Grid_DrawOutlineCodeSize[];
 
-extern const u8 Data_080209a8[];
+extern const u8 gSpriteColorShadeTables[];
 
 void SpriteAnimation_Start(struct AnimationEntry *work, s32 no);
 
@@ -960,7 +960,7 @@ extern char ResourceId_DefaultMapCells;
 
 void WorldMap_UpdateCurrentTileBlock(void);
 
-extern const u16 gData_0802f054[8];
+extern const u16 gSpriteViewer_BackdropColors[8];
 
 void ActorSystem_Initialize(s32 mode);
 
@@ -1060,16 +1060,16 @@ void SpriteAnimation_ClearFar(void *record);
 void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
 extern const u8 gRope_Tiles[];
-extern const u8 Data_080f0e00[];
+extern const u8 gHangingVine_ChainBottomPicture[];
 
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect);
 
 s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 
 extern const u8 gFieldEffect_GroundParticleTiles[];
-extern const u8 gData_080f385e[];
+extern const u8 gFieldEffect_MoteTiles[];
 
-extern u32 gData_080f0bfc[];
+extern u32 gBattleEffect_PulseScales[];
 
 void BattleEffect_UpdateDescendingOrbitObject(
     struct DescendingOrbitObject *arg);
@@ -1078,7 +1078,7 @@ extern const s16 gLineScroll_WaveSine[];
 
 extern const s16 gFieldEffect_GroundParticleFrames[];
 
-extern const u8 Data_080f3901[];
+extern const u8 gFieldEffect_StreakTiles[];
 
 extern const struct SparklePicture gFieldEffect_SparklePictures[];
 
@@ -1090,11 +1090,12 @@ s32 MapGrid_GetCellBehaviorAtFar(s32 layer, s32 x, s32 z);
 
 s32 MapGrid_IsWallAtFar(s32 *position);
 
-extern const u16 Data_080f0890[];
+extern const u16 gRope_KeyHeadings[];
+extern const u16 gFieldEffect_CyclePatternWords[];
 
 extern u32 gScanlinePitch;
 
-extern const s16 Data_080f0b50[];
+extern const s16 gGroundParticle_Offsets[];
 
 void Actor_UpdateAllMotion(void);
 

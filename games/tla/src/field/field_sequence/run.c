@@ -246,7 +246,7 @@ s32 FieldSequence_Run(void) {
       }
       if (work->raisedTrigger != 0) {
         work->busy = 1;
-        if (work->raisedTrigger == -1) {
+        if (work->raisedTrigger == FIELD_RAISED_TRIGGER_PARTY_FELL) {
           Leader_StopMoving();
           WorldMap_Freeze();
           for (value = 0; value < work->fallenCount; value++) {
@@ -279,20 +279,20 @@ s32 FieldSequence_Run(void) {
             goto done;
           }
           WorldMap_ReloadPendingAreaGraphics();
-        } else if (work->raisedTrigger == -0x377) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_TELEPORT) {
           Leader_StopMoving();
           WorldPicture_Show(1);
           if (ARRIVAL.scene != -1)
             ARRIVAL.state = 1;
-        } else if (work->raisedTrigger == -0x378) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_WORLD_PICTURE) {
           Leader_StopMoving();
           value = 0;
           while (WorldPicture_Show(value))
             value ^= 1;
-        } else if (work->raisedTrigger == -0x379) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM) {
           Leader_StopMoving();
           WorldMap_ZoomOutWhileLHeld();
-        } else if (work->raisedTrigger == -0x37b) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_ROPE_ON) {
           if (work->heldKeys == gInput.held) {
             Leader_StepOntoRope();
             work->fieldMenu = 0;
@@ -301,7 +301,7 @@ s32 FieldSequence_Run(void) {
             work->encounter = 0;
             work->psynergy = 0;
           }
-        } else if (work->raisedTrigger == -0x37a) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_ROPE_OFF) {
           if (work->heldKeys == gInput.held) {
             Leader_StepOffRope();
             work->fieldMenu = 0;
@@ -310,7 +310,7 @@ s32 FieldSequence_Run(void) {
             work->encounter = 0;
             work->psynergy = 0;
           }
-        } else if (work->raisedTrigger == -0x37d) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_TIGHTROPE_ON) {
           if (work->heldKeys == gInput.held) {
             Leader_StepOntoTightrope();
             work->fieldMenu = 0;
@@ -319,7 +319,7 @@ s32 FieldSequence_Run(void) {
             work->encounter = 0;
             work->psynergy = 0;
           }
-        } else if (work->raisedTrigger == -0x37c) {
+        } else if (work->raisedTrigger == FIELD_RAISED_TRIGGER_TIGHTROPE_OFF) {
           if (work->heldKeys == gInput.held) {
             Leader_StepOffTightrope();
             work->fieldMenu = 0;
@@ -384,7 +384,7 @@ s32 FieldSequence_Run(void) {
             ((gInput.held & KEY_SELECT) != 0)) {
           DebugFlagEditor_RunFar();
         } else if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER)) {
-          work->raisedTrigger = 250;
+          work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
         } else {
           work->effectTimerRunning = 0;
           FieldMenu_RunFar();
@@ -432,7 +432,7 @@ s32 FieldSequence_Run(void) {
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & KEY_L)) {
           PaletteEditor_Run();
         } else if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER)) {
-          work->raisedTrigger = 250;
+          work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
         } else {
           Event_ResolveAllPendingActions();
           AreaNameWindow_HideFar();

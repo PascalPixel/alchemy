@@ -204,8 +204,8 @@ void Actor_ResetForLeader(s32 table) {
   placements = (struct EventWorkPlacements *)work;
   leader = gMainRoutineWork.currentOwner;
   entry = placements->leader;
-  entry[0] = gData_080f21d4[0];
-  entry[1] = gData_080f21d4[1];
+  entry[0] = gField_DefaultPlacements[0];
+  entry[1] = gField_DefaultPlacements[1];
   for (i = 0; i < 4; i++)
     placements->tables[i] = 0;
   ObjectTable_Clear();

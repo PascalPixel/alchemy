@@ -8,7 +8,7 @@
 
 extern const s32 gFieldEffect_TargetColors[];
 extern const u8 Data_080f1040[];
-extern const u8 gData_080f3614[];
+extern const u8 gMovementType_SquashScript[];
 extern char ResourceId_Runes, ResourceId_Pebbles;
 
 void Field_StartColorTransition(s32 frames, s32 color);
@@ -228,7 +228,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 7:
       if (timer == 0)
-        Actor_StartScriptFar(owner, gData_080f3614);
+        Actor_StartScriptFar(owner, gMovementType_SquashScript);
       if ((timer & 3) == 0)
         Sound_PlayFar(SE_MAP_TRANSITION);
       work->state = 3;

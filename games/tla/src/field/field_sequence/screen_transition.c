@@ -1363,9 +1363,9 @@ void BattlePalette_UpdateBlend(void) {
 #define COLOR_MAX 448
 #define COLOR_HALF 224
 
-#define gColorBuffer_ChannelCurve Data_080f0246
-#define gColorBuffer_ChannelCurveLight Data_080f0286
-#define gColorBuffer_ChannelCurveContrast Data_080f02c6
+#define gFieldEffect_ChannelCurve gFieldEffect_ChannelCurve
+#define gFieldEffect_ChannelCurveLight gFieldEffect_ChannelCurveLight
+#define gFieldEffect_ChannelCurveContrast gFieldEffect_ChannelCurveContrast
 
 void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
@@ -1419,9 +1419,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         green = PaletteFade_ClampComponent(green);
         blue = color - 3;
         blue = PaletteFade_ClampComponent(blue);
-        dst[0] = gColorBuffer_ChannelCurveLight[blue];
-        dst[1] = gColorBuffer_ChannelCurveLight[green];
-        dst[2] = gColorBuffer_ChannelCurveLight[red];
+        dst[0] = gFieldEffect_ChannelCurveLight[blue];
+        dst[1] = gFieldEffect_ChannelCurveLight[green];
+        dst[2] = gFieldEffect_ChannelCurveLight[red];
         dst += 3;
       }
       break;
@@ -1448,9 +1448,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
           green = 28;
         if (blue > 28)
           blue = 28;
-        *dst++ = gColorBuffer_ChannelCurveLight[blue];
-        *dst++ = gColorBuffer_ChannelCurveLight[green];
-        *dst++ = gColorBuffer_ChannelCurveLight[red];
+        *dst++ = gFieldEffect_ChannelCurveLight[blue];
+        *dst++ = gFieldEffect_ChannelCurveLight[green];
+        *dst++ = gFieldEffect_ChannelCurveLight[red];
       }
       break;
     case PALETTE_TINT_WARM: // half R + 10, two thirds G + 8, B - 7 (black
@@ -1470,9 +1470,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
           green = PaletteFade_ClampComponent(green);
           blue = PaletteFade_ClampComponent(blue);
         }
-        *dst++ = gColorBuffer_ChannelCurveContrast[blue];
-        *dst++ = gColorBuffer_ChannelCurveLight[green];
-        *dst++ = gColorBuffer_ChannelCurve[red];
+        *dst++ = gFieldEffect_ChannelCurveContrast[blue];
+        *dst++ = gFieldEffect_ChannelCurveLight[green];
+        *dst++ = gFieldEffect_ChannelCurve[red];
       }
       break;
     case PALETTE_TINT_MUTED: // narrow the range, G and B + 2, past the first
@@ -1500,9 +1500,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
           green = PaletteFade_ClampComponent(green);
           blue = PaletteFade_ClampComponent(blue);
         }
-        *dst++ = gColorBuffer_ChannelCurve[blue];
-        *dst++ = gColorBuffer_ChannelCurve[green];
-        *dst++ = gColorBuffer_ChannelCurve[red];
+        *dst++ = gFieldEffect_ChannelCurve[blue];
+        *dst++ = gFieldEffect_ChannelCurve[green];
+        *dst++ = gFieldEffect_ChannelCurve[red];
       }
       break;
     case PALETTE_TINT_PALE: // half of each, plus the mean
@@ -1520,9 +1520,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = PaletteFade_ClampComponent(red);
         green = PaletteFade_ClampComponent(green);
         blue = PaletteFade_ClampComponent(blue);
-        dst[0] = gColorBuffer_ChannelCurveContrast[blue];
-        dst[1] = gColorBuffer_ChannelCurveContrast[green];
-        dst[2] = gColorBuffer_ChannelCurveContrast[red];
+        dst[0] = gFieldEffect_ChannelCurveContrast[blue];
+        dst[1] = gFieldEffect_ChannelCurveContrast[green];
+        dst[2] = gFieldEffect_ChannelCurveContrast[red];
         dst += 3;
       }
       break;
@@ -1537,9 +1537,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = PaletteFade_ClampComponent(red);
         green -= green / 3;
         blue -= blue / 3;
-        dst[0] = gColorBuffer_ChannelCurve[blue];
-        dst[1] = gColorBuffer_ChannelCurve[green];
-        dst[2] = gColorBuffer_ChannelCurveLight[red];
+        dst[0] = gFieldEffect_ChannelCurve[blue];
+        dst[1] = gFieldEffect_ChannelCurve[green];
+        dst[2] = gFieldEffect_ChannelCurveLight[red];
         dst += 3;
       }
       break;
@@ -1557,9 +1557,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = PaletteFade_ClampComponent(red);
         green = PaletteFade_ClampComponent(green);
         blue = PaletteFade_ClampComponent(blue);
-        dst[0] = gColorBuffer_ChannelCurveContrast[blue];
-        dst[1] = gColorBuffer_ChannelCurveLight[green];
-        dst[2] = gColorBuffer_ChannelCurve[red];
+        dst[0] = gFieldEffect_ChannelCurveContrast[blue];
+        dst[1] = gFieldEffect_ChannelCurveLight[green];
+        dst[2] = gFieldEffect_ChannelCurve[red];
         dst += 3;
       }
       break;
@@ -1577,9 +1577,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = PaletteFade_ClampComponent(red);
         green = PaletteFade_ClampComponent(green);
         blue = PaletteFade_ClampComponent(blue);
-        *dst++ = gColorBuffer_ChannelCurve[blue];
-        *dst++ = gColorBuffer_ChannelCurve[green];
-        *dst++ = gColorBuffer_ChannelCurve[red];
+        *dst++ = gFieldEffect_ChannelCurve[blue];
+        *dst++ = gFieldEffect_ChannelCurve[green];
+        *dst++ = gFieldEffect_ChannelCurve[red];
       }
       break;
     default: // unchanged
@@ -1652,9 +1652,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       clampedRed = PaletteFade_ClampComponent((u32)blendedRed >> 16);
       clampedGreen = PaletteFade_ClampComponent((u32)blendedGreen >> 16);
       clampedBlue = PaletteFade_ClampComponent((u32)blendedBlue >> 16);
-      dst[i * 3 + 0] = gColorBuffer_ChannelCurve[clampedBlue];
-      dst[i * 3 + 1] = gColorBuffer_ChannelCurve[clampedGreen];
-      dst[i * 3 + 2] = gColorBuffer_ChannelCurve[clampedRed];
+      dst[i * 3 + 0] = gFieldEffect_ChannelCurve[clampedBlue];
+      dst[i * 3 + 1] = gFieldEffect_ChannelCurve[clampedGreen];
+      dst[i * 3 + 2] = gFieldEffect_ChannelCurve[clampedRed];
     }
   } else if (mode & PALETTE_TINT_SPLIT) {
     // The colours unchanged, as the default tint writes them.
@@ -2003,7 +2003,7 @@ void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
 /// Finds the battle effect definition of id among the first 243 entries; when
 /// none matches it returns entry 243.
 struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
-  struct BattleFxDefinition *entry = gData_080f0308;
+  struct BattleFxDefinition *entry = gSpeakerDefinitions;
   u32 index = 0;
 
   if (entry->id != id) {

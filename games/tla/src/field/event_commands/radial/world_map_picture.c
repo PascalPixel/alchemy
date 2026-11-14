@@ -974,7 +974,7 @@ done:
   return 0;
 }
 
-extern const struct FlagEntry gData_080f1140[];
+extern const struct FlagEntry gFlagEntries[];
 
 void WorldMap_StartZoom(s32 scale, s32 frames);
 
@@ -998,7 +998,7 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 }
 
 /// Returns the flag entry table, 20-byte entries ended by a zero flag.
-const struct FlagEntry *FlagEntries_GetTable(void) { return gData_080f1140; }
+const struct FlagEntry *FlagEntries_GetTable(void) { return gFlagEntries; }
 #undef BG_VRAM
 #undef SCROLL_X
 #undef SCROLL_Y

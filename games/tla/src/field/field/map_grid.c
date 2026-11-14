@@ -153,7 +153,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       if (effect != NULL) {
         effect->terrainHeight = actor->terrainHeight;
         sprite = effect->sprite;
-        Actor_StartScript(effect, gData_0802ed28);
+        Actor_StartScript(effect, gSand_GrainScript);
         effect->update = Sand_JitterGrain;
         effect->motionFlags = 2;
         if (collision == 0)
@@ -332,7 +332,7 @@ counted:
     if (effect != NULL) {
       effect->terrainHeight = actor->terrainHeight;
       sprite = effect->sprite;
-      Actor_StartScript(effect, gData_0802ece0);
+      Actor_StartScript(effect, gActor_WakeScript);
       effect->priorityFlags = 8;
       // Through a struct member: as a byte offset the store holds back the
       // stack read of collision after it.
@@ -511,7 +511,7 @@ update_object:
     if (ripple != 0) {
       ripple->terrainHeight = object->terrainHeight;
       rippleSprite = ripple->sprite;
-      Actor_StartScript(ripple, gData_0802ece0);
+      Actor_StartScript(ripple, gActor_WakeScript);
       ripple->priorityFlags = 8;
       ((struct Unk0802a124Actor *)ripple)->unk63 = 100;
       ripple->motionFlags = collision;

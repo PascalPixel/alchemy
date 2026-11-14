@@ -83,7 +83,7 @@ void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   u32 index;
   u32 value;
 
-  table = gData_080f0bfc;
+  table = gBattleEffect_PulseScales;
   index = (*vblankCount >> 2) & 1;
   value = index[table];
   ((struct MotionObject *)object)->scaleX = value;
@@ -125,7 +125,6 @@ struct BattleFxScene__motes;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
   ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
@@ -198,5 +197,4 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
 }
 
 #undef Actor_SetChildValueUnlessFifteenFar
-#undef gBattleEffect_PulseScales
 #undef gEffectWork

@@ -826,10 +826,6 @@ retry:
 
 struct ScriptObjectEntry;
 
-s32 MapGrid_CheckCollision__resource_slot(
-    struct Actor *object,
-    struct FieldPosition *position) __asm__("MapGrid_CheckCollision");
-
 /// SC_WANDER_HOME: moves the object to a random spot within its home radius: up
 /// to seven tries at a point a random distance away in a random turn of its
 /// heading, each refused if anything overlaps it or blocks the path or the
@@ -1757,7 +1753,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
     s32 action;
 
     action = 9;
-    if (((struct UnitHp *)Unit_Get(gMainRoutineWork.currentOwner))->hp == 0)
+    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.currentOwner))->hp == 0)
       action = 22;
     Actor_SelectAnimation(object, action);
   } else {

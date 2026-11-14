@@ -271,6 +271,6 @@ extern const s32 Data_080f0f54[4];
 
 extern const u8 Data_080eda0c[];
 
-extern const s8 Data_080f0f64[];
+extern const s8 gFieldPsynergy_NearbyCellOffsets[];
 
 #endif

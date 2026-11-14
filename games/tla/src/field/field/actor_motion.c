@@ -78,7 +78,7 @@ struct MotionObject {
 
 typedef s32 (*MotionCommand)(struct MotionObject *object);
 
-extern const MotionCommand gData_0802f204[];
+extern const MotionCommand gActorScript_CommandTable[];
 extern const s32 gActorScript_CycleTable[];
 
 /// A whole-pixel distance squared.
@@ -135,7 +135,7 @@ void Actor_UpdateAllThumb(void) {
         u32 command = script->word[object->step];
 
         if (command <= 63) {
-          if (gData_0802f204[command](object) == 0)
+          if (gActorScript_CommandTable[command](object) == 0)
             break;
         } else {
           object->step++;

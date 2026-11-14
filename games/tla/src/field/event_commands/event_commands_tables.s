@@ -137,30 +137,32 @@ gScreenTransition_DitherTable:
 	.byte 58, 5, 2, 26, 36, 61, 9, 34, 56, 27, 10, 48, 53, 30, 28, 22
 	.byte 62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21
 @ A copy of The Broken Seal's gColorBuffer_ChannelCurve
-	.global Data_080f0246
-Data_080f0246:
+	.global gFieldEffect_ChannelCurve
+gFieldEffect_ChannelCurve:
 	.2byte 0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f
 	.2byte 0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4
 	.2byte 0x2dc3, 0x31b9, 0x35d7, 0x3a1d, 0x3e8e, 0x432b, 0x47f6, 0x4cee
 	.2byte 0x5217, 0x5772, 0x5d00, 0x62c3, 0x68bc, 0x6eed, 0x7559, 0x7c00
 @ A copy of The Broken Seal's gColorBuffer_ChannelCurveLight
-	.global Data_080f0286
-Data_080f0286:
+	.global gFieldEffect_ChannelCurveLight
+gFieldEffect_ChannelCurveLight:
 	.2byte 0x0000, 0x0265, 0x04df, 0x076e, 0x0a14, 0x0cd1, 0x0fa5, 0x1291
 	.2byte 0x1596, 0x18b4, 0x1bec, 0x1f3f, 0x22ac, 0x2636, 0x29dc, 0x2da0
 	.2byte 0x3182, 0x3583, 0x39a3, 0x3de3, 0x4245, 0x46c9, 0x4b70, 0x503a
 	.2byte 0x5529, 0x5a3d, 0x5f78, 0x64da, 0x6a65, 0x7019, 0x75f7, 0x7c00
 @ A copy of The Broken Seal's gColorBuffer_ChannelCurveContrast
-	.global Data_080f02c6
-Data_080f02c6:
+	.global gFieldEffect_ChannelCurveContrast
+gFieldEffect_ChannelCurveContrast:
 	.2byte 0x0000, 0x0168, 0x02f7, 0x04b1, 0x0699, 0x08b2, 0x0b01, 0x0d8a
 	.2byte 0x1052, 0x135d, 0x16b0, 0x1a52, 0x1e48, 0x2298, 0x274a, 0x2c65
 	.2byte 0x31f0, 0x37f5, 0x3e7c, 0x458e, 0x4d37, 0x5580, 0x5e77, 0x6826
 	.2byte 0x729c, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00
 	.section .rodata.b
-@ A copy of The Broken Seal's gBattleEffect_CyclePatternWords
-	.global Data_080f0890
-Data_080f0890:
+@ The heading the direction pad points, by its four bits (0xffff for none
+@ or opposed keys), where Leader_StepOffRope and Leader_StepOffTightrope
+@ step: the same table as The Broken Seal's gBattleEffect_CyclePatternWords
+	.global gRope_KeyHeadings
+gRope_KeyHeadings:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xffff, 0xffff, 0xc000
 	.2byte 0x4000, 0xffff, 0xffff, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff
 @ A copy of The Broken Seal's gDisplayScroll_WaveSine
@@ -220,8 +222,8 @@ gFieldEffect_GroundParticleFrames:
 @ {x, y} screen offsets of a ground particle, in pixels, indexed by its
 @ remaining frame count; read by Weather_UpdateRain (The Broken Seal's
 @ FieldEffect_UpdateGroundParticles), which has no such table.
-	.global Data_080f0b50
-Data_080f0b50:
+	.global gGroundParticle_Offsets
+gGroundParticle_Offsets:
 	.2byte -32, -16
 	.2byte -48, -23
 	.2byte -64, -34
@@ -276,8 +278,8 @@ gFieldEffect_SparklePictures:
 
 @ The Broken Seal's gBattleEffect_PulseScales without its unread third word:
 @ two scales in 16.16 fixed point that alternate every four frames
-	.global gData_080f0bfc
-gData_080f0bfc:
+	.global gBattleEffect_PulseScales
+gBattleEffect_PulseScales:
 	.4byte 0x10000, 0xf851
 
 @ A rope tile Rope_Initialize and Tightrope_Initialize unpack into VRAM
@@ -288,26 +290,26 @@ gRope_Tiles:
 @ HangingVine_Initialize unpacks four 16x16 sprites, top first, into one VRAM block:
 @ the vine's when its argument is 372, else the chain's, whose middle
 @ sprite it unpacks twice
-	.global Data_080f0c1c
-Data_080f0c1c:
+	.global gHangingVine_VineTopPicture
+gHangingVine_VineTopPicture:
 	.incbin "games/tla/src/field/event_commands/vine_0.8bpp16x16.lz"
-	.global Data_080f0c63
-Data_080f0c63:
+	.global gHangingVine_VineUpperPicture
+gHangingVine_VineUpperPicture:
 	.incbin "games/tla/src/field/event_commands/vine_1.8bpp16x16.lz"
-	.global Data_080f0cb8
-Data_080f0cb8:
+	.global gHangingVine_VineLowerPicture
+gHangingVine_VineLowerPicture:
 	.incbin "games/tla/src/field/event_commands/vine_2.8bpp16x16.lz"
-	.global Data_080f0d07
-Data_080f0d07:
+	.global gHangingVine_VineBottomPicture
+gHangingVine_VineBottomPicture:
 	.incbin "games/tla/src/field/event_commands/vine_3.8bpp16x16.lz"
-	.global Data_080f0d5e
-Data_080f0d5e:
+	.global gHangingVine_ChainTopPicture
+gHangingVine_ChainTopPicture:
 	.incbin "games/tla/src/field/event_commands/chain_0.8bpp16x16.lz"
-	.global Data_080f0dbb
-Data_080f0dbb:
+	.global gHangingVine_ChainMiddlePicture
+gHangingVine_ChainMiddlePicture:
 	.incbin "games/tla/src/field/event_commands/chain_1.8bpp16x16.lz"
-	.global Data_080f0e00
-Data_080f0e00:
+	.global gHangingVine_ChainBottomPicture
+gHangingVine_ChainBottomPicture:
 	.incbin "games/tla/src/field/event_commands/chain_2.8bpp16x16.lz"
 	.balign 4
 
@@ -343,12 +345,12 @@ gFieldEffect_FragmentScript:
 	.4byte 0x26
 
 @ A copy of The Broken Seal's gAnim_ChildPaletteCycle
-	.global gData_080f0e9c
-gData_080f0e9c:
+	.global gAnim_ChildPaletteCycle
+gAnim_ChildPaletteCycle:
 	.byte 1, 2, 3, 4, 3, 2, 1, 0
 @ A copy of The Broken Seal's gBattleEffect_CyclePatternWords
-	.global gBattleEffect_CyclePatternWords
-gBattleEffect_CyclePatternWords:
+	.global gFieldEffect_CyclePatternWords
+gFieldEffect_CyclePatternWords:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xffff, 0xffff, 0xc000
 	.2byte 0x4000, 0xffff, 0xffff, 0x4000, 0xffff, 0x0000, 0x8000, 0xffff
 	.section .rodata.c
@@ -357,8 +359,8 @@ gBattleEffect_CyclePatternWords:
 @ callback FieldPsynergy_UpdateBurst writes OBJ colours 0xe0 to 0xff, computed from the
 @ sine table, each frame; the picture carries the shared OBJ palette and
 @ those colours of the first frame.
-	.global Data_080f3984
-Data_080f3984:
+	.global gBurst_GlowTiles
+gBurst_GlowTiles:
 	.incbin "games/tla/src/field/event_commands/glow_spark.8bpp"
 @ 256 tile index permutations.
 	.global gData_080f39c4

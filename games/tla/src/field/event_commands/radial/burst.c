@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-extern const u8 Data_080f3984[];
+extern const u8 gBurst_GlowTiles[];
 extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
 void Camera_WorldToScreen(s32 *position);
@@ -54,7 +54,7 @@ void FieldPsynergy_Burst(void) {
     canvas->depth -= 4;
 
   sparkEntry = VramCache_FindFreeEntry();
-  sparkTile = VramCache_Load(sparkEntry, 64, Data_080f3984);
+  sparkTile = VramCache_Load(sparkEntry, 64, gBurst_GlowTiles);
   for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
       sprite = work->sparkSprites;
        i < 32;) {

@@ -6,8 +6,8 @@
 /// them. A frightened jelly flees down the lift; the last one calls the others
 /// together into the Aqua Hydra, whose fall floods the hold until Parch dries
 /// it. Douse fills the two pillars that sink on their droplet tiles and open
-/// the way to the engine room, where Piers sets the Black Orb and the ship
-/// sails.
+/// the way to the engine room, where Piers sets the Black Crystal and the
+/// ship sails.
 #include "shared/tables.h"
 #include "field/field_work.h"
 #include "flags.h"
@@ -32,11 +32,12 @@
 #include "version.h"
 #include "macros.h"
 #include "objcmd.h"
+#include "item_ids.h"
 
 #define FLAG_JELLIES_BEATEN 0x930 ///< the first of sixteen, by jelly number
 #define FLAG_AQUA_HYDRA_BEATEN (FLAG_JELLIES_BEATEN + 15)
 #define FLAG_PILLAR_WAY_OPEN 0x982     ///< both pillars sank, the way opened
-#define FLAG_SHIP_ENGINE_RUNNING 0x983 ///< the Black Orb is set
+#define FLAG_SHIP_ENGINE_RUNNING 0x983 ///< the Black Crystal is set
 #define FLAG_HOLD_PARCHED 0x9e4        ///< Parch dried the flooded hold
 #define FLAG_CRATE_DROPPED FLAG_SCENE_TEMP_00
 #define FLAG_JELLY_FLED FLAG_SCENE_TEMP_01 ///< the frightened jelly ran
@@ -114,7 +115,7 @@ extern s16 gLemurianShip_SevenJellyRoomPuddles[];
 extern s16 gLemurianShip_Pillars[];
 
 void LemurianShip_JellyFlees(void);
-void LemurianShip_SetBlackOrb(void);
+void LemurianShip_SetBlackCrystal(void);
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_PlaceBlocks(const void *script);
 extern u32 gLemurianShip_LightToOrb[];
@@ -913,10 +914,10 @@ void LemurianShip_DrawLightToOrb(void) {
   }
 }
 
-/// In the engine room Piers sets the Black Orb in its pedestal and the engine
-/// starts: the monsters are gone and the ship sails out.
+/// In the engine room Piers sets the Black Crystal in its pedestal and the
+/// engine starts: the monsters are gone and the ship sails out.
 /// "How did all these monsters get on board?"
-void LemurianShip_SetBlackOrb(void) {
+void LemurianShip_SetBlackCrystal(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemurianShip01);
@@ -971,7 +972,7 @@ void LemurianShip_SetBlackOrb(void) {
   gFieldWork->transition = 513;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  PartyInventory_Remove(242);
+  PartyInventory_Remove(ITEM_BLACK_CRYSTAL);
   Event_SetFlag(FLAG_SHIP_ENGINE_RUNNING);
   Event_SetFlag(FLAG_JELLIES_BEATEN);
   Event_SetFlag((FLAG_JELLIES_BEATEN + 1));
@@ -1554,7 +1555,7 @@ void LemurianShip_SetUpPillarRoom(void) {
 
 void LemurianShip_SetUpEngineRoom(void) {
   if (Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING) == 0)
-    LemurianShip_SetBlackOrb();
+    LemurianShip_SetBlackCrystal();
 }
 
 #include "text/msg_ids.h"

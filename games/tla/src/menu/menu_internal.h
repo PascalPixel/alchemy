@@ -244,53 +244,79 @@ struct OwnerMenuState {
   u16 skipSlide;
 };
 
-/// The Psynergy menu's work (the menu heap slot) as these functions read it.
-struct PsynergyMenuState {
-  u8 unk000[8];
-  s32 selectedOwner;
-  u8 unk00c[4];
-  struct MenuWindow *rowWindow;
-  struct MenuIcon *sideIcons[2];
-  s8 tabIndex[2];
+/// The Psynergy menu's work (heap slot 220): its windows, icons and cursors,
+/// the party members' tabs and the Psynergy listed for the chosen party
+/// member. The Broken Seal's PsynergyMenuWork, laid out as ItemMenuWork is
+/// here. The menu's shared routines (MenuCursor_Create, MenuCursor_Slide,
+/// Menu_PlacePartyFigures) read their cursor and figures through it, as The
+/// Broken Seal's do.
+struct PsynergyMenuWork {
+  u8 unused[8];                    ///< no view of the menu work names it
+  s32 selectedMember;              ///< the party member chosen
+  struct RenderInput *moneyWindow; ///< ShopWork's; not named here
+  struct RenderInput *auxiliaryWindow;
+  struct WindowSprite *sideIcon[2]; ///< each side's cursor
+  s8 tabIndex[2];  ///< each side's party member, in memberTable
   s8 tabCounts[2]; ///< party members each side chooses from
   u8 unk020[4];
-  s32 psynergyWindow;
-  void *statusWindow;
-  s32 shortcutWindow;
-  void *infoWindow;
-  u8 unk034[4];
-  s32 listWindow;
+  struct RenderInput *psynergyWindow;
+  struct RenderInput *statusWindow;
+  struct RenderInput *shortcutWindow;
+  struct RenderInput *infoWindow;
+  struct RenderInput *equipWindow; ///< ItemMenuWork's; not named here
+  struct RenderInput *listWindow;
   u8 unk03c[0xc];
-  struct MenuIcon *entryGridCursor;
-  struct MenuIcon *entryIcons[32];
+  struct WindowSprite *entryGridCursor;
+  struct WindowSprite *entryIcons[32];
   u8 unk0cc[0x24];
-  s32 messageWindow;
+  struct RenderInput *messageWindow;
   u8 unk0f4[4];
-  void *tabObjects[8];
-  u8 unk118[0x50];
-  u16 paneRow[2];    ///< each pane's Psynergy row chosen
-  u16 paneAction[2]; ///< each pane's Psynergy chosen, as a member action entry
+  void *tabSprites[8];    ///< the party members' figures
+  s16 tabX[8];            ///< screen pixels
+  s16 rowPositions[8];    ///< screen pixels
+  s32 memberScale[8];     ///< 16.16 fixed point, Q16_ONE full size
+  s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
+  u16 sideRow[2];         ///< each side's Psynergy row chosen
+  u16 sideAction[2]; ///< each side's Psynergy chosen, as a party member action
+                     ///< entry
   u8 unk170[8];
-  struct MenuIcon *paneIcon[2];
+  /// The up and down arrows beside the party row (MenuCursor_Create).
+  struct WindowSprite *pageArrows[2];
   u8 unk180[0x44];
-  u16 psynergies[32];
-  u16 ownerIds[8];
-  u8 psynergyCount; ///< the chosen member's Psynergy listed
+  u16 psynergies[32]; ///< the chosen party member's Psynergy listed
+  u16 memberTable[8]; ///< the party in order (Party_ListMembersFar)
+  u8 psynergyCount;
   u8 memberCount;
   /// The user and the target: [1] is MENU_TARGET_WHOLE_PARTY for Psynergy on
   /// the whole party.
   u8 memberIds[2];
-  struct MenuIcon *cursorIcon;
+  struct WindowSprite *cursorIcon;
   /// bits: 0 set after a use or a cancelled target
   u16 flags;
   u16 skipSlide; ///< 1 skips the cursor's next slide once
   u8 unk220[0x3e];
   s16 useResult; ///< the use's result message, after MsgItemUseResult
   u8 unk260[4];
-  s8 selectedIndexByOwner[8];
+  s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
   u8 unk26d[3];
 };
+
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, auxiliaryWindow) == 0x010);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyWindow) == 0x024);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, entryGridCursor) == 0x048);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, messageWindow) == 0x0f0);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabSprites) == 0x0f8);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 0x138);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction) == 0x16c);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, pageArrows) == 0x178);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 0x1c4);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 0x216);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 0x21e);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, useResult) == 0x25e);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) ==
+              0x264);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 0x26c);
 
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.

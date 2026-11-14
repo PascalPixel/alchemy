@@ -519,7 +519,8 @@ extern char ResourceId_ShopDownArrowTiles;
 /// edge when a VRAM entry is free. Returns the window.
 // The twin of The Broken Seal's routine, which has no divider or
 // arrows.
-struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
+struct RenderInput *MenuCursor_Create(void *source) {
+  struct PsynergyMenuWork *work = source;
   struct RenderInput *window;
   struct WindowSprite *icon;
   s32 zero = 0;
@@ -544,21 +545,21 @@ struct RenderInput *MenuCursor_Create(struct OwnerMenuState *work) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
     icon->active = ICON_HIDDEN;
-    work->arrows[0] = icon;
+    work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
     icon->active = ICON_HIDDEN;
-    work->arrows[1] = icon;
+    work->pageArrows[1] = icon;
   }
   return window;
 }
 
 void Menu_PlacePartyFigures(void) {
-  struct OwnerMenuState *menu =
-      (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu =
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 i;
@@ -566,13 +567,13 @@ void Menu_PlacePartyFigures(void) {
 
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
-    struct AnimationObject *figure = menu->tabObjects[i];
+    struct AnimationObject *figure = menu->tabSprites[i];
     s32 placeY = 0x00728000 - (menu->rowPositions[i] << 15);
 
     if (figure != 0) {
       figure->image.priority = 0;
-      scale.x = menu->ownerScale[i];
-      scale.y = menu->ownerScale[i];
+      scale.x = menu->memberScale[i];
+      scale.y = menu->memberScale[i];
       position.x = menu->tabX[i] << 16;
       position.height = placeY;
       position.y = (menu->rowPositions[i] << 16) + placeY;
@@ -591,8 +592,8 @@ extern u8 gMenuCursor_BobY[];
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's window,
 /// bobbing; the twin of The Broken Seal's routine.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
-  struct OwnerMenuState *work =
-      (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *work =
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor = work->sideIcon[0];
 
   cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
@@ -603,8 +604,8 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
 
 /// The twin of The Broken Seal's MenuCursor_Slide.
 void MenuCursor_Slide(s32 x, s32 y) {
-  struct OwnerMenuState *work =
-      (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *work =
+      (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
   struct WindowSprite *cursor;
   s32 steps;
   s32 startX;

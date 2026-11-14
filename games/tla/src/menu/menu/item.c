@@ -775,8 +775,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuRuntime;
   s32 ownerIndex;
 
-  Menu_PlaceOwnerEntryObjects(MenuCursor_Create((struct OwnerMenuState *)menu),
-                              2, 2);
+  Menu_PlaceOwnerEntryObjects(MenuCursor_Create(menu), 2, 2);
   for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--)
     menu->memberY[ownerIndex] = 26;
 

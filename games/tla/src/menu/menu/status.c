@@ -1411,7 +1411,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 /// Psynergy" when empty, then the owner's name, class and level.
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
                               const struct MenuResult *res) {
-  struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
   u8 *owner;
   u32 first;
   u32 rows;
@@ -1506,7 +1506,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 #endif
 
 s32 PsynergyMenu_SelectAction(void) {
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   s32 result;
   s32 window;
   s32 refresh;
@@ -1574,17 +1574,18 @@ s32 PsynergyMenu_SelectAction(void) {
     if ((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       ownerIndex = menu->tabIndex[0];
-      menu->selectedIndexByOwner[menu->ownerIds[ownerIndex]] =
+      menu->selectedIndexByMember[menu->memberTable[ownerIndex]] =
           state.selectedIndex;
       if (gInput.repeat & KEY_R)
         ownerIndex++;
       else
         ownerIndex--;
       ownerIndex = (ownerIndex + menu->memberCount) % menu->memberCount;
-      menu->selectedOwner = menu->ownerIds[ownerIndex];
-      menu->memberIds[0] = menu->ownerIds[ownerIndex];
+      menu->selectedMember = menu->memberTable[ownerIndex];
+      menu->memberIds[0] = menu->memberTable[ownerIndex];
       menu->tabIndex[0] = ownerIndex;
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
+      PsynergyMenu_CallIconRoutineWithValue(menu,
+                                            menu->memberTable[ownerIndex]);
       refresh = 2;
     }
   }

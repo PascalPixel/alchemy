@@ -82,11 +82,6 @@ s32 PsynergyMenu_Run(void) {
   return result;
 }
 
-STATIC_ASSERT(offsetof(struct PsynergyMenuState, paneAction) == 0x16c);
-STATIC_ASSERT(offsetof(struct PsynergyMenuState, memberIds) == 0x216);
-STATIC_ASSERT(offsetof(struct PsynergyMenuState, useResult) == 0x25e);
-STATIC_ASSERT(offsetof(struct PsynergyMenuState, mode) == 0x26c);
-
 s32 BattleEffect_HasMatchingEvent5Far(s32 type);
 
 #define MENU_TARGET_WHOLE_PARTY 9 ///< memberIds[1] for the whole party
@@ -108,7 +103,7 @@ enum PsynergyShortcut {
   PSYNERGY_SHORTCUT_R,
 };
 
-/// What the Psynergy menu is open for (PsynergyMenuState's mode).
+/// What the Psynergy menu is open for (PsynergyMenuWork.mode).
 enum PsynergyMenuMode {
   PSYNERGY_MODE_USE,
   PSYNERGY_MODE_SET_L,
@@ -132,7 +127,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex);
 /// when the player backs out or presses Start; otherwise the result of the
 /// last use.
 s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   s32 useResult;
   s32 step;
   s32 done;
@@ -154,7 +149,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       s32 cancelled;
       s32 chosen;
 
-      menu->paneRow[0] = 0;
+      menu->sideRow[0] = 0;
       ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
@@ -179,7 +174,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       step = PSYNERGY_STEP_MEMBER;
       if (menu->psynergyCount != 0) {
         {
-          struct PsynergyMenuState *savedWork = menu;
+          struct PsynergyMenuWork *savedWork = menu;
 
           /* FAKEMATCH(dead): menu cleared and restored under a false test. */
           if (done)
@@ -251,14 +246,14 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       done = 1;
       useResult = 1;
       *outMember = menu->memberIds[0];
-      *outAction = menu->paneAction[0] & PSYNERGY_ABILITY_MASK;
+      *outAction = menu->sideAction[0] & PSYNERGY_ABILITY_MASK;
       break;
 
     // Use it: pay its PP, show the result and go back to the list, or to the
     // target when it failed on one member.
     case PSYNERGY_STEP_APPLY:
       chosenTarget = 0;
-      actionEntry = menu->paneAction[0];
+      actionEntry = menu->sideAction[0];
       useResult = Ability_ApplyToTargets(actionEntry, menu->memberIds[0],
                                          menu->memberIds[1], 0);
       if (menu->memberIds[1] == MENU_TARGET_WHOLE_PARTY) {
@@ -266,7 +261,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         chosenTarget = MENU_TARGET_WHOLE_PARTY;
       }
       if (useResult != -1) {
-        u32 entry = menu->paneAction[0];
+        u32 entry = menu->sideAction[0];
         u32 mask;
 
         mask = PSYNERGY_ABILITY_MASK;
@@ -283,7 +278,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         window = menu->statusWindow;
         StatusPanel_Draw(window, target, 0, 0);
         {
-          u32 entry = menu->paneAction[0];
+          u32 entry = menu->sideAction[0];
           u32 mask;
 
           mask = PSYNERGY_ABILITY_MASK;
@@ -333,7 +328,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 /// 0xff), 1 on one chosen party member when its target mode is 2, and 0
 /// otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   struct BattleAct *psynergy;
   s32 diff;
   s32 ret;
@@ -341,7 +336,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   register u32 action asm("r3");
 
   menu = Ram_HeapSlots->menuRuntime;
-  action = menu->paneAction[0];
+  action = menu->sideAction[0];
   psynergy = Ability_Get(0x3fff & action);
   if (BattleEffect_HasMatchingEvent5Far(psynergy->fieldEffect) != 0)
     return 0;
@@ -365,7 +360,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
 /// there last (the first when none was) and runs PsynergyMenu_SelectMember on
 /// them. Returns its result.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 memberIndex = menu->tabIndex[partySlot];
   struct MenuIcon *icon;
   struct BattleUnit *unit;
@@ -373,7 +368,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   s32 result;
 
   result = 0;
-  icon = menu->sideIcons[partySlot];
+  icon = menu->sideIcon[partySlot];
   icon->active = ICON_SHOWN;
   icon->animStep = result;
   menu->cursorIcon->active = ICON_HIDDEN;
@@ -386,11 +381,11 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
     MenuCursor_Slide(memberIndex * 24 - 10, 16);
   }
 
-  unit = Unit_Get(menu->ownerIds[memberIndex]);
+  unit = Unit_Get(menu->memberTable[memberIndex]);
   actions = menu->psynergies;
   menu->psynergyCount = PsynergyMenu_CollectActions(unit, actions, 2);
-  result = PsynergyMenu_SelectMember(menu->ownerIds, actions);
-  icon = menu->sideIcons[partySlot];
+  result = PsynergyMenu_SelectMember(menu->memberTable, actions);
+  icon = menu->sideIcon[partySlot];
   Icon_PrepareActor(icon);
   wait(1);
   return result;
@@ -404,7 +399,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId);
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
 
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   s32 selection;
   s32 count;
   s32 redraw;
@@ -443,7 +438,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->rowWindow, selection, count);
+      Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
       if (!GameFlag_Get(0x151) && !shown) {
         WindowSprite_ClearListFar(menu->infoWindow);
 #if TLA_PATCH_1
@@ -492,10 +487,10 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
     redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
   menu->tabIndex[0] = selection;
-  menu->selectedOwner = ownerIds[selection];
+  menu->selectedMember = ownerIds[selection];
   menu->memberIds[0] = ownerIds[selection];
-  menu->paneIcon[0]->active = ICON_HIDDEN;
-  menu->paneIcon[1]->active = ICON_HIDDEN;
+  menu->pageArrows[0]->active = ICON_HIDDEN;
+  menu->pageArrows[1]->active = ICON_HIDDEN;
   return result;
 }
 
@@ -507,7 +502,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 /// empty.
 void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   u16 *psynergies;
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   void *owner;
 
   menu = Ram_HeapSlots->menuRuntime;
@@ -524,7 +519,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
 }
 
 s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   s32 selection;
   s32 count;
   s32 redraw;
@@ -538,23 +533,25 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   count = menu->memberCount;
   result = 0;
   shown = 0;
-  Unit_Get(menu->ownerIds[menu->tabIndex[0]]);
+  Unit_Get(menu->memberTable[menu->tabIndex[0]]);
   redraw = 2;
   MenuCursor_Slide(selection * 24 - 10, 16);
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
-      Unit_Get(menu->ownerIds[selection]);
-      icon = menu->sideIcons[1];
+      Unit_Get(menu->memberTable[selection]);
+      icon = menu->sideIcon[1];
       column = (selection % 4) * 3;
-      icon->oam.x = icon->x = (menu->rowWindow->x + column) * 8 - 2;
+      icon->oam.x = icon->x = (menu->auxiliaryWindow->x + column) * 8 - 2;
       if (browseOnly == 0) {
-        StatusPanel_Draw(menu->statusWindow, menu->ownerIds[selection], 0, 0);
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[selection]);
+        StatusPanel_Draw(menu->statusWindow, menu->memberTable[selection], 0,
+                         0);
+        PsynergyMenu_CallIconRoutineWithValue(menu,
+                                              menu->memberTable[selection]);
         if (redraw == 2) {
           Menu_CreateOwnerEntryObjects(selection / 4 * 4);
           wait(1);
         }
-        Menu_HighlightPageEntry(menu->rowWindow, selection, count);
+        Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
         if (!GameFlag_Get(0x151) && !shown) {
           // The Japanese release clears the info window; from patch 1 it
           // redraws the window's saved rectangle.
@@ -565,11 +562,11 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
 #endif
           // Japanese draws the description as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
-          Text_DrawMessageFar((menu->paneAction[0] & 0x3fff) +
+          Text_DrawMessageFar((menu->sideAction[0] & 0x3fff) +
                                   MsgAbilityDescription,
                               menu->infoWindow, 0, 0);
 #else
-          Text_DrawMessageAsTilesFar((menu->paneAction[0] & 0x3fff) +
+          Text_DrawMessageAsTilesFar((menu->sideAction[0] & 0x3fff) +
                                          MsgAbilityDescription,
                                      menu->infoWindow, 0, 0);
 #endif
@@ -583,7 +580,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
     wait(1);
     if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
-      result = menu->ownerIds[selection];
+      result = menu->memberTable[selection];
       break;
     }
     if (gInput.pressed & KEY_B) {
@@ -593,19 +590,19 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
     }
     redraw = Menu_MoveGridCursor(&selection, count, 4);
   }
-  icon = menu->sideIcons[1];
+  icon = menu->sideIcon[1];
   Icon_PrepareActor(icon);
   icon->active = ICON_HIDDEN;
   wait(1);
   menu->tabIndex[1] = selection;
-  menu->selectedOwner = menu->ownerIds[selection];
-  menu->memberIds[1] = menu->ownerIds[selection];
+  menu->selectedMember = menu->memberTable[selection];
+  menu->memberIds[1] = menu->memberTable[selection];
   selection = menu->tabIndex[0];
   count = menu->tabCounts[0];
   Menu_CreateOwnerEntryObjects(selection / 4 * 4);
-  Menu_HighlightPageEntry(menu->rowWindow, selection, count);
-  menu->paneIcon[0]->active = ICON_HIDDEN;
-  menu->paneIcon[1]->active = ICON_HIDDEN;
+  Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
+  menu->pageArrows[0]->active = ICON_HIDDEN;
+  menu->pageArrows[1]->active = ICON_HIDDEN;
   return result;
 }
 
@@ -854,7 +851,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
 /// Split the selected slot owner's Psynergy into pages of five rows.
 s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   s32 ownerState;
-  struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 entryCount;
   s32 row;
   s32 page;
@@ -865,7 +862,7 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   ownerState = Unit_Get(menu->memberIds[index]);
   entryCount = menu->psynergyCount;
   owner = menu->memberIds[index];
-  selectedIndex = menu->selectedIndexByOwner[owner];
+  selectedIndex = menu->selectedIndexByMember[owner];
   if ((selectedIndex + 1) > entryCount) {
     selectedIndex = entryCount - 1;
   }
@@ -892,7 +889,7 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
 /// highlights its row of the five. window and work are not used.
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
                                 struct MenuResult *state) {
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   s32 combined;
   s32 row;
 
@@ -974,7 +971,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   s32 cursor;
   struct BattleUnit *owner;
   struct BattleAct *ability;
-  struct PsynergyMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
 
   (void)unused;
 
@@ -1052,7 +1049,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 /// twin of The Broken Seal's PsynergyMenu_RunList
 /// (games/tbs/src/menu/menu/psynergy.c).
 s32 PsynergyMenu_RunList(s32 paneIndex) {
-  struct PsynergyMenuState *menu;
+  struct PsynergyMenuWork *menu;
   struct BattleAct *ability;
   struct MenuIcon *icon;
   s32 window;
@@ -1075,7 +1072,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   result = 0;
   previous = 0;
   shortcutHelp = 0;
-  menu->sideIcons[paneIndex]->active = ICON_HIDDEN;
+  menu->sideIcon[paneIndex]->active = ICON_HIDDEN;
   Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
@@ -1092,7 +1089,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     PsynergyMenu_BuildPagedList(&state, paneIndex);
     changed = 1;
     redraw = 1;
-    menu->sideIcons[paneIndex]->active = ICON_SHOWN;
+    menu->sideIcon[paneIndex]->active = ICON_SHOWN;
 
     while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
       MenuCursor_Position(CURSOR_X, state.row * 16 + 36);
@@ -1109,7 +1106,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           PsynergyMenu_DrawActionPage(window, 0, &state);
         }
         PsynergyMenu_DrawDetailPage(window, work, &state);
-        menu->paneAction[paneIndex] = menu->psynergies[state.selectedIndex];
+        menu->sideAction[paneIndex] = menu->psynergies[state.selectedIndex];
         menu->cursorIcon->active = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
@@ -1118,7 +1115,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->memberCount; i++)
-          Animation_ApplyChildArgumentFar(menu->tabObjects[i], 1);
+          Animation_ApplyChildArgumentFar(menu->tabSprites[i], 1);
       }
 
       wait(1);
@@ -1200,7 +1197,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         ownerCount = menu->memberCount;
         listMode = menu->mode != 0 ? 1 : 2;
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        menu->selectedIndexByOwner[menu->memberIds[paneIndex]] =
+        menu->selectedIndexByMember[menu->memberIds[paneIndex]] =
             state.selectedIndex;
         do {
           if (gInput.repeat & KEY_R)
@@ -1208,19 +1205,19 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           else
             member--;
           member = (member + ownerCount) % ownerCount;
-          menu->selectedOwner = menu->ownerIds[member];
-          menu->memberIds[0] = menu->ownerIds[member];
+          menu->selectedMember = menu->memberTable[member];
+          menu->memberIds[0] = menu->memberTable[member];
           menu->psynergyCount = PsynergyMenu_CollectActions(
               Unit_Get(menu->memberIds[0]), menu->psynergies, listMode);
         } while (menu->psynergyCount == 0);
         menu->tabIndex[paneIndex] = member;
         Menu_CreateOwnerEntryObjects(member / 4 * 4);
-        Menu_HighlightPageEntry(menu->rowWindow, member, ownerCount);
-        menu->paneIcon[0]->active = ICON_HIDDEN;
-        menu->paneIcon[1]->active = ICON_HIDDEN;
+        Menu_HighlightPageEntry(menu->auxiliaryWindow, member, ownerCount);
+        menu->pageArrows[0]->active = ICON_HIDDEN;
+        menu->pageArrows[1]->active = ICON_HIDDEN;
         wait(1);
-        StatusPanel_Draw(menu->statusWindow, menu->ownerIds[member], 0, 0);
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[member]);
+        StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0, 0);
+        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberTable[member]);
         break;
       }
 
@@ -1260,9 +1257,9 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 
   menu->flags &= ~2;
   Icon_PrepareActor(menu->entryGridCursor);
-  menu->paneRow[paneIndex] = state.selectedIndex;
-  menu->selectedIndexByOwner[menu->memberIds[paneIndex]] = state.selectedIndex;
-  menu->paneAction[paneIndex] = result;
+  menu->sideRow[paneIndex] = state.selectedIndex;
+  menu->selectedIndexByMember[menu->memberIds[paneIndex]] = state.selectedIndex;
+  menu->sideAction[paneIndex] = result;
   if (GameFlag_Get(FLAG_MENU_START_PRESSED) != 0)
     result = -1;
   wait(1);

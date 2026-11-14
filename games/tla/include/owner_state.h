@@ -89,6 +89,27 @@ enum ClassSeries {
   CLASS_SERIES_DARK_MAGE        ///< with the Tomegathericon equipped
 };
 
+/// The curse bits of BattleUnit.restraint, as The Broken Seal's CurseFlag.
+enum CurseFlag {
+  CURSE_BOUND = 0x01,      ///< the unit is bound
+  CURSE_ITEM = 0x02,       ///< a cursed item is equipped
+  CURSE_KEEP_BOUND = 0x04, ///< keeps CURSE_BOUND through Unit_Calculate
+  /// EQUIP_EFFECT_CURSE_REMOVABLE: Unit_Calculate clears it again with
+  /// CURSE_BOUND.
+  CURSE_REMOVABLE = 0x08
+};
+
+// The caps on a unit's level and stats (Unit_Calculate).
+#define UNIT_LEVEL_MAX 99
+#define UNIT_ENEMY_HP_MAX 16383    ///< maximum HP, an enemy's
+#define UNIT_HP_MAX 9999           ///< maximum PP, an enemy's
+#define UNIT_CHARACTER_HP_MAX 1999 ///< maximum HP and PP, a character's
+#define UNIT_STAT_MAX 999          ///< Attack, Defense and Agility
+#define UNIT_LUCK_MAX 99
+#define UNIT_ELEMENT_MAX 200 ///< elemental power and resistance
+#define UNIT_HP_REGEN_MAX 10000
+#define UNIT_PP_REGEN_MAX 200
+
 /// A full HP or PP gauge (BattleUnit.hpGauge, ppGauge): the gauge is the
 /// current value over the maximum in 2.14 fixed point.
 #define UNIT_GAUGE_SHIFT 14

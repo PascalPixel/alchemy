@@ -4,6 +4,7 @@
 
 #include "../game_internal.h"
 #include "flags.h"
+#include "macros.h"
 #include "flag_call.h"
 #include "gamepak/far_call/field_sequence.h"
 #include "module/game/game.h"
@@ -14,61 +15,6 @@
 extern u16 gData_02003860;
 
 extern s16 gSaveSlot;
-
-struct OwnerStats {
-  u8 unk000[0x10];
-  s16 baseHp;
-  s16 basePp;
-  s16 hpRatio;
-  s16 ppRatio;
-  u16 baseAttack;
-  u16 baseDefense;
-  u16 baseAgility;
-  u8 baseLuck;
-  u8 baseTurns;
-  u8 base20;
-  u8 base21;
-  u8 unk022[2];
-  s16 baseElement[4][2];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  s16 atk;
-  s16 def;
-  s16 agi;
-  u8 luck;
-  u8 turns;
-  u8 stat44;
-  u8 stat45;
-  u8 unk046[2];
-  s16 element[4][2];
-  u8 unk058[0x80];
-  u16 equipment[15];
-  u8 unk0f6[0x12];
-  u32 djinn[4];
-  u8 unk118[0x10];
-  u8 character;
-  u8 classId;
-  u8 unk12a[2];
-  s8 elementLevel[4];
-  s8 curse;
-  u8 unk131[2];
-  s8 attackLevel;
-  u8 unk134;
-  s8 defenseLevel;
-  u8 unk136;
-  s8 resistLevel;
-  u8 unk138[3];
-  u8 unk13b[7];
-  u8 bonus142;
-  u8 bonus143;
-  u8 extraTurn;
-  u8 unk145[2];
-  s8 agilityLevel;
-  u8 unk148[2];
-  u16 id;
-};
 
 /// Starts a new game: sets up a new game's state
 /// (MainRoutineWork_InitializeDefaults) and runs the main routine afresh from
@@ -141,341 +87,327 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
   }
 }
 
-#define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
+/// The distance between `a` and `b`, |a - b|.
+#define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-void Unit_Calculate(s32 owner) {
-  struct StatWork *work;
-  struct OwnerStats *st;
-  s32 i, j, el;
+/// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
+#define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
+
+/// Works out a unit's stats from its base stats, equipment, set Djinn, class
+/// and battle stat levels; its HP and PP keep their share of a new maximum.
+void Unit_Calculate(s32 unitId) {
+  struct StatWork *stats;
+  struct BattleUnit *unit;
+  s32 index, effectIndex, elementIndex;
   s32 value;
-  s32 flag;
-  s32 kind;
-  s32 amount;
-  s32 hpCap;
-  s32 ppCap;
-  s16 old;
+  s32 lighthouse;
+  s32 effectKind;
+  s32 effectAmount;
+  s32 hpLimit;
+  s32 ppLimit;
+  s16 previousMaximum;
 
-  work = Heap_AllocEwram(sizeof(struct StatWork));
-  st = Unit_Get(owner);
-  work->hp = st->baseHp;
-  work->pp = st->basePp;
-  work->atk = st->baseAttack;
-  work->def = st->baseDefense;
-  work->agi = st->baseAgility;
-  work->luck = st->baseLuck;
-  work->turns = st->baseTurns & 15;
-  work->stat20 = st->base20;
-  work->stat24 = st->base21;
+  // Start with the unit's base stats and elemental power/resistance.
+  stats = Heap_AllocEwram(sizeof(struct StatWork));
+  unit = Unit_Get(unitId);
+  stats->hp = unit->baseHp;
+  stats->pp = unit->basePp;
+  stats->atk = unit->baseAttack;
+  stats->def = unit->baseDefense;
+  stats->agi = unit->baseAgility;
+  stats->luck = unit->baseLuck;
+  stats->actionCount = unit->baseActionCount & 15;
+  stats->hpRegen = unit->baseHpRegen;
+  stats->ppRegen = unit->basePpRegen;
   {
-    s16 *src = st->baseElement[0];
-    s32 *dst = work->element[0];
-    for (i = 0; i < 4; i++) {
-      dst[0] = src[0];
-      dst[1] = src[1];
-      src += 2;
-      dst += 2;
+    s16 *base = &unit->baseElement[0].power;
+    s32 *total = &stats->element[0].power;
+
+    for (index = 0; index < ELEMENT_COUNT; index++) {
+      total[0] = base[0];
+      total[1] = base[1];
+      base += 2;
+      total += 2;
     }
   }
 
-  if (STAT_DIFF(st->maxHp * st->hpRatio / 0x4000, st->hp) > 1 ||
-      STAT_DIFF(st->maxPp * st->ppRatio / 0x4000, st->pp) > 1) {
-    st->hpRatio = 0x4000;
-    st->ppRatio = 0x4000;
-    st->hp = st->maxHp;
-    st->pp = st->maxPp;
+  // HP and PP keep their share of the maximum; gauges that no longer match are
+  // reset to full first.
+  if (UNIT_STAT_DIFF(unit->maxHp * unit->hpGauge / UNIT_GAUGE_FULL, unit->hp) >
+          1 ||
+      UNIT_STAT_DIFF(unit->maxPp * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) >
+          1) {
+    unit->hpGauge = UNIT_GAUGE_FULL;
+    unit->ppGauge = UNIT_GAUGE_FULL;
+    unit->hp = unit->maxHp;
+    unit->pp = unit->maxPp;
   }
 
-  st->curse &= ~3;
-  if (st->curse & 4)
-    st->curse |= 1;
-  if (st->extraTurn)
-    work->turns++;
-  st->bonus142 = 0;
+  // CURSE_KEEP_BOUND keeps CURSE_BOUND, and CURSE_REMOVABLE clears both again
+  // below.
+  unit->restraint &= ~(CURSE_BOUND | CURSE_ITEM);
+  if (unit->restraint & CURSE_KEEP_BOUND)
+    unit->restraint |= CURSE_BOUND;
+  if (unit->ready)
+    stats->actionCount++;
+  unit->equipBonus[0] = 0;
 
-  if (st->classId) {
-    for (i = 0; i < 15; i++) {
-      if (!(st->equipment[i] & 0x200))
+  // Apply additive equipment and set-Djinn bonuses before class scaling.
+  // An enemy (CLASS_NONE) skips equipment, Djinn and class entirely.
+  if (unit->classIndex != CLASS_NONE) {
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
-      work->item = Item_GetDirect(st->equipment[i]);
-      if (work->item->flags & 1)
-        st->curse |= 3;
-      work->atk += work->item->primaryBonus;
-      /* FAKEMATCH(barrier): an empty asm after `work->atk +=
-       * work->item->primaryBonus. */
+      stats->item = Item_GetDirect(unit->inventory[index]);
+      if (stats->item->flags & ITEM_CURSED)
+        unit->restraint |= CURSE_BOUND | CURSE_ITEM;
+      stats->atk += stats->item->primaryBonus;
+      /* FAKEMATCH(barrier): an empty asm after the Attack bonus. */
       asm("");
-      work->def += work->item->secondaryBonus;
-      for (j = 0; j < 4; j++) {
-        kind = work->item->effects[j].kind;
-        amount = work->item->effects[j].amount;
-        work->kind = kind;
-        work->amount = amount;
-        switch (work->kind) {
-        case 0:
+      stats->def += stats->item->secondaryBonus;
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
+        effectKind = stats->item->effects[effectIndex].kind;
+        effectAmount = stats->item->effects[effectIndex].amount;
+        stats->kind = effectKind;
+        stats->amount = effectAmount;
+        switch (stats->kind) {
+        case EQUIP_EFFECT_NONE:
           break;
-        case 1:
-          work->hp += work->amount;
+        case EQUIP_EFFECT_ADD_HP:
+          stats->hp += stats->amount;
           break;
-        case 2:
-          work->stat20 += work->amount;
+        case EQUIP_EFFECT_ADD_HP_REGEN:
+          stats->hpRegen += stats->amount;
           break;
-        case 3:
-          work->pp += work->amount;
+        case EQUIP_EFFECT_ADD_PP:
+          stats->pp += stats->amount;
           break;
-        case 4:
-          work->stat24 += work->amount;
+        case EQUIP_EFFECT_ADD_PP_REGEN:
+          stats->ppRegen += stats->amount;
           break;
-        case 5:
-          work->agi += work->amount;
+        case EQUIP_EFFECT_ADD_AGILITY:
+          stats->agi += stats->amount;
           break;
-        case 6:
-          work->luck += work->amount;
+        case EQUIP_EFFECT_ADD_LUCK:
+          stats->luck += stats->amount;
           break;
-        case 15:
-          work->element[0][0] += work->amount;
+        case EQUIP_EFFECT_ADD_VENUS_POWER:
+          stats->element[ELEMENT_VENUS].power += stats->amount;
           break;
-        case 16:
-          work->element[1][0] += work->amount;
+        case EQUIP_EFFECT_ADD_MERCURY_POWER:
+          stats->element[ELEMENT_MERCURY].power += stats->amount;
           break;
-        case 17:
-          work->element[2][0] += work->amount;
+        case EQUIP_EFFECT_ADD_MARS_POWER:
+          stats->element[ELEMENT_MARS].power += stats->amount;
           break;
-        case 18:
-          work->element[3][0] += work->amount;
+        case EQUIP_EFFECT_ADD_JUPITER_POWER:
+          stats->element[ELEMENT_JUPITER].power += stats->amount;
           break;
-        case 19:
-          work->element[0][1] += work->amount;
+        case EQUIP_EFFECT_ADD_VENUS_RESIST:
+          stats->element[ELEMENT_VENUS].resistance += stats->amount;
           break;
-        case 20:
-          work->element[1][1] += work->amount;
+        case EQUIP_EFFECT_ADD_MERCURY_RESIST:
+          stats->element[ELEMENT_MERCURY].resistance += stats->amount;
           break;
-        case 21:
-          work->element[2][1] += work->amount;
+        case EQUIP_EFFECT_ADD_MARS_RESIST:
+          stats->element[ELEMENT_MARS].resistance += stats->amount;
           break;
-        case 22:
-          work->element[3][1] += work->amount;
+        case EQUIP_EFFECT_ADD_JUPITER_RESIST:
+          stats->element[ELEMENT_JUPITER].resistance += stats->amount;
           break;
-        case 23:
-          st->bonus142 += work->amount;
+        case EQUIP_EFFECT_ADD_UNLEASH_CHANCE:
+          unit->equipBonus[0] += stats->amount;
           break;
-        case 25:
-          st->curse |= 8;
+        case EQUIP_EFFECT_CURSE_REMOVABLE:
+          unit->restraint |= CURSE_REMOVABLE;
           break;
-        case 26:
-          work->turns += work->amount;
+        case EQUIP_EFFECT_ADD_ACTIONS:
+          stats->actionCount += stats->amount;
           break;
         }
       }
     }
-    if (st->curse & 8)
-      st->curse &= ~9;
+    if (unit->restraint & CURSE_REMOVABLE)
+      unit->restraint &= ~(CURSE_REMOVABLE | CURSE_BOUND);
 
-    for (el = 0; el < 4; el++) {
-      u32 bits = st->djinn[el];
+    // Only set Djinn contribute their stat bonuses.
+    for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
+      u32 setDjinn = unit->djinnActive[elementIndex];
 
-      for (i = 0; i < 20; i++) {
-        if (bits & (1 << i)) {
+      for (index = 0; index < DJINN_PER_ELEMENT; index++) {
+        if (setDjinn & (1 << index)) {
           const struct DjinnDefinition *djinn =
-              (const struct DjinnDefinition *)Djinn_GetDefinition(el, i);
+              (const struct DjinnDefinition *)Djinn_GetDefinition(elementIndex,
+                                                                  index);
 
-          work->hp += djinn->hp;
-          work->pp += djinn->pp;
-          work->atk += djinn->atk;
-          work->def += djinn->def;
-          work->agi += djinn->agi;
-          work->luck += djinn->luck;
+          stats->hp += djinn->hp;
+          stats->pp += djinn->pp;
+          stats->atk += djinn->atk;
+          stats->def += djinn->def;
+          stats->agi += djinn->agi;
+          stats->luck += djinn->luck;
         }
       }
     }
 
+    // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat).
     {
-      struct ClassRecord *class =
-          (struct ClassRecord *)Class_GetDefinition(st->classId);
+      /* FAKEMATCH(signature): the class read through ClassScaleView, which has
+       * no word member, so the multipliers load ahead of the stores. */
+      struct ClassScaleView *scale =
+          (struct ClassScaleView *)Class_GetDefinition(unit->classIndex);
 
-      work->hp = work->hp * class->hp / 10;
-      work->pp = work->pp * class->pp / 10;
-      work->atk = work->atk * class->atk / 10;
-      work->def = work->def * class->def / 10;
-      work->agi = work->agi * class->agi / 10;
-      work->luck = work->luck * class->luck / 10;
+      stats->hp = stats->hp * scale->hp / STAT_SCALE_ONE;
+      stats->pp = stats->pp * scale->pp / STAT_SCALE_ONE;
+      stats->atk = stats->atk * scale->atk / STAT_SCALE_ONE;
+      stats->def = stats->def * scale->def / STAT_SCALE_ONE;
+      stats->agi = stats->agi * scale->agi / STAT_SCALE_ONE;
+      stats->luck = stats->luck * scale->luck / STAT_SCALE_ONE;
     }
 
-    for (i = 0; i < 15; i++) {
-      if (!(st->equipment[i] & 0x200))
+    // Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
+    // EQUIP_EFFECT_SCALE_LUCK, also in tenths, applied after the class.
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
-      work->item = Item_GetDirect(st->equipment[i]);
-      for (j = 0; j < 4; j++) {
-        kind = work->item->effects[j].kind;
-        amount = work->item->effects[j].amount;
-        work->kind = kind;
-        kind -= 7;
-        work->amount = amount;
-        switch (kind) {
-        case 0:
-          work->hp = work->hp * work->amount / 10;
+      stats->item = Item_GetDirect(unit->inventory[index]);
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
+        effectKind = stats->item->effects[effectIndex].kind;
+        effectAmount = stats->item->effects[effectIndex].amount;
+        stats->kind = effectKind;
+        effectKind = SCALE_EFFECT(effectKind);
+        stats->amount = effectAmount;
+        switch (effectKind) {
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP):
+          stats->hp = stats->hp * stats->amount / STAT_SCALE_ONE;
           break;
-        case 1:
-          work->stat20 = work->stat20 * work->amount / 10;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP_REGEN):
+          stats->hpRegen = stats->hpRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case 2:
-          work->pp = work->pp * work->amount / 10;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP):
+          stats->pp = stats->pp * stats->amount / STAT_SCALE_ONE;
           break;
-        case 3:
-          work->stat24 = work->stat24 * work->amount / 10;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP_REGEN):
+          stats->ppRegen = stats->ppRegen * stats->amount / STAT_SCALE_ONE;
           break;
-        case 4:
-          work->atk = work->atk * work->amount / 10;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_ATTACK):
+          stats->atk = stats->atk * stats->amount / STAT_SCALE_ONE;
           break;
-        case 5:
-          work->def = work->def * work->amount / 10;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_DEFENSE):
+          stats->def = stats->def * stats->amount / STAT_SCALE_ONE;
           break;
-        case 6:
-          work->agi = work->agi * work->amount / 10;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_AGILITY):
+          stats->agi = stats->agi * stats->amount / STAT_SCALE_ONE;
           break;
-        case 7:
-          work->luck = work->luck * work->amount / 10;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_LUCK):
+          stats->luck = stats->luck * stats->amount / STAT_SCALE_ONE;
           break;
         }
       }
     }
   }
 
-  work->atk = work->atk * (st->attackLevel + 8) / 8;
-  work->def = work->def * (st->defenseLevel + 8) / 8;
-  work->agi = work->agi * (st->agilityLevel + 8) / 8;
-  for (i = 0; i < 4; i++)
-    work->element[i][0] +=
-        (st->elementLevel[i] * st->elementLevel[i] + st->elementLevel[i]) * 5;
-  for (i = 0; i < 4; i++)
-    work->element[i][1] += st->resistLevel * 20;
+  // Then the battle's changes apply: the Attack, Defense and Agility stages,
+  // a summon's boost to each element's power, and the Resistance stage.
+  stats->atk = stats->atk * (unit->attackStage + 8) / 8;
+  stats->def = stats->def * (unit->defenseStage + 8) / 8;
+  stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
+  for (index = 0; index < ELEMENT_COUNT; index++)
+    stats->element[index].power +=
+        (unit->elementLevels[index] * unit->elementLevels[index] +
+         unit->elementLevels[index]) *
+        5;
+  for (index = 0; index < ELEMENT_COUNT; index++)
+    stats->element[index].resistance += unit->resistanceStage * 20;
 
-  if (st->classId) {
-    flag = 0;
-    switch (st->id) {
-    case 1:
-      flag = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
+  if (unit->classIndex != CLASS_NONE) {
+    lighthouse = 0;
+    // Faster PP recovery inside the lighthouse of the character's own element.
+    switch (unit->enemyId) {
+    case GARET:
+      lighthouse = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
       break;
-    case 3:
-      flag = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
+    case MIA:
+      lighthouse = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
       break;
-    case 5:
-      flag = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
+    case JENNA:
+      lighthouse = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
       break;
-    case 0:
-    case 4:
-      flag = GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE);
+    case ISAAC:
+    case FELIX:
+      lighthouse = GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE);
       break;
-    case 2:
-    case 6:
-      flag = GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE);
+    case IVAN:
+    case SHEBA:
+      lighthouse = GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE);
       break;
-    case 7:
-      flag = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
+    case PIERS:
+      lighthouse = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
       break;
     }
-    if (flag)
-      work->stat24 += 4;
+    if (lighthouse)
+      stats->ppRegen += 4;
   }
 
-  if (work->atk < 0)
-    work->atk = 0;
-  if (work->atk > 999)
-    work->atk = 999;
-  if (work->def < 0)
-    work->def = 0;
-  if (work->def > 999)
-    work->def = 999;
-  if (work->agi < 0)
-    work->agi = 0;
-  if (work->agi > 999)
-    work->agi = 999;
-  if (work->luck < 0)
-    work->luck = 0;
-  if (work->luck > 99)
-    work->luck = 99;
-  if (st->classId == 0) {
-    if (work->turns < 0)
-      work->turns = 0;
-    if (work->turns > 4)
-      work->turns = 4;
+  CLAMP(stats->atk, 0, UNIT_STAT_MAX);
+  CLAMP(stats->def, 0, UNIT_STAT_MAX);
+  CLAMP(stats->agi, 0, UNIT_STAT_MAX);
+  CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
+  // An enemy may act up to four times a turn, a character twice.
+  if (unit->classIndex == CLASS_NONE) {
+    CLAMP(stats->actionCount, 0, 4);
   } else {
-    if (work->turns < 0)
-      work->turns = 0;
-    if (work->turns > 2)
-      work->turns = 2;
+    CLAMP(stats->actionCount, 0, 2);
   }
-  if (work->stat20 < 0)
-    work->stat20 = 0;
-  if (work->stat20 > 10000)
-    work->stat20 = 10000;
-  if (work->stat24 < 0)
-    work->stat24 = 0;
-  if (work->stat24 > 200)
-    work->stat24 = 200;
-  for (i = 0; i < 4; i++) {
-    if (work->element[i][0] < 0)
-      work->element[i][0] = 0;
-    if (work->element[i][0] > 200)
-      work->element[i][0] = 200;
-    if (work->element[i][1] < 0)
-      work->element[i][1] = 0;
-    if (work->element[i][1] > 200)
-      work->element[i][1] = 200;
+  CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
+  CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
+  for (index = 0; index < ELEMENT_COUNT; index++) {
+    CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
+    CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
   }
 
-  st->atk = work->atk;
-  st->def = work->def;
-  st->agi = work->agi;
-  st->luck = work->luck;
-  st->turns = work->turns;
-  st->stat44 = work->stat20;
-  st->stat45 = work->stat24;
-  for (i = 0; i < 4; i++) {
-    st->element[i][0] = work->element[i][0];
-    st->element[i][1] = work->element[i][1];
+  unit->atk = stats->atk;
+  unit->def = stats->def;
+  unit->agi = stats->agi;
+  unit->luck = stats->luck;
+  unit->actionEntryCount = stats->actionCount;
+  unit->hpRegen = stats->hpRegen;
+  unit->ppRegen = stats->ppRegen;
+  for (index = 0; index < ELEMENT_COUNT; index++) {
+    unit->element[index].power = stats->element[index].power;
+    unit->element[index].resistance = stats->element[index].resistance;
   }
 
-  if (st->classId == 0) {
-    hpCap = 16383;
-    ppCap = 9999;
+  if (unit->classIndex == CLASS_NONE) {
+    hpLimit = UNIT_ENEMY_HP_MAX;
+    ppLimit = UNIT_HP_MAX;
   } else {
-    hpCap = ppCap = 1999;
+    hpLimit = ppLimit = UNIT_CHARACTER_HP_MAX;
   }
 
-  old = st->maxHp;
-  if (work->hp < 0)
-    work->hp = 0;
-  if (work->hp > hpCap)
-    work->hp = hpCap;
-  st->maxHp = work->hp;
-  if (old != st->maxHp) {
-    value = work->hp * st->hpRatio / 0x4000;
-    if (value < 0)
-      value = 0;
-    if (value > hpCap)
-      value = hpCap;
-    if (st->hp != 0 && value == 0)
+  previousMaximum = unit->maxHp;
+  CLAMP(stats->hp, 0, hpLimit);
+  unit->maxHp = stats->hp;
+  if (previousMaximum != unit->maxHp) {
+    value = stats->hp * unit->hpGauge / UNIT_GAUGE_FULL;
+    CLAMP(value, 0, hpLimit);
+    if (unit->hp != 0 && value == 0)
       value = 1;
-    st->hp = value;
+    unit->hp = value;
   }
 
-  old = st->maxPp;
-  if (work->pp < 0)
-    work->pp = 0;
-  if (work->pp > ppCap)
-    work->pp = ppCap;
-  st->maxPp = work->pp;
-  if (old != st->maxPp) {
-    value = work->pp * st->ppRatio / 0x4000;
-    if (value < 0)
-      value = 0;
-    if (value > ppCap)
-      value = ppCap;
-    if (st->pp != 0 && value == 0)
+  previousMaximum = unit->maxPp;
+  CLAMP(stats->pp, 0, ppLimit);
+  unit->maxPp = stats->pp;
+  if (previousMaximum != unit->maxPp) {
+    value = stats->pp * unit->ppGauge / UNIT_GAUGE_FULL;
+    CLAMP(value, 0, ppLimit);
+    if (unit->pp != 0 && value == 0)
       value = 1;
-    st->pp = value;
+    unit->pp = value;
   }
 
-  Heap_Release(work);
+  Heap_Release(stats);
 }
 
 void GameFlag_RefreshLureCap(void) {

@@ -172,8 +172,11 @@ struct EnemyRecord {
   u8 unk2a[34];
 };
 
-struct ClassRecord {
-  u8 unk00[8];
+/// The running totals Unit_Calculate builds a unit's stats in.
+/// The class's stat multipliers as Unit_Calculate reads them, ClassDefinition
+/// with its first eight bytes left opaque.
+struct ClassScaleView {
+  u8 seriesAndRequired[8]; ///< ClassDefinition.series and required
   u8 hp;
   u8 pp;
   u8 atk;
@@ -183,22 +186,25 @@ struct ClassRecord {
 };
 
 struct StatWork {
-  s32 hp;
-  s32 pp;
-  s32 atk;
-  s32 def;
-  s32 agi;
-  s32 unused14;
-  s32 luck;
-  s32 turns;
-  s32 stat20;
-  s32 stat24;
-  s32 element[4][2];
-  s32 kind;
-  s32 unused4c[2];
-  s32 amount;
-  struct ItemDefinition *item;
-  s32 unused5c;
+  s32 hp;          ///< maximum HP
+  s32 pp;          ///< maximum PP
+  s32 atk;         ///< Attack, 0 to UNIT_STAT_MAX once clamped
+  s32 def;         ///< Defense, 0 to UNIT_STAT_MAX once clamped
+  s32 agi;         ///< Agility, 0 to UNIT_STAT_MAX once clamped
+  s32 unused;      ///< never written; a gap between Agility and Luck
+  s32 luck;        ///< Luck, 0 to UNIT_LUCK_MAX once clamped
+  s32 actionCount; ///< actions a turn
+  s32 hpRegen;     ///< HP regained each turn
+  s32 ppRegen;     ///< PP regained each turn
+  struct {
+    s32 power;
+    s32 resistance;
+  } element[ELEMENT_COUNT];    ///< each element's power and resistance
+  s32 kind;                    ///< the item effect being applied
+  s32 unusedAfterKind[2];      ///< never written
+  s32 amount;                  ///< the amount of the item effect being applied
+  struct ItemDefinition *item; ///< the equipped item being applied
+  s32 unusedAfterItem;         ///< never written
 };
 
 struct UnitDjinnSets {

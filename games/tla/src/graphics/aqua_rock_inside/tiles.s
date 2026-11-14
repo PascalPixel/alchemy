@@ -1,7 +1,7 @@
 	.section .rodata
-	.global gData_0200414c
-gData_0200414c:
+	.global gAquaRockInside_PillarTiles
+gAquaRockInside_PillarTiles:
 	.incbin "games/tla/src/graphics/aqua_rock_inside/tiles_a.8bpp.lz"
-	.global gData_02004351
-gData_02004351:
+	.global gAquaRockInside_SplashTiles
+gAquaRockInside_SplashTiles:
 	.incbin "games/tla/src/graphics/aqua_rock_inside/tiles_b.8bpp.lz"

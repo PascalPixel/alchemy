@@ -121,37 +121,37 @@ void FieldCamera_WaitForArrival(void);
 void Field_TryJumpForward(void);
 void Party_AddPp(s32 a, s32 b);
 void Scene_QueueMusic(s32 a);
-void Func_02002bd4(struct Actor *object);
+void AquaRockInside_SpawnSplash(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
 void Event_NoOp(void);
 
-void Func_020006d0(void);
-s32 Func_02000b24(s32 id, s32 value);
-void Func_02000b5c(void);
+void AquaRockInside_LowerSpring(void);
+s32 AquaRockInside_BlockCellUnder(s32 id, s32 value);
+void AquaRockInside_SetPillarCellLow(void);
 void AquaRockInside_ReadParchTablet(void);
-void Func_02001e78(s32 id);
-void Func_020030f4(void);
-void Func_02003460(s32 value);
-void Func_020034fc(void);
-void Func_02003628(void);
-s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind);
-s32 Func_020036b8(s32 a, s32 b);
-void Func_0200389c(struct Actor *object);
+void AquaRockInside_SetMoaiFace(s32 id);
+void AquaRockInside_DrawPillars(void);
+void AquaRockInside_SetPillarsHeight(s32 value);
+void AquaRockInside_DrawSplashes(void);
+void AquaRockInside_StartSplashes(void);
+s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind);
+s32 AquaRockInside_AdvanceStreams(s32 a, s32 b);
+void Vent_Bounce(struct Actor *object);
 void Actor_StartScripted(struct Actor *object, s32 priority);
 void Vent_Puff(s32 *position, s32 base);
-s32 Func_02003bb8(s32 index, s32 value);
-s32 Func_02003bcc(void);
+s32 AquaRockInside_SetVentActive(s32 index, s32 value);
+s32 AquaRockInside_GetVentCounter(void);
 s32 Vents_AdvanceCounter(s32 limit);
 
-extern s32 gData_02004d84;
-extern struct PillarWork gData_0200536c;
-extern struct BeamWork gData_02005970;
-extern u32 gData_02003fd8[];
-extern u32 gData_020040dc[];
-extern u32 gData_0200411c[];
+extern s32 gAquaRockInside_SpringLevel;
+extern struct PillarWork gAquaRockInside_Pillars;
+extern struct BeamWork gAquaRockInside_Splashes;
+extern u32 gAquaRockInside_SparkScript[];
+extern u32 gAquaRockInside_SplashScript[];
+extern u32 gAquaRockInside_StreamSplashScript[];
 extern u32 gWaterDropScript[];
-extern const u8 gData_0200414c[];
-extern const u8 gData_02004351[];
+extern const u8 gAquaRockInside_PillarTiles[];
+extern const u8 gAquaRockInside_SplashTiles[];
 extern u32 gTaopoSwamp_PuffRises[];
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
@@ -232,42 +232,42 @@ struct WaterWork {
   u16 levels[4];
 };
 
-void Func_0200349c(u32 index, s32 height);
+void AquaRockInside_SetPillarHeight(u32 index, s32 height);
 
-void Func_0200061c(struct Actor *object);
+void AquaRockInside_WaitToLand(struct Actor *object);
 
 void Leader_RiseFromWater(void);
-void Func_0200107c(s32 a, s32 b);
-void Func_02003278(void);
-void Func_020032d4(u32 first, s32 level, s32 baseLevel);
-void Func_020007a8(void);
-void Func_02003420(s32 id, s32 kind, s32 height);
-void Func_02000ad8(void);
+void AquaRockInside_FinishPushingRock(s32 a, s32 b);
+void AquaRockInside_StartPillars(void);
+void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel);
+void AquaRockInside_ShowAquariusStone(void);
+void AquaRockInside_AddPillar(s32 id, s32 kind, s32 height);
+void AquaRockInside_ParchPool(void);
 
-void Func_020004b4(void);
+void AquaRockInside_JumpForward(void);
 
-void Func_02000690(void);
+void AquaRockInside_ParchSpring(void);
 
-void Func_0200071c(void);
-void Func_020007d4(void);
+void AquaRockInside_SpringDries(void);
+void AquaRockInside_UseAquariusStone(void);
 void AquaRockInside_CheckColumn(void);
 
-void Func_02000a98(void);
+void AquaRockInside_DouseSecondMoai(void);
 
-void Func_02000bac(void);
+void AquaRockInside_SetPillarCellHigh(void);
 
-void Func_02000bd4(void);
+void AquaRockInside_DouseThirdMoai(void);
 
-void Func_02000de4(void);
+void AquaRockInside_DouseThirdWaterStone(void);
 
-void Func_02001060(void);
+void AquaRockInside_StartPushingRock(void);
 void AquaRockInside_CheckPsynergyStone(void);
-void Func_02001170(void);
-void Func_02001328(void);
+void AquaRockInside_DouseFourthMoai(void);
+void AquaRockInside_ParchLastPool(void);
 void AquaRockInside_WalkToParchTablet(void);
-void Func_02001cd8(void);
-void Func_02001d40(void);
-void Func_02002ca4(void);
+void AquaRockInside_ReadTabletFacingWest(void);
+void AquaRockInside_ReadTabletFacingEast(void);
+void AquaRockInside_FlowWithStream(void);
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void FieldEffect_StartBlankOverlay();
@@ -326,7 +326,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 // When object 10 reaches row 12, or object 11 column 51, stops its motion,
 // lifts it one pixel and sets its flag; object 10 also redraws two blocks of
 // row 12.
-void Func_0200042c(s32 unused, s32 id) {
+void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 10) {
@@ -356,9 +356,9 @@ void Func_0200042c(s32 unused, s32 id) {
   }
 }
 
-void Func_020004b4(void) { Field_TryJumpForward(); }
+void AquaRockInside_JumpForward(void) { Field_TryJumpForward(); }
 
-void Func_020004bc(s32 unused, s32 id) {
+void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *layer;
   s32 i;
@@ -367,7 +367,7 @@ void Func_020004bc(s32 unused, s32 id) {
 
   layer = (s32 *)(map + 0x140);
   FieldActor_SetSpriteColor(Actor_Get(objectId), 0);
-  Func_02001e78(objectId);
+  AquaRockInside_SetMoaiFace(objectId);
   Actor_SetAnimation(objectId, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
@@ -377,13 +377,13 @@ void Func_020004bc(s32 unused, s32 id) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_556);
   for (i = 0; i <= 31; i++) {
-    Func_02003460(i << 16);
+    AquaRockInside_SetPillarsHeight(i << 16);
     {
       /* FAKEMATCH(pin): the zero pinned to r1, set before the column is copied
        * to r0. */
       register s32 height asm("r1") = 0;
 
-      Func_0200349c(column, height);
+      AquaRockInside_SetPillarHeight(column, height);
     }
     layer[3] += 0x10000;
     System_Wait(4);
@@ -394,14 +394,14 @@ void Func_020004bc(s32 unused, s32 id) {
   Event_SetFlag(FLAG_SCENE_TEMP_30);
 }
 
-void Func_02000574(s32 unused, s32 id) {
+void AquaRockInside_DouseFirstWaterStone(s32 unused, s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *layer;
   s32 i;
 
   layer = (s32 *)(map + 0x140);
   FieldActor_SetSpriteColor(Actor_Get(id), 0);
-  Func_02001e78(id);
+  AquaRockInside_SetMoaiFace(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
@@ -410,7 +410,7 @@ void Func_02000574(s32 unused, s32 id) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_556);
   for (i = 0; i <= 31; i++) {
-    Func_02003460(i << 16);
+    AquaRockInside_SetPillarsHeight(i << 16);
     layer[3] += 0x10000;
     System_Wait(4);
   }
@@ -418,15 +418,15 @@ void Func_02000574(s32 unused, s32 id) {
   Event_SetFlag(FLAG_SCENE_TEMP_31);
 }
 
-void Data_020005f4(void) {}
+void AquaRockInside_DoNothing(void) {}
 
-void Func_020005f8(void) {
+void AquaRockInside_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
   Event_SetFlag(FLAG_SCENE_TEMP_50);
 }
 
 #if TLA_PATCH_1
-void Func_0200061c(struct Actor *object) {
+void AquaRockInside_WaitToLand(struct Actor *object) {
   object->motionFlags = 3;
   do {
     System_Wait(1);
@@ -437,7 +437,7 @@ void Func_0200061c(struct Actor *object) {
 }
 #endif
 
-void Func_02000644(s32 unused, s32 id) {
+void AquaRockInside_MovePillarBeforeMoai(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 x;
 
@@ -453,7 +453,7 @@ void Func_02000644(s32 unused, s32 id) {
 #else
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
-      Func_0200061c(object);
+      AquaRockInside_WaitToLand(object);
       Event_SetFlag(0x95c);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
       Event_End();
@@ -462,25 +462,25 @@ void Func_02000644(s32 unused, s32 id) {
   }
 }
 
-void Func_02000690(void) {
+void AquaRockInside_ParchSpring(void) {
   Actor_SetAnimation(8, 4);
   FieldActor_SetSpriteColor(Actor_Get(8), 6);
   MapGrid_CopyCells(123, 15, 5, 3, 110, 15);
   gFieldWork->raisedTrigger = 88;
 }
 
-void Func_020006d0(void) {
-  s32 count = gData_02004d84 - 1;
+void AquaRockInside_LowerSpring(void) {
+  s32 count = gAquaRockInside_SpringLevel - 1;
   s32 row;
 
-  gData_02004d84 = count;
+  gAquaRockInside_SpringLevel = count;
   row = count / 8;
   MapGrid_CopyCells((count & 1) * 5 + 118, 47 - row, 5, 2, 110, 47 - row);
-  if (gData_02004d84 == 0)
-    FieldTask_Remove(Func_020006d0);
+  if (gAquaRockInside_SpringLevel == 0)
+    FieldTask_Remove(AquaRockInside_LowerSpring);
 }
 
-void Func_0200071c(void) {
+void AquaRockInside_SpringDries(void) {
   s32 priority;
 
   Event_Start();
@@ -488,7 +488,7 @@ void Func_0200071c(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Event_PlaySound(SE_557);
   priority = 0x480;
-  FieldTask_AddFrame(Func_020006d0, priority);
+  FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
   FieldCamera_MoveTo(776, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
@@ -498,7 +498,7 @@ void Func_0200071c(void) {
   MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
 }
 
-void Func_020007a8(void) {
+void AquaRockInside_ShowAquariusStone(void) {
   struct Actor *object;
   struct FieldSpriteFlags *sprite;
 
@@ -510,9 +510,9 @@ void Func_020007a8(void) {
   object->y = px(24);
 }
 
-extern u8 gData_02003fb8[];
+extern u8 gAquaRockInside_SpringLevelCells[];
 
-void Func_020007d4(void) {
+void AquaRockInside_UseAquariusStone(void) {
   s32 priority;
   s32 i;
   s32 j;
@@ -520,7 +520,7 @@ void Func_020007d4(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Func_020007a8();
+  AquaRockInside_ShowAquariusStone();
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(60);
   Event_PlaySound(SE_162);
@@ -531,7 +531,7 @@ void Func_020007d4(void) {
   MapGrid_SetShake(1, 3, 1);
   FieldEvent_Wait(40);
   priority = 0x480;
-  FieldTask_AddFrame(Func_020006d0, priority);
+  FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
   FieldCamera_MoveTo(312, CAMERA_KEEP, 504, 1);
   Event_PlaySound(SE_SCATTER);
@@ -546,8 +546,9 @@ cell:
   {
     s32 index = (i + (1 & ~j)) * 2;
 
-    MapGrid_CopyCellsLayered(gData_02003fb8[index], gData_02003fb8[index + 1],
-                             7, 13, 80, 27);
+    MapGrid_CopyCellsLayered(gAquaRockInside_SpringLevelCells[index],
+                             gAquaRockInside_SpringLevelCells[index + 1], 7, 13,
+                             80, 27);
     System_Wait(1);
   }
   j++;
@@ -568,7 +569,7 @@ cell:
   Event_SetFlag(0x143);
 }
 
-void Func_02000958(s32 value) {
+void AquaRockInside_StepOnLoosePlank(s32 value) {
   s32 width = 1;
   s32 height = 2;
 
@@ -613,27 +614,27 @@ void AquaRockInside_CheckColumn(void) {
   Event_End();
 }
 
-void Func_02000a98(void) {
+void AquaRockInside_DouseSecondMoai(void) {
   s32 i;
 
-  Func_02003628();
-  Func_02003688(16, 4, 16, 2);
-  Func_02003688(22, 4, 16, 0);
+  AquaRockInside_StartSplashes();
+  AquaRockInside_AddSplash(16, 4, 16, 2);
+  AquaRockInside_AddSplash(22, 4, 16, 0);
   for (i = 5; i >= 0; i--) {
-    Func_020036b8(33, 55);
+    AquaRockInside_AdvanceStreams(33, 55);
     System_Wait(15);
   }
   Event_SetFlag(0xa66);
 }
 
-void Func_02000ad8(void) {
+void AquaRockInside_ParchPool(void) {
   MapGrid_CopyCellsLayered(106, 14, 14, 13, 81, 14);
   MapGrid_CopyCellsLayered(44, 78, 14, 12, 17, 78);
   MapGrid_CopyCellAttributes(81, 14, 14, 13, 17, 14);
   Event_SetFlag(0xa6a);
 }
 
-s32 Func_02000b24(s32 id, s32 value) {
+s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_Get(id);
 
@@ -646,46 +647,46 @@ s32 Func_02000b24(s32 id, s32 value) {
   }
 }
 
-void Func_02000b5c(void) {
+void AquaRockInside_SetPillarCellLow(void) {
   struct Actor *object = Actor_Get(12);
 
   MapGrid_CopyCellAttributes(64, 43, 1, 1, object->x >> 20, object->z >> 20);
 }
 
-void Func_02000b84(void) {
+void AquaRockInside_SetPillarCellMiddle(void) {
   struct Actor *object = Actor_Get(12);
 
   MapGrid_CopyCellAttributes(64, 42, 1, 1, object->x >> 20, object->z >> 20);
 }
 
-void Func_02000bac(void) {
+void AquaRockInside_SetPillarCellHigh(void) {
   struct Actor *object = Actor_Get(12);
 
   MapGrid_CopyCellAttributes(64, 41, 1, 1, object->x >> 20, object->z >> 20);
 }
 
-void Func_02000bd4(void) {
+void AquaRockInside_DouseThirdMoai(void) {
   s32 i;
   s32 result;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_49)) {
-    Func_02000b24(12, 38);
-    Func_02003628();
-    Func_02003688(12, 2, 45, 1);
+    AquaRockInside_BlockCellUnder(12, 38);
+    AquaRockInside_StartSplashes();
+    AquaRockInside_AddSplash(12, 2, 45, 1);
     for (i = 3; i >= 0; i--)
-      result = Func_020036b8(33, 55);
+      result = AquaRockInside_AdvanceStreams(33, 55);
     Event_SetFlag(FLAG_SCENE_TEMP_48);
     if (result == 1)
       Event_SetFlag(0xa64);
   }
 }
 
-void Func_02000c28(s32 unused, s32 id) {
+void AquaRockInside_DouseSecondWaterStone(s32 unused, s32 id) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(9), 5);
-  Func_02001e78(id);
+  AquaRockInside_SetMoaiFace(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
@@ -698,23 +699,25 @@ void Func_02000c28(s32 unused, s32 id) {
     System_Wait(4);
   }
   Event_End();
-  Func_02000b5c();
+  AquaRockInside_SetPillarCellLow();
   Event_SetFlag(FLAG_SCENE_TEMP_49);
 }
 
-void Func_02000ca8(void) {
+void AquaRockInside_JumpDownLedge(void) {
   Actor_JumpDownLedge(gMainRoutineWork.currentOwner, 6, 0);
   Event_End();
 }
 
-/* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
- * it has another declaration; tried as the definition's void
- * Func_02000ca8(void), which the object already declares, it does not compile
- * in tla-ja (aqua_rock_inside.c): games/tla/src/scene/aqua_rock_inside.c:740:
- * too many arguments to function `Func_02000ca8'. */
-extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
+/* VIEW(s0cc8): routine AquaRockInside_JumpDownLedge as void
+ * AquaRockInside_JumpDownLedge(); the parts before it has another declaration;
+ * tried as the definition's void AquaRockInside_JumpDownLedge(void), which the
+ * object already declares, it does not compile in tla-ja (aqua_rock_inside.c):
+ * games/tla/src/scene/aqua_rock_inside.c:740: too many arguments to function
+ * `AquaRockInside_JumpDownLedge'. */
+extern void
+AquaRockInside_JumpDownLedge__rapids() __asm__("AquaRockInside_JumpDownLedge");
 
-void Func_02000cc8(s32 trigger) {
+void AquaRockInside_StepIntoRapids(s32 trigger) {
   s32 clear = 1;
   struct Actor *object;
   struct Vector3 target;
@@ -743,7 +746,7 @@ void Func_02000cc8(s32 trigger) {
 step:
   if (result < 0) {
     object->facing = 0x4000;
-    Func_02000ca8__s0cc8(trigger);
+    AquaRockInside_JumpDownLedge__rapids(trigger);
     return;
   }
   {
@@ -774,19 +777,19 @@ test:
     goto step;
 }
 
-void Func_02000de4(void) {
+void AquaRockInside_DouseThirdWaterStone(void) {
   s32 i;
 
-  Func_02003628();
-  Func_02003688(44, 0, 34, 2);
+  AquaRockInside_StartSplashes();
+  AquaRockInside_AddSplash(44, 0, 34, 2);
   for (i = 4; i >= 0; i--) {
-    Func_020036b8(33, 55);
+    AquaRockInside_AdvanceStreams(33, 55);
     System_Wait(15);
   }
   Event_SetFlag(0xa67);
 }
 
-void Func_02000e18(s32 value) {
+void AquaRockInside_RideFalls(s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 speed;
   s32 i;
@@ -811,14 +814,14 @@ void Func_02000e18(s32 value) {
     speed += 0x4000;
     object->y += speed;
     if ((i & 7) == 0)
-      Func_02002bd4(Actor_Get(15));
+      AquaRockInside_SpawnSplash(Actor_Get(15));
     System_Wait(1);
   }
   Event_End();
   FieldEvent_SetExitRequest(value);
 }
 
-void Func_02000ecc(s32 unused, s32 id) {
+void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 49) {
@@ -863,7 +866,7 @@ void Func_02000ecc(s32 unused, s32 id) {
   }
 }
 
-void Func_0200101c(s32 unused, s32 id) {
+void AquaRockInside_FreezeRoomPuddle(s32 unused, s32 id) {
   if ((u32)(id - 13) <= 2) {
     struct Actor *object = Actor_Get(id);
 
@@ -873,11 +876,13 @@ void Func_0200101c(s32 unused, s32 id) {
   }
 }
 
-void Func_02001060(void) { MapGrid_CopyCellAttributes(8, 63, 7, 1, 8, 34); }
+void AquaRockInside_StartPushingRock(void) {
+  MapGrid_CopyCellAttributes(8, 63, 7, 1, 8, 34);
+}
 
 // When object 10 or 11 arrives, stops both and redraws row 33 at each one's
 // column.
-void Func_0200107c(s32 unused, s32 id) {
+void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
   if ((u32)(id - 10) <= 1) {
     struct Actor *object = Actor_Get(10);
 
@@ -897,7 +902,7 @@ void Func_0200107c(s32 unused, s32 id) {
   }
 }
 
-void Func_020010d0(struct Actor *object) {
+void AquaRockInside_WaitToRise(struct Actor *object) {
   s32 frames = 60;
 
   while (frames != 0) {
@@ -920,40 +925,40 @@ void AquaRockInside_CheckPsynergyStone(void) {
   Event_End();
 }
 
-void Func_02001138(s32 unused, s32 id) {
+void AquaRockInside_MovePuzzlePillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   MapGrid_CopyCellAttributes(17, 39, 2, 1, 20, 39);
   MapGrid_CopyCellAttributes(23, 39, 1, 1, object->x >> 20, 39);
 }
 
-void Func_02001170(void) {
+void AquaRockInside_DouseFourthMoai(void) {
   s32 i;
   s32 result;
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_4B)) {
     /* FAKEMATCH(signature): these two calls go through a void function type. */
-    ((void (*)(s32, s32))Func_02000b24)(12, 38);
-    ((void (*)(s32, s32))Func_02000b24)(13, 39);
-    Func_02000b24(15, 37);
-    Func_02003628();
-    Func_02003688(38, 2, 19, 1);
+    ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(12, 38);
+    ((void (*)(s32, s32))AquaRockInside_BlockCellUnder)(13, 39);
+    AquaRockInside_BlockCellUnder(15, 37);
+    AquaRockInside_StartSplashes();
+    AquaRockInside_AddSplash(38, 2, 19, 1);
     for (i = 8; i >= 0; i--)
-      result = Func_020036b8(33, 55);
+      result = AquaRockInside_AdvanceStreams(33, 55);
     Event_SetFlag(FLAG_SCENE_TEMP_4A);
     if (result == 1)
       Event_SetFlag(0xa65);
   }
 }
 
-void Func_020011d4(s32 unused, s32 id) {
+void AquaRockInside_DouseFourthWaterStone(s32 unused, s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   s32 *layer;
   s32 i;
 
   layer = (s32 *)(map + 0x140);
   FieldActor_SetSpriteColor(Actor_Get(id), 5);
-  Func_02001e78(id);
+  AquaRockInside_SetMoaiFace(id);
   Actor_SetAnimation(id, 3);
   layer[3] -= 0x200000;
   Map_LoadCellsAndShapes();
@@ -969,7 +974,7 @@ void Func_020011d4(s32 unused, s32 id) {
   Event_SetFlag(FLAG_SCENE_TEMP_4B);
 }
 
-void Func_0200124c(void) {
+void AquaRockInside_WaterSinks(void) {
   s32 *layer = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x140);
   s32 i;
 
@@ -1003,13 +1008,13 @@ shake:
   Event_SetFlag(FLAG_AREA_TEMP_49);
 }
 
-void Func_02001328(void) {
+void AquaRockInside_ParchLastPool(void) {
   MapGrid_CopyCellsLayered(70, 8, 7, 6, 77, 8);
   MapGrid_CopyCellAttributes(38, 17, 7, 6, 13, 9);
   Event_ClearFlag(FLAG_AREA_TEMP_49);
 }
 
-void Func_02001364(struct Actor *object) {
+void AquaRockInside_SpawnSpark(struct Actor *object) {
   struct Actor *child =
       Import_ActorCreate_(0x2a0, object->x, object->y, object->z);
 
@@ -1021,15 +1026,14 @@ void Func_02001364(struct Actor *object) {
   Actor_SelectAnimation(child, 1);
   Actor_SetSpriteFlags(child, 0);
   Actor_SetBlendMode(child, 1);
-  Actor_StartScript(child, gData_02003fd8);
+  Actor_StartScript(child, gAquaRockInside_SparkScript);
 }
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 // countdown runs out returns 0, else, unless its radius is down to 2 pixels,
-// takes a second, shrinking step. Returns 1 while it runs. The same code as
-// overlay 681's Func_0200136c. The first push goes through Call3 (directly, its
-// offset pointer is set after the angle's load).
+// takes a second, shrinking step. Returns 1 while it runs. The first push goes
+// through Call3 (directly, its offset pointer is set after the angle's load).
 
 #include "shared/orbiter_spiral.h"
 
@@ -1057,15 +1061,15 @@ union ActorView {
     u8 unk63;
   } bytes;
 };
-extern u32 gData_02004034[];
-extern u32 gData_02003fe8[];
-extern s32 gData_02004004[];
-extern u32 gData_02004058[];
-extern s32 gData_02004014[];
-extern s32 gData_0200407c[];
-extern s32 gData_020040ac[];
+extern u32 gAquaRockInside_TabletRiseScript[];
+extern u32 gAquaRockInside_TabletGlowScript[];
+extern s32 gAquaRockInside_RisingSparkScript[];
+extern u32 gAquaRockInside_PiersRiseScript[];
+extern s32 gAquaRockInside_RiserScript[];
+extern s32 gAquaRockInside_TabletSettleScript[];
+extern s32 gAquaRockInside_PiersSettleScript[];
 
-void Func_02001620(s32 firstId, s32 secondId) {
+void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
   struct Actor *object;
@@ -1078,7 +1082,7 @@ void Func_02001620(s32 firstId, s32 secondId) {
   // Unused: gives the stack frame its 12 bytes.
   s32 unused[3];
 
-  script = gData_02004058;
+  script = gAquaRockInside_PiersRiseScript;
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
@@ -1093,7 +1097,7 @@ void Func_02001620(s32 firstId, s32 secondId) {
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
-  Actor_SetMovementTypeById(firstId, gData_02004034);
+  Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletRiseScript);
   Sound_Play(SE_194);
   Event_Wait(45);
   Actor_ConfigureSpriteColor(firstId, 256);
@@ -1113,7 +1117,7 @@ burst:
   Actor_SelectAnimation(object, 7);
   Actor_SetSpriteFlags(object, 0);
   Actor_SetBlendMode(object, 1);
-  Actor_StartScript(object, gData_02003fe8);
+  Actor_StartScript(object, gAquaRockInside_TabletGlowScript);
   REG_BLDALPHA = 0x1004;
   wait(2);
   REG_BLDALPHA = 0x100a;
@@ -1151,7 +1155,7 @@ spiral:
   Actor_SetSpriteFlags(spark, 0);
   Actor_SetBlendMode(spark, 1);
   FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
-  Actor_StartScript(spark, gData_02004004);
+  Actor_StartScript(spark, gAquaRockInside_RisingSparkScript);
   if (i == 3) {
     Actor_SetSpriteColorById(secondId, 256);
     second->motionFlags = noMotion;
@@ -1184,7 +1188,7 @@ column:
   Actor_SelectAnimation(riser, 7);
   Actor_SetSpriteFlags(riser, 0);
   Actor_SetBlendMode(riser, 1);
-  Actor_StartScript(riser, gData_02004014);
+  Actor_StartScript(riser, gAquaRockInside_RiserScript);
   i += 2;
   if (i != 32)
     goto column;
@@ -1199,8 +1203,8 @@ column:
   Sound_Play(SE_574);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   PaletteFade_StartInterpolation(80);
-  Actor_SetMovementTypeById(firstId, gData_0200407c);
-  Actor_SetMovementTypeById(secondId, gData_020040ac);
+  Actor_SetMovementTypeById(firstId, gAquaRockInside_TabletSettleScript);
+  Actor_SetMovementTypeById(secondId, gAquaRockInside_PiersSettleScript);
   second->update = Actor_EmitBubbles;
   wait(120);
   second->update = 0;
@@ -1256,7 +1260,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_FaceDirection(7, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   Message_ShowCentered(((s32)&MsgCheckedTheTabletIt + 2), 1);
-  Func_02001620(14, 7);
+  AquaRockInside_PiersLearnsParch(14, 7);
   Party_LearnAbility(PIERS, ABILITY_PARCH);
   Event_SetFlag(0x9ae);
   Event_PlaySound(SE_TREMOR);
@@ -1267,7 +1271,7 @@ void AquaRockInside_ReadParchTablet(void) {
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Func_0200124c();
+  AquaRockInside_WaterSinks();
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   FieldEvent_Wait(30);
   FieldEvent_SetMessageId((s32)&MsgWhatWentWrong);
@@ -1326,9 +1330,9 @@ void AquaRockInside_WalkToParchTablet(void) {
     }                                                                          \
   }
 
-DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001cd8, 280)
+DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingWest, 280)
 
-DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(Func_02001d40, 248)
+DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingEast, 248)
 
 extern struct Trigger gAquaRockInside_Triggers[];
 extern struct Trigger gAquaRockInside_Room1Triggers[];
@@ -1368,7 +1372,7 @@ const u8 *Scene_GetEvents(void) {
   return gAquaRockInside_Triggers;
 }
 
-void Func_02001e78(s32 id) {
+void AquaRockInside_SetMoaiFace(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object != 0) {
@@ -1380,7 +1384,7 @@ void Func_02001e78(s32 id) {
   }
 }
 
-void Func_02001ea0(struct Actor *object) {
+void AquaRockInside_SplashBeneath(struct Actor *object) {
   s32 phase = gFrameCount & 15;
 
   if (phase == 0) {
@@ -1390,7 +1394,7 @@ void Func_02001ea0(struct Actor *object) {
     if (child != 0) {
       struct FieldSprite *sprite = child->sprite;
 
-      Actor_StartScript(child, gData_020040dc);
+      Actor_StartScript(child, gAquaRockInside_SplashScript);
       child->motionFlags = 0;
       child->terrainId = 1;
       if (sprite != 0) {
@@ -1403,7 +1407,7 @@ void Func_02001ea0(struct Actor *object) {
   }
 }
 
-void Func_02001f04(void) {
+void AquaRockInside_FallThroughWater(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
@@ -1427,7 +1431,7 @@ fall:
   i--;
   if (i >= 0)
     goto fall;
-  Func_02002bd4(object);
+  AquaRockInside_SpawnSplash(object);
   Actor_SetSpriteColorMode(object, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 2);
   *flags = saved;
@@ -1437,30 +1441,31 @@ fall:
   Event_End();
 }
 
-void Func_02001fcc(void) {
-  s32 counter = Func_02003bcc();
+void AquaRockInside_UpdateVents(void) {
+  s32 counter = AquaRockInside_GetVentCounter();
 
   switch (counter) {
   case 0:
-    Func_02003bb8(0, 1);
-    Func_02003bb8(1, 1);
+    AquaRockInside_SetVentActive(0, 1);
+    AquaRockInside_SetVentActive(1, 1);
     Scene_QueueMusic(SE_170);
     break;
   case 0x34bbf:
-    Func_02003bb8(0, 0);
-    Func_02003bb8(1, 0);
+    AquaRockInside_SetVentActive(0, 0);
+    AquaRockInside_SetVentActive(1, 0);
     Scene_QueueMusic(-1);
     break;
   }
   Vents_AdvanceCounter(0x34bc0);
 }
 
-extern u16 gData_020040f4[];
-extern u16 gData_02004102[];
-extern u16 gData_02004106[];
-extern u32 gData_02004114[];
+extern u16 gAquaRockInside_FirstOutletSpots[];
+extern u16 gAquaRockInside_FirstOutletLevels[];
+extern u16 gAquaRockInside_SecondOutletSpots[];
+extern u32 gAquaRockInside_SecondOutletLevels[];
 
-s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
+s32 AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b,
+                                void (*handler)(void));
 
 // Aqua Rock's entry setup: in each room it shows the statues already filled by
 // their flags (or dims those still empty), opens what the story has opened and
@@ -1473,13 +1478,13 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   if (scene == (s32)&SceneId_AquaRockInside1) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
-      Func_02001e78(8);
+      AquaRockInside_SetMoaiFace(8);
       Actor_SetAnimation(8, 3);
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(8), 6);
     }
     if (GameFlag_Get(FLAG_SCENE_TEMP_31)) {
-      Func_02001e78(9);
+      AquaRockInside_SetMoaiFace(9);
       Actor_SetAnimation(9, 3);
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(9), 6);
@@ -1490,7 +1495,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
       FieldActor_SetSpriteColor(Actor_GetById(8), 6);
     } else {
-      Func_02001e78(8);
+      AquaRockInside_SetMoaiFace(8);
       Actor_SetAnimation(8, 3);
     }
     object = Actor_GetById(9);
@@ -1505,16 +1510,16 @@ s32 Scene_Initialize(void) {
     if (entrance == 7)
       Leader_RiseFromWater();
   } else if (scene == (s32)&SceneId_AquaRockInside4) {
-    Func_02001e78(10);
+    AquaRockInside_SetMoaiFace(10);
     Actor_SetAnimation(10, 3);
-    Func_02001e78(11);
+    AquaRockInside_SetMoaiFace(11);
     Actor_SetAnimation(11, 3);
     if ((u32)(entrance - 6) <= 1) {
       if (GameFlag_Get(FLAG_SCENE_TEMP_49)) {
         FieldActor_SetSpriteColor(Actor_GetById(9), 5);
-        Func_02001e78(9);
+        AquaRockInside_SetMoaiFace(9);
         Actor_SetAnimation(9, 3);
-        Func_02000b5c();
+        AquaRockInside_SetPillarCellLow();
       } else {
         FieldActor_SetSpriteColor(Actor_GetById(9), 6);
       }
@@ -1529,30 +1534,34 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == (s32)&SceneId_AquaRockInside5) {
     if ((u32)(entrance - 5) <= 1) {
-      Func_02003ab0(gData_020040f4, gData_02004102, Func_02001fcc);
+      AquaRockInside_SetUpOutlets(gAquaRockInside_FirstOutletSpots,
+                                  gAquaRockInside_FirstOutletLevels,
+                                  AquaRockInside_UpdateVents);
       Scene_QueueMusic(SE_170);
     }
   } else if (scene == (s32)&SceneId_AquaRockInside6) {
     if (entrance == 5 || entrance == 7) {
-      Func_02003ab0(gData_02004106, gData_02004114, Func_02001fcc);
+      AquaRockInside_SetUpOutlets(gAquaRockInside_SecondOutletSpots,
+                                  gAquaRockInside_SecondOutletLevels,
+                                  AquaRockInside_UpdateVents);
       Scene_QueueMusic(SE_170);
-      Func_0200107c(0, 10);
+      AquaRockInside_FinishPushingRock(0, 10);
     }
     if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
-      Func_02001e78(9);
+      AquaRockInside_SetMoaiFace(9);
       Actor_SetAnimation(9, 3);
     }
     object = Actor_GetById(12);
     Actor_SetSpriteFlags(object, 0);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
-    object->update = (void (*)(void))Func_02001ea0;
+    object->update = (void (*)(void))AquaRockInside_SplashBeneath;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && entrance == 13)
-      Func_02001f04();
+      AquaRockInside_FallThroughWater();
   } else if (scene == (s32)&SceneId_AquaRockInside9) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_4B)) {
       FieldActor_SetSpriteColor(Actor_GetById(9), 5);
-      Func_02001e78(9);
+      AquaRockInside_SetMoaiFace(9);
       Actor_SetAnimation(9, 3);
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(9), 6);
@@ -1599,10 +1608,10 @@ s32 Scene_PrepareMap(void) {
   u8 *map;
 
   ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
-  Func_02003278();
+  AquaRockInside_StartPillars();
   if (scene == (s32)&SceneId_AquaRockInside1) {
     if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
-      Func_020032d4(33, 0, -2);
+      AquaRockInside_AddSpouts(33, 0, -2);
     } else if (entrance == 5 || entrance == 7) {
       actor = Actor_GetById(12);
       i1 = 0;
@@ -1620,11 +1629,11 @@ s32 Scene_PrepareMap(void) {
         MapGrid_CopyCellsLayered(110, 116, 18, 12, 39, 105);
         // i2 is the flag test's 0.
         MapGrid_CopyCellAttributes(64, 32, 64, 32, i2, 32);
-        Func_020032d4(33, 0, 0);
+        AquaRockInside_AddSpouts(33, 0, 0);
       } else {
-        Func_020032d4(33, 4, 0);
+        AquaRockInside_AddSpouts(33, 4, 0);
         actor = Actor_GetById(12);
-        Func_0200349c((actor->x >> 20) - 42, 0);
+        AquaRockInside_SetPillarHeight((actor->x >> 20) - 42, 0);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_50)) {
         MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
@@ -1637,9 +1646,9 @@ s32 Scene_PrepareMap(void) {
         MapGrid_CopyCellsLayered(112, 96, 16, 20, 12, 98);
         // a is the flag test's 0.
         MapGrid_CopyCellAttributes(64, 32, 64, 32, a, i3);
-        Func_020032d4(33, 0, 0);
+        AquaRockInside_AddSpouts(33, 0, 0);
       } else {
-        Func_020032d4(33, 4, 0);
+        AquaRockInside_AddSpouts(33, 4, 0);
       }
     }
     if (GameFlag_Get(0x95a)) {
@@ -1653,7 +1662,7 @@ s32 Scene_PrepareMap(void) {
     }
   } else if (scene == (s32)&SceneId_AquaRockInside2) {
     if ((u32)(entrance - 1) <= 1) {
-      Func_020032d4(33, 0, -2);
+      AquaRockInside_AddSpouts(33, 0, -2);
     }
     actor = Actor_GetById(8);
     actor->motionFlags = 0;
@@ -1663,14 +1672,14 @@ s32 Scene_PrepareMap(void) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpriteFlags((s32)Actor_GetById(9), 0);
     Actor_SetSpriteFlags((s32)Actor_GetById(10), 0);
-    Func_020032d4(33, 8, -2);
-    Func_020032d4(40, 8, 8);
+    AquaRockInside_AddSpouts(33, 8, -2);
+    AquaRockInside_AddSpouts(40, 8, 8);
     if (GameFlag_Get(0xa66)) {
-      Func_02003628();
-      Func_02003688(16, 4, 16, 2);
-      Func_02003688(22, 4, 16, 0);
+      AquaRockInside_StartSplashes();
+      AquaRockInside_AddSplash(16, 4, 16, 2);
+      AquaRockInside_AddSplash(22, 4, 16, 0);
       for (i5 = 0; i5 < 6; i5++)
-        Func_020036b8(33, 55);
+        AquaRockInside_AdvanceStreams(33, 55);
     }
     if (GameFlag_Get(0x95d)) {
       MapGrid_CopyCellsLayered(75, 96, 7, 13, 80, 27);
@@ -1679,7 +1688,7 @@ s32 Scene_PrepareMap(void) {
       MapGrid_CopyCellsLayered(91, 96, 7, 10, i6, b);
       MapGrid_CopyCellsLayered(99, 96, 7, 14, i6, 91);
       MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, b);
-      Func_020007a8();
+      AquaRockInside_ShowAquariusStone();
     } else {
       MapGrid_CopyCellAttributes(17, 32, 5, 1, 17, 31);
     }
@@ -1691,27 +1700,27 @@ s32 Scene_PrepareMap(void) {
   statues:
     {
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-      Value3((s32 (*)())Func_02003420, 12, 5, 4);
-      Value3((s32 (*)())Func_02003420, 13, 3, 4);
-      Value3((s32 (*)())Func_02003420, 14, 4, 4);
-      Func_020032d4(40, 4, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 12, 5, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 13, 3, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 14, 4, 4);
+      AquaRockInside_AddSpouts(40, 4, 4);
       if (!GameFlag_Get(FLAG_SCENE_TEMP_49) && !Event_GetFlag(0xa64)) {
         map = (u8 *)Ram_HeapSlots->mapWork;
         i7 = 39;
         MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, i7);
         MapGrid_CopyCellAttributes(71, 39, 16, 15, 7, i7);
-        Func_02000b84();
+        AquaRockInside_SetPillarCellMiddle();
         map[262] = 1;
         BG1_SET_PRIORITY_1();
       } else if (Event_GetFlag(0xa64) || GameFlag_Get(FLAG_SCENE_TEMP_48)) {
         if (Event_GetFlag(0xa64)) {
           Actor_SetPosition(12, 280, 712);
         }
-        Func_02000b24(12, 38);
-        Func_02003628();
-        Func_02003688(12, 2, 45, 1);
+        AquaRockInside_BlockCellUnder(12, 38);
+        AquaRockInside_StartSplashes();
+        AquaRockInside_AddSplash(12, 2, 45, 1);
         for (i8 = 0; i8 < 8; i8++)
-          Func_020036b8(33, 55);
+          AquaRockInside_AdvanceStreams(33, 55);
         Event_SetFlag(FLAG_SCENE_TEMP_49);
       }
       i9 = 12;
@@ -1725,27 +1734,27 @@ s32 Scene_PrepareMap(void) {
       goto statues_cleared;
     }
   no_statues:
-    Func_020032d4(33, 0, -4);
+    AquaRockInside_AddSpouts(33, 0, -4);
   statues_cleared:
     if (GameFlag_Get(0xa6a)) {
-      Func_02000ad8();
+      AquaRockInside_ParchPool();
     }
   } else if (scene == (s32)&SceneId_AquaRockInside5) {
-    Func_020032d4(33, 0, -2);
-    Func_020032d4(40, 0, 0);
+    AquaRockInside_AddSpouts(33, 0, -2);
+    AquaRockInside_AddSpouts(40, 0, 0);
     FieldEffect_StartBlankOverlay(0);
     if (((u32)(entrance - 1) <= 3 || entrance == 7) && GameFlag_Get(0xa67)) {
-      Func_02003628();
-      Func_02003688(44, 0, 34, 2);
+      AquaRockInside_StartSplashes();
+      AquaRockInside_AddSplash(44, 0, 34, 2);
       for (i10 = 0; i10 <= 4; i10++)
-        Func_020036b8(33, 55);
+        AquaRockInside_AdvanceStreams(33, 55);
     }
   } else if (scene == (s32)&SceneId_AquaRockInside6) {
     FieldEffect_StartBlankOverlay(0);
     if (entrance == 1 || entrance == 13) {
-      Func_020032d4(33, 0, -2);
+      AquaRockInside_AddSpouts(33, 0, -2);
     } else if (entrance == 9 || entrance == 11 || entrance == 12) {
-      Func_020032d4(33, 0, -2);
+      AquaRockInside_AddSpouts(33, 0, -2);
     }
     if (!GameFlag_Get(FLAG_SCENE_TEMP_38)) {
       i11 = 13;
@@ -1771,25 +1780,25 @@ s32 Scene_PrepareMap(void) {
       }
     }
   } else if (scene == (s32)&SceneId_AquaRockInside7) {
-    Func_020032d4(33, 0, -2);
+    AquaRockInside_AddSpouts(33, 0, -2);
   } else if (scene == (s32)&SceneId_AquaRockInside8) {
     FieldEffect_StartBlankOverlay(0);
-    Func_020032d4(33, 0, -2);
+    AquaRockInside_AddSpouts(33, 0, -2);
     Tightrope_Initialize();
     Tightrope_Place(0, 8, 9);
   } else if (scene == (s32)&SceneId_AquaRockInside9) {
     if ((u32)(entrance - 3) <= 1) {
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-      Value3((s32 (*)())Func_02003420, 10, 6, 4);
-      Value3((s32 (*)())Func_02003420, 11, 3, 4);
-      Value3((s32 (*)())Func_02003420, 12, 5, 4);
-      Value3((s32 (*)())Func_02003420, 13, 6, 4);
-      Value3((s32 (*)())Func_02003420, 14, 5, 4);
-      Value3((s32 (*)())Func_02003420, 15, 4, 4);
-      Value3((s32 (*)())Func_02003420, 16, 4, 4);
-      Value3((s32 (*)())Func_02003420, 17, 3, 4);
-      Value3((s32 (*)())Func_02003420, 18, 6, 4);
-      Func_020032d4(40, 4, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 10, 6, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 11, 3, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 12, 5, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 13, 6, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 14, 5, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 15, 4, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 16, 4, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 17, 3, 4);
+      Value3((s32 (*)())AquaRockInside_AddPillar, 18, 6, 4);
+      AquaRockInside_AddSpouts(40, 4, 4);
       if (!GameFlag_Get(FLAG_SCENE_TEMP_4B) && !Event_GetFlag(0xa65)) {
         map = (u8 *)Ram_HeapSlots->mapWork;
         i14 = 13;
@@ -1804,13 +1813,13 @@ s32 Scene_PrepareMap(void) {
           Actor_SetPosition(13, 680, 360);
           Actor_SetPosition(15, 744, 424);
         }
-        Call2((void (*)())Func_02000b24, 12, 38);
-        Call2((void (*)())Func_02000b24, 13, 39);
-        Func_02000b24(15, 37);
-        Func_02003628();
-        Func_02003688(38, 2, 19, 1);
+        Call2((void (*)())AquaRockInside_BlockCellUnder, 12, 38);
+        Call2((void (*)())AquaRockInside_BlockCellUnder, 13, 39);
+        AquaRockInside_BlockCellUnder(15, 37);
+        AquaRockInside_StartSplashes();
+        AquaRockInside_AddSplash(38, 2, 19, 1);
         for (i15 = 0; i15 < 8; i15++)
-          Func_020036b8(33, 55);
+          AquaRockInside_AdvanceStreams(33, 55);
         Event_SetFlag(FLAG_SCENE_TEMP_4B);
       }
     }
@@ -1830,7 +1839,7 @@ s32 Scene_PrepareMap(void) {
     }
   } else if (scene == (s32)&SceneId_AquaRockInside10) {
     FieldEffect_StartBlankOverlay(0);
-    Func_020032d4(33, 0, -2);
+    AquaRockInside_AddSpouts(33, 0, -2);
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_AREA_TEMP_49)) {
       MapGrid_CopyCellAttributes(38, 9, 7, 6, 13, 9);
@@ -1845,7 +1854,7 @@ done:
   return 0;
 }
 
-void Func_02002bd4(struct Actor *object) {
+void AquaRockInside_SpawnSplash(struct Actor *object) {
   struct Actor *child =
       FieldActor_Create(14, object->x, object->y + px(4), object->z + px(4));
   struct FieldSprite *source = object->sprite;
@@ -1854,7 +1863,7 @@ void Func_02002bd4(struct Actor *object) {
     struct FieldSprite *sprite = child->sprite;
 
     child->terrainHeight = object->terrainHeight;
-    Actor_StartScript(child, gData_0200411c);
+    Actor_StartScript(child, gAquaRockInside_StreamSplashScript);
     child->motionFlags = 0;
     if (sprite != 0) {
       Animation_ApplyChildArgument(sprite, 1);
@@ -1866,7 +1875,7 @@ void Func_02002bd4(struct Actor *object) {
 
 #include "shared/actor_emit_water_drop.h"
 
-void Func_02002ca4(void) {
+void AquaRockInside_FlowWithStream(void) {
   struct Actor *center;
   s32 id;
   struct Actor *actor;
@@ -1888,7 +1897,7 @@ void Func_02002ca4(void) {
   position[2] = actor->z + px(2);
   hit = MapGrid_CheckCollision(actor, position);
   if ((gFrameCount & 4) == 0)
-    Func_02002bd4(actor);
+    AquaRockInside_SpawnSplash(actor);
   if (hit < 0) {
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1898,7 +1907,7 @@ void Func_02002ca4(void) {
     do {
       System_Wait(1);
     } while (actor->y != actor->terrainHeight);
-    Func_02002bd4(actor);
+    AquaRockInside_SpawnSplash(actor);
     Actor_SelectAnimation(actor, 49);
     System_Wait(3);
     return;
@@ -1949,7 +1958,7 @@ void Leader_SpinAway(s32 entrance) {
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
-      Func_02002bd4(Actor_Get(15));
+      AquaRockInside_SpawnSplash(Actor_Get(15));
     System_Wait(1);
   }
   Event_End();
@@ -1957,7 +1966,7 @@ void Leader_SpinAway(s32 entrance) {
 }
 
 // On odd frames, spawns a drifting effect above the object, swaying with the
-// frame count; Func_02002030 of Aqua Rock is the same function.
+// frame count.
 #include "shared/actor_emit_mist.h"
 
 #include "shared/leader_sink_away.h"
@@ -1966,9 +1975,9 @@ void Leader_SpinAway(s32 entrance) {
 
 // Draws the scene's pillars: a top sprite for each active one and, when it
 // stands above its base, a column sprite as tall as its height.
-void Func_020030f4(void) {
+void AquaRockInside_DrawPillars(void) {
   s32 *view = &Ram_HeapSlots->mapWork->viewX;
-  struct PillarWork *work = &gData_0200536c;
+  struct PillarWork *work = &gAquaRockInside_Pillars;
   s32 viewX = view[0];
   struct PillarEntry *entry = work->entries;
   s32 viewZ;
@@ -2049,18 +2058,18 @@ void Func_020030f4(void) {
   }
 }
 
-void Func_02003278(void) {
+void AquaRockInside_StartPillars(void) {
   void *buffer;
   s32 priority;
 
-  Iwram_ClearWordsEntry(&gData_0200536c, 0x604);
+  Iwram_ClearWordsEntry(&gAquaRockInside_Pillars, 0x604);
   buffer = MemAlloc_(0xc80);
-  Decompress_TaggedLz(gData_0200414c, buffer);
-  gData_0200536c.vramEntry = VramCache_FindFreeEntry();
-  Vram_Load(gData_0200536c.vramEntry, 0xc80, buffer);
+  Decompress_TaggedLz(gAquaRockInside_PillarTiles, buffer);
+  gAquaRockInside_Pillars.vramEntry = VramCache_FindFreeEntry();
+  Vram_Load(gAquaRockInside_Pillars.vramEntry, 0xc80, buffer);
   Heap_Release(buffer);
   priority = 0x41c;
-  FieldTask_AddFrame(Func_020030f4, priority);
+  FieldTask_AddFrame(AquaRockInside_DrawPillars, priority);
 }
 
 #define LAYER_S32(layer, off) (*(s32 *)((layer)->unk08 + (off) - 8))
@@ -2068,13 +2077,13 @@ void Func_02003278(void) {
 // Adds a water spout on every map cell of the given layer whose spout kind lies
 // in [first, first + 8), at the given heights, and marks those cells as spout
 // cells (120).
-void Func_020032d4(u32 first, s32 level, s32 baseLevel) {
+void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayer *layer = map->layers;
   struct MapCell *cells = layer->cells;
   s32 originX = LAYER_S32(layer, 8) + map->minX;
   s32 originZ = LAYER_S32(layer, 12) + map->minZ;
-  struct PillarWork *work = &gData_0200536c;
+  struct PillarWork *work = &gAquaRockInside_Pillars;
   s32 width = (map->maxX - map->minX) >> 20;
   s32 depth = (map->maxZ - map->minZ) >> 20;
   struct PillarEntry *spout = &work->entries[work->count];
@@ -2129,9 +2138,9 @@ void Func_020032d4(u32 first, s32 level, s32 baseLevel) {
   }
 }
 
-void Func_02003420(s32 id, s32 kind, s32 height) {
+void AquaRockInside_AddPillar(s32 id, s32 kind, s32 height) {
   struct Actor *object = Actor_Get(id);
-  struct PillarWork *work = &gData_0200536c;
+  struct PillarWork *work = &gAquaRockInside_Pillars;
   struct PillarEntry *entry = &work->entries[work->count];
 
   if (object != 0) {
@@ -2146,8 +2155,8 @@ void Func_02003420(s32 id, s32 kind, s32 height) {
   }
 }
 
-void Func_02003460(s32 height) {
-  struct PillarWork *work = &gData_0200536c;
+void AquaRockInside_SetPillarsHeight(s32 height) {
+  struct PillarWork *work = &gAquaRockInside_Pillars;
   struct PillarEntry *entry;
   s32 i;
 
@@ -2160,9 +2169,9 @@ void Func_02003460(s32 height) {
   }
 }
 
-void Func_0200349c(u32 index, s32 height) {
+void AquaRockInside_SetPillarHeight(u32 index, s32 height) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct PillarWork *work = &gData_0200536c;
+  struct PillarWork *work = &gAquaRockInside_Pillars;
 
   if (index <= 31) {
     struct PillarEntry *entry = &work->entries[index];
@@ -2181,10 +2190,10 @@ void Func_0200349c(u32 index, s32 height) {
 }
 
 // Draws thirty-two sprites that each shake by a random few pixels a frame.
-void Func_020034fc(void) {
+void AquaRockInside_DrawSplashes(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
-  struct BeamWork *splashes = &gData_02005970;
+  struct BeamWork *splashes = &gAquaRockInside_Splashes;
   s32 viewX = view[0];
   s32 viewZ;
   s32 originY;
@@ -2234,23 +2243,23 @@ void Func_020034fc(void) {
   } while (i >= 0);
 }
 
-void Func_02003628(void) {
+void AquaRockInside_StartSplashes(void) {
   void *buffer;
   s32 priority;
 
-  Iwram_ClearWordsEntry(&gData_02005970, 0x3a4);
+  Iwram_ClearWordsEntry(&gAquaRockInside_Splashes, 0x3a4);
   buffer = MemAlloc_(0x400);
-  Decompress_TaggedLz(gData_02004351, buffer);
-  gData_02005970.vramEntry = VramCache_FindFreeEntry();
-  Vram_Load(gData_02005970.vramEntry, 0x400, buffer);
+  Decompress_TaggedLz(gAquaRockInside_SplashTiles, buffer);
+  gAquaRockInside_Splashes.vramEntry = VramCache_FindFreeEntry();
+  Vram_Load(gAquaRockInside_Splashes.vramEntry, 0x400, buffer);
   Heap_Release(buffer);
   priority = 0x41c;
-  FieldTask_AddFrame(Func_020034fc, priority);
+  FieldTask_AddFrame(AquaRockInside_DrawSplashes, priority);
   Event_PlaySound(SE_SHIMMER);
 }
 
-s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
-  struct BeamWork *work = &gData_02005970;
+s32 AquaRockInside_AddSplash(s32 x, s32 y, s32 z, s32 kind) {
+  struct BeamWork *work = &gAquaRockInside_Splashes;
   struct BeamEntry *entry = work->entries;
 
   if (entry->x != 0)
@@ -2259,17 +2268,17 @@ s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind) {
   entry->direction = kind;
 }
 
-extern s8 gData_0200534c[];
+extern s8 gAquaRockInside_StreamTurns[];
 
 // Advances Aqua Rock's two water streams one cell along the map: each stream
 // follows the turn its cell's kind gives, leaves a splash on every open cell
 // (255) it crosses, stops on a wall kind and counts the cells of the given kind
 // it reaches; then it clears the splashes past the new count and opens the
 // cells under those left.
-s32 Func_020036b8(s32 first, s32 target) {
+s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
   s32 reached = 0;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct BeamWork *state = &gData_02005970;
+  struct BeamWork *state = &gAquaRockInside_Splashes;
   s32 count = state->count;
   s32 turn;
   s32 again = 0;
@@ -2296,7 +2305,8 @@ s32 Func_020036b8(s32 first, s32 target) {
           turn = 0;
           again = 1;
         } else if (kind >= first && kind <= first + 7) {
-          turn = gData_0200534c[(stream->direction << 3) + kind - first];
+          turn = gAquaRockInside_StreamTurns[(stream->direction << 3) + kind -
+                                             first];
           if (turn != 8)
             count = state->count;
           again = 0;
@@ -2352,8 +2362,8 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 
-#define VENT_TOUCHING Func_02003844
-#define VENT_BOUNCE Func_0200389c
+#define VENT_TOUCHING Vent_IsTouching
+#define VENT_BOUNCE Vent_Bounce
 #include "../field/object/vent_bounce.c"
 
 #include "shared/actor_start_scripted.h"
@@ -2372,25 +2382,28 @@ void Vent_Puff(s32 *position, s32 base) {
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Actor_StartScripted(object, 3);
-    object->update = (void (*)(void))Func_0200389c;
+    object->update = (void (*)(void))Vent_Bounce;
     Actor_SetBlendMode(object, 1);
   }
 }
 
 #include "shared/vents_update.h"
 
-/* VIEW(s3844): routine Func_02003ab0 as void Func_02003ab0(const u16 *spots,
- * const u16 *levels, void (*handler)(void));
- * games/tla/src/scene/aqua_rock_inside/s1620 has s32 Func_02003ab0(const u8 *a,
- * const u8 *b, void (*handler)(void)); tried as the definition's void
- * Func_02003ab0(const u16 *spots, const u16 *levels, void(*handler) (void)),
- * which the object already declares, it does not compile in tla-ja
- * (aqua_rock_inside.c): games/tla/src/scene/aqua_rock_inside.c:2382:
- * conflicting types for `Func_02003ab0'. */
-void Func_02003ab0__s3844(const u16 *spots, const u16 *levels,
-                          void (*handler)(void)) __asm__("Func_02003ab0");
-#define Func_02003ab0 Func_02003ab0__s3844
-void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
+/* VIEW(s3844): routine AquaRockInside_SetUpOutlets as void
+ * AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels, void
+ * (*handler)(void)); games/tla/src/scene/aqua_rock_inside/s1620 has s32
+ * AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b, void (*handler)(void));
+ * tried as the definition's void AquaRockInside_SetUpOutlets(const u16 *spots,
+ * const u16 *levels, void(*handler) (void)), which the object already declares,
+ * it does not compile in tla-ja (aqua_rock_inside.c):
+ * games/tla/src/scene/aqua_rock_inside.c:2382: conflicting types for
+ * `AquaRockInside_SetUpOutlets'. */
+void AquaRockInside_SetUpOutlets__vents(
+    const u16 *spots, const u16 *levels,
+    void (*handler)(void)) __asm__("AquaRockInside_SetUpOutlets");
+#define AquaRockInside_SetUpOutlets AquaRockInside_SetUpOutlets__vents
+void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
+                                 void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
   struct WaterOutlet *outlet = work->outlets;
 
@@ -2446,23 +2459,23 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   Task_AddFrame(Vents_Update, 0x480);
 }
 
-s32 Func_02003ba4(s32 index) {
+s32 AquaRockInside_IsVentActive(s32 index) {
   u8 *base = (u8 *)VENT_WORK;
 
   return ((struct VentRow *)(base + index * 20))->active;
 }
 
-s32 Func_02003bb8(s32 index, s32 value) {
+s32 AquaRockInside_SetVentActive(s32 index, s32 value) {
   u8 *base = (u8 *)VENT_WORK;
 
   ((struct VentRow *)(base + index * 20))->active = value;
 }
 
-s32 Func_02003bcc(void) { return VENT_WORK->counter; }
+s32 AquaRockInside_GetVentCounter(void) { return VENT_WORK->counter; }
 
 #include "shared/vents_advance_counter.h"
 
-void Func_02003c00(s32 index, s32 value) {
+void AquaRockInside_SetVentValue(s32 index, s32 value) {
   u8 *base = (u8 *)VENT_WORK;
 
   ((struct VentRow *)(base + index * 20))->value = value;
@@ -2489,69 +2502,69 @@ u32 gFieldEffect_LongScript[] = {
     1, 38, 17,
 };
 
-u8 gData_02003fb8[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
+u8 gAquaRockInside_SpringLevelCells[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
 
-u32 gData_02003fd8[] = {
+u32 gAquaRockInside_SparkScript[] = {
     0, 6, 38, 17,
 };
 
-u32 gData_02003fe8[] = {
+u32 gAquaRockInside_TabletGlowScript[] = {
     5, 0, 0xa00000, 0, 1, 38,
     17,
 };
 
-s32 gData_02004004[] = {                                                               
+s32 gAquaRockInside_RisingSparkScript[] = {                                                               
       46,                                                                      
       (s32)Orbiter_Spiral,                                                              
       38,                                                                      
       17,                                                                      
   };
 
-s32 gData_02004014[] = {                                                               
+s32 gAquaRockInside_RiserScript[] = {                                                               
       46, (s32)Orbit_Update, 46, (s32)Actor_AimAtWatched, 46, (s32)Actor_StepToWatched, 38, 17,                  
   };
 
-u32 gData_02004034[] = {
+u32 gAquaRockInside_TabletRiseScript[] = {
     5, 0, 0x180000, 0, 1, 22,
     26, 4, 17,
 };
 
-u32 gData_02004058[] = {
+u32 gAquaRockInside_PiersRiseScript[] = {
     5, 0, 0x100000, 0, 1, 22,
     26, 4, 17,
 };
 
-s32 gData_0200407c[] = {
+s32 gAquaRockInside_TabletSettleScript[] = {
     22, 26, 0, 5, 0, -0x180000,
     0, 1, 22, 26, 0, 17,
 };
 
-s32 gData_020040ac[] = {
+s32 gAquaRockInside_PiersSettleScript[] = {
     22, 26, 0, 5, 0, -0x100000,
     0, 1, 22, 26, 3, 17,
 };
 
-u32 gData_020040dc[] = {
+u32 gAquaRockInside_SplashScript[] = {
     0, 1, 13, 30, 0, 38,
 };
 
-u16 gData_020040f4[] = {
+u16 gAquaRockInside_FirstOutletSpots[] = {
     280, 344, 2, 312, 344, 2, 0,
 };
 
-u16 gData_02004102[] = {
+u16 gAquaRockInside_FirstOutletLevels[] = {
     8, 0,
 };
 
-u16 gData_02004106[] = {
+u16 gAquaRockInside_SecondOutletSpots[] = {
     152, 536, 2, 216, 536, 2, 0,
 };
 
-u32 gData_02004114[] = {
+u32 gAquaRockInside_SecondOutletLevels[] = {
     0xb000a, 0,
 };
 
-u32 gData_0200411c[] = {
+u32 gAquaRockInside_StreamSplashScript[] = {
     0, 20, 38,
 };
 
@@ -2561,7 +2574,7 @@ u32 gWaterDropScript[] = {
 };
 // clang-format on
 
-#undef Func_02003ab0
+#undef AquaRockInside_SetUpOutlets
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef EFFECT_SPAWN
@@ -2577,8 +2590,8 @@ u32 gWaterDropScript[] = {
 #undef BYTE_AT
 
 void AquaRockInside_FightSteam(void);
-void Func_020005f8(void);
-void Func_02000b84(void);
+void AquaRockInside_FreezePuddle(void);
+void AquaRockInside_SetPillarCellMiddle(void);
 void AquaRockInside_ReadParchTablet(void);
 
 // clang-format off
@@ -2798,20 +2811,20 @@ LATE_DATA struct Trigger gAquaRockInside_Room1Triggers[] = {
     {0x51, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS, EVENT(Func_020004b4)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS, EVENT(Func_020004b4)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS, EVENT(Func_020004b4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x95a, EVENT(Func_0200042c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x95b, EVENT(Func_0200042c)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_0200042c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x230, EVENT(Func_020004bc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x231, EVENT(Func_02000574)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, (s32)((u8 *)Data_020005f4 + 1)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x250, EVENT(Func_020005f8)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x95a, EVENT(AquaRockInside_PlacePillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x95b, EVENT(AquaRockInside_PlacePillarOverVent)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_PlacePillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0x230, EVENT(AquaRockInside_DouseFirstMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x231, EVENT(AquaRockInside_DouseFirstWaterStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, (s32)((u8 *)AquaRockInside_DoNothing + 1)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x250, EVENT(AquaRockInside_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s32 gData_02004d84 = 256;
+LATE_DATA s32 gAquaRockInside_SpringLevel = 256;
 
 LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
@@ -2823,27 +2836,27 @@ LATE_DATA struct Trigger gAquaRockInside_Room2Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {0x51, 8, CONDITION_ALWAYS, 8},
     {0x51, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_02002ca4)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x95c, EVENT(Func_02000644)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02000644)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 88, 0x240, EVENT(Func_02000690)},
-    {TRIGGER_RAISED, 88, 0x240, EVENT(Func_0200071c)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x95c, EVENT(AquaRockInside_MovePillarBeforeMoai)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePillarBeforeMoai)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 88, 0x240, EVENT(AquaRockInside_ParchSpring)},
+    {TRIGGER_RAISED, 88, 0x240, EVENT(AquaRockInside_SpringDries)},
     {TRIGGER_TABLE_END},
 };
 
 LATE_DATA struct Trigger gAquaRockInside_Room3Triggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 3, CONDITION_ALWAYS, EVENT(Func_02000958)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK, 3, CONDITION_ALWAYS, EVENT(AquaRockInside_StepOnLoosePlank)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {STEP_TRIGGER_FACING(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckColumn)},
-    {USE_ITEM_ON_ACTOR(ITEM_AQUARIUS_STONE), 9, 0x95d, EVENT(Func_020007d4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa66, EVENT(Func_02000a98)},
+    {USE_ITEM_ON_ACTOR(ITEM_AQUARIUS_STONE), 9, 0x95d, EVENT(AquaRockInside_UseAquariusStone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa66, EVENT(AquaRockInside_DouseSecondMoai)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2857,14 +2870,14 @@ LATE_DATA struct Trigger gAquaRockInside_Room4Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING, 55, CONDITION_ALWAYS, EVENT(Func_020004b4)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(Func_02000bac)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02000bac)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(Func_02000b84)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02000b84)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, 0xa6a, EVENT(Func_02000ad8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa64, EVENT(Func_02000bd4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x249, EVENT(Func_02000c28)},
+    {STEP_TRIGGER_WALKING, 55, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellHigh)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellHigh)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, 0xa6a, EVENT(AquaRockInside_ParchPool)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa64, EVENT(AquaRockInside_DouseThirdMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x249, EVENT(AquaRockInside_DouseSecondWaterStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2880,11 +2893,11 @@ LATE_DATA struct Trigger gAquaRockInside_Room5Triggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 77, CONDITION_ALWAYS, EVENT(Func_02000cc8)},
-    {TRIGGER_STEP, 78, CONDITION_ALWAYS, EVENT(Func_02000cc8)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 70, CONDITION_ALWAYS, EVENT(Func_020004b4)},
+    {TRIGGER_STEP, 77, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
+    {TRIGGER_STEP, 78, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 70, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0xa67, EVENT(Func_02000de4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0xa67, EVENT(AquaRockInside_DouseThirdWaterStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2901,19 +2914,19 @@ LATE_DATA struct Trigger gAquaRockInside_Room6Triggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {0x51, 11, CONDITION_ALWAYS, 11},
     {0x51, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Func_02000e18)},
-    {TRIGGER_STEP, 77, CONDITION_ALWAYS, EVENT(Func_02000cc8)},
-    {TRIGGER_STEP, 78, CONDITION_ALWAYS, EVENT(Func_02000cc8)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x238, EVENT(Func_02000ecc)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x251, EVENT(Func_0200101c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x252, EVENT(Func_0200101c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, 0x253, EVENT(Func_0200101c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(Func_02001060)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_02001060)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02001060)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(Func_0200107c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_0200107c)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_0200107c)},
+    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(AquaRockInside_RideFalls)},
+    {TRIGGER_STEP, 77, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
+    {TRIGGER_STEP, 78, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x238, EVENT(AquaRockInside_MovePillarByFalls)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x251, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, 0x252, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 15, 0x253, EVENT(AquaRockInside_FreezeRoomPuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2941,13 +2954,13 @@ LATE_DATA struct Trigger gAquaRockInside_Room9Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
     {0x51, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(Func_02002ca4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02001138)},
+    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePuzzlePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa65, EVENT(Func_02001170)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x24b, EVENT(Func_020011d4)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa65, EVENT(AquaRockInside_DouseFourthMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 9, 0x24b, EVENT(AquaRockInside_DouseFourthWaterStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2955,13 +2968,13 @@ LATE_DATA struct Trigger gAquaRockInside_Room10Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadParchTablet)},
     {EXAMINE_TRIGGER_FACING(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_WalkToParchTablet)},
-    {EXAMINE_TRIGGER_FACING(FACING_WEST), 30, CONDITION_ALWAYS, EVENT(Func_02001cd8)},
-    {EXAMINE_TRIGGER_FACING(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Func_02001d40)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 40, IF_FLAG_SET(0x349), EVENT(Func_02001328)},
+    {EXAMINE_TRIGGER_FACING(FACING_WEST), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadTabletFacingWest)},
+    {EXAMINE_TRIGGER_FACING(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(AquaRockInside_ReadTabletFacingEast)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 40, IF_FLAG_SET(0x349), EVENT(AquaRockInside_ParchLastPool)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s8 gData_0200534c[] = {
+LATE_DATA s8 gAquaRockInside_StreamTurns[] = {
     8, 8, 0, 8, -1, 8, 1, 8,
     8, 0, 8, -1, 1, 8, 8, 8,
     8, 8, 0, 1, 8, -1, 8, 8,

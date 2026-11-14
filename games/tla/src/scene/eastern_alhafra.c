@@ -349,10 +349,10 @@ void EasternAlhafra_FinishPushingLastCrate(s32 mode, s32 id) {
 
 void EasternAlhafra_OverhearWorkers(void);
 /* VIEW(s0514): routine PushTarget_Push as void PushTarget_Push(struct
- * PushSlide); eastern_alhafra has void PushTarget_Push(struct DoorPlan);
- * tried as the definition's void PushTarget_Push(struct PushTarget target),
- * which the object already declares, EasternAlhafra_RollLog moves: 1 of 198
- * instructions in tla-ja. */
+ * PushSlide); eastern_alhafra has void PushTarget_Push(struct DoorPlan); tried
+ * as the definition's void PushTarget_Push(struct PushTarget target), which the
+ * object already declares, EasternAlhafra_RollLog moves: 1 of 198 instructions
+ * in tla-ja. */
 extern void PushTarget_Push__log(struct PushSlide) __asm__("PushTarget_Push");
 
 void EasternAlhafra_RollLog(void) {

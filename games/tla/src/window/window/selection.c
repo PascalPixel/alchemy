@@ -287,10 +287,10 @@ void SelectionMenu_StartDrawing(void) {
 void SelectionMenu_StopDrawing(void) { Task_Remove(SelectionMenu_Draw); }
 
 /* VIEW(window): tag struct ScreenPoint as struct ScreenPoint__window;
- * field/particle.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/include/field/particle.h:43: redefinition of `struct
- * ScreenPoint'. */
+ * field/particle.h has another definition; tried with the definition the rest
+ * of the object has, it does not compile in tla-ja:
+ * games/tla/include/field/particle.h:43: redefinition of `struct ScreenPoint'.
+ */
 #define ScreenPoint ScreenPoint__window
 struct ScreenPoint {
   s32 x;

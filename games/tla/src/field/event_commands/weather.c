@@ -9,8 +9,8 @@
 #include "module/field/field.h"
 
 /* VIEW(event_commands): tag struct GroundParticle as struct
- * GroundParticle__event_commands; ground_mask.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
+ * GroundParticle__event_commands; ground_mask.h has another definition; tried
+ * with the definition the rest of the object has, it does not compile in
  * tla-ja: games/tla/src/field/event_commands/line_scroll.c:348: field
  * `particles' has incomplete type. */
 struct GroundParticle__event_commands {
@@ -88,9 +88,9 @@ void GroundParticles_Update(void) {
 }
 
 /* VIEW(f0d6674): tag struct GroundParticleWork as struct
- * GroundParticleWork__f0d6674; event_commands.c has another definition;
- * tried with the definition the rest of the object has, Weather_UpdateRain
- * moves: 1 of 167 instructions in tla-ja. */
+ * GroundParticleWork__f0d6674; event_commands.c has another definition; tried
+ * with the definition the rest of the object has, Weather_UpdateRain moves: 1
+ * of 167 instructions in tla-ja. */
 struct GroundParticleWork__f0d6674 {
   u8 unk00[4];
   // long, not s32: its own alias set lets the sprite stores pass its load.

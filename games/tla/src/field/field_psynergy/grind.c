@@ -37,8 +37,8 @@ struct SplashAnimation {
 /* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4;
  * event_work.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/grind.c:212: structure has no
- * member named `callback'. */
+ * games/tla/src/field/field_psynergy/grind.c:212: structure has no member named
+ * `callback'. */
 struct PendingEvent__f0e92b4 {
   u8 unk00[8];
   void (*callback)(s32, s32, s32);

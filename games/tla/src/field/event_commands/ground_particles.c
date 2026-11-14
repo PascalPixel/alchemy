@@ -10,9 +10,8 @@
 /* VIEW(ground_particles): tag struct GroundParticleWork as struct
  * GroundParticleWork__ground_particles; event_commands.c has another
  * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja:
- * games/tla/src/field/event_commands/ground_particles.c:34: structure
- * has no member named `entry'. */
+ * compile in tla-ja: games/tla/src/field/event_commands/ground_particles.c:34:
+ * structure has no member named `entry'. */
 struct GroundParticleWork__ground_particles {
   s32 entry;
   s32 tileBase;

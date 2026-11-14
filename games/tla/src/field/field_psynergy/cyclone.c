@@ -32,8 +32,8 @@
  * Camera_WorldToScreen(struct EffectVector *position); tried as the
  * definition's void Camera_WorldToScreen(struct EffectVector *position), which
  * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/sand.c: conflicting
- * types for `Camera_WorldToScreen'. */
+ * games/tla/src/field/field_psynergy/sand.c: conflicting types for
+ * `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");
 #define Camera_WorldToScreen Camera_WorldToScreen__psynergy

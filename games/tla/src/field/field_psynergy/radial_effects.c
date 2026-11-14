@@ -1210,8 +1210,8 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 /* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c;
  * field_psynergy.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/radial_effects.c:1237: structure
- * has no member named `x'. */
+ * games/tla/src/field/field_psynergy/radial_effects.c:1237: structure has no
+ * member named `x'. */
 struct ArcSprite__f0e150c {
   u8 unk00[12];
   s32 x;
@@ -1805,8 +1805,8 @@ void FieldPsynergy_RunTouchedEvents(void) {
 /* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has
  * another definition; tried with the definition the rest of the object has, it
  * does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/radial_effects.c:1834: structure
- * has no member named `unk02'. */
+ * games/tla/src/field/field_psynergy/radial_effects.c:1834: structure has no
+ * member named `unk02'. */
 struct MapCell__f0e150c {
   u8 unk00[2];
   u8 unk02;
@@ -1857,16 +1857,16 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
 /* VIEW(f0e2718): variable gSceneLocalState as extern u8 gSceneLocalState[];
  * f0e150c has extern struct TouchCopies gSceneLocalState; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/radial_effects.c:1874: incompatible
- * types in initialization. */
+ * games/tla/src/field/field_psynergy/radial_effects.c:1874: incompatible types
+ * in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gSceneLocalState");
 /* VIEW(f0e2718): routine MapGrid_GetCellAt as struct MapCell
  * *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); f0e150c has struct
  * MapCell__f0e150c *MapGrid_GetCellAt(s32 x, s32 z, s32 layer); tried as the
  * definition's struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer), it
  * does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/radial_effects.c:1865: conflicting
- * types for `MapGrid_GetCellAt'. */
+ * games/tla/src/field/field_psynergy/radial_effects.c:1865: conflicting types
+ * for `MapGrid_GetCellAt'. */
 extern struct MapCell *
 MapGrid_GetCellAt__f0e2718(s32 x, s32 z,
                            s32 layer) __asm__("MapGrid_GetCellAt");

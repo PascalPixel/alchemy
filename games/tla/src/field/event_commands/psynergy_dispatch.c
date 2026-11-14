@@ -25,8 +25,8 @@ void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
  * FieldPsynergy_WhirlwindOnTarget(void); tried as the definition's void
  * FieldPsynergy_WhirlwindOnTarget(void), which the object already declares, it
  * does not compile in tla-ja:
- * games/tla/src/field/event_commands/psynergy_dispatch.c:455: too
- * many arguments to function `FieldPsynergy_WhirlwindOnTarget'. */
+ * games/tla/src/field/event_commands/psynergy_dispatch.c:455: too many
+ * arguments to function `FieldPsynergy_WhirlwindOnTarget'. */
 extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__(
     "FieldPsynergy_WhirlwindOnTarget");
 void FieldPsynergy_CatchOnTarget(s32 targetId);

@@ -704,11 +704,10 @@ void GaiaRockInside_ClearRoom4SmallBushes(void) {
 
 /* VIEW(s07f4): variable gGaiaRockInside_CobwebCells as const struct CellPoint
  * gGaiaRockInside_CobwebCells[12]; scene/gaia_rock_inside/s4d00 has u16
- * gGaiaRockInside_CobwebCells[] =
- * {; tried as the definition's extern u16 gGaiaRockInside_CobwebCells[], it
- * does not compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:726: `gGaiaRockInside_CobwebCells'
- * undeclared (first use in this function). */
+ * gGaiaRockInside_CobwebCells[] = {; tried as the definition's extern u16
+ * gGaiaRockInside_CobwebCells[], it does not compile in tla-ja
+ * (gaia_rock_inside.c): games/tla/src/scene/gaia_rock_inside.c:726:
+ * `gGaiaRockInside_CobwebCells' undeclared (first use in this function). */
 extern const struct CellPoint gGaiaRockInside_CobwebCells__cobweb[12] __asm__(
     "gGaiaRockInside_CobwebCells");
 #define gGaiaRockInside_CobwebCells gGaiaRockInside_CobwebCells__cobweb
@@ -3571,8 +3570,7 @@ void BlendScript_Start(u16 *script);
  * games/tla/src/scene/gaia_rock_inside/s07f4 has void
  * GaiaRockInside_SwayPlatformUp(struct Actor *object) {; tried as the
  * definition's void GaiaRockInside_SwayPlatformUp(void), Scene_PrepareMap
- * moves: 1 of 226 instructions in tla-ja (gaia_rock_inside.c).
- */
+ * moves: 1 of 226 instructions in tla-ja (gaia_rock_inside.c). */
 void GaiaRockInside_SwayPlatformUp__platforms(void) __asm__(
     "GaiaRockInside_SwayPlatformUp");
 #define GaiaRockInside_SwayPlatformUp GaiaRockInside_SwayPlatformUp__platforms

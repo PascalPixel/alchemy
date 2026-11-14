@@ -12,11 +12,10 @@
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
 /// Heap slot 0x74 while the motes run.
-/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes;
- * event_commands.c has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/motes.c:32: structure has no
- * member named `motes'. */
+/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; event_commands.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja: games/tla/src/field/event_commands/motes.c:32:
+ * structure has no member named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;

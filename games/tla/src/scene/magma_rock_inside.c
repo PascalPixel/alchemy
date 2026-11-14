@@ -187,9 +187,9 @@ extern u32 gMagmaRockInside_RubbleScript[];
 
 extern u32 gMagmaRockInside_DustScript[];
 
-void Func_02004c58(void *entry, void *destination);
-void Func_02004f10(struct RockSprite__s4b18 *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
+void MagmaRockInside_DecompressTaggedLz(void *entry, void *destination);
+void MagmaRockInside_InitRockSprite(struct RockSprite__s4b18 *sprite, s32 width,
+                                    s32 height, u32 attributes, s32 tile);
 
 void Particles_UpdateFalling(void);
 
@@ -721,7 +721,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
  * MagmaRockInside_PlayBurst(s16 value), which the object already declares,
  * MagmaRockInside_FireFromStatue moves: 1 of 270 instructions in tla-ja
  * (magma_rock_inside.c). */
-extern void Func_02000ce4__s0e20(u16 id) __asm__("MagmaRockInside_PlayBurst");
+extern void
+MagmaRockInside_PlayBurst__s0e20(u16 id) __asm__("MagmaRockInside_PlayBurst");
 
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
@@ -823,7 +824,7 @@ hit:
   flame->update = 0;
   Actor_Release(flame);
   Event_SetFlag(FLAG_SCENE_TEMP_F0);
-  Func_02000ce4__s0e20((u16)id);
+  MagmaRockInside_PlayBurst__s0e20((u16)id);
   Event_ClearFlag(FLAG_SCENE_TEMP_F0);
   EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
@@ -1567,7 +1568,8 @@ void MagmaRockInside_StartStepCells(void) {
 
 // Saves the 1 by 2 cells 64 columns across from the controlled object at
 // (73, 72) and stamps the cells kept at (70, 72) in their place, once per
-// cell; Func_02003d40 of Air's Rock is the same with another source.
+// cell; AirsRockInside_StampWideCellUnderLeader is the same with another
+// source.
 void MagmaRockInside_StampStepCell(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = object->x >> 20;
@@ -2833,7 +2835,8 @@ void MagmaRockInside_StartFallingRocks(void) {
   struct Rock *rock;
   struct RockSprite *sprite;
 
-  Func_02004c58(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  MagmaRockInside_DecompressTaggedLz(
+      Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   entry = VramCache_FindFreeEntry();
   tile = Vram_Load(entry, 0x500, work);
   work->tileBase = tile;
@@ -2841,7 +2844,7 @@ void MagmaRockInside_StartFallingRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    Func_02004f10(sprite, 8, 8, 0x40000000, tile);
+    MagmaRockInside_InitRockSprite(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05_5 = 1;
     sprite->palette = 0;
     sprite->priority = 0;

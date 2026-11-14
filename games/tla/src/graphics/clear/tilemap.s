@@ -2,12 +2,12 @@
 @ table of cell numbers that follows it.
 	.section .rodata
 	.balign 4
-	.global Data_02002504
-Data_02002504:
+	.global gClear_GridTilemap
+gClear_GridTilemap:
 	.incbin "games/tla/src/graphics/clear/tilemap.table.lz"
 
-	.global gData_0200265e
-gData_0200265e:
+	.global gClear_PasswordGrid
+gClear_PasswordGrid:
 	.ifdef TLA_EDITION_JA
 	@ 20 cells a row; 99 is an empty cell
 	.byte  0,  1,  2,  3,  4, 20, 21, 22, 23, 24, 38, 39, 40, 41, 42, 56, 99, 99, 57, 58

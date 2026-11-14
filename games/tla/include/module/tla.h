@@ -239,7 +239,7 @@ struct Object {
   u16 rest22 : 2;
 };
 
-void Func_02000f14(s32, s32, s32);
+void Import_DebugMadPlantLeap(s32, s32, s32);
 
 extern char ResourceId_FallingRock;
 
@@ -267,7 +267,8 @@ extern s32 gData_020017b0;
 
 extern char SceneId_MarsLighthouseAerie1;
 
-void Func_02002f90(struct FieldEffect *effect, const s32 *script);
+void TundariaTower_StartEffectScript(struct FieldEffect *effect,
+                                     const s32 *script);
 
 struct RenderInput *Portrait_OpenWindowFar(s32 resource, s32 x, s32 y,
                                            s32 mode);

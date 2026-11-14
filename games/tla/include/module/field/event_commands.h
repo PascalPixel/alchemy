@@ -340,6 +340,13 @@ void Weather_UpdateLightning(void);
 
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
 
+/// The sprite of the Mad Plants hidden in bushes (MadPlant_LeapAtLeader).
+#define SPRITE_MAD_PLANT 249
+/// The encounter table row of the hidden Mad Plants' battles, one column
+/// each, in FLAG_MAD_PLANT's order.
+#define ENCOUNTER_TABLE_MAD_PLANTS 106
+void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z);
+
 void Party_LearnAbility(s32 unit, s32 ability);
 void Party_RemoveMemberRestored(s32 owner);
 

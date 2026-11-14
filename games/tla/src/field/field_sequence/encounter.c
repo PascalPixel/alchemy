@@ -368,8 +368,8 @@ s16 BattleBackground_GetSelected(void) {
 
 /// As The Broken Seal's, with this game's dragon hall check after the loop:
 /// looks the scene up in gScene_BattleBackgroundRules and keeps the last marked
-/// backdrop before it; with flag 0xa30 set, the second dragon hall backdrop
-/// becomes the first.
+/// backdrop before it; once the Mars Lighthouse has thawed, the second dragon
+/// hall backdrop becomes the first.
 void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.scene;
   s32 *table = gScene_BattleBackgroundRules;
@@ -385,7 +385,8 @@ void BattleBackground_SelectForMap(void) {
       entry = *table++;
     } while (entry != 0 && entry != target);
   }
-  if (result == (s32)&ResourceId_DragonHallBBackdrop && GameFlag_Get(0xa30))
+  if (result == (s32)&ResourceId_DragonHallBBackdrop &&
+      GameFlag_Get(FLAG_MARS_LIGHTHOUSE_THAWED))
     result = (s32)&ResourceId_DragonHallABackdrop;
   gMainRoutineWork.battleBackground = result;
 }

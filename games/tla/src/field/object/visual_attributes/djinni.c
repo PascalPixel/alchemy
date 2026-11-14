@@ -217,8 +217,8 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
 /// call then makes this actor join the party.
 void Djinn_RestoreActorAfterBattle(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  u32 raw = (u16)party->pendingDjinnEvent;
-  s32 flags = party->pendingDjinnEvent & 0xf000;
+  u32 raw = (u16)party->pendingDjinni;
+  s32 flags = party->pendingDjinni & 0xf000;
   u32 scene = 0xfff;
   s32 id;
 
@@ -259,7 +259,7 @@ void Djinn_RestoreActorAfterBattle(void) {
 /// 0x1000 kind tested like the first, falling into the common clear.
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
-  s16 *pending = &st->pendingDjinnEvent;
+  s16 *pending = &st->pendingDjinni;
   s32 kind = *pending & 0xf000;
   s32 flag = *pending & 0xfff;
 
@@ -300,7 +300,7 @@ void Djinn_ResolvePending(s32 shown) {
       }
     }
   }
-  gMainRoutineWork.pendingDjinnEvent = 0;
+  gMainRoutineWork.pendingDjinni = 0;
 }
 
 /* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes;

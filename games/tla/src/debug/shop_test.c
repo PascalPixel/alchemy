@@ -2,6 +2,7 @@
 /// Overlay 0x6ba's scene: its code up to Func_02000520, then its tables, in ROM
 /// order.
 
+#include "flags.h"
 #include "battle/battle.h"
 #include "system/io_reg.h"
 #include "sounds.h"
@@ -142,7 +143,7 @@ void Func_020001cc(void) { Sanctum_Run(); }
 
 void Party_AdjustCoins(s32 amount);
 void MessageArgument_Push(s32 value, s32 slot);
-u16 *Func_02000d48(s32 item);
+u16 *ShopTest_GetItem(s32 item);
 s32 PartyInventory_FindRoom(s32 item);
 void ItemDisplay_ShowItem(s32 item, s32 mode);
 void Forge_Run(s32 actor);
@@ -164,7 +165,7 @@ void Func_020001d4(s32 actor) {
       Event_SetMessageId(message + 2);
     }
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Event_GetFlag(0x200)) {
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetMessageId((s32)MsgICanTWait);
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
@@ -179,7 +180,7 @@ void Func_020001d4(s32 actor) {
       Event_ShowMessageAndWait(actor, 0);
       Forge_Run(actor);
       if (Forge_GetItem())
-        Event_SetFlag(0x200);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
     } else {
       Event_SetMessageId(message + 2);
       Event_ShowMessageAndWait(actor, 0);
@@ -191,12 +192,12 @@ void Func_020002a8(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Event_GetFlag(0x200)) {
+  } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
-    u32 price = *Func_02000d48(item);
+    u32 price = *ShopTest_GetItem(item);
     s32 message;
 
     MessageArgument_Push(item, 2);
@@ -424,13 +425,13 @@ struct Trigger gSceneEvents[] = {
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
-/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition
- * *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried
- * as the definition's void Func_02000d48(struct Actor *shot), it does not
- * compile in tla-ja: games/tla/src/debug/shop_test.c:427: conflicting types for
- * `Func_02000d48'. */
+/* VIEW(s0520): routine ShopTest_GetItem as struct ItemDefinition
+ * *ShopTest_GetItem(s32 item); shop_test has u16 *ShopTest_GetItem(s32 item);
+ * tried as the definition's void ShopTest_GetItem(struct Actor *shot), it does
+ * not compile in tla-ja: games/tla/src/debug/shop_test.c:427: conflicting types
+ * for `ShopTest_GetItem'. */
 extern struct ItemDefinition *
-Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
+Func_02000d48__s0520(s32 item) __asm__("ShopTest_GetItem");
 void GameFlag_RefreshLureCap(void);
 
 void Func_02000520(void) {

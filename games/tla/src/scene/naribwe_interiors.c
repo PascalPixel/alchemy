@@ -4,6 +4,7 @@
 /// armor for an unfound Djinni, a prong for the foe it masters, and other items
 /// for the path to follow.
 
+#include "flags.h"
 #include "shared/tables.h"
 #include "field/field.h"
 #include "battle/battle.h"
@@ -69,7 +70,7 @@ s32 NaribweInteriors_MindReadFortuneTellerOnReturn(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) {
-  if (Event_GetFlag(0x8ff))
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gNaribweInteriors_TriggersOnReturn;
   return gNaribweInteriors_Triggers;
 }
@@ -487,7 +488,7 @@ void NaribweInteriors_ReadProng(void) {
 /// Which foe a weapon's reading names: 0 before the return with Piers, then 1,
 /// and 2 once flag 0x940 is set.
 s32 NaribweInteriors_FoeAhead(void) {
-  if (Event_GetFlag(0x8ff) == 0)
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return 0;
   return (Event_GetFlag(0x940) != 0) + 1;
 }
@@ -512,7 +513,7 @@ s32 NaribweInteriors_NextPowerToGain(void) {
 /// The path an ordinary item's reading points along, by the story's flags and
 /// the Trident's prongs (items 439 to 441) and the Trident (item 326).
 s32 NaribweInteriors_NextPath(void) {
-  if (Event_GetFlag(0x8ff) == 0)
+  if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return 0;
   if (FieldPartyInventory_FindMember(326) == -1) {
     if (Event_GetFlag(0x940) == 0) {

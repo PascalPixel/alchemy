@@ -1262,14 +1262,16 @@ void TrialRoad_DriftWithStream(void) {
 
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_SCENE_TEMP_89); }
 
-void TrialRoad_CutBushes(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
+void TrialRoad_CutBushes(void) {
+  Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
+}
 
 void TrialRoad_CutMadPlantBushes(void) {
-  Func_02005a50_(68, 6, 1, 21, 13, 64, 64);
+  Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
   if (!Event_GetFlag(0x9b9)) {
-    Func_02005a60(249, 72, 152);
+    Import_MadPlantLeapAtLeader(249, 72, 152);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 4);
   }
 }
@@ -1317,7 +1319,7 @@ void TrialRoad_ChallengeMoapa(void) {
   else
     TrialRoad_ReachPeakSecond();
   party = &gMainRoutineWork;
-  party->battleRule24b = 2;
+  party->battleType = BATTLE_TYPE_NO_ESCAPE;
   do {
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_TrialRoad2, 4);

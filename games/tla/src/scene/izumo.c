@@ -94,7 +94,7 @@ void Actor_ShowEmoteById(s32 id, s32 a, s32 b);
 void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);
 void FieldCamera_MoveToActorById(s32 id, s32 value);
-void Func_02000db0(s32 value);
+void Izumo_SetExitRequest(s32 value);
 void Actor_PlaceBlocks(const s16 *data);
 void Actor_LiftTargetBlock(const s16 *data);
 void Actor_PlaceMovedBlock(void);
@@ -259,7 +259,7 @@ void Izumo_EnterDoor(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
-  Func_02000db0(work->stepTrigger);
+  Izumo_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -572,7 +572,7 @@ void Izumo_DescendIntoTheRuins(void) {
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
   FieldEvent_Wait(14);
-  Func_02000db0(value);
+  Izumo_SetExitRequest(value);
 }
 
 void Izumo_EnterTheRuinsFromTheLeft(void) {

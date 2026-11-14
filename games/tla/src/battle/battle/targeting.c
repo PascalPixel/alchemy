@@ -1344,7 +1344,7 @@ power_end:
         }
         dmg += Battle_RandomFar() & 3;
         GUARD_CUT();
-        if ((gMainRoutineWork.battleRule24b == 6 ||
+        if ((gMainRoutineWork.battleType == BATTLE_TYPE_LOST ||
              (GameFlag_Get(FLAG_DJINN_LESSON) != 0 && plan->command == 6)) &&
             cur > dmg) {
           dmg = cur;
@@ -1367,7 +1367,7 @@ power_end:
 
       if (cur <= 0 && BattleUnit_KeepsOneHp(tid) != 0)
         cur = 1;
-      if (gMainRoutineWork.battleRule24b == 6)
+      if (gMainRoutineWork.battleType == BATTLE_TYPE_LOST)
         cur = 0;
       if (cur <= 0) {
         BattlePlayback_Push(BATTLE_EVENT_DEFEAT, tid);

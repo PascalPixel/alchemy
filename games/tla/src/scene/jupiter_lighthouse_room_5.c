@@ -1,4 +1,12 @@
 /// @file
+/// The hall of Jupiter Lighthouse where the lighthouse is woken, between room 4
+/// below and rooms 6 and M above. In its center a voice asks the holder of the
+/// star to show the power of Anemos (JupiterLighthouse_HearTheVoice), and Hover
+/// cast on the raised platform there activates the lighthouse
+/// (JupiterLighthouse_ActivateTheLighthouse): its grey blocks rise to hover in
+/// every room and a beam of light stands in the hall. Later, on the way to the
+/// fight by the aerie, Alex stops the party here and heals it
+/// (JupiterLighthouse_AlexHealsTheParty).
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -42,6 +50,33 @@
 #include "shared/tables.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+
+/// Set while the leader stands in the center of the hall, so the voice speaks
+/// once each time he steps in.
+#define FLAG_VOICE_HEARD 0xa0e
+/// The grey block Moved to the gap at cell (13, 34) has risen to hover.
+#define FLAG_MOVED_BLOCK_RAISED 0xa09
+/// Set as Alex stops the party here; he stays in the hall until Isaac and Ivan
+/// have fallen.
+#define FLAG_ALEX_WAITING 0xa22
+
+enum JupiterLighthouseRoom5ActorId {
+  /// The three grey blocks at the west end, the middle one Moved into the gap
+  /// between the others to rise with them.
+  ACTOR_WEST_GREY_BLOCK = ACTOR_FIRST_PLACED + 2,
+  ACTOR_MOVED_GREY_BLOCK,
+  ACTOR_EAST_GREY_BLOCK,
+  /// The row of four grey blocks the activation raises before the party's eyes.
+  ACTOR_FIRST_ROW_BLOCK,
+  ACTOR_LAST_ROW_BLOCK = ACTOR_FIRST_ROW_BLOCK + 3,
+  /// The three blocks pushed or Moved about the floor.
+  ACTOR_FIRST_PUSHED_BLOCK,
+  ACTOR_LAST_PUSHED_BLOCK = ACTOR_FIRST_PUSHED_BLOCK + 2,
+  ACTOR_ALEX = ACTOR_LAST_PUSHED_BLOCK + 3,
+  /// The two halves of the beam of light the activation raises.
+  ACTOR_LOWER_BEAM,
+  ACTOR_UPPER_BEAM
+};
 #include "text/msg_ids.h"
 
 struct Actor;
@@ -58,16 +93,16 @@ enum {
 
 extern u32 gOrbScript[];
 
-void Func_02001718(const s32 *from, const s32 *to);
+void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to);
 
 void JupiterLighthouse_LoadPalettes(s32 value);
 
-void Func_02001538(void);
+void JupiterLighthouse_UpdateSparkRing(void);
 
 void Actor_PlaceBlocks(void *data);
 
-void Func_020029e0(struct SparkSprite *sprite, s32 width, s32 height,
-                   s32 attributes, s32 tile);
+void JupiterLighthouse_InitSparkSprite(struct SparkSprite *sprite, s32 width,
+                                       s32 height, s32 attributes, s32 tile);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
@@ -81,11 +116,11 @@ extern struct CellTarget gCrackedTiles;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void Func_020006ac(void);
+void JupiterLighthouse_HearTheVoice(void);
 
-void Func_02000724(void);
+void JupiterLighthouse_LeaveTheCenter(void);
 
-void Func_020008a4(void);
+void JupiterLighthouse_AlexHealsTheParty(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
@@ -100,7 +135,8 @@ extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetAttributeBAt();
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
-void Func_020029e8(struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
+void JupiterLighthouse_DrawSparkSprite(
+    struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -112,18 +148,20 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-extern s16 gData_02002fb8[];
+extern s16 gJupiterLighthouse_Room5Blocks[];
 
-void Func_02000054(void) { Actor_LiftTargetBlock(gData_02002fb8); }
+void JupiterLighthouse_LiftPushedBlock(void) {
+  Actor_LiftTargetBlock(gJupiterLighthouse_Room5Blocks);
+}
 
 void Actor_RaiseFromCell(s32 id);
 
-void Func_02000064(s32 unused, s32 id) {
+void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
   struct Actor *object;
   s32 i;
 
   object = Actor_Get(id);
-  if (id == 11) {
+  if (id == ACTOR_MOVED_GREY_BLOCK) {
     if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
         object->x >> 20 != 13 || object->z >> 20 != 34)
       return;
@@ -133,7 +171,7 @@ void Func_02000064(s32 unused, s32 id) {
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
-    Event_SetFlag(0xa09);
+    Event_SetFlag(FLAG_MOVED_BLOCK_RAISED);
   } else {
     Actor_PlaceMovedBlock();
   }
@@ -144,17 +182,16 @@ void Actor_SetSpriteColorMode();
 
 #include "shared/actor_cycle_pictures.h"
 
-void Func_02000120(struct Actor *object) {
+void JupiterLighthouse_ShimmerColors(struct Actor *object) {
   u32 frameCount = gFrameCount;
 
   if (frameCount & 1)
     Actor_SetSpriteColorMode(object, (frameCount >> 1) % 6);
 }
 
-/// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
-/// actor 31.
+/// A rising mote's update: it circles the beam of light.
 void Orb_Update(struct Actor *self) {
-  struct Actor *centre = Actor_Get(23);
+  struct Actor *centre = Actor_Get(ACTOR_LOWER_BEAM);
   u16 angle = self->timer;
   s32 sine;
   s32 x;
@@ -179,37 +216,40 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
   return ((struct OrbitEffect *)Import_ActorCreate(type, x, y, z));
 }
 
-/// Every third frame, or every frame once flag 0x201 is set, starts a particle
-/// circling actor 23 at a random height above it.
+/// Starts a mote circling the beam of light at a random height, every third
+/// frame; every frame while FLAG_SCENE_TEMP_01 is set, which nothing in the
+/// hall sets.
 #include "shared/orbs_spawn_rising.h"
 
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02003274 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_02003274[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:199: `gData_02003274'
- * undeclared (first use in this function). */
-extern s32 gData_02003274__jupiter_lighthouse_room_5 __asm__("gData_02003274");
-#define gData_02003274 gData_02003274__jupiter_lighthouse_room_5
-/* VIEW(jupiter_lighthouse_room_5): routine gData_02003278 as this part declared
- * it; the joined file has another; tried as the definition's extern u32
- * gData_02003278[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:197: `gData_02003278'
- * undeclared (first use in this function). */
-extern s32 gData_02003278__jupiter_lighthouse_room_5 __asm__("gData_02003278");
-#define gData_02003278 gData_02003278__jupiter_lighthouse_room_5
+/* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseStep as this
+ * part declared it; the joined file has another; tried as the definition's
+ * extern u32 gJupiterLighthouse_PulseStep[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:199:
+ * `gJupiterLighthouse_PulseStep' undeclared (first use in this function). */
+extern s32 gJupiterLighthouse_PulseStep__room_5 __asm__(
+    "gJupiterLighthouse_PulseStep");
+#define gJupiterLighthouse_PulseStep gJupiterLighthouse_PulseStep__room_5
+/* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseOn as this
+ * part declared it; the joined file has another; tried as the definition's
+ * extern u32 gJupiterLighthouse_PulseOn[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:197:
+ * `gJupiterLighthouse_PulseOn' undeclared (first use in this function). */
+extern s32
+    gJupiterLighthouse_PulseOn__room_5 __asm__("gJupiterLighthouse_PulseOn");
+#define gJupiterLighthouse_PulseOn gJupiterLighthouse_PulseOn__room_5
 
-void Func_02001650();
+void JupiterLighthouse_AddSparks();
 
-void Func_02000294(void) {
-  if (gData_02003278 != 0)
+void JupiterLighthouse_PulseAscend(void) {
+  if (gJupiterLighthouse_PulseOn != 0)
     Event_PlaySound(SE_ASCEND);
-  Func_02001650(gData_02003274);
+  JupiterLighthouse_AddSparks(gJupiterLighthouse_PulseStep);
 }
 
-extern u32 gData_02002f70[];
-extern s32 gData_02002f94[];
+extern u32 gJupiterLighthouse_BringInScript[];
+extern s32 gJupiterLighthouse_PulseScript[];
 
-void Func_0200185c(void);
+void JupiterLighthouse_EndSparkRing(void);
 
 static __inline__ void Bring(s32 id) {
   struct Actor *object;
@@ -221,24 +261,20 @@ static __inline__ void Bring(s32 id) {
   object->priorityFlags |= 2;
   object->scaleY = 0xffff0000;
   object->scaleX = 0x1999;
-  Actor_SetMovementTypeById(id, gData_02002f70);
+  Actor_SetMovementTypeById(id, gJupiterLighthouse_BringInScript);
 }
 
-/// The event when the leader stands on cell (42, 41): sets flag 2560, turns the
-/// leader (Actor_FaceDirectionById), plays its hooks and sounds 220 and
-/// 178, starts the spark ring from above the leader to (680, 0, 574)
-/// (Func_02001718) and a pulse callback (Func_02000294) that quickens over 20
-/// steps, sounds 390 and 144 with the screen shaking, objects 23 and 24 brought
-/// in on their action scripts, flashes, the room's cells copied open
-/// (MapGrid_CopyCellPictureCellsRect) and JupiterLighthouse_LoadPalettes(2);
-/// then the callbacks stop, objects 13 to 16 rise 2 pixels a frame for 16
-/// frames, take their next state (Actor_RaiseFromCell) and sound 80 plays.
-void Func_020002b8(void) {
+/// Hover cast on the raised platform at cell (42, 41) wakes the lighthouse:
+/// the leader faces north and shimmers, a ring of sparks pulses faster and
+/// faster toward the hall's far end as the tower shakes, the beam of light
+/// rises there with motes circling it, the hall's floor changes and its lights
+/// cycle, and the row of four grey blocks rises to hover.
+void JupiterLighthouse_ActivateTheLighthouse(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct Actor *a = Actor_GetById(13);
-  struct Actor *b = Actor_GetById(14);
-  struct Actor *c = Actor_GetById(15);
-  struct Actor *d = Actor_GetById(16);
+  struct Actor *a = Actor_GetById(ACTOR_FIRST_ROW_BLOCK);
+  struct Actor *b = Actor_GetById(ACTOR_FIRST_ROW_BLOCK + 1);
+  struct Actor *c = Actor_GetById(ACTOR_FIRST_ROW_BLOCK + 2);
+  struct Actor *d = Actor_GetById(ACTOR_LAST_ROW_BLOCK);
   s32 from[3];
   s32 to[3];
   s32 i;
@@ -249,7 +285,7 @@ void Func_020002b8(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   FieldEvent_Wait(30);
-  leader->update = Func_02000120;
+  leader->update = JupiterLighthouse_ShimmerColors;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_SHIMMER);
   Actor_SetAnimationSpeed(leader, 64);
@@ -264,26 +300,26 @@ void Func_020002b8(void) {
   to[0] = 170 << 18;
   to[1] = 0;
   to[2] = 0x23e0000;
-  Func_02001718(from, to);
-  gData_02003274 = 0;
-  gData_02003278 = 1;
-  Task_AddFrame(Func_02000294, 0x480);
+  JupiterLighthouse_StartSparkRing(from, to);
+  gJupiterLighthouse_PulseStep = 0;
+  gJupiterLighthouse_PulseOn = 1;
+  Task_AddFrame(JupiterLighthouse_PulseAscend, 0x480);
   for (i = 0; i < 20; i++) {
-    gData_02003274 = 0;
+    gJupiterLighthouse_PulseStep = 0;
     System_Wait((20 - i) / 2);
-    gData_02003274 = 1;
+    gJupiterLighthouse_PulseStep = 1;
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(1, 1, 1);
-  gData_02003274 = 1;
+  gJupiterLighthouse_PulseStep = 1;
   FieldEvent_Wait(90);
   MapGrid_SetShake(3, 3, 1);
-  gData_02003274 = 3;
-  gData_02003278 = 0;
+  gJupiterLighthouse_PulseStep = 3;
+  gJupiterLighthouse_PulseOn = 0;
   FieldEvent_Wait(40);
-  Bring(23);
-  Bring(24);
+  Bring(ACTOR_LOWER_BEAM);
+  Bring(ACTOR_UPPER_BEAM);
   Task_AddFrame(Orbs_SpawnRising, 0x480);
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(6, 6, 1);
@@ -307,24 +343,24 @@ void Func_020002b8(void) {
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, 16);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
-  Actor_SetScript(23, gData_02002f94);
-  Actor_SetScript(24, gData_02002f94);
-  gData_02003274 = 2;
+  Actor_SetScript(ACTOR_LOWER_BEAM, gJupiterLighthouse_PulseScript);
+  Actor_SetScript(ACTOR_UPPER_BEAM, gJupiterLighthouse_PulseScript);
+  gJupiterLighthouse_PulseStep = 2;
   FieldEvent_Wait(30);
-  gData_02003274 = 1;
+  gJupiterLighthouse_PulseStep = 1;
   FieldEvent_Wait(30);
-  gData_02003274 = 0;
-  FieldActor_RefreshSelectorById(23);
-  FieldActor_RefreshSelectorById(24);
-  Actor_GetById(23)->scaleX = 0;
-  Actor_GetById(24)->scaleX = 0;
+  gJupiterLighthouse_PulseStep = 0;
+  FieldActor_RefreshSelectorById(ACTOR_LOWER_BEAM);
+  FieldActor_RefreshSelectorById(ACTOR_UPPER_BEAM);
+  Actor_GetById(ACTOR_LOWER_BEAM)->scaleX = 0;
+  Actor_GetById(ACTOR_UPPER_BEAM)->scaleX = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(30);
   MapGrid_SetShake(2, 2, 1);
   FieldEvent_Wait(30);
   MapGrid_SetShake(0, 0, 1);
-  FieldTask_Remove(Func_02000294);
-  Func_0200185c();
+  FieldTask_Remove(JupiterLighthouse_PulseAscend);
+  JupiterLighthouse_EndSparkRing();
   FieldEvent_Wait(30);
   a->motionFlags = 0;
   b->motionFlags = 0;
@@ -337,10 +373,10 @@ void Func_020002b8(void) {
     d->y += px(2);
     System_Wait(1);
   }
-  Actor_RaiseFromCell(13);
-  Actor_RaiseFromCell(14);
-  Actor_RaiseFromCell(15);
-  Actor_RaiseFromCell(16);
+  Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK);
+  Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 1);
+  Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 2);
+  Actor_RaiseFromCell(ACTOR_LAST_ROW_BLOCK);
   Event_PlaySound(MUS_080);
   Sound_WaitForJingle();
 }
@@ -364,9 +400,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-void Func_020006ac(void) {
-  if (!Event_GetFlag(0xa0e)) {
-    Event_SetFlag(0xa0e);
+void JupiterLighthouse_HearTheVoice(void) {
+  if (!Event_GetFlag(FLAG_VOICE_HEARD)) {
+    Event_SetFlag(FLAG_VOICE_HEARD);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     PaletteFade_ApplySource(0x10000, 0);
@@ -382,10 +418,12 @@ void Func_020006ac(void) {
   }
 }
 
-void Func_02000724(void) { GameFlag_Clear(0xa0e); }
+void JupiterLighthouse_LeaveTheCenter(void) {
+  GameFlag_Clear(FLAG_VOICE_HEARD);
+}
 
-/// Actor 22 rises in a shower of sparks: one every other frame for 32 frames.
-void Func_02000734(void) {
+/// Alex appears out of a shower of rising sparks.
+void JupiterLighthouse_AlexAppears(void) {
   struct EffectParams params;
   struct EffectParams *p;
   struct SparkActor *actor;
@@ -396,9 +434,9 @@ void Func_02000734(void) {
   u32 random2;
   u32 scaled;
 
-  actor = ((struct SparkActor *)Actor_Get(22));
+  actor = ((struct SparkActor *)Actor_Get(ACTOR_ALEX));
   Event_PlaySound(SE_WARP);
-  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(22)), 0);
+  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(ACTOR_ALEX)), 0);
   p = &params;
   p->count = 1;
   p->kind = 5;
@@ -422,13 +460,13 @@ void Func_02000734(void) {
                         actor->z, 0, -0x40000, 0, 0x1b0000, p);
     }
     if (i == 20)
-      Actor_SetSpriteColorById(22, 0x100);
+      Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);
   }
-  Actor_SetSpriteColorById(22, 0);
-  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(22)), 1);
+  Actor_SetSpriteColorById(ACTOR_ALEX, 0);
+  Actor_SetSpriteFlags(((struct SparkActor *)Actor_Get(ACTOR_ALEX)), 1);
 }
 
-void Func_02000810(s32 actor, s32 target) {
+void JupiterLighthouse_HealWithArc(s32 actor, s32 target) {
   s32 i;
 
   BattleEffect_StartArcEffect();
@@ -456,72 +494,72 @@ void Func_02000810(s32 actor, s32 target) {
 
 #define EVENT_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
 
-/// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
-/// about, actor 22 rises in sparks and talks with it, then joins it; flags
-/// 0xa25, 0x161 and 0x144 are set.
-void Func_020008a4(void) {
+/// On the way to the fight by the aerie, Alex appears behind Felix, asks
+/// whether he will light the beacon, tells him to save his friends and heals
+/// the party; from then on there are no encounters and Retreat is blocked.
+void JupiterLighthouse_AlexHealsTheParty(void) {
   s32 angle;
 
-  if (!Event_GetFlag(0xa24))
+  if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED))
     return;
-  if (Event_GetFlag(0xa23))
+  if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL))
     return;
-  if (Event_GetFlag(0xa22))
+  if (Event_GetFlag(FLAG_ALEX_WAITING))
     return;
-  Event_SetFlag(0xa22);
+  Event_SetFlag(FLAG_ALEX_WAITING);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgFieldWaitingForCompanion);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Actor_WalkToAndWait(4, 68, 280);
-  Actor_WalkToAndWait(4, 68, 272);
-  Actor_FaceDirectionAndWait(4, FACING_WEST);
+  Actor_WalkToAndWait(ACTOR_FELIX, 68, 280);
+  Actor_WalkToAndWait(ACTOR_FELIX, 68, 272);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
   FieldEvent_Wait(20);
-  Actor_FaceDirectionAndWait(4, FACING_NORTH);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   FieldEvent_Wait(20);
-  Actor_FaceDirectionAndWait(4, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_EAST);
   FieldEvent_Wait(20);
-  Actor_FaceDirectionAndWait(4, FACING_NORTH);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   FieldEvent_Wait(10);
-  Actor_SetSpriteFlags(((void *)Actor_Get(22)), 0);
-  FieldActor_SetSpriteColor(((void *)Actor_Get(22)), 15);
+  Actor_SetSpriteFlags(((void *)Actor_Get(ACTOR_ALEX)), 0);
+  FieldActor_SetSpriteColor(((void *)Actor_Get(ACTOR_ALEX)), 15);
   angle = 0x4000;
-  Actor_SetPositionAndFacing(22, px(64), px(225), angle);
-  Func_02000734();
+  Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
+  JupiterLighthouse_AlexAppears();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(68, CAMERA_KEEP, 240, 1);
   Event_OpenMessage(22, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Actor_SetAnimationAndWait(22, 4);
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+    Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     EVENT_WORK->message++;
   } else {
-    Actor_SetAnimationAndWait(22, 3);
+    Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
     FieldEvent_Wait(10);
     EVENT_WORK->message++;
     FieldEvent_ShowMessageThenWait(22, 0, 5);
   }
-  Actor_SetAnimationAndWait(22, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Actor_SetAnimationAndWait(22, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Actor_SetAnimationAndWait(22, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(68, CAMERA_KEEP, 256, 1);
-  Actor_WalkByAndWait(22, 0, 16);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
   FieldEvent_Wait(30);
-  Func_02000810(22, 4);
+  JupiterLighthouse_HealWithArc(22, 4);
   Party_RestoreHpPp(1);
   Message_ShowCentered((s16)EVENT_WORK->message++, 5);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(22, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(30);
   FieldEvent_ShowMessageThenWait(22, 0, 5);
-  Event_SetFlag(0xa25);
+  Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY);
   Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
   Event_SetFlag(FLAG_RETREAT_BLOCKED);
   Event_End();
@@ -529,32 +567,31 @@ void Func_020008a4(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/// Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22
-/// is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
-/// 0xa00 two more and the particle callback.
+/// Sets up the hall: Alex while he waits for the party, the beam of light
+/// hidden until the lighthouse is activated, then shown with its motes.
 s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 angle;
 
   gFieldWork->transition = 0x204;
-  if (Event_GetFlag(0xa23))
-    Event_ClearFlag(0xa22);
-  if (Event_GetFlag(0xa22)) {
+  if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL))
+    Event_ClearFlag(FLAG_ALEX_WAITING);
+  if (Event_GetFlag(FLAG_ALEX_WAITING)) {
     angle = 0x4000;
-    Actor_SetPositionAndFacing(22, px(64), px(225), angle);
+    Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
   }
-  Actor_PlaceBlocks(gData_02002fb8);
+  Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);
   Actor_SetActionCallback(Actor_Get(64), 9);
-  object = Actor_Get(23);
+  object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x200000, 0x2440000);
-  Actor_SetSpriteFlags(Actor_Get(23), 0);
-  object = Actor_Get(24);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LOWER_BEAM), 0);
+  object = Actor_Get(ACTOR_UPPER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
   SET_POSITION(object, 0x2a80000, 0x400000, 0x2440000);
-  Actor_SetSpriteFlags(Actor_Get(24), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_BEAM), 0);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
     MapGrid_CopyCellsLayered(123, 32, 1, 5, 106, 32);
@@ -563,8 +600,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Scene setup: the arrival flags and palette, the leader's priority bit 0x40,
-/// and the actors flags 0xa00 and 0xa09 bring in.
+/// Raises the grey blocks once the lighthouse is activated, the Moved one
+/// once it is in its gap.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
@@ -572,16 +609,16 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED))
     MapGrid_SetCellBehavior(0xd00000, 0x2a00000, 2, 236);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
-    Actor_RaiseFromCell(10);
-    Actor_RaiseFromCell(12);
-    Actor_RaiseFromCell(13);
-    Actor_RaiseFromCell(14);
-    Actor_RaiseFromCell(15);
-    Actor_RaiseFromCell(16);
+    Actor_RaiseFromCell(ACTOR_WEST_GREY_BLOCK);
+    Actor_RaiseFromCell(ACTOR_EAST_GREY_BLOCK);
+    Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK);
+    Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 1);
+    Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK + 2);
+    Actor_RaiseFromCell(ACTOR_LAST_ROW_BLOCK);
   }
-  if (Event_GetFlag(0xa09)) {
-    Actor_SetPosition(11, 216, 552);
-    Actor_RaiseFromCell(11);
+  if (Event_GetFlag(FLAG_MOVED_BLOCK_RAISED)) {
+    Actor_SetPosition(ACTOR_MOVED_GREY_BLOCK, 216, 552);
+    Actor_RaiseFromCell(ACTOR_MOVED_GREY_BLOCK);
   }
   return 0;
 }
@@ -608,12 +645,12 @@ void MapGrid_SetCellHeight();
 
 #include "shared/position_flat_distance.h"
 
-extern s32 gData_020033e0[];
-extern s32 gData_02003400;
+extern s32 gJupiterLighthouse_OrbScript[];
+extern s32 gJupiterLighthouse_OrbFrame;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
-void Func_02001070(struct Actor *self) {
+void JupiterLighthouse_UpdateOrb(struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
@@ -653,7 +690,7 @@ void Func_02001070(struct Actor *self) {
         if (Position_FlatDistance(&leader->x, &self->x) <= 12 &&
             distance < 0xc0000)
           near = 1;
-        if (near && !Event_GetFlag(260)) {
+        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
@@ -686,13 +723,13 @@ stop:
     s32 zero = 0;
     *((u8 *)self + 0x63) = zero;
     self->update = zero;
-    Actor_StartScript(self, gData_020033e0);
+    Actor_StartScript(self, gJupiterLighthouse_OrbScript);
     Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gData_02003400 = zero;
+    gJupiterLighthouse_OrbFrame = zero;
   }
 }
 
-struct GustObject *Func_02001230(struct GustObject *source) {
+struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;
@@ -710,7 +747,7 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = Func_02001070;
+  object->update = JupiterLighthouse_UpdateOrb;
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
@@ -719,7 +756,7 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   return object;
 }
 
-s32 Func_02001308(struct Actor *object) {
+s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   struct EffectOptions options;
   s32 phase, x, y, speed;
 
@@ -777,7 +814,7 @@ struct SparkWork__s1230 {
   s16 next;
 };
 
-void Func_02001538(void) {
+void JupiterLighthouse_UpdateSparkRing(void) {
   struct SparkWork__s1230 *work = Ram_HeapSlots->menuRuntime;
   struct Spark *spark = work->sparks;
   struct SparkSprite__jupiter_lighthouse_room_5 *sprite = work->sprites;
@@ -804,7 +841,7 @@ void Func_02001538(void) {
       Camera_WorldToScreen(p);
       sprite->x = p[0];
       sprite->z = p[2];
-      Func_020029e8(sprite);
+      JupiterLighthouse_DrawSparkSprite(sprite);
       spark->age++;
     }
   }
@@ -830,7 +867,7 @@ struct SparkWork__s1650 {
 /// with a random angle from 0x6000 across three quarters of a turn, the
 /// cosine and negated sine of it at 64 pixels as its direction, a random
 /// speed of 16 to 31 and an age of 0.
-void Func_02001650(s32 count) {
+void JupiterLighthouse_AddSparks(s32 count) {
   struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;
   struct Spark *spark;
   s32 angle;
@@ -859,7 +896,7 @@ void Func_02001650(s32 count) {
   }
 }
 
-void Func_02001718(const s32 *from, const s32 *to) {
+void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   struct SparkWork__s1650 *work =
       HeapSlot_Alloc(220, sizeof(struct SparkWork__s1650));
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -885,7 +922,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
   spark = work->sparks;
   sprite = work->sprites;
   for (; i <= 95; i++, sprite++, spark++) {
-    Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
+    JupiterLighthouse_InitSparkSprite(sprite, 4, 4, 0, tile + (i & 15) * 2);
     sprite->fullColor = 1;
     sprite->palette = 0;
     sprite->priority = BattleEffect_GetObjectPriority(leader) & 3;
@@ -902,13 +939,13 @@ void Func_02001718(const s32 *from, const s32 *to) {
 
     work->next = zero;
   }
-  Task_AddFrame(Func_02001538, 0x480);
+  Task_AddFrame(JupiterLighthouse_UpdateSparkRing, 0x480);
 }
 
-void Func_0200185c(void) {
+void JupiterLighthouse_EndSparkRing(void) {
   struct SparkWork__s1650 *work = Ram_HeapSlots->menuRuntime;
 
-  FieldTask_Remove(Func_02001538);
+  FieldTask_Remove(JupiterLighthouse_UpdateSparkRing);
   VramCache_FreeEntry(work->vramEntry);
   HeapSlot_Release(220);
 }
@@ -938,8 +975,8 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect/move.c"
 
 #undef EVENT_WORK
-#undef gData_02003274
-#undef gData_02003278
+#undef gJupiterLighthouse_PulseStep
+#undef gJupiterLighthouse_PulseOn
 #undef gPaletteCyclePausesInEvents
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -1051,8 +1088,8 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 #include "text/msg_ids.h"
 
-void Func_02000054(void);
-void Func_020002b8(void);
+void JupiterLighthouse_LiftPushedBlock(void);
+void JupiterLighthouse_ActivateTheLighthouse(void);
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {                                                               
@@ -1076,21 +1113,21 @@ u32 gFieldEffect_LongScript[] = {
       SC_END,                                                                  
   };
 
-u32 gData_02002f70[] = {
+u32 gJupiterLighthouse_BringInScript[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
     SC_WAIT(1),
     SC_LOOP(32, SC_TOP),
     SC_END,
 };
 
-s32 gData_02002f94[] = {                                                               
+s32 gJupiterLighthouse_PulseScript[] = {                                                               
       SC_ADD(SW_SCALE_X, -960),                                                 
       SC_WAIT(1),                                                              
       SC_LOOP(140, SC_TOP),                                                     
       SC_END,                                                                  
   };
 
-s16 gData_02002fb8[] = {
+s16 gJupiterLighthouse_Room5Blocks[] = {
     17, 18, 19, -1,
 };
 
@@ -1143,11 +1180,11 @@ u32 gOrbScript[] = {
       SC_FREE,                                                                 
   };
 
-u32 gData_02003274[] = {
+u32 gJupiterLighthouse_PulseStep[] = {
     0,
 };
 
-u32 gData_02003278[] = {
+u32 gJupiterLighthouse_PulseOn[] = {
     1,
 };
 
@@ -1164,22 +1201,22 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 21, 0xa00, EVENT(Func_020006ac)},
-    {TRIGGER_STEP, 22, 0xa00, EVENT(Func_02000724)},
-    {TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(Func_020008a4)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgFieldFollowTrueFeelings)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgFieldPartWithAgatio)},
-    {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(Func_02000064)},
-    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_ACTS), 0, 0xa00, EVENT(Func_020002b8)},
+    {TRIGGER_STEP, 21, FLAG_JUPITER_LIGHTHOUSE_ACTIVATED, EVENT(JupiterLighthouse_HearTheVoice)},
+    {TRIGGER_STEP, 22, FLAG_JUPITER_LIGHTHOUSE_ACTIVATED, EVENT(JupiterLighthouse_LeaveTheCenter)},
+    {TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(JupiterLighthouse_AlexHealsTheParty)},
+    {TRIGGER_TALK, ACTOR_ALEX, CONDITION_ALWAYS, MSGNO(MsgFieldFollowTrueFeelings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALEX, CONDITION_ALWAYS, MSGNO(MsgFieldPartWithAgatio)},
+    {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
+    {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_PUSHED_BLOCK + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PUSHED_BLOCK + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LAST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_PUSHED_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_MOVED_GREY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPushedBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOVED_GREY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePushedBlock)},
+    {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_ACTS), 0, FLAG_JUPITER_LIGHTHOUSE_ACTIVATED, EVENT(JupiterLighthouse_ActivateTheLighthouse)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1189,7 +1226,7 @@ u32 gPaletteCyclePausesInEvents[] = {
     1,
 };
 
-s32 gData_020033e0[] = {
+s32 gJupiterLighthouse_OrbScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

@@ -50,9 +50,6 @@ extern s32 gAlhafranCave_ClearedWord;
 // Set while the way down to the jail is open, as the leader stands on the
 // ledge above it.
 #define FLAG_WAY_TO_JAIL_OPEN 0x204
-// Set as Chaucha and Eoleo leave the jail after visiting Briggs.
-#define FLAG_FAMILY_VISITED_BRIGGS 0x8bd
-
 /// The jail's people, numbering the rows of gAlhafranCave_JailActorPlacements.
 enum AlhafraJailActorId {
   ACTOR_BRIGGS = ACTOR_FIRST_PLACED + 10,
@@ -100,7 +97,6 @@ void Actor_ApplyRandomChildValues(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FlagBlock_ApplyFlags(const void *data);
-s32 Func_02001588(void);
 void Actor_TakeLeaderLayer(void);
 void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
                                             s32 z);
@@ -311,10 +307,9 @@ void AlhafranCave_SetUpCave(void) {
 void FieldEffect_StartBlankOverlay(s32 value);
 void EffectSprite_InitFromSlot94(const void *data, s32 a, s32 b, s32 c);
 
-/// The rooms' setup: sprite priorities, the scene callback, actors 12 to 14,
-/// actors 15 to 24 by flags FLAG_ALHAFRA_MAST_CLEARED, FLAG_BRIGGS_CAUGHT and
-/// FLAG_FAMILY_VISITED_BRIGGS, and actor 8 stepping in at entrance 9 until flag
-/// 0x109 is set.
+/// Sets up the jail and the cave: who is held and who visits, by how far the
+/// story has gone (Briggs caught, his family's visit, the mast cleared), and
+/// the hungry boy's father stepping in as the party comes in by entrance 9.
 void AlhafranCave_SetUpJail(void) {
   const void *data;
   struct FieldWork *work;
@@ -804,7 +799,7 @@ struct Trigger gAlhafranCave_CaveTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AlhafranCave_CloseWayToJail)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AlhafranCave_OpenWayToJail)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x203, EVENT(AlhafranCave_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_SCENE_TEMP_03, EVENT(AlhafranCave_FreezePuddle)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AlhafranCave_CastSand)},
     {TRIGGER_TABLE_END},
 };
@@ -832,9 +827,9 @@ struct Trigger gAlhafranCave_JailTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgIfTheyDon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgOhWhatS)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgIHearSome)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x200, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, 0x201, EVENT(AlhafranCave_PoundPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, 0x203, EVENT(AlhafranCave_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, FLAG_SCENE_TEMP_00, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9, FLAG_SCENE_TEMP_01, EVENT(AlhafranCave_PoundPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_SCENE_TEMP_03, EVENT(AlhafranCave_FreezePuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(AlhafranCave_StartMovingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(AlhafranCave_FinishMovingCrate)},
     {TRIGGER_TABLE_END},

@@ -1,62 +1,62 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02003918
-gData_02003918:
+	.global gPaletteCycle_Flash
+gPaletteCycle_Flash:
 	.space 0x00000004
-	.global Data_0200391c
-Data_0200391c:
+	.global gPaletteCycle_Order
+gPaletteCycle_Order:
 	.space 0x00000004
-	.global gData_02003920
-gData_02003920:
+	.global gPaletteCycle_Countdown
+gPaletteCycle_Countdown:
 	.space 0x00000004
-	.global gData_02003924
-gData_02003924:
+	.global gPaletteCycle_Period
+gPaletteCycle_Period:
 	.space 0x00000004
-	.global gData_02003928
-gData_02003928:
+	.global gPaletteCycle_Slots
+gPaletteCycle_Slots:
 	.space 0x00000004
-	.global Data_0200392c
-Data_0200392c:
+	.global gPaletteCycle_FlashColors
+gPaletteCycle_FlashColors:
 	.space 0x00000004
-	.global Data_02003930
-Data_02003930:
+	.global gPaletteCycle_Colors
+gPaletteCycle_Colors:
 	.space 0x00000004
-	.global gData_02003934
-gData_02003934:
+	.global gPaletteCycle_Count
+gPaletteCycle_Count:
 	.space 0x00000004
-	.global gData_02003938
-gData_02003938:
+	.global gPaletteCycle_Step
+gPaletteCycle_Step:
 	.space 0x00000004
-	.global gData_0200393c
-gData_0200393c:
+	.global gMarsLighthouseRoomM_LedgeFlameColors
+gMarsLighthouseRoomM_LedgeFlameColors:
 	.space 0x00000040
-	.global gData_0200397c
-gData_0200397c:
+	.global gMarsLighthouseRoomM_LedgePalette
+gMarsLighthouseRoomM_LedgePalette:
 	.space 0x00000040
-	.global Data_020039bc
-Data_020039bc:
+	.global gMarsLighthouseRoomM_LedgeSavedPalette
+gMarsLighthouseRoomM_LedgeSavedPalette:
 	.space 0x00000020
-	.global Data_020039dc
-Data_020039dc:
+	.global gMarsLighthouseRoomM_HallFlameColors
+gMarsLighthouseRoomM_HallFlameColors:
 	.space 0x00000040
-	.global Data_02003a1c
-Data_02003a1c:
+	.global gMarsLighthouseRoomM_HallPalette
+gMarsLighthouseRoomM_HallPalette:
 	.space 0x00000040
-	.global gData_02003a5c
-gData_02003a5c:
+	.global gMarsLighthouseRoomM_HallSavedPalette
+gMarsLighthouseRoomM_HallSavedPalette:
 	.space 0x00000014
-	.global Data_0200ba70
-Data_0200ba70:
+	.global gMarsLighthouseRoomM_UnlitFlameColors
+gMarsLighthouseRoomM_UnlitFlameColors:
 	.space 0x0000000c
-	.global Data_02003a7c
-Data_02003a7c:
+	.global gMarsLighthouseRoomM_DoorwayBlend
+gMarsLighthouseRoomM_DoorwayBlend:
 	.space 0x00000002
-	.global gData_02003a7e
-gData_02003a7e:
+	.global gMarsLighthouseRoomM_DoorwayBlendTarget
+gMarsLighthouseRoomM_DoorwayBlendTarget:
 	.space 0x00000002
-	.global gData_02003a80
-gData_02003a80:
+	.global gMarsLighthouseRoomM_Doorway
+gMarsLighthouseRoomM_Doorway:
 	.space 0x00000002
-	.global gData_02003a82
-gData_02003a82:
+	.global gMarsLighthouseRoomM_DoorwayStep
+gMarsLighthouseRoomM_DoorwayStep:

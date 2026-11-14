@@ -559,7 +559,7 @@ void WorldMap_RefuseToRunAway(void) {
   s32 southwest = FACING_SOUTHWEST;
   s32 west = FACING_WEST;
 
-  if (Event_GetFlag(0xa21) && !Event_GetFlag(0x9d0)) {
+  if (Event_GetFlag(0xa21) && !Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
     object = Actor_Get(gMainRoutineWork.currentOwner);
     x = object->x;
     z = object->z;
@@ -979,7 +979,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     /* FAKEMATCH(dead): the native loads the scene's id after this store. */
     do {
     } while (0);

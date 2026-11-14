@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global Data_02006a1c
-Data_02006a1c:
+	.global gJupiterLighthouse_BeamLevel
+gJupiterLighthouse_BeamLevel:
 	.space 0x00000008
-	.global gData_02006a24
-gData_02006a24:
+	.global gJupiterLighthouse_BeaconStage
+gJupiterLighthouse_BeaconStage:
 	.space 0x00000004
-	.global Data_02006a28
-Data_02006a28:
+	.global gJupiterLighthouse_WhirlwindRiding
+gJupiterLighthouse_WhirlwindRiding:
 	.space 0x00000004
 	.global gPaletteCycleColors
 gPaletteCycleColors:

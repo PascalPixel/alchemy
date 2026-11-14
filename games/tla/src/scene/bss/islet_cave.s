@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02001a14
-gData_02001a14:
+	.global gPaletteCycleBright
+gPaletteCycleBright:
 	.space 0x00000004
 	.global gPaletteCycleSlots
 gPaletteCycleSlots:
@@ -10,20 +10,20 @@ gPaletteCycleSlots:
 	.global gPaletteCycleTimer
 gPaletteCycleTimer:
 	.space 0x00000004
-	.global gData_02001a20
-gData_02001a20:
+	.global gPaletteCycleDelay
+gPaletteCycleDelay:
 	.space 0x00000004
-	.global gData_02001a24
-gData_02001a24:
+	.global gPaletteSlots
+gPaletteSlots:
 	.space 0x00000004
 	.global gPaletteColors
 gPaletteColors:
 	.space 0x00000004
-	.global Data_02001a2c
-Data_02001a2c:
+	.global gPaletteCycleColors
+gPaletteCycleColors:
 	.space 0x00000004
-	.global gData_02001a30
-gData_02001a30:
+	.global gPaletteCycleLength
+gPaletteCycleLength:
 	.space 0x00000004
-	.global gData_02001a34
-gData_02001a34:
+	.global gPaletteCycleIndex
+gPaletteCycleIndex:

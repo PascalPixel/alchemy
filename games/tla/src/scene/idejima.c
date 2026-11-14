@@ -114,7 +114,7 @@ void Idejima_CatchUpWithFelix(void);
 void Idejima_RunAlexDeparture(void);
 void Party_RestoreHpPp(s32 a);
 void Actor_MoveToObject();
-void Func_02003320();
+void Idejima_CountAnswer();
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gIdejimaEntrances;
@@ -617,7 +617,7 @@ void Idejima_RunAlexDeparture(void) {
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-    Func_02003320();
+    Idejima_CountAnswer();
   }
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessage(ACTOR_JENNA, 0);

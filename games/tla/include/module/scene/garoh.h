@@ -8,55 +8,53 @@
 
 struct SpawnObject;
 
-extern s16 gData_02005874[];
+extern s16 gGaroh_Room1DayPlacements[];
 extern s32 gGaroh_Room3Triggers[];
-void Func_02002694(void);
-void Func_02003878(void);
+void Garoh_WerewolvesRevealThemselves(void);
+void Garoh_MahaTellsTheLegend(void);
 
-void Func_02000be4(void);
-void Func_02000e00(void);
+void Garoh_InitializeRoom1(void);
+void Garoh_InitializeRoom3(void);
 
-void Func_0200538c(void);
+extern u32 gGaroh_WerewolfLookAroundScript[];
+s32 Garoh_MetWerewolves();
 
-extern u32 gData_0200545c[];
-s32 Func_02001344();
+void Garoh_OpenDoorAndEnter(void);
+void Garoh_WerewolfPeersFromCrevice(void);
 
-void Func_020004cc(void);
-void Func_02000808(void);
+void Garoh_EnterCrevice(void);
 
-void Func_02000960(void);
+void Garoh_MeetInTheCave(void);
+void Garoh_PlaceFirstBlock(void);
+void Garoh_PlaceSecondBlock(void);
 
-void Func_020009a4(void);
-void Func_02000f74(void);
-void Func_02000f80(void);
+void Garoh_PlaceThirdBlock(void);
 
-void Func_02000f8c(void);
+void Garoh_PlaceFourthBlock(void);
 
-void Func_02000f98(void);
+void Garoh_PlaceBlockByLash(void);
 
-void Func_02000fa4(void);
+void Garoh_RevealRoom4Passage(void);
+void Garoh_HideSanctuaryCrevice(void);
+void Garoh_RestoreRoom3Dark(void);
 
-void Func_02000fec(void);
-void Func_0200105c(void);
-void Func_02001098(void);
+void Garoh_HideRoom4Passage(void);
 
-void Func_020010d4(void);
+void Garoh_HideCavePassage(void);
+void Garoh_CrossRoom3West(void);
 
-void Func_02001104(void);
-void Func_02001144(void);
-
-void Func_020011c8(void);
+void Garoh_CrossRoom3East(void);
 
 extern u32 gFieldEffect_ShortScript[];
 
 extern u32 gFieldEffect_LongScript[];
-extern s32 gData_0200552c[];
-extern s16 gData_02005d9c[];
-extern s16 gData_02005db2[];
-extern s16 gData_02005dc8[];
-void Func_0200132c(void);
+extern s32 gGaroh_ShrunkenSpriteScript[];
+extern s16 gGaroh_DoorFrames[];
+extern s16 gGaroh_WideDoorFrames[];
+extern s16 gGaroh_TallDoorFrames[];
+void Garoh_LashRope(void);
 
-extern u16 Data_02006340[];
+extern u16 gGaroh_WaveLines[];
 extern char SceneId_Garoh1;
 extern char SceneId_Garoh2;
 extern char SceneId_Garoh3;

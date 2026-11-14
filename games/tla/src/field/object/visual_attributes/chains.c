@@ -588,7 +588,7 @@ void Tightrope_Update(void) {
   struct TightropeSlot *slot;
   s32 i = 0;
 
-  if (!GameFlag_Get(260) && event->blockedSteps > 12) {
+  if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode == 0) {

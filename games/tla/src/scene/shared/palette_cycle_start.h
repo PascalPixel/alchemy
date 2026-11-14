@@ -1,5 +1,5 @@
 /// Starts a palette cycle's task.
-void Func_020000f4(void) {
+void PaletteCycle_Start(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
   gPaletteCycleDelay = 15;

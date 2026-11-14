@@ -686,7 +686,7 @@ s32 LinkLobby_EnterBattle(void) {
       Event_SetAfterBattleDestination(scene, 10);
       Party_SetFields1f2And1f4(scene, 11);
     }
-    gMainRoutineWork.battleRule24b = 4;
+    gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
     Field_RequestBattleFromEncounterTable(1, 1);
     table = (u16 *)gSerialTransfer.payload;
     table[0] = 0x45;

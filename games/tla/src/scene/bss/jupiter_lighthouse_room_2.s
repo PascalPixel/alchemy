@@ -2,11 +2,11 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.space 0x00000004
-	.global gData_02002b60
-gData_02002b60:
+	.global gJupiterLighthouse_GlowSprite
+gJupiterLighthouse_GlowSprite:
 	.space 0x00000028
-	.global gData_02002b88
-gData_02002b88:
+	.global gJupiterLighthouse_GlowPosition
+gJupiterLighthouse_GlowPosition:
 	.space 0x0000000c
 	.global gWhirlwindRiding
 gWhirlwindRiding:

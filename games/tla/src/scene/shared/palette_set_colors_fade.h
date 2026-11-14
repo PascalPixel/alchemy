@@ -2,10 +2,10 @@
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->block32;
 
-  gData_0200e88c = slots;
-  gData_02006890 = colours;
-  Data_02006894 = a;
-  Data_02006880 = b;
+  gPaletteCycle_Slots = slots;
+  gPaletteCycle_FlashColors = colours;
+  gPaletteCycle_Colors = a;
+  gPaletteCycle_Order = b;
   if (*slots != 0xffff && *colours != 0xffff) {
   next:
     {
@@ -22,5 +22,5 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_ApplyTarget(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
-    Func_020048e8();
+    Teleport_ArriveWhirling();
 }

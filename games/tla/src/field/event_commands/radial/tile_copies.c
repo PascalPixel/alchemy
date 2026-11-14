@@ -72,13 +72,11 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
   }
 }
 
-/// An object (sprite) pops up at the cell (x, z), grows, turns to the leader,
-/// who raises its arms, hops twice and flies into the leader in an arc. Trial
-/// Road, Gaia Rock, the Gabomba catacombs, Jupiter Lighthouse and Taopo Swamp
-/// call it.
-// XXX: what the object is (an item the Cyclone uncovers?); a render at Trial
-// Road would settle it.
-void FieldItem_JumpToLeader(s32 sprite, s32 x, s32 z) {
+/// A Mad Plant (sprite) springs out of the bushes cleared at the cell (x, z):
+/// it grows, turns to the leader, hops twice and leaps at the leader in an arc
+/// before the battle. The Gabomba Catacombs, Taopo Swamp, Gaia Rock,
+/// Jupiter Lighthouse and Trial Road each hide one.
+void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
   struct Actor *object = Actor_CreateFar(sprite, x << 16, 0, z << 16);

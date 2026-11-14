@@ -90,7 +90,7 @@ extern s16 gMagmaRock_CrumblingPillars[];
 
 void MagmaRock_RestoreCrumblingPillars(const u16 *table);
 
-void Func_02003bf4();
+void MagmaRock_PlaceTightrope();
 s32 Func_02003c04(struct Actor *object);
 s32 Field_TryJumpForward(void);
 

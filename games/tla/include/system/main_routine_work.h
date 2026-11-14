@@ -3,6 +3,24 @@
 
 #include "types.h"
 
+/// gMainRoutineWork.battleType: how the next battle starts, as ☀️'s; it is
+/// set back to BATTLE_TYPE_NORMAL as the battle ends.
+enum BattleType {
+  BATTLE_TYPE_NORMAL = 0,
+  /// A battle the party cannot run from: a Mimic's, a hidden Mad Plant's and
+  /// the bosses'.
+  BATTLE_TYPE_NO_ESCAPE = 2,
+  BATTLE_TYPE_LINK = 4,  ///< a link battle, from the lobby
+  BATTLE_TYPE_DEBUG = 5, ///< the debug battle menu's mark
+  /// A battle the party is meant to lose: it is caught off guard and every
+  /// hit downs its target, as when Karst and Agatio fight Isaac and Ivan.
+  BATTLE_TYPE_LOST = 6
+};
+
+/// The first pending Djinni battle event: DJINNI_BATTLE_EVENT_FIRST plus the
+/// Djinni's number (Field_RequestDjinnBattle).
+#define DJINNI_BATTLE_EVENT_FIRST 300
+
 /// gMainRoutineWork, the state a save file keeps (☀️'s struct MainRoutineWork,
 /// 0x20 bytes further on from the shop credit): play time, coins, the scene and
 /// the leader's position, the active party and the options.
@@ -76,14 +94,14 @@ struct MainRoutineWork {
   /// Not named by ⚓️ code; byte 6 is option 4, the idle sleep, as ☀️'s
   /// idleSleepEnabled.
   u8 unk244[7];
-  /// How the next battle runs, as ☀️'s battleStart: 2 forbids escape, 6
-  /// lets a hit defeat at once; 4 and 5 also set.
-  u8 battleRule24b;
-  u8 unk24c[6];    ///< not named by ⚓️ code
+  u8 battleType; ///< an enum BattleType, set back to BATTLE_TYPE_NORMAL at the
+                 ///< end
+  u8 unk24c[6];  ///< not named by ⚓️ code
   u16 hazardSteps; ///< reset on entering a new scene group
-  /// The Djinni battle pending (300 plus its number, flags above), cleared
-  /// once resolved.
-  s16 pendingDjinnEvent;
+  /// The Djinni battle pending (DJINNI_BATTLE_EVENT_FIRST plus its number,
+  /// flags in bits 15 to 11), or a Mimic's flag with CONDITION_FLAG_SET,
+  /// resolved on returning to the field.
+  s16 pendingDjinni;
   s16 sequenceResult; ///< the last battle's result, as ☀️'s; -1 for a defeat
   s32 encounterSteps; ///< reset on entering a new scene group
   /// Cleared with the battle's spoils, as ☀️'s pendingItem; not read by name
@@ -102,8 +120,14 @@ struct MainRoutineWork {
   s8 cloaked;        ///< Cloak: the leader is hidden
   u8 unk26e[2];      ///< not named by ⚓️ code
   u32 savedCallback; ///< the paused object's update, restored on resuming
-  u8 counter274;     ///< 0 on a new game; counted up by Func_080d2d70
-  u8 unk275;         ///< not named by ⚓️ code
+  /// The answers events count: telling Kraden on Idejima that the Western
+  /// Sea is not where they go, agreeing with Alhafra's mayor that the party
+  /// owes him, and others; Ancient Lemuria asks its question only while this
+  /// is 4 or less. 0 on a new game, counted up by Func_080d2d70.
+  // XXX: what the counted answers share; reading every site's question and
+  // the Ancient Lemuria event that tests the count would settle it.
+  u8 countedAnswers;
+  u8 unk275; ///< not named by ⚓️ code
   /// Nonzero makes actor 8, not currentOwner, the one events control.
   s16 ownerOverride;
   s32 savedX;      ///< the world map leader's x, kept on leaving

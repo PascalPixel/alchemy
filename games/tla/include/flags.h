@@ -5,6 +5,23 @@
 /// Game flags, named where their meaning is shown, as The Broken Seal's
 /// flags.h names its own.
 
+/// Set while the party member whose actor id is `actor` (ACTOR_FELIX to
+/// ACTOR_PIERS, 0 to 3 for Isaac's party) is in the party, as ☀️'s
+/// FLAG_IN_PARTY.
+#define FLAG_IN_PARTY(actor) (actor)
+
+/// The first of the 80 Djinn flags, DJINNI_FLINT's.
+#define FLAG_DJINN_FIRST 48
+/// Set once the party has `djinni` (djinn_ids.h), whose DjinniId counts from
+/// FLAG_DJINN_FIRST.
+#define FLAG_DJINNI(djinni) (FLAG_DJINN_FIRST + (djinni))
+/// The first of the 80 hiding flags after the Djinn's own, DJINNI_FLINT's.
+#define FLAG_DJINN_HIDING_FIRST 128
+/// Set while `djinni` is hiding, its DjinniId counting from
+/// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
+/// fled Djinni battle.
+#define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
+
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing its sound, once.
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
@@ -19,14 +36,47 @@
 /// scene's flags are not reset, the actors come back from their snapshot,
 /// and the music saved in gMainRoutineWork.returnMusic resumes if there is
 /// one. The scenes skip their arrival events while it is set.
+/// Set while the field sequence handles its requests, and cleared while the
+/// party walks (FieldSequence_Run), as ☀️'s.
+#define FLAG_FIELD_HANDLING_REQUESTS 0x104
 #define FLAG_KEEP_PARTY_POSITION 0x109
+/// The next scene keeps the music that is playing; main_routine.c clears
+/// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
+#define FLAG_KEEP_MUSIC_ONCE 0x11a
+/// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.
+#define FLAG_KEEP_MUSIC_HELD 0x11b
+#define FLAG_WORLD_MAP_LEFT 0x11c ///< the current scene is not the World Map
+/// The leader falls into the next scene from above, as after jumping down a
+/// ledge into it.
+#define FLAG_ARRIVE_FALLING 0x122
+/// The party is in a town; the scene loader sets and clears it.
+#define FLAG_IN_TOWN 0x123
+/// The file was loaded to restart at its last Sanctum, as ☀️'s.
+#define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e
+/// The file was recovered at its last Sanctum, as ☀️'s.
+#define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
+#define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
+#define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
+/// While set, the save screen refuses to save with "Cannot save here".
+#define FLAG_CANNOT_SAVE_HERE 0x17c
+/// While set, the save screen refuses to save with "This is no place for
+/// that!": the scenes set it while the party rides a moving platform, lift or
+/// raft.
+#define FLAG_NO_PLACE_TO_SAVE 0x17d
+/// Set while Start is pressed in the Psynergy menu, which ends its waits.
+#define FLAG_MENU_START_PRESSED 0x150
+/// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next scene plays
+/// the leader's arrival, unless its setup clears this first.
+#define FLAG_ARRIVAL_STAIRS_UP 0x120
+/// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
+#define FLAG_ARRIVAL_STAIRS_DOWN 0x121
 // Each lighthouse's scenes set its flag on every arrival, and Scene_Arrive
 // clears all four when the party enters another area, so a flag is set only
 // while the party is inside.
-#define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
-#define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
-#define FLAG_MARS_LIGHTHOUSE_LIT 0x112
-#define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
+#define FLAG_IN_VENUS_LIGHTHOUSE 0x110
+#define FLAG_IN_MERCURY_LIGHTHOUSE 0x111
+#define FLAG_IN_MARS_LIGHTHOUSE 0x112
+#define FLAG_IN_JUPITER_LIGHTHOUSE 0x113
 /// The scene shows its area's name once it is on screen; entering a new area
 /// sets it.
 #define FLAG_SHOW_AREA_NAME 0x12f
@@ -90,15 +140,25 @@
 
 /// Set as Briggs is caught on the boat he bought at Alhafra; the town then
 /// thanks the party and talks of pirates.
+/// Set as the mayor of Madra arrives on the ship at Alhafra's eastern
+/// harbour, or once the party has fought Briggs there.
+#define FLAG_MAYOR_ARRIVED_AT_THE_SHIP 0x8aa
 #define FLAG_BRIGGS_CAUGHT 0x8ab
+/// Set as Chaucha and Eoleo leave the jail after visiting Briggs.
+#define FLAG_FAMILY_VISITED_BRIGGS 0x8bd
+/// Set as Felix comes upon the four Kibombo warriors in their hideout in the
+/// Gondowan Cliffs; back in Madra, Felix is asked "It was them, wasn't it?"
+#define FLAG_KIBOMBO_WARRIORS_FOUND 0x98f
 /// Set once Burst has broken the last block on the Alhafran boat's mast, so
 /// the mast is ready for repairs; the town then wonders whether Briggs was a
 /// pirate at all.
 #define FLAG_ALHAFRA_MAST_CLEARED 0x8a7
 /// Set as Alex greets the party at Alhafra's inn.
 #define FLAG_ALHAFRA_MET_ALEX 0x8b2
-/// Set once Alex has left Alhafra's inn.
-#define FLAG_ALEX_LEFT_ALHAFRA 0x971
+/// Set as Alex meets the party again by Obaba's cliff in Champa ("I see you've
+/// caught up with me again", MsgChampa25); Alhafra's inn is without him from
+/// then on ("That cute boy next door left already").
+#define FLAG_CHAMPA_MET_ALEX 0x971
 /// Set as the party from Madra, its mayor among them, reaches Alhafra across
 /// the Yampi Desert.
 #define FLAG_ALHAFRA_MADRANS_ARRIVED 0x8b3
@@ -142,6 +202,18 @@
 /// button beside them: the gates stay open.
 #define FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED 0xa01
 
+/// The Gabomba ceremony at Kibombo: FLAG_GABOMBA_CEREMONY_UNDER_WAY is set as
+/// it begins (the music rules play its music while set) and cleared once the
+/// message is carried; the others are set as each step happens.
+#define FLAG_GABOMBA_CEREMONY_UNDER_WAY 0x8f2
+#define FLAG_GABOMBA_RESPONDED 0x8fb
+#define FLAG_GABOMBA_CEREMONY_ENDED 0x8ef
+#define FLAG_AKAFUBU_OFFERED_HELP 0x8fd
+/// Set as Felix carries the message of the Gabomba to Akafubu after the
+/// ceremony at the Gabomba Statue; Madra, Alhafra and the Kibombo then speak of
+/// the raids and the Black Crystal.
+#define FLAG_GABOMBA_MESSAGE_CARRIED 0x8ff
+
 /// Set as the party sets out on the ship Hamma gave wings to at Atteka Inlet:
 /// from then on the ship flies, with no encounters at sea.
 #define FLAG_SHIP_FLIES 0x8df
@@ -159,12 +231,33 @@
 #define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED 0xa0a
 /// The same for the right tower's archer and the right angel.
 #define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED 0xa0b
-
-/// Set as the left tower's archer statue shoots its arrow at the left angel
-/// on Jupiter Lighthouse's aerie, which starts to lift its half of the lid.
-#define FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED 0xa0a
-/// The same for the right tower's archer and the right angel.
-#define FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED 0xa0b
+/// Set once both angels are energized and the lid is off the well on Jupiter
+/// Lighthouse's aerie, where Isaac's party is found.
+#define FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED 0xa1f
+/// Set as the party comes out by the aerie to watch Karst and Agatio fight
+/// Isaac and Ivan; cleared once the two have fallen.
+#define FLAG_JUPITER_LIGHTHOUSE_FIGHT_WATCHED 0xa24
+/// Set as Alex stops the party on its way to the fight and heals it; while
+/// set there are no encounters and Retreat is blocked.
+#define FLAG_JUPITER_LIGHTHOUSE_ALEX_HEALED_THE_PARTY 0xa25
+/// Set once Isaac and Ivan have fallen to Karst and Agatio and gone up to the
+/// aerie, where the two wait for Felix.
+#define FLAG_ISAAC_AND_IVAN_FELL 0xa23
+/// Set as the Jupiter Star lights the beacon; Contigo's people speak of it.
+#define FLAG_JUPITER_BEACON_LIT 0xa21
+/// Set in the Mars Lighthouse's aerie as the talk after the Doom Dragon's
+/// battle ends, just before the voice asks for the Mars Star; Prox's people say
+/// "only Mars Lighthouse still needs lighting" while it is clear and thank the
+/// party for lighting the beacon once it is set.
+#define FLAG_MARS_BEACON_LIT 0xa3d
+/// Set in the dragon hall once the Mars Star is set in the statue's face: the
+/// lighthouse turns to fire and its ice is gone, and battles there take the
+/// dragon hall's backdrop A in place of B.
+#define FLAG_MARS_LIGHTHOUSE_THAWED 0xa30
+/// Set at the end of the reunion in Contigo, where the two parties hear what
+/// happened on Mt. Aleph; the shipwrights at Atteka Inlet then wait with the
+/// wings.
+#define FLAG_REUNITED_AT_CONTIGO 0x9d0
 
 /// Set once Felix has woken on Idejima's shore.
 #define FLAG_IDEJIMA_FELIX_WOKE 0x844
@@ -703,5 +796,12 @@
 #define FLAG_AREA_TEMP_FD 0x3fd
 #define FLAG_AREA_TEMP_FE 0x3fe
 #define FLAG_AREA_TEMP_FF 0x3ff
+
+/// The Mad Plants hidden in bushes, one flag each, set once it is beaten, in
+/// the order of their battles in ENCOUNTER_TABLE_MAD_PLANTS: the Gabomba
+/// Catacombs' (0), Taopo Swamp's, Gaia Rock's, Jupiter Lighthouse's and
+/// Trial Road's (4).
+#define FLAG_MAD_PLANT_FIRST 0x9b5
+#define FLAG_MAD_PLANT(n) (FLAG_MAD_PLANT_FIRST + (n))
 
 #endif

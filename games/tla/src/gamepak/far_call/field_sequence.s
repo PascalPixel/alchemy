@@ -322,7 +322,7 @@ Teleport_PlaySparksFar:
 	export Func_080c8930, Func_080d2d70
 	export WorldMap_SetReturnForSceneFar, WorldMap_SetReturnForScene
 	export WorldMap_SetReturnLeavingSceneFar, WorldMap_SetReturnLeavingScene
-	export FieldItem_JumpToLeaderFar, FieldItem_JumpToLeader
+	export MadPlant_LeapAtLeaderFar, MadPlant_LeapAtLeader
 	export ScreenTransition_IsScanlineActiveFar, ScreenTransition_IsScanlineActive
 	export Party_CheckItemLimitFar, Party_CheckItemLimit
 	export Scene_FindTriggerFar, Scene_FindTrigger

@@ -55,7 +55,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   djinn = group * 20 + index;
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
-  gMainRoutineWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
+  gMainRoutineWork.pendingDjinni = (djinn + 300) | noPrepare;
   work->encounter = Encounter_GetDjinnFormation(djinn);
   if (work->mode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
@@ -110,7 +110,7 @@ void Func_080d2cc4(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_ShowFar(message, 1);
-  GameFlag_Clear(0x142);
+  GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   Event_End();
   if (Party_FindOwnerWithActionFar(136) != -1)
     ((struct EventWork15a *)Ram_HeapSlots->fieldWork)->flag = 1;
@@ -141,5 +141,5 @@ void Event_PlayCueNearFocus(struct CueObject *object, s32 cue) {
   Sound_PlayFar(cue);
 }
 
-/// Counts up the main routine's counter274.
-void Func_080d2d70(void) { gMainRoutineWork.counter274++; }
+/// Counts up the main routine's countedAnswers.
+void Func_080d2d70(void) { gMainRoutineWork.countedAnswers++; }

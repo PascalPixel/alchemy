@@ -207,7 +207,7 @@ void SuhallaGate_ThievesSpotParty(void) {
   Actor_WalkToAndWait(8, 456, 312);
   Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate1, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 1);
   Event_End();
 }
@@ -265,7 +265,7 @@ void SuhallaGate_FightPunchAnt(void) {
   Event_Wait(20);
   Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate3, 99);
   Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 3);
   Event_End();
 }

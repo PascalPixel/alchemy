@@ -1,6 +1,6 @@
 @ Three raw palettes and the two packed streams of one animated screen: four
 @ beams of light that meet, and a light that falls from where they meet.
-@ Func_0200020c, called with 4, unpacks both streams into a work buffer. It
+@ StaffCredit_ShowBeacon, called with 4, unpacks both streams into a work buffer. It
 @ copies the second stream's 8,192 bytes to video memory 0x06000000, 256 tiles
 @ of 16 colours, and the first stream's eleven tilemaps of 32 x 20 cells to
 @ 0x06002000 one at a time: the first seven for four frames each, the last four
@@ -10,18 +10,18 @@
 @ the tiles no screen shows. Called with 0 to 3 the routine builds a tilemap
 @ in code instead and puts that row of pal_a in BG palette 14.
 	.section .rodata
-	.global Data_020020bc
-Data_020020bc:
+	.global gStaffCredit_BeaconPalettes
+gStaffCredit_BeaconPalettes:
 	.incbin "games/tla/src/graphics/staff_credit/pal_a.gbapal"
-	.global Data_0200213c
-Data_0200213c:
+	.global gStaffCredit_BeamsPalette
+gStaffCredit_BeamsPalette:
 	.incbin "games/tla/src/graphics/staff_credit/pal_b.gbapal"
-	.global gData_0200215c
-gData_0200215c:
+	.global gStaffCredit_BeamsLightPalette
+gStaffCredit_BeamsLightPalette:
 	.incbin "games/tla/src/graphics/staff_credit/pal_c.gbapal"
-	.global Data_0200217c
-Data_0200217c:
+	.global gStaffCredit_BeamsMaps
+gStaffCredit_BeamsMaps:
 	.incbin "games/tla/src/graphics/staff_credit/beams_map.table.lz"
-	.global Data_02002469
-Data_02002469:
+	.global gStaffCredit_BeamsTiles
+gStaffCredit_BeamsTiles:
 	.incbin "games/tla/src/graphics/staff_credit/beams.parts.lz"

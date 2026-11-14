@@ -27,6 +27,7 @@
 /// lifts.
 
 #include "flags.h"
+#include "djinn_ids.h"
 #include "item_ids.h"
 #include "types.h"
 #include "system/system.h"
@@ -112,19 +113,23 @@ static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
   Actor_SetSpriteFlags(object, flags);
 }
 
-static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y, s32 z) {
+static __inline__ struct Actor *KandoreanTemple_CreateActor(s32 type, s32 x,
+                                                            s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
-static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void KandoreanTemple_PlaceRope(s32 a, s32 b, s32 c, s32 d) {
+  /* FAKEMATCH(wrapper): the call through this inline. */
+  Rope_Place(a, b, c, d);
+}
+
+static __inline__ void KandoreanTemple_CopyTouchedCells(s32 a, s32 b, s32 c,
+                                                        s32 d, s32 e, s32 f,
+                                                        s32 g) {
   /* FAKEMATCH(wrapper): the call through this inline. */
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
-static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
-  Rope_Place(a, b, c, d);
-}
 #include "field/field.h"
 #include "types.h"
 #include "scene_tables.h"
@@ -148,6 +153,16 @@ static __inline__ void Func_020053a8_(s32 a, s32 b, s32 c, s32 d) {
 #include "field/field_sequence_event.h"
 #include "module/field/field_effect.h"
 #include "objcmd.h"
+
+/// The Kandorean Temple's story, from the hidden passage Kraden suspects to
+/// the ladder Poi's students lower once the party has Lash.
+#define FLAG_HIDDEN_PASSAGE_FOUND 0x842
+#define FLAG_ASKED_ABOUT_POI 0x845
+#define FLAG_TOLD_OF_THE_MEDITATION 0x846
+#define FLAG_STUDENTS_TESTED 0x848
+#define FLAG_MET_POI 0x849
+#define FLAG_LASH_RECEIVED 0x84a
+#define FLAG_LADDER_LOWERED 0x92d
 
 struct MapWork17 {
   s32 *origin;
@@ -236,7 +251,9 @@ void Actor_PlaceBlocks(const void *data);
 
 extern s32 gKandoreanTemple_RightTimer;
 
-void KandoreanTemple_FightFog(void) { Field_RequestDjinnBattle(11, 27); }
+void KandoreanTemple_FightFog(void) {
+  Field_RequestDjinnBattle(11, DJINNI_FOG);
+}
 
 u32 KandoreanTemple_CountDownSteam(struct Actor *object) {
   s32 left;
@@ -328,7 +345,7 @@ void *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_KandoreanTemple7)
     return gKandoreanTemple_FogRoomPlacements;
   if (scene == (s32)&SceneId_KandoreanTemple8) {
-    if (GameFlag_Get(0x849)) {
+    if (GameFlag_Get(FLAG_MET_POI)) {
       gKandoreanTemple_GatePlacements[3].talkFacing = 0;
       gKandoreanTemple_GatePlacements[4].talkFacing = 0;
       gKandoreanTemple_GatePlacements[5].talkFacing = 0;
@@ -336,7 +353,7 @@ void *Scene_GetPlacements(void) {
     return gKandoreanTemple_GatePlacements;
   }
   if (scene == (s32)&SceneId_KandoreanTemple9) {
-    if (GameFlag_Get(0x849)) {
+    if (GameFlag_Get(FLAG_MET_POI)) {
       gKandoreanTemple_PoisHallPlacements[5].talkFacing = 3;
       gKandoreanTemple_PoisHallPlacements[6].x = px(368);
       gKandoreanTemple_PoisHallPlacements[6].z = px(694);
@@ -350,7 +367,7 @@ void *Scene_GetPlacements(void) {
 void KandoreanTemple_KradenSuspectsTheWall(void) {
   struct Actor *object;
 
-  if (GameFlag_Get(0x842) == 0) {
+  if (GameFlag_Get(FLAG_HIDDEN_PASSAGE_FOUND) == 0) {
     GameFlag_Set(FLAG_SCENE_TEMP_30);
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -437,7 +454,8 @@ void KandoreanTemple_TrailSteam(struct Actor *object, s32 step) {
 }
 
 void KandoreanTemple_PuffSteam(struct Actor *object) {
-  struct Actor *steam = Func_02005140_(0x10d, object->x, object->y, object->z);
+  struct Actor *steam =
+      KandoreanTemple_CreateActor(0x10d, object->x, object->y, object->z);
   struct FieldSprite *sprite;
 
   if (steam) {
@@ -560,8 +578,8 @@ void KandoreanTemple_InitializeSteam(struct Actor *object, s32 priority) {
 }
 
 void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
-  struct Actor *object =
-      Func_02005140_(0x11d, position[0], position[1], position[2] - 0x20000);
+  struct Actor *object = KandoreanTemple_CreateActor(
+      0x11d, position[0], position[1], position[2] - 0x20000);
 
   if (object) {
     s32 timer;
@@ -1196,9 +1214,9 @@ void KandoreanTemple_WatchVentPlatforms(void) {
     Event_ClearFlag(FLAG_SCENE_TEMP_09);
   }
   if (onCell)
-    Event_SetFlag(0x17d);
+    Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
   else
-    Event_ClearFlag(0x17d);
+    Event_ClearFlag(FLAG_NO_PLACE_TO_SAVE);
   if (gKandoreanTemple_LeftVentBlowing != 0 && leader->y == 0 &&
       leader->x > px(284) && leader->x < px(308) && leader->z < px(200) &&
       !Event_GetFlag(FLAG_SCENE_TEMP_0B))
@@ -1253,7 +1271,7 @@ void KandoreanTemple_WatchLifts(void) {
     riding = 1;
   }
   if (riding) {
-    GameFlag_Set(0x17d);
+    GameFlag_Set(FLAG_NO_PLACE_TO_SAVE);
     return;
   }
   Actor_SetModeById(13, 0);
@@ -1262,7 +1280,7 @@ void KandoreanTemple_WatchLifts(void) {
   leader->motionFlags = 3;
   GameFlag_Clear(FLAG_SCENE_TEMP_08);
   GameFlag_Clear(FLAG_SCENE_TEMP_09);
-  GameFlag_Clear(0x17d);
+  GameFlag_Clear(FLAG_NO_PLACE_TO_SAVE);
 }
 
 /* VIEW(kandorean_temple): tag struct MapCell as struct
@@ -1329,7 +1347,7 @@ void KandoreanTemple_AskAboutPoi(void) {
   Actor_SetMovementTypeById(9, gKandoreanTemple_LookAroundScript);
   wait(1);
   Event_End();
-  GameFlag_Set(0x845);
+  GameFlag_Set(FLAG_ASKED_ABOUT_POI);
 }
 
 void KandoreanTemple_TellOfTheMeditation(void) {
@@ -1341,7 +1359,7 @@ void KandoreanTemple_TellOfTheMeditation(void) {
   Actor_GetById(10)->facing = FACING_SOUTH + FACING_STEP;
   wait(1);
   Event_End();
-  GameFlag_Set(0x846);
+  GameFlag_Set(FLAG_TOLD_OF_THE_MEDITATION);
 }
 
 void KandoreanTemple_AskWhoPassedTheTest(void) {
@@ -1548,7 +1566,7 @@ void KandoreanTemple_FindTheHiddenPassage(void) {
   struct Actor *object;
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
-  GameFlag_Set(0x842);
+  GameFlag_Set(FLAG_HIDDEN_PASSAGE_FOUND);
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkToAndWaitById(4, 89, 237);
@@ -1635,7 +1653,7 @@ void KandoreanTemple_ReceiveLash(void) {
   Actor_WalkToAndWait(12, 432, 394);
   FieldActor_WatchAndSetScript(12, gMainRoutineWork.currentOwner);
   FieldActor_SetSpritePriority(12, 2);
-  Event_SetFlag(0x84a);
+  Event_SetFlag(FLAG_LASH_RECEIVED);
   Event_End();
 }
 
@@ -1673,30 +1691,30 @@ void KandoreanTemple_FightChestbeaters(void) {
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination((s32)&SceneId_KandoreanTemple3, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
 }
 
 void KandoreanTemple_CycloneFirstPatch(void) {
-  Func_020053d0_(76, 0, 2, 2, 73, 14, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 2, 2, 73, 14, 1);
 }
 
 void KandoreanTemple_CycloneSecondPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 75, 16, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 75, 16, 1);
 }
 
 void KandoreanTemple_CycloneThirdPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 74, 18, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 74, 18, 1);
 }
 
 void KandoreanTemple_CycloneFourthPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 80, 18, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 80, 18, 1);
 }
 
 void KandoreanTemple_CycloneFifthPatch(void) {
-  Func_020053d0_(76, 0, 1, 1, 87, 15, 1);
+  KandoreanTemple_CopyTouchedCells(76, 0, 1, 1, 87, 15, 1);
 }
 
 s32 Scene_Initialize(void) {
@@ -1797,7 +1815,7 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   object->scaleY = 0xb333;
   object->collisionFlags = 0;
   FieldEffect_StartBlankOverlay(0);
-  if (Event_GetFlag(0x92d)) {
+  if (Event_GetFlag(FLAG_LADDER_LOWERED)) {
     {
       s32 e = 1;
       s32 f = 4;
@@ -1811,7 +1829,8 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gMainRoutineWork.entrance == 2) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y = px(64);
-    } else if (gMainRoutineWork.entrance == 3 && Event_GetFlag(0x92d) == 0) {
+    } else if (gMainRoutineWork.entrance == 3 &&
+               Event_GetFlag(FLAG_LADDER_LOWERED) == 0) {
       Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
@@ -2307,7 +2326,7 @@ void KandoreanTemple_StartRoom6(void) {
 void KandoreanTemple_StartFogRoom(void) {
   Rope_Initialize();
   Rope_Place(0, 0x20f, 8, 9);
-  if (GameFlag_Get(0x849)) {
+  if (GameFlag_Get(FLAG_MET_POI)) {
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
   } else {
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
@@ -2328,13 +2347,13 @@ void KandoreanTemple_StartMeditating(s32 id, s32 base) {
 
 void KandoreanTemple_StartGate(void) {
   gFieldWork->transition = 0x100;
-  if (GameFlag_Get(0x842)) {
+  if (GameFlag_Get(FLAG_HIDDEN_PASSAGE_FOUND)) {
     Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   } else {
     Actor_DisableById(8);
   }
-  if (GameFlag_Get(0x849)) {
+  if (GameFlag_Get(FLAG_MET_POI)) {
     MapGrid_CopyCellAttributes(2, 0, 2, 3, 17, 24);
     Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
@@ -2367,7 +2386,7 @@ void KandoreanTemple_StartGate(void) {
 void KandoreanTemple_PlaceTheLevitator(void) {
   if (Event_GetFlag(FLAG_SCENE_TEMP_10) == 0) {
     Event_SetFlag(FLAG_SCENE_TEMP_10);
-    Func_020053a8_(1, 0x210, 10, 11);
+    KandoreanTemple_PlaceRope(1, 0x210, 10, 11);
   }
   {
     s32 angle = 0x3000;
@@ -2381,9 +2400,9 @@ void KandoreanTemple_MatchLiftPriority(void);
 void KandoreanTemple_StartPoisHall(void) {
   gFieldWork->transition = 521;
   Rope_Initialize();
-  Func_020053a8_(0, 527, 8, 9);
+  KandoreanTemple_PlaceRope(0, 527, 8, 9);
   Rope_Place(1, 528, 10, 11);
-  if (Event_GetFlag(0x849) == 0) {
+  if (Event_GetFlag(FLAG_MET_POI) == 0) {
     Actor_SetModeById(13, 5);
     Actor_SetModeById(15, 5);
   }
@@ -2391,13 +2410,13 @@ void KandoreanTemple_StartPoisHall(void) {
   Task_Add(KandoreanTemple_MatchLiftPriority, TASK_PASS_VBLANK);
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
       gMainRoutineWork.entrance == 14) {
-    if (GameFlag_Get(0x84a)) {
+    if (GameFlag_Get(FLAG_LASH_RECEIVED)) {
       s32 angle = 0x5000;
 
       Actor_SetPositionAndFacing(12, px(432), px(394), angle);
     } else {
       KandoreanTemple_CreateLashPebble();
-      if (GameFlag_Get(0x849))
+      if (GameFlag_Get(FLAG_MET_POI))
         KandoreanTemple_PlaceTheLevitator();
     }
   }
@@ -2405,26 +2424,26 @@ void KandoreanTemple_StartPoisHall(void) {
       gMainRoutineWork.entrance == 9) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_12))
       KandoreanTemple_OpenTheTrapdoor();
-    if (GameFlag_Get(0x849)) {
+    if (GameFlag_Get(FLAG_MET_POI)) {
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       {
         s32 facing = FACING_NORTHWEST + FACING_STEP;
 
         Actor_SetPositionAndFacing(15, px(408), px(664), facing);
       }
-    } else if (GameFlag_Get(0x848)) {
+    } else if (GameFlag_Get(FLAG_STUDENTS_TESTED)) {
       Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     } else {
       KandoreanTemple_TestTheStudents();
     }
   } else if (gMainRoutineWork.entrance == 6) {
-    if (GameFlag_Get(0x849) == 0)
+    if (GameFlag_Get(FLAG_MET_POI) == 0)
       KandoreanTemple_PraiseTheLevitator();
   } else if (gMainRoutineWork.entrance == 13) {
     KandoreanTemple_FindTheRopeOnTheFloor();
   } else if (gMainRoutineWork.entrance == 14) {
-    if (GameFlag_Get(0x849) == 0)
+    if (GameFlag_Get(FLAG_MET_POI) == 0)
       KandoreanTemple_MeetPoi();
   }
 #if TLA_PATCH_1 /* From patch 1. */
@@ -2642,7 +2661,7 @@ fall15:
   FieldCamera_WaitForArrival();
   Task_Add(KandoreanTemple_MatchLiftPriority, 0x480);
   Event_End();
-  GameFlag_Set(0x848);
+  GameFlag_Set(FLAG_STUDENTS_TESTED);
 }
 
 void KandoreanTemple_PraiseTheLevitator(void) {
@@ -2927,7 +2946,7 @@ void KandoreanTemple_MeetPoi(void) {
   }
   Actor_WaitForMoveById(16);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
-  GameFlag_Set(0x849);
+  GameFlag_Set(FLAG_MET_POI);
 #if TLA_PATCH_1
   WORK->transition = 0x209;
 #endif
@@ -2973,7 +2992,7 @@ void KandoreanTemple_LowerTheLadder(void) {
   Event_Wait(10);
   MapGrid_CopyCellPictureIndicesRect(41, 3, 20, 3, 1, 1);
   Event_Wait(10);
-  GameFlag_Set(0x92d);
+  GameFlag_Set(FLAG_LADDER_LOWERED);
   Event_End();
 }
 
@@ -3228,7 +3247,7 @@ struct ActorPlacement gKandoreanTemple_FogRoomPlacements[] = {
     {407, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 340, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(244, 0x4b, MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_FOG), MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3274,7 +3293,7 @@ struct Trigger gKandoreanTemple_LiftRoomEvents[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
-    {TRIGGER_STEP, 10, 0x211, EVENT(KandoreanTemple_SinkIntoTheSteam)},
+    {TRIGGER_STEP, 10, FLAG_SCENE_TEMP_11, EVENT(KandoreanTemple_SinkIntoTheSteam)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_RideWestLiftUp)},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(KandoreanTemple_RideEastLiftUp)},
     {TRIGGER_TABLE_END},
@@ -3289,13 +3308,13 @@ s16 gKandoreanTemple_Room2Events[] = {
 
 struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x304, EVENT(KandoreanTemple_StartMovingPot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x304, EVENT(KandoreanTemple_FinishMovingPot)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_AREA_TEMP_04, EVENT(KandoreanTemple_StartMovingPot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_AREA_TEMP_04, EVENT(KandoreanTemple_FinishMovingPot)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, FLAG_AREA_TEMP_04, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, FLAG_AREA_TEMP_04, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, FLAG_AREA_TEMP_04, EVENT(KandoreanTemple_TouchTheHotFloor)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(KandoreanTemple_ReadPoisSign)},
-    {TRIGGER_STEP, 6, 0x92d, EVENT(KandoreanTemple_FightChestbeaters)},
+    {TRIGGER_STEP, 6, FLAG_LADDER_LOWERED, EVENT(KandoreanTemple_FightChestbeaters)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3330,7 +3349,7 @@ struct Trigger gKandoreanTemple_FogRoomEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_SCENE_TEMP_0F, 0},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(KandoreanTemple_FightFog)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_StepBehindThePole)},
@@ -3350,10 +3369,11 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
      EVENT(KandoreanTemple_SlipIntoTheCrack)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgKandoreanTemple13))},
-    {TRIGGER_STEP, 20, 0x230, EVENT(KandoreanTemple_KradenSuspectsTheWall)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 4, 0x212,
+    {TRIGGER_STEP, 20, FLAG_SCENE_TEMP_30,
+     EVENT(KandoreanTemple_KradenSuspectsTheWall)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 4, FLAG_SCENE_TEMP_12,
      EVENT(KandoreanTemple_OpenTheWellPassage)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, 0x212,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, FLAG_SCENE_TEMP_12,
      EVENT(KandoreanTemple_OpenTheWellPassage)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TryTheLockedDoor)},
@@ -3372,31 +3392,32 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_AskAboutPoi)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TellOfTheMeditation)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, 0x845,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, FLAG_ASKED_ABOUT_POI,
      EVENT(KandoreanTemple_ReadTheGateStudent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1034, 0x846,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1034, FLAG_TOLD_OF_THE_MEDITATION,
      EVENT(KandoreanTemple_ReadTheGuard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgFieldIWasHopingToHearMaster)},
-    {TRIGGER_TALK, 11, 0x849, MSGNO(MsgFieldIHopeToEnterTheTemple)},
+    {TRIGGER_TALK, 11, FLAG_MET_POI, MSGNO(MsgFieldIHopeToEnterTheTemple)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS,
      MSGNO(MsgFieldHeyWhatsAnOutsiderDoingOn)},
-    {TRIGGER_TALK, 12, 0x849, MSGNO(MsgFieldPleaseDontBreakMyConcentrationI)},
+    {TRIGGER_TALK, 12, FLAG_MET_POI,
+     MSGNO(MsgFieldPleaseDontBreakMyConcentrationI)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS,
      MSGNO(MsgFieldLooksLikeNoneOfOurBrothers)},
-    {TRIGGER_TALK, 13, 0x849, MSGNO(MsgFieldIAmNotJustMeditatingI)},
+    {TRIGGER_TALK, 13, FLAG_MET_POI, MSGNO(MsgFieldIAmNotJustMeditatingI)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldSomedayImGoingToBeA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x849,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_MET_POI,
      MSGNO(MsgFieldIStillCantBelieveThatThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgFieldGahIKeptMyEyesShut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x849,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_MET_POI,
      MSGNO(MsgFieldMyMindIsEmptyMyBody)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgFieldIveBeenMeditatingAllDayBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x849,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_MET_POI,
      MSGNO(MsgFieldEmptyTheMindToLightenThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
@@ -3414,20 +3435,20 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_DropThroughTheTrapdoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x210, 0},
-    {TRIGGER_TALK, 13, 0x849, MSGNO(MsgFieldHeWentInBeforeMeWhat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_SCENE_TEMP_0F, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, FLAG_SCENE_TEMP_10, 0},
+    {TRIGGER_TALK, 13, FLAG_MET_POI, MSGNO(MsgFieldHeWentInBeforeMeWhat)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(KandoreanTemple_AskWhoPassedTheTest)},
-    {TRIGGER_TALK, 14, 0x849, MSGNO(MsgFieldEmptyMindEmptyBodyByClearing)},
+    {TRIGGER_TALK, 14, FLAG_MET_POI, MSGNO(MsgFieldEmptyMindEmptyBodyByClearing)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgFieldIHearThatSomeonePassedThe)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgFieldWhenIAwokeILearnedThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x849, MSGNO(MsgFieldTheresNoWayImRootingFor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_MET_POI, MSGNO(MsgFieldTheresNoWayImRootingFor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgFieldTheMasterSeemedSoDisappointedThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x849, MSGNO(MsgFieldArrghIWasSoCloseI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_MET_POI, MSGNO(MsgFieldArrghIWasSoCloseI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgFieldIKnewItItShouldHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgFieldBeforeIPassedOutISaw)},
-    {TRIGGER_EXAMINE, 16, 0x84a, EVENT(KandoreanTemple_ReceiveLash)},
-    {TRIGGER_TALK, 12, 0x84a, MSGNO(MsgFieldTakeThePowerOfLashIt)},
+    {TRIGGER_EXAMINE, 16, FLAG_LASH_RECEIVED, EVENT(KandoreanTemple_ReceiveLash)},
+    {TRIGGER_TALK, 12, FLAG_LASH_RECEIVED, MSGNO(MsgFieldTakeThePowerOfLashIt)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWishToPracticeThese)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgFieldHoHoIFeelTheStrength)},
     {TRIGGER_TABLE_END},

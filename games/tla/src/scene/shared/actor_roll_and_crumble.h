@@ -111,7 +111,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     if (actor->scaleX > 0) {
       actor->scaleX -= Q16_ONE / 16;
       actor->scaleY -= Q16_ONE / 16;
-      Func_02002870(actor);
+      MarsLighthouseRoomM_ScatterCrumbs(actor);
     } else {
       actor->z = 0;
       actor->y = 0;

@@ -239,7 +239,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     /* FAKEMATCH(dead): an empty once-only block after the twoSided store. */
     do {
     } while (0);
-    gMainRoutineWork.battleRule24b = 4;
+    gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
   }
   if (battle->twoSided != 0) {
     /* FAKEMATCH(dead): the seed's store in a once-only block. */
@@ -302,12 +302,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   battle->encounterMode = 0;
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
     battle->encounterMode = 1;
-  } else if (gMainRoutineWork.battleRule24b == 0) {
+  } else if (gMainRoutineWork.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
       battle->encounterMode = 1;
     else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = 2;
-  } else if (gMainRoutineWork.battleRule24b == 6) {
+  } else if (gMainRoutineWork.battleType == BATTLE_TYPE_LOST) {
     battle->encounterMode = 2;
   }
   BattleTransition_Run(enemyCount, enemyGroup);
@@ -471,7 +471,7 @@ aborted_scripted:
   Task_SuspendAll(0);
   *(volatile u16 *)0x04000000 = 1;
   result = battle->defeated;
-  GameFlag_Set(1000);
+  GameFlag_Set(FLAG_AREA_TEMP_E8);
   goto finished;
 
 party_lost:
@@ -507,7 +507,7 @@ finished:
   BattleParty_ResetActiveRuntimeFields();
   Battle_TurnEndNoOp();
   DjinnRecovery_CountDown();
-  gMainRoutineWork.battleRule24b = 0;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NORMAL;
   Task_Remove(BattleObject_UpdateSpritePriorities);
   BattleBackground_Free();
   return result;
@@ -610,7 +610,7 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   output = unitIds;
   livingCount = 0;
   enemyCapacity = 6;
-  if (GameFlag_Get(0x16C) != 0) {
+  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
   if (sideMask & BATTLE_SIDE_PARTY) {
@@ -676,7 +676,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   output = unitIds;
   livingCount = 0;
   enemyCapacity = 6;
-  if (GameFlag_Get(0x16C) != 0) {
+  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
   if (sideMask & BATTLE_SIDE_PARTY) {

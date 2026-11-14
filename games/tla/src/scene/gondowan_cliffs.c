@@ -32,6 +32,7 @@
 #include "scene_tables.h"
 #include "objcmd.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "map.h"
 #include "field/field_sequence_event.h"
 #include "system/heap_release.h"
@@ -51,7 +52,9 @@ extern struct ActorPlacement gGondowanCliffs_PassEntrances[];
 
 #include "shared/tile_sprite_reset.h"
 
-void GondowanCliffs_FightKindle(void) { Field_RequestDjinnBattle(21, 49); }
+void GondowanCliffs_FightKindle(void) {
+  Field_RequestDjinnBattle(21, DJINNI_KINDLE);
+}
 
 const u8 *Scene_GetEntrances(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_GondowanCliffsPass)
@@ -408,7 +411,7 @@ s32 Scene_Initialize(void) {
     GondowanCliffs_SetUpPass();
     return 0;
   }
-  if (GameFlag_Get(0x8f3) && !GameFlag_Get(0x8ef)) {
+  if (GameFlag_Get(0x8f3) && !GameFlag_Get(FLAG_GABOMBA_CEREMONY_ENDED)) {
     GondowanCliffs_TurnBackToHelpPiers();
     return 0;
   }
@@ -513,7 +516,7 @@ void Geysers_Update(void) {
         entry->phase = 0;
       }
     }
-    if (!GameFlag_Get(0x104)) {
+    if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }
@@ -761,10 +764,10 @@ LATE_DATA struct ActorPlacement gGondowanCliffs_ActorPlacements[] = {
     ACTOR_PLACEMENT(273, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1232, 0, 544, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(189, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1928, 0, 728, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(83, 0x8ab, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(83, 0x8ab, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(83, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 200, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(83, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 888, 0, 232, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(424, FLAG_GONDOWAN_CLIFFS_ROCK_GROUND, MOVEMENT_TYPE_STAND, 816, 0, 232, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(245, 0x61, MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_KINDLE), MOVEMENT_TYPE_STAND, 1336, 0, 648, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(5, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(6, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(56, IF_FLAG_SET(0x8f3), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -804,7 +807,7 @@ LATE_DATA struct Trigger gGondowanCliffs_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgIfTheOther)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgILongTo)},
     {TRIGGER_TALK, 21, CONDITION_ALWAYS, EVENT(GondowanCliffs_FightKindle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x200, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, FLAG_SCENE_TEMP_00, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, FLAG_FIRST_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FLAG_SECOND_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayFoliage)},

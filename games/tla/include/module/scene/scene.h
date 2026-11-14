@@ -1010,7 +1010,7 @@ extern char ResourceId_LogoOnBlack;
 
 void EventObject_Initialize(void);
 
-void Func_020032a0();
+void EasternAlhafraShip_CountAnswer();
 
 extern const u8 gField_Tiles64D[];
 

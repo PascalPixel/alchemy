@@ -8,12 +8,8 @@
 
 struct Actor;
 
-extern u32 gData_02002eac[];
-void Func_02001ad0(struct Actor *object);
-
-void Func_0200200c(s32 value);
-
-void Func_02001f7c(u32 *oam, s32 priority);
+extern u32 gStaffCredit_ColorModes[];
+void StaffCredit_SpawnGrowingPair(struct Actor *object);
 
 void WorldMap_UpdatePlacedActors(void);
 

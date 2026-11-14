@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_020073dc
-gData_020073dc:
+	.global gAirsRockInside_StampedWidth
+gAirsRockInside_StampedWidth:
 	.space 0x00000004
-	.global gData_020073e0
-gData_020073e0:
+	.global gAirsRockInside_StampedHeight
+gAirsRockInside_StampedHeight:
 	.space 0x00000004
-	.global gData_020073e4
-gData_020073e4:
+	.global gAirsRockInside_StampedX
+gAirsRockInside_StampedX:
 	.space 0x00000004
-	.global gData_020073e8
-gData_020073e8:
+	.global gAirsRockInside_StampedZ
+gAirsRockInside_StampedZ:

@@ -68,13 +68,13 @@ s32 DjinnMenu_Run(void) {
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = 0;
   if (GameFlag_Get(FLAG_DJINN_LESSON)) {
-    if (!GameFlag_Get(0x16f)) {
-      if (!GameFlag_Get(0x171))
+    if (!GameFlag_Get(FLAG_DJINN_LESSON_PART_A)) {
+      if (!GameFlag_Get(FLAG_DJINN_LESSON_PART_B))
         backdrop->tutorialStep = enabled;
       else
         backdrop->tutorialStep = 14;
     } else {
-      if (!GameFlag_Get(0x171))
+      if (!GameFlag_Get(FLAG_DJINN_LESSON_PART_B))
         backdrop->tutorialStep = 27;
       else
         backdrop->tutorialStep = 28;

@@ -6,6 +6,7 @@
 
 #include "../radial_internal.h"
 #include "fixed_math.h"
+#include "flags.h"
 #include "sounds.h"
 #include "gamepak/far_call/field.h"
 #include "macros.h"
@@ -1090,7 +1091,7 @@ void FieldPsynergy_Avoid(void) {
   tiles = gFieldEffect_ArcSparkTiles;
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
-  gMainRoutineWork.avoidByItem = GameFlag_Get(0x145);
+  gMainRoutineWork.avoidByItem = GameFlag_Get(FLAG_ITEM_USE);
   Actor_SetSpriteColorModeFar(object, 0);
   object->callback = FieldEffect_UpdateAvoidCaster;
   object->phase = 0;

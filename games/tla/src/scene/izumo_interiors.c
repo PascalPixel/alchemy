@@ -6,6 +6,7 @@
 #include "types.h"
 #include "item_ids.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "actor.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
@@ -288,10 +289,9 @@ void IzumoInteriors_HeroesComeFromTheWest(void) {
   IzumoInteriors_RecognizeTheHeroes(1);
 }
 
-/// The scene that opens with MsgWarriorsAppearedFrom: the warriors confront
-/// the party in front of persons 20, 21 and 22 through three yes-or-no
-/// answers, then persons 5, 6, 7 and 23 join the leader and flags
-/// FLAG_IZUMO_RECOGNIZED_THE_HEROES and 0x350 are set. Mode 0 and mode 1
+/// Izumo hears that warriors appeared from within Mt. Mikage and recognizes
+/// the party as the heroes, through three answers; the party gathers again
+/// and FLAG_IZUMO_RECOGNIZED_THE_HEROES is set. Mode 0 and mode 1
 /// (IzumoInteriors_HeroesComeFromTheEast and
 /// IzumoInteriors_HeroesComeFromTheWest) start the party at different spots.
 void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
@@ -1525,7 +1525,7 @@ struct ActorPlacement gIzumoInteriors_ActorPlacementsOnceTheSerpentIsSlain[] = {
     ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(245, 0x63, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_COAL), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

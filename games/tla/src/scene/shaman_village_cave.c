@@ -376,7 +376,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   /* FAKEMATCH(dead): the once-only block loads gMainRoutineWork before its
    * offset is built. */
   do {
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   } while (0);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_ShamanVillageCave, 20);
   Event_SetDefeatDestination((s32)&SceneId_ShamanVillageCave, 21);
@@ -390,7 +390,7 @@ void ShamanVillageCave_FightGladiators(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->battleRule24b = 2;
+    party->battleType = BATTLE_TYPE_NO_ESCAPE;
     /* FAKEMATCH(dead): the empty once-only block's loop note ends the
      * scheduling block after the store. */
     do {

@@ -87,7 +87,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     if (((u8 *)Ram_HeapSlots->battleWork)[0x44] == 0 &&
         battleMenu->reserveChoice == -1 && Party_CountMembersFar() > 4)
       selectionUi->commandKinds[kindCount++] = 49;
-    if (fleeAllowed > 0 && gMainRoutineWork.battleRule24b != 2)
+    if (fleeAllowed > 0 && gMainRoutineWork.battleType != BATTLE_TYPE_NO_ESCAPE)
       selectionUi->commandKinds[kindCount++] = 4;
     selectionUi->commandKinds[kindCount++] = 7;
     selectionUi->commandKinds[kindCount] = -1;

@@ -921,7 +921,7 @@ next:
   Event_Wait(60);
   Actor_SelectAnimation(object, 1);
   Event_Wait(40);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination((s32)&SceneId_SeaOfTime2, 4);
   Field_RequestBattleFromEncounterTable(12, 6);
   Event_End();

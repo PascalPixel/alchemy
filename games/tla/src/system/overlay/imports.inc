@@ -28,7 +28,7 @@
 	export HeapSlot_AllocEwram, HeapSlot_AllocEwramFar
 	export HeapSlot_Alloc, HeapSlot_AllocFar
 	export HeapSlot_Release, HeapSlot_ReleaseFar
-	export Func_02004c58, Decompress_TaggedLzFar
+	export MagmaRockInside_DecompressTaggedLz, Decompress_TaggedLzFar
 	export Import_DecompressTaggedLz, Decompress_TaggedLzFar
 	export Heap_Alloc, Heap_AllocFar
 	export Heap_AllocEwram, Heap_AllocEwramFar
@@ -76,7 +76,7 @@
 	export Import_ActorSelectAnimation, Actor_SelectAnimationFar
 	export Actor_SelectAnimation, Actor_SelectAnimationFar
 	export Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
-	export Func_02002f90, Actor_StartScriptFar
+	export TundariaTower_StartEffectScript, Actor_StartScriptFar
 	export Actor_StartScript, Actor_StartScriptFar
 	export Actor_StartRenderModeScript, Actor_StartRenderModeScriptFar
 	export Import_ActorCreate, Actor_CreateFar
@@ -123,7 +123,7 @@
 	export Actor_SetSpritePriorityDirect, Actor_SetSpritePriorityDirectFar
 	export WorldMap_GetCollision, WorldMap_GetCollisionFar
 	export TilesetAnim_ResumeAll, TilesetAnim_ResumeAllFar
-	export Func_02001c74, MapGrid_SetCellHeightFar
+	export Import_MapGridSetCellHeight, MapGrid_SetCellHeightFar
 	export Animation_ApplyChildValue, Animation_ApplyChildValueFar
 	export MapGrid_GetTerrainKind, MapGrid_GetTerrainKindFar
 	export Actor_HasArrived, Actor_HasArrivedFar
@@ -188,7 +188,7 @@
 	export Unit_Calculate, Unit_CalculateFar
 	export Item_GetDirect, Item_GetDirectFar
 	export Inventory_GetQuantity, Inventory_GetQuantityFar
-	export Func_02000d48, Item_GetDirectFar
+	export ShopTest_GetItem, Item_GetDirectFar
 	export PartyInventory_FindMember, PartyInventory_FindMemberFar
 	export Inventory_AddItem, Inventory_AddItemFar
 	export PartyInventory_Add, PartyInventory_AddFar
@@ -237,8 +237,8 @@
 	export ClearData_Apply, ClearData_ApplyFar
 	export Event_Wait, Event_WaitFar
 	export Event_Start, Event_StartFar
-	export Func_0200446c, Event_EndFar
-	export Func_02003af4, Event_EndFar
+	export Prox_EndEvent, Event_EndFar
+	export MagmaRock_EndEvent, Event_EndFar
 	export Event_End, Event_EndFar
 	export PartyInventory_GiveItem, PartyInventory_GiveItemFar
 	export Event_PrepareObjectAndApplyValue, Event_PrepareObjectAndApplyValueFar
@@ -302,7 +302,7 @@
 	export Import_EventSetExitRequest, Event_SetExitRequestFar
 	export Field_RequestBattleFromEncounterTable, Field_RequestBattleFromEncounterTableFar
 	export RisingParticles_Start, RisingParticles_StartFar
-	export Func_02000db0, Event_SetExitRequestFar
+	export Izumo_SetExitRequest, Event_SetExitRequestFar
 	export Field_RequestDjinnBattle, Field_RequestDjinnBattleFar
 	export Event_SetAfterBattleDestination, Event_SetAfterBattleDestinationFar
 	export Event_LeaveFor, Event_LeaveForFar
@@ -364,7 +364,7 @@
 	export UpdateRisingParticleBurst, UpdateRisingParticleBurstFar
 	export Djinn_JoinParty, Djinn_JoinPartyFar
 	export Camera_WorldToScreen, Camera_WorldToScreenFar
-	export Func_02002b28, HangingVine_PlaceFar
+	export Import_HangingVinePlace, HangingVine_PlaceFar
 	export Event_ClearInvalidPackedValues, Party_ClearUnusableShortcutsFar
 	export Actor_LaunchFromLeader, Actor_LaunchFromLeaderFar
 	export Actor_WalkByById, Actor_WalkByByIdFar
@@ -372,9 +372,9 @@
 	export Actor_WatchAndSetScript, Actor_WatchAndSetScriptFar
 	export Actor_GetSpriteById, Actor_GetSpriteByIdFar
 	export WorldMap_StartZoom, WorldMap_StartZoomFar
-	export Func_02004604, EffectSprite_InitFar
-	export Func_02003d90, Rope_InitializeFar
-	export Func_02003320, Func_080c8930
+	export Prox_InitRockSprite, EffectSprite_InitFar
+	export DehkanPlateau_InitializeRopes, Rope_InitializeFar
+	export Idejima_CountAnswer, Func_080c8930
 	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
 	export Actor_Spawn, Actor_SpawnFar
 	export Actor_SetActionCallback, Actor_SetActionCallbackFar
@@ -385,56 +385,55 @@
 	export Rope_Initialize, Rope_InitializeFar
 	export Rope_Tie, Rope_TieFar
 	export Rope_Coil, Rope_CoilFar
-	export Func_0200582c, Rope_CoilFar
+	export GabombaStatue_CoilRope, Rope_CoilFar
 	export Rope_Lash, Rope_LashFar
 	export Tightrope_Initialize, Tightrope_InitializeFar
 	export Tightrope_Place, Tightrope_PlaceFar
 	export Rope_Place, Rope_PlaceFar
 	export Rope_GetState, Rope_GetStateFar
-	export Func_02003bf4, Tightrope_PlaceFar
+	export MagmaRock_PlaceTightrope, Tightrope_PlaceFar
 	export FlagBlock_PlaceAllMarkingEdges, FlagBlock_PlaceAllMarkingEdgesFar
 	export FlagBlock_PlaceAll, FlagBlock_PlaceAllFar
-	export Func_0200583c, Rope_PlaceFar
-	export Func_02003bfc, Rope_PlaceFar
+	export GabombaStatue_PlaceRope, Rope_PlaceFar
+	export MagmaRock_PlaceRope, Rope_PlaceFar
 	export FlagBlock_ApplyFlags, FlagBlock_ApplyFlagsFar
 	export Actor_GetCellIndex, Actor_GetCellIndexFar
-	export Func_02001588, Actor_GetCellIndexFar
 	export Actor_PlaceBlocks, Actor_PlaceBlocksFar
 	export Actor_LiftTargetBlock, Actor_LiftTargetBlockFar
 	export Actor_PlaceMovedBlock, Actor_PlaceMovedBlockFar
 	export MapCollision_FindOrAddTag, MapCollision_FindOrAddTagFar
 	export Actor_FindAtCell, Actor_FindAtCellFar
-	export Func_020029e0, EffectSprite_InitFar
+	export JupiterLighthouse_InitSparkSprite, EffectSprite_InitFar
 	export Leader_CanPushObjectAhead, Leader_CanPushObjectAheadFar
-	export Func_02004c4c, Leader_PushObjectAheadFar
-	export Func_020029e8, EffectSprite_DrawFar
+	export EasternAlhafra_PushObjectAhead, Leader_PushObjectAheadFar
+	export JupiterLighthouse_DrawSparkSprite, EffectSprite_DrawFar
 	export Leader_PushObjectAhead, Leader_PushObjectAheadFar
 	export Leader_FindActorAhead, Leader_FindActorAheadFar
 	export TileCopies_CopyTouchedCells, TileCopies_CopyTouchedCellsFar
 	export Party_GetLeaderActor, Party_GetLeaderActorFar
 	export HangingVine_Place, HangingVine_PlaceFar
 	export Actor_FallOverById, Actor_FallOverByIdFar
-	export Func_02004f10, EffectSprite_InitFar
-	export Func_020029a0, Func_080c8898
-	export Func_02001f08, Func_080c8930
+	export MagmaRockInside_InitRockSprite, EffectSprite_InitFar
+	export TaopoSwamp_ShowMessage, Func_080c8898
+	export GabombaStatueChamber_CountAnswer, Func_080c8930
 	export Exit_PrepareActorAnimation, Exit_PrepareActorAnimationFar
 	export ItemMenu_DrawItemDetails, ItemMenu_DrawItemDetailsFar
 	export Actor_VanishInSparks, Actor_VanishInSparksFar
 	export Actor_SetSpriteRotationById, Actor_SetSpriteRotationByIdFar
-	export Func_02005c7c, Func_080c8930
+	export Kibombo_CountAnswer, Func_080c8930
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
-	export Func_02005a50, Cyclone_CopyTouchedCellsFar
-	export Func_02001ef8, Func_080c8930
-	export Func_02004c64, EffectSprite_InitFar
-	export Func_02002a0c, EffectSprite_InitFar
+	export TrialRoad_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
+	export MadraInteriors_CountAnswer, Func_080c8930
+	export EasternAlhafra_InitializeRockSprite, EffectSprite_InitFar
+	export VenusLighthouseEntrance_InitGlowSprite, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
 	export Exit_StartStairsUp, Exit_StartStairsUpFar
-	export Func_02002b38, EffectSprite_DrawFar
+	export Import_EffectSpriteDraw, EffectSprite_DrawFar
 	export EffectSprite_DrawAtWorldPosition, EffectSprite_DrawAtWorldPositionFar
 	export EffectSprite_Draw, EffectSprite_DrawFar
 	export BattleEffect_StepVector3, BattleEffect_StepVector3Far
 	export BattleEffect_GetObjectPriority, BattleEffect_GetObjectPriorityFar
-	export Func_02005a60, FieldItem_JumpToLeaderFar
+	export Import_MadPlantLeapAtLeader, MadPlant_LeapAtLeaderFar
 	export EndingPicture_Start, EndingPicture_StartFar
 	export Event_PlayCueNearFocus, Event_PlayCueNearFocusFar
 	export MapGrid_GetAttributeBAt, MapGrid_GetAttributeBAtFar
@@ -457,10 +456,10 @@
 	export MapGrid_SetCellBehavior, MapGrid_SetCellBehaviorFar
 	export BattleEffect_PackTargetBuffer, BattleEffect_PackTargetBufferFar
 	export SceneEvent_FindActiveRecord, Scene_FindTriggerFar
-	export Func_020032a0, Func_080c8930
+	export EasternAlhafraShip_CountAnswer, Func_080c8930
 	export Actor_WatchActor, Actor_WatchActorFar
 	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
-	export Func_020020ac, Resource_FarCall00A+1
+	export StaffCredit_RunCredits, Resource_FarCall00A+1
 	export DjinnMenu_Run, DjinnMenu_RunFar
 	export Actor_TakeLeaderLayer, Actor_TakeLeaderLayerFar
 	export Actor_DepartInRing, Actor_DepartInRingFar
@@ -469,10 +468,10 @@
 	export MapGrid_SetAttributeBBitsAt, MapGrid_SetAttributeBBitsAtFar
 	export MapGrid_ClearAttributeBBitsAt, MapGrid_ClearAttributeBBitsAtFar
 	export Teleport_PlaySparksAndFade, Teleport_PlaySparksAndFadeFar
-	export Func_020015f0, Func_080c8930
+	export AlhafraManor_CountAnswer, Func_080c8930
 	export BattleEffect_FillOverlayTiles, BattleEffect_FillOverlayTilesFar
 	export Cyclone_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
-	export Func_02000f14, FieldItem_JumpToLeaderFar
+	export Import_DebugMadPlantLeap, MadPlant_LeapAtLeaderFar
 	export Tightrope_Settle, Tightrope_SettleFar
 	export EffectSprite_InitFromSlot94, EffectSprite_InitFromSlot94Far
 	export BattleEffect_DrawSpriteAtWorldPosition, BattleEffect_DrawSpriteAtWorldPositionFar
@@ -482,7 +481,7 @@
 	export EffectSprite_InitFromSlot94Blended, EffectSprite_InitFromSlot94BlendedFar
 	export Sanctum_Run, Sanctum_RunFar
 	export WorldMap_SetReturnLeavingScene, WorldMap_SetReturnLeavingSceneFar
-	export FieldItem_JumpToLeader, FieldItem_JumpToLeaderFar
+	export MadPlant_LeapAtLeader, MadPlant_LeapAtLeaderFar
 	export StatusScreen_Run, StatusScreen_RunFar
 	export MenuCursor_Advance, MenuCursor_AdvanceFar
 	export Inn_CheckIn, Inn_CheckInFar

@@ -1,5 +1,5 @@
 /// Starts the beam over its targets and stops.
-void Beam_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
+void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   struct MarsLighthouseBeam *beam =
       (struct MarsLighthouseBeam *)(gInventorySnapshot + 0x188);
   struct MarsLighthouseBeamTarget *target = beam->targets;
@@ -51,5 +51,5 @@ void Beam_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
     control = 0x3f10;
     REG_BLDCNT = control;
   }
-  Task_AddFrame(Beam_DrawTargets, 0x480);
+  Task_AddFrame(FlameThrowers_Puff, 0x480);
 }

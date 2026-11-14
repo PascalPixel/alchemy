@@ -6,18 +6,9 @@
 
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
-/// Expands message into buf without an upper length bound.
-/* VIEW(window): routine Message_DecodeRawUnbounded as void
- * Message_DecodeRawUnbounded(s32 message, s32 buf); field/event.h has void
- * Message_DecodeRawUnbounded(s32 message, u16 *buffer); tried as the
- * definition's void Message_DecodeRawUnbounded(s32 message, s32 buf), it does
- * not compile in tla-ja: games/tla/src/window/window/messages.c:9: conflicting
- * types for `Message_DecodeRawUnbounded'. */
-void Message_DecodeRawUnbounded__window(s32 message, s32 buf) __asm__(
-    "Message_DecodeRawUnbounded");
-#define Message_DecodeRawUnbounded Message_DecodeRawUnbounded__window
-void Message_DecodeRawUnbounded(s32 message, s32 buf) {
-  Message_DecodeRaw(message, buf, 0x7fffffff);
+/// Expands message into buffer without an upper length bound.
+void Message_DecodeRawUnbounded(s32 message, u16 *buffer) {
+  Message_DecodeRaw(message, buffer, 0x7fffffff);
 }
 
 /// Builds message key's text entries and copies them to destination, at most

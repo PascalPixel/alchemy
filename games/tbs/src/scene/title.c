@@ -71,14 +71,8 @@ s32 Scene_Initialize(void) {
     Sound_Play(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     wait(120);
-    waitFrames = 0;
-    if (gKeysPressed == 0) {
-      do {
-        wait(1);
-        if (++waitFrames > 3599)
-          break;
-      } while (gKeysPressed == 0);
-    }
+    for (waitFrames = 0; waitFrames < 3600 && gKeysPressed == 0; waitFrames++)
+      wait(1);
     Event_SetDestination(SCENE_TITLE, TITLE_AFTER_RUN);
     return 0;
   }

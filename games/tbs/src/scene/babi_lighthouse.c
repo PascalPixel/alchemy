@@ -1294,19 +1294,17 @@ s32 Scene_Initialize(void) {
   struct Actor *placedActor;
   s32 sceneId;
   s32 mapCopy;
-  struct MainRoutineWork *state;
   s32 x;
   s32 z;
 
   wait(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  state = &gMainRoutineWork;
-  sceneId = state->next;
+  sceneId = gMainRoutineWork.next;
   if (sceneId != SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
-    state->retreatEntrance = 1;
-    state->retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
-    mapCopy = state->next;
+    gMainRoutineWork.retreatEntrance = 1;
+    gMainRoutineWork.retreatScene = SCENE_BABI_LIGHTHOUSE_ENTRY;
+    mapCopy = gMainRoutineWork.next;
   }
   // The road: the moved pillar's cell behavior where it stands.
   if (sceneId == SCENE_ROAD_TO_BABI_LIGHTHOUSE) {
@@ -1328,7 +1326,7 @@ s32 Scene_Initialize(void) {
     ((union ActorOrEffect *)Actor_Get(ACTOR_RIGHT_PILLAR))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
-    if (state->entrance ==
+    if (gMainRoutineWork.entrance ==
             BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(ACTOR_RIGHT_PILLAR, 312, 328);
@@ -1378,7 +1376,7 @@ s32 Scene_Initialize(void) {
   } else if (mapCopy == SCENE_BABI_LIGHTHOUSE_LUFF) {
     // Match the arrival effect and fall to the entrance used in this
     // room.
-    switch (state->entrance) {
+    switch (gMainRoutineWork.entrance) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
       // Both entrances restore the same remembered cell changes.
@@ -1421,7 +1419,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);
     Actor_SetSpeed(ACTOR_RIGHT_DOOR, 1);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (state->entrance ==
+      if (gMainRoutineWork.entrance ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {
         GameFlag_Set(FLAG_BEYOND_DOOR);
       } else {

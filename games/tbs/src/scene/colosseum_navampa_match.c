@@ -1638,14 +1638,9 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
-      if (work->raisedTrigger != 5) {
-        do {
-          wait(1);
-          if (++promptResult > 239) {
-            break;
-          }
-        } while (work->raisedTrigger != 5);
-      }
+      for (promptResult = 0; promptResult < 240 && work->raisedTrigger != 5;
+           promptResult++)
+        wait(1);
       ColosseumNavampaMatch_PassSouthWallOpening();
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,

@@ -467,10 +467,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
   Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
-  if (gFallingEffectState != KOLIMA_DUST_CENTRED) {
-    do {
-      wait(1);
-    } while (gFallingEffectState != KOLIMA_DUST_CENTRED);
+  while (gFallingEffectState != KOLIMA_DUST_CENTRED) {
+    wait(1);
   }
   Event_Wait(300);
   Task_Remove(Kolima_UpdateCurseDust);

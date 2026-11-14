@@ -495,15 +495,9 @@ recordTest:
   }
   wait(2);
   FieldMessage_DecodeRawUnbounded(MsgEnemyLabel, namePrefix);
-  i = 0;
-  if (namePrefix[i] != 0) {
-    do {
-      i++;
-      if (i > LOBBY_PREFIX_LIMIT) {
-        break;
-      }
-    } while (namePrefix[i] != 0);
-  }
+  // The prefix's length, at most LOBBY_PREFIX_LIMIT + 1.
+  for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
+    ;
   // German, Spanish, French and Italian put a space after the prefix.
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
     LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
@@ -1306,14 +1300,13 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
 /// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most monster battles
 /// won in a row (tally 2), or before any, that the speaker will count them.
 static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
-  struct MainRoutineWork *state;
 
   Event_Start();
-  state = &gMainRoutineWork;
-  Actor_FaceActor(actorId, state->leaderActorId, 0);
-  if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
-    MessageArgument_Push(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
-                         MESSAGE_ARGUMENT_NUMBER);
+  Actor_FaceActor(actorId, gMainRoutineWork.leaderActorId, 0);
+  if (gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
+    MessageArgument_Push(
+        gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK],
+        MESSAGE_ARGUMENT_NUMBER);
     Event_SetMessageId(MsgLobbyWonNumberConsecutive);
   } else {
     Event_SetMessageId(MsgLobbyCantWaitSee);

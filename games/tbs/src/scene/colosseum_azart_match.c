@@ -301,16 +301,8 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
   s32 i;
 
   wait(10);
-  i = 0;
-  if (gColosseumAzartMatch_Countdown != 22) {
-    do {
-      wait(1);
-      i++;
-      if (i > 119) {
-        break;
-      }
-    } while (gColosseumAzartMatch_Countdown != 22);
-  }
+  for (i = 0; i < 120 && gColosseumAzartMatch_Countdown != 22; i++)
+    wait(1);
 }
 
 /// Move on a rock in the Rock Challenge, and each push, settles the rocks.

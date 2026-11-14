@@ -403,7 +403,6 @@ static inline void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
 static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct Actor *leader;
-  s32 *paletteFrame;
   u32 flash;
   void (*spawnOrbitSparks)(void);
   const s32 *finalActions;
@@ -439,8 +438,7 @@ static void KolimaForestTree_RestoreTret(void) {
   PaletteFade_StartInterpolation(32);
   wait(40);
   // Carry the healing across the forest as its healthy colours return.
-  paletteFrame = &gKolimaForestTreePaletteFrame;
-  *paletteFrame = 0;
+  gKolimaForestTreePaletteFrame = 0;
   Task_AddFrame(KolimaForestTree_UpdateHealingPalette, TASK_PASS_FRAME);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -459,10 +457,8 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(326, CAMERA_KEEP, 384, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);
-  if (*paletteFrame != 24) {
-    do {
-      wait(1);
-    } while (*paletteFrame != 24);
+  while (gKolimaForestTreePaletteFrame != 24) {
+    wait(1);
   }
   Task_Remove(KolimaForestTree_UpdateHealingPalette);
   wait(10);

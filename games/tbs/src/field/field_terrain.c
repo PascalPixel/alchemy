@@ -4,13 +4,8 @@
 
 #include "field_internal.h"
 
-// A sample is in eight-pixel units. UB: signed samples may be negative, so
-// their left shift is undefined. Multiplication fits s32 for both s8 and u8.
-#ifdef UBFIX
+// A sample is in eight-pixel units.
 #define CURVE_HEIGHT_FIXED(sample) ((sample) * (1 << CURVE_VALUE_SHIFT))
-#else
-#define CURVE_HEIGHT_FIXED(sample) ((sample) << CURVE_VALUE_SHIFT)
-#endif
 
 /// The ground height functions (gMapGrid_TerrainHeightFunctions): each takes a
 /// cell's height samples after its kind byte and a pixel (x, y) within the

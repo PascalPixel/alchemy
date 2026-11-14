@@ -27,19 +27,10 @@ void String_FormatDecimal(s32 number) {
   s32 places;
   u32 placeValue;
   s32 digit;
-#ifdef UBFIX
   u32 magnitude = number;
-#else
-  s32 magnitude = number;
-#endif
 
   if (number < 0) {
-#ifdef UBFIX
     magnitude = 0U - magnitude;
-#else
-    // UB: negating INT_MIN cannot be represented as a signed s32.
-    magnitude = -magnitude;
-#endif
     sign = '-';
   }
   // A space for each power of ten above the number, then its sign, then a

@@ -112,18 +112,9 @@ void FieldPsynergy_Reveal(void) {
 /// Ends Reveal if it is running: stops its watch, brings the colours back from
 /// black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES event.
 void FieldPsynergy_EndReveal(void) {
-#ifdef UBFIX
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ScreenTransitionState *transition = gScreenTransitionWork;
   struct FieldWork *state = gFieldWork;
-#else
-  // Named slots avoid stepping outside gFieldEffectWork.
-  struct FieldEffectWork **cell = &gFieldEffectWork;
-  struct FieldEffectWork *effectWork = *cell;
-  struct ScreenTransitionState *transition =
-      *(struct ScreenTransitionState **)((u8 *)cell - 0x64);
-  struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
-#endif
   s32 eventTarget;
   void *event;
 

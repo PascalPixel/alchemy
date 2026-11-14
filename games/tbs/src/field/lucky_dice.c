@@ -78,12 +78,7 @@ UNUSED s32 FixedPoint_Multiply8_8(s16 left, s16 right) {
 
 /// Unused: divides two 8.8 fixed-point values.
 UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
-// UB: a signed numerator may be negative. All s16 values times 256 fit.
-#ifdef UBFIX
   return (numerator * 256) / denominator;
-#else
-  return (numerator << 8) / denominator;
-#endif
 }
 
 /// Unused: the reciprocal of an 8.8 fixed-point value.

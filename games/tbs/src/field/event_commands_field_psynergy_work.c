@@ -107,26 +107,15 @@ void FieldPsynergy_StopCasterUpdate(void) {
 /// restores the map's shake, plays the queued sound and releases its
 /// work.
 void FieldPsynergy_End(void) {
-#ifndef UBFIX
-  struct FieldEffectWork **effectWorkCell;
-#endif
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
   struct MapGridScrollWork *grid;
   struct FieldParticle *effectSlot;
   s32 i;
 
-#ifdef UBFIX
   effectWork = gFieldEffectWork;
   runtime = gFieldWork;
   grid = gMapGridWork[0];
-#else
-  // Indexing beyond the scalar global is undefined in C.
-  effectWorkCell = (struct FieldEffectWork **)&gFieldEffectWork;
-  effectWork = *effectWorkCell;
-  runtime = *(struct FieldWork **)((u8 *)effectWorkCell - 116);
-  grid = *(struct MapGridScrollWork **)((u8 *)effectWorkCell - 192);
-#endif
   for (i = 0; i < 24; i++) {
     effectSlot = &effectWork->particles[i];
     if (effectSlot->active != 0)

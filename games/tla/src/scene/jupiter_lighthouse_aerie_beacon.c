@@ -11,6 +11,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/io_write.h"
 #include "scene_tables.h"
 #include "field_event.h"
 #include "system/heap_release.h"
@@ -2783,59 +2784,7 @@ void CrackedTiles_Update(void);
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-void CrackedTile_Fall(struct PushEvent *event) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x;
-  s32 z;
-  s32 mask;
-
-  mask = 64;
-  x = object->x >> 20;
-  do {
-  } while (0);
-  x |= (s16)(event->x & mask);
-  z = object->z >> 20;
-  z |= (s16)(event->z & mask);
-  Leader_CenterInCell();
-  Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
-  FieldEvent_Wait(12);
-  {
-    u32 zero = 0;
-
-    object->facing = 0x4000;
-    object->motionFlags = zero;
-  }
-  Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
-  {
-    /* FAKEMATCH(temporary): a word local holding 0xf1f, built with movs,
-     * lsls, adds as the native does. */
-    u32 winout = 0xf1f;
-
-    REG_WINOUT = winout;
-  }
-  do {
-  } while (0);
-  REG_DISPCNT |= 0x8000;
-  event->busy = 1;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 28);
-  FieldEvent_Wait(16);
-  for (x = 0; x < 40; x++) {
-    if (x == 5)
-      Event_PlaySound(SE_DUST_PUFF);
-    object->scaleX += -0x400;
-    object->scaleY += -0x300;
-    object->y += -0x9999;
-    System_Wait(1);
-  }
-  do {
-    Actor_Get(gMainRoutineWork.currentOwner)->animationKind = 0;
-  } while (0);
-  event->busy = 0;
-  gFieldWork->transition = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -2854,16 +2803,6 @@ static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
 #include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s539c): routine CrackedTile_Fall as this part declared it; the joined
- * file has another; tried as the definition's void CrackedTile_Fall(struct
- * PushEvent *event), which the object already declares, it does not compile in
- * tla-ja: games/tla/src/scene/shared/cracked_tiles_step.h:23: too many
- * arguments to function `CrackedTile_Fall'. */
-void CrackedTile_FallEvent__s539c(
-    struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_FallEvent__s539c
-
 #include "shared/cracked_tiles_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
@@ -2892,7 +2831,6 @@ s32 gData_02005a20[] = {
     64,
 };
 
-#undef CrackedTile_Fall
 
 // clang-format off
 LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               

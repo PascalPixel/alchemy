@@ -21,6 +21,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/io_write.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
 #include "system/iwram_call.h"
@@ -1798,57 +1799,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-void CrackedTile_Fall(struct PushEvent *event) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 x;
-  s32 z;
-  s32 mask;
-
-  mask = 64;
-  x = object->x >> 20;
-  do {
-  } while (0);
-  x |= (s16)(event->x & mask);
-  z = object->z >> 20;
-  z |= (s16)(event->z & mask);
-  Leader_CenterInCell();
-  Sound_Play(SE_SPLASH);
-  Map_CopyCellsRect(event->x, event->z + 2, 1, 1, x, z);
-  Event_Wait(12);
-  {
-    u32 zero = 0;
-
-    object->facing = 0x4000;
-    object->motionFlags = zero;
-  }
-  Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  {
-    u32 winout = 0xf1f;
-
-    REG_WINOUT = winout;
-  }
-  do {
-  } while (0);
-  REG_DISPCNT |= 0x8000;
-  event->busy = 1;
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
-  Event_Wait(16);
-  for (x = 0; x < 40; x++) {
-    if (x == 5)
-      Sound_Play(SE_DUST_PUFF);
-    object->scaleX += -0x400;
-    object->scaleY += -0x300;
-    object->y += -0x9999;
-    wait(1);
-  }
-  do {
-    Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
-  } while (0);
-  event->busy = 0;
-  gFieldWork->transition = 0x209;
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
+#include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect/advance_motion.c"
 
@@ -1933,16 +1884,6 @@ loop:
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s2f48): routine CrackedTile_Fall as this part declared it; the joined
- * file has another; tried as the definition's void CrackedTile_Fall(struct
- * PushEvent *event), which the object already declares, it does not compile in
- * tla-ja: games/tla/src/scene/shared/cracked_tiles_step.h:23: too many
- * arguments to function `CrackedTile_Fall'. */
-void CrackedTile_Fall__s2f48(
-    struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__s2f48
-
 #include "shared/cracked_tiles_step.h"
 
 #include "shared/cracked_tile_place_landing.h"
@@ -2389,5 +2330,4 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_020037c8,
     (s32)gData_02003804,
 };
-#undef CrackedTile_Fall
 #undef CrackedTile_PlaceLanding

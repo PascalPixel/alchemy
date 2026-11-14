@@ -35,7 +35,7 @@ extern u16 gFileScreen_PasswordStackItems[];
 #include "system/system.h"
 #include "battle/battle.h"
 #include "system/input.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

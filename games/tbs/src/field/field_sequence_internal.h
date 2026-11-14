@@ -8,7 +8,7 @@
 /// resolves. It places no bytes.
 
 #include "ability_ids.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "flags.h"
 #include "macros.h"
 #include "resource_ids.h"

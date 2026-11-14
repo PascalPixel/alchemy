@@ -108,7 +108,7 @@ extern s32 gTreeRooms_TintIndex;
 
 #include "field/create_configured_actor.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

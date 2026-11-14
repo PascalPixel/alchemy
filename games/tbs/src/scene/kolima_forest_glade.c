@@ -33,7 +33,7 @@ extern struct Trigger gKolimaForestGlade_Triggers[];
 #include "scene/kolima_palette.h"
 #include "field/event_commands.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

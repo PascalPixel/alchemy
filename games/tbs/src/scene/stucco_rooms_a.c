@@ -49,7 +49,7 @@ extern u16 gStuccoRoomsA_DoorCellSteps[];
 extern struct MapGridCellAnimation gStuccoRoomsA_DoorCells[];
 
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

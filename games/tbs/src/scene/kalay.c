@@ -164,7 +164,7 @@ extern s32 gKalay_TunnelParticleScript[];
 #include "system/main_routine.h"
 #include "window/screens.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

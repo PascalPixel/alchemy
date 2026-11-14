@@ -70,7 +70,7 @@ extern s32 gSolSanctum_RingScaleSteps[];
 #include "field/event.h"
 #include "field/create_configured_actor.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

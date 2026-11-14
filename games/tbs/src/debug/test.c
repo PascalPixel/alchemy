@@ -2,7 +2,6 @@
 /// The debug room Menu test, whose actors each run a test of the menus, the
 /// shops or the bags when talked to.
 
-#include "debug/test.h"
 #include "ability_ids.h"
 #include "djinn_ids.h"
 #include "edition.h"
@@ -13,6 +12,7 @@
 #include "battle/playback_queue.h"
 #include "field/actor.h"
 #include "field/field_psynergy_work.h"
+#include "field/scene_tables.h"
 #include "game/character.h"
 #include "game/game.h"
 #include "gamepak/far_call.h"
@@ -25,6 +25,22 @@
 #include "system/system_call.h"
 #include "window/screens.h"
 #include "text/msg_ids.h"
+
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+s32 Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern u32 gTest_UnusedRows[];
+extern char gDebugItemPrompt[12];
+extern char gDebugItemCapacityLabel[24];
+extern char gDebugItemFullLabel[20];
+extern struct SceneEntrance gMenuTest_Entrances[];
+extern u32 gMenuTest_Exits[];
+extern struct ActorPlacement gMenuTest_ActorPlacements[];
+extern struct Trigger gMenuTest_Triggers[];
+extern s32 gMenuTest_NextLevel;
+extern s32 gMenuTest_FillLetter;
 
 /// The debug item browser covers IDs 0 through 269.
 #define DEBUG_ITEM_COUNT 270

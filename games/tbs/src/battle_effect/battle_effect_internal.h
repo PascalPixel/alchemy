@@ -5,7 +5,7 @@
 /// What every part of the battle effect object shares: its includes, macros and
 /// frame-loop helpers.
 
-#include "debug.h"
+#include "debug/debug.h"
 #include "edition.h"
 #include "fixed_math.h"
 #include "macros.h"

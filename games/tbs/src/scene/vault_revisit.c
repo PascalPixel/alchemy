@@ -70,7 +70,7 @@ extern struct Trigger gVaultRevisit_Triggers[];
 #include "field/actor.h"
 #include "field/event.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

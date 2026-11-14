@@ -66,7 +66,7 @@ extern const u16 gTolbiSpring_ActorHeadings[];
 #include "window/screens.h"
 #include "shop/shop.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "sound/sound.h"

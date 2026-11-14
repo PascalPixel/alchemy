@@ -145,7 +145,7 @@ extern s32 gImilFuchinFalls_LongDustScript[];
 #include "system/main_routine.h"
 #include "battle/battle.h"
 #include "field/event_inline.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

@@ -97,7 +97,7 @@ extern struct Trigger gBilibinCaveIceTriggers[];
 extern s32 gPushedActor_DirectionSteps[];
 
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

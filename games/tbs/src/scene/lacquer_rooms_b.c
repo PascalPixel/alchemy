@@ -48,7 +48,7 @@ extern struct Trigger gLacquerRoomsB_SchoolRoomTriggers[];
 #include "scene/field_effect_spawn.h"
 #include "field/event.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

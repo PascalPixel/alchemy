@@ -113,7 +113,7 @@ extern struct Trigger gKalayTolbiDocks_RoomTriggersStranded[];
 #include "window/window.h"
 #include "window/screens.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

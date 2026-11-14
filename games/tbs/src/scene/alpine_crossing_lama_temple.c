@@ -95,7 +95,7 @@ extern struct Trigger gAlpineCrossing_Triggers[];
 #include "field/event_commands.h"
 #include "system/system.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

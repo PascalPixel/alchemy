@@ -127,7 +127,7 @@ extern s32 gVale_GuardFromSecondPausePath[];
 #include "window/screens.h"
 #include "system/system.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

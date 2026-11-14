@@ -7,7 +7,7 @@
 /// includes it too, so that a part read on its own still resolves.
 
 #include "ability_ids.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "djinn_ids.h"
 #include "edition.h"
 #include "enemy_ids.h"

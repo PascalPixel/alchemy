@@ -118,7 +118,7 @@ extern const s32 gTolbiShipDeckRowerStrokes[];
 #include "window/window.h"
 #include "window/screens.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

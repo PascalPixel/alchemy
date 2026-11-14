@@ -108,7 +108,7 @@ extern s32 gColossoParticleCount;
 #include "field/event.h"
 #include "system/input.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

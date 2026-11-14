@@ -82,7 +82,7 @@ extern s32 gMercuryLighthouseAerie_SparkScript[];
 #include "field/create_configured_actor.h"
 #include "system/heap_slots.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

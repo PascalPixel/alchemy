@@ -90,7 +90,7 @@ extern s16 gHeatGaugeFlash;
 #include "system/fixed_point_position.h"
 #include "field/scene.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "system/io_write.h"
 #include "game/game.h"

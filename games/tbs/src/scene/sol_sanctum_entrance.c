@@ -76,7 +76,7 @@ extern s32 gSolSanctumPushSteps[];
 
 #include "field/event_commands.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

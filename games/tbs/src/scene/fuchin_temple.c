@@ -86,7 +86,7 @@ extern s32 gFuchinTemple_ShotScript[];
 #include "field/event.h"
 #include "system/system_call.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

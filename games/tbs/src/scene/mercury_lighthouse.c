@@ -143,7 +143,7 @@ extern struct Trigger gMercuryLighthouseTriggersOther[];
 #include "system/ram_buffer.h"
 #include "field/ground_mask.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

@@ -76,7 +76,7 @@ extern s32 gSolSanctumStatue_ScrollPhase;
 #include "field/event_inline.h"
 #include "text/msg_ids.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

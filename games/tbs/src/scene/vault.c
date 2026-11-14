@@ -79,7 +79,7 @@ extern s32 gVault_DriftScriptB[];
 #include "system/system.h"
 #include "field/actor.h"
 #include "field/event.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

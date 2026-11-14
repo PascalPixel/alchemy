@@ -2,19 +2,38 @@
 /// The debug room Increase item and level, whose actors raise the party's
 /// levels, give any item and show the game's icons and portraits.
 
-#include "debug/level.h"
 #include "edition.h"
 #include "types.h"
 #include "battle/battle.h"
 #include "battle/battle_action_run.h"
 #include "battle/playback_queue.h"
 #include "field/field_work.h"
+#include "field/scene_tables.h"
 #include "game/game.h"
 #include "gamepak/far_call.h"
 #include "system/heap_slots.h"
 #include "system/input.h"
 #include "system/system.h"
 #include "window/window.h"
+
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+u8 *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern char gIncreaseItemAndLevel_LvLabel[4];
+extern char gIncreaseItemAndLevel_ItemPrompt[12];
+extern char gIncreaseItemAndLevel_ItemHelp[24];
+extern char gIncreaseItemAndLevel_ItemFull[20];
+extern char gIncreaseItemAndLevel_PsyPrompt[8];
+extern char gIncreaseItemAndLevel_PsyHelp[12];
+extern char gIncreaseItemAndLevel_GlyphsUpper[28];
+extern char gIncreaseItemAndLevel_GlyphsLower[28];
+extern char gIncreaseItemAndLevel_GlyphsMarks[12];
+extern struct SceneEntrance gIncreaseItemAndLevel_Entrances[];
+extern u32 gIncreaseItemAndLevel_Exits[];
+extern struct ActorPlacement gIncreaseItemAndLevel_ActorPlacements[];
+extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 
 void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
 

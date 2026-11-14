@@ -148,7 +148,7 @@ extern s32 gIslandWakeScript[];
 #include "window/screens.h"
 #include "system/system.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

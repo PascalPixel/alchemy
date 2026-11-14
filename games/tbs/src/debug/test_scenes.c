@@ -2,12 +2,23 @@
 /// The debug rooms Test 0 to Test 7, all one room, where talking to Flint,
 /// Fizz, Forge or Gust gives that Djinni.
 
-#include "debug/test_scenes.h"
 #include "djinn_ids.h"
 #include "flags.h"
+#include "types.h"
 #include "battle/battle.h"
 #include "field/event.h"
+#include "field/scene_tables.h"
 #include "system/system.h"
+
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+u8 *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gTest_Entrances[];
+extern u32 gTest_Exits[];
+extern struct ActorPlacement gTest_ActorPlacements[];
+extern struct Trigger gTest_Triggers[];
 
 /// The placed actors: the first Djinni of each element, each there while its
 /// flag is clear.

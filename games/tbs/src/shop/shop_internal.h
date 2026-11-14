@@ -7,7 +7,7 @@
 /// includes it before the parts, and each part includes it too, so that a
 /// part read on its own still resolves.
 
-#include "debug.h"
+#include "debug/debug.h"
 #include "edition.h"
 #include "fixed_math.h"
 #include "flags.h"

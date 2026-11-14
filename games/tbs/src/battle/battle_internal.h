@@ -8,7 +8,7 @@
 /// its own still resolves. It places no bytes.
 
 #include "ability_ids.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "djinn_ids.h"
 #include "edition.h"
 #include "enemy_ids.h"

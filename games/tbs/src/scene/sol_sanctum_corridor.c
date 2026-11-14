@@ -21,7 +21,7 @@ extern struct Trigger gSolSanctumCorridorTriggers[];
 
 #include "scene/sol_sanctum_init_zoom.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

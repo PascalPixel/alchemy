@@ -65,7 +65,7 @@ extern struct Trigger gLogRoomsB_Triggers[];
 #include "field/event_commands.h"
 #include "game/game.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"

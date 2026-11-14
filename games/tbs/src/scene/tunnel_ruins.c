@@ -104,7 +104,7 @@ extern struct Trigger gTunnelRuinsTriggersOther[];
 #include "field/field_effect.h"
 #include "field/pushed_actor.h"
 #include "battle/battle.h"
-#include "debug.h"
+#include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

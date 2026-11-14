@@ -3446,81 +3446,15 @@ void Func_020053bc(const u16 *entry) {
 
     object->collisionFlags &= 0xfe;
     Actor_SetSpriteFlags(object, 0);
-    Func_020054ac(id, (u16)mode, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->terrainId);
     entry += 2;
   }
 }
 
 // Finds the current target's table row and shrinks it.
-void Statue_Sink(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+#include "shared/statue_sink.h"
 
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        Func_020054ac(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
-
-void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
-  struct Actor *object = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Actor_GetCellIndex(object);
-  if (Event_GetFlag(flag)) {
-    /* FAKEMATCH(temporary): the flags read into a local before the cell store
-     * and a local holding 2. */
-    u8 flags = object->priorityFlags;
-    s32 bits;
-
-    cell->collisionCode = 0;
-    bits = 2;
-    bits |= flags;
-    object->priorityFlags = bits;
-    switch (mode) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (mode) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {                                                               

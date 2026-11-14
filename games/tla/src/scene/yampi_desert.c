@@ -113,7 +113,7 @@ void YampiDesert_PlayScorpionRumble(void);
 void YampiDesert_SetUpRoom4Scorpion(void);
 void YampiDesert_ReadyStake(s32 id);
 void YampiDesert_TrackUpperLevelFromBelow(void);
-void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 static inline void Scene_TaskAdd(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
@@ -2249,7 +2249,7 @@ loop:
 
     object->collisionFlags &= 0xfe;
     Actor_SetSpriteFlags(object, 0);
-    YampiDesert_SetStakeCell(id, (u16)kind, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
     entry += 3;
   }
   if (entry[0] != 0xffff)
@@ -2263,68 +2263,9 @@ loop:
 #undef MAIN_ROUTINE_WORK_U16
 
 // Finds the current target's table row and shrinks it.
-void Statue_Sink(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+#include "shared/statue_sink.h"
 
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        YampiDesert_SetStakeCell(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
-
-void YampiDesert_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Actor_GetCellIndex(object);
-  if (GameFlag_Get(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 // The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has

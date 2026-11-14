@@ -520,11 +520,11 @@ void YampiDesertCave_ArriveByTeleport(void) {
   work->transition = saved;
 }
 
-void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer);
+void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 /// Walks a list of three-halfword entries (object id, column, row) ended by
 /// 0xffff, clearing each object's collision bit and child flags before passing
-/// the entry to YampiDesertCave_SetStakeCell. A struct of three halfwords would
+/// the entry to Actor_SetCellOpen. A struct of three halfwords would
 /// be padded to 8 bytes, so the list is read as u16 triples.
 void YampiDesertCave_PlaceStakes(const u16 *list) {
   const u16 *entry;
@@ -541,7 +541,7 @@ loop:
 
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlags(object, 0);
-    YampiDesertCave_SetStakeCell(id, (u16)column, (u16)row, object->terrainId);
+    Actor_SetCellOpen(id, (u16)column, (u16)row, object->terrainId);
     entry += 3;
   }
   if (entry[0] != 0xffff)
@@ -549,70 +549,11 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-void Statue_Sink(u16 *list, s32 mode, s32 count) {
-  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
-
-  while (*list != 0xffff) {
-    u32 entry = *list;
-    s32 id = work->objectId;
-
-    if (id == entry) {
-      struct Actor *object = Actor_GetById(id);
-      s32 a;
-      s32 flag;
-
-      list++;
-      a = list[0];
-      flag = list[1];
-      if (count < 8)
-        object->scaleY -= 0x1f00;
-      if (mode == 1) {
-        GameFlag_Set(flag);
-        YampiDesertCave_SetStakeCell(id, a, flag, object->terrainId);
-        object->scaleY = Q16_ONE;
-      }
-      break;
-    }
-    list += 3;
-  }
-}
+#include "shared/statue_sink.h"
 
 s32 Actor_GetCellIndex(struct Actor *object);
 
-void YampiDesertCave_SetStakeCell(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct Actor *object = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
-
-  cell += Actor_GetCellIndex(object);
-  if (GameFlag_Get(flag)) {
-    cell->collisionCode = 0;
-    object->priorityFlags |= 2;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 2);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 4);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 6);
-      break;
-    }
-  } else {
-    cell->collisionCode = 255;
-    switch (kind) {
-    case 0:
-      Actor_SelectAnimation(object, 1);
-      break;
-    case 1:
-      Actor_SelectAnimation(object, 3);
-      break;
-    case 2:
-      Actor_SelectAnimation(object, 5);
-      break;
-    }
-  }
-}
+#include "shared/actor_set_cell_open.h"
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
 /// (flag 0x271).

@@ -1152,8 +1152,8 @@ void Actor_SetActionById(s32 id, s32 action);
  * FieldCamera_MoveToActor(s32 id, s32 use_setter), it does not compile in
  * tla-ja (magma_rock.c): games/tla/src/scene/magma_rock.c:1149: conflicting
  * types for `FieldCamera_MoveToActor'. */
-extern void Func_080d452c__s1c00(s32 a,
-                                 s32 b) __asm__("FieldCamera_MoveToActor");
+extern void
+FieldCamera_MoveToActor__s1c00(s32 a, s32 b) __asm__("FieldCamera_MoveToActor");
 void FieldCamera_WaitForArrival(void);
 
 void MagmaRock_AmplifyBurst(void) {
@@ -1220,7 +1220,7 @@ second:
   MapGrid_SetShake(5, 8, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
-  Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
+  FieldCamera_MoveToActor__s1c00(gMainRoutineWork.currentOwner, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 4);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 0);

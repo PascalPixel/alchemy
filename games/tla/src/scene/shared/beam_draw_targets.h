@@ -65,7 +65,7 @@ void FlameThrowers_Puff(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Func_0200206c__s20ec(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnSpark__s20ec(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
         Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);

@@ -825,9 +825,9 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
  * declares, it does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_entrance.c:1630: conflicting types for
  * `Actor_HoldDuringEvent'. */
-void Func_02002c2c__mars_lighthouse_entrance(void) __asm__(
+void Actor_HoldDuringEvent__mars_lighthouse_entrance(void) __asm__(
     "Actor_HoldDuringEvent");
-#define Actor_HoldDuringEvent Func_02002c2c__mars_lighthouse_entrance
+#define Actor_HoldDuringEvent Actor_HoldDuringEvent__mars_lighthouse_entrance
 
 /// The dragon face wakes and begins its slow way left, breathing fire.
 void MarsLighthouseEntrance_WakeDragonFace(void) {
@@ -1383,7 +1383,7 @@ typedef struct State {
  * Ride_SpawnSpark(s32 *position, s32 speed), it does not compile in tla-ja:
  * games/tla/src/scene/shared/beam_draw_targets.h:68: too many arguments to
  * function `Ride_SpawnSpark'. */
-extern void Func_0200206c__s20ec() __asm__("Ride_SpawnSpark");
+extern void Ride_SpawnSpark__s20ec() __asm__("Ride_SpawnSpark");
 
 typedef struct Position {
   s32 x;

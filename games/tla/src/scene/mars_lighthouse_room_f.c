@@ -3370,11 +3370,6 @@ s32 gPushLeaderSteps[] = {
 #undef ABS
 #undef MapLayer
 
-/* VIEW(data): routine Func_02001010 as module/scene/airs_rock.h declares it;
- * the joined file has another; not tried: Func_02001010's declaration holds a
- * FAKEMATCH tag. */
-void Func_02001010__data(void) __asm__("Func_02001010");
-#define Func_02001010 Func_02001010__data
 #include "module/scene/airs_rock.h"
 
 void MarsLighthouseRoomF_JumpGapOrPushStone(void);
@@ -3674,4 +3669,3 @@ LATE_DATA s32 gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_MediumScript,
     (s32)gFieldEffect_LongScript,
 };
-#undef Func_02001010

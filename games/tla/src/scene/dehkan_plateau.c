@@ -1033,7 +1033,6 @@ void Actor_DisableById(s32 id);
 extern struct Actor *gData_02004420__s2698 __asm__("gDehkanPlateau_PoundCube");
 #define gDehkanPlateau_PoundCube gData_02004420__s2698
 
-
 extern u32 gDehkanPlateau_DustScript[];
 
 // Flashes actor id, then raises eight puffs over actor center, then sets

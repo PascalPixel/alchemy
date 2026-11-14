@@ -1,17 +1,17 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_0200646c
-gData_0200646c:
+	.global gGaiaRockInside_SavedSusa
+gGaiaRockInside_SavedSusa:
 	.space 0x00000080
-	.global gData_020064ec
-gData_020064ec:
+	.global gGaiaRockInside_SavedSusaX
+gGaiaRockInside_SavedSusaX:
 	.space 0x00000004
-	.global gData_020064f0
-gData_020064f0:
+	.global gGaiaRockInside_SavedSusaZ
+gGaiaRockInside_SavedSusaZ:
 	.space 0x00000004
-	.global Data_020064f4
-Data_020064f4:
+	.global gGaiaRockInside_SavedSusaFrame
+gGaiaRockInside_SavedSusaFrame:
 	.space 0x00000004
-	.global gData_020064f8
-gData_020064f8:
+	.global gGaiaRockInside_SavedSusaAnimation
+gGaiaRockInside_SavedSusaAnimation:

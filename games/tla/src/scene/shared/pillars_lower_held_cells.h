@@ -30,6 +30,8 @@ void Pillars_LowerHeldCells(u16 *list) {
       shape += index;
       // The index goes on as the cell offset, four bytes a cell.
       index <<= 2;
+      /* FAKEMATCH(signature): the grid byte stored through a one-field struct
+       * view. */
       ((struct ShapeCell *)shape)->shape = result;
       cell += index;
       ((struct MapCell *)cell)->attributeB &= 63;

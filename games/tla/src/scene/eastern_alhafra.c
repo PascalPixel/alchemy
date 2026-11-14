@@ -1,4 +1,16 @@
 /// @file
+/// Eastern Alhafra, the dock where the mayor's ship lies with its mast fallen.
+/// On the first visit the party overhears the workers
+/// (EasternAlhafra_OverhearWorkers) and, in the cabin, Briggs, who is fought
+/// and caught. The mast is then cleared as a puzzle: blocks and crates pushed
+/// or Moved into the water (EasternAlhafra_FinishPushingBlock), the log rolled
+/// in (EasternAlhafra_RollLog), the cone Pounded to free the rope
+/// (EasternAlhafra_PoundCone), and the stone block on the mast Burst
+/// (EasternAlhafra_BurstMastBlock). The workers tell the mayor
+/// (EasternAlhafra_WorkersTellMayor), Briggs escapes and sails off in the ship
+/// (EasternAlhafra_BriggsStealsShip), and the mayor finds it gone
+/// (EasternAlhafra_MayorFindsShipGone). The water ripples by an HBlank wave on
+/// BG1 (EasternAlhafra_StartWave).
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -33,11 +45,28 @@
 #include "module/field/field.h"
 #include "field_event.h"
 
+// Story flags of the mast puzzle and its events.
+#define FLAG_FIRST_BLOCK_SUNK 0x8a0  // actor 10
+#define FLAG_SECOND_BLOCK_SUNK 0x8a1 // actor 11
+#define FLAG_CONE_POUNDED 0x8a2
+#define FLAG_ROPE_LASHED 0x8a3
+#define FLAG_LAST_CRATE_SUNK 0x8a4  // actor 16
+#define FLAG_FIRST_CRATE_SUNK 0x8a5 // actor 17
+#define FLAG_LOG_ROLLED 0x8a6
+#define FLAG_TALKED_TO_SAILOR 0x8a8
+#define FLAG_OVERHEARD_WORKERS 0x8a9
+#define FLAG_ASKED_TO_HELP 0x8ac
+#define FLAG_ASKED_IF_FINISHED 0x8ad
+#define FLAG_REACHED_ROCK 0x8be
+#define FLAG_GAVE_UP_ON_ROCK 0x8bf
+#define FLAG_WORKERS_SAW_BLOCK_GONE 0x904
+#define FLAG_WORKERS_TOLD_MAYOR 0x905
+
 struct Actor;
 struct RockSprite;
 struct Vector3;
 
-struct Unk_02004240 {
+struct PushSlide {
   s32 value[6];
 };
 
@@ -55,38 +84,38 @@ struct PushState {
   s32 unk14;
 };
 
-void Func_02000fa4(void);
+void EasternAlhafra_PlaceClearedDebris(void);
 void Rocks_Spawn(s32, s32, s32, s32);
 
-void Func_02004004(void);
-void Func_020040c0(void);
+void EasternAlhafra_StartFallingRocks(void);
+void EasternAlhafra_EndFallingRocks(void);
 
-void Func_020017ec(void);
-void Func_02001cb0(void);
-void Func_02003274(void);
+void EasternAlhafra_AskIfFinished(void);
+void EasternAlhafra_WorkersSeeBlockGone(void);
+void EasternAlhafra_MayorFindsShipGone(void);
 
-extern s32 gData_020054f4[];
-extern s32 gData_0200556c[];
-extern u32 gData_0200d5d0[];
-extern u32 gData_02005620[];
-extern s32 gData_02005670[];
+extern s32 gEasternAlhafra_FirstWorkerCheerScript[];
+extern s32 gEasternAlhafra_SecondWorkerCheerScript[];
+extern u32 gEasternAlhafra_FirstWorkerRunScript[];
+extern u32 gEasternAlhafra_SecondWorkerRunScript[];
+extern s32 gEasternAlhafra_RunOffScript[];
 
-void Func_02000514(void);
+void EasternAlhafra_RollLog(void);
 
-void Func_02000730(void);
+void EasternAlhafra_TalkToSailor(void);
 
-void Func_02000838(void);
+void EasternAlhafra_StepOntoMast(void);
 
-void Func_02000954(void);
-void Func_02000968(void);
-void Func_02001574(void);
-void Func_02002048(void);
-void Func_02002a08(void);
+void EasternAlhafra_IgnoreDiagonalStep(void);
+void EasternAlhafra_GiveUpOnRock(void);
+void EasternAlhafra_AskToHelpWithMast(void);
+void EasternAlhafra_WorkersTellMayor(void);
+void EasternAlhafra_BriggsStealsShip(void);
 
-extern s16 gData_02005284[];
+extern s16 gEasternAlhafra_CabinDoorFrames[];
 
-void Func_02004c64(struct RockSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tile);
+void EasternAlhafra_InitializeRockSprite(struct RockSprite *sprite, s32 width,
+                                         s32 height, u32 attributes, s32 tile);
 
 void Particles_UpdateFalling(void);
 
@@ -107,16 +136,16 @@ s32 Actor_GetCellIndex(struct Actor *object);
 s32 Tightrope_Place();
 s32 Tightrope_Release();
 s32 Leader_CanPushObjectAhead();
-s32 Func_02004c4c();
-extern u16 gData_020056e0[2][160];
+s32 EasternAlhafra_PushObjectAhead();
+extern u16 gEasternAlhafra_WaveLines[2][160];
 void Actor_FallOverWithAnimationById();
 void Rope_Initialize(void);
 void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
 
-extern s16 gData_02004d0c[];
+extern s16 gEasternAlhafra_PoundCone[];
 extern struct ActorPlacement gEasternAlhafra_Placements[];
-extern s16 gData_02004fe4[];
+extern s16 gEasternAlhafra_PlacementsAfterBriggsCaught[];
 
 s32 Actor_HasArrived();
 
@@ -128,31 +157,31 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 void *Scene_GetPlacements(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT))
-    return gData_02004fe4;
+    return gEasternAlhafra_PlacementsAfterBriggsCaught;
   return gEasternAlhafra_Placements;
 }
 
-void Func_0200006c(s32 mode, s32 id) {
+void EasternAlhafra_BurstMastBlock(s32 mode, s32 id) {
   if (id == 0)
-    Func_02004004();
+    EasternAlhafra_StartFallingRocks();
   if (mode == 1) {
     Event_SetFlag(FLAG_ALHAFRA_MAST_CLEARED);
-    Func_02000fa4();
+    EasternAlhafra_PlaceClearedDebris();
   }
   if (mode == 2)
     Rocks_Spawn(0x1f20000, 0x100000, 0x19c0000, 2);
   if (mode == 3)
     Rocks_Spawn(0x1f20000, 0x100000, 0x19c0000, 30);
   if (id == 0x3e7)
-    Func_020040c0();
+    EasternAlhafra_EndFallingRocks();
 }
 
-void Func_020000c8(s32 mode, s32 arg) {
+void EasternAlhafra_PoundCone(s32 mode, s32 arg) {
   struct Actor *a;
   struct Actor *b;
   s32 i;
 
-  Pound_SinkTarget(gData_02004d0c, mode, arg);
+  Pound_SinkTarget(gEasternAlhafra_PoundCone, mode, arg);
   if (mode == 1) {
     a = Actor_Get(19);
     b = Actor_Get(21);
@@ -180,7 +209,7 @@ void Func_020000c8(s32 mode, s32 arg) {
   }
 }
 
-void Func_02000190(s32 unused, s32 id) {
+void EasternAlhafra_StartPushingBlock(s32 unused, s32 id) {
   struct Actor *leader;
   struct Actor *object;
   s32 leaderX;
@@ -203,13 +232,13 @@ void Func_02000190(s32 unused, s32 id) {
 
 #include "text/msg_ids.h"
 
-extern s32 gData_02005290[];
+extern s32 gEasternAlhafra_CabinDoor[];
 
 s32 Party_FindOwnerWithAction();
 void Event_Start();
 void Event_End();
 
-void Func_02000200(s32 mode, s32 id) {
+void EasternAlhafra_FinishPushingBlock(s32 mode, s32 id) {
   struct Actor *object;
   struct Actor *sparks[4];
   struct Actor *spark;
@@ -227,19 +256,19 @@ void Func_02000200(s32 mode, s32 id) {
     FieldMapGrid_SetCellBehavior(px(512), px(512), 2, 0);
   }
   if (x == 31 && z == 32) {
-    Event_SetFlag(0x8a0);
+    Event_SetFlag(FLAG_FIRST_BLOCK_SUNK);
     hit = 1;
   }
   if (x == 25 && z == 33) {
-    Event_SetFlag(0x8a1);
+    Event_SetFlag(FLAG_SECOND_BLOCK_SUNK);
     hit = 1;
   }
   if (x == 21 && z == 33) {
-    Event_SetFlag(0x8a4);
+    Event_SetFlag(FLAG_LAST_CRATE_SUNK);
     hit = 1;
   }
   if (x == 27 && z == 33) {
-    Event_SetFlag(0x8a5);
+    Event_SetFlag(FLAG_FIRST_CRATE_SUNK);
     hit = 1;
   }
   if (hit) {
@@ -269,7 +298,7 @@ void Func_02000200(s32 mode, s32 id) {
     i++;
     if (i <= 2)
       goto create;
-    Func_02000fa4();
+    EasternAlhafra_PlaceClearedDebris();
     FieldActor_Stop(gMainRoutineWork.currentOwner);
     System_Wait(30);
     for (i = 0; i <= 2; i++)
@@ -277,8 +306,8 @@ void Func_02000200(s32 mode, s32 id) {
   }
 }
 
-void Func_02000394(s32 unused, s32 id) {
-  Func_02000190(unused, id);
+void EasternAlhafra_StartPushingLastCrate(s32 unused, s32 id) {
+  EasternAlhafra_StartPushingBlock(unused, id);
   FieldMapGrid_SetCellBehavior(px(320), px(464), 2, 255);
   FieldMapGrid_SetCellBehavior(px(320), px(480), 2, 255);
   FieldMapGrid_SetCellBehavior(px(320), px(496), 2, 255);
@@ -290,7 +319,7 @@ void Func_02000394(s32 unused, s32 id) {
   FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 0);
 }
 
-void Func_0200042c(s32 mode, s32 id) {
+void EasternAlhafra_FinishPushingLastCrate(s32 mode, s32 id) {
   struct Actor *object;
   s32 x;
   s32 z;
@@ -313,23 +342,24 @@ void Func_0200042c(s32 mode, s32 id) {
   FieldMapGrid_SetCellBehavior(px(336), px(528), 2, 255);
   if (open)
     FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
-  Func_02000200(mode, id);
+  EasternAlhafra_FinishPushingBlock(mode, id);
   if (open)
     EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
 
-void Func_0200112c(void);
-/* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct
- * Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried
- * as the definition's void Func_020044c4(struct PushTarget target), which the
- * object already declares, Func_02000514 moves: 1 of 198 instructions in
- * tla-ja. */
-extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
+void EasternAlhafra_OverhearWorkers(void);
+/* VIEW(s0514): routine PushTarget_PushFill as void PushTarget_PushFill(struct
+ * PushSlide); eastern_alhafra has void PushTarget_PushFill(struct DoorPlan);
+ * tried as the definition's void PushTarget_PushFill(struct PushTarget target),
+ * which the object already declares, EasternAlhafra_RollLog moves: 1 of 198
+ * instructions in tla-ja. */
+extern void
+    PushTarget_PushFill__log(struct PushSlide) __asm__("PushTarget_PushFill");
 
-void Func_02000514(void) {
+void EasternAlhafra_RollLog(void) {
   struct Actor *actor15;
   struct Actor *actor16;
-  struct Unk_02004240 unk;
+  struct PushSlide unk;
   s32 facing;
   s32 i;
 
@@ -337,17 +367,17 @@ void Func_02000514(void) {
   actor16 = Actor_GetById(16);
   facing =
       (Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
-  if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
+  if (actor16 != NULL && Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0)
     MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 255);
-  if (Func_02004240(&unk) != 0) {
-    if (Event_GetFlag(0x8a4) == 0 || facing == 0xc000) {
-      Func_020044c4__s0514(unk);
+  if (PushTarget_FindSlide(&unk) != 0) {
+    if (Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0 || facing == 0xc000) {
+      PushTarget_PushFill__log(unk);
     } else {
-      Event_SetFlag(0x8a6);
+      Event_SetFlag(FLAG_LOG_ROLLED);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
-      Func_020044c4__s0514(unk);
+      PushTarget_PushFill__log(unk);
       MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 0, 0);
       MapGrid_SetCellBehavior(actor15->x + px(8), actor15->z, 0, 0);
       MapGrid_SetCellBehavior(actor15->x - px(24), actor15->z, 2, 0);
@@ -366,7 +396,7 @@ void Func_02000514(void) {
           i++;
         } while (i <= 59 && actor15->y > 0);
       }
-      Func_02000fa4();
+      EasternAlhafra_PlaceClearedDebris();
       Event_PlaySound(SE_LOG_FALL);
       Actor_SetAnimation(15, 8);
       FieldEvent_Wait(60);
@@ -374,26 +404,26 @@ void Func_02000514(void) {
       Event_End();
     }
   }
-  if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
+  if (actor16 != NULL && Event_GetFlag(FLAG_LAST_CRATE_SUNK) == 0)
     MapGrid_SetCellBehavior(actor16->x, actor16->z, 2, 0);
 }
 
-void Func_020006ec(s32 mode) {
+void EasternAlhafra_PushAhead(s32 mode) {
   s32 tile;
 
   tile = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
   if (tile == 16) {
-    Func_02000394(mode, 16);
+    EasternAlhafra_StartPushingLastCrate(mode, 16);
     if (Leader_CanPushObjectAhead() != 0)
-      Func_02004c4c();
-    Func_0200042c(mode, 16);
+      EasternAlhafra_PushObjectAhead();
+    EasternAlhafra_FinishPushingLastCrate(mode, 16);
   } else if (tile == 15) {
-    Func_02000514();
+    EasternAlhafra_RollLog();
   }
 }
 
-void Func_02000730(void) {
-  Event_SetFlag(0x8a8);
+void EasternAlhafra_TalkToSailor(void) {
+  Event_SetFlag(FLAG_TALKED_TO_SAILOR);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgWhatSYour);
@@ -432,21 +462,22 @@ void Func_02000730(void) {
   Event_End();
 }
 
-void Func_02000838(void) {
+void EasternAlhafra_StepOntoMast(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (Event_GetFlag(0x904) == 0) {
-      Event_SetFlag(0x904);
-      Func_02001cb0();
+    if (Event_GetFlag(FLAG_WORKERS_SAW_BLOCK_GONE) == 0) {
+      Event_SetFlag(FLAG_WORKERS_SAW_BLOCK_GONE);
+      EasternAlhafra_WorkersSeeBlockGone();
     }
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    if (Event_GetFlag(0x8a0) && Party_FindOwnerWithAction(151) == -1 &&
-        Event_GetFlag(0x8ad) == 0) {
-      Event_SetFlag(0x8ad);
-      Func_020017ec();
+    if (Event_GetFlag(FLAG_FIRST_BLOCK_SUNK) &&
+        Party_FindOwnerWithAction(ABILITY_BURST) == -1 &&
+        Event_GetFlag(FLAG_ASKED_IF_FINISHED) == 0) {
+      Event_SetFlag(FLAG_ASKED_IF_FINISHED);
+      EasternAlhafra_AskIfFinished();
     }
-  } else if (Event_GetFlag(0x8a9) == 0) {
-    Event_SetFlag(0x8a9);
-    Func_0200112c();
+  } else if (Event_GetFlag(FLAG_OVERHEARD_WORKERS) == 0) {
+    Event_SetFlag(FLAG_OVERHEARD_WORKERS);
+    EasternAlhafra_OverhearWorkers();
   }
 }
 
@@ -469,22 +500,22 @@ void EasternAlhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   Event_End();
 }
 
-void Func_02000940(s32 countdown) {
-  EasternAlhafra_OpenDoorAndEnter(gData_02005290, countdown, 0);
+void EasternAlhafra_EnterCabin(s32 countdown) {
+  EasternAlhafra_OpenDoorAndEnter(gEasternAlhafra_CabinDoor, countdown, 0);
 }
 
-void Func_02000954(void) {}
+void EasternAlhafra_IgnoreDiagonalStep(void) {}
 
-void Func_02000958(void) { GameFlag_Set(0x8be); }
+void EasternAlhafra_ReachRock(void) { GameFlag_Set(FLAG_REACHED_ROCK); }
 
-void Func_02000968(void) {
+void EasternAlhafra_GiveUpOnRock(void) {
   struct Actor *leader;
 
   goto check;
 run:
-  if (Party_FindOwnerWithAction(151) != -1)
+  if (Party_FindOwnerWithAction(ABILITY_BURST) != -1)
     return;
-  Event_SetFlag(0x8bf);
+  Event_SetFlag(FLAG_GAVE_UP_ON_ROCK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_WalkToAndWait(4, 488, 440);
@@ -503,13 +534,14 @@ run:
   return;
 check:
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) &&
-      Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0 && Event_GetFlag(0x8be))
+      Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0 &&
+      Event_GetFlag(FLAG_REACHED_ROCK))
     goto run;
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern u8 gData_020054f0[];
+extern u8 gEasternAlhafra_WaveTableIndex[];
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
@@ -517,8 +549,8 @@ extern u8 gData_020054f0[];
 /// Starts DMA 0 copying the finished table into BG1's horizontal offset at
 /// each HBlank.
 // With ☀️'s way of stopping DMA 0.
-void Func_02000a44(void) {
-  u16 *line = gData_020056e0[gData_020054f0[0] ^ 1];
+void EasternAlhafra_StartWaveDma(void) {
+  u16 *line = gEasternAlhafra_WaveLines[gEasternAlhafra_WaveTableIndex[0] ^ 1];
   volatile u16 *channel;
 
   REG_BG1VOFS = line[0];
@@ -533,39 +565,39 @@ void Func_02000a44(void) {
 
 /// Fills the other table: each of the 160 lines takes layer 2's scroll plus a
 /// sine of the frame count less the line.
-void Func_02000a98(void) {
+void EasternAlhafra_FillWaveLines(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
   u16 *line;
   s32 i = 0;
 
-  line = gData_020056e0[gData_020054f0[0] ^ 1];
+  line = gEasternAlhafra_WaveLines[gEasternAlhafra_WaveTableIndex[0] ^ 1];
   for (i = 0; i != 160; i++) {
     *line++ =
         (layer->y >> 16) +
         (Math_Sin(((u8)gFrameCount - i - (layer->y >> 16) + 160) << 9) >> 15);
   }
-  gData_020054f0[0] ^= 1;
+  gEasternAlhafra_WaveTableIndex[0] ^= 1;
 }
 
-void Func_02000af8(void) {
-  Task_AddFrame(Func_02000a98, 0x480);
-  Task_AddFrame(Func_02000a44, 0xc80);
+void EasternAlhafra_StartWave(void) {
+  Task_AddFrame(EasternAlhafra_FillWaveLines, 0x480);
+  Task_AddFrame(EasternAlhafra_StartWaveDma, 0xc80);
 }
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->fieldWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-void Func_020047fc();
+void Pillars_Place();
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
   s32 flag;
 
   ((struct FieldWork *)EVENT_WORK)->transition = 0x100;
-  Func_02000af8();
+  EasternAlhafra_StartWave();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
-    if (Event_GetFlag(0x905) != 0 &&
+    if (Event_GetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0 &&
         Event_GetFlag(FLAG_ALHAFRA_SHIP_GONE) == 0) {
       Actor_SetPosition(30, 184, 616);
       Actor_SetPosition(31, 136, 600);
@@ -588,7 +620,7 @@ s32 Scene_Initialize(void) {
       Actor_SetAnimation(27, 13);
       Actor_SetAnimation(29, 13);
     }
-    if (Event_GetFlag(0x905) != 0) {
+    if (Event_GetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0) {
       MapGrid_CopyCellsLayered(40, 0, 24, 31, 11, 6);
       MapGrid_CopyCellsLayered(84, 15, 10, 10, 75, 15);
       MapGrid_CopyCellAttributes(10, 24, 1, 1, 11, 24);
@@ -630,22 +662,22 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(30, 13);
     Actor_SetAnimation(31, 13);
     Actor_SetAnimation(28, 13);
-    Func_02003274();
+    EasternAlhafra_MayorFindsShipGone();
   }
-  Func_02000fa4();
-  if (Event_GetFlag(0x8a6) == 0)
-    Func_020040ec(15);
+  EasternAlhafra_PlaceClearedDebris();
+  if (Event_GetFlag(FLAG_LOG_ROLLED) == 0)
+    PushTarget_FillFootprint(15);
   Rope_Initialize();
-  Rope_Place(0, 0x8a3, 8, 9);
+  Rope_Place(0, FLAG_ROPE_LASHED, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Tightrope_Initialize();
   Tightrope_Place(0, 12, 13);
   Actor_SetSpriteFlags(Actor_Get(12), 0);
   Actor_SetSpriteFlags(Actor_Get(13), 0);
-  Func_020047fc(gData_02004d0c);
+  Pillars_Place(gEasternAlhafra_PoundCone);
   Actor_SetSpriteFlags(Actor_Get(14), 0);
-  flag = Event_GetFlag(0x8a2);
+  flag = Event_GetFlag(FLAG_CONE_POUNDED);
   if (flag == 0) {
     object = OBJECT(18);
     /* FAKEMATCH(dead): the solid bit set in a once-only block. */
@@ -687,10 +719,10 @@ s32 Scene_PrepareMap(void) { return 0; }
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000fa4(void) {
+void EasternAlhafra_PlaceClearedDebris(void) {
   struct Actor *object;
 
-  if (Event_GetFlag(0x8a6)) {
+  if (Event_GetFlag(FLAG_LOG_ROLLED)) {
     object = Actor_Get(15);
     Actor_SetPosition(15, 336, 536);
     Actor_SetAnimation(15, 4);
@@ -703,13 +735,13 @@ void Func_02000fa4(void) {
     FieldMapGrid_SetCellBehavior(px(336), px(528), 0, 0);
     FieldMapGrid_SetCellBehavior(px(352), px(528), 0, 0);
   }
-  if (Event_GetFlag(0x8a4)) {
+  if (Event_GetFlag(FLAG_LAST_CRATE_SUNK)) {
     Actor_SetPosition(16, 0, 0);
   }
-  if (Event_GetFlag(0x8a5)) {
+  if (Event_GetFlag(FLAG_FIRST_CRATE_SUNK)) {
     Actor_SetPosition(17, 0, 0);
   }
-  if (Event_GetFlag(0x8a0)) {
+  if (Event_GetFlag(FLAG_FIRST_BLOCK_SUNK)) {
     object = Actor_Get(10);
     Actor_SetPosition(10, 504, 520);
     Actor_SetAnimation(10, 2);
@@ -722,7 +754,7 @@ void Func_02000fa4(void) {
     FieldMapGrid_SetCellBehavior(object->x, object->z, 0, 0);
     MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
   }
-  if (Event_GetFlag(0x8a1)) {
+  if (Event_GetFlag(FLAG_SECOND_BLOCK_SUNK)) {
     object = Actor_Get(11);
     Actor_SetPosition(11, 408, 536);
     Actor_SetAnimation(11, 2);
@@ -740,7 +772,7 @@ void Func_02000fa4(void) {
   }
 }
 
-void Func_0200112c(void) {
+void EasternAlhafra_OverhearWorkers(void) {
   struct Actor *object0;
   struct Actor *object1;
   struct Actor *object2;
@@ -879,7 +911,7 @@ void Func_0200112c(void) {
   return;
 }
 
-void Func_02001574(void) {
+void EasternAlhafra_AskToHelpWithMast(void) {
   s32 result0;
   s32 result1;
   s32 result2;
@@ -900,7 +932,7 @@ void Func_02001574(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgYouDoPlan);
-  Event_SetFlag(0x8ac);
+  Event_SetFlag(FLAG_ASKED_TO_HELP);
   Actor_WalkToAndWait(4, 264, 448);
   FieldActor_LaunchFromLeader(26, 0, -16, 0x4000);
   FieldActor_LaunchFromLeader(5, 16, 0, 0x8000);
@@ -975,7 +1007,7 @@ L_020097dc:
   return;
 }
 
-void Func_020017ec(void) {
+void EasternAlhafra_AskIfFinished(void) {
   s32 result0;
   s32 result1;
   s32 result2;
@@ -1102,14 +1134,14 @@ void Func_020017ec(void) {
   return;
 }
 
-extern u32 gData_020056d4[];
+extern u32 gEasternAlhafra_PuffScript[];
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
 
 /// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
 /// its timer set.
-void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
+void EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   struct SpawnObject *object;
   struct FieldSprite *sprite;
 
@@ -1117,7 +1149,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   if (object != 0) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gData_020056d4);
+    Actor_StartScript(object, gEasternAlhafra_PuffScript);
     Actor_SetSpritePriorityDirect(object, 1);
     object->motionFlags = 0;
     {
@@ -1134,31 +1166,33 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 #undef OBJECT
 #undef FIELD_AT
 
-/* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z,
- * s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y,
- * s32 z, s16 value, s32 timer); tried as the definition's void
- * Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object
- * already declares, Func_02001bf4 moves: 2 of 79 instructions in tla-ja. */
-extern s32 Func_02001b9c__s1bf4(s32 x, s32 y, s32 z, s32 rotation,
-                                s32 timer) __asm__("Func_02001b9c");
+/* VIEW(s1bf4): routine EasternAlhafra_SpawnPuff as s32
+ * EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the
+ * definition has void EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s16 value,
+ * s32 timer); tried as the definition's void EasternAlhafra_SpawnPuff(s32 x,
+ * s32 y, s32 z, s16 value, s32 timer), which the object already declares,
+ * EasternAlhafra_PuffFrom moves: 2 of 79 instructions in tla-ja. */
+extern s32
+EasternAlhafra_SpawnPuff__puffs(s32 x, s32 y, s32 z, s32 rotation,
+                                s32 timer) __asm__("EasternAlhafra_SpawnPuff");
 
-void Func_02001bf4(s32 id) {
+void EasternAlhafra_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_02001b9c__s1bf4(object->x + px(8), object->y + px(28), object->z, 0x1000,
-                       15);
+  EasternAlhafra_SpawnPuff__puffs(object->x + px(8), object->y + px(28),
+                                  object->z, 0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - px(8), object->y + px(28), object->z, 0xf000,
-                       15);
+  EasternAlhafra_SpawnPuff__puffs(object->x - px(8), object->y + px(28),
+                                  object->z, 0xf000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x + px(8), object->y + px(28), object->z, 0x1000,
-                       15);
+  EasternAlhafra_SpawnPuff__puffs(object->x + px(8), object->y + px(28),
+                                  object->z, 0x1000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
-  Func_02001b9c__s1bf4(object->x - px(8), object->y + px(28), object->z, 0xf000,
-                       15);
+  EasternAlhafra_SpawnPuff__puffs(object->x - px(8), object->y + px(28),
+                                  object->z, 0xf000, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }
@@ -1171,7 +1205,7 @@ static __inline__ void FieldMessage_ShowAtActor_(s32 actor, s32 flags) {
 
 /// The scene that opens with MsgHeyThatBlock: either answer to the prompt
 /// steps the event to its next message.
-void Func_02001cb0(void) {
+void EasternAlhafra_WorkersSeeBlockGone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgHeyThatBlock);
@@ -1274,13 +1308,13 @@ void Func_02001cb0(void) {
   Event_End();
 }
 
-/// Only once flag 0x8a7 is set: the scene that opens with MsgIStillJust, which
-/// sets flag 0x905 and ends by sending the party to SceneId_AlhafraManor,
-/// entrance 81.
-void Func_02002048(void) {
+/// Once the mast is clear, the workers can't believe the stone block has
+/// vanished and take the party to the mayor (SceneId_AlhafraManor, entrance
+/// 81).
+void EasternAlhafra_WorkersTellMayor(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
-  Event_SetFlag(0x905);
+  Event_SetFlag(FLAG_WORKERS_TOLD_MAYOR);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgIStillJust);
@@ -1315,8 +1349,8 @@ void Func_02002048(void) {
   FieldActor_ShowEmote(0x1c, 0x107, 0x28);
   Actor_SetSpeed(28, 3);
   Actor_SetSpeed(29, 3);
-  Actor_SetScript(28, gData_020054f4);
-  Actor_SetScript(29, gData_0200556c);
+  Actor_SetScript(28, gEasternAlhafra_FirstWorkerCheerScript);
+  Actor_SetScript(29, gEasternAlhafra_SecondWorkerCheerScript);
   FieldActor_RefreshSelectorById(28);
   FieldActor_RefreshSelectorById(29);
   FieldEvent_Wait(10);
@@ -1334,8 +1368,8 @@ void Func_02002048(void) {
   FieldActor_StartRepeatedMotion(27, 3);
   Actor_SetAttachedEffect(27, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_SetScript(28, gData_0200d5d0);
-  Actor_SetScript(29, gData_02005620);
+  Actor_SetScript(28, gEasternAlhafra_FirstWorkerRunScript);
+  Actor_SetScript(29, gEasternAlhafra_SecondWorkerRunScript);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(25, 1);
   Actor_WalkBy(25, 64, 0);
@@ -1539,10 +1573,10 @@ void Func_02002048(void) {
   Event_End();
 }
 
-/// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which
-/// sets flags FLAG_ALHAFRA_SHIP_GONE and FLAG_BRIGGS_SAILED_FROM_ALHAFRA and
-/// ends by sending the party to SceneId_EasternAlhafra1, entrance 99.
-void Func_02002a08(void) {
+/// Once the mast is clear and Briggs has escaped, he sails off in the mayor's
+/// ship, taunting the party, and the scene starts over at entrance 99 for the
+/// mayor (EasternAlhafra_MayorFindsShipGone).
+void EasternAlhafra_BriggsStealsShip(void) {
   struct MapWork *map;
   s32 i;
   s32 step = 0x10000;
@@ -1680,7 +1714,7 @@ void Func_02002a08(void) {
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  Func_02001bf4(22);
+  EasternAlhafra_PuffFrom(22);
   Event_PlaySound(SE_CURSE);
   FieldActor_ShowEmote(0x16, 0x105, 0x32);
   Actor_ArmCallback(22, FACING_EAST, 0);
@@ -1689,7 +1723,7 @@ void Func_02002a08(void) {
   FieldEvent_ShowMessageThenWait(23, 0, 10);
   Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  Func_02001bf4(22);
+  EasternAlhafra_PuffFrom(22);
   FieldActor_ShowEmote(0x16, 0x106, 0x32);
   Actor_ArmCallback(22, FACING_EAST, 0);
   FieldEvent_Wait(20);
@@ -1788,7 +1822,7 @@ scroll:
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two
 /// prompts steps the event's message number, by 1 and then by 2.
-void Func_02003274(void) {
+void EasternAlhafra_MayorFindsShipGone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhatYouLet);
@@ -2031,18 +2065,18 @@ void Func_02003274(void) {
   FieldActor_WatchAndSetScript(30, 25);
   FieldActor_WatchAndSetScript(31, 25);
   FieldActor_WatchAndSetScript(28, 25);
-  Actor_SetScript(25, (s32)gData_02005670);
-  Actor_SetScript(27, (s32)gData_02005670);
+  Actor_SetScript(25, (s32)gEasternAlhafra_RunOffScript);
+  Actor_SetScript(27, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(10);
-  Actor_SetScript(29, (s32)gData_02005670);
+  Actor_SetScript(29, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(70);
   Actor_WalkByAndWait(28, -16, 0);
-  Actor_SetScript(28, (s32)gData_02005670);
+  Actor_SetScript(28, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(33);
   Actor_WalkByAndWait(31, 16, 0);
-  Actor_SetScript(31, (s32)gData_02005670);
+  Actor_SetScript(31, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(15);
-  Actor_SetScript(30, (s32)gData_02005670);
+  Actor_SetScript(30, (s32)gEasternAlhafra_RunOffScript);
   FieldActor_RefreshSelectorById(25);
   Actor_ArmCallback(26, 0x5000, 0);
   FieldActor_RefreshSelectorById(30);
@@ -2129,7 +2163,7 @@ static __inline__ void StartTask(void (*func)(void), s32 priority) {
   Task_Add(func, priority);
 }
 
-void Func_02004004(void) {
+void EasternAlhafra_StartFallingRocks(void) {
   struct RockWork *work = HeapSlot_Alloc(220, sizeof(struct RockWork));
   s32 entry;
   s32 tile;
@@ -2146,7 +2180,7 @@ void Func_02004004(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    Func_02004c64(sprite, 8, 8, 0x40000000, tile);
+    EasternAlhafra_InitializeRockSprite(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05_5 = 1;
     sprite->palette = 0;
     sprite->priority = 0;
@@ -2161,7 +2195,7 @@ void Func_02004004(void) {
   StartTask(Particles_UpdateFalling, 0x480);
 }
 
-void Func_020040c0(void) {
+void EasternAlhafra_EndFallingRocks(void) {
   struct EasternAlhafraSparkWork *work = Ram_HeapSlots->menuRuntime;
 
   FieldTask_Remove(Particles_UpdateFalling);
@@ -2185,7 +2219,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 /// in sixteenths of a cell); the cells under it are copied from the map's spare
 /// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
 /// is filled with 255. Returns 1, or 0 for a shape with no footprint.
-s32 Func_020040ec(s32 id) {
+s32 PushTarget_FillFootprint(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *actor = Actor_GetById(id);
   s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
@@ -2229,8 +2263,8 @@ s32 Func_020040ec(s32 id) {
 
 extern s32 gPushLeaderSteps[];
 
-static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
-                                        struct Vector3 *cell) {
+static __inline__ s32 PushTarget_CheckCollision(struct Actor *actor,
+                                                struct Vector3 *cell) {
   return MapGrid_CheckCollision(actor, cell);
 }
 
@@ -2239,9 +2273,8 @@ static __inline__ s32 CallFunc_02004a64(struct Actor *actor,
 /// then steps the actor's box one cell at a time along the leader's direction
 /// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at
 /// least one free step it records the end position in the push state and
-/// returns 1, else 0. The actor stays on layer 2 while it is measured. The same
-/// code as overlay 674's Func_020037d8 and overlay 662's Func_020001d4.
-s32 Func_02004240(struct PushState *push) {
+/// returns 1, else 0. The actor stays on layer 2 while it is measured.
+s32 PushTarget_FindSlide(struct PushState *push) {
   struct Actor *actor;
   struct Vector3 cell;
   s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
@@ -2269,8 +2302,8 @@ s32 Func_02004240(struct PushState *push) {
       for (j = 0; j < height; j++) {
         cell.x = push->x + (gPushFootprints[kind][0] << 16);
         for (i = 0; i < width; i++) {
-          /* FAKEMATCH(wrapper): the call through CallFunc_02004a64. */
-          if (CallFunc_02004a64(actor, &cell) == 2)
+          /* FAKEMATCH(wrapper): the call through PushTarget_CheckCollision. */
+          if (PushTarget_CheckCollision(actor, &cell) == 2)
             goto blocked;
           cell.x += px(16);
         }
@@ -2312,7 +2345,7 @@ struct PushTarget {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-void Func_020044c4(struct PushTarget target) {
+void PushTarget_PushFill(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_Get(target.id);
@@ -2399,7 +2432,7 @@ void Func_020044c4(struct PushTarget target) {
 
 #include "shared/actor_stop_at_push_target.h"
 
-void Func_020047fc(const u16 *list) {
+void Pillars_Place(const u16 *list) {
   const u16 *spec;
   u16 id;
   struct Actor *object;
@@ -2441,7 +2474,7 @@ next:
 #undef PIXEL_PART
 #include "text/msg_ids.h"
 
-void Func_02000958(void);
+void EasternAlhafra_ReachRock(void);
 
 // clang-format off
 u16 gPushKinds[] = {
@@ -2459,8 +2492,8 @@ s32 gPushLeaderSteps[] = {
     0xfff0, 0xfff0, 0xfff0, 0x100000, 0xffff000a,
 };
 
-s16 gData_02004d0c[] = {
-    14, 1, 0x8a2, -1,
+s16 gEasternAlhafra_PoundCone[] = {
+    14, 1, FLAG_CONE_POUNDED, -1,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -2505,7 +2538,7 @@ struct ActorPlacement gEasternAlhafra_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_02004fe4[] = {
+s16 gEasternAlhafra_PlacementsAfterBriggsCaught[] = {
     407, -1, 1, 0, 0, 280, 0, 0,
     0, 232, FACING_SOUTH, 2, 407, -1, 1, 0,
     0, 376, 0, 0, 0, 232, FACING_SOUTH, 258,
@@ -2550,20 +2583,20 @@ s16 gData_02004fe4[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-s16 gData_02005284[] = {
+s16 gEasternAlhafra_CabinDoorFrames[] = {
     0, 0, 1, 2, 6, -1,
 };
 
-s32 gData_02005290[] = {
-    (s32)gData_02005284,
+s32 gEasternAlhafra_CabinDoor[] = {
+    (s32)gEasternAlhafra_CabinDoorFrames,
     0x110010,
 };
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Func_02000940)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000730)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1046, 0x8a8, EVENT(Func_02000730)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(EasternAlhafra_EnterCabin)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(EasternAlhafra_TalkToSailor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1046, FLAG_TALKED_TO_SAILOR, EVENT(EasternAlhafra_TalkToSailor)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgWeSentMy)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIfWeCould)},
@@ -2577,46 +2610,46 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgBriggsSaidTheBoat)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 10, FLAG_ALHAFRA_MAST_CLEARED, EVENT(Func_0200006c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x8a3, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, 0x8a2, EVENT(Func_020000c8)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, 0x8a0, EVENT(Func_02000190)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x8a0, EVENT(Func_02000200)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, 0x8a1, EVENT(Func_02000190)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x8a1, EVENT(Func_02000200)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x8a4, EVENT(Func_02000394)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x8a4, EVENT(Func_0200042c)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, 0x8a5, EVENT(Func_02000190)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, 0x8a5, EVENT(Func_02000200)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Func_02000190)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Func_02000200)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(Func_020006ec)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Func_020006ec)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(Func_02000514)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(Func_02000954)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_02000838)},
-    {TRIGGER_STEP, 21, 0x905, EVENT(Func_02002048)},
-    {TRIGGER_STEP, 22, FLAG_ALHAFRA_SHIP_GONE, EVENT(Func_02002a08)},
-    {TRIGGER_STEP, 23, 0x8ac, EVENT(Func_02001574)},
-    {TRIGGER_STEP, 24, 0x8bf, EVENT(Func_02000968)},
-    {TRIGGER_STEP, 25, 0x8be, EVENT(Func_02000958)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 10, FLAG_ALHAFRA_MAST_CLEARED, EVENT(EasternAlhafra_BurstMastBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, FLAG_ROPE_LASHED, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 14, FLAG_CONE_POUNDED, EVENT(EasternAlhafra_PoundCone)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10, FLAG_FIRST_BLOCK_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_FIRST_BLOCK_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11, FLAG_SECOND_BLOCK_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SECOND_BLOCK_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, FLAG_LAST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingLastCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_LAST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingLastCrate)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 17, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_StartPushingBlock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_FinishPushingBlock)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_RollLog)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_RollLog)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(EasternAlhafra_StepOntoMast)},
+    {TRIGGER_STEP, 21, FLAG_WORKERS_TOLD_MAYOR, EVENT(EasternAlhafra_WorkersTellMayor)},
+    {TRIGGER_STEP, 22, FLAG_ALHAFRA_SHIP_GONE, EVENT(EasternAlhafra_BriggsStealsShip)},
+    {TRIGGER_STEP, 23, FLAG_ASKED_TO_HELP, EVENT(EasternAlhafra_AskToHelpWithMast)},
+    {TRIGGER_STEP, 24, FLAG_GAVE_UP_ON_ROCK, EVENT(EasternAlhafra_GiveUpOnRock)},
+    {TRIGGER_STEP, 25, FLAG_REACHED_ROCK, EVENT(EasternAlhafra_ReachRock)},
     {TRIGGER_TABLE_END},
 };
 
-u8 gData_020054f0[] = {
+u8 gEasternAlhafra_WaveTableIndex[] = {
     0,
 };
 
-s32 gData_020054f4[] = {
+s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
     39, 2, 5, 0, 0, 0x80000,
     1, 5, 0x100000, 0, 0x100000, 1,
     5, 0x100000, 0, -0x100000, 1, 5,
@@ -2624,7 +2657,7 @@ s32 gData_020054f4[] = {
     22, 3, 0x8000, 0, 1, 17,
 };
 
-s32 gData_0200556c[] = {
+s32 gEasternAlhafra_SecondWorkerCheerScript[] = {
     39, 2, 5, 0x200000, 0, 0x200000,
     1, 5, 0x100000, 0, -0x100000, 1,
     5, 0x20000, 0, -0x60000, 1, 39,
@@ -2632,21 +2665,21 @@ s32 gData_0200556c[] = {
     17,
 };
 
-u32 gData_0200d5d0[] = {
+u32 gEasternAlhafra_FirstWorkerRunScript[] = {
     39, 2, 5, 0x300000, 0, 0,
     1, 4, 0xa80000, 0, 0x2480000, 1,
     39, 1, 22, 3, 0xe000, 0,
     1, 17,
 };
 
-u32 gData_02005620[] = {
+u32 gEasternAlhafra_SecondWorkerRunScript[] = {
     39, 2, 5, 0x300000, 0, 0,
     1, 4, 0xb80000, 0, 0x2480000, 1,
     39, 1, 22, 3, 0xe000, 0,
     1, 17,
 };
 
-s32 gData_02005670[] = {
+s32 gEasternAlhafra_RunOffScript[] = {
     39, 2, 4, 0x980000, 0, 0x2800000,
     1, 5, -0x500000, 0, 0, 1,
     5, -0x200000, 0, -0x200000, 1, 5,
@@ -2655,6 +2688,6 @@ s32 gData_02005670[] = {
 };
 // clang-format on
 
-u32 gData_020056d4[] = {
+u32 gEasternAlhafra_PuffScript[] = {
     38,
 };

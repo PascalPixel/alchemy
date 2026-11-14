@@ -405,7 +405,7 @@
 	export Actor_FindAtCell, Actor_FindAtCellFar
 	export Func_020029e0, EffectSprite_InitFar
 	export Leader_CanPushObjectAhead, Leader_CanPushObjectAheadFar
-	export Func_02004c4c, Leader_PushObjectAheadFar
+	export EasternAlhafra_PushObjectAhead, Leader_PushObjectAheadFar
 	export Func_020029e8, EffectSprite_DrawFar
 	export Leader_PushObjectAhead, Leader_PushObjectAheadFar
 	export Leader_FindActorAhead, Leader_FindActorAheadFar
@@ -424,7 +424,7 @@
 	export Actor_FallOverWithAnimationById, Actor_FallOverWithAnimationByIdFar
 	export Func_02005a50, Cyclone_CopyTouchedCellsFar
 	export Func_02001ef8, Func_080c8930
-	export Func_02004c64, EffectSprite_InitFar
+	export EasternAlhafra_InitializeRockSprite, EffectSprite_InitFar
 	export Func_02002a0c, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
 	export Exit_StartStairsUp, Exit_StartStairsUpFar

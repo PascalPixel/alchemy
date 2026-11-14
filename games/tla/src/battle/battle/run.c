@@ -67,9 +67,9 @@ void BattleCamera_Create(void) {
 
   SET_VECTOR(focus, 0, px(64), 0);
   SET_VECTOR(camera->eye, 0, px(180), px(64));
-  camera->yaw = 0x2800;
-  camera->pitch = 0x5000;
-  camera->distance = 0x1000000;
+  camera->yaw = TRIG_TURN * 5 / 32;
+  camera->pitch = TRIG_TURN * 5 / 16;
+  camera->distance = 256 << 16;
 }
 
 /// Replaces enemy 128 with the next form of the three-part battle of enemy
@@ -288,7 +288,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   if (enemyGroup == 75 || enemyGroup == 76)
     ScriptedBattle_RestoreUnits();
   PartyStatus_CreateWindowFar(9);
-  Camera_InitializeDefaultTransform();
+  BattleCamera_SetDefaultView();
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(1, battle->background, 0);

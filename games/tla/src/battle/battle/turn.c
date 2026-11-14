@@ -10,6 +10,8 @@
 #include "module/battle/presentation.h"
 #include "macros.h"
 
+/// Turns the battle camera to the view the commands are chosen in: the focus 5
+/// pixels up, a quarter turn of yaw, a slight downward pitch, 750 pixels away.
 void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *secondary =
@@ -18,14 +20,14 @@ void BattleCamera_SetCommandView(s32 pos) {
   u32 result;
   s32 one;
 
-  state->pos[1] = 160 << 11;
+  state->pos[1] = px(5);
   state->pos[0] = 0;
   state->pos[2] = 0;
-  secondary->targetYaw = 128 << 7;
-  state->yaw = 128 << 7;
-  state->pitch = 244 << 8;
+  secondary->targetYaw = TRIG_TURN / 4;
+  state->yaw = TRIG_TURN / 4;
+  state->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
   state->followPos = 0;
-  state->distance = 0x02ee0000;
+  state->distance = px(750);
   state->unk18 = 0;
 
   Transform_Reset();
@@ -37,12 +39,12 @@ void BattleCamera_SetCommandView(s32 pos) {
   Iwram_TransformVector(&local, (s32 *)state);
   one = 1;
 
-  result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
-  Projection_Set(0, result, 0x07920000);
+  result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
+  Projection_Set(0, result, px(1938));
 
   gCameraSceneParameters[4] = pos + 120;
   secondary->active = one;
-  BattleCamera_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
+  BattleCamera_SetRange(px(120), px(118 - pos), 0, 8 << 8, Q16_ONE * 2);
   secondary->flag = one;
   secondary->active = 0;
 }
@@ -252,7 +254,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
       (struct BattleLinkedActionState *)Heap_AllocEwram(40);
   s32 index;
 
-  s32 BattleLink_SendActions(void) {
+  s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
     s32 status = Serial_StartSend(state, 20);
@@ -291,7 +293,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
     return 0;
   }
 
-  s32 BattleLink_ReceiveActions(void) {
+  s32 LinkBattle_ReceiveActions(void) {
     s32 timeout;
     s32 disconnected;
     s32 status = Serial_StartReceive(state);
@@ -361,15 +363,15 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
       IRQ_LOCK(saved);
       gBattleRandomSeed = state->seed = gRandomState;
       IRQ_UNLOCK(saved);
-      if (BattleLink_SendActions() < 0 || BattleLink_ReceiveActions() < 0)
+      if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;
       result = state->count;
     } else {
-      if (BattleLink_ReceiveActions() < 0)
+      if (LinkBattle_ReceiveActions() < 0)
         goto fail;
       result = state->count;
       state->count = count;
-      if (BattleLink_SendActions() < 0)
+      if (LinkBattle_SendActions() < 0)
         goto fail;
       if (Battle_RandomFar() != state->check)
         goto fail;
@@ -522,7 +524,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 
 finish:
   GameFlag_Clear(FLAG_CHOOSING_COMMANDS);
-  Camera_InitializeDefaultTransform();
+  BattleCamera_SetDefaultView();
   Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
   return cnt;
 }

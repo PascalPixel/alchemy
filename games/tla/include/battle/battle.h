@@ -60,7 +60,7 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries);
 s32 LinkBattle_WaitSync(void);
 s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count);
 void BattleUnit_ResetGuardLevels(void);
-void Camera_InitializeDefaultTransform(void);
+void BattleCamera_SetDefaultView(void);
 void FieldParticle_UpdateMotion(struct FieldParticle *effect);
 void FieldPsynergy_Douse(void);
 s32 BattleSprite_IsSmall(s32 index);

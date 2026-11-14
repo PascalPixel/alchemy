@@ -605,13 +605,15 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
   return NULL;
 }
 
-void Camera_InitializeDefaultTransform(void) {
+/// Puts the battle camera at its default view of the battlefield's centre.
+void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition transfer;
 
-  state->yaw = 192 << 6;
-  state->pitch = 254 << 8;
-  state->distance = 255 << 17;
+  // A pitch of -1/128 of a turn, 510 pixels away.
+  state->yaw = TRIG_TURN * 3 / 16;
+  state->pitch = TRIG_TURN - TRIG_TURN / 128;
+  state->distance = BATTLE_CAMERA_DISTANCE;
   SET_VECTOR(state->pos, 0, 0, 0);
   state->followPos = 0;
   state->unk18 = 0;

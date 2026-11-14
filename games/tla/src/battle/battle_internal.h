@@ -320,6 +320,9 @@ struct BattleLinkedActionState {
 /// The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
+/// The battle camera's distance from its focus in the default view.
+#define BATTLE_CAMERA_DISTANCE px(510)
+
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1
 

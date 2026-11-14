@@ -1020,11 +1020,11 @@ struct MeshTriangle {
   u8 unk0a[2];
 };
 
-// Builds the mesh of an open cylinder, the band summon 20 shows: two rings of
+// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of
 // `segments` vertices of radius 96 around the y axis, and two textured
 // triangles for each side of the band, joining the first ring (texture row 0)
 // to the second (row 15). A triangle whose three vertices are 0 ends the list.
-// Summon 20 builds it with 32 segments into the buffers at 0x02014400 and
+// Coatlicue builds it with 32 segments into the buffers at 0x02014400 and
 // 0x02014800.
 void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
                             struct MeshTriangle *triangles, s32 segments) {

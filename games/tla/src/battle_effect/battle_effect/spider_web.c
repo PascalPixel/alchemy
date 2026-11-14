@@ -174,7 +174,7 @@ void Palette_MirrorBgColors(void) {
   REG_BLDALPHA = BLEND_ALPHA(16, 8);
 }
 
-// A frame callback of summon 17 (BattleEffect_RunUlysses adds and removes it):
+// A frame callback of Ulysses (BattleEffect_RunUlysses adds and removes it):
 // places effect object 7 at the last particle's point (x across, y in depth)
 // at a scale of one, moves the particle by its velocity (its depth speed
 // grows for 20 frames, then shrinks, and its sideways speed grows from frame

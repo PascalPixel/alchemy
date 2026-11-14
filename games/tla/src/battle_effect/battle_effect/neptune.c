@@ -4,18 +4,20 @@
 
 #include "../battle_effect_internal.h"
 
-// Summon 6: at dusk the window opens on a sea; a great serpent rises out of
-// the spray, light gathers at its mouth, rays reach out and it breathes a
-// blast; then blue flames fall as pillars on each enemy in turn, splashing.
-//
-// Act one (244 frames): the dusk backdrop, the serpent built from eight
-// 32 x 32 sprites, the spray and sparkle pictures, 712 drops of spray; the
-// window opens in 16 frames over a ragged edge; the serpent glides in from
-// frame 22 and settles; a second fountain at frame 76; glints converge on its
-// mouth from 152 and the glow grows; rays from 176; the breath from 222 with
-// a ring of sparks; the sea rolls along the bottom all the while. Act two
-// (144 frames): a flame pillar falls on each target 16 frames apart, splashing
-// sparks where it lands and striking that target; results at frame 96.
+/// Under storm clouds Neptune leaps out of the sea in a burst of spray, light
+/// gathers at its head and a beam of light joins its head to the sky, with a
+/// splash there; then columns of water crash down on the targets, throwing up
+/// drops.
+///
+/// Act one (244 frames): Neptune is built from eight 32x32 sprites and 712
+/// drops of spray wait; the window opens in 16 frames over a ragged edge;
+/// Neptune rises from frame 22, a second burst of spray at 76, light gathers
+/// at its head from 152, the beam from 176 and the splash from 222, the sea
+/// rolling along the bottom all the while. Act two (144 frames): a column of
+/// water falls on each target 16 frames apart, throwing up drops where it
+/// lands and striking that target; the damage shows at frame 96.
+///
+/// Abilities: Neptune.
 void BattleEffect_RunNeptune(struct BattleEffectArgument *args) {
   s32 position[4];
   s32 target[3];

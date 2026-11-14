@@ -1,5 +1,5 @@
 /// @file
-/// The particle streams of summon 11, the formation objects summons place,
+/// The particle streams of Meteor, the formation objects summons place,
 /// palette brightening, and an unused second copy of the Nereid summon.
 // Part of battle_effect.c.
 
@@ -652,7 +652,7 @@ struct FxAnimObject {
   u8 flags;
 };
 
-// Summon 11: the screen goes dark and the ground dissolves away from the top;
+// Meteor: the screen goes dark and the ground dissolves away from the top;
 // a sun (or, in mode 1, two great flames the user throws) climbs over a
 // spinning ring of seven orbs while burning drops rain and the sky glows from
 // a heat palette under every scanline; then the scene bursts: embers fountain

@@ -60,10 +60,13 @@ static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
   BattleEffect_RunImpactBurst(formation, x, y);
 }
 
-// Summon 5, the thorn vines:thorns fly in, vines grow up under the targets
-// and lift them while the ground throws up debris; the picture is erased
-// dot by dot, the targets are dropped from on high, and each lands in an
-// explosion with a ring of embers. A or B skips to the drop.
+/// Cybele drops in at the right and thorns fly from her mouth; flowering
+/// vines grow out of the ground, lifting the targets while sparks flash around
+/// them; then the picture greys and dissolves pixel by pixel, and the targets
+/// drop, each landing on a spreading ring in a cloud of dust. A or B skips to
+/// the drop.
+///
+/// Abilities: Cybele.
 void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
   struct BattleEffectWork *work;
   u8 *canvas;

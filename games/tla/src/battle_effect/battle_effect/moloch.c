@@ -11,14 +11,13 @@
 struct FxPartyList;
 struct Model;
 
-// Summon 16's frames: the shower of motes, the rising flames, the rings and
-// the closing glow, by frame.
-#define SUMMON16_FRAMES 296
-#define SUMMON16_SKIP_TO 232
+// Moloch's frames, and the frame A or B skips to.
+#define MOLOCH_FRAMES 296
+#define MOLOCH_SKIP_TO 232
 
 void Render_DrawModelList(struct Model *model);
 
-// Summon 16. A shower of 256 motes drifts down the screen and, from frame
+// Moloch. A shower of 256 motes drifts down the screen and, from frame
 // 91, gathers toward the middle; from frame 97 flames rise in twelve columns
 // and from frame 136 four textured rings spread out from the summoned
 // objects. At frames 212 to 268 the targets are struck in turn, and the
@@ -69,7 +68,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
     do {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 231 && frame > 15) {
         Sound_PlayFar(SE_CLATTER);
-        frame = SUMMON16_SKIP_TO;
+        frame = MOLOCH_SKIP_TO;
       }
 
       if (frame == 0) {
@@ -322,7 +321,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
       BattleEffect_CountDownBattlerTints();
       frame++;
       EFFECT_PRESENT_CANVAS(work);
-    } while (frame != SUMMON16_FRAMES);
+    } while (frame != MOLOCH_FRAMES);
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
@@ -765,7 +764,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   }
 }
 
-// Summon 25 (Iris): a circle of light opens over a dark field while fifteen
+// Iris: a circle of light opens over a dark field while fifteen
 // streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 grid
 // of sprites and bursts into sparks; drops fall and splash in rings; pillars
 // of light climb, the scene fills with rising motes, rays turn about the
@@ -3050,8 +3049,8 @@ void Render_DrawModelList(struct Model *model) {
     model++;
   }
 }
-#undef SUMMON16_FRAMES
-#undef SUMMON16_SKIP_TO
+#undef MOLOCH_FRAMES
+#undef MOLOCH_SKIP_TO
 #undef SLOT_BLITTER
 #undef BLITTER
 #undef HALF

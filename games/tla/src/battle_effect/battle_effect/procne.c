@@ -1,5 +1,5 @@
 /// @file
-/// The Procne summon, and the scene of summon 7.
+/// The Procne summon, and the Tiamat summon and Dragon Driver.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
@@ -24,12 +24,13 @@
 #define COMETS 9
 #define FORMATION_RESOURCE 646
 
-// Summon 8: a whirlwind rises under the enemies and lifts them, spinning,
-// while dust motes swirl up through it (frames 0 to 159; A or B skips to
-// 160). Then the sky turns violet and a formation of nine comets wheels
-// in; a cloud of sparks gathers on its centre, and from frame 330 four
-// comets strike one after another, each with a burst of sparks, throwing
-// the enemies down. A or B skips frames 161 to 394.
+/// A whirlwind lifts the targets, then Procne, a great bird in a violet sky,
+/// strikes them with comets: the whirlwind spins them while dust swirls up
+/// through it (frames 0 to 159; A or B skips to 160), a cloud of sparks
+/// gathers, and from frame 330 four comets strike one after another, each
+/// with a burst of sparks. A or B skips frames 161 to 394.
+///
+/// Abilities: Procne.
 void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
   void *canvas;
   void *camera;
@@ -541,10 +542,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
 #define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
 
-// Summon 7 (mode 0; mode 1 is the same scene cast from the caster's side,
-// without the formation): streaks rain down and splash, sparks and grains
-// rise from where the formation stands, a burst of flashes at frame 128,
-// then the screen whitens and the canvas fades away. In mode 0 a formation
+// Tiamat (mode 0) and Dragon Driver (mode 1, the same scene cast from the
+// caster's side, without the formation): streaks rain down and splash, sparks
+// and grains rise from where the formation stands, a burst of flashes at frame
+// 128, then the screen whitens and the canvas fades away. In mode 0 a formation
 // of eight drops in at frame 40 and bursts at the end. A or B skips frames
 // 49 to 159.
 void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {

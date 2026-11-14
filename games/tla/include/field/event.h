@@ -23,6 +23,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "types.h"
+#include "system/iwram_call.h"
 #include "system/task.h"
 
 struct Actor;
@@ -356,6 +357,9 @@ static inline void Event_PlaySound(s32 sound) { Sound_Play(sound); }
 static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
+
+/// The 16.16 product of two 16.16 numbers (Iwram_MulQ16), written as a call.
+static inline s32 Math_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 
 /// Sends an actor toward a point in 16.16 fixed-point pixels, where it coasts
 /// to a stop.

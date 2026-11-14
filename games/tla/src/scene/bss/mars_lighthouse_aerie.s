@@ -2,50 +2,50 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.balign 16
-	.global Data_0200eb60
-Data_0200eb60:
+	.global gMarsLighthouseAerie_BeaconFlameFrame
+gMarsLighthouseAerie_BeaconFlameFrame:
 	.space 0x00000004
-	.global gData_02006b64
-gData_02006b64:
+	.global gMarsLighthouseAerie_FlickerFrame
+gMarsLighthouseAerie_FlickerFrame:
 	.space 0x00000004
-	.global Data_02006b68
-Data_02006b68:
+	.global gMarsLighthouseAerie_BeaconFireFrames
+gMarsLighthouseAerie_BeaconFireFrames:
 	.space 0x00000004
-	.global gData_02006b6c
-gData_02006b6c:
+	.global gMarsLighthouseAerie_FlickerRate
+gMarsLighthouseAerie_FlickerRate:
 	.space 0x00000004
-	.global gData_02006b70
-gData_02006b70:
+	.global gMarsLighthouseAerie_RisingRingsB
+gMarsLighthouseAerie_RisingRingsB:
 	.space 0x000000b0
-	.global gData_02006c20
-gData_02006c20:
+	.global gMarsLighthouseAerie_RisingRingsA
+gMarsLighthouseAerie_RisingRingsA:
 	.space 0x000000ac
-	.global Data_02006ccc
-Data_02006ccc:
+	.global gMarsLighthouseAerie_BeaconFireFrame
+gMarsLighthouseAerie_BeaconFireFrame:
 	.space 0x00000004
-	.global gData_02006cd0
-gData_02006cd0:
+	.global gPaletteCycle_Flash
+gPaletteCycle_Flash:
 	.space 0x00000004
-	.global Data_02006cd4
-Data_02006cd4:
+	.global gPaletteCycle_Order
+gPaletteCycle_Order:
 	.space 0x00000004
-	.global gData_02006cd8
-gData_02006cd8:
+	.global gPaletteCycle_Countdown
+gPaletteCycle_Countdown:
 	.space 0x00000004
-	.global gData_02006cdc
-gData_02006cdc:
+	.global gPaletteCycle_Period
+gPaletteCycle_Period:
 	.space 0x00000004
-	.global gData_02006ce0
-gData_02006ce0:
+	.global gPaletteCycle_Slots
+gPaletteCycle_Slots:
 	.space 0x00000004
-	.global Data_02006ce4
-Data_02006ce4:
+	.global gPaletteCycle_FlashColors
+gPaletteCycle_FlashColors:
 	.space 0x00000004
-	.global Data_02006ce8
-Data_02006ce8:
+	.global gPaletteCycle_Colors
+gPaletteCycle_Colors:
 	.space 0x00000004
-	.global gData_02006cec
-gData_02006cec:
+	.global gPaletteCycle_Count
+gPaletteCycle_Count:
 	.space 0x00000004
-	.global gData_02006cf0
-gData_02006cf0:
+	.global gPaletteCycle_Step
+gPaletteCycle_Step:

@@ -64,43 +64,41 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void);
 
 void MarsLighthouseAerie_LightBeacon(void);
 void MarsLighthouseAerie_WatchGoldenSunRise(void);
-void Func_020054e4(struct Actor *object);
+void MarsLighthouseAerie_EndRisingRings(struct Actor *object);
 
-void Func_02003210(struct Actor *self);
+void Orbs_UpdateRising(struct Actor *self);
 
-extern u32 gData_02006afc[];
+extern u32 gOrbs_RisingScript[];
 
-extern u32 Data_02006ccc;
-extern u32 Data_02006b68;
+extern u32 gMarsLighthouseAerie_BeaconFireFrame;
+extern u32 gMarsLighthouseAerie_BeaconFireFrames;
 
-extern s32 gData_02006180[];
+extern s32 gMarsLighthouseAerie_BeaconSparkScript[];
 
 void Orbs_SpawnRising(void);
 
-extern s32 gData_020060b4[];
-extern u32 gData_02006120[];
-extern u32 gData_02006150[];
+extern s32 gMarsLighthouseAerie_BeamWidenScript[];
+extern u32 gMarsLighthouseAerie_BeamShootUpScript[];
+extern u32 gMarsLighthouseAerie_BeamRiseScript[];
 extern s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[];
 
-extern u16 *Data_02006ce4;
-extern u16 *Data_02006ce8;
-extern u16 *Data_02006cd4;
+extern u16 *gPaletteCycle_FlashColors;
+extern u16 *gPaletteCycle_Colors;
+extern u16 *gPaletteCycle_Order;
 
-void Func_020051e0(void);
+void Teleport_ArriveWhirling(void);
 
-void Func_020057ac(struct SparkleSprite *sprite);
+extern s32 gMarsLighthouseAerie_RisingRingTiles[];
 
-extern s32 gData_020057e4[];
-
-void Func_02005268(struct Actor *object);
+void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object);
 void MarsLighthouseAerie_HoldBackFromParents(void);
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void);
 void MarsLighthouseAerie_OfferToCastMarsStar(void);
-void Func_02004d14(void);
+void MarsLighthouseAerie_ClearCastOffer(void);
 void MarsLighthouseAerie_TalkToConsoler(void);
 void MarsLighthouseAerie_TalkToBlindedParent(void);
 void MarsLighthouseAerie_TalkToGladParent(void);
-void Func_02004ecc(void);
-void Func_02004ee4(void);
+void MarsLighthouseAerie_HaltBlindedParent(void);
+void MarsLighthouseAerie_HaltGladParent(void);
 
 #endif

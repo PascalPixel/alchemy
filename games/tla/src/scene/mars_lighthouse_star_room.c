@@ -375,7 +375,7 @@ void Func_020005b0(void) {
   Actor_SetAnimation(11, 4);
   Actor_SetAnimation(12, 4);
   FieldEvent_Wait(60);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseStarRoom1,
                                        20);
   gMainRoutineWork.battleBackground = (s32)&SceneId_GondowanCliffsHideout;

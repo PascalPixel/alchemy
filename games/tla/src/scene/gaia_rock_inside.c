@@ -678,11 +678,6 @@ static __inline__ void GaiaRockInside_GiveItem(s32 a, s32 b, s32 c) {
   FieldItem_JumpToLeader(a, b, c);
 }
 
-struct MainRoutineWork254 {
-  u8 unk000[0x254];
-  u16 value;
-};
-
 static __inline__ void GaiaRockInside_CopyTouchedCells(s32 a, s32 b, s32 c,
                                                        s32 d, s32 e, s32 f,
                                                        s32 g) {
@@ -701,8 +696,8 @@ void GaiaRockInside_CycloneMadPlant(void) {
   GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
   if (Event_GetFlag(0x9b7) == 0) {
     GaiaRockInside_GiveItem(249, 328, 344);
-    ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b7;
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(0x9b7);
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 2);
   }
 }
@@ -1427,7 +1422,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
     /* FAKEMATCH(dead): the count is summed before the battle rule store. */
     do {
     } while (0);
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     /* FAKEMATCH(dead): the scene address is loaded after the battle rule store.
      */
     do {

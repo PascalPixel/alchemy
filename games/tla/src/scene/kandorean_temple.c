@@ -1679,7 +1679,7 @@ void KandoreanTemple_FightChestbeaters(void) {
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination((s32)&SceneId_KandoreanTemple3, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();

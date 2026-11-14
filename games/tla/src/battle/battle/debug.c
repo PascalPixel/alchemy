@@ -294,7 +294,7 @@ restart:
         GameFlag_Set(FLAG_DJINN_LESSON);
       GameFlag_Set(354);
       if (startModeSet)
-        m->battleRule24b = 5;
+        m->battleType = BATTLE_TYPE_DEBUG;
       Battle_RunEncounter(encounter);
       gDebugTextEnabled = 1;
       Window_LoadGraphics();

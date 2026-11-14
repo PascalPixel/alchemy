@@ -92,11 +92,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-struct MainRoutineWork254 {
-  u8 unk000[0x254];
-  u16 value;
-};
-
 extern struct Trigger gJupiterLighthouseBasement_Triggers[];
 extern struct Trigger gJupiterLighthouseBasement_Room2Triggers[];
 
@@ -124,8 +119,8 @@ void JupiterLighthouse_UncoverMadPlant(void) {
   JupiterLighthouse_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
   if (!Event_GetFlag(0x9b8)) {
     JupiterLighthouse_GiveItem(249, 424, 488);
-    ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b8;
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(0x9b8);
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 3);
   }
 }

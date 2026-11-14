@@ -777,7 +777,7 @@ void IsletCave_SentinelAwaits(void) {
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_IsletCave3, 2);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
    * second. */

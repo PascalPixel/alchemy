@@ -1011,7 +1011,7 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance,
                                        99);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 98);
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 0);
   Event_End();
 }

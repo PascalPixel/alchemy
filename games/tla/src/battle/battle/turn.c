@@ -97,7 +97,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     escapeState->failedAttempts++;
   }
-  if (gMainRoutineWork.battleRule24b == 2) {
+  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
   }
   return escaped;

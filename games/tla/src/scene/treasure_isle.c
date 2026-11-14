@@ -404,8 +404,8 @@ void TreasureIsle_MeetWaterGuardian(void) {
     Actor_SetDestination(8, FIELD_AT(t12, s16, 10), FIELD_AT(t12, s16, 18));
   }
   FieldEvent_Wait(20);
-  gMainRoutineWork.pendingDjinnEvent = 0x19bb;
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.pendingDjinni = 0x19bb;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(0x67, 0);
 }
 

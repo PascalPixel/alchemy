@@ -979,7 +979,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     /* FAKEMATCH(dead): the native loads the scene's id after this store. */
     do {
     } while (0);

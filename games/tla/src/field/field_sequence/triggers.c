@@ -305,12 +305,12 @@ s32 Scene_TalkToActor(s32 id) {
         work = Ram_HeapSlots->fieldWork;
         ObjectEvent_Spring(index);
         if (flag != -1)
-          gMainRoutineWork.pendingDjinnEvent = flag | 0x1000;
+          gMainRoutineWork.pendingDjinni = flag | 0x1000;
         if (contents > 7)
           work->encounter = Encounter_GetFormationAtSlot(105, contents - 8);
         else
           work->encounter = Encounter_GetFormationAtSlot(104, contents);
-        gMainRoutineWork.battleRule24b = 2;
+        gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gMainRoutineWork.sceneCue);
         FieldMessage_ShowFar((s32)&MsgKey0e1a, 1);

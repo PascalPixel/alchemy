@@ -100,7 +100,7 @@ s32 FieldSequence_Run(void) {
   Field_PlaceTreasureSpots();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     Actor_Restore();
-  if (gMainRoutineWork.pendingDjinnEvent != 0)
+  if (gMainRoutineWork.pendingDjinni != 0)
     Djinn_RestoreActorAfterBattle();
   work->queuedSound = -1;
   if (mode == 3) {
@@ -200,15 +200,15 @@ s32 FieldSequence_Run(void) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
       AreaNameWindow_ShowFar(gMainRoutineWork.scene);
     }
-    if (gMainRoutineWork.pendingDjinnEvent != 0) {
+    if (gMainRoutineWork.pendingDjinni != 0) {
       // UB: called with a second argument (1) its definition does not take.
 #ifdef UBFIX
-      Djinn_ResolvePending(gMainRoutineWork.pendingDjinnEvent);
+      Djinn_ResolvePending(gMainRoutineWork.pendingDjinni);
 #else
       ((void (*)(s32, s32))Djinn_ResolvePending)(
-          gMainRoutineWork.pendingDjinnEvent, 1);
+          gMainRoutineWork.pendingDjinni, 1);
 #endif
-      gMainRoutineWork.pendingDjinnEvent = 0;
+      gMainRoutineWork.pendingDjinni = 0;
     }
     if (gMainRoutineWork.tally25c != 0) {
       WorldMap_Freeze();

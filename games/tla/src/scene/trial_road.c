@@ -1269,7 +1269,7 @@ void TrialRoad_CutMadPlantBushes(void) {
   if (!Event_GetFlag(0x9b9)) {
     Func_02005a60(249, 72, 152);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 4);
   }
 }
@@ -1317,7 +1317,7 @@ void TrialRoad_ChallengeMoapa(void) {
   else
     TrialRoad_ReachPeakSecond();
   party = &gMainRoutineWork;
-  party->battleRule24b = 2;
+  party->battleType = BATTLE_TYPE_NO_ESCAPE;
   do {
   } while (0);
   Event_SetAfterBattleDestination((s32)&SceneId_TrialRoad2, 4);

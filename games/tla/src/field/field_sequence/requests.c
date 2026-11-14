@@ -55,7 +55,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   djinn = group * 20 + index;
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
-  gMainRoutineWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
+  gMainRoutineWork.pendingDjinni = (djinn + 300) | noPrepare;
   work->encounter = Encounter_GetDjinnFormation(djinn);
   if (work->mode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(

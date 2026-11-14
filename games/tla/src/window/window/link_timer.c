@@ -148,8 +148,8 @@ s32 Battle_RefuseFlee(void) {
   s32 attrs;
 
   state = Ram_HeapSlots->battleWork;
-  mode = gMainRoutineWork.battleRule24b;
-  if (gMainRoutineWork.battleRule24b == 2 || mode <= 2 ||
+  mode = gMainRoutineWork.battleType;
+  if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE || mode <= 2 ||
       (result = 1, mode > 4)) {
     result = 0;
   }

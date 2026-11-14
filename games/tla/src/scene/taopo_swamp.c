@@ -368,7 +368,7 @@ void TaopoSwamp_StartMadPlantBattle(void) {
   if (!Event_GetFlag(0x9b6)) {
     Func_020029a8_(249, 344, 648);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b6;
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 1);
   }
 }

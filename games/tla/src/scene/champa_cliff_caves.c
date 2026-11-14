@@ -937,7 +937,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     /* FAKEMATCH(dead): holds the 2's store after the party pointer. */
     do {
     } while (0);
-    party->battleRule24b = 2;
+    party->battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(12, 5);
   }
   Event_End();

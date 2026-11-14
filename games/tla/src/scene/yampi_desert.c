@@ -1955,7 +1955,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   actor8->gravity = 0xe666;
   Actor_SetSpeedFixed(8, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(8, 232, 184);
-  party->battleRule24b = 2;
+  party->battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination((s32)&SceneId_YampiDesert10, 2);
   Field_RequestBattleFromEncounterTable(10, 0);
 }

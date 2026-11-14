@@ -524,7 +524,7 @@ void Func_02000af4(void) {
     Actor_SetAttachedEffect(id,                                                \
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
     Event_Wait(20);                                                            \
-    gMainRoutineWork.battleRule24b = 2;                                        \
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;                                        \
     Field_RequestBattleFromEncounterTable(11, 0);                              \
     GameFlag_Set(id + n1);                                                     \
   }
@@ -570,7 +570,7 @@ void Func_02000d44(void) {
   Event_PlaySound(MUS_052);
   Actor_RunScriptAndWait(8, gData_02002e9c);
 
-  gMainRoutineWork.battleRule24b = 2;
+  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination((s32)&SceneId_LemurianShip2, 15);
   Field_RequestBattleFromEncounterTable(11, 1);
   Event_SetFlag(FLAG_AREA_TEMP_0F);

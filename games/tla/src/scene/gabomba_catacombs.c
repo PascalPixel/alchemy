@@ -235,7 +235,7 @@ void GabombaCatacombs_UncoverMadPlant(void) {
   if (GameFlag_Get(0x9b5) == 0) {
     GabombaCatacombs_GiveItem(249, 168, 424);
     ((struct GabombaCatacombsParty *)&gMainRoutineWork)->value254 = 0x19b5;
-    gMainRoutineWork.battleRule24b = 2;
+    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     Field_RequestBattleFromEncounterTable(106, 0);
   }
 }

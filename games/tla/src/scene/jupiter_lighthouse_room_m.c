@@ -1134,7 +1134,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   do {
     /* FAKEMATCH(dead): the store kept in a once-only block, whose end ends
      * CSE's block. */
-    gMainRoutineWork.battleRule24b = 6;
+    gMainRoutineWork.battleType = BATTLE_TYPE_LOST;
   } while (0);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_JupiterLighthouseRoomM,
                                        77);

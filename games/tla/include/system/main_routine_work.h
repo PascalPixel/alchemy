@@ -4,6 +4,15 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A scene's type (Scene.sceneType, copied to MainRoutineWork.sceneVariant),
+/// as The Broken Seal's.
+enum SceneType {
+  SCENE_TYPE_OTHER = 1, ///< every other scene: dungeons, the world map
+  /// Towns and their rooms, and the prologue's Venus Lighthouse scenes:
+  /// FLAG_IN_TOWN is set there (Scene_Arrive).
+  SCENE_TYPE_TOWN = 2
+};
+
 /// gMainRoutineWork.battleType: how the next battle starts, as ☀️'s; it is
 /// set back to BATTLE_TYPE_NORMAL as the battle ends.
 enum BattleType {

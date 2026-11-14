@@ -1,8 +1,9 @@
+@ Audio mixing, playback commands and music-player updates.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall010
-Resource_FarCall010:
+	.global FarCall_SoundTable
+FarCall_SoundTable:
 	export m4aSoundMainFar, m4aSoundMain
 	export Sound_InitializeFar, Sound_Initialize
 	export Sound_PlayFar, Sound_Play

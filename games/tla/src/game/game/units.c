@@ -18,10 +18,10 @@ extern s16 gSaveSlot;
 
 /// Starts a new game: sets up a new game's state
 /// (MainRoutineWork_InitializeDefaults) and runs the main routine afresh from
-/// mode 0.
+/// the Title (GAME_START_TITLE).
 void Game_RestartQuest(void) {
   MainRoutineWork_InitializeDefaults();
-  MainRoutine_RunFar(0);
+  MainRoutine_RunFar(GAME_START_TITLE);
 }
 
 struct TradeOfferState *Djinn_GetRecoveryTable(s32 which) {

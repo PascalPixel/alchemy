@@ -1,8 +1,9 @@
+@ The title, the introduction and the Nintendo and Camelot logos.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall00B
-Resource_FarCall00B:
+	.global FarCall_TitleTable
+FarCall_TitleTable:
 	export Title_ShowIntroFar, Title_ShowIntro
 	export Data_081a786cFar, Data_081a786c
 	export Title_NoOpPaletteFar, Title_NoOpPalette

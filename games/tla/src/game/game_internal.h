@@ -16,6 +16,7 @@
 #include "lib.h"
 #include "menu/menu.h"
 #include "minigame.h"
+#include "module/system/system.h"
 #include "sound/sound.h"
 #include "system/system.h"
 #include "edition.h"

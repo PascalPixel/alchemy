@@ -28,8 +28,8 @@ void System_Initialize(void) {
   Window_LoadGraphics();
   DebugText_Clear();
   REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  Irq_SetHandler(0, 1, System_VBlankHandler);
-  Irq_SetHandler(13, 1, Iwram_Halt);
+  Irq_SetHandler(IRQ_VBLANK, 1, System_VBlankHandler);
+  Irq_SetHandler(IRQ_GAMEPAK, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   Sound_InitializeFar();
   VramCache_Reset();
@@ -40,7 +40,7 @@ void System_Initialize(void) {
   gOamUsage.used = 0;
   gSleepDisabled = 0;
   wait(10);
-  MainRoutine_RunFar(0);
+  MainRoutine_RunFar(GAME_START_TITLE);
 }
 
 void System_IdleForever(void) {

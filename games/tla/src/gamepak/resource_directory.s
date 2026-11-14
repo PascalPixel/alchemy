@@ -13,21 +13,21 @@ Resource_DirectoryTable:
 	resource , Cartridge_Restart
 	resource , Resource_DirectoryTable
 	resource BuildStamp, Resource_BuildStamp
-	resource , Resource_FarCall003
-	resource , Resource_FarCall004
-	resource , Resource_FarCall005
-	resource , Resource_FarCall006
-	resource , Resource_FarCall007
-	resource , Resource_FarCall008
-	resource , Resource_FarCall009
-	resource FarCall00A, Resource_FarCall00A
-	resource FarCall00B, Resource_FarCall00B
-	resource FarCall00C, Resource_FarCall00C
-	resource , Resource_FarCall00D
-	resource , Resource_FarCall00E
-	resource , Resource_FarCall00F
-	resource , Resource_FarCall010
-	resource , Resource_FarCall010
+	resource , FarCall_FieldTable
+	resource , FarCall_WindowTable
+	resource , FarCall_GameTable
+	resource , FarCall_OverworldTable
+	resource , FarCall_MenuTable
+	resource , FarCall_ShopTable
+	resource , FarCall_BattleTable
+	resource FarCall00A, FarCall_CreditsTable
+	resource FarCall00B, FarCall_TitleTable
+	resource FarCall00C, FarCall_BattleEffectTable
+	resource , FarCall_LuckyDiceTable
+	resource , FarCall_LuckyWheelsTable
+	resource , FarCall_SuperLuckyDiceTable
+	resource , FarCall_SoundTable
+	resource , FarCall_SoundTable
 	resource Data012, gResource_Data012
 	resource WindowTiles, Ui_WindowTiles
 	resource SmallFont, Text_SmallFont

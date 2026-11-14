@@ -81,7 +81,7 @@ m4aSoundInitWorkCopy:
 	.thumb_func
 m4aSoundMainWorkCopy:
 	push	{lr}
-	bl	Resource_FarCall010 - 0x7e4	@ 0x081bf81c: SoundMain in the twin
+	bl	FarCall_SoundTable - 0x7e4	@ 0x081bf81c: SoundMain in the twin
 	pop	{r0}
 	bx	r0
 	.2byte	0

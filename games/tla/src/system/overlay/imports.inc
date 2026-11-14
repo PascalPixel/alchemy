@@ -459,7 +459,7 @@
 	export EasternAlhafraShip_CountAnswer, Func_080c8930
 	export Actor_WatchActor, Actor_WatchActorFar
 	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
-	export StaffCredit_RunCredits, Resource_FarCall00A+1
+	export StaffCredit_RunCredits, Credits_RunFar
 	export DjinnMenu_Run, DjinnMenu_RunFar
 	export Actor_TakeLeaderLayer, Actor_TakeLeaderLayerFar
 	export Actor_DepartInRing, Actor_DepartInRingFar

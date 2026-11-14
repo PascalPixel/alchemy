@@ -1,8 +1,9 @@
+@ Shops, inns and the cursors used by their screens.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall008
-Resource_FarCall008:
+	.global FarCall_ShopTable
+FarCall_ShopTable:
 	export Shop_OpenDebugShopFar, Shop_OpenDebugShop
 	export Shop_RunFar, Shop_Run
 	export Sanctum_RunFar, Sanctum_Run

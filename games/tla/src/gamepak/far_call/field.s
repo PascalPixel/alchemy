@@ -1,8 +1,9 @@
+@ Actors, movement, map drawing and event commands.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall003
-Resource_FarCall003:
+	.global FarCall_FieldTable
+FarCall_FieldTable:
 	export Resource_GetMetadataRecordFarFar, Resource_GetMetadataRecordFar
 	export ActorSystem_ConfigureFar, ActorSystem_Configure
 	export Render_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement

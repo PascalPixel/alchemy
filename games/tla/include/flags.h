@@ -91,6 +91,10 @@
 /// that!": the scenes set it while the party rides a moving platform, lift or
 /// raft.
 #define FLAG_NO_PLACE_TO_SAVE 0x17d
+/// Set when the cleared game's link lobby goes to the Battle Arena: there the
+/// Pause menu offers only Change settings, as The Broken Seal's; Scene_Arrive
+/// clears it.
+#define FLAG_IN_BATTLE_ARENA 0x17e
 /// Set while Start is pressed in the Psynergy menu, which ends its waits.
 #define FLAG_MENU_START_PRESSED 0x150
 /// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next scene plays

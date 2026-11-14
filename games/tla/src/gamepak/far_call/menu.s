@@ -1,8 +1,9 @@
+@ Party menus and their interactive selection screens.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall007
-Resource_FarCall007:
+	.global FarCall_MenuTable
+FarCall_MenuTable:
 	export ItemMenu_RunFar, ItemMenu_Run
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
 	export StatusScreen_RunFar, StatusScreen_Run

@@ -1,8 +1,9 @@
+@ Triggers, field Psynergy, actors and field effect lifecycles.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall006
-Resource_FarCall006:
+	.global FarCall_OverworldTable
+FarCall_OverworldTable:
 	export FieldSequence_RunFar, FieldSequence_Run
 	export MainRoutine_RunFar, MainRoutine_Run
 	export Event_WaitFar, Event_Wait

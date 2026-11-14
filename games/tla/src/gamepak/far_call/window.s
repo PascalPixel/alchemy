@@ -1,8 +1,9 @@
+@ Window construction, text drawing and selection interfaces.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall004
-Resource_FarCall004:
+	.global FarCall_WindowTable
+FarCall_WindowTable:
 	export WindowSystem_InitFieldFar, WindowSystem_InitField
 	export WindowSystem_InitBattleFar, WindowSystem_InitBattle
 	export Window_CreateFar, Window_Create

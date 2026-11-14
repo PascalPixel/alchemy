@@ -230,10 +230,9 @@ A sequence is one whole kind of play, run from its start to its end. There
 are five: the field sequence (walking around a place), the battle sequence
 (one fight), the dice sequence (Lucky Dice), the slots sequence (Lucky
 Wheels) and a fifth that runs [Super Lucky Dice](#super-lucky-dice). The
-code names three of them `SEQUENCE_BATTLE`, `SEQUENCE_DICE` and
-`SEQUENCE_SLOTS`, and the fifth is still only a number,
-`SEQUENCE_UNK_1FB`. The field sequence has no such name: it is asked for by
-naming the place to walk around. Only one sequence runs at a time
+code names four of them `SEQUENCE_BATTLE`, `SEQUENCE_DICE`, `SEQUENCE_SLOTS`
+and `SEQUENCE_SUPER_DICE`. The field sequence has no such name: it is asked
+for by naming the place to walk around. Only one sequence runs at a time
 ([System](system.md#the-main-routine)).
 
 Evidence: tradition: ゲームシーケンス.

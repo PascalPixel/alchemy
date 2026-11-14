@@ -1,6 +1,11 @@
+@ Battle effect dispatch, drawing and presentation setup.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
+	.global FarCall_BattleEffectTable
+FarCall_BattleEffectTable:
+@ lucky_wheels.c still calls the first entry, BattleEffect_BuildBlitterFar,
+@ by this name.
 	.global Resource_FarCall00C
 Resource_FarCall00C:
 	export BattleEffect_BuildBlitterFar, BattleEffect_BuildBlitter

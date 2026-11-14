@@ -24,19 +24,27 @@ typedef s32 (*TaskIntFunc)(void);
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 /// Sequence ids above the scene table's rows, as The Broken Seal's
-/// SEQUENCE_ values: the sequences other than the field sequence.
+/// SEQUENCE_ values: the sequences other than the field sequence, which
+/// MainRoutine_Run runs in place of a scene.
 enum {
-  // XXX: what sequence Resource_FarCall00F runs here, where The Broken
-  // Seal's SEQUENCE_NONE runs nothing; SuperLuckyDice_Run
-  // (field/dice_game.c) and a scene that leaves for it would
-  // settle it.
-  SEQUENCE_UNK_1FB = 0x1fb,
+  /// The Super Lucky Dice sequence (SuperLuckyDice_Run); Contigo's dealer
+  /// leaves for it. The Broken Seal's 0x1fb, SEQUENCE_NONE, runs nothing.
+  SEQUENCE_SUPER_DICE = 0x1fb,
   SEQUENCE_SLOTS = 0x1fc, ///< the slots sequence (LuckyWheels_Run)
   SEQUENCE_DICE = 0x1fd,  ///< the dice sequence (LuckyDice_Run)
   SEQUENCE_BATTLE = 0x1fe ///< a battle; the entrance is the formation
 };
 
-enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
+/// MainRoutine_Run's mode: where the game starts. Only GAME_START_TITLE is
+/// passed (System_Initialize, Game_RestartQuest); the others are its debug
+/// starts.
+enum GameStart {
+  GAME_START_TITLE = 0,                  ///< the Title, with the work cleared
+  GAME_START_DEBUG_VENUS_LIGHTHOUSE = 1, ///< SCENE_VENUS_LIGHTHOUSE_ENTRANCE
+  GAME_START_DEBUG_CLEAR = 2,            ///< SCENE_CLEAR
+  GAME_START_DEBUG_MT_ALEPH = 3,         ///< SCENE_MT_ALEPH_SUMMIT
+  GAME_START_DEBUG_TITLE = 4             ///< SCENE_TITLE from entrance 8
+};
 
 struct BgScrollRegs {
   u32 words[4];
@@ -100,9 +108,9 @@ void Scene_PlayMusic(void);
 
 s32 Battle_RunEncounterFar(s32 entrance);
 
-s32 Resource_FarCall00E(s32 entrance);
+s32 LuckyWheels_StartFar(s32 entrance);
 
-s32 Resource_FarCall00F(s32 entrance);
+s32 SuperLuckyDice_StartFar(s32 entrance);
 
 void Scene_Arrive(s32 unused, s32 keep);
 void Scene_LoadOverlay(s32 unused);

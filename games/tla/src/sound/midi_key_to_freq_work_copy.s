@@ -49,11 +49,11 @@ MidiKeyToFreqWorkCopy:
 	ldr	r4, [r1, #4]
 	subs	r0, r0, r5
 	adds	r1, r7, #0
-	bl	Resource_FarCall010 - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
+	bl	FarCall_SoundTable - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
 	adds	r1, r0, #0
 	adds	r1, r5, r1
 	adds	r0, r4, #0
-	bl	Resource_FarCall010 - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
+	bl	FarCall_SoundTable - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
 	pop	{r4, r5, r6, r7}
 	pop	{r1}
 	bx	r1

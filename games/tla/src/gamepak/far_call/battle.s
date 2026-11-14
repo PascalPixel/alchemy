@@ -1,8 +1,9 @@
+@ Battle state, unit motion and presentation services.
 	.syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Resource_FarCall009
-Resource_FarCall009:
+	.global FarCall_BattleTable
+FarCall_BattleTable:
 	export DebugBattle_RunMenuFar, DebugBattle_RunMenu
 	export BattleTransition_RunMosaicFadeOutFar, BattleTransition_RunMosaicFadeOut
 	export BattleActor_SpawnObjectsForListFar, BattleActor_SpawnObjectsForList

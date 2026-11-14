@@ -350,7 +350,7 @@ SECTIONS
         "*/games/tla/src/field/lucky_wheels.o"(.text)
         "*/games/tla/src/field/lucky_wheels.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081b8000);
-        "*/games/tla/src/gamepak/far_call/resource_f.o"(.text)
+        "*/games/tla/src/gamepak/far_call/super_lucky_dice.o"(.text)
         "*/games/tla/src/field/dice_game.o"(.text)
         "*/games/tla/src/field/dice_game.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081c0000);
@@ -676,12 +676,12 @@ SECTIONS
         "*/games/tla/sound/songs/se_285.o"(.rodata)
         "*/games/tla/sound/songs/se_286.o"(.rodata)
         "*/games/tla/sound/songs/se_287.o"(.rodata)
-        "*/games/tla/sound/songs/se_288.o"(.rodata)
+        "*/games/tla/sound/songs/se_stop_action_se.o"(.rodata)
         "*/games/tla/sound/songs/se_290.o"(.rodata)
         "*/games/tla/sound/songs/se_take_flight.o"(.rodata)
         "*/games/tla/sound/songs/se_eruption_columns.o"(.rodata)
         "*/games/tla/sound/songs/se_293.o"(.rodata)
-        "*/games/tla/sound/songs/se_298.o"(.rodata)
+        "*/games/tla/sound/songs/se_stop_music_player_5.o"(.rodata)
         "*/games/tla/sound/songs/se_tolbi_spring_toss.o"(.rodata)
         "*/games/tla/sound/songs/se_tolbi_spring_obstacle_hit.o"(.rodata)
         "*/games/tla/sound/songs/se_lucky_dice_throw.o"(.rodata)

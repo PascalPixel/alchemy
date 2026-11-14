@@ -3,8 +3,8 @@
 /// overlay: ice cones Pound flattens (MarsLighthouseEntrance_PoundIceCone),
 /// ice sheets that burst and ice to Grind (MarsLighthouseEntrance_GrindIce),
 /// floors of ice the leader slides across (MarsLighthouseEntrance_SlideOnIce),
-/// flame throwers whose flames knock the leader back (Beam_Start,
-/// Ride_UpdateCarried), a statue pushed into the flames
+/// flame throwers whose flames knock the leader back (FlameThrowers_Start,
+/// Flame_UpdateForward), a statue pushed into the flames
 /// (MarsLighthouseEntrance_PushStatueIntoFlames) and the teleporters on
 /// (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and the Mercury
 /// Djinni Balm fight here (MarsLighthouseEntrance_FightFugue,
@@ -311,7 +311,7 @@ next:
   {
     s32 x = source->x + (Random16() << 4) - (Random16() << 4);
     struct Actor *object =
-        Func_02004bd8_(0x145, x, (Random16() << 3) + source->y + px(4),
+        Import_ActorCreate_(0x145, x, (Random16() << 3) + source->y + px(4),
                        source->z + (Random16() << 4) - (Random16() << 4));
 
     if (object != NULL) {
@@ -352,7 +352,7 @@ void MarsLighthouseEntrance_GrindIce(void) {
   x = 32;
   count = 6;
 step:
-  Func_02004c30_(x, 125, 3, 3, 39, 85);
+  MapGrid_CopyCellPictureCellsRect_(x, 125, 3, 3, 39, 85);
   MarsLighthouseEntrance_ScatterIceChips(10);
   count--;
   System_Wait(10);
@@ -379,7 +379,7 @@ void MarsLighthouseEntrance_Teleport(void) {
     Teleport_PlaySparks();
     WORD_AT(Actor_Get(gMainRoutineWork.currentOwner), 108) = 0;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
-    Func_02004cd8_(gMainRoutineWork.currentOwner, px(688), px(360));
+    Actor_SetHorizontalPositionWithTerrain_(gMainRoutineWork.currentOwner, px(688), px(360));
     FieldCamera_MoveTo(688, CAMERA_KEEP, 360, 1);
     FieldCamera_WaitForArrival();
     Teleport_PlayWhirl();
@@ -423,8 +423,8 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
     Event_PlaySound(SE_574);
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(60);
-    Func_02004c30_(47, 94, 10, 6, 47, 100);
-    Func_02004c28_(110, 40, 12, 4, 46, 40);
+    MapGrid_CopyCellPictureCellsRect_(47, 94, 10, 6, 47, 100);
+    Map_CopyCellAttributeRect_(110, 40, 12, 4, 46, 40);
     Actor_SetPosition(18, 0, 0);
     Flag_Set(FLAG_ROOM3_SHEET_BURST);
   }
@@ -819,15 +819,15 @@ extern struct Trigger gMarsLighthouseEntrance_Room5Triggers[];
 extern struct Trigger gMarsLighthouseEntrance_Room6Triggers[];
 extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
 
-/* VIEW(mars_lighthouse_entrance): routine Func_02002c2c as void
- * Func_02002c2c(void); scene/mars_lighthouse_entrance/s263c has void
- * Func_02002c2c(struct Actor *object) {; tried as the definition's void
- * Func_02002c2c(struct Actor *object), which the object already declares, it
+/* VIEW(mars_lighthouse_entrance): routine Actor_HoldDuringEvent as void
+ * Actor_HoldDuringEvent(void); scene/mars_lighthouse_entrance/s263c has void
+ * Actor_HoldDuringEvent(struct Actor *object) {; tried as the definition's void
+ * Actor_HoldDuringEvent(struct Actor *object), which the object already declares, it
  * does not compile in tla-ja:
  * games/tla/src/scene/mars_lighthouse_entrance.c:1630: conflicting types for
- * `Func_02002c2c'. */
-void Func_02002c2c__mars_lighthouse_entrance(void) __asm__("Func_02002c2c");
-#define Func_02002c2c Func_02002c2c__mars_lighthouse_entrance
+ * `Actor_HoldDuringEvent'. */
+void Func_02002c2c__mars_lighthouse_entrance(void) __asm__("Actor_HoldDuringEvent");
+#define Actor_HoldDuringEvent Func_02002c2c__mars_lighthouse_entrance
 
 /// The dragon face wakes and begins its slow way left, breathing fire.
 void MarsLighthouseEntrance_WakeDragonFace(void) {
@@ -998,7 +998,7 @@ extern struct Trigger gMarsLighthouseEntrance_Room5Triggers[];
 extern struct Trigger gMarsLighthouseEntrance_Room6Triggers[];
 extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
 
-void Func_02002c2c(void);
+void Actor_HoldDuringEvent(void);
 
 void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *object) {
   if (ABS(object->x - object->watchedObject->x) > 0x200000)
@@ -1012,7 +1012,7 @@ void MarsLighthouseEntrance_StopSlideWhileRiding(void) {
     Leader_SetSlideStopped(1);
 }
 
-void Beam_Start(u16 *targets, u16 *stops, s32 a2, s32 a3);
+void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3);
 void Ride_SetEntryCount(s32 index, s16 value);
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void MarsLighthouseEntrance_ShootRoom6UpperFireball(void);
@@ -1044,7 +1044,7 @@ s32 Scene_Initialize(void) {
   // watch on the word in the running game would say what else reads it.
   Data_02006878 = 0;
   gFieldWork->transition = 0x204;
-  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
+  Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
   if (scene == (s32)&SceneId_MarsLighthouseEntrance1) {
     Weather_StartRain(1);
@@ -1064,7 +1064,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsLayered(50, 125, 3, 3, 39, 85);
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance3) {
     FieldEffect_StartBlankOverlay(0);
-    Beam_Start((s32)gMarsLighthouseEntrance_Room3BeamTargets,
+    FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room3BeamTargets,
                (s32)gMarsLighthouseEntrance_Room3BeamStops, 0, 88);
     MarsLighthouseEntrance_PlaceIceCones(
         (s32)gMarsLighthouseEntrance_Room3IceCones);
@@ -1127,7 +1127,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance4) {
     FieldEffect_StartBlankOverlay(0);
     if (entrance == 10 || entrance == 1) {
-      Beam_Start((s32)gMarsLighthouseEntrance_Room4BeamTargets,
+      FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room4BeamTargets,
                  (s32)gMarsLighthouseEntrance_Room4BeamStops,
                  (s32)MarsLighthouseEntrance_ShootRoom4Fireball, 88);
       Ride_SetEntryCount(0, 1);
@@ -1151,7 +1151,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_MarsLighthouseEntrance6) {
     FieldEffect_StartBlankOverlay(0);
     if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 13) {
-      Beam_Start((s32)gMarsLighthouseEntrance_Room6UpperBeamTargets,
+      FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room6UpperBeamTargets,
                  (s32)gMarsLighthouseEntrance_Room6UpperBeamStops,
                  (s32)MarsLighthouseEntrance_ShootRoom6UpperFireball, 88);
       Ride_SetEntryCount(0, 1);
@@ -1159,7 +1159,7 @@ s32 Scene_Initialize(void) {
     if ((u32)(entrance - 7) <= 1 || entrance == 11) {
       struct Actor *target;
 
-      Beam_Start((s32)gMarsLighthouseEntrance_Room6LowerBeamTargets,
+      FlameThrowers_Start((s32)gMarsLighthouseEntrance_Room6LowerBeamTargets,
                  (s32)gMarsLighthouseEntrance_Room6LowerBeamStops,
                  (s32)MarsLighthouseEntrance_ShootRoom6LowerFireball, 88);
       Ride_SetEntryCount(0, 1);
@@ -1235,7 +1235,7 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
  * in tla-ja. */
 extern s32 Actor_Attach__s1930(s32 id, s32 a1, s32 a2, s32 a3,
                                const void *script) __asm__("Actor_Attach");
-void Func_02002c2c(void);
+void Actor_HoldDuringEvent(void);
 
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
@@ -1304,32 +1304,32 @@ void Ride_UpdateDrift(struct Actor *object);
 
 #include "shared/ride_spawn_back.h"
 
-void Func_02001ea8(s32 *position, s32 speed, s32 mode) {
+void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
-      Func_02004bd8_(366, position[0], position[1], position[2]);
+      Import_ActorCreate_(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = speed;
     Actor_SetupScriptedPart(object, 3);
-    object->update = Ride_UpdateLanding;
+    object->update = Flame_UpdateLanding;
     if (mode)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
 
-void Func_02001ef0(s32 *position, s32 speed, s32 mode) {
+void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
   struct Actor *object =
-      Func_02004bd8_(366, position[0], position[1], position[2]);
+      Import_ActorCreate_(366, position[0], position[1], position[2]);
 
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
     object->unk4c = -speed;
     Actor_SetupScriptedPart(object, 3);
-    object->update = Ride_UpdateLanding;
+    object->update = Flame_UpdateLanding;
     if (mode)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
@@ -1408,7 +1408,7 @@ typedef struct IwramGlobals {
 #include "shared/beam_draw_targets.h"
 #undef IWRAM
 
-#undef Func_02002c2c
+#undef Actor_HoldDuringEvent
 void Ride_Create(void) {
   struct MarsLighthouseEntranceRideHead *work =
       (struct MarsLighthouseEntranceRideHead *)(gInventorySnapshot + 0x188);
@@ -1427,7 +1427,7 @@ void Ride_Create(void) {
 }
 
 UNUSED void Ride_Release(void) {
-  struct RideWork *work = RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
 
   Actor_Release(work->handle);
   work->handle = NULL;
@@ -1435,7 +1435,7 @@ UNUSED void Ride_Release(void) {
 
 void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
 
-void Beam_DrawTargets(void);
+void FlameThrowers_Puff(void);
 
 #include "shared/beam_start.h"
 
@@ -1450,7 +1450,7 @@ UNUSED void Ride_SetEntryValue(s32 index, s16 value) {
 UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 UNUSED s32 Ride_StepCounter(s32 limit) {
-  struct RideWork *work = RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
 
   if (!Event_GetFlag(260)) {
     if (++work->counter >= limit)
@@ -1460,7 +1460,7 @@ UNUSED s32 Ride_StepCounter(s32 limit) {
 }
 
 void Ride_SetEntryState(s32 index, s32 value) {
-  struct RideWork *work = RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
   struct RideEntry *entry = &work->entries[index];
 
   entry->d = (value & 15) << 16;
@@ -1476,7 +1476,7 @@ UNUSED s32 Ride_GetEntryFlags(s32 index) {
 }
 
 UNUSED void Ride_SetSlotActor(u32 index, s32 value) {
-  struct RideWork *work = RIDE_WORK;
+  struct FlameHitWork *work = RIDE_WORK;
 
   if (index <= 3)
     work->slots[index].id = value;
@@ -1503,7 +1503,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 /* VIEW(s263c): routine Actor_Blink as void Actor_Blink(void);
  * scene/mars_lighthouse_entrance/s2270 has DEFINE_ACTOR_BLINK(Actor_Blink, 10,
- * 4, 0) #undef Beam_Start #undef Unit_Get // ----
+ * 4, 0) #undef FlameThrowers_Start #undef Unit_Get // ----
  * scene/mars_lighthouse_entrance/s263c.c ---- /// Scene code of overlay 0x6aa,
  * #include "types.h" #include "call.h" #include "actor.h" #include
  * "main_routine_work.h" #include "ram_buffer.h" #include "vector3.h" #include
@@ -1553,7 +1553,7 @@ void Actor_Blink(void);
 /// Seal): the leader slides until the ice stops.
 int MarsLighthouseEntrance_SlideOnIce(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct RideWork *ride;
+  struct FlameHitWork *ride;
   struct Actor *leader;
   // Unused: gives the stack frame its 12 bytes.
   s32 frame[3];
@@ -1573,7 +1573,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   Party_TakeFallDamage__s2860(-10, 0);
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideWork *)(gInventorySnapshot + 0x188);
+  ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   Flag_Set(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1714,7 +1714,7 @@ extern u32 gEmbers_Script[];
 /// speed plus 0x14000 with a random spread, at a random angle and size.
 #include "shared/embers_spawn.h"
 
-void Func_02002c2c(struct Actor *object) {
+void Actor_HoldDuringEvent(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
 }
 
@@ -1935,7 +1935,7 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
 #undef ABS
-#undef Func_02002c2c
+#undef Actor_HoldDuringEvent
 #undef Unit_Get
 #undef Actor_Blink
 #undef Position
@@ -2208,8 +2208,8 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   }
 }
 
-extern u16 *gData_0200e88c;
-extern u16 *gData_02006890;
+extern u16 *gPaletteCycle_Slots;
+extern u16 *gPaletteCycle_FlashColors;
 
 // Records the four palette lists, writes each listed palette entry from its
 // red, green and blue, then copies two palettes from block32 and starts the
@@ -2221,7 +2221,7 @@ extern u16 gPaletteCycle_Count;
 /// Starts the shimmer of the circle's colours as Teleport is cast.
 void Teleport_StartShimmer(void) {
   gPaletteCycle_Step = 0;
-  gPaletteCycle_Count = List_CountEntries(gData_0200e88c);
+  gPaletteCycle_Count = List_CountEntries(gPaletteCycle_Slots);
   gPaletteCycle_Period = 15;
   gPaletteCycle_Countdown = 16;
   gPaletteCycle_Flash = 1;
@@ -2236,7 +2236,7 @@ void Teleport_StopShimmer(void) {
 
 void Teleport_StartFastShimmer(void) {
   gPaletteCycle_Step = 0;
-  gPaletteCycle_Count = List_CountEntries(gData_0200e88c);
+  gPaletteCycle_Count = List_CountEntries(gPaletteCycle_Slots);
   gPaletteCycle_Period = 2;
   gPaletteCycle_Countdown = 2;
   gPaletteCycle_Flash = 1;
@@ -2263,19 +2263,19 @@ void PaletteCycle_Fade(void) {
   }
   if (step == 0)
     return;
-  src = Data_02006894;
+  src = gPaletteCycle_Colors;
   for (i = 0; i < gPaletteCycle_Count; i++) {
-    dst = &BG_PLTT[Data_02006880[gPaletteCycle_Step * gPaletteCycle_Count + i]];
+    dst = &BG_PLTT[gPaletteCycle_Order[gPaletteCycle_Step * gPaletteCycle_Count + i]];
     red = *src++;
     green = *src++;
     blue = *src++;
     SET_RGB(*dst, red, green, blue);
   }
-  dst = &BG_PLTT[gData_0200e88c[gPaletteCycle_Count]];
+  dst = &BG_PLTT[gPaletteCycle_Slots[gPaletteCycle_Count]];
   if (gPaletteCycle_Flash != 0)
-    src = gData_02006890 + gPaletteCycle_Count * 3;
+    src = gPaletteCycle_FlashColors + gPaletteCycle_Count * 3;
   else
-    src = Data_02006894 + gPaletteCycle_Count * 3;
+    src = gPaletteCycle_Colors + gPaletteCycle_Count * 3;
   red = *src++;
   green = *src++;
   blue = *src++;
@@ -2285,7 +2285,7 @@ void PaletteCycle_Fade(void) {
     gPaletteCycle_Step = 0;
 }
 
-void Func_020048e8(void) {
+void Teleport_ArriveWhirling(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 

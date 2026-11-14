@@ -1,7 +1,7 @@
-/// Runs MarsLighthouseRoomF_SlideOnIce while the ride is active; 1 when it ran.
-s32 MarsLighthouseRoomF_ContinueSlide(void) {
-  if (((struct RideWork *)(gInventorySnapshot + 0x188))->active) {
-    MarsLighthouseRoomF_SlideOnIce();
+/// Runs Fireball_CarryLeader while the ride is active; 1 when it ran.
+s32 Fireball_CarryLeaderIfHit(void) {
+  if (((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active) {
+    Fireball_CarryLeader();
     return 1;
   }
   return 0;

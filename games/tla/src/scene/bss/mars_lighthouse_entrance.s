@@ -7,8 +7,8 @@ Data_02006878:
 	.global gPaletteCycle_Flash
 gPaletteCycle_Flash:
 	.space 0x00000004
-	.global Data_02006880
-Data_02006880:
+	.global gPaletteCycle_Order
+gPaletteCycle_Order:
 	.space 0x00000004
 	.global gPaletteCycle_Countdown
 gPaletteCycle_Countdown:
@@ -16,14 +16,14 @@ gPaletteCycle_Countdown:
 	.global gPaletteCycle_Period
 gPaletteCycle_Period:
 	.space 0x00000004
-	.global gData_0200e88c
-gData_0200e88c:
+	.global gPaletteCycle_Slots
+gPaletteCycle_Slots:
 	.space 0x00000004
-	.global gData_02006890
-gData_02006890:
+	.global gPaletteCycle_FlashColors
+gPaletteCycle_FlashColors:
 	.space 0x00000004
-	.global Data_02006894
-Data_02006894:
+	.global gPaletteCycle_Colors
+gPaletteCycle_Colors:
 	.space 0x00000004
 	.global gPaletteCycle_Count
 gPaletteCycle_Count:

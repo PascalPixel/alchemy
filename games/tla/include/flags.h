@@ -73,10 +73,10 @@
 // Each lighthouse's scenes set its flag on every arrival, and Scene_Arrive
 // clears all four when the party enters another area, so a flag is set only
 // while the party is inside.
-#define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
-#define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
-#define FLAG_MARS_LIGHTHOUSE_LIT 0x112
-#define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
+#define FLAG_IN_VENUS_LIGHTHOUSE 0x110
+#define FLAG_IN_MERCURY_LIGHTHOUSE 0x111
+#define FLAG_IN_MARS_LIGHTHOUSE 0x112
+#define FLAG_IN_JUPITER_LIGHTHOUSE 0x113
 /// The scene shows its area's name once it is on screen; entering a new area
 /// sets it.
 #define FLAG_SHOW_AREA_NAME 0x12f

@@ -55,7 +55,7 @@ void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Func_02005a50(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Import_MadPlantLeapAtLeader(s32 a, s32 b, s32 c);
 
-static __inline__ void Func_02005a50_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
+static __inline__ void Cyclone_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   Func_02005a50(a, b, c, d, e, f, g);
 }

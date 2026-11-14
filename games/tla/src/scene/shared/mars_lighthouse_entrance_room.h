@@ -43,29 +43,28 @@ struct Box {
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
-s32 Func_0200246c(s32 index, s32 value);
-s32 Func_0200249c(s32 index);
+s32 Ride_GetEntryFlags(s32 index);
 void Actor_StartScript(struct Actor *object, const void *script);
 void ObjectTable_Snapshot(void);
 s32 Trig_Cos(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);
 
-static inline void Func_02004c28_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
+static inline void Map_CopyCellAttributeRect_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
   Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
 }
 
-static inline void Func_02004c30_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
+static inline void MapGrid_CopyCellPictureCellsRect_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
   MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
 }
 
-static inline void Func_02004cd8_(s32 id, s32 x, s32 z) {
+static inline void Actor_SetHorizontalPositionWithTerrain_(s32 id, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(id, x, z);
 }
 
-static inline struct Actor *Func_02004bd8_(s32 kind, s32 x, s32 y, s32 z) {
+static inline struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 

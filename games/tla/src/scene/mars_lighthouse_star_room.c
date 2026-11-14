@@ -83,8 +83,6 @@
 /// The way in from the cracked floor above, landing below the crack.
 #define ENTRANCE_FROM_CRACK 11
 
-/// The Mythril Bag with nothing in it; ITEM_MYTHRIL_BAG holds the Mars Star.
-#define ITEM_EMPTY_MYTHRIL_BAG ITEM_224
 
 enum {
   /// The dragon statue before the statue with the face, in two halves; Blaze
@@ -318,9 +316,9 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x204;
   gMarsLighthouseStarRoom_MarsStar = NULL;
-  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
+  Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
-  Beam_Start(0, 0, 0, 88);
+  FlameThrowers_Start(0, 0, 0, 88);
   if (scene == (s32)&SceneId_MarsLighthouseStarRoom1) {
     FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
@@ -728,13 +726,13 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
                                   leader->z);
     FieldActor_WaitForMove(gMarsLighthouseStarRoom_MarsStar);
     Event_PlaySound(MUS_083);
-    PartyInventory_Remove(ITEM_EMPTY_MYTHRIL_BAG);
-    Inventory_AddItem(4, ITEM_MYTHRIL_BAG);
+    PartyInventory_Remove(ITEM_MYTHRIL_BAG);
+    Inventory_AddItem(4, ITEM_MYTHRIL_BAG_MARS_STAR);
     Message_ShowCentered((s32)MsgMarsStar08, 1);
     i = 0;
     offset = 216;
     for (; i <= 14; offset += 2, i++) {
-      if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) == ITEM_MYTHRIL_BAG) {
+      if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) == ITEM_MYTHRIL_BAG_MARS_STAR) {
         Inventory_Equip(4, i);
         break;
       }
@@ -1239,7 +1237,7 @@ void Ride_SpawnForward(s32 *position, s32 speed, s32 flag) {
     object->gravity = 0;
     object->unk4c = speed;
     ((void (*)())Actor_ResetScripted)(object, 2);
-    object->update = Ride_UpdateCarried;
+    object->update = Flame_UpdateForward;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
@@ -1274,7 +1272,7 @@ void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
     }                                                                          \
   }
 
-DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnBackward, Ride_UpdateCarried)
+DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnBackward, Flame_UpdateForward)
 
 void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
   struct Actor *object =
@@ -1285,14 +1283,14 @@ void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
     object->gravity = 0;
     object->unk4c = speed;
     Actor_SetupScriptedPart(object, 3);
-    object->update = Ride_UpdateLanding;
+    object->update = Flame_UpdateLanding;
     if (flag != 0)
       object->unk5c[0] = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
 
-DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnLandingBackward, Ride_UpdateLanding)
+DEFINE_RIDE_SPAWN_BACKWARD(Ride_SpawnLandingBackward, Flame_UpdateLanding)
 
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x, b->x) < 0xc0000) {
@@ -1403,7 +1401,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-void Beam_DrawTargets(void) {
+void FlameThrowers_Puff(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
@@ -1502,7 +1500,7 @@ struct RideAnimation {
 extern u8 gInventorySnapshot[];
 
 void Ride_Create(void) {
-  struct RideWork *work = (struct RideWork *)(gInventorySnapshot + 0x188);
+  struct FlameHitWork *work = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   struct Actor *object;
   struct RideAnimation *animation;
 
@@ -1523,7 +1521,7 @@ void Actor_Release(struct Actor *object);
 #include "shared/ride_release_handle.h"
 
 void Ride_SetMode(s16 value) {
-  ((struct RideWork *)(gInventorySnapshot + 0x188))->value0e = value;
+  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->value0e = value;
 }
 
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
@@ -1539,7 +1537,7 @@ struct MarsLighthouseBeam__ride_handle {
   u16 stops[7];
 };
 
-void Beam_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
+void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   struct MarsLighthouseBeam__ride_handle *beam =
       (struct MarsLighthouseBeam__ride_handle *)(gInventorySnapshot + 0x188);
   struct MarsLighthouseBeamTarget *target = beam->targets;
@@ -1637,7 +1635,7 @@ void Beam_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       REG_BLDCNT = control;
     }
   }
-  Task_AddFrame(Beam_DrawTargets, 0x480);
+  Task_AddFrame(FlameThrowers_Puff, 0x480);
 }
 
 s32 Ride_GetEntryValue(s32 index) {
@@ -1649,7 +1647,7 @@ void Ride_SetEntryValue(s32 index, s16 value) {
 }
 
 s32 Ride_GetCounter(void) {
-  return ((struct RideWork *)(gInventorySnapshot + 0x188))->counter;
+  return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->counter;
 }
 
 #include "shared/ride_advance_counter.h"
@@ -1657,7 +1655,7 @@ s32 Ride_GetCounter(void) {
 #include "shared/ride_set_entry.h"
 
 void Ride_SetEntryCount(s32 index, s16 value) {
-  ((struct RideWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
+  ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->entries[index].c = value;
 }
 
 s32 Ride_GetEntryFlags(s32 index) {
@@ -1701,7 +1699,7 @@ extern u8 gInventorySnapshot[];
 
 /// A ride knocks the leader back while it runs.
 void MarsLighthouseStarRoom_ContinueSlide(void) {
-  if (((struct RideWork *)(gInventorySnapshot + 0x188))->active)
+  if (((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active)
     Leader_KnockBack();
 }
 
@@ -1713,9 +1711,9 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 // state's 0x6c would settle it.
 /// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
 /// Seal): the leader slides until the ice stops.
-s32 MarsLighthouseRoomF_SlideOnIce(void) {
+s32 Fireball_CarryLeader(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct RideWork *ride;
+  struct FlameHitWork *ride;
   struct Actor *leader;
   s32 frame[3]; // Unused: gives the stack frame its 12 bytes.
 
@@ -1737,7 +1735,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
-  ride = (struct RideWork *)(gInventorySnapshot + 0x188);
+  ride = (struct FlameHitWork *)(gInventorySnapshot + 0x188);
   Event_SetFlag(FLAG_MENU_OPEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1770,7 +1768,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
 #include "shared/ride_if_active.h"
 
 s32 MarsLighthouseStarRoom_IsSliding(void) {
-  return ((struct RideWork *)(gInventorySnapshot + 0x188))->active;
+  return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active;
 }
 
 struct Sprite {
@@ -1913,7 +1911,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     struct MapWork *map;
     struct MapCell *cell;
     struct FieldWork *work2;
-    struct RideWork *other;
+    struct FlameHitWork *other;
     struct Actor *target;
 
     flag = Event_GetFlag(FLAG_MENU_OPEN);
@@ -2572,7 +2570,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_STEP, 90, IF_FLAG_SET(FLAG_FLAME_DRAGONS_BEATEN),
-     EVENT(MarsLighthouseRoomF_SlideOnIce)},
+     EVENT(Fireball_CarryLeader)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_BeginBlazeOnStatue)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), 9,
@@ -2594,7 +2592,7 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgMarsStar04)},
     {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_ExamineStatue)},
-    {USE_ITEM(ITEM_MYTHRIL_BAG), 1045, CONDITION_ALWAYS,
+    {USE_ITEM(ITEM_MYTHRIL_BAG_MARS_STAR), 1045, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_UseMarsStar)},
     {TRIGGER_TABLE_END},
 };

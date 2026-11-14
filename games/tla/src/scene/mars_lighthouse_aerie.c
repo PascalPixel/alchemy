@@ -84,8 +84,8 @@ u32 Random16(void);
 void MarsLighthouseAerie_LookAround(struct Actor *object);
 void MarsLighthouseAerie_BeginTalkWhileHalted(s32 id);
 void MarsLighthouseAerie_EndTalkWhileHalted(s32 id);
-void Func_02004fac(void);
-void Func_02005010(void);
+void Teleport_StartShimmer(void);
+void Teleport_StopShimmer(void);
 void PaletteCycle_Fade(void);
 void Teleport_PlaySparks(void);
 
@@ -271,7 +271,7 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   MarsLighthouseAerie_SetUpBeacon();
-  Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
+  Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   if (gMainRoutineWork.entrance == 5) {
     /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from the
      * pool before the register address. */
@@ -1980,7 +1980,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_FaceDirectionAndWait((OWNER), FACING_NORTH);
   Actor_RunRepeatedMotion((OWNER), 2);
   FieldEvent_Wait(20);
-  PartyInventory_Remove(ITEM_MYTHRIL_BAG);
+  PartyInventory_Remove(ITEM_MYTHRIL_BAG_MARS_STAR);
   anchor = (s32)Actor_Get(4);
   y = A(anchor)->y;
   x = A(anchor)->x;
@@ -2845,7 +2845,7 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     Teleport_ArriveWhirling();
 }
 
-void Func_02004fac(void) {
+void Teleport_StartShimmer(void) {
   gPaletteCycle_Step = 0;
   gPaletteCycle_Count = List_CountEntries(gPaletteCycle_Slots);
   gPaletteCycle_Period = 15;
@@ -2854,7 +2854,7 @@ void Func_02004fac(void) {
   Task_AddFrame(PaletteCycle_Fade, TASK_PASS_VBLANK);
 }
 
-void Func_02005010(void) {
+void Teleport_StopShimmer(void) {
   gFieldWork->transition = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
@@ -2927,7 +2927,7 @@ void Teleport_ArriveWhirling(void) {
   Teleport_StartFastShimmer();
   Teleport_PlayWhirl();
   System_Wait(40);
-  Func_02005010();
+  Teleport_StopShimmer();
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(16);
   System_Wait(16);

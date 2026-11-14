@@ -16,7 +16,7 @@ void Actor_LaunchAhead(struct Actor *object);
 
 void MarsLighthouseStarRoom_ShootFireballs(void);
 
-void Beam_DrawTargets(void);
+void FlameThrowers_Puff(void);
 
 void Party_TakeFallDamage(void);
 

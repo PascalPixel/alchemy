@@ -35,7 +35,7 @@ struct MarsLighthouseEntranceRideHead {
 
 void Leader_KnockBack(void);
 
-void Func_02001c74();
+void Ride_SpawnForward();
 
 s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value);
 
@@ -76,18 +76,18 @@ void MarsLighthouseEntrance_ShootRoom4Fireball(void);
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
-void Func_02001e60();
-void Func_02001ea8();
-void Func_02001ef0();
+void Ride_SpawnBackward();
+void Ride_SpawnLandingForward();
+void Ride_SpawnLandingBackward();
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-extern u16 *Data_02006894;
-extern u16 *Data_02006880;
+extern u16 *gPaletteCycle_Colors;
+extern u16 *gPaletteCycle_Order;
 
-void Func_020048e8(void);
+void Teleport_ArriveWhirling(void);
 
 extern u16 gPaletteCycle_Flash;
 extern u16 gPaletteCycle_Countdown;

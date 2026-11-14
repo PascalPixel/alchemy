@@ -1262,10 +1262,10 @@ void TrialRoad_DriftWithStream(void) {
 
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_SCENE_TEMP_89); }
 
-void TrialRoad_CutBushes(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
+void TrialRoad_CutBushes(void) { Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64); }
 
 void TrialRoad_CutMadPlantBushes(void) {
-  Func_02005a50_(68, 6, 1, 21, 13, 64, 64);
+  Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
   if (!Event_GetFlag(0x9b9)) {
     Import_MadPlantLeapAtLeader(249, 72, 152);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;

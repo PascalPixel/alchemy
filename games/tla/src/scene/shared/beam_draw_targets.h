@@ -1,5 +1,5 @@
 /// Draws the beam's targets, firing each in turn.
-void Beam_DrawTargets(void) {
+void FlameThrowers_Puff(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
@@ -68,16 +68,16 @@ void Beam_DrawTargets(void) {
         Func_0200206c__s20ec(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Func_02001e60(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnBackward(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 32:
-        Func_02001ef0(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingBackward(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 16:
-        Func_02001ea8(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnLandingForward(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 0:
-        Func_02001c74(&entry->actor->x, entry->unk_c, unk6);
+        Ride_SpawnForward(&entry->actor->x, entry->unk_c, unk6);
         break;
       }
       value = 8;

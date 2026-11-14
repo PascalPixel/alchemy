@@ -344,24 +344,24 @@ void Unit_Calculate(s32 owner) {
     flag = 0;
     switch (st->id) {
     case 1:
-      flag = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
+      flag = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
       break;
     case 3:
-      flag = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      flag = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
       break;
     case 5:
-      flag = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
+      flag = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
       break;
     case 0:
     case 4:
-      flag = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT);
+      flag = GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE);
       break;
     case 2:
     case 6:
-      flag = GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT);
+      flag = GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE);
       break;
     case 7:
-      flag = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      flag = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
       break;
     }
     if (flag)
@@ -796,13 +796,13 @@ void Party_RestorePpOfLitElements(void) {
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {
-      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT) ||
-          GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT)) {
+      if (GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE) ||
+          GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE)) {
         restorePp = 1;
       }
     } else {
-      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT) ||
-          GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT)) {
+      if (GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE) ||
+          GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE)) {
         restorePp = 1;
       }
     }

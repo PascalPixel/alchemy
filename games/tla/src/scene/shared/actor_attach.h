@@ -12,5 +12,5 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->timer = 0;
   object->unk66 = a3;
   BYTE_AT(object, 98) = kind;
-  object->update = Func_02002c2c;
+  object->update = Actor_HoldDuringEvent;
 }

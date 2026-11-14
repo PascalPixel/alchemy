@@ -164,7 +164,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           target->speedLimit = px(8);
           target->velocityY = px(5);
           target->gravity = 0xab85;
-          target->actionFlags = 0;
+          target->steeringFlags = 0;
           Actor_StartIdleFar(target);
           if (target->x < 0)
             Actor_SetMoveTargetFar(target, target->x - 0x280000, 0, target->z);

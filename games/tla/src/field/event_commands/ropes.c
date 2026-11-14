@@ -190,7 +190,7 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
     struct RopeSlot *slot;
     s32 lift;
 
-    if (first->animationKind == 1)
+    if (first->spriteStorageKind == 1)
       priority = ((struct FieldSprite *)first->sprite)->priority;
     slot = &work->slots[index];
     slot->first = id;
@@ -323,7 +323,7 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
     struct RopeSlot *slot;
     s32 lift;
 
-    if (first->animationKind == 1)
+    if (first->spriteStorageKind == 1)
       priority = ((struct FieldSprite *)first->sprite)->priority;
     slot = &work->slots[index];
     slot->first = firstId;

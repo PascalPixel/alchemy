@@ -284,7 +284,7 @@ void DebugWarp_Arafura2(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->packedEvents[1] = 141;
+    party->secondShortcut = 141;
   }
   Event_SetDestinationFar(SCENE_ALHAFRA_1, 1);
 }
@@ -298,7 +298,7 @@ void DebugWarp_Arafura3(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->packedEvents[1] = 141;
+    party->secondShortcut = 141;
   }
   Event_SetDestinationFar(SCENE_EASTERN_ALHAFRA_1, 1);
 }
@@ -311,7 +311,7 @@ void DebugWarp_Champa2(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->packedEvents[1] = 141;
+    party->secondShortcut = 141;
   }
   Event_SetDestinationFar(SCENE_CHAMPA_1, 9);
 }
@@ -630,20 +630,20 @@ done:
       if (result == 0)
         events->psynergy = 0;
       if (result == 1)
-        gMainRoutineWork.packedEvents[0] = 0;
+        gMainRoutineWork.firstShortcut = 0;
       if (result == 2) {
         party = &gMainRoutineWork;
-        party->packedEvents[1] = 0;
+        party->secondShortcut = 0;
       }
     } else {
       owner = (owner << 10) | (ability & 0x3fff);
       if (result == 0)
         events->psynergy = owner;
       if (result == 1)
-        gMainRoutineWork.packedEvents[0] = owner;
+        gMainRoutineWork.firstShortcut = owner;
       if (result == 2) {
         party = &gMainRoutineWork;
-        party->packedEvents[1] = owner;
+        party->secondShortcut = owner;
       }
     }
     pp = 500;

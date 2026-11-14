@@ -16,7 +16,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
                                        position[2]);
   actor->update = (void (*)(void))Actor_RollAndCrumble;
-  actor->actionFlags = 0;
+  actor->steeringFlags = 0;
   actor->speedLimit = px(8);
   actor->acceleration = px(1) / 8;
   sprite->rotation = angle - 0x4000;
@@ -27,6 +27,6 @@ void Actor_LaunchAhead(struct Actor *self) {
     actor->scaleY = 0;
   } while (0);
   actor->timer = 0;
-  actor->watchedObject = self->watchedObject;
+  actor->watchedActor = self->watchedActor;
   Event_PlaySound(SE_104);
 }

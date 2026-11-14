@@ -42,7 +42,7 @@ void Whirlwind_Update(struct Actor *self) {
           near = 1;
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
-          leader->watchedObject = self;
+          leader->watchedActor = self;
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;

@@ -190,11 +190,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 // Sand takes the leader into the sand (and ApojiiIslands_RiseFromSand back up).
 void ApojiiIslands_SinkIntoSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
 void ApojiiIslands_RiseFromSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
 extern s32 gApojiiIslands_FallsCycleFrame;
@@ -668,7 +668,7 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
   parent = object->sprite;
   if (child != NULL) {
     sprite = child->sprite;
-    child->terrainHeight = object->terrainHeight;
+    child->groundHeight = object->groundHeight;
     Actor_StartScript(child, gApojiiIslands_SplashScript);
     child->motionFlags = 0;
     if (sprite != NULL) {
@@ -690,8 +690,7 @@ void ApojiiIslands_FlowWithStream(void) {
   s32 position[3];
   s32 result;
 
-  if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1 ||
-      leader->terrainHeight != 0) {
+  if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1 || leader->groundHeight != 0) {
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z + px(2);
@@ -707,7 +706,7 @@ void ApojiiIslands_FlowWithStream(void) {
       FieldActor_WaitForMove(leader);
       do {
         System_Wait(1);
-      } while (leader->y != leader->terrainHeight);
+      } while (leader->y != leader->groundHeight);
       ApojiiIslands_SpawnSplash(leader);
       Actor_SelectAnimation(leader, 49);
       System_Wait(3);

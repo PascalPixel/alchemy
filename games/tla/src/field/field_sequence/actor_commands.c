@@ -31,8 +31,8 @@ void Actor_SetMovementTypeById(s32 actorId, const void *script) {
 
   if (object != NULL) {
     s32 value = 1;
-    value |= object->actionFlags;
-    object->actionFlags = value;
+    value |= object->steeringFlags;
+    object->steeringFlags = value;
     Actor_SetActionCallback(object, (s32)script);
   }
 }
@@ -43,7 +43,7 @@ void Actor_Stop(s32 actorId) {
 
   if (object != NULL) {
     enabled = 1;
-    object->actionFlags = enabled | object->actionFlags;
+    object->steeringFlags = enabled | object->steeringFlags;
     Actor_StartIdleFar(object);
   }
 }
@@ -52,7 +52,7 @@ void Actor_ResetTargetsAndVelocity(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->actionFlags = (u8)(object->actionFlags | 1);
+    object->steeringFlags = (u8)(object->steeringFlags | 1);
     Actor_StartIdleFar(object);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
@@ -66,7 +66,7 @@ void Actor_WatchAndSetScript(s32 actorId, s32 linkedObjectId) {
   struct Actor *object = ObjectTable_Get(actorId);
 
   if (object != NULL) {
-    object->watchedObject = Actor_GetById(linkedObjectId);
+    object->watchedActor = Actor_GetById(linkedObjectId);
     Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
   }
 }
@@ -83,8 +83,8 @@ void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script) {
 
   if (object != NULL) {
     s32 value = 1;
-    value |= object->actionFlags;
-    object->actionFlags = value;
+    value |= object->steeringFlags;
+    object->steeringFlags = value;
     Actor_SetActionCallback(object, (s32)script);
     Actor_WaitForCommandEndFar(object);
   }
@@ -94,7 +94,7 @@ void Actor_SetDestinationById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
@@ -104,7 +104,7 @@ void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     Actor_WaitForMoveFar(object);
@@ -115,7 +115,7 @@ void Actor_WalkToById(s32 actorId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(actorId);
 
   if (object != NULL) {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 2);
     Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
@@ -126,7 +126,7 @@ void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z) {
   struct Actor *object = ObjectTable_Get(actorId);
 
   if (object != NULL) {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 2);
     Actor_SetMoveTargetFar(object, x << 16, object->y, z << 16);
@@ -153,7 +153,7 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 zOffset) {
     snappedAngle >>= 4;
     snappedAngle *= 16;
     angleRemainder = currentAngle - snappedAngle;
-    object->movementState = 0;
+    object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SelectAnimationFar(object, 2);
     x = object->x;
@@ -171,7 +171,7 @@ void Actor_SetDestinationOffsetById(s32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(actorId);
 
   if (object != NULL) {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                            object->z + (zOffset << 16));
@@ -182,7 +182,7 @@ void Actor_WalkByById(u32 objectId, s32 xOffset, s32 zOffset) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
     Actor_SelectAnimationFar(object, 2);
     Actor_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
@@ -208,7 +208,7 @@ void Actor_LaunchFromLeader(s32 actorId, s32 xOffset, s32 zOffset, s32 action) {
     Actor_MoveToObject(actorId, gMainRoutineWork.leaderActorId);
     Actor_SetPositionAndResetMotionFar(object, object->x, object->y,
                                        object->z - 0x10000);
-    object->movementState = 0;
+    object->paused = 0;
     Actor_SelectAnimationFar(object, 2);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
     Actor_StartScriptFar(object, gActor_LaunchScript);
@@ -237,9 +237,9 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
     Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
-          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z);
-      object->y = object->y - object->terrainHeight + terrainHeight;
-      object->terrainHeight = terrainHeight;
+          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z);
+      object->y = object->y - object->groundHeight + terrainHeight;
+      object->groundHeight = terrainHeight;
     }
   }
 }
@@ -269,9 +269,9 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
     object->facing = angle;
     if (object->motionFlags & 1) {
       terrainHeight =
-          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z);
-      object->y = object->y - object->terrainHeight + terrainHeight;
-      object->terrainHeight = terrainHeight;
+          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z);
+      object->y = object->y - object->groundHeight + terrainHeight;
+      object->groundHeight = terrainHeight;
     }
   }
 }
@@ -285,9 +285,9 @@ void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
     Actor_SetPositionAndResetMotionFar(object, x, y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
-          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z);
-      object->y = object->y - object->terrainHeight + terrainHeight;
-      object->terrainHeight = terrainHeight;
+          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z);
+      object->y = object->y - object->groundHeight + terrainHeight;
+      object->groundHeight = terrainHeight;
     }
   }
 }
@@ -298,7 +298,7 @@ void Actor_MoveToObject(u32 objectId, u32 otherId) {
 
   if (object != NULL && other != NULL) {
     Actor_SetPositionAndResetMotionFar(object, other->x, other->y, other->z);
-    object->terrainHeight = other->terrainHeight;
+    object->groundHeight = other->groundHeight;
   }
 }
 
@@ -328,7 +328,7 @@ void Actor_WaitForAnimationChange(u32 objectId) {
   volatile u32 saved;
   s32 elapsedFrames;
 
-  if (object != NULL && object->animationKind == 1) {
+  if (object != NULL && object->spriteStorageKind == 1) {
     group = object->sprite;
     saved = group->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
@@ -498,12 +498,12 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
     return;
   }
   i = 0;
-  if (object->y > object->terrainHeight) {
+  if (object->y > object->groundHeight) {
     do {
       wait(1);
       if (++i >= 180)
         break;
-    } while (object->y > object->terrainHeight);
+    } while (object->y > object->groundHeight);
   }
   Actor_SetSpriteFlagsFar(object, frame);
   wait(2);
@@ -603,7 +603,7 @@ void Actor_ApplyIndexedChildValue(struct Actor *object) {
   s32 attribute;
   s32 i;
 
-  if ((object->animationKind & 0xf) == 1) {
+  if ((object->spriteStorageKind & 0xf) == 1) {
     list = object->sprite;
     attribute = gActor_BlinkChildValues[(gFrameCount >> 1) & 3];
     for (i = 0; i < list->count; i++) {
@@ -621,7 +621,7 @@ void Actor_SetSpriteColor(struct Actor *object, s32 attribute) {
   struct ObjectPart *part;
   s32 i;
 
-  if ((object->animationKind & 0xf) == 1) {
+  if ((object->spriteStorageKind & 0xf) == 1) {
     list = object->sprite;
     for (i = 0; i < list->count; i++) {
       part = list->parts[i];
@@ -644,7 +644,7 @@ void Actor_WatchAndStartScript(u32 objectId, s32 targetId,
   struct Actor *target = ObjectTable_Get(targetId & 0xff);
 
   if (follower != NULL && target != NULL) {
-    follower->watchedObject = target;
+    follower->watchedActor = target;
     if (!(targetId & 0x10000)) {
       u16 none = 0;
 

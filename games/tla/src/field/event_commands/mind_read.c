@@ -327,13 +327,13 @@ void FieldPsynergy_SteerPushedTarget(void) {
   moved = 0;
   /* FAKEMATCH(temporary): a byte pointer standing in for target->terrainId at
    * the save and the restore. */
-  layer = &target->terrainId;
+  layer = &target->layer;
   savedLayer = *layer;
   pushed = 0;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
-  user->watchedObject = target;
+  user->watchedActor = target;
   Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
   pusher = FieldEffect_SpawnMoveHand(user);
   if (pusher == NULL) {
@@ -344,7 +344,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   event =
       Scene_FindPsynergyTrigger(0x50000005, scene->fieldKind,
                                 Scene_SelectPsynergyTarget(scene->fieldKind));
-  pusher->watchedObject = target;
+  pusher->watchedActor = target;
   SET_POSITION(&position, target->x, target->y + px(16), target->z);
   Vector_AddPolarOffset(px(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
@@ -355,9 +355,9 @@ void FieldPsynergy_SteerPushedTarget(void) {
   target->update = Actor_ApplyRandomChildValues;
   target->speedLimit = 0x6666;
   target->acceleration = 0x3333;
-  target->actionFlags = moved;
+  target->steeringFlags = moved;
   // Through target rather than layer, which keeps moved's load after the
-  target->terrainId = 2;
+  target->layer = 2;
   while (1) {
     wait(1);
     // The mode read as a signed byte, which the test against 0 does not change.
@@ -418,8 +418,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
-        if (MapGrid_GetTerrainKindFar(user->terrainId, beyond.x, beyond.z) !=
-            0) {
+        if (MapGrid_GetTerrainKindFar(user->layer, beyond.x, beyond.z) != 0) {
           Actor_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(SE_MENU_ERROR);
@@ -436,7 +435,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     modes = gUnused_BattleEffectBytes;
     Actor_SelectAnimationFar(pusher, modes[(u16)(angle - direction) >> 14]);
     wait(15);
-    target->movementState = 0;
+    target->paused = 0;
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
     Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
@@ -446,7 +445,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
     Vector_AddPolarOffset(px(16), direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y + px(16), position.z);
     if (moved == 1) {
-      Actor_GetById(scene->firstObjectId)->actionFlags &= 0xfe;
+      Actor_GetById(scene->firstObjectId)->steeringFlags &= 0xfe;
       user->speedLimit = 0x3333;
       user->acceleration = 0x3333;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
@@ -476,7 +475,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   if (moved == 1) {
     /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
      * actionFlags. */
-    userFlags = &Actor_GetById(scene->firstObjectId)->actionFlags;
+    userFlags = &Actor_GetById(scene->firstObjectId)->steeringFlags;
     *userFlags |= 1;
   }
   FieldPsynergy_FadeFromCastColor();
@@ -1659,7 +1658,7 @@ void FieldPsynergy_Ply(void) {
     target->timer = -1;
     target->speedLimit = px(5);
     target->acceleration = 0x6666;
-    target->actionFlags = 0;
+    target->steeringFlags = 0;
     Actor_SetTargetPositionFromMagnitudeAngle(target, px(192), 0xe800);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);

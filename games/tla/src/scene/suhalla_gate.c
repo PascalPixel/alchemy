@@ -292,7 +292,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   owner = &work->leaderActorId;
   Actor_WalkByAndWait(*owner, 0, -4);
   FieldEvent_Wait(30);
-  Actor_GetById(*owner)->actionFlags &= 254;
+  Actor_GetById(*owner)->steeringFlags &= 254;
   Actor_WalkByAndWait(*owner, 0, 12);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(*owner, 0, 16);

@@ -783,11 +783,11 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_FaceDirection(28, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   JupiterLighthouse_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_Get(28)->actionFlags &= 0xfe;
+  Actor_Get(28)->steeringFlags &= 0xfe;
   Actor_Get(28)->velocityY = px(4);
   Actor_SetDestinationOffset(28, 0, 24);
   FieldActor_WaitForMoveById(28);
-  Actor_Get(28)->actionFlags |= 1;
+  Actor_Get(28)->steeringFlags |= 1;
   Actor_FaceDirection(28, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
@@ -806,12 +806,12 @@ void JupiterLighthouse_BeaconIsLit(void) {
   FieldEvent_Wait_(5);
   Actor_WalkBy(ACTOR_FELIX, 0, 8);
   Actor_WalkByAndWait(27, -24, -8);
-  Actor_Get(ACTOR_FELIX)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= 0xfe;
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, -8);
   JupiterLighthouse_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(28, 0, 0);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
-  Actor_Get(ACTOR_FELIX)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= 0xfe;
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30));
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
@@ -1045,11 +1045,11 @@ void JupiterLighthouse_AfterTheFight(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ((void *)Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30));
-  Actor_Get(ACTOR_FELIX)->actionFlags &= ~1;
-  Actor_Get(ACTOR_PIERS)->actionFlags &= ~1;
-  Actor_Get(ACTOR_JENNA)->actionFlags &= ~1;
-  Actor_Get(27)->actionFlags &= ~1;
-  Actor_Get(28)->actionFlags &= ~1;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_PIERS)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_JENNA)->steeringFlags &= ~1;
+  Actor_Get(27)->steeringFlags &= ~1;
+  Actor_Get(28)->steeringFlags &= ~1;
   Actor_Get(ACTOR_FELIX)->velocityY = px(3);
   Actor_Get(ACTOR_PIERS)->velocityY = px(3);
   Actor_Get(ACTOR_JENNA)->velocityY = px(3);
@@ -1061,11 +1061,11 @@ void JupiterLighthouse_AfterTheFight(void) {
   Actor_SetDestinationOffset(27, -16, -8);
   Actor_SetDestinationOffset(28, -16, -8);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
-  Actor_Get(ACTOR_FELIX)->actionFlags |= 1;
-  Actor_Get(ACTOR_PIERS)->actionFlags |= 1;
-  Actor_Get(ACTOR_JENNA)->actionFlags |= 1;
-  Actor_Get(27)->actionFlags |= 1;
-  Actor_Get(28)->actionFlags |= 1;
+  Actor_Get(ACTOR_FELIX)->steeringFlags |= 1;
+  Actor_Get(ACTOR_PIERS)->steeringFlags |= 1;
+  Actor_Get(ACTOR_JENNA)->steeringFlags |= 1;
+  Actor_Get(27)->steeringFlags |= 1;
+  Actor_Get(28)->steeringFlags |= 1;
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   Actor_WalkToAndWait(ACTOR_SHEBA, 552, 344);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -2471,11 +2471,11 @@ void Actor_RaiseFromCell(s32 id) {
 
   object = Actor_Get(id);
   object->motionFlags = 4;
-  height = object->terrainHeight;
+  height = object->groundHeight;
   object->bounce = 0;
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+  height = Map_GetTerrainHeight(object->layer, object->x, object->z);
   MapGrid_SetCellHeight__beacon(object->x, object->z, 0, (height >> 19) + 6);
   MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
 }
@@ -2483,7 +2483,7 @@ void Actor_RaiseFromCell(s32 id) {
 void JupiterLighthouse_RideTheBeam(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *linked = actor->watchedObject;
+  struct Actor *linked = actor->watchedActor;
   struct Actor *shadow;
   u8 *p;
   s32 angle;
@@ -2525,13 +2525,13 @@ void JupiterLighthouse_RideTheBeam(void) {
   FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
-  if (actor->y > actor->terrainHeight + px(16)) {
+  if (actor->y > actor->groundHeight + px(16)) {
     do {
       System_Wait(1);
       i++;
       if (i > 59)
         break;
-    } while (actor->y > actor->terrainHeight + px(16));
+    } while (actor->y > actor->groundHeight + px(16));
   }
   Event_PlaySound(SE_LANDING_THUD);
   i = 0;
@@ -2596,7 +2596,7 @@ void Whirlwind_Update(struct Object6a5 *object) {
               distance < 0xc0000)
             near = 1;
           if (near != 0 && Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-            leader->watchedObject = (struct Actor *)object;
+            leader->watchedActor = (struct Actor *)object;
             leader->facing = object->angle;
             flags = &leader->priorityFlags;
             *flags &= ~1;
@@ -2644,11 +2644,11 @@ void JupiterLighthouse_EnergizeAngels(void) {
   Actor_SetPositionFixed(10, 0x2280000, 0x1000000);
   Actor_GetById(24)->scaleX = 0;
   rider->motionFlags = 0;
-  rider->y = rider->terrainHeight;
+  rider->y = rider->groundHeight;
   left->motionFlags = 0;
-  left->y = left->terrainHeight;
+  left->y = left->groundHeight;
   right->motionFlags = 0;
-  right->y = right->terrainHeight;
+  right->y = right->groundHeight;
   if (GameFlag_Test_(0xa0a)) {
     left->y += 0x66640;
     rider->y += 0x1eb80;

@@ -294,10 +294,10 @@ s32 IzumoInteriors_KushinadaPleads(void) {
     // "Susa, please... Don't try to save me."
     Event_ShowMessageAndWait(17, 0);
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
   Actor_WalkByById(gMainRoutineWork.leaderActorId, 0, 16);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   Event_End();
   return 0;
 }
@@ -630,10 +630,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_FaceActorById(20, 21, 0);
     Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 56, 584);
-    Actor_GetById(22)->actionFlags &= ~1;
+    Actor_GetById(22)->steeringFlags &= ~1;
     Actor_WalkToAndWait(22, 88, 568);
     Event_Wait(1);
-    Actor_GetById(22)->actionFlags |= 1;
+    Actor_GetById(22)->steeringFlags |= 1;
     Actor_FaceDirectionById(22, FACING_EAST, 0);
     Actor_SetSpritePriority(21, 1);
     Actor_WalkToAndWait(21, 104, 568);
@@ -683,10 +683,10 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
     Actor_FaceActorById(20, 21, 0);
     Actor_FaceActorById(22, 21, 0);
     Actor_WalkToAndWait(21, 232, 584);
-    Actor_GetById(22)->actionFlags &= ~1;
+    Actor_GetById(22)->steeringFlags &= ~1;
     Actor_WalkToAndWait(22, 200, 568);
     Event_Wait(1);
-    Actor_GetById(22)->actionFlags |= 1;
+    Actor_GetById(22)->steeringFlags |= 1;
     Actor_FaceDirection(22, FACING_WEST, 0);
     Actor_SetSpritePriority(21, 1);
     Actor_WalkToAndWait(21, 184, 568);

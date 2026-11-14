@@ -37,7 +37,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
   layerZ = layer->z >> 20;
   left = x - layerX;
   top = z - layerZ;
-  lift = -(owner->terrainHeight >> 20);
+  lift = -(owner->groundHeight >> 20);
 
   /* FAKEMATCH(signature): gSceneLocalState typed as 1491 TouchCells before the
    * copies. */

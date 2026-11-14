@@ -20,7 +20,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         GameFlag_Set(flag);
-        Actor_SetCellOpen(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->layer);
         object->scaleY = Q16_ONE;
       }
       break;

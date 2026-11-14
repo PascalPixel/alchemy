@@ -203,13 +203,13 @@ void MarsLighthouseEntrance_SetIceConeCells(struct Actor *object) {
   v10 = (v5->z >> 20);
   v8 = MapCell_Get(0, v9, v10);
   v6 = MapCell_Get(2, v9, v10);
-  v11 = &v5->terrainId;
-  t3 = Map_GetTerrainHeight(v5->terrainId, v5->x, v5->z);
+  v11 = &v5->layer;
+  t3 = Map_GetTerrainHeight(v5->layer, v5->x, v5->z);
   v7 = (t3 >> 19);
   if (Event_GetFlag(v5->timer)) {
     v6 &= -0xff01;
     v8 &= -129;
-    if ((v5->terrainHeight >> 19) == v7)
+    if ((v5->groundHeight >> 19) == v7)
       goto L_02008282;
     v7 = (v7 + -4);
     goto L_02008282;
@@ -781,7 +781,7 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
   z = actor->z >> 20;
   map = Ram_HeapSlots->mapWork;
   if (map != NULL)
-    cells = map->layers[actor->terrainId & 3].cells;
+    cells = map->layers[actor->layer & 3].cells;
   else
     cells = buffer;
   cells += x + (z << 7) + 128;
@@ -803,7 +803,7 @@ next:
   i++;
   if (i <= 39)
     goto next;
-  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -888,7 +888,7 @@ next:
   i++;
   if (i <= 39)
     goto next;
-  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -913,7 +913,7 @@ void MarsLighthouseEntrance_CheckCrackedFloor(void) {
   z = object->z >> 20;
   cell = gMapGridCellBuffer;
   if (map != NULL)
-    cell = map->layers[object->terrainId & 3].cells;
+    cell = map->layers[object->layer & 3].cells;
   cell += x + (z << 7);
   if (cell->attributeB & 64)
     MarsLighthouseEntrance_FallThroughCrack(cell + 128);
@@ -1003,7 +1003,7 @@ extern struct Trigger gMarsLighthouseEntrance_Room7Triggers[];
 void Actor_HoldDuringEvent(void);
 
 void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *object) {
-  if (ABS(object->x - object->watchedObject->x) > 0x200000)
+  if (ABS(object->x - object->watchedActor->x) > 0x200000)
     return;
   object->timer = 0;
   object->update = (void (*)(void))MarsLighthouseEntrance_FlingIceCone;
@@ -1192,12 +1192,12 @@ s32 Scene_Initialize(void) {
           (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(18)->update =
           (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
-      Actor_Get(13)->watchedObject = target;
-      Actor_Get(14)->watchedObject = target;
-      Actor_Get(15)->watchedObject = target;
-      Actor_Get(16)->watchedObject = target;
-      Actor_Get(17)->watchedObject = target;
-      Actor_Get(18)->watchedObject = target;
+      Actor_Get(13)->watchedActor = target;
+      Actor_Get(14)->watchedActor = target;
+      Actor_Get(15)->watchedActor = target;
+      Actor_Get(16)->watchedActor = target;
+      Actor_Get(17)->watchedActor = target;
+      Actor_Get(18)->watchedActor = target;
     }
     Actor_Get(9)->priorityFlags |= 2;
     if (Event_GetFlag(FLAG_ROOM6_STATUE_BLOCKS_FLAMES))
@@ -1719,7 +1719,7 @@ extern u32 gEmbers_Script[];
 #include "shared/embers_spawn.h"
 
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->movementState = Event_GetFlag(260);
+  object->paused = Event_GetFlag(260);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1771,7 +1771,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     flag = Event_GetFlag(FLAG_MENU_OPEN);
     if (work->psynergy != 0)
       flag |= 1;
-    actor->movementState = flag;
+    actor->paused = flag;
 
     position.x = actor->x;
     position.y = actor->y;
@@ -1787,8 +1787,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(5, 5, 1);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      if (actor->watchedObject != NULL)
-        ((void (*)(struct Actor *))actor->watchedObject)(actor);
+      if (actor->watchedActor != NULL)
+        ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
     map = Ram_HeapSlots->mapWork;
@@ -1846,7 +1846,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       work2->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
-    actor->movementState = 0;
+    actor->paused = 0;
     if (actor->scaleX > 0) {
       actor->scaleX -= Q16_ONE / 16;
       actor->scaleY -= Q16_ONE / 16;
@@ -2069,7 +2069,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
     System_Wait(1);
   }
   do {
-    Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
+    Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   } while (0);
   event->busy = 0;
   gFieldWork->transition = 0x209;
@@ -2334,7 +2334,7 @@ UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         Event_SetFlag(flag);
-        Actor_SetCellOpen(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->layer);
         object->scaleY = Q16_ONE;
       }
       break;

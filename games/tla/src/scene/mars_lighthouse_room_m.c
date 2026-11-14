@@ -730,10 +730,10 @@ s32 Scene_Initialize(void) {
         actor = Actor_Get(ACTOR_STATUE_MOUTH);
         actor->motionFlags = unset;
         actor->y = px(16);
-        actor->terrainHeight = px(16);
+        actor->groundHeight = px(16);
         ((u8 *)actor)[98] = ACTOR_FIREBALL;
         actor->userValue = 0x4000;
-        actor->watchedObject = (struct Actor *)unset;
+        actor->watchedActor = (struct Actor *)unset;
         Actor_LaunchAhead__s0b64();
         System_Wait(40);
         MapGrid_SetShake(2, 2, 1);
@@ -1332,7 +1332,7 @@ void Ride_UpdateDrift(struct Actor *object) {
   animation = object->sprite;
   object->scaleY += object->acceleration;
   animation->angle += object->timer;
-  if (target->y == target->terrainHeight && Actor_IsAbove(object, target)) {
+  if (target->y == target->groundHeight && Actor_IsAbove(object, target)) {
     object->z -= object->riseBaseY;
     object->gravity += object->riseBaseY >> 2;
     object->riseBaseY = 0;
@@ -1782,7 +1782,7 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
 #include "shared/embers_spawn.h"
 
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->movementState = Event_GetFlag(260);
+  object->paused = Event_GetFlag(260);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1814,7 +1814,7 @@ void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   Actor_SelectAnimation(object, 1);
-  object->watchedObject = source;
+  object->watchedActor = source;
   object->timer = 0;
   object->userValue = angle;
   ((u8 *)object)[0x62] = value;

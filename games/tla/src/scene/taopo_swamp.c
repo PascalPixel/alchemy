@@ -267,7 +267,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
       splash = (FieldActor_Create(14, x, actor->y, z));
       if (splash != 0) {
         splashSprite = splash->sprite;
-        splash->terrainHeight = actor->terrainHeight;
+        splash->groundHeight = actor->groundHeight;
         Actor_StartScript(splash, gTaopoSwamp_SplashFades);
         splash->motionFlags = 0;
         if (splashSprite != 0) {
@@ -283,7 +283,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
     i++;
   } while (i <= 24);
 
-  actor->animationKind = 0;
+  actor->spriteStorageKind = 0;
   actor->y = 0;
   for (i = 1; i >= 0; i--) {
     spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
@@ -296,7 +296,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
         zero = 0;
         *flags = zero;
       }
-      spark->terrainId = 1;
+      spark->layer = 1;
       if (sparkSprite != 0) {
         Animation_ApplyChildArgument(sparkSprite, 2);
         sparkSprite->nextFrame = zero;
@@ -306,7 +306,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
     System_Wait(15);
   }
   FieldEvent_Wait(30);
-  actor->animationKind = 1;
+  actor->spriteStorageKind = 1;
   Actor_SetPosition(id, 0, 0);
   Event_End();
   Event_SetFlag(0x8e5);
@@ -743,10 +743,10 @@ void TaopoSwamp_TremorPillar(void) {
   Actor_SetDestination(19, 492, 246);
   rock->gravity = 0xcccc;
   rock->motionFlags = 3;
-  rock->terrainId = 0;
+  rock->layer = 0;
   FieldActor_WaitForMoveById(19);
   rock->velocityY = 0;
-  rock->y = rock->terrainHeight;
+  rock->y = rock->groundHeight;
   Actor_SetPosition(19, 480, 248);
   ((struct FieldSprite *)rock->sprite)->rotation = 0;
   Event_PlaySound(SE_THUMP);
@@ -931,7 +931,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
   struct Actor *spark;
   s32 scale;
 
-  if (y + object->velocityY < object->terrainHeight) {
+  if (y + object->velocityY < object->groundHeight) {
     spark = TaopoSwamp_CreateActor(0x10d, object->x, y, object->z);
     scale = 0x8ccc;
     if (spark) {
@@ -942,7 +942,7 @@ s32 TaopoSwamp_LandDrop(struct Actor *object) {
       Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(SE_DRIP);
-    object->y = object->terrainHeight;
+    object->y = object->groundHeight;
     object->velocityY = 0;
     return 0;
   }
@@ -1091,7 +1091,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
   struct Actor *spark;
   s32 scale;
 
-  if (object->y + object->velocityY < object->terrainHeight) {
+  if (object->y + object->velocityY < object->groundHeight) {
     flag = Event_GetFlag(FLAG_SCENE_TEMP_21);
     if (flag) {
       Event_PlaySound(SE_DRIP);
@@ -1107,7 +1107,7 @@ s32 TaopoSwamp_LandDrip(struct Actor *object) {
       Actor_SelectAnimation(spark, 2);
     }
     Event_PlaySound(SE_DRIP);
-    object->y = object->terrainHeight;
+    object->y = object->groundHeight;
     object->velocityY = 0;
     if (Event_GetFlag(0x104) == 0) {
       count = FieldGameFlag_GetByte(0x230);
@@ -1167,7 +1167,7 @@ s32 TaopoSwamp_IsDropFalling(struct Actor *object) {
         object->scaleX = scale;                                                \
         object->scaleY = scale;                                                \
         object->motionFlags = 2;                                               \
-        object->terrainHeight = 0xffc00000;                                    \
+        object->groundHeight = 0xffc00000;                                     \
         object->gravity = 0x7333;                                              \
         Actor_StartScript(object, gTaopoSwamp_DropFalls);                      \
         Actor_SetSpriteFlags(object, 0);                                       \
@@ -1261,7 +1261,7 @@ s32 Scene_Initialize(void) {
     piece->motionFlags = 0;
     if (Event_GetFlag(0xa6f)) {
       Actor_SetPositionFixed(9, px(264), px(424));
-      piece->terrainHeight = 0;
+      piece->groundHeight = 0;
       piece->y = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
@@ -1459,7 +1459,7 @@ s32 Scene_Initialize(void) {
     piece->motionFlags = 0;
     if (Event_GetFlag(0xa6f)) {
       Actor_SetPositionFixed(9, px(264), px(424));
-      piece->terrainHeight = 0;
+      piece->groundHeight = 0;
       piece->y = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
@@ -1719,14 +1719,14 @@ void TaopoSwamp_SinkInMud(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  actor->animationKind = 0;
+  actor->spriteStorageKind = 0;
   for (i = 1; i >= 0; i--) {
     spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
       sparkSprite = spark->sprite;
       Actor_StartScript(spark, gTaopoSwamp_SplashFades);
       spark->motionFlags = 0;
-      spark->terrainId = 1;
+      spark->layer = 1;
       if (sparkSprite != 0) {
         Animation_ApplyChildArgument(sparkSprite, 2);
         sparkSprite->nextFrame = 0;
@@ -1736,7 +1736,7 @@ void TaopoSwamp_SinkInMud(void) {
     System_Wait(15);
   }
   FieldEvent_Wait(30);
-  actor->animationKind = 1;
+  actor->spriteStorageKind = 1;
   sprite->level = 0;
   sprite->mode = 0;
   Event_End();

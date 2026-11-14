@@ -195,7 +195,7 @@ push_objects:
     if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
-    if ((other->collisionFlags & 2) && other->movementState == 0) {
+    if ((other->collisionFlags & 2) && other->paused == 0) {
       u16 direction;
 
       direction = ArcTan2(other->z - object->z, other->x - object->x);
@@ -276,7 +276,7 @@ counted:
       object->timer--;
   }
   Field_CheckConfiguredKeys();
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -341,9 +341,9 @@ s32 Field_CheckConfiguredKeys(void) {
       work->pauseMenu = 1;
       result = 1;
     } else if (gInput.pressed & gMainRoutineWork.firstShortcutKeys) {
-      result = Field_RequestShortcut(gMainRoutineWork.packedEvents[0]);
+      result = Field_RequestShortcut(gMainRoutineWork.firstShortcut);
     } else if (gInput.pressed & gMainRoutineWork.secondShortcutKeys) {
-      result = Field_RequestShortcut(gMainRoutineWork.packedEvents[1]);
+      result = Field_RequestShortcut(gMainRoutineWork.secondShortcut);
     }
   }
   return result;
@@ -375,7 +375,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   if (created != NULL) {
     struct Child *child = created->sprite;
 
-    created->terrainHeight = object->terrainHeight;
+    created->groundHeight = object->groundHeight;
     Actor_StartScript(created, gActor_SplashScript);
     created->motionFlags = 0;
     if (child != NULL) {
@@ -568,7 +568,7 @@ push_objects:
     if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
-    if ((other->collisionFlags & 2) && other->movementState == 0) {
+    if ((other->collisionFlags & 2) && other->paused == 0) {
       direction = ArcTan2(other->z - object->z, other->x - object->x);
       SET_POSITION(&testPosition, other->x, other->y, other->z);
       heading = direction;
@@ -663,8 +663,8 @@ counted:
   if (map->groundEffects & 12) {
     struct MapCell *cells;
 
-    if (object->terrainId <= 2)
-      cells = ((struct MapWork *)map)->layers[object->terrainId].cells;
+    if (object->layer <= 2)
+      cells = ((struct MapWork *)map)->layers[object->layer].cells;
     else
       cells = gMapGridCellBuffer;
     cells += object->x / 0x100000 + (object->z / 0x100000) * 128;
@@ -701,7 +701,7 @@ counted:
     if (effect != NULL) {
       struct PlayerSprite *effectSprite;
 
-      effect->terrainHeight = object->terrainHeight;
+      effect->groundHeight = object->groundHeight;
       effectSprite = effect->sprite;
       Actor_StartScript(effect, gActor_FootprintScript);
       effect->priorityFlags = 2;
@@ -726,7 +726,7 @@ counted:
     }
   }
   Field_CheckConfiguredKeys();
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 #undef SAME_CELL

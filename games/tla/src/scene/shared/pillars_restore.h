@@ -31,7 +31,7 @@ next:
   object = Actor_Get(id);
   flag = list[1];
   nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
+  cells = map->layers[object->layer].cells;
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   object->retainSpriteCache = 3;
   if (Event_GetFlag(nextFlag)) {
@@ -44,12 +44,11 @@ next:
     index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
+    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
     Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot =
-        MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
+    *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
     if (Event_GetFlag(flag))
       Actor_CopyGraphics(id, 9);
   }

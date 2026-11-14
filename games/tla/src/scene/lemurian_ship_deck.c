@@ -647,10 +647,10 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_SetAnimation(9, 4);
   Event_ShowMessage(9, 0);
   Actor_SetSpeed(9, 0.8);
-  Actor_Get(9)->actionFlags &= ~1;
+  Actor_Get(9)->steeringFlags &= ~1;
   Actor_WalkToAndWait(9, 288, 144);
   FieldEvent_Wait(1);
-  Actor_Get(9)->actionFlags |= 1;
+  Actor_Get(9)->steeringFlags |= 1;
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 9, 0);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);

@@ -848,7 +848,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
     object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 102) << 16;
     object->motionFlags = 0;
-    object->terrainHeight = -px(32);
+    object->groundHeight = -px(32);
     object->y = -px(32);
     FieldActor_SetSpritePriority(i, 3);
     i++;
@@ -1151,7 +1151,7 @@ spiral:
   noMotion = 0;
   spark->motionFlags = noMotion;
   spark->riseBaseY = 0x7a0000;
-  spark->watchedObject = second;
+  spark->watchedActor = second;
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
   Actor_SetSpriteColor(spark, 2);
   Scene_SetActorSpritePriority(spark, 1);
@@ -1185,7 +1185,7 @@ column:
   riser->bounce = riser->x;
   riser->riseBaseY = 0;
   riser->gravity = riser->z;
-  riser->watchedObject = second;
+  riser->watchedActor = second;
   riser->motionFlags = (u16)0;
   riser->priorityFlags = 1;
   Actor_SetSpriteColor(riser, 2);
@@ -1403,7 +1403,7 @@ void AquaRockInside_SplashBeneath(struct Actor *object) {
 
       Actor_StartScript(child, gAquaRockInside_SplashScript);
       child->motionFlags = 0;
-      child->terrainId = 1;
+      child->layer = 1;
       if (sprite != 0) {
         Animation_ApplyChildArgument(sprite, 2);
         sprite->nextFrame = 0;
@@ -1511,7 +1511,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(9, 632, 152);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, 39, 9);
       object->y = 0;
-      object->terrainHeight = 0;
+      object->groundHeight = 0;
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_3) {
     if (entrance == 7)
@@ -1536,7 +1536,7 @@ s32 Scene_Initialize(void) {
     object = Actor_GetById(64);
     if (object != 0) {
       object->motionFlags = 0;
-      object->terrainHeight = -px(32);
+      object->groundHeight = -px(32);
       object->y = -px(32);
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_5) {
@@ -1623,12 +1623,12 @@ s32 Scene_PrepareMap(void) {
       actor = Actor_GetById(12);
       i1 = 0;
       actor->motionFlags = i1;
-      actor->terrainHeight = i1;
+      actor->groundHeight = i1;
       actor->y = i1;
       Actor_SelectAnimation((s32)actor, 0);
       actor = Actor_GetById(13);
       actor->motionFlags = i1;
-      actor->terrainHeight = i1;
+      actor->groundHeight = i1;
       actor->y = i1;
       i2 = GameFlag_Get(FLAG_SCENE_TEMP_30);
       if (i2 == 0) {
@@ -1673,7 +1673,7 @@ s32 Scene_PrepareMap(void) {
     }
     actor = Actor_GetById(8);
     actor->motionFlags = 0;
-    actor->terrainHeight = 0;
+    actor->groundHeight = 0;
     actor->y = 0;
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_3) {
     FieldEffect_StartBlankOverlay(0);
@@ -1734,7 +1734,7 @@ s32 Scene_PrepareMap(void) {
       do {
         actor = Actor_GetById(i9);
         actor->motionFlags = 0;
-        actor->terrainHeight = 0;
+        actor->groundHeight = 0;
         actor->y = 0;
         i9++;
       } while (i9 <= 14);
@@ -1834,7 +1834,7 @@ s32 Scene_PrepareMap(void) {
   clear_pillars:
     actor = Actor_GetById(i16);
     actor->motionFlags = 0;
-    actor->terrainHeight = 0;
+    actor->groundHeight = 0;
     actor->y = 0;
     i16++;
     if (i16 <= 20)
@@ -1869,7 +1869,7 @@ void AquaRockInside_SpawnSplash(struct Actor *object) {
   if (child != 0) {
     struct FieldSprite *sprite = child->sprite;
 
-    child->terrainHeight = object->terrainHeight;
+    child->groundHeight = object->groundHeight;
     Actor_StartScript(child, gAquaRockInside_StreamSplashScript);
     child->motionFlags = 0;
     if (sprite != 0) {
@@ -1896,7 +1896,7 @@ void AquaRockInside_FlowWithStream(void) {
     center = work->camera;
   }
   actor = Actor_Get(id);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && actor->terrainHeight == 0)
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && actor->groundHeight == 0)
     return;
   position[0] = actor->x;
   position[1] = actor->y;
@@ -1912,7 +1912,7 @@ void AquaRockInside_FlowWithStream(void) {
     FieldActor_WaitForMove(actor);
     do {
       System_Wait(1);
-    } while (actor->y != actor->terrainHeight);
+    } while (actor->y != actor->groundHeight);
     AquaRockInside_SpawnSplash(actor);
     Actor_SelectAnimation(actor, 49);
     System_Wait(3);

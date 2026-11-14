@@ -24,7 +24,7 @@ void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
 /// Halves the distance to the watched object along x, y and z.
 /// obj: object to move.
 void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
-  struct Actor *target = obj->watchedObject;
+  struct Actor *target = obj->watchedActor;
 
   obj->x += (target->x - obj->x) / 2;
   {
@@ -75,7 +75,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   wait(10);
   djinni->facing = back;
   Actor_ShowEmoteById(djinniId, 0x103, 50);
-  Actor_GetById(djinniId)->actionFlags &= ~1;
+  Actor_GetById(djinniId)->steeringFlags &= ~1;
   djinni->motionFlags = 2;
   djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
 #if TLA_PATCH_1
@@ -118,7 +118,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->scaleX = 0xf000;
       copy->motionFlags = 0;
       copy->priorityFlags = 2;
-      copy->actionFlags |= 1;
+      copy->steeringFlags |= 1;
       copy->update = (void (*)(void))Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       ((struct AnimationObject *)copy->sprite)->image.priority = 0;
@@ -126,7 +126,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       Actor_SelectAnimationFar(copy, 0);
       Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
-      copy->watchedObject = prev;
+      copy->watchedActor = prev;
       prev = copy;
     }
   }
@@ -237,7 +237,7 @@ void Djinn_RestoreActorAfterBattle(void) {
         if (obj == NULL)
           continue;
         if (flags == 0) {
-          obj->terrainHeight = flags;
+          obj->groundHeight = flags;
           obj->motionFlags = 3;
           Actor_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
         } else {

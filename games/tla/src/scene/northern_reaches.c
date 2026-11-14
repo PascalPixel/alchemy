@@ -256,7 +256,7 @@ ready:
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Actor_SetSpeed(8, 3);
   t40 = Actor_Get(8);
-  t40->actionFlags &= 254;
+  t40->steeringFlags &= 254;
   Actor_WalkBy(8, 0, 16);
   Event_PlaySound(SE_CLATTER);
   FieldEvent_Wait(4);

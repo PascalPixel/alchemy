@@ -96,7 +96,8 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       if (entry->flags & 1) {
         struct Actor *previous = ObjectTable_Get(index - 1);
 
-        if (previous->animationKind == 1 && object->animationKind == 1) {
+        if (previous->spriteStorageKind == 1 &&
+            object->spriteStorageKind == 1) {
           u8 resource;
 
           sprite = previous->sprite;
@@ -116,7 +117,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
     if (object != NULL) {
       sprite = object->sprite;
       Actor_SelectAnimationFar(object, 1);
-      if (object->animationKind == 1 && sprite != NULL) {
+      if (object->spriteStorageKind == 1 && sprite != NULL) {
         for (i = 0; i < sprite->partCount; i++) {
           struct SpawnSpritePart *part = sprite->parts[i];
 
@@ -139,9 +140,9 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         if (!GameFlag_Get(33))
           sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
       } else {
-        object->terrainHeight =
+        object->groundHeight =
             MapGrid_GetTerrainHeightFar(0, object->x, object->z);
-        object->y += object->terrainHeight;
+        object->y += object->groundHeight;
       }
       object->priorityFlags = 1;
     }
@@ -219,13 +220,13 @@ void Actor_ResetForLeader(s32 table) {
     if (y != 0) {
       object = work->actors[leader];
       object->y = y;
-      object->terrainHeight = y;
+      object->groundHeight = y;
     }
   }
   Event_SpawnObjectTable((struct ActorPlacement *)table, 8);
 
   object = work->actors[leader];
-  object->terrainId = gMainRoutineWork.layer;
+  object->layer = gMainRoutineWork.layer;
   object->timer = 0;
   object->userValue = 0;
   if (work->mode == 3) {
@@ -239,7 +240,7 @@ void Actor_ResetForLeader(s32 table) {
     gMainRoutineWork.movementMode = 0;
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
-    cell = Ram_HeapSlots->mapWork->layers[object->terrainId].cells +
+    cell = Ram_HeapSlots->mapWork->layers[object->layer].cells +
            ((object->x / 0x100000) + ((object->z / 0x100000) << 7));
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
@@ -248,7 +249,7 @@ void Actor_ResetForLeader(s32 table) {
       height = MapGrid_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
                0x200000;
       object->y += height;
-      object->terrainHeight = object->y;
+      object->groundHeight = object->y;
       object->motionFlags = 0;
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_SelectAnimationFar(object, 12);
@@ -259,7 +260,7 @@ void Actor_ResetForLeader(s32 table) {
     struct Actor *stand = work->actors[8];
 
     SET_POSITION(stand, object->x, object->y, object->z);
-    stand->terrainHeight = object->terrainHeight;
+    stand->groundHeight = object->groundHeight;
     stand->facing = object->facing;
     object->x = 0;
     object->z = 0;
@@ -267,7 +268,7 @@ void Actor_ResetForLeader(s32 table) {
   }
 
   camera = Actor_CreateFar(0x8000, object->x, object->y, object->z);
-  camera->terrainHeight = object->terrainHeight;
+  camera->groundHeight = object->groundHeight;
   Actor_StartCameraFar(camera, object);
   if (work->mode == 3) {
     u8 *effect = ResourceMetadata_RegisterFar(object->sprite, 266);
@@ -356,7 +357,7 @@ void ObjectTable_Snapshot(void) {
       continue;
     *indices++ = i;
     Dma_Set(object, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
-    if (object->animationKind == 1) {
+    if (object->spriteStorageKind == 1) {
       sprite = object->sprite;
       frame = sprite->frame;
       next = sprite->nextFrame;
@@ -411,7 +412,7 @@ void Actor_Restore(void) {
         view = Ram_HeapSlots->mapWork->origin;
         y = object->y;
         camera->x = object->x;
-        camera->terrainHeight = y;
+        camera->groundHeight = y;
         camera->y = y;
         camera->z = object->z;
         view[1] = y;

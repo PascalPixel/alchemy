@@ -651,7 +651,7 @@ void MadraCatacombs_SetUpBookshelfRoom(void) {
     object->collisionFlags = 8;
     object->motionFlags = 2;
     object->y = px(32);
-    object->terrainHeight = px(32);
+    object->groundHeight = px(32);
     object->update = MadraCatacombs_RockChestWithBookshelf;
     Actor_GetById(ACTOR_BOOKSHELF)->scaleY = Q16_ONE * 4 / 5;
   }

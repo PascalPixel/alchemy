@@ -352,8 +352,8 @@ s32 Scene_Initialize(void) {
 
   buffer = Heap_AllocEwram(0x200);
   Window_LoadGraphics();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
   Actor_SetPosition(ACTOR_FELIX, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
@@ -577,7 +577,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(8, 1);
     Actor_FaceDirection(8, FACING_NORTHWEST, 0);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    ACTOR(8)->actionFlags &= ~1;
+    ACTOR(8)->steeringFlags &= ~1;
     Actor_WalkTo(8, 256, 136);
     Actor_SetSpeed(8, 0.6);
     FieldEvent_Wait(20);
@@ -613,7 +613,7 @@ s32 Scene_Initialize(void) {
     if (j & 1) {
       Actor_WalkToAndWait(9, 216, 96);
     } else {
-      ACTOR(9)->actionFlags &= ~1;
+      ACTOR(9)->steeringFlags &= ~1;
       Actor_WalkTo(9, 208, 88);
     }
     i = 0;
@@ -658,7 +658,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(20);
     Actor_SetSpeed(8, 8);
     MtAlephSummit_ScatterDustRing(128, 8);
-    ACTOR(8)->actionFlags &= ~1;
+    ACTOR(8)->steeringFlags &= ~1;
     Actor_WalkTo(8, 280, 160);
     Actor_SetAnimation(8, 17);
     Event_PlaySound(SE_HEAVY_IMPACT);

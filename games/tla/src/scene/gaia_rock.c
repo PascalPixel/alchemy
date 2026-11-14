@@ -651,7 +651,7 @@ next:
 fall:
   if (id <= 179) {
     System_Wait(1);
-    if (leader->y > leader->terrainHeight)
+    if (leader->y > leader->groundHeight)
       goto next;
   }
   Event_PlaySound(SE_THUMP);

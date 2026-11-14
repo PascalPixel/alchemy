@@ -600,8 +600,7 @@ void AquaRock_RideStreamUp(void) {
     owner = gMainRoutineWork.leaderActorId;
     carried = work->camera;
     leader = Actor_GetById(owner);
-    if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 &&
-        leader->terrainHeight == 0)
+    if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->groundHeight == 0)
       return;
     ahead.x = leader->x;
     ahead.y = leader->y;
@@ -617,7 +616,7 @@ void AquaRock_RideStreamUp(void) {
       Actor_WaitForMove(leader);
       do
         wait(1);
-      while (leader->y != leader->terrainHeight);
+      while (leader->y != leader->groundHeight);
       AquaRock_SpawnSplash(leader);
       Actor_SelectAnimation(leader, 6);
       wait(3);
@@ -715,7 +714,7 @@ void AquaRock_DropDownFalls(void) {
   object->motionFlags = 3;
   for (i = 0; i < 180; i++) {
     wait(1);
-    if (object->y <= object->terrainHeight)
+    if (object->y <= object->groundHeight)
       break;
   }
   state = &gMainRoutineWork;
@@ -825,7 +824,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void AquaRock_KeepLeaderPriority(void) {
   struct Actor *object = Actor_GetById(Party_GetLeaderActor());
 
-  if (object != 0 && (object->animationKind & 15) == 1) {
+  if (object != 0 && (object->spriteStorageKind & 15) == 1) {
     struct FieldSprite *sprite;
     s32 priority;
 
@@ -1143,7 +1142,7 @@ void AquaRock_SpawnSplash(struct Actor *object) {
   if (child != 0) {
     struct FieldSprite *sprite = child->sprite;
 
-    child->terrainHeight = object->terrainHeight;
+    child->groundHeight = object->groundHeight;
     Actor_StartScript(child, gAquaRock_SplashScript);
     child->motionFlags = 0;
     if (sprite != 0) {
@@ -1170,7 +1169,7 @@ void AquaRock_FlowWithStream(void) {
     anchor = work->camera;
   }
   leader = Actor_GetById(owner);
-  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->terrainHeight == 0)
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->groundHeight == 0)
     return;
   position[0] = leader->x;
   position[1] = leader->y;
@@ -1186,7 +1185,7 @@ void AquaRock_FlowWithStream(void) {
     Actor_WaitForMove(leader);
     do {
       wait(1);
-    } while (leader->y != leader->terrainHeight);
+    } while (leader->y != leader->groundHeight);
     AquaRock_SpawnSplash(leader);
     Actor_SelectAnimation(leader, 49);
     wait(3);

@@ -197,7 +197,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   mask |= 4;
   ((u8 *)visual)[9] = mask;
   picture->motionFlags = 2;
-  picture->terrainHeight = position[1];
+  picture->groundHeight = position[1];
   picture->velocityY = px(2);
   picture->gravity = px(1) / 4;
   buffer = HeapSlot_Alloc(68, 0x608);

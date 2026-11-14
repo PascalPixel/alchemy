@@ -261,10 +261,10 @@ void AttekaInlet_HammaShowsTheWings(void) {
     // "Now, be confident and set sail!"
     Event_ShowMessageAndWait(23, 0);
     Actor_SetSpeed(23, 0.8);
-    Actor_GetById(23)->actionFlags &= ~1;
+    Actor_GetById(23)->steeringFlags &= ~1;
     Actor_WalkToAndWaitById(23, 504, 360);
     Event_Wait(1);
-    Actor_GetById(23)->actionFlags |= 1;
+    Actor_GetById(23)->steeringFlags |= 1;
     Actor_FaceDirectionAndRefreshById(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
     // "All of Contigo is watching... Show them your power, and make your..."
@@ -412,17 +412,17 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_ShowMessageAndWait(24, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_FaceDirectionAndRefreshById(24, angle);
-  Actor_GetById(24)->actionFlags &= ~1;
+  Actor_GetById(24)->steeringFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 384);
   Event_Wait(1);
-  Actor_GetById(24)->actionFlags |= 1;
+  Actor_GetById(24)->steeringFlags |= 1;
   Motion_SetVarCbAndRefresh(24, 2);
   Actor_SetHorizontalPositionWithTerrain(65, px(520), px(380));
   wait(1);
-  Actor_GetById(24)->actionFlags &= ~1;
+  Actor_GetById(24)->steeringFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 388);
   Event_Wait(1);
-  Actor_GetById(24)->actionFlags |= 1;
+  Actor_GetById(24)->steeringFlags |= 1;
   Event_Wait(10);
   Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 10);
   Motion_SetModeAndWaitAnimation(24, 3);

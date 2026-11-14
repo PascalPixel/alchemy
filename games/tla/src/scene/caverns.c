@@ -200,8 +200,8 @@ loop:
 done:
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     wait(1);
-    leader->y = leader->terrainHeight =
-        Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+    leader->y = leader->groundHeight =
+        Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
     leader->velocityY = 0;
     leader->targetY = 0x80000000;
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
@@ -372,7 +372,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
     Caverns_ShiftAngaraCellHeights(-1);
   }
   if (Map_GetTerrainHeight(0, object->x, object->z) != object->y) {
-    object->terrainId = 2;
+    object->layer = 2;
     object->motionFlags = 3;
     object->bounce = 0;
     wait(1);
@@ -421,7 +421,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
         goto loop;
     }
     object->motionFlags = 0;
-    object->terrainId = 0;
+    object->layer = 0;
     // The velocity array is reused for the position under the object.
     {
       velocity[0] = object->x;

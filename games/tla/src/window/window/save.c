@@ -377,8 +377,8 @@ s32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && owners[i] != 255; i++)
     summary->party[i] = owners[i];
   summary->party[i] = -1;
-  summary->paletteGlow = gMainRoutineWork.unusedAfterParty[5];
-  summary->paletteGlowSub = gMainRoutineWork.unusedAfterParty[6];
+  summary->windowHue = gMainRoutineWork.windowHue;
+  summary->windowBrightness = gMainRoutineWork.windowBrightness;
   summary->sendFlag = gMainRoutineWork.unk22d[2];
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
@@ -1047,8 +1047,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     if (summaryDirty != 0) {
       summaryDirty = 0;
       if (save->summary[selectedFile].level != 0) {
-        WindowColor_Apply(save->summary[selectedFile].paletteGlow,
-                          save->summary[selectedFile].paletteGlowSub);
+        WindowColor_Apply(save->summary[selectedFile].windowHue,
+                          save->summary[selectedFile].windowBrightness);
         if (summaryWindow == NULL)
           summaryWindow = Window_Create(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
         FileList_DrawSummary((s32)summaryWindow,
@@ -1077,8 +1077,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        WindowColor_Apply(gMainRoutineWork.unusedAfterParty[5],
-                          gMainRoutineWork.unusedAfterParty[6]);
+        WindowColor_Apply(gMainRoutineWork.windowHue,
+                          gMainRoutineWork.windowBrightness);
         DjinnFigures_SetShownFar(0);
         Menu_ClearFirstObjectRowAndScheduleUpdate();
         Window_Close(djinnWindow, 2);
@@ -1137,8 +1137,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_Close(fileList, 2);
   FileList_StopPulse();
   HeapSlot_Release(220);
-  WindowColor_Apply(gMainRoutineWork.unusedAfterParty[5],
-                    gMainRoutineWork.unusedAfterParty[6]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
   wait(1);
 done:
   return result;

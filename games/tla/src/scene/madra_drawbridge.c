@@ -89,13 +89,13 @@ void MadraDrawbridge_BlockBridge(void) {
       FieldCamera_MoveTo(164, CAMERA_KEEP, 260, 1);
       Actor_WalkTo(gMainRoutineWork.leaderActorId, 158, 316);
     }
-    Actor_GetById(ACTOR_EAST_GUARD)->actionFlags &= ~1;
-    Actor_GetById(ACTOR_WEST_GUARD)->actionFlags &= ~1;
+    Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~1;
+    Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~1;
     Actor_WalkTo(ACTOR_WEST_GUARD, 148, 252);
     Actor_WalkToAndWait(ACTOR_EAST_GUARD, 170, 252);
     Actor_WaitForMoveById(ACTOR_WEST_GUARD);
-    Actor_GetById(ACTOR_EAST_GUARD)->actionFlags |= 1;
-    Actor_GetById(ACTOR_WEST_GUARD)->actionFlags |= 1;
+    Actor_GetById(ACTOR_EAST_GUARD)->steeringFlags |= 1;
+    Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= 1;
     Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);

@@ -97,7 +97,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   Actor_SetSpritePriorityDirect(self, BattleEffect_GetObjectPriority(Actor_Get(
                                           gMainRoutineWork.leaderActorId)));
   mode = 0x3ff & event->psynergy;
-  state = &self->movementState;
+  state = &self->paused;
   if (mode == 141) {
     effect = Ram_HeapSlots->effectWork;
     if (effect[0x713] != 0)
@@ -108,7 +108,7 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
   other = Actor_Get(gMainRoutineWork.leaderActorId);
   if (Position_Distance(&self->x, &other->x) <= 11)
     goto far;
-  if (Actor_IsFacingNear(self, self->watchedObject, 18) != 0)
+  if (Actor_IsFacingNear(self, self->watchedActor, 18) != 0)
     goto near;
   if (Actor_IsFacingNear(self, Actor_Get(gMainRoutineWork.leaderActorId), 26) !=
       0)
@@ -638,12 +638,12 @@ s32 Scene_Initialize(void) {
   Actor_SetPosition(18, 40, 952);
   Actor_SetScript(18, (s32)&gLemuria_FirstWalkerPaces);
   actor = Actor_Get(18);
-  actor->watchedObject = Actor_Get(19);
+  actor->watchedActor = Actor_Get(19);
   actor->update = Lemuria_NoticeLeader;
   Actor_SetPosition(19, 88, 904);
   Actor_SetScript(19, (s32)&gLemuria_SecondWalkerPaces);
   actor = Actor_Get(19);
-  actor->watchedObject = Actor_Get(18);
+  actor->watchedActor = Actor_Get(18);
   actor->update = Lemuria_NoticeLeader;
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_SetPosition(30, 440, 1048);
@@ -694,7 +694,7 @@ s32 Scene_Initialize(void) {
   }
   actor = Actor_Get(31);
   actor->motionFlags = 0;
-  actor->terrainHeight = px(64);
+  actor->groundHeight = px(64);
   actor->y = px(64);
   return 0;
 }

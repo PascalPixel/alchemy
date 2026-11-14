@@ -140,9 +140,9 @@ void SettingsMenu_InitializeWork(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x628 / 4),
           REG_DMA3);
-  work->option[0] = gMainRoutineWork.paletteGlow[0];
+  work->option[0] = gMainRoutineWork.windowHue;
   work->optionCount[0] = 24;
-  work->option[1] = gMainRoutineWork.paletteGlow[1];
+  work->option[1] = gMainRoutineWork.windowBrightness;
   work->optionCount[1] = 15;
   work->option[2] = gMainRoutineWork.messageSpeed;
   work->optionCount[2] = 3;
@@ -566,15 +566,15 @@ s32 SettingsMenu_Run(void) {
       FieldMessage_Show((s32)MsgKey1161, 1);
   }
   if (result == 0) {
-    gMainRoutineWork.paletteGlow[0] = work->option[0];
-    gMainRoutineWork.paletteGlow[1] = work->option[1];
+    gMainRoutineWork.windowHue = work->option[0];
+    gMainRoutineWork.windowBrightness = work->option[1];
     gMainRoutineWork.messageSpeed = work->option[2];
     gMainRoutineWork.speech = work->option[3];
     gMainRoutineWork.unk244[6] = work->option[4];
     gIdleSleepEnabled = gMainRoutineWork.unk244[6];
   } else {
-    WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                      gMainRoutineWork.paletteGlow[1]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
   }
   SettingsMenu_Release();
   wait(1);

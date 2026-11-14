@@ -305,7 +305,7 @@ extern struct SceneState gSceneState;
 extern s8 gGabombaStatue_CogAnimations[];
 
 s32 GabombaStatue_CircleOwner(struct Actor *object) {
-  struct Actor *owner = object->watchedObject;
+  struct Actor *owner = object->watchedActor;
 
   if (owner != NULL) {
     u8 *phase = &OBJECT_BYTE(object, 98);
@@ -1281,7 +1281,7 @@ next:
   {
     struct Actor *object = Actor_Get(i);
 
-    if (object != NULL && object->animationKind == 1) {
+    if (object != NULL && object->spriteStorageKind == 1) {
       struct FieldPart *part = ((struct FieldAnimation *)object->sprite)->part;
 
       if (part != NULL) {
@@ -1295,7 +1295,7 @@ next:
           Actor_SetAnimationSpeed(object, value);
           break;
         case 407:
-          object->movementState = open;
+          object->paused = open;
           break;
         }
       }
@@ -1333,7 +1333,7 @@ void GabombaStatue_DrawCogCells(void) {
     object = Actor_GetById(i);
     if (object == 0)
       continue;
-    if (object->animationKind != 1)
+    if (object->spriteStorageKind != 1)
       continue;
     frames = *(s16 **)((u8 *)object->sprite + 40);
     if (frames == 0)
@@ -1640,10 +1640,10 @@ void GabombaStatue_FocusEnergies(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_SHEBA)->facing = FACING_SOUTH;
   Actor_Get(ACTOR_JENNA)->facing = FACING_SOUTH;
-  Actor_Get(ACTOR_PIERS)->actionFlags &= 0xfe;
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
-  Actor_Get(ACTOR_SHEBA)->actionFlags &= 0xfe;
-  Actor_Get(ACTOR_JENNA)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_PIERS)->steeringFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_SHEBA)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_JENNA)->steeringFlags &= 0xfe;
   Actor_WalkTo(ACTOR_PIERS, 400, 272);
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 420, 272);
   Actor_WalkTo(ACTOR_SHEBA, 444, 272);
@@ -3553,7 +3553,7 @@ void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
 
     object->collisionFlags &= 0xfe;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->layer);
     entry += 2;
   }
 }

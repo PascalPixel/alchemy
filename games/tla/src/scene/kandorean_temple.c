@@ -521,7 +521,7 @@ void KandoreanTemple_PuffSteam(struct Actor *object) {
     sprite = steam->sprite;
     Actor_StartScript(steam, gKandoreanTemple_PuffScript);
     steam->motionFlags = 0;
-    steam->terrainId = 1;
+    steam->layer = 1;
     steam->priorityFlags = 2;
     if (sprite) {
       Animation_ApplyChildArgument(sprite, 2);
@@ -1379,7 +1379,7 @@ void KandoreanTemple_DropOffLowCells(void) {
 
   if (cell->unk2 != 0) {
     leader->y = 0;
-    leader->terrainHeight = 0;
+    leader->groundHeight = 0;
   }
 }
 
@@ -1722,7 +1722,7 @@ void KandoreanTemple_ReceiveLash(void) {
   FieldActor_SetMoveTarget(object, 492, 8, 376);
   FieldActor_WaitForMoveById(ACTOR_POI);
   object->motionFlags = 3;
-  object->terrainHeight = 0;
+  object->groundHeight = 0;
   object->scaleX = Q16_ONE;
   sprite->rotation = 0;
   Actor_SetAnimation(ACTOR_POI, ANIM_STAND);
@@ -3048,7 +3048,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 1);
   sprite->rotation = 0;
   object->scaleX = Q16_ONE;
-  object->terrainHeight = px(32);
+  object->groundHeight = px(32);
   Actor_SetModeById(ACTOR_POI, ANIM_STAND);
   Actor_SetSpeed(ACTOR_POI, 1.6);
   Actor_Jump(ACTOR_POI, 4, 0);

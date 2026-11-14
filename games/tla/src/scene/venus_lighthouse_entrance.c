@@ -1455,7 +1455,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   s32 resource, tile, i;
   u8 zero = 0; // Holds 0 for its whole life.
 
-  actor->movementState = zero;
+  actor->paused = zero;
   work->object = actor;
   work->x = actor->x;
   work->y = actor->y;

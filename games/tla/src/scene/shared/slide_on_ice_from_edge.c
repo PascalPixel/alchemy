@@ -39,7 +39,7 @@ retry:
   p[2] = z = (object->z & 0xfff00000) + 0x80000;
   targetZ = z;
   targetX = x;
-  layer = &object->terrainId;
+  layer = &object->layer;
   startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
@@ -148,7 +148,7 @@ changed:
   System_Wait(10);
 end:
   object->update = NULL;
-  object->actionFlags |= 1;
+  object->steeringFlags |= 1;
   object->acceleration = px(1) / 4;
   Actor_SelectAnimation(object, 1);
 }

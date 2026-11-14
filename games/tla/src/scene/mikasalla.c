@@ -259,7 +259,7 @@ void Mikasalla_ClimbDownLadder(void) {
   }
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->actionFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);

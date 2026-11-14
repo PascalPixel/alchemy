@@ -422,13 +422,13 @@ void WorldMap_BoardShip(void) {
   leader->speedLimit = px(3);
   leader->acceleration = px(2);
   leader->velocityY = px(4);
-  leader->terrainHeight = px(4);
+  leader->groundHeight = px(4);
   Actor_StartIdle(leader);
   FieldActor_SetMoveTargetFixed(leader, ship->x, 0, ship->z);
   FieldActor_WaitForMove(leader);
   Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
-  leader->terrainHeight = 0;
+  leader->groundHeight = 0;
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
   Scene_ChooseMusic();
   Scene_PlayMusic();
@@ -1375,7 +1375,7 @@ void WorldMap_MeetEcho(void) {
     djinni->speedLimit = px(1);
     djinni->acceleration = px(1);
     djinni->velocityY = 0;
-    djinni->terrainHeight = 0;
+    djinni->groundHeight = 0;
     /* FAKEMATCH(barrier): an empty asm that reads and writes all of djinni. */
     asm("" : "+m"(*djinni));
     FieldActor_SetMoveTarget(djinni, 10120, 0, 8356);
@@ -1433,7 +1433,7 @@ void WorldMap_MeetEcho(void) {
     Event_ShowMessageAndWait(9, 0);
     djinni->motionFlags = 2;
     djinni->velocityY = 0;
-    djinni->terrainHeight = 0;
+    djinni->groundHeight = 0;
     i = 7;
     while (i >= 0) {
       *(u16 *)&djinni->facing += 0x1000;
@@ -2254,7 +2254,7 @@ void Func_02003d44(s32 mode) {
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
-  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2400,8 +2400,8 @@ void Func_020042e0(void) {
   System_Wait(1);
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                         gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                         gMainRoutineWork.windowBrightness);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
 }
@@ -2436,11 +2436,11 @@ void Func_02004634(struct Actor *parent) {
     child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
     pair[i] = child;
     if (child != NULL) {
-      child->terrainHeight = parent->terrainHeight;
+      child->groundHeight = parent->groundHeight;
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->watchedObject = parent;
+      child->watchedActor = parent;
       if (sprite != NULL) {
         Animation_ApplyChildArgument(sprite, 0);
         sprite->nextFrame = 0;

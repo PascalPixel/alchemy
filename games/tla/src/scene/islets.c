@@ -259,7 +259,7 @@ void Islets_PushLogIntoWater(void) {
     object->motionFlags = 0;
     object->velocityY = 0;
     object->y = px(-8);
-    object->terrainHeight = px(-8);
+    object->groundHeight = px(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 8, 4, 1, 9, 9);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
@@ -533,8 +533,9 @@ void Islets_TradeWithBird(void) {
 // 10 says MsgYupANice after the trade or MsgIVeBeenFeeling before it.
 
 #define STEP(actor, x, z)                                                      \
-  (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
-   Event_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
+  (Actor_GetById(actor)->steeringFlags &= ~1,                                  \
+   Actor_WalkToAndWait(actor, x, z), Event_Wait(1),                            \
+   Actor_GetById(actor)->steeringFlags |= 1)
 
 /// Object 10 walks round and hands item 454 back over the leader's head.
 #define HAND_BACK(leader, given, off)                                          \
@@ -734,8 +735,9 @@ extern s32 gIslets_BirdFliesOffScript[];
 extern s32 gIslets_BirdFliesBackScript[];
 
 #define STEP(actor, x, z)                                                      \
-  (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
-   FieldEvent_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
+  (Actor_GetById(actor)->steeringFlags &= ~1,                                  \
+   Actor_WalkToAndWait(actor, x, z), FieldEvent_Wait(1),                       \
+   Actor_GetById(actor)->steeringFlags |= 1)
 
 // "Sniff! Sniff! I smell fresh milk!" The dog trades the Li'l Turtle for Milk.
 void Islets_TradeWithDog(void) {
@@ -1285,14 +1287,14 @@ void Islets_PengusGivesPrettyStone(void) {
   Actor_FaceDirection(9, FACING_WEST, 10);
   // "Thank you so much for saving my sweet Pengulina. Allow me to give..."
   Event_ShowMessage(9, 0);
-  Actor_GetById(9)->actionFlags &= ~1;
+  Actor_GetById(9)->steeringFlags &= ~1;
   Actor_WalkToAndWait(9, 222, 186);
   FieldEvent_Wait(1);
-  Actor_GetById(9)->actionFlags |= 1;
-  Actor_GetById(9)->actionFlags &= ~1;
+  Actor_GetById(9)->steeringFlags |= 1;
+  Actor_GetById(9)->steeringFlags &= ~1;
   Actor_WalkToAndWait(9, 232, 186);
   FieldEvent_Wait(1);
-  Actor_GetById(9)->actionFlags |= 1;
+  Actor_GetById(9)->steeringFlags |= 1;
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1330,7 +1332,7 @@ void Islets_BirdReturnsToNest(void) {
   Actor_SetSpeed(10, 1.6);
   FieldActor_SetPositionAndResetMotion(object, px(268), px(64), px(390));
   System_Wait(1);
-  object->terrainHeight = px(128);
+  object->groundHeight = px(128);
   System_Wait(1);
   object->y = px(160);
   System_Wait(1);
@@ -1365,7 +1367,7 @@ void Leader_SetLayer(void) {
   struct Actor *object0;
 
   object0 = Actor_Get(gMainRoutineWork.leaderActorId);
-  object0->terrainId = 2;
+  object0->layer = 2;
   return;
 }
 
@@ -1373,7 +1375,7 @@ void Islets_StepOntoGround(void) {
   struct Actor *object0;
 
   object0 = Actor_Get(gMainRoutineWork.leaderActorId);
-  object0->terrainId = 0;
+  object0->layer = 0;
   return;
 }
 
@@ -1871,15 +1873,15 @@ void Islets_DriftIcebergs(void) {
 
   if (work->psynergy != 0 || GameFlag_Get(FLAG_SCENE_TEMP_18)) {
     for (i = 11; i <= 18; i++)
-      Actor_GetById(i)->movementState = 1;
+      Actor_GetById(i)->paused = 1;
     return;
   }
   for (i = 11; i <= 18; i++)
-    Actor_GetById(i)->movementState = 0;
+    Actor_GetById(i)->paused = 0;
   if (Actor_GetById(gMainRoutineWork.leaderActorId)->y < -px(12)) {
     work = Ram_HeapSlots->fieldWork;
     for (i = 11; i <= 18; i++)
-      Actor_GetById(i)->movementState = 1;
+      Actor_GetById(i)->paused = 1;
     {
       s16 *countdown = &work->raisedTrigger;
       s32 ticks = 200;
@@ -1954,7 +1956,7 @@ void Islets_InitializeRoom2(void) {
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->y = px(-8);
-    object->terrainHeight = px(-8);
+    object->groundHeight = px(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
   } else {
@@ -1963,7 +1965,7 @@ void Islets_InitializeRoom2(void) {
   if (!Event_GetFlag(0xaa2)) {
     FieldActor_WatchAndSetScript(9, 19);
     Actor_SetAnimation(19, 0);
-    Actor_Get(19)->actionFlags &= ~1;
+    Actor_Get(19)->steeringFlags &= ~1;
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     other = Actor_Get(9);
     other->facing = FACING_SOUTH_SOUTHWEST;
@@ -2456,7 +2458,7 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
       dz = offset << 16;
       push->callback = 0;
       steps = 0;
-      layer = &object->terrainId;
+      layer = &object->layer;
       *layer = 2;
       push->x = object->x + dx;
       push->z = object->z + dz;

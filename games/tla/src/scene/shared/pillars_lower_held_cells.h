@@ -18,7 +18,7 @@ void Pillars_LowerHeldCells(u16 *list) {
   if (*list != 0xffff) {
   loop:
     if (held == Actor_GetById(*list)) {
-      u8 *layer = &held->terrainId;
+      u8 *layer = &held->layer;
       u8 *cell = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
       u8 *shape =
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);

@@ -27,7 +27,7 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     dz = gPushLeaderSteps[direction] << 16;
     target->callback = 0;
     count = 0;
-    layer = &object->terrainId;
+    layer = &object->layer;
     *layer = 2;
     target->x = object->x + dx;
     target->z = object->z + dz;

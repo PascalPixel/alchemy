@@ -62,13 +62,13 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
 }
 
 void Event_SetAfterBattleDestination(s32 first, s32 second) {
-  gMainRoutineWork.pair1ee[0] = first;
-  gMainRoutineWork.pair1ee[1] = second;
+  gMainRoutineWork.afterBattleScene = first;
+  gMainRoutineWork.afterBattleEntrance = second;
 }
 
 void Party_SetFields1f2And1f4(s32 first, s32 second) {
-  gMainRoutineWork.pair1f2[0] = first;
-  gMainRoutineWork.pair1f2[1] = second;
+  gMainRoutineWork.defeatScene = first;
+  gMainRoutineWork.defeatEntrance = second;
 }
 
 void Event_LeaveFor(s16 scene, s16 entrance) {

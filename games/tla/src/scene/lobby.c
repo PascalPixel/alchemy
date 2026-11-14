@@ -1275,8 +1275,8 @@ s32 LinkLobby_Initialize(void) {
   void *func;
 
   Event_SetFlag(FLAG_IN_BATTLE_ARENA);
-  gMainRoutineWork.packedEvents[0] = 0;
-  gMainRoutineWork.packedEvents[1] = 0;
+  gMainRoutineWork.firstShortcut = 0;
+  gMainRoutineWork.secondShortcut = 0;
   gLinkLobby_CallFrames = 0;
   gLinkLobby_WaitFrames = 0;
   gFieldWork->transition = 0x201;

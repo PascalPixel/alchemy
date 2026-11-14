@@ -600,8 +600,8 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.firstShortcutKeys = 0x200;
   gMainRoutineWork.secondShortcutKeys = 0x100;
   gMainRoutineWork.dashKeys = 2;
-  gMainRoutineWork.packedEvents[0] = 0;
-  gMainRoutineWork.packedEvents[1] = 0;
+  gMainRoutineWork.firstShortcut = 0;
+  gMainRoutineWork.secondShortcut = 0;
   gMainRoutineWork.leaderActorId = 4;
   Party_AddMember(4);
   Party_AddMember(5);
@@ -621,8 +621,8 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.messageSpeed = 1;
   gMainRoutineWork.speech = 1;
   gMainRoutineWork.unusedAfterSpeech = 1;
-  gMainRoutineWork.paletteGlow[0] = 0;
-  gMainRoutineWork.paletteGlow[1] = 8;
+  gMainRoutineWork.windowHue = 0;
+  gMainRoutineWork.windowBrightness = 8;
   gMainRoutineWork.buildStamp = 0;
   // Its result taken as a whole word, where the definition returns u16.
   gMainRoutineWork.startStamp = ((u32 (*)(void))BuildStamp_GetTime)();
@@ -876,12 +876,12 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   state = &gMainRoutineWork;
   *(s32 *)&state->unk284[8] = party->coins;
   if (byPassword == 0) {
-    state->paletteGlow[0] = party->paletteGlow[0];
-    state->paletteGlow[1] = party->paletteGlow[1];
+    state->windowHue = party->windowHue;
+    state->windowBrightness = party->windowBrightness;
     state->messageSpeed = party->messageSpeed;
     state->speech = party->speech;
     state->unk244[6] = party->unk244[6];
-    WindowColor_ApplyFar(state->paletteGlow[0], state->paletteGlow[1]);
+    WindowColor_ApplyFar(state->windowHue, state->windowBrightness);
   }
 
   j = 4; // A local reused for a second value: the unit loop's bound.
@@ -919,13 +919,13 @@ void ClearData_Apply(u8 *save) {
   s32 i;
   s32 count;
 
-  gMainRoutineWork.paletteGlow[0] = party->paletteGlow[0];
-  gMainRoutineWork.paletteGlow[1] = party->paletteGlow[1];
+  gMainRoutineWork.windowHue = party->windowHue;
+  gMainRoutineWork.windowBrightness = party->windowBrightness;
   gMainRoutineWork.messageSpeed = party->messageSpeed;
   gMainRoutineWork.speech = party->speech;
   gMainRoutineWork.unk244[6] = party->unk244[6];
-  WindowColor_ApplyFar(gMainRoutineWork.paletteGlow[0],
-                       gMainRoutineWork.paletteGlow[1]);
+  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
+                       gMainRoutineWork.windowBrightness);
   count = 8;
   for (i = 0; i < count; i++) {
     struct BattleUnit *unit = Unit_Get(i);

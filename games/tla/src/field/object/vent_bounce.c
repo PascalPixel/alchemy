@@ -41,7 +41,7 @@ void VENT_BOUNCE(struct Actor *object) {
     object->scaleY += acceleration;
   }
   sprite->rotation += object->timer;
-  if (other->y == other->terrainHeight && VENT_TOUCHING(object, other)) {
+  if (other->y == other->groundHeight && VENT_TOUCHING(object, other)) {
     object->z -= object->riseBaseY;
     object->gravity += object->riseBaseY >> 2;
     object->riseBaseY = 0;
@@ -52,7 +52,7 @@ void VENT_BOUNCE(struct Actor *object) {
     if (id == 0)
       break;
     other = Actor_GetById(id);
-    if (other->y == other->terrainHeight && VENT_TOUCHING(object, other)) {
+    if (other->y == other->groundHeight && VENT_TOUCHING(object, other)) {
       object->z -= object->riseBaseY;
       object->gravity += object->riseBaseY >> 2;
       object->riseBaseY = 0;

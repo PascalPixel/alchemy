@@ -170,7 +170,7 @@ void AnemosInnerSanctumEntrance_PlaceStatues(void) {
 }
 
 void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *object) {
-  if ((object->terrainHeight = Map_GetTerrainHeight(0, object->x, object->z)) >=
+  if ((object->groundHeight = Map_GetTerrainHeight(0, object->x, object->z)) >=
       -0x200000)
     Actor_SetSpriteFlags(object, 1);
   else
@@ -231,7 +231,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   Event_ResolvePendingActions(0);
   if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
     return;
-  if (MapGrid_GetCellBehaviorAt(object->terrainId, object->x, object->z) != 77)
+  if (MapGrid_GetCellBehaviorAt(object->layer, object->x, object->z) != 77)
     return;
   Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1

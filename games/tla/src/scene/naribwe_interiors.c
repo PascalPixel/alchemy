@@ -207,7 +207,7 @@ void NaribweInteriors_ReadShiningItem(void);
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).
 #define DANCE_TO(x)                                                            \
-  (Actor_Get(10)->actionFlags &= ~1, Actor_WalkTo(10, x, 96),                  \
+  (Actor_Get(10)->steeringFlags &= ~1, Actor_WalkTo(10, x, 96),                \
    Actor_SetAnimation(10, 5))
 
 /// The reading: the party sets one of a member's items on the table and the
@@ -823,7 +823,7 @@ s32 Scene_Initialize(void) {
   object = Actor_Get(18);
   object->motionFlags = 0;
   object->y = -px(4);
-  object->terrainHeight = -px(4);
+  object->groundHeight = -px(4);
   Actor_Get(18)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(18, 1);
   Actor_SetPosition(18, 0, 0);
@@ -831,7 +831,7 @@ s32 Scene_Initialize(void) {
   object = Actor_Get(19);
   object->motionFlags = 0;
   object->y = px(12);
-  object->terrainHeight = px(12);
+  object->groundHeight = px(12);
   Actor_Get(19)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(19, 1);
   Actor_SetPosition(19, 0, 0);
@@ -839,7 +839,7 @@ s32 Scene_Initialize(void) {
   object = Actor_Get(20);
   object->motionFlags = 0;
   object->y = px(12);
-  object->terrainHeight = px(12);
+  object->groundHeight = px(12);
   Actor_Get(20)->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(20, 1);
   Actor_SetPosition(20, 0, 0);

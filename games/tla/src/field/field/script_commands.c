@@ -447,9 +447,9 @@ s32 ActorScript_SetPositionAndResetMotion(struct ActorScriptView *object) {
 
   Actor_SetPositionAndResetMotion(object, x, y, z);
   if (y == -1 && (object->flags & 1)) {
-    height = MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
-    object->y = object->y - object->terrainHeight + height;
-    object->terrainHeight = height;
+    height = MapGrid_GetTerrainHeight(object->layer, object->x, object->z);
+    object->y = object->y - object->groundHeight + height;
+    object->groundHeight = height;
   }
   object->scriptCursor += 4;
   return 1;
@@ -462,9 +462,9 @@ s32 ActorScript_ResetToOrigin(struct ActorScriptView *object) {
 
   Actor_SetPositionAndResetMotion(object, 0, object->y, 0);
   if (object->flags & 1) {
-    height = MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
-    object->y = object->y - object->terrainHeight + height;
-    object->terrainHeight = height;
+    height = MapGrid_GetTerrainHeight(object->layer, object->x, object->z);
+    object->y = object->y - object->groundHeight + height;
+    object->groundHeight = height;
   }
   object->scriptCursor += 1;
   return 1;
@@ -507,7 +507,7 @@ s32 ActorScript_ApplyRelativePosition(struct ActorScriptView *object) {
 s32 ActorScript_StoreAngleToWatchedActor(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
-  target = object->watchedObject;
+  target = object->watchedActor;
   object->scriptValue = ArcTan2((s32)((u32)target->z - (u32)object->z),
                                 (s32)((u32)target->x - (u32)object->x));
   object->scriptCursor++;
@@ -517,7 +517,7 @@ s32 ActorScript_StoreAngleToWatchedActor(struct ActorScriptView *object) {
 s32 ActorScript_ApplyWatchedActorPosition(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
-  target = object->watchedObject;
+  target = object->watchedActor;
   Actor_SetMoveTarget(object, target->x, target->y, target->z);
   object->scriptCursor++;
   return 1;
@@ -528,7 +528,7 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *object) {
 
   Actor_SetMoveTarget(object, object->x + offset[0], object->y + offset[1],
                       object->z + offset[2]);
-  object->step += 3;
+  object->scriptCursor += 3;
   return 1;
 }
 
@@ -553,7 +553,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   s16 *region;
 
   bounds = Ram_HeapSlots->mapWork;
-  leader = cameraObject->watchedObject;
+  leader = cameraObject->watchedActor;
   minX = bounds->minX + 0x780000;
   minZ = bounds->minZ + leader->y + 0x600000;
   maxX = bounds->maxX - 0x780000;
@@ -631,7 +631,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       cameraObject->y += dy;
     }
   }
-  cameraObject->step++;
+  cameraObject->scriptCursor++;
   return 1;
 }
 
@@ -652,7 +652,7 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
   s32 moveStep;
 
   bounds = Ram_HeapSlots->mapWork;
-  leader = cameraObject->watchedObject;
+  leader = cameraObject->watchedActor;
   minX = bounds->minX + 0x780000;
   minZ = bounds->minZ + 0x600000;
   maxX = bounds->maxX - 0x780000;
@@ -704,7 +704,7 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
       cameraObject->y += dy;
     }
   }
-  cameraObject->step++;
+  cameraObject->scriptCursor++;
   return 1;
 }
 
@@ -722,7 +722,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
   s32 moveX;
   struct Actor *watchedObject;
 
-  watchedObject = object->watchedObject;
+  watchedObject = object->watchedActor;
   object->speedLimit = watchedObject->speedLimit;
   object->acceleration = watchedObject->acceleration;
   dx = watchedObject->x - object->x;
@@ -738,7 +738,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
     Actor_SetMoveTarget(object, object->x + moveX, object->y,
                         object->z + moveZ);
     Actor_SelectAnimation(object, 2);
-    object->step = (object->step + 1);
+    object->scriptCursor = (object->scriptCursor + 1);
     return 1;
   }
   Actor_SelectAnimation(object, 1);
@@ -1790,9 +1790,9 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
   if (pressed) {
     Sound_PlayFar(SE_MENU_CANCEL);
   } else {
-    object->terrainHeight =
-        MapGrid_GetTerrainHeight(object->terrainId, object->x, object->z);
-    object->step++;
+    object->groundHeight =
+        MapGrid_GetTerrainHeight(object->layer, object->x, object->z);
+    object->scriptCursor++;
   }
   return 1;
 }

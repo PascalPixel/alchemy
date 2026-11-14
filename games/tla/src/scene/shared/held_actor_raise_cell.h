@@ -11,7 +11,7 @@ void HeldActor_RaiseCell(void) {
 
   if (held == NULL)
     return;
-  layer = &held->terrainId;
+  layer = &held->layer;
   cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
   shapes = Ram_MapShapeGrid +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);

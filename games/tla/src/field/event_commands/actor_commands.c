@@ -45,7 +45,7 @@ void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
 void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   struct Actor *object = ObjectTable_Get(objectId);
 
-  if (object != NULL && (object->animationKind & 0xF) == 1) {
+  if (object != NULL && (object->spriteStorageKind & 0xF) == 1) {
     struct FieldSprite *sprite = object->sprite;
 
     sprite->priority = priority;
@@ -110,11 +110,9 @@ void Actor_FallOverById(u32 id, u32 angle) {
     angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
     position[0] = object->x;
     position[2] = object->z;
-    MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
-                                 255);
+    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
     Vector_AddPolarOffset(px(16), angle, position);
-    MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
-                                 255);
+    MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
     switch (angle) {
     case 0:
       sprite->offsetX -= 3;
@@ -152,11 +150,9 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   position[0] = object->x;
   angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   position[2] = object->z;
-  MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
-                               255);
+  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
   Vector_AddPolarOffset(px(16), angle, position);
-  MapGrid_SetCellBehaviorAtFar(object->terrainId, position[0], position[2],
-                               255);
+  MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
   switch (angle) {
   case 0:
     object->x += px(8);
@@ -196,7 +192,7 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
   u8 kind;
 
   if (object != NULL) {
-    kind = object->animationKind;
+    kind = object->spriteStorageKind;
     if (kind == 1) {
       sprite = object->sprite;
       if (resource & 0x8000)
@@ -231,7 +227,7 @@ s32 Actor_GetSpriteById(s32 key) {
   s32 result = -1;
   struct Actor *object = event->actors[key & 0x0fff];
 
-  if (object != NULL && object->animationKind == 1)
+  if (object != NULL && object->spriteStorageKind == 1)
     result = *((struct ObjectAnimationState *)object->sprite)->value28;
   return result;
 }
@@ -244,7 +240,7 @@ s32 Actor_FindBySprite(s32 value) {
 
   for (index = 8; index <= 79; index++) {
     object = event->actors[index];
-    if (object != NULL && object->animationKind == 1 &&
+    if (object != NULL && object->spriteStorageKind == 1 &&
         *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
       result = index;
       break;

@@ -109,10 +109,10 @@ void FieldPsynergy_Parch(void) {
     result = 0;
     // DEAD: pending is already NULL; the ROM stores it again.
     pending = NULL;
-  } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->terrainId) != 0) {
+  } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(
         0x50000005, scene->fieldKind,
-        MapGrid_GetCellBehavior(pos[0], pos[2], caster->terrainId));
+        MapGrid_GetCellBehavior(pos[0], pos[2], caster->layer));
     result = 2;
     if (pending == NULL)
       result = 1;
@@ -347,7 +347,7 @@ loaded:
 
   if (found != -1) {
     struct Actor *marked = Actor_GetById(found);
-    MapGrid_SetCellBehavior(marked->x, marked->z, marked->terrainId, 0);
+    MapGrid_SetCellBehavior(marked->x, marked->z, marked->layer, 0);
     Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)

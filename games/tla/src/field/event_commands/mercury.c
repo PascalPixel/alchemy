@@ -15,7 +15,7 @@
 #include "macros.h"
 
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
-  struct Actor *target = object->watchedObject;
+  struct Actor *target = object->watchedActor;
 
   object->x += (target->x - object->x) / 2;
   object->y += (target->y - object->y) / 2;

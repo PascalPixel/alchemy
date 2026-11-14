@@ -223,11 +223,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void AnkohlRuins_SinkIntoSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
 void AnkohlRuins_RiseFromSand(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->terrainId = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
 // Copies the cells under the object with the given id in the rooms that have
@@ -597,7 +597,7 @@ void AnkohlRuins_PushedOffLedge(void) {
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   object->motionFlags = 0;
-  object->actionFlags = 0;
+  object->steeringFlags = 0;
   {
     s32 zero;
 
@@ -611,7 +611,7 @@ void AnkohlRuins_PushedOffLedge(void) {
   FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Event_PlaySound(SE_DUST_PUFF);
   AnkohlRuins_SettleObject(gMainRoutineWork.leaderActorId, 188);
-  object->actionFlags = 1;
+  object->steeringFlags = 1;
   Event_End();
 }
 
@@ -839,7 +839,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
     cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
     if (cells->collisionCode == 232) {
       leader->y += gAnkohlRuins_SandStep;
-      leader->terrainHeight = leader->y;
+      leader->groundHeight = leader->y;
     }
     FieldEvent_Wait(1);
     if (m == 2 && i == 0) {
@@ -921,7 +921,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
     cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
     if (cells->collisionCode == 232) {
       leader->y += gAnkohlRuins_SandStep;
-      leader->terrainHeight = leader->y;
+      leader->groundHeight = leader->y;
     }
     FieldEvent_Wait(1);
     if (level == 2 && i == 0) {
@@ -1493,7 +1493,7 @@ s32 Scene_Initialize(s32 a0) {
         MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
       }
       object = Actor_GetById(work->leaderActorId);
-      object->terrainHeight = level;
+      object->groundHeight = level;
       object->y = level;
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
@@ -1502,7 +1502,7 @@ s32 Scene_Initialize(s32 a0) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
-      object->terrainHeight = px(72);
+      object->groundHeight = px(72);
       object->y = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }
@@ -1759,7 +1759,7 @@ s32 Scene_Initialize(s32 a0) {
         MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, z);
       }
       object = Actor_GetById(work->leaderActorId);
-      object->terrainHeight = level;
+      object->groundHeight = level;
       object->y = level;
       FieldEvent_Wait(1);
       Map_CenterOnFollowedPoint();
@@ -1768,7 +1768,7 @@ s32 Scene_Initialize(s32 a0) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
-      object->terrainHeight = px(72);
+      object->groundHeight = px(72);
       object->y = px(72);
       object->update = (void (*)(void))AnkohlRuins_RaiseDust;
     }

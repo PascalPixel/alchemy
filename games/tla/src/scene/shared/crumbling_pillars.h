@@ -20,7 +20,7 @@ void CrumblingPillars_Place(u16 *list) {
     struct Actor *object = Actor_Get(id);
     s32 flag = list[1];
     s32 next = flag + 1;
-    struct MapCell *cells = map->layers[object->terrainId].cells;
+    struct MapCell *cells = map->layers[object->layer].cells;
     u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     if (Event_GetFlag(next)) {
@@ -33,22 +33,22 @@ void CrumblingPillars_Place(u16 *list) {
 
       cell = cells + index;
       slot = shapes + index;
-      shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
-      ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+      shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
+      ground = Map_GetTerrainHeight(object->layer, object->x, object->z);
 
       Actor_DisableById(id);
       cell->attributeB = 128;
-      *slot = MapCollision_FindOrAddTag(object->terrainId, shape,
-                                        (ground >> 19) + 4);
+      *slot =
+          MapCollision_FindOrAddTag(object->layer, shape, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(object, 0);
     }
     list += 2;
   }
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+  height = Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
   if (leader->y < height) {
-    leader->terrainHeight = height;
+    leader->groundHeight = height;
     leader->y = height;
   }
 }
@@ -99,10 +99,10 @@ void CrumblingPillars_Step(u16 *list) {
         Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(pillar, 2);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
+        Leader_SetCellShapeAt(-2, pillar->layer);
         Rubble_Spray(1);
         wait(16);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
+        Leader_SetCellShapeAt(-2, pillar->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -140,7 +140,7 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
         Rubble_Spray(0);
         System_Wait(8);
         Actor_SelectAnimation(object, 2);
-        Actor_SetCellShape(-4, object->terrainId, id);
+        Actor_SetCellShape(-4, object->layer, id);
         Rubble_Spray(1);
         System_Wait(16);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -189,7 +189,7 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
     struct Actor *actor = Actor_Get(id);
     s32 flag = list[1];
     s32 next = flag + 1;
-    struct MapCell *cells = map->layers[actor->terrainId].cells;
+    struct MapCell *cells = map->layers[actor->layer].cells;
     u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     actor->retainSpriteCache = 3;
@@ -201,13 +201,13 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
       u8 *shape = shapes + index;
       s32 kind, ground;
 
-      kind = MapGrid_GetTerrainKind(actor->terrainId, actor->x, actor->z);
-      ground = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z);
+      kind = MapGrid_GetTerrainKind(actor->layer, actor->x, actor->z);
+      ground = Map_GetTerrainHeight(actor->layer, actor->x, actor->z);
 
       Actor_DisableById(id);
       cell->attributeB = 128;
       *shape =
-          MapCollision_FindOrAddTag(actor->terrainId, kind, (ground >> 19) + 4);
+          MapCollision_FindOrAddTag(actor->layer, kind, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
         Actor_CopyGraphics(id, 9);
     }
@@ -279,10 +279,10 @@ void CrumblingPillars_StepWithStandIn(u16 *list) {
         Rubble_Spray(0);
         wait(8);
         Actor_SelectAnimation(helper, 2);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
+        Leader_SetCellShapeAt(-2, pillar->layer);
         Rubble_Spray(1);
         wait(16);
-        Leader_SetCellShapeAt(-2, pillar->terrainId);
+        Leader_SetCellShapeAt(-2, pillar->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);

@@ -165,7 +165,7 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
     System_Wait(10);
     Event_PlaySound(SE_HEAVY_IMPACT);
     for (i = 0; i < 30; i++) {
-      if (object->y <= object->terrainHeight && object->velocityY == 0)
+      if (object->y <= object->groundHeight && object->velocityY == 0)
         break;
       System_Wait(1);
     }
@@ -200,7 +200,7 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
     object = Actor_Get(14);
     object->motionFlags = 0;
-    object->terrainHeight = px(-32);
+    object->groundHeight = px(-32);
     object->y = px(-32);
     Actor_SetPositionFixed(14, px(328), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
@@ -208,7 +208,7 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
     object = Actor_Get(15);
     object->motionFlags = 0;
-    object->terrainHeight = px(-32);
+    object->groundHeight = px(-32);
     object->y = px(-32);
     Actor_SetPositionFixed(15, px(520), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);

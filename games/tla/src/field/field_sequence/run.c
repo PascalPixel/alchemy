@@ -69,10 +69,10 @@ s32 FieldSequence_Run(void) {
   GameFlag_Clear(FLAG_IN_BATTLE);
   gMainRoutineWork.returnScene = gMainRoutineWork.next;
   gMainRoutineWork.returnEntrance = gMainRoutineWork.entrance;
-  gMainRoutineWork.pair1ee[0] = -1;
-  gMainRoutineWork.pair1ee[1] = -1;
-  gMainRoutineWork.pair1f2[0] = -1;
-  gMainRoutineWork.pair1f2[1] = -1;
+  gMainRoutineWork.afterBattleScene = -1;
+  gMainRoutineWork.afterBattleEntrance = -1;
+  gMainRoutineWork.defeatScene = -1;
+  gMainRoutineWork.defeatEntrance = -1;
   gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
   Djinn_ResolvePending(0);
@@ -237,7 +237,7 @@ s32 FieldSequence_Run(void) {
     Actor_StartIdleFar(leader);
     SET_POSITION(party, leader->x, 0, leader->z);
     party->heading = leader->facing;
-    *turn = leader->terrainId;
+    *turn = leader->layer;
     while (Field_CountRequests() != 0) {
       if (work->exit != 0) {
         result = work->exit;
@@ -473,8 +473,7 @@ s32 FieldSequence_Run(void) {
       if (gDebugMode == 0 || !GameFlag_Get(FLAG_DEBUG_STEPS_OFF)) {
         if (*pending == 0 ||
             (leader->timer == 0 && *(s16 *)&leader->userValue == 0))
-          Field_UpdateWalking(leader->terrainId, leader->x, leader->y,
-                              leader->z);
+          Field_UpdateWalking(leader->layer, leader->x, leader->y, leader->z);
       }
     } while (Field_CountRequests() == 0);
   }

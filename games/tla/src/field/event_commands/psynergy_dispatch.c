@@ -222,7 +222,7 @@ void FieldPsynergy_Dispatch(void) {
       FieldPsynergy_EndReveal();
     party = &gMainRoutineWork;
     if (party->haltedActor != scene->secondObjectId)
-      ((struct Actor *)scene->child)->movementState = 1;
+      ((struct Actor *)scene->child)->paused = 1;
     FieldPsynergy_StartMindReadWave(scene->firstObjectId, targetId);
   } else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the target.
@@ -247,7 +247,7 @@ void FieldPsynergy_FinishMindRead(void) {
     FieldPsynergy_StopMindReadWave();
     party = (struct PartyPauseView *)&gMainRoutineWork;
     if (party->pausedObject != scene->secondObjectId)
-      ((struct Actor *)scene->child)->movementState = 0;
+      ((struct Actor *)scene->child)->paused = 0;
   }
 }
 
@@ -288,7 +288,7 @@ void Actor_ApplyRandomChildValues(struct Actor *owner) {
   u32 frame;
   s32 value;
 
-  state = owner->animationKind;
+  state = owner->spriteStorageKind;
   if (state == 1) {
     target = owner->sprite;
     if (target != 0 && (target->displayFlags & state) == 0) {

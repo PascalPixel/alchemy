@@ -20,7 +20,7 @@ void Flame_UpdateForward(struct Actor *object) {
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (actor->y == actor->terrainHeight && Actor_IsTouching(object, actor) &&
+  if (actor->y == actor->groundHeight && Actor_IsTouching(object, actor) &&
       gMainRoutineWork.movementMode == 0) {
     if (object->riseBaseY != 0) {
       work->direction.x = 0;
@@ -50,7 +50,7 @@ void Flame_UpdateForward(struct Actor *object) {
   for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
     actor = Actor_Get(id);
 
-    if (actor->y == actor->terrainHeight && Actor_IsBeside(object, actor)) {
+    if (actor->y == actor->groundHeight && Actor_IsBeside(object, actor)) {
       if (work->slots[i].blocked == 0) {
         s32 speed;
 

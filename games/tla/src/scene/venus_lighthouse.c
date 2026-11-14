@@ -391,15 +391,15 @@ void VenusLighthouse_RepelLeader(void) {
   actor->velocityY = px(4);
   Actor_SetSpeed(leader, 4);
   if (actor->z >> 20 <= 54) {
-    Actor_GetById(leader)->actionFlags &= ~1;
+    Actor_GetById(leader)->steeringFlags &= ~1;
     z = 210;
   } else {
-    Actor_GetById(leader)->actionFlags &= ~1;
+    Actor_GetById(leader)->steeringFlags &= ~1;
     z = 238;
   }
   Actor_WalkToAndWaitById(leader, ((s16 *)&actor->x)[1], z * 4);
   Event_Wait(1);
-  Actor_GetById(leader)->actionFlags |= 1;
+  Actor_GetById(leader)->steeringFlags |= 1;
   Event_Wait(20);
   Actor_SetSpriteColor(actor, 0);
   actor->update = VenusLighthouse_EmitRisingParticles;
@@ -425,7 +425,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
     leader->motionFlags |= 1;
-    leader->terrainHeight = 0;
+    leader->groundHeight = 0;
     leader->y = 0;
   } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED)) {
     Event_Start();
@@ -436,7 +436,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
     Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~1;
-    leader->terrainHeight = -px(2);
+    leader->groundHeight = -px(2);
     leader->y = -px(2);
     Event_End();
   }
@@ -460,7 +460,7 @@ void VenusLighthouse_SinkStatue(void) {
     Event_PlaySound(SE_THUMP);
     obj->motionFlags = 0;
     val = -px(2);
-    obj->terrainHeight = val;
+    obj->groundHeight = val;
     obj->y = val;
     Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK);
     a = 3;

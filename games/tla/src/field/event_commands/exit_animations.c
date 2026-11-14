@@ -40,7 +40,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   z = object->z - cameraZ - object->y;
   *position++ = x / Q16_ONE;
   *position = z / Q16_ONE;
-  if ((object->animationKind & 15) == 1)
+  if ((object->spriteStorageKind & 15) == 1)
     *position -= (s8)Resource_GetMetadataRecordFarFar(
                      *((struct ObjectAnimationState *)object->sprite)->value28)
                      ->boxX;
@@ -215,11 +215,11 @@ s32 Entrance_PlayArrival(void) {
         object = ObjectTable_Get(id);
         object->y += px(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
-        while (object->y + object->velocityY > object->terrainHeight) {
+        while (object->y + object->velocityY > object->groundHeight) {
           wait(1);
         }
         Sound_PlayFar(SE_DOOR_CLOSE);
-        object->y = object->terrainHeight;
+        object->y = object->groundHeight;
         Actor_SelectAnimationFar(object, 22);
         Event_Wait(15);
         FieldCamera_FollowActor(id, 1);

@@ -335,7 +335,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         Actor_FaceDirectionById(ownerId, 0x4000, 0);
         break;
       }
-      if (owner->script[owner->step] == 17) {
+      if (owner->script[owner->scriptCursor] == 17) {
         state++;
         timer = -1;
       }
@@ -463,7 +463,7 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
     struct Actor *object = Actor_GetById(actors->actor);
     u16 flag = actors->flag;
     s32 slot = Actor_GetCellIndex(object);
-    struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
+    struct MapCell *cell = &map->layers[object->layer].cells[slot];
 
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
@@ -478,9 +478,9 @@ void FlagBlock_PlaceAll(struct ActorFlag *actors) {
   }
   FlagBlock_ApplyFlags(list);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  height = MapGrid_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
+  height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x, leader->z);
   if (leader->y < height)
-    leader->y = leader->terrainHeight = height;
+    leader->y = leader->groundHeight = height;
 }
 
 struct MenuFlagWork {

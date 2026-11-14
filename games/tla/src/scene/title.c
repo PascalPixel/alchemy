@@ -144,16 +144,16 @@ s32 Title_Run(void) {
     if (gMainRoutineWork.entrance == 2) {
       Event_PlaySound(MUS_TITLE);
       TitleIntro_Run(0);
-      FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                             gMainRoutineWork.paletteGlow[1]);
+      FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                             gMainRoutineWork.windowBrightness);
       Party_SetLeaderJenna();
       Event_SetDestination(SCENE_VENUS_LIGHTHOUSE, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
       Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
       Title_ShowIntro(0);
-      FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                             gMainRoutineWork.paletteGlow[1]);
+      FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                             gMainRoutineWork.windowBrightness);
       Party_SetLeaderFelix();
       Event_SetDestination(SCENE_IDEJIMA, 13);
     }

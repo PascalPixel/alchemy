@@ -336,7 +336,7 @@ void Settlements_EnterDoor(void) {
 
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_Get(ACTOR_FELIX)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= 0xfe;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
@@ -422,7 +422,7 @@ void Settlements_DriftSmoke(struct Actor *object) {
   object->scaleX += step;
   object->scaleY += step;
   object->timer += 2;
-  if (--*(s32 *)&object->watchedObject == 0)
+  if (--*(s32 *)&object->watchedActor == 0)
     Actor_Release(object);
 }
 
@@ -442,7 +442,7 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = Q16_ONE / 2;
     object->scaleY = Q16_ONE / 2;
-    *(s32 *)&object->watchedObject = 60;
+    *(s32 *)&object->watchedActor = 60;
     object->update = (void (*)(void))Settlements_DriftSmoke;
     Actor_SelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);

@@ -36,7 +36,7 @@ top:
   position->z = startZ = (actor->z & 0xfff00000) + px(8);
   x = startX;
   z = startZ;
-  layer = &actor->terrainId;
+  layer = &actor->layer;
   startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);
   dz = z - actor->z;
   dx = x - actor->x;
@@ -132,7 +132,7 @@ blocked:
   System_Wait(10);
 done:
   actor->update = NULL;
-  actor->actionFlags |= 1;
+  actor->steeringFlags |= 1;
   actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }

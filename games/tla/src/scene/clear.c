@@ -382,8 +382,8 @@ top:
     result = 0;
   if (result == 0) {
     MainRoutineWork_InitializeDefaults();
-    WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                      gMainRoutineWork.paletteGlow[1]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
     i = 4;
     limit = 5;
   open:
@@ -467,7 +467,7 @@ top:
           {
             struct MainRoutineWork *party = &gMainRoutineWork;
 
-            WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
+            WindowColor_Apply(party->windowHue, party->windowBrightness);
             RESTORE_CELLS()
             ClearData_Apply(MAP_CELL_BACKUP);
             party->unk284[3] = 1;
@@ -503,7 +503,7 @@ top:
     {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
-      WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
+      WindowColor_Apply(party->windowHue, party->windowBrightness);
       if (PARTY_WORD(party, 0) != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput.held & mask) == mask) {
@@ -553,7 +553,7 @@ top:
       party->leaderActorId = 4;
       if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT))
         InventorySnapshot_Restore();
-      WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
+      WindowColor_Apply(party->windowHue, party->windowBrightness);
       Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
       Event_ClearFlag(FLAG_MENU_OPEN);
       party->ownerOverride = 0;
@@ -568,8 +568,8 @@ link:
   result = Save_ChooseAndLoadFile(6);
   if (result == -1)
     goto top;
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
 again:
   result = IconMenu_ChooseSendOption(2);
   if (result == -1)
@@ -833,8 +833,8 @@ done:
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(RECEIVED_FLAGS, flags, 0xf40);
-  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                         gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                         gMainRoutineWork.windowBrightness);
   return 1;
 }
 
@@ -1005,8 +1005,8 @@ s32 Clear_EnterPassword(void) {
   s32 height;
 
   Window_LoadGraphics();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
   palette = (u16 *)&BG_PLTT_COLOR(14, 0);
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
           REG_DMA3);
@@ -1247,7 +1247,7 @@ s32 Clear_EnterPassword(void) {
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
+            WindowColor_Apply(party->windowHue, party->windowBrightness);
             Sound_Play(MUS_CLEAR);
             System_Wait(6);
             NameEntry_EditMemberName(0);

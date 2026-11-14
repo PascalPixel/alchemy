@@ -6,7 +6,7 @@ void Pillars_Raise(u16 *list) {
 
   while (((struct ListedActor *)list)->id != 0xffff) {
     struct Actor *object = Actor_GetById(*list);
-    u8 *layer = &object->terrainId;
+    u8 *layer = &object->layer;
     s32 shape = MapGrid_GetTerrainKind(*layer, object->x, object->z);
     s32 level = Map_GetTerrainHeight(*layer, object->x, object->z);
     s32 index;
@@ -36,9 +36,9 @@ void Pillars_Raise(u16 *list) {
     list++;
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+  height = Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
   if (leader->y < height) {
-    leader->terrainHeight = height;
+    leader->groundHeight = height;
     leader->y = height;
   }
 }

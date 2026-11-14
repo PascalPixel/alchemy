@@ -305,11 +305,11 @@ void Actor_RaiseFromCell(s32 id) {
 
   object = Actor_Get(id);
   object->motionFlags = 4;
-  height = object->terrainHeight;
+  height = object->groundHeight;
   object->bounce = 0;
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+  height = Map_GetTerrainHeight(object->layer, object->x, object->z);
   Import_MapGridSetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
   MapGrid_SetAttributeBAt(object->x, object->z, 0, 128);
 }

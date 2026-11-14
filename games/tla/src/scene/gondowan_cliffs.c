@@ -208,7 +208,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     Actor_SetDestination(id, 1193, 530);
     actor->gravity = 0xcccc;
     actor->motionFlags = 3;
-    actor->terrainId = 0;
+    actor->layer = 0;
     FieldActor_WaitForMoveById(id);
     GondowanCliffs_WaitToLand(actor, 0);
     Event_PlaySound(SE_THUMP);
@@ -244,7 +244,7 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
-  object->terrainHeight = px(32);
+  object->groundHeight = px(32);
   object->y = px(32);
   MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
@@ -261,7 +261,7 @@ void GondowanCliffs_ScoopUpGeyser(s32 unused, s32 cell) {
     object = Actor_Get(17);
     MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
     Actor_SetPosition(17, 1912, 728);
-    object->terrainHeight = object->y =
+    object->groundHeight = object->y =
         Map_GetTerrainHeight(0, object->x, object->z);
     Event_SetFlag(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG);
   }
@@ -445,7 +445,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(17, 1912, 728);
     height = Map_GetTerrainHeight(0, actor->x, actor->z);
     actor->y = height;
-    actor->terrainHeight = height;
+    actor->groundHeight = height;
   }
   Actor_SetAnimation(16, 4);
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_PILLAR_IN_WATER)) {

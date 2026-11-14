@@ -64,10 +64,15 @@ struct MainRoutineWork {
   s16 returnEntrance;  ///< the default entrance: the fallback of both
                        ///< destinations
   s16 area; ///< the current scene's group; a new group resets its state
-  /// The next destination (scene, entrance), -1 for none; the default scene
-  /// and entrance stand in for either.
-  u16 pair1ee[2];
-  u16 pair1f2[2]; ///< the defeat destination (scene, entrance); -1 for none
+  /// The after-battle destination, -1 for none: read by
+  /// Scene_ReturnFromSequence when the party was not defeated, before the
+  /// default scene and entrance.
+  u16 afterBattleScene;
+  u16 afterBattleEntrance; ///< its entrance; -1 for none
+  /// The defeat destination, -1 for none: read by Scene_ReturnFromSequence
+  /// after a defeat.
+  u16 defeatScene;
+  u16 defeatEntrance;   ///< its entrance; -1 for none
   s16 battleBackground; ///< the battle background chosen for the scene or
                         ///< terrain
   u8 unusedAfterBackground[2];
@@ -85,7 +90,8 @@ struct MainRoutineWork {
   s32 leaderActorId;      ///< the leader, as ☀️'s selectedActor
   u8 party[8];            ///< the party in order
   u8 unusedAfterParty[5]; ///< not named by ⚓️ code
-  u8 paletteGlow[2];      ///< window hue and brightness (options 0 and 1)
+  u8 windowHue;           ///< the "Window color" setting (option 0)
+  u8 windowBrightness;    ///< the "Window brightness" setting (option 1)
   u8 unusedAfterBrightness[3];
   u8 speech;            ///< option 3, on or off; 1 on a new game
   u8 unusedAfterSpeech; ///< 1 on a new game; nothing reads it
@@ -107,7 +113,9 @@ struct MainRoutineWork {
   s16 returnMusic; ///< the music to play on returning, -1 for the scene's own
   /// The shortcuts' assignments, run by firstShortcutKeys and
   /// secondShortcutKeys (PsynergyMenu_SetShortcut: kind << 10 | id).
-  u16 packedEvents[2];
+  u16 firstShortcut;
+  u16 secondShortcut;
+
   /// Not named by ⚓️ code; byte 6 is option 4, the idle sleep, as ☀️'s
   /// idleSleepEnabled.
   u8 unk244[7];

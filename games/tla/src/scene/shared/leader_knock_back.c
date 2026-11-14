@@ -30,8 +30,7 @@ void KNOCK_BACK(void) {
     actor->facing = TRIG_TURN / 4;
     KNOCK_BACK_SET_ANIMATION(actor, 49);
     for (;;) {
-      if (KNOCK_BACK_CELL_ATTRIBUTE(actor->terrainId, actor->x, actor->z) ==
-          7) {
+      if (KNOCK_BACK_CELL_ATTRIBUTE(actor->layer, actor->x, actor->z) == 7) {
         s32 i;
 
         /* FAKEMATCH(temporary): velocityX stored through a union. */

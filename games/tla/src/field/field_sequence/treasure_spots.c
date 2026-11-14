@@ -13,7 +13,7 @@ void Actor_SnapToTerrain(void *object) {
 
   height = MapGrid_GetTerrainHeightFar(0, state->x, state->z);
   state->y = height;
-  state->terrainHeight = height;
+  state->groundHeight = height;
 }
 
 /// The current scene's rows of the scene item table (Data_080f2204): those
@@ -95,12 +95,12 @@ void Field_PlaceTreasureSpots(void) {
       if (object != NULL) {
         if (work->mode == 3) {
           object->motionFlags = 2;
-          object->terrainHeight = 0;
+          object->groundHeight = 0;
           object->y = 0;
         } else {
-          object->terrainHeight =
+          object->groundHeight =
               MapGrid_GetTerrainHeightFar(0, object->x, object->z);
-          object->y += object->terrainHeight;
+          object->y += object->groundHeight;
           if (buried) {
             u8 *motionFlags = &object->motionFlags;
             struct MapWork *map;
@@ -109,8 +109,8 @@ void Field_PlaceTreasureSpots(void) {
             s32 z;
 
             *motionFlags = 2;
-            object->terrainHeight += 0xfff00000;
-            object->y = object->terrainHeight;
+            object->groundHeight += 0xfff00000;
+            object->y = object->groundHeight;
             map = Ram_HeapSlots->mapWork;
             x = object->x >> 20;
             z = object->z >> 20;
@@ -315,5 +315,5 @@ void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
     z = object->homeZ << 16;
   object->x = x;
   object->z = z;
-  object->y = object->terrainHeight = MapGrid_GetTerrainHeightFar(0, x, z);
+  object->y = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);
 }

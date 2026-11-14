@@ -1246,7 +1246,7 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
   object->velocityY = px(4);
   object->gravity = 0xAB85;
   object->bounce = 0;
-  object->actionFlags = 0;
+  object->steeringFlags = 0;
   object->snapToTarget = 1;
   Actor_StartIdleFar(object);
   Actor_SetMoveTargetFar(object, context->anchorX, 0, context->anchorZ);
@@ -1282,7 +1282,7 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
   obj->gravity = 0xab85;
   obj->velocityY = 0;
   obj->bounce = 0;
-  obj->actionFlags = 1;
+  obj->steeringFlags = 1;
   Actor_StartIdleFar(obj);
   Actor_SetMoveTargetFar(obj, x, 0, z);
   Actor_SelectAnimationFar(obj, 2);

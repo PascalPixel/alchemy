@@ -1223,10 +1223,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WatchAndSetScript(ACTOR_SHEBA, 26);
   Actor_WatchAndSetScript(ACTOR_PIERS, 26);
   Event_Wait(20);
-  Actor_GetById(26)->actionFlags &= ~1;
+  Actor_GetById(26)->steeringFlags &= ~1;
   Actor_WalkToAndWaitById(26, 248, 188);
   Event_Wait(1);
-  Actor_GetById(26)->actionFlags |= 1;
+  Actor_GetById(26)->steeringFlags |= 1;
   Event_Wait(20);
   Actor_SetModeById(26, 7);
   Event_Wait(20);
@@ -1250,10 +1250,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 280, 188);
   Actor_SetModeById(26, 1);
   Event_Wait(10);
-  Actor_GetById(26)->actionFlags &= ~1;
+  Actor_GetById(26)->steeringFlags &= ~1;
   Actor_WalkToAndWaitById(26, 238, 188);
   Event_Wait(1);
-  Actor_GetById(26)->actionFlags |= 1;
+  Actor_GetById(26)->steeringFlags |= 1;
   // "Dig there!"
   FieldMessage_ShowAtActor(26, 0);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
@@ -1616,7 +1616,7 @@ void Kibombo_RiseSmoke(struct Actor *object) {
   object->scaleX += 0x51e;
   object->scaleY += 0x51e;
   object->timer += 2;
-  if (--*(s32 *)&object->watchedObject == 0)
+  if (--*(s32 *)&object->watchedActor == 0)
     Actor_Release(object);
 }
 
@@ -1638,7 +1638,7 @@ void Kibombo_PuffSmoke(void) {
       Actor_SetSpriteFlags(object, 0);
       object->scaleX = Q16_ONE / 2;
       object->scaleY = Q16_ONE / 2;
-      *(s32 *)&object->watchedObject = 60;
+      *(s32 *)&object->watchedActor = 60;
       object->update = (void (*)(void))Kibombo_RiseSmoke;
       Actor_SelectAnimation(object, 5);
       Actor_SetBlendMode(object, 1);

@@ -136,7 +136,7 @@ void JupiterLighthouse_SetLayerCellsByLeader(void) {
   struct Actor *object;
 
   object = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (object->terrainId == 1) {
+  if (object->layer == 1) {
     FieldMapGrid_SetCellBehavior(px(144), px(576), 2, 0xea);
     FieldMapGrid_SetCellBehavior(px(256), px(560), 2, 0xea);
   } else {
@@ -207,7 +207,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = FACING_SOUTH;
-  leader->terrainId = 0;
+  leader->layer = 0;
   leader->motionFlags = 3;
   FieldTask_Remove(JupiterLighthouse_DrawGlow);
   JupiterLighthouse_SetLayerCellsByLeader();
@@ -287,10 +287,10 @@ spin:
   Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
   leader->facing = FACING_SOUTH;
-  leader->terrainId = 1;
+  leader->layer = 1;
   leader->motionFlags = 3;
   leader->y = px(144);
-  leader->terrainHeight = px(144);
+  leader->groundHeight = px(144);
   FieldTask_Remove(JupiterLighthouse_DrawGlow);
   JupiterLighthouse_SetLayerCellsByLeader();
   Event_End();
@@ -372,11 +372,11 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   Actor_Get(party->leaderActorId)->priorityFlags |= 1;
   if (object->x >> 20 == 20 && object->z >> 20 == 39)
     FieldActor_SetSpritePriority(id, 3);
-  if (object->terrainHeight !=
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
+  if (object->groundHeight !=
+      Map_GetTerrainHeight(object->layer, object->x, object->z)) {
     System_Wait(2);
     for (i = 0; i <= 29 &&
-                (object->y > object->terrainHeight || object->velocityY != 0);
+                (object->y > object->groundHeight || object->velocityY != 0);
          i++)
       System_Wait(1);
     Event_PlaySound(SE_THUMP);
@@ -579,11 +579,11 @@ void Actor_RaiseFromCell(s32 id) {
 
   object = Actor_Get(id);
   object->motionFlags = 4;
-  height = object->terrainHeight;
+  height = object->groundHeight;
   object->bounce = 0;
   object->y = height + 0x200000;
   object->priorityFlags |= 128;
-  height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+  height = Map_GetTerrainHeight(object->layer, object->x, object->z);
   MapGrid_SetCellHeight(object->x, object->z, 0, (height >> 19) + 6);
   MapGrid_SetAttributeBAt__room_2(object->x, object->z, 0, 128);
 }

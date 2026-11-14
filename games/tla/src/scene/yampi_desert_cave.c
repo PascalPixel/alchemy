@@ -170,7 +170,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
     dz = gPushLeaderSteps[direction] << 16;
     position[5] = 0;
     count = 0;
-    state = &object->terrainId;
+    state = &object->layer;
     *state = 2;
     position[0] = object->x + dx;
     position[2] = object->z + dz;
@@ -537,7 +537,7 @@ loop:
 
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)column, (u16)row, object->terrainId);
+    Actor_SetCellOpen(id, (u16)column, (u16)row, object->layer);
     entry += 3;
   }
   if (entry[0] != 0xffff)
@@ -701,7 +701,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
 /// each followed by more.
 /// Sand: the leader sinks into the sand and the rooms' sand-only cells open.
 void YampiDesertCave_CastSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_1) {
     MapGrid_CopyCellAttributes(55, 71, 4, 1, 43, 70);
     MapGrid_CopyCellAttributes(43, 71, 4, 1, 55, 71);
@@ -718,7 +718,7 @@ void YampiDesertCave_CastSand(void) {
 
 /// Sand fades: the leader rises and the cells close again.
 void YampiDesertCave_EndSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 0;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_1)
     MapGrid_CopyCellAttributes(43, 70, 4, 1, 55, 71);
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
@@ -748,7 +748,7 @@ void YampiDesertCave_MoveSandRipple(void) {
   s32 column = gYampiDesertCave_RipplePath[index];
   s32 row = gYampiDesertCave_RipplePath[index + 1];
 
-  if (Actor_GetById(16)->movementState == 0) {
+  if (Actor_GetById(16)->paused == 0) {
     Actor_SetPositionFixed(16, column << 19, row << 19);
     if (Event_GetFlag(0x104) == 0)
       step++;

@@ -1041,9 +1041,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
     return 0;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
-  if (actor->terrainId <= 2) {
-    cells = (u8 *)map->layers[actor->terrainId].cells;
-    shapes = map->layers[actor->terrainId].terrainIds;
+  if (actor->layer <= 2) {
+    cells = (u8 *)map->layers[actor->layer].cells;
+    shapes = map->layers[actor->layer].terrainIds;
   } else {
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
@@ -1055,7 +1055,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
     return 2;
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
-         actor->terrainHeight;
+         actor->groundHeight;
   if (rise > px(8))
     return 1;
   if (rise < -px(12))
@@ -1081,9 +1081,9 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
     return 0;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     return 0;
-  if (actor->terrainId <= 2) {
-    cells = (u8 *)map->layers[actor->terrainId].cells;
-    shapes = map->layers[actor->terrainId].terrainIds;
+  if (actor->layer <= 2) {
+    cells = (u8 *)map->layers[actor->layer].cells;
+    shapes = map->layers[actor->layer].terrainIds;
   } else {
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;

@@ -1,6 +1,6 @@
 /// Aims an actor at the actor it watches, to reach it in ten steps.
 s32 Actor_AimAtWatched(struct Actor *object) {
-  struct Actor *target = object->watchedObject;
+  struct Actor *target = object->watchedActor;
   s32 steps;
   s32 from;
 

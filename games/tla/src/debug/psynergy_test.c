@@ -289,9 +289,9 @@ void PsynergyTest_GivePartyDjinn(void) {
 
 // While Felix is Sand he reads his ground height from layer 2, and from
 // layer 0 again once Sand fades.
-void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->terrainId = 2; }
+void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->layer = 2; }
 
-void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->terrainId = 0; }
+void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->layer = 0; }
 
 /// As Blaze reaches him, the practising man shouts and jumps to the other of
 /// his two spots, as he does in Daila (DailaInteriors_PracticeShout).
@@ -619,7 +619,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;
   s32 i, j;
-  struct SparkleWork *work = (struct SparkleWork *)object->watchedObject;
+  struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;
   struct SparkleSprite *sprite;
 
@@ -914,7 +914,7 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
   ((u8 *)object)[0x63] = 0;
   object->update = PsynergyTest_UpdateRings;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
-  object->watchedObject = (struct Actor *)work;
+  object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
     offset = (row * 2) * sizeof(struct SparkleSprite);

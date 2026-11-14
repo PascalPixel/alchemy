@@ -114,7 +114,7 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
   s32 *objectPos;
 
   if (BYTE_AT(object, 99) != 0) {
-    object->movementState = 1;
+    object->paused = 1;
     return 1;
   }
   targetPos = &target->x;
@@ -128,12 +128,12 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
     u32 facing = object->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
-      object->movementState = 1;
+      object->paused = 1;
       Actor_SelectAnimation(object, 1);
       result = 1;
     }
   } else {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_SelectAnimation(object, 2);
   }
   return result;
@@ -153,7 +153,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
-    u8 *state = &object->movementState;
+    u8 *state = &object->paused;
     /* FAKEMATCH(temporary): the call's argument copied before the barrier
      * below. */
     struct Actor *arg = object;

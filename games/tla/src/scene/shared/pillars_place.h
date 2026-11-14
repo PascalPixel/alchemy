@@ -15,7 +15,7 @@ void Pillars_Place(const u16 *list) {
 
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
   } while (entry[0] != 0xffff);
 }

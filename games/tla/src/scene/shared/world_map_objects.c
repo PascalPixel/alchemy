@@ -231,7 +231,7 @@ s32 WorldMap_GetCellIndex(s32 x, s32 z) {
 }
 
 s32 WorldMap_RiseFromAnchor(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
+  struct Actor *parent = object->watchedActor;
   s32 step = ++object->timer;
   s32 scale;
 
@@ -263,12 +263,12 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
   mulQ16(object->scaleX, 0x18000);
   spark = FieldActor_Create(271, object->x, object->y, object->z);
   if (spark != NULL) {
-    spark->terrainHeight = object->terrainHeight;
+    spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
     Actor_StartScript(spark, gWorldMap_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedObject = object;
+    spark->watchedActor = object;
     if (sprite != NULL) {
       Animation_ApplyChildArgument(sprite, 2);
       sprite->nextFrame = 0;
@@ -277,13 +277,13 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
   }
   spark = FieldActor_Create(271, object->x, object->y, object->z);
   if (spark != NULL) {
-    spark->terrainHeight = object->terrainHeight;
+    spark->groundHeight = object->groundHeight;
     sprite = spark->sprite;
     Actor_StartScript(spark, gWorldMap_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
-    spark->watchedObject = object;
-    spark->terrainId = 1;
+    spark->watchedActor = object;
+    spark->layer = 1;
     if (sprite != NULL) {
       Animation_ApplyChildArgument(sprite, 1);
       sprite->nextFrame = 0;
@@ -304,7 +304,7 @@ void WorldMap_SpawnParticle(struct Actor *object) {
   FieldVector_AddPolarOffset(angle * 20, Random16(), position);
   particle = (FieldActor_Create(674, position[0], position[1], position[2]));
   if (particle != NULL) {
-    particle->terrainHeight = object->terrainHeight;
+    particle->groundHeight = object->groundHeight;
     sprite = particle->sprite;
     Actor_StartScript(particle, gWorldMap_ParticleScript);
     Animation_ApplyChildArgument(sprite, 2);

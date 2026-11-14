@@ -204,13 +204,12 @@ void IzumoRuins_ShowPillarState(struct Actor *object) {
   s32 row = object->z >> 20;
   s32 lower = MapGrid_GetCellWord(0, column, row);
   s32 upper = MapGrid_GetCellWord(2, column, row);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
+  s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
 
   if (Event_GetFlag(object->timer)) {
     upper |= 0xff00;
     lower &= ~0x80;
-    if (object->terrainHeight >> 19 != height)
+    if (object->groundHeight >> 19 != height)
       height -= 4;
     Scene_SetActorSpritePriority((struct Actor *)object, 3);
   } else {
@@ -224,7 +223,7 @@ void IzumoRuins_ShowPillarState(struct Actor *object) {
   }
   MapGrid_SetCellWord(0, column, row, lower);
   MapGrid_SetCellWord(2, column, row, upper);
-  MapGrid_SetCellHeight(column << 20, row << 20, object->terrainId, height);
+  MapGrid_SetCellHeight(column << 20, row << 20, object->layer, height);
 }
 
 void IzumoRuins_PlacePillars(u16 *list) {
@@ -304,7 +303,7 @@ void IzumoRuins_SinkIntoSand(void) {
   object0 = Actor_Get(gMainRoutineWork.leaderActorId);
   result1 = MapGrid_GetCellWord(2, (object0->x >> 20), (object0->z >> 20));
   if (!((result1 >> 8) != 232)) {
-    object0->terrainId = 2;
+    object0->layer = 2;
   }
   return;
 }
@@ -375,9 +374,9 @@ s32 Scene_Initialize(void) {
       System_Wait(1);
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
         object = Actor_Get(gMainRoutineWork.leaderActorId);
-        height = Map_GetTerrainHeight(object->terrainId, object->x,
+        height = Map_GetTerrainHeight(object->layer, object->x,
                                       object->z - object->y);
-        object->terrainHeight = height;
+        object->groundHeight = height;
         object->y = height;
         EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }

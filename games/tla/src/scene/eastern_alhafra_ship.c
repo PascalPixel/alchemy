@@ -189,7 +189,7 @@ s32 Scene_Initialize(void) {
       object = Actor_GetById(15);
       object->priorityFlags |= 64;
       object->y += px(16);
-      object->terrainHeight += px(16);
+      object->groundHeight += px(16);
     }
   } else {
     Actor_SetHorizontalPositionWithTerrain(14, 0x880000, 0x1db0000);
@@ -1145,11 +1145,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirectionById(17, FACING_EAST, 0);
   Event_Wait(10);
   object16 = Actor_GetById(17);
-  object16->actionFlags &= 254;
+  object16->steeringFlags &= 254;
   Actor_WalkToAndWaitById(17, 456, 312);
   Event_Wait(1);
   object17 = Actor_GetById(17);
-  object17->actionFlags |= 1;
+  object17->steeringFlags |= 1;
   Event_Wait(20);
   Actor_WalkBy(9, 0, -16);
   Actor_WalkBy(22, 0, -16);

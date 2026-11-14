@@ -99,7 +99,7 @@ struct DescriptorEntry *Field_GetPsynergyTargetRule(s32 id) {
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   struct DescriptorEntry *entry = Field_GetPsynergyTargetRule(id);
   s32 height = MapGrid_GetTerrainHeightAboveFar__field_sequence(
-      position[0], position[2], actor->terrainId, actor->terrainHeight);
+      position[0], position[2], actor->layer, actor->groundHeight);
 
   if (ABS(height) <= entry->range << 16)
     return ABS(height);
@@ -135,7 +135,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   rule = Field_GetPsynergyTargetRule(animation);
   height = rule->height << 16;
   if (animation == ANIMATION_MEASURES_FOOTING) {
-    if (ABS(other->terrainHeight - self->terrainHeight) > height)
+    if (ABS(other->groundHeight - self->groundHeight) > height)
       return -1;
   } else {
     if (ABS(other->y - self->y) > height)
@@ -254,10 +254,10 @@ s32 Leader_CanPushObjectAhead(void) {
   hit = Actor_FindAtCell(above, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
-  terrain = target->terrainId;
-  target->terrainId = 2;
+  terrain = target->layer;
+  target->layer = 2;
   result = MapGrid_CheckCollisionFar(target, position);
-  target->terrainId = terrain;
+  target->layer = terrain;
   if (result > 0)
     return 0;
   return 1;
@@ -287,10 +287,10 @@ void Leader_PushObjectAhead(void) {
   position[1] = target->y;
   position[2] = target->z;
   Vector_AddPolarOffset(px(16), angle, position);
-  terrain = target->terrainId;
-  target->terrainId = 2;
+  terrain = target->layer;
+  target->layer = 2;
   result = MapGrid_CheckCollisionFar(target, position);
-  target->terrainId = terrain;
+  target->layer = terrain;
   if (result <= 0) {
     Actor_SelectAnimationFar(owner, 8);
     wait(15);

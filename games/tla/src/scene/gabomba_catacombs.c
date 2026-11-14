@@ -362,7 +362,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   TALK();
   Actor_SetPosition(64, 168, 152);
   statue->motionFlags = 6;
-  statue->terrainHeight += px(16);
+  statue->groundHeight += px(16);
   Sound_Play(SE_SHIMMER);
   glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
@@ -371,7 +371,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   glow->x = statue->x;
   glow->y = statue->y + px(8);
   glow->z = statue->z;
-  glow->terrainHeight = statue->terrainHeight;
+  glow->groundHeight = statue->groundHeight;
   glow->update = GabombaCatacombs_ShrinkSpray;
   Event_Wait(15);
   glow->x = 0;
@@ -549,7 +549,7 @@ s32 Scene_Initialize(void) {
     statue = Actor_GetById(64);
     Actor_SetPosition(64, 168, 152);
     statue->motionFlags = 6;
-    statue->terrainHeight += px(16);
+    statue->groundHeight += px(16);
   }
   return 0;
 }

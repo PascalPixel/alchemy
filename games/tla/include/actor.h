@@ -17,16 +17,16 @@ struct ObjectAnimationState {
 /// update hook.
 struct Actor {
   const s32 *script; ///< the object script it runs; null when it is free
-  s16 step;          ///< the script cursor, in words
+  s16 scriptCursor;  ///< the script cursor, in words
   u16 facing;        ///< 1/65536 turns
   s32 x;             ///< 16.16 fixed-point pixels
   s32 y;             ///< 16.16 fixed-point pixels
   s32 z;             ///< 16.16 fixed-point pixels
-  s32 terrainHeight; ///< 16.16 fixed-point pixels
+  s32 groundHeight;  ///< 16.16 fixed-point pixels
   s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
   s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
   u16 radius;        ///< collision radius in pixels
-  u8 terrainId;      ///< the map layer its ground height is read from
+  u8 layer;          ///< the map layer its ground height is read from
   /// Bit 0 is cleared when Actor_SetSpritePriorityDirect fixes its
   /// sprite's priority.
   u8 priorityFlags;
@@ -49,14 +49,14 @@ struct Actor {
   /// Not read by the motion update; field code keeps its own values here (a
   /// drifting speed, a 0x31415927 marker), and scene code a resting height.
   s32 riseBaseY;
-  /// Its sprite (a struct FieldSprite) when animationKind is 1, or its list of
-  /// sprites when it is 2. Code that reads one kind converts it: typed, or as a
-  /// union of the two, this pointer compiles differently where a store comes
-  /// between two of its reads.
+  /// Its sprite (a struct FieldSprite) when spriteStorageKind is 1, or its list
+  /// of sprites when it is 2. Code that reads one kind converts it: typed, or
+  /// as a union of the two, this pointer compiles differently where a store
+  /// comes between two of its reads.
   void *sprite;
   /// 1 one sprite, 2 a group of sprites, in the low four bits, which is all
   /// the field and the scenes test.
-  u8 animationKind;
+  u8 spriteStorageKind;
   u8 motionFlags; ///< bit 1: falls by its gravity and bounces
   /// The axis watched for arrival at the target; zero once it arrives, and
   /// cleared with the target.
@@ -66,8 +66,8 @@ struct Actor {
   /// bits: 4 targeted from half as far again | 3 skipped by the target
   /// searches | 2 counts as 10/13 as far in the nearest search | 0 solid
   u8 collisionFlags;
-  u8 actionFlags; ///< bit 0: turns toward its velocity, 1/16 turn a frame
-  u8 movementState;
+  u8 steeringFlags; ///< bit 0: turns toward its velocity, 1/16 turn a frame
+  u8 paused;
   /// Keeps its sprite's VRAM cache entry (Actor_SetItemIcon sets it).
   u8 retainSpriteCache;
   u8 repeatCount; ///< the actor script's loop count
@@ -89,7 +89,7 @@ struct Actor {
   s16 timer;
   s16 userValue; ///< the side of the player's next footprint, or scene scratch
   /// The object its action script follows or faces.
-  struct Actor *watchedObject;
+  struct Actor *watchedActor;
   void (*update)(void); ///< the object's per-frame hook
   u8 unk70[0x10];
 };

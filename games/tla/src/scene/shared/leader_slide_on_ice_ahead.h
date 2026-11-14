@@ -43,8 +43,8 @@ top:
   position->z = startZ = (actor->z & 0xfff00000) + i;
   x = startX;
   z = startZ;
-  startBehavior = FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),
-                                                 startX, startZ);
+  startBehavior =
+      FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->layer), startX, startZ);
   FieldVector_AddPolarOffset(px(16), heading, position);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
@@ -125,7 +125,7 @@ blocked:
   System_Wait(10);
 done:
   actor->update = NULL;
-  actor->actionFlags |= 1;
+  actor->steeringFlags |= 1;
   actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }

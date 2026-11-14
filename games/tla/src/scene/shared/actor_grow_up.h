@@ -1,6 +1,6 @@
 /// Grows an actor upward over 32 frames.
 void Actor_GrowUp(struct Actor *object) {
-  struct Actor *parent = object->watchedObject;
+  struct Actor *parent = object->watchedActor;
   s32 step = ++object->timer;
   s32 scale;
   s32 rise;

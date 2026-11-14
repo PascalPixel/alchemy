@@ -8,9 +8,9 @@ void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id) {
   s32 value;
   s32 height;
 
-  value = MapGrid_GetTerrainKind(actor->terrainId, actor->x, z);
-  height = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z) >> 19;
+  value = MapGrid_GetTerrainKind(actor->layer, actor->x, z);
+  height = Map_GetTerrainHeight(actor->layer, actor->x, actor->z) >> 19;
   height += heightOffset;
   shapes += actor->x / 0x100000 + (actor->z / 0x100000 << 7);
-  *shapes = MapCollision_FindOrAddTag(actor->terrainId, value, height);
+  *shapes = MapCollision_FindOrAddTag(actor->layer, value, height);
 }

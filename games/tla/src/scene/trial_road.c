@@ -63,7 +63,7 @@ extern s32 gTrialRoad_Room1Placements[];
 s32 TrialRoad_SettleOnGround(struct Actor *object) {
   s32 height = Map_GetTerrainHeight(0, object->x, object->z) + 0x20000;
 
-  object->terrainHeight = height;
+  object->groundHeight = height;
   object->y = height;
   object->motionFlags = 0;
   object->collisionFlags = 0;
@@ -586,11 +586,11 @@ void TrialRoad_UnblockCellUnder(s32 id) {
 }
 
 s32 TrialRoad_FollowPillar(struct Actor *object) {
-  struct Actor *owner = object->watchedObject;
+  struct Actor *owner = object->watchedActor;
 
   SET_POSITION(object, owner->x, owner->y + (OBJECT_BYTE(object, 99) << 16),
                owner->z);
-  object->terrainHeight = owner->terrainHeight;
+  object->groundHeight = owner->groundHeight;
   return 1;
 }
 
@@ -605,12 +605,12 @@ void TrialRoad_AddPillarTop(s32 id) {
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       Actor_StartScript(object, gTrialRoad_PillarTopScript);
-      object->watchedObject = owner;
+      object->watchedActor = owner;
       object->priorityFlags |= 0x80;
       object->motionFlags = 0;
       object->collisionFlags = 0;
       OBJECT_BYTE(object, 99) = 16;
-      owner->watchedObject = object;
+      owner->watchedActor = object;
     }
   }
 }
@@ -619,7 +619,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    object = object->watchedObject;
+    object = object->watchedActor;
     if (object != NULL)
       OBJECT_BYTE(object, 99) = value;
   }
@@ -1106,7 +1106,7 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
     object->x = object->timer << 16;
     object->z = (s16)object->userValue << 16;
     height = Map_GetTerrainHeight(0, object->x, object->z);
-    object->terrainHeight = height;
+    object->groundHeight = height;
     object->y = height;
     TrialRoad_OpenSpoutCell(id);
     Event_SetFlag(id + 0x353);
@@ -1138,11 +1138,11 @@ void TrialRoad_StandOnBlock(void) {
 }
 
 void TrialRoad_StartSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
 void TrialRoad_EndSand(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
 void TrialRoad_RevealVine(void) {
@@ -1609,7 +1609,7 @@ void TrialRoad_GaspFlees(void) {
   partner->speedLimit = px(2);
   partner->acceleration = px(2);
   partner->motionFlags = 2;
-  partner->terrainHeight = 0;
+  partner->groundHeight = 0;
   partner->collisionFlags = 1;
   partner->velocityY = px(10);
   Actor_SetScript(8, gTrialRoad_GaspHopScript);
@@ -1834,7 +1834,7 @@ void TrialRoad_UpdateRival(void) {
             state->order[state->stage[1] * 2 + (s16)(state->mirrored ^ 1)];
 
         TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[pattern & 7]);
-        Actor_GetById(8)->terrainHeight = 0;
+        Actor_GetById(8)->groundHeight = 0;
         Actor_GetById(8)->y = 0;
       } else {
         Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
@@ -1843,7 +1843,7 @@ void TrialRoad_UpdateRival(void) {
     }
   }
   {
-    u8 *kind = &Actor_GetById(8)->animationKind;
+    u8 *kind = &Actor_GetById(8)->spriteStorageKind;
 
     if (state->stage[0] == state->stage[1])
       *kind = 1;
@@ -2093,7 +2093,7 @@ s32 Scene_PrepareMap(void) {
         Map_CenterOnFollowedPoint();
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
-          leader->y = leader->terrainHeight =
+          leader->y = leader->groundHeight =
               Map_GetTerrainHeight(0, leader->x, leader->z);
         if (GameFlag_Get(2559)) {
           struct TrialRoadState *road;
@@ -2266,7 +2266,7 @@ void TrialRoad_ReachPeakFirst(void) {
   FieldActor_WaitForMove(object);
   Actor_SelectAnimation(object, 1);
   object->motionFlags = 2;
-  object->terrainHeight = px(128);
+  object->groundHeight = px(128);
   object->velocityY = px(4);
   object->speedLimit = px(3);
   object->acceleration = px(2);
@@ -3054,10 +3054,10 @@ void TrialRoad_StepOnTrap(const u16 *table) {
         MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
-        MagmaRockInside_SetLeaderCellShape(-2, trap->terrainId);
+        MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
         MagmaRockInside_SpawnRubble(1);
         wait(16);
-        MagmaRockInside_SetLeaderCellShape(-2, trap->terrainId);
+        MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -3205,14 +3205,13 @@ void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
   struct Actor *object = Actor_GetById(owner);
   u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
                                   (struct MapCell *)Ram_MapCellBuffer);
-  s32 value = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
+  s32 value = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
+  s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
 
   height += level;
 
   shape += object->x / 0x100000 + object->z / 0x100000 * 128;
-  *shape = MapCollision_FindOrAddTag(object->terrainId, value, height);
+  *shape = MapCollision_FindOrAddTag(object->layer, value, height);
 }
 
 void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {

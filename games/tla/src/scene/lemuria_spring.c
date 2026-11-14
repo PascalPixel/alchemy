@@ -591,7 +591,7 @@ void LemuriaSpring_SetSpriteStorageKind(s32 a0, s32 a1) {
 
   object = Actor_GetById(a0);
   if (object != 0) {
-    object->animationKind = a1;
+    object->spriteStorageKind = a1;
   }
 }
 

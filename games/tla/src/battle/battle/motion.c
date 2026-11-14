@@ -74,7 +74,7 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   start->velocityY = px(4);
   start->gravity = 0xab85;
   start->bounce = 0;
-  start->actionFlags = 1;
+  start->steeringFlags = 1;
   Actor_SetMoveTargetFar(start, x, 0, z);
   Actor_SelectAnimationFar(start, 2);
 }

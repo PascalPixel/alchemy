@@ -12,7 +12,7 @@ s32 Actor_PopUpSlow(struct Actor *object) {
   } else if (frame <= 30) {
     if (frame == 30) {
       Event_PlaySound(SE_WHOOSH);
-      Actor_SelectAnimation(object->watchedObject, 2);
+      Actor_SelectAnimation(object->watchedActor, 2);
     }
   } else if (frame <= 60) {
     object->scaleX = Q16_ONE;
@@ -20,13 +20,13 @@ s32 Actor_PopUpSlow(struct Actor *object) {
     {
       s32 half = (object->timer / 2) & 1;
 
-      Actor_SetSpriteColorMode(object->watchedObject, half * 7);
+      Actor_SetSpriteColorMode(object->watchedActor, half * 7);
     }
   } else {
-    Actor_SelectAnimation(object->watchedObject, 1);
+    Actor_SelectAnimation(object->watchedActor, 1);
     Event_PlaySound(SE_POP_UP);
     object->y = Map_GetTerrainHeight(0, object->x, object->z);
-    object->watchedObject = 0;
+    object->watchedActor = 0;
     return 0;
   }
   object->timer++;

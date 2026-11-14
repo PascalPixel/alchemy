@@ -422,7 +422,7 @@ void WorldMap_ReloadPendingAreaGraphics(void) {
 
   if (block->mode == 3 && block->unk18b != 0) {
     block->unk18b = 0;
-    block->camera->movementState = 0;
+    block->camera->paused = 0;
     WorldMap_LoadAreaGraphicsFar();
   }
 }

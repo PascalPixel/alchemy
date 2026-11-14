@@ -18,7 +18,7 @@ void Flame_UpdateLanding(struct Actor *object) {
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
-  if (other->y == other->terrainHeight && Actor_IsTouching(object, other) &&
+  if (other->y == other->groundHeight && Actor_IsTouching(object, other) &&
       gMainRoutineWork.movementMode == 0) {
     if (object->riseBaseY != 0) {
       work->direction.z = 0;
@@ -41,7 +41,7 @@ void Flame_UpdateLanding(struct Actor *object) {
     if (id == 0)
       break;
     other = Actor_Get(id);
-    if (other->y == other->terrainHeight && Actor_IsBeside(object, other)) {
+    if (other->y == other->groundHeight && Actor_IsBeside(object, other)) {
       if (work->slots[i].blocked == 0) {
         object->priorityFlags = 2;
         object->z -= object->riseBaseY;

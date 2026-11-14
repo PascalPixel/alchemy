@@ -24,8 +24,8 @@ void WorldMap_StepZoom(void) {
   s32 offset;
   s32 delta;
 
-  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))
-          ->camera->movementState != 0)
+  if (((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera->paused !=
+      0)
     return;
   duration = &map->zoomFrames;
   if (*duration == 0)
@@ -78,7 +78,7 @@ void Event_WaitForZoomTransition(void) {
 s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
   struct Actor *link;
 
-  link = object->watchedObject;
+  link = object->watchedActor;
   if (link != NULL) {
     object->motionFlags = 0;
     object->x = link->x;
@@ -88,7 +88,7 @@ s32 FieldEffect_CopyWatchedActorPosition(struct Actor *object) {
                      ->boxX
                  << 16) +
                 0x80000;
-    object->terrainHeight = link->terrainHeight;
+    object->groundHeight = link->groundHeight;
     object->z = link->z;
   }
   return 0;
@@ -168,7 +168,7 @@ s32 Actor_IsOutsideAnimation108(struct Actor *object) {
   struct ObjectAnimationState *state;
   s32 value;
 
-  if (object == 0 || object->animationKind != 1 ||
+  if (object == 0 || object->spriteStorageKind != 1 ||
       (state = object->sprite) == 0 || state->value28 == 0)
     return 1;
   value = *state->value28;

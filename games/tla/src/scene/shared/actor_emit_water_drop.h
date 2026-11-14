@@ -12,7 +12,7 @@ void Actor_EmitWaterDrop(struct Actor *object) {
       Actor_StartScript(child, gWaterDropScript);
       child->motionFlags = 0;
       child->y = -0x78000;
-      child->terrainId = 1;
+      child->layer = 1;
       if (sprite != 0) {
         Animation_ApplyChildArgument(sprite, 2);
         sprite->nextFrame = 0;

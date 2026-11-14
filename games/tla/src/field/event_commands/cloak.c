@@ -110,7 +110,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
   object->y -= 0x4ccc;
   r = Random16();
   object->x += r - Random16();
-  if (object->y <= object->terrainHeight) {
+  if (object->y <= object->groundHeight) {
     Actor_StartScriptFar((struct Actor *)object,
                          (u32)gBattleEffect_SharedParticleScript);
   }
@@ -209,11 +209,11 @@ void FieldPsynergy_Douse(void) {
         struct Actor *ground = work->anchor;
 
         if (ground != 0) {
-          mote->terrainHeight = ground->y;
+          mote->groundHeight = ground->y;
           if (raised == 1)
-            mote->terrainHeight = ground->y + px(32);
+            mote->groundHeight = ground->y + px(32);
         } else {
-          mote->terrainHeight = pos.y - px(32);
+          mote->groundHeight = pos.y - px(32);
         }
         mote->update = (void (*)(void))BattleEffect_LandFallingObject;
         mote->motionFlags = 2;

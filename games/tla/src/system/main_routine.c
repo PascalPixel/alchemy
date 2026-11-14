@@ -120,8 +120,8 @@ void Scene_TakeExit(s32 exitId) {
 /// Chooses where the game continues after a sequence other than the field
 /// sequence (see MainRoutine_Run). result is its result: -1 when the party was
 /// defeated, which revives the leader with 1 HP and returns to the story
-/// battle's defeat point (Event_SetDefeatDestination, pair1f2) or, when none
-/// is set, to the restart point, usually the last Sanctum
+/// battle's defeat point (Event_SetDefeatDestination, defeatScene) or, when
+/// none is set, to the restart point, usually the last Sanctum
 /// (Scene_SetRestartPoint, savedScene); the world map is then told the scene
 /// was left (WorldMap_SetReturnLeavingScene). As The Broken Seal's, with no
 /// childhood healing.
@@ -138,8 +138,8 @@ void Scene_ReturnFromSequence(s32 result) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
     }
-    sceneId = gMainRoutineWork.pair1f2[0];
-    entrance = gMainRoutineWork.pair1f2[1];
+    sceneId = gMainRoutineWork.defeatScene;
+    entrance = gMainRoutineWork.defeatEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
         gMainRoutineWork.next = sceneId;
@@ -157,8 +157,8 @@ void Scene_ReturnFromSequence(s32 result) {
                                    gMainRoutineWork.entrance);
   } else {
     // An after-battle destination an event set overrides the return point.
-    sceneId = gMainRoutineWork.pair1ee[0];
-    entrance = gMainRoutineWork.pair1ee[1];
+    sceneId = gMainRoutineWork.afterBattleScene;
+    entrance = gMainRoutineWork.afterBattleEntrance;
     if (sceneId != -1 || entrance != -1) {
       if (sceneId != -1)
         gMainRoutineWork.next = sceneId;
@@ -240,8 +240,8 @@ void MainRoutine_Run(s32 mode) {
     gMainRoutineWork.entrance = 1;
   }
   // The window colours from the options: hue, then brightness.
-  WindowColor_ApplyFar(gMainRoutineWork.paletteGlow[0],
-                       gMainRoutineWork.paletteGlow[1]);
+  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
+                       gMainRoutineWork.windowBrightness);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();

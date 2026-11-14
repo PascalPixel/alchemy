@@ -71,22 +71,22 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
     sourceCell =
-        &map->layers[object->terrainId].cells[Actor_GetCellIndexFar(object)];
+        &map->layers[object->layer].cells[Actor_GetCellIndexFar(object)];
     destinationCell =
-        &map->layers[object->terrainId]
+        &map->layers[object->layer]
              .cells[position.x / 0x100000 + (position.z / 0x100000) * 128];
     if (MapGrid_IsWallAt((s32 *)&position) != 0 ||
         !(sourceCell->attributeB & 64) || !(destinationCell->attributeB & 64)) {
       collisionFlags = 4;
       animation = 12;
     } else if (gInput.held & 64) {
-      terrainHeight = MapGrid_GetTerrainHeight(object->terrainId, position.x,
+      terrainHeight = MapGrid_GetTerrainHeight(object->layer, position.x,
                                                position.z - 0x100000);
       if (terrainHeight - object->y < 0x100000)
         goto refused;
     } else if (gInput.held & 128) {
       terrainHeight =
-          MapGrid_GetTerrainHeight(object->terrainId, position.x, position.z);
+          MapGrid_GetTerrainHeight(object->layer, position.x, position.z);
       if (terrainHeight - object->y > -0x80000) {
       refused:
         collisionFlags = 1;
@@ -113,7 +113,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
   }
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -146,7 +146,7 @@ s32 Actor_CrossRope(struct Actor *object) {
   object->motionFlags = 0;
   angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
-    best = (struct RopeNode *)object->watchedObject;
+    best = (struct RopeNode *)object->watchedActor;
     value = 0;
   } else {
     value = 16;
@@ -206,7 +206,7 @@ s32 Actor_CrossRope(struct Actor *object) {
       slot->amplitude += 0x8000;
       if (slot->amplitude > 0x20000)
         slot->amplitude = 0x20000;
-      object->watchedObject = (struct Actor *)best;
+      object->watchedActor = (struct Actor *)best;
       SET_POSITION(&position, best->x, best->y, best->z);
       sprite->angle = best->angle + turn;
     }
@@ -232,7 +232,7 @@ done:
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
   }
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -270,7 +270,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     collisionFlags = 4;
-    best = (struct TightropeNode *)object->watchedObject;
+    best = (struct TightropeNode *)object->watchedActor;
     SET_POSITION(&position, object->x, best->y, object->z);
   } else {
     SET_POSITION(&position, object->x, object->y, object->z);
@@ -310,7 +310,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
           slot->amplitude += 0x8000;
           if (slot->amplitude > 0x20000)
             slot->amplitude = 0x20000;
-          object->watchedObject = (struct Actor *)best;
+          object->watchedActor = (struct Actor *)best;
         }
         /* FAKEMATCH(dead): position.x copied onto itself before the copies. */
         position.x = position.x;
@@ -347,7 +347,7 @@ s32 Actor_CrossTightrope(struct Actor *object) {
     if (object->x == position.x && object->z == position.z)
       TurnToward(object, angle);
   }
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -428,21 +428,21 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   cellX = actor->x & 0xfff00000;
   cellZ = actor->z & 0xfff00000;
   y = actor->y;
-  terrainId = &actor->terrainId;
+  terrainId = &actor->layer;
   groundHere = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ);
   groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ + 0xfff00000);
   if (actor->timer != 0) {
     if (actor->targetX != TARGET_UNSET)
       goto done;
     actor->timer = 0;
-    actor->terrainHeight = groundHere;
+    actor->groundHeight = groundHere;
   }
   if ((s16)actor->userValue != 0) {
     if (groundAhead < y) {
       s32 topZ = cellZ + 0xfff80000;
 
       if (MapGrid_CheckCollisionAt(actor->x, topZ, *terrainId,
-                                   actor->terrainHeight) == 2) {
+                                   actor->groundHeight) == 2) {
         actor->y -= px(1);
       } else {
         Actor_SetMoveTarget(actor, actor->x, groundAhead, topZ);
@@ -453,7 +453,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
     if (groundHere > y) {
       actor->userValue = 0;
-      actor->terrainHeight = groundHere;
+      actor->groundHeight = groundHere;
       actor->motionFlags = 3;
       goto done;
     }
@@ -534,7 +534,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
                    actor->z);
       effect = Actor_Create(0x11d, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
-        effect->terrainHeight = actor->terrainHeight;
+        effect->groundHeight = actor->groundHeight;
         sprite = effect->sprite;
         Actor_StartScript(effect, gSand_GrainScript);
         effect->update = Sand_JitterGrain;
@@ -713,7 +713,7 @@ counted:
   if (((u8 *)actor)[98] == 0 && collision == 0) {
     effect = Actor_Create(0x164, actor->x, actor->y, actor->z - 0x20000);
     if (effect != NULL) {
-      effect->terrainHeight = actor->terrainHeight;
+      effect->groundHeight = actor->groundHeight;
       sprite = effect->sprite;
       Actor_StartScript(effect, gActor_WakeScript);
       effect->priorityFlags = 8;
@@ -737,7 +737,7 @@ counted:
   Sand_CheckEndKeys(actor);
 
 done:
-  actor->step++;
+  actor->scriptCursor++;
   return 1;
 }
 
@@ -880,7 +880,7 @@ update_object:
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
-  if (object->animationKind == 1) {
+  if (object->spriteStorageKind == 1) {
     playerSprite = object->sprite;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x);
@@ -892,7 +892,7 @@ update_object:
   if (*timer == 0 && collision == 0) {
     ripple = Actor_Create(0x164, object->x, object->y, object->z - 0x20000);
     if (ripple != 0) {
-      ripple->terrainHeight = object->terrainHeight;
+      ripple->groundHeight = object->groundHeight;
       rippleSprite = ripple->sprite;
       Actor_StartScript(ripple, gActor_WakeScript);
       ripple->priorityFlags = 8;
@@ -908,6 +908,6 @@ update_object:
     }
   }
   Sand_CheckEndKeys(object);
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }

@@ -775,12 +775,12 @@ void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
 
   if (object->x >> 20 == 13) {
     object->motionFlags = 3;
-    if (object->terrainHeight !=
+    if (object->groundHeight !=
         Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z)) {
       s32 frames;
 
       System_Wait(2);
-      for (frames = 0; frames < 30 && object->y > object->terrainHeight;
+      for (frames = 0; frames < 30 && object->y > object->groundHeight;
            frames++)
         System_Wait(1);
       Event_PlaySound(SE_IMPACT);
@@ -835,7 +835,7 @@ step:
   System_Wait(1);
   if (++frame <= 39)
     goto step;
-  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transition = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1236,7 +1236,7 @@ s32 Scene_Initialize(void) {
     if (Flag_IsSet(FLAG_VENUS_STATUE_BLOCKS_FLAMES)) {
       Actor_SetPosition(ACTOR_PUSHED_STATUE, 808, 312);
       Actor_GetById(ACTOR_PUSHED_STATUE)->y = 0;
-      Actor_GetById(ACTOR_PUSHED_STATUE)->terrainHeight = 0;
+      Actor_GetById(ACTOR_PUSHED_STATUE)->groundHeight = 0;
     }
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     Actor_GetById(ACTOR_FIRST_STONE)->priorityFlags |= 192;
@@ -1370,7 +1370,7 @@ struct EventWork__s167c {
 UNUSED void Whirlwind_CarryLeader(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *linked = actor->watchedObject;
+  struct Actor *linked = actor->watchedActor;
   struct Actor *shadow;
   u8 *motion;
   u8 *flag;
@@ -1415,11 +1415,11 @@ UNUSED void Whirlwind_CarryLeader(void) {
   FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
-  if (actor->y > actor->terrainHeight + px(16)) {
+  if (actor->y > actor->groundHeight + px(16)) {
   fall:
     System_Wait(1);
     i++;
-    if (i <= 59 && actor->y > actor->terrainHeight + px(16))
+    if (i <= 59 && actor->y > actor->groundHeight + px(16))
       goto fall;
   }
   Event_PlaySound(SE_LANDING_THUD);
@@ -1485,7 +1485,7 @@ void Whirlwind_Update(struct Actor *self) {
           near = 1;
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
-          leader->watchedObject = self;
+          leader->watchedActor = self;
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
@@ -2030,7 +2030,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
     actor->facing = TRIG_TURN / 4;
     Actor_SelectAnimation(actor, 49);
     for (;;) {
-      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->terrainId, actor->x,
+      if (MapGrid_GetCellAttributeLowNibbleOrBump(actor->layer, actor->x,
                                                   actor->z) == 7) {
         s32 i;
 
@@ -2318,7 +2318,7 @@ extern u32 gEmbers_Script[];
 
 /// An attached actor holds still while an event runs.
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->movementState = Event_GetFlag(260);
+  object->paused = Event_GetFlag(260);
 }
 #undef position
 #undef WORK
@@ -2381,7 +2381,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     flag = Event_GetFlag(FLAG_MENU_OPEN);
     if (work->psynergy != 0)
       flag |= 1;
-    actor->movementState = flag;
+    actor->paused = flag;
 
     position.x = actor->x;
     position.y = actor->y;
@@ -2397,8 +2397,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(5, 5, 1);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      if (actor->watchedObject != NULL)
-        ((void (*)(struct Actor *))actor->watchedObject)(actor);
+      if (actor->watchedActor != NULL)
+        ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
     map = Ram_HeapSlots->mapWork;
@@ -2456,7 +2456,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       work2->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
-    actor->movementState = 0;
+    actor->paused = 0;
     if (actor->scaleX > 0) {
       actor->scaleX -= Q16_ONE / 16;
       actor->scaleY -= Q16_ONE / 16;
@@ -2485,7 +2485,7 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   Actor_SelectAnimation(object, 1);
-  object->watchedObject = source;
+  object->watchedActor = source;
   object->timer = 0;
   object->userValue = a3;
   BYTE_AT(object, 98) = kind;
@@ -2511,7 +2511,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
                                        position[2]);
   actor->update = Actor_RollAndCrumble;
-  actor->actionFlags = 0;
+  actor->steeringFlags = 0;
   actor->speedLimit = px(8);
   actor->acceleration = px(1) / 8;
   sprite->rotation = angle - 0x4000;
@@ -2520,7 +2520,7 @@ void Actor_LaunchAhead(struct Actor *self) {
     actor->scaleY = 0;
   } while (0);
   actor->timer = 0;
-  actor->watchedObject = self->watchedObject;
+  actor->watchedActor = self->watchedActor;
   Event_PlaySound(SE_104);
 }
 

@@ -273,13 +273,13 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       object->motionFlags = 3;
       System_Wait(2);
       i = 0;
-      if (object->y > object->terrainHeight || object->velocityY != 0) {
+      if (object->y > object->groundHeight || object->velocityY != 0) {
         do {
           System_Wait(1);
           i++;
           if (i > 29)
             break;
-        } while (object->y > object->terrainHeight || object->velocityY != 0);
+        } while (object->y > object->groundHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
@@ -303,13 +303,13 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       object->motionFlags = 3;
       System_Wait(2);
       i = 0;
-      if (object->y > object->terrainHeight || object->velocityY != 0) {
+      if (object->y > object->groundHeight || object->velocityY != 0) {
         do {
           System_Wait(1);
           i++;
           if (i > 29)
             break;
-        } while (object->y > object->terrainHeight || object->velocityY != 0);
+        } while (object->y > object->groundHeight || object->velocityY != 0);
       }
       object->motionFlags = 0;
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
@@ -429,7 +429,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 void JupiterLighthouse_RideTheBeam(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *linked = actor->watchedObject;
+  struct Actor *linked = actor->watchedActor;
   struct Actor *shadow;
   s32 facing;
   s32 i;
@@ -467,7 +467,7 @@ void JupiterLighthouse_RideTheBeam(void) {
   FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
-  while (i <= 59 && actor->y > actor->terrainHeight + px(16)) {
+  while (i <= 59 && actor->y > actor->groundHeight + px(16)) {
     i++;
     System_Wait(1);
   }
@@ -535,7 +535,7 @@ void Whirlwind_Update(struct Actor *self) {
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
-          leader->watchedObject = self;
+          leader->watchedActor = self;
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;

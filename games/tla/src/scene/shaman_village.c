@@ -685,8 +685,8 @@ fade:
   }
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                         gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                         gMainRoutineWork.windowBrightness);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
   Actor_GetById(14)->priorityFlags |= 1;
@@ -1367,12 +1367,12 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2.4);
   Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->actionFlags &= ~1;
+      ->steeringFlags &= ~1;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 220);
   Event_Wait(1);
   {
     u8 *flags = &((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-                     ->actionFlags;
+                     ->steeringFlags;
 
     *flags |= 1;
   }
@@ -1400,11 +1400,11 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.4);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->actionFlags &= ~1;
+      ->steeringFlags &= ~1;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 264);
   Event_Wait(1);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->actionFlags |= 1;
+      ->steeringFlags |= 1;
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20)
   // "Who have we here? Strangers in Shaman Village? What is your purpose..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
@@ -2689,7 +2689,7 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
   object->scaleX += step;
   object->scaleY += step;
   object->timer += 2;
-  if (--*(s32 *)&object->watchedObject == 0)
+  if (--*(s32 *)&object->watchedActor == 0)
     Actor_Release(object);
 }
 
@@ -2707,7 +2707,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = Q16_ONE / 2;
     object->scaleY = Q16_ONE / 2;
-    *(s32 *)&object->watchedObject = 60;
+    *(s32 *)&object->watchedActor = 60;
     object->update = ShamanVillage_DriftSmoke;
     Import_ActorSetMode(object, 5);
     Actor_SetBlendMode(object, 1);

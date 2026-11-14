@@ -140,7 +140,7 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
     System_Wait(10);
     Event_PlaySound(SE_HEAVY_IMPACT);
     y = object->y;
-    floor = object->terrainHeight;
+    floor = object->groundHeight;
     /* FAKEMATCH(dead): the height and the floor are read before the counter is
      * cleared and again at the end of each pass. */
     do {
@@ -152,7 +152,7 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
       if (++i > 29)
         break;
       y = object->y;
-      floor = object->terrainHeight;
+      floor = object->groundHeight;
     test:;
     } while (y > floor || object->velocityY != 0);
     {
@@ -201,7 +201,7 @@ s32 Scene_PrepareMap(void) {
     struct Actor *object = Actor_Get(ACTOR_PILLAR);
 
     object->motionFlags = 0;
-    object->terrainHeight = -px(32);
+    object->groundHeight = -px(32);
     object->y = -px(32);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);

@@ -159,12 +159,12 @@ void Champa_SailorsSpotFelix(void) {
   FieldActor_Jump(33, 6, 0);
   Actor_SetSpeed(32, 1.8);
   Actor_SetSpeed(33, 1.8);
-  Actor_Get(32)->actionFlags &= 0xfe;
+  Actor_Get(32)->steeringFlags &= 0xfe;
   Actor_WalkBy(32, 0, -16);
-  Actor_Get(33)->actionFlags &= 0xfe;
+  Actor_Get(33)->steeringFlags &= 0xfe;
   Actor_WalkByAndWait(33, 0, -16);
   FieldEvent_Wait(1);
-  Actor_Get(33)->actionFlags |= 1;
+  Actor_Get(33)->steeringFlags |= 1;
   FieldEvent_Wait(15);
   Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "You're awfully persistent, aren't you?"
@@ -877,10 +877,10 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessage(28, 0);
   Actor_SetSpeed(25, 1);
-  Actor_Get(25)->actionFlags &= 0xfe;
+  Actor_Get(25)->steeringFlags &= 0xfe;
   Actor_WalkByAndWait(25, -7, 7);
   FieldEvent_Wait(1);
-  Actor_Get(25)->actionFlags |= 1;
+  Actor_Get(25)->steeringFlags |= 1;
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(25, FACING_SOUTH_SOUTHWEST);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -924,10 +924,10 @@ void Champa_MeetAlex(void) {
   Actor_SetSpeed(28, 0.6);
   Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
   FieldEvent_Wait(2);
-  Actor_Get(28)->actionFlags &= 0xfe;
+  Actor_Get(28)->steeringFlags &= 0xfe;
   Actor_WalkByAndWait(28, -8, 8);
   FieldEvent_Wait(1);
-  Actor_Get(28)->actionFlags |= 1;
+  Actor_Get(28)->steeringFlags |= 1;
   Actor_FaceDirectionAndWait(28, FACING_SOUTH_SOUTHWEST);
   Actor_SetAnimationAndWait(28, 4);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 28, 0);
@@ -1155,10 +1155,10 @@ void Champa_MeetAlex(void) {
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
   FieldEvent_Wait(25);
   Actor_SetSpeed(28, 0.4);
-  Actor_Get(28)->actionFlags &= 0xfe;
+  Actor_Get(28)->steeringFlags &= 0xfe;
   Actor_WalkByAndWait(28, 0, -24);
   FieldEvent_Wait(1);
-  Actor_Get(28)->actionFlags |= 1;
+  Actor_Get(28)->steeringFlags |= 1;
   FieldEvent_Wait(10);
   Actor_SetAnimation(28, 8);
   FieldEvent_Wait(30);

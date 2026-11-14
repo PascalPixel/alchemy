@@ -283,12 +283,12 @@ void AlhafranCave_SetUpCave(void) {
   }
   object = Actor_Get(14);
   object->motionFlags = 0;
-  object->terrainHeight = 0;
+  object->groundHeight = 0;
   object->y = 0;
   MapGrid_SetCellHeight(object->x, object->z, 0, 4);
   object = Actor_Get(15);
   object->motionFlags = 0;
-  object->terrainHeight = 0;
+  object->groundHeight = 0;
   object->y = 0;
   MapGrid_SetCellHeight(object->x, object->z, 0, 4);
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
@@ -501,7 +501,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_Wait(40);
   effect = FieldEffect_SpawnMoveHand(actor21);
   position[0] = actor15->x;
-  effect->watchedObject = actor15;
+  effect->watchedActor = actor15;
   position[1] = actor15->y + px(16);
   position[2] = actor15->z;
   FieldVector_AddPolarOffset(px(16), 0xc000, position);

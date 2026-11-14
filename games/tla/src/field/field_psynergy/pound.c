@@ -243,10 +243,10 @@ void FieldPsynergy_Pound(void) {
     Vector_AddPolarOffset(lift, scene->facing, &scene->x);
   } else if (child->motionFlags & 4) {
     /* FAKEMATCH(dead): lift cleared under a test of the ground's height. */
-    if (child->terrainHeight == 300)
+    if (child->groundHeight == 300)
       lift = 0;
-    scene->y = child->terrainHeight;
-    lift = child->y - child->terrainHeight + 0x200000;
+    scene->y = child->groundHeight;
+    lift = child->y - child->groundHeight + 0x200000;
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.
@@ -278,7 +278,7 @@ void FieldPsynergy_Pound(void) {
     goto end;
   shine->motionFlags = 0;
   if (*(u16 *)((u8 *)event + 0xd4c) & 2) {
-    if ((shine->animationKind & 15) == 1) {
+    if ((shine->spriteStorageKind & 15) == 1) {
       ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
       ((u8 *)shine)[35] &= 254;
     }

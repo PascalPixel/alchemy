@@ -8,7 +8,7 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
   Actor_SelectAnimation(object, 1);
-  object->watchedObject = source;
+  object->watchedActor = source;
   object->timer = 0;
   object->userValue = a3;
   BYTE_AT(object, 98) = kind;

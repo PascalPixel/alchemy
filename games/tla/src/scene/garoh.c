@@ -475,7 +475,7 @@ void Garoh_WerewolfPeersFromCrevice(void) {
     FieldEvent_ShowMessageThenWait(ACTOR_MAHA_AT_THE_CREVICE, 0, 10);
     FieldActor_ShowEmote(ACTOR_MAHA_AT_THE_CREVICE,
                          EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Actor_Get(ACTOR_MAHA_AT_THE_CREVICE)->actionFlags &= ~1;
+    Actor_Get(ACTOR_MAHA_AT_THE_CREVICE)->steeringFlags &= ~1;
     Actor_FaceDirection(ACTOR_MAHA_AT_THE_CREVICE, facing, 0);
     FieldEvent_Wait(30);
     Garoh_OpenCrevice(ACTOR_SANCTUARY_CREVICE);
@@ -1121,10 +1121,10 @@ loop2:
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_SetSpeed(ACTOR_WEREWOLF, 0.6);
-  Actor_Get(ACTOR_WEREWOLF)->actionFlags &= 254;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 128, 148);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_WEREWOLF)->actionFlags |= 1;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags |= 1;
   Actor_SetSpeed(ACTOR_WEREWOLF, 2.5);
   Actor_WalkByAndWait(ACTOR_WEREWOLF, 0, 4);
   FieldEvent_Wait(20);
@@ -1276,10 +1276,10 @@ loop2:
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_KRADEN, 0.4);
-  Actor_Get(ACTOR_KRADEN)->actionFlags &= 254;
+  Actor_Get(ACTOR_KRADEN)->steeringFlags &= 254;
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, -16);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_KRADEN)->actionFlags |= 1;
+  Actor_Get(ACTOR_KRADEN)->steeringFlags |= 1;
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1414,14 +1414,14 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
   FieldEvent_Wait(10);
   Actor_SetSpeed(ACTOR_WEREWOLF, 0.6);
-  Actor_Get(ACTOR_WEREWOLF)->actionFlags &= 254;
+  Actor_Get(ACTOR_WEREWOLF)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_WEREWOLF, 296, 712);
   FieldEvent_Wait(1);
   object = Actor_Get(ACTOR_WEREWOLF);
   /* FAKEMATCH(temporary): a local holding the constant 1. */
   b1 = 1;
-  b1 |= object->actionFlags;
-  object->actionFlags = b1;
+  b1 |= object->steeringFlags;
+  object->steeringFlags = b1;
   FieldEvent_Wait(15);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(25);

@@ -358,7 +358,7 @@ void LemurianShip_ExamineLiftSwitch(void) {
       Event_PlaySound(SE_CRUNCH);
       FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
                                            px(824), px(-32), px(72));
-      ((struct Actor *)Actor_GetById(15))->terrainHeight = 0xffe00000;
+      ((struct Actor *)Actor_GetById(15))->groundHeight = 0xffe00000;
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       MapGrid_CopyCellAttributes(106, 16, 3, 2, 110, 4);
       MapGrid_CopyCellAttributes(50, 1, 3, 1, 50, 4);
@@ -449,7 +449,7 @@ void LemurianShip_StepOnLift(void) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 840, 72);
     opened = Event_GetFlag((FLAG_JELLIES_BEATEN + 2));
-    state = &leader->terrainId;
+    state = &leader->layer;
     if (opened) {
       Event_PlaySound(SE_243);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -472,12 +472,12 @@ void LemurianShip_StepOnLift(void) {
       helper = ((struct Actor *)Actor_GetById(9));
       Actor_SetSpritePriority(9, 2);
       Actor_SetSpeed(9, 2.4);
-      ((struct Actor *)Actor_GetById(9))->actionFlags &= ~1;
+      ((struct Actor *)Actor_GetById(9))->steeringFlags &= ~1;
       Actor_WalkToAndWait(9, 824, 88);
       Event_Wait(1);
       {
         /* FAKEMATCH(temporary): the bit in a local the byte is or'ed into. */
-        u8 *bits = &((struct Actor *)Actor_GetById(9))->actionFlags;
+        u8 *bits = &((struct Actor *)Actor_GetById(9))->steeringFlags;
         s32 value = 1;
 
         value |= *bits;
@@ -502,7 +502,7 @@ void LemurianShip_StepOnLift(void) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
         Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 9);
         helper->gravity = px(1);
-        helper->terrainId = two;
+        helper->layer = two;
       }
       Actor_Jump(9, 4, 0);
       Actor_MoveToAndWait(9, 832, 74);
@@ -516,7 +516,7 @@ void LemurianShip_StepOnLift(void) {
       Event_Wait(20);
       Actor_Stop(gMainRoutineWork.leaderActorId);
       *state = 1;
-      helper->terrainId = 0;
+      helper->layer = 0;
       wait(1);
       Event_ClearFlag(FLAG_JELLY_FLED);
     }
@@ -540,7 +540,7 @@ void LemurianShip_StepOnLiftWestSide(void) {
     Event_Wait(20);
     MapGrid_SetShake(0, 0, 0);
     MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
-    leader->terrainId = 2;
+    leader->layer = 2;
     Event_Wait(20);
     Actor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 3.2);
@@ -549,7 +549,7 @@ void LemurianShip_StepOnLiftWestSide(void) {
     Event_PlaySound(SE_CRUNCH);
     MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
     Event_Wait(20);
-    leader->terrainId = 1;
+    leader->layer = 1;
   }
 }
 
@@ -1159,13 +1159,13 @@ void LemurianShip_SetUpTwoJellyRoom(void) {
       MapGrid_CopyCellAttributes(0, 25, 1, 3, 6, 25);
       Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(10)),
                                       px(104), 0, px(424));
-      ((struct Actor *)Actor_GetById(10))->terrainHeight = 0;
+      ((struct Actor *)Actor_GetById(10))->groundHeight = 0;
     } else {
       Actor_SetPosition(8, 0, 0);
       MapGrid_CopyCellAttributes(0, 25, 1, 3, 6, 25);
       FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(10)),
                                            px(104), 0, px(424));
-      ((struct Actor *)Actor_GetById(10))->terrainHeight = 0;
+      ((struct Actor *)Actor_GetById(10))->groundHeight = 0;
     }
     wait(1);
   }
@@ -1176,7 +1176,7 @@ void LemurianShip_SetUpTwoJellyRoom(void) {
       Actor_SetPosition(9, 0, 0);
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(11)),
                                          px(104), px(-32), px(536));
-    ((struct Actor *)Actor_GetById(11))->terrainHeight = 0xffe00000;
+    ((struct Actor *)Actor_GetById(11))->groundHeight = 0xffe00000;
     Actor_SetSpritePriority(11, 1);
     wait(1);
   }
@@ -1197,7 +1197,7 @@ void LemurianShip_SetUpRaisedJelly(s32 id) {
   Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
   object->y = -px(32);
-  object->terrainHeight = -px(32);
+  object->groundHeight = -px(32);
 }
 
 /// Places a puddle up on the raised floor, where its jelly sat.
@@ -1205,7 +1205,7 @@ void LemurianShip_SetUpRaisedJelly(s32 id) {
   {                                                                            \
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(id)),  \
                                          x, px(-32), z);                       \
-    ((struct Actor *)Actor_GetById(id))->terrainHeight = -px(32);              \
+    ((struct Actor *)Actor_GetById(id))->groundHeight = -px(32);               \
   }
 
 void LemurianShip_SetUpSixJellyRoom(void) {
@@ -1221,7 +1221,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     object->motionFlags = 0;
     FieldActor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(15)),
                                          206 << 18, px(-32), 144 << 15);
-    object->terrainHeight = -px(32);
+    object->groundHeight = -px(32);
     if (Event_GetFlag((FLAG_PUDDLE_FROZEN + 2)))
       MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
     else
@@ -1359,7 +1359,7 @@ void LemurianShip_SetUpJelly(s32 id) {
   Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
   object->y = 0;
-  object->terrainHeight = 0;
+  object->groundHeight = 0;
 }
 
 /// The room of seven jellies: each beaten one leaves a puddle and opens its
@@ -1374,7 +1374,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 32);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(16)),
                                     px(776), 0, px(520));
-    ((struct Actor *)Actor_GetById(16))->terrainHeight = 0;
+    ((struct Actor *)Actor_GetById(16))->groundHeight = 0;
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 8)))
       Actor_SetPosition(9, 0, 0);
   } else {
@@ -1384,7 +1384,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 53, 32);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(17)),
                                     px(856), 0, px(520));
-    ((struct Actor *)Actor_GetById(17))->terrainHeight = 0;
+    ((struct Actor *)Actor_GetById(17))->groundHeight = 0;
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 9)))
       Actor_SetPosition(10, 0, 0);
   } else {
@@ -1394,7 +1394,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 43, 37);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(18)),
                                     px(696), 0, px(600));
-    ((struct Actor *)Actor_GetById(18))->terrainHeight = 0;
+    ((struct Actor *)Actor_GetById(18))->groundHeight = 0;
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 10)))
       Actor_SetPosition(11, 0, 0);
   } else {
@@ -1404,7 +1404,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 37);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(19)),
                                     px(776), 0, px(600));
-    ((struct Actor *)Actor_GetById(19))->terrainHeight = 0;
+    ((struct Actor *)Actor_GetById(19))->groundHeight = 0;
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 11)))
       Actor_SetPosition(12, 0, 0);
   } else {
@@ -1414,7 +1414,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 50, 37);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(20)),
                                     px(808), 0, px(600));
-    ((struct Actor *)Actor_GetById(20))->terrainHeight = 0;
+    ((struct Actor *)Actor_GetById(20))->groundHeight = 0;
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 12)))
       Actor_SetPosition(13, 0, 0);
   } else {
@@ -1424,7 +1424,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 43);
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(22)),
                                     px(776), 0, px(696));
-    ((struct Actor *)Actor_GetById(22))->terrainHeight = 0;
+    ((struct Actor *)Actor_GetById(22))->groundHeight = 0;
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 14)))
       Actor_SetPosition(15, 0, 0);
   } else {
@@ -1473,7 +1473,7 @@ void LemurianShip_SetUpHold(void) {
     object->motionFlags = 0;
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(64)),
                                     px(136), px(-32), px(392));
-    object->terrainHeight = 0xfff00000;
+    object->groundHeight = 0xfff00000;
     Actor_SetSpritePriority(64, 3);
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 1);
     Actor_SetPosition(8, 0, 0);

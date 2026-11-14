@@ -448,10 +448,10 @@ s32 Scene_TalkToActor(s32 id) {
     ((void (*)(s32))talk->script)(id);
   }
   if (!paused) {
-    if (object->script[object->step] == 17) {
+    if (object->script[object->scriptCursor] == 17) {
       if ((s8)placement->talkFacing == 3) {
-        object->watchedObject = Actor_GetById(gMainRoutineWork.leaderActorId);
-        object->actionFlags |= 1;
+        object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
+        object->steeringFlags |= 1;
         Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
       } else if ((s8)placement->talkFacing == 1) {
         object->timer = savedAngle;

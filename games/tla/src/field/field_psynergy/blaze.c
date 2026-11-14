@@ -281,7 +281,7 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   result = 0;
   if (work->mode != EVENT_MODE_NO_CELL_TEST) {
     if (MapGrid_CheckCollisionAtFar(object->x, object->z, 0,
-                                    object->terrainHeight) != 0)
+                                    object->groundHeight) != 0)
       result = 1;
   }
   other = Ram_HeapSlots->scriptObjects;

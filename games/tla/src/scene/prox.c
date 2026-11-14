@@ -275,7 +275,7 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
   s32 *objectPos;
 
   if (BYTE_AT(object, 99) != 0) {
-    object->movementState = 1;
+    object->paused = 1;
     return 1;
   }
   targetPos = &target->x;
@@ -292,7 +292,7 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
       /* FAKEMATCH(temporary): the count and movementState's address held in
        * locals before the test. */
       s16 count = gFieldWork->blockedSteps;
-      u8 *movementState = &object->movementState;
+      u8 *movementState = &object->paused;
 
       if (count > 120) {
         *movementState = 0;
@@ -304,7 +304,7 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
       }
     }
   } else {
-    object->movementState = 0;
+    object->paused = 0;
     Actor_SelectAnimation(object, 2);
   }
   return result;
@@ -322,7 +322,7 @@ s32 Prox_PlayTag(struct Actor *actor) {
 
   target = Actor_Get(gMainRoutineWork.leaderActorId);
   if (SceneActor_CalculateFixedPointDistance(&target->x, &actor->x) <= 11) {
-    actor->movementState = flag;
+    actor->paused = flag;
     Actor_SelectAnimation(actor, 2);
     return 0;
   }
@@ -811,10 +811,10 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirection(17, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
   Actor_SetSpeed(ACTOR_ISAAC, 2.4);
-  Actor_Get(ACTOR_ISAAC)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_ISAAC)->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(ACTOR_ISAAC, 160, 140);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_ISAAC)->actionFlags |= 1;
+  Actor_Get(ACTOR_ISAAC)->steeringFlags |= 1;
   Actor_SetAnimationAndWait(ACTOR_ISAAC, 0x15);
   Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
@@ -1003,24 +1003,24 @@ void Prox_MoldHidesInSnow(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   Actor_SetSpeed(20, 2);
   object = Actor_Get(20);
-  object->terrainId = 1;
+  object->layer = 1;
   FieldActor_SetSpritePriority(20, 3);
   object = Actor_Get(gMainRoutineWork.leaderActorId);
-  object->actionFlags &= 0xfe;
+  object->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 408, 326);
   FieldEvent_Wait(1);
   object = Actor_Get(gMainRoutineWork.leaderActorId);
-  object->actionFlags |= 1;
+  object->steeringFlags |= 1;
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_PlaySound(SE_RATTLE);
   object = (struct Actor *)((s32)FieldCamera_GetActor());
   object->y += px(2);
   object = Actor_Get(20);
-  object->actionFlags &= 0xfe;
+  object->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(20, 408, 200);
   FieldEvent_Wait(1);
   object = Actor_Get(20);
-  object->actionFlags |= 1;
+  object->steeringFlags |= 1;
   Actor_SetPosition(20, 0, 0);
   Event_PlaySound(SE_KOLIMA_BRIDGE_HOP);
   MapGrid_SetShake(1, 2, 1);

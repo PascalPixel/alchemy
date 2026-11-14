@@ -19,7 +19,7 @@ void Ride_UpdateDrift(struct Actor *object) {
   object->scaleX = scale + rate;
   object->scaleY += object->acceleration;
   parts->unk12 += object->timer;
-  if (leader->y == leader->terrainHeight && Actor_IsAbove(object, leader)) {
+  if (leader->y == leader->groundHeight && Actor_IsAbove(object, leader)) {
     object->z -= object->riseBaseY;
     object->gravity += object->riseBaseY >> 2;
     object->riseBaseY = 0;

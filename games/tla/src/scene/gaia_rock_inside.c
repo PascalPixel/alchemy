@@ -812,7 +812,7 @@ void GaiaRockInside_SaveSusa(void) {
   object->speedLimit = px(1);
   if (walker->script == gGaiaRockInside_SerpentThrowScript ||
       walker->script == gGaiaRockInside_SerpentStrikeScript) {
-    walker->movementState = 1;
+    walker->paused = 1;
     Actor_SetAnimationSpeed(walker, 0);
   }
 }
@@ -830,7 +830,7 @@ void GaiaRockInside_RestoreSusa(void) {
   }
   if (walker->script == gGaiaRockInside_SerpentThrowScript ||
       walker->script == gGaiaRockInside_SerpentStrikeScript) {
-    walker->movementState = 0;
+    walker->paused = 0;
     Actor_SetAnimationSpeed(walker, 16);
   }
   Iwram_CopyWordsEntry(object, &gGaiaRockInside_SavedSusa, 128);
@@ -1468,7 +1468,7 @@ void GaiaRockInside_FindCloudBrand(void) {
   object->x = px(552);
   object->z = px(296);
   object->y = -1966080;
-  object->terrainHeight = -2097152;
+  object->groundHeight = -2097152;
   Event_ClearFlag(FLAG_NOTHING_HAPPENS);
   Scene_TalkToActor(4162);
 }
@@ -2027,7 +2027,7 @@ void GaiaRockInside_SwayPlatforms(void) {
     stopped |= 1;
   id = 8;
   do {
-    Actor_Get(id++)->movementState = stopped;
+    Actor_Get(id++)->paused = stopped;
   } while (id <= 16);
   if (stopped != 0)
     return;
@@ -2356,8 +2356,8 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 10);
         dragon->velocityY = px(6);
         C1(Event_Wait, 10);
-        dragon->movementState = 1;
-        partner->movementState = 1;
+        dragon->paused = 1;
+        partner->paused = 1;
         C2(Actor_SetAnimationSpeed, dragon, 0);
         C2(Actor_SetAnimationSpeed, partner, 0);
         C2(Actor_SetSpriteColorMode, dragon, 6);
@@ -2376,12 +2376,12 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSpriteColorMode, dragon, 0);
         C2(Actor_SetSpriteColorMode, partner, 0);
         C6(MapGrid_CopyCellPictureCellsRect, 85, 74, 5, 2, width, height);
-        dragon->movementState = 0;
-        partner->movementState = 0;
+        dragon->paused = 0;
+        partner->paused = 0;
         C2(Actor_SetAnimationSpeed, dragon, 16);
         C2(Actor_SetAnimationSpeed, partner, 16);
         mask = 254;
-        Actor_GetById(10)->actionFlags &= mask;
+        Actor_GetById(10)->steeringFlags &= mask;
         C3(Actor_WalkToById, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
@@ -2400,8 +2400,8 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 572);
         {
           struct Actor *a = Actor_GetById(10);
-          mask &= a->actionFlags;
-          a->actionFlags = mask;
+          mask &= a->steeringFlags;
+          a->steeringFlags = mask;
         }
         C3(Actor_WalkToById, 10, 456, 360);
         dragon->velocityY = fast;
@@ -2455,7 +2455,7 @@ s32 Scene_Initialize(void) {
           C2(Actor_StartScript, shards[i], gGaiaRockInside_SerpentSmokeScript);
         }
         dragon->velocityY = px(10);
-        Actor_GetById(10)->actionFlags &= 254;
+        Actor_GetById(10)->steeringFlags &= 254;
         C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
         C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
@@ -2552,7 +2552,7 @@ s32 Scene_Initialize(void) {
       dragon->velocityY = px(6);
       C1(Event_Wait, 10);
       C1(Sound_Play, 572);
-      dragon->movementState = 1;
+      dragon->paused = 1;
       C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
@@ -3052,8 +3052,8 @@ s32 Scene_Initialize(void) {
         C1(Event_Wait, 10);
         dragon->velocityY = px(6);
         C1(Event_Wait, 10);
-        dragon->movementState = 1;
-        partner->movementState = 1;
+        dragon->paused = 1;
+        partner->paused = 1;
         C2(Actor_SetAnimationSpeed, dragon, 0);
         C2(Actor_SetAnimationSpeed, partner, 0);
         C2(Actor_SetSpriteColorMode, dragon, 6);
@@ -3072,12 +3072,12 @@ s32 Scene_Initialize(void) {
         C2(Actor_SetSpriteColorMode, dragon, 0);
         C2(Actor_SetSpriteColorMode, partner, 0);
         C6(MapGrid_CopyCellPictureCellsRect, 85, 74, 5, 2, width, height);
-        dragon->movementState = 0;
-        partner->movementState = 0;
+        dragon->paused = 0;
+        partner->paused = 0;
         C2(Actor_SetAnimationSpeed, dragon, 16);
         C2(Actor_SetAnimationSpeed, partner, 16);
         mask = 254;
-        Actor_GetById(10)->actionFlags &= mask;
+        Actor_GetById(10)->steeringFlags &= mask;
         C3(Actor_WalkToById, 10, 456, 360);
         fast = 0x40000;
         dragon->velocityY = fast;
@@ -3096,8 +3096,8 @@ s32 Scene_Initialize(void) {
         C1(Sound_Play, 572);
         {
           struct Actor *a = Actor_GetById(10);
-          mask &= a->actionFlags;
-          a->actionFlags = mask;
+          mask &= a->steeringFlags;
+          a->steeringFlags = mask;
         }
         C3(Actor_WalkToById, 10, 456, 360);
         dragon->velocityY = fast;
@@ -3151,7 +3151,7 @@ s32 Scene_Initialize(void) {
           C2(Actor_StartScript, shards[i], gGaiaRockInside_SerpentSmokeScript);
         }
         dragon->velocityY = px(10);
-        Actor_GetById(10)->actionFlags &= 254;
+        Actor_GetById(10)->steeringFlags &= 254;
         C3(Actor_WalkToById, 10, 432, 320);
         C1(Event_Wait, 10);
         C3(MapGrid_SetScreenShake, -1, -1, 0xe666);
@@ -3248,7 +3248,7 @@ s32 Scene_Initialize(void) {
       dragon->velocityY = px(6);
       C1(Event_Wait, 10);
       C1(Sound_Play, 572);
-      dragon->movementState = 1;
+      dragon->paused = 1;
       C2(PaletteFade_SetTarget, 0x7fff, 0);
       C1(PaletteFade_StartInterpolation, 10);
       C1(Event_Wait, 10);
@@ -4119,7 +4119,7 @@ burst:
   leader->gravity = 0x547a;
   for (value = 0; value < 180; value++) {
     System_Wait(1);
-    if (leader->y <= leader->terrainHeight)
+    if (leader->y <= leader->groundHeight)
       break;
   }
   Event_PlaySound(SE_THUMP);

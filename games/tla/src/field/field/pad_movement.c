@@ -148,7 +148,7 @@ update_object:
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
-  if (object->animationKind == 1) {
+  if (object->spriteStorageKind == 1) {
     playerSprite = object->sprite;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x);
@@ -165,7 +165,7 @@ update_object:
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gActor_RippleScript);
         ripple->motionFlags = collision;
-        ripple->terrainId = 1;
+        ripple->layer = 1;
         if (rippleSprite != 0) {
           Animation_ApplyChildArgument(rippleSprite, 1);
           rippleSprite->flags = collision;
@@ -179,7 +179,7 @@ update_object:
   Field_CheckConfiguredKeys();
   if (gInput.pressed & gMainRoutineWork.aKeys)
     gFieldWork->raisedTrigger = 251;
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -374,7 +374,7 @@ push_objects:
     if (Field_CheckSpheresOverlap(&other->x, radius, &contact.x,
                                   other->radius - 2) < 0)
       continue;
-    if ((other->collisionFlags & 2) && other->movementState == 0) {
+    if ((other->collisionFlags & 2) && other->paused == 0) {
       direction = ArcTan2(other->z - object->z, other->x - object->x);
       SET_POSITION(&testPosition, other->x, other->y, other->z);
       heading = direction;
@@ -457,7 +457,7 @@ counted:
                           (struct FieldPosition *)&object->velocityX);
     if (object->timer != 0)
       object->timer--;
-    object->actionFlags &= ~1;
+    object->steeringFlags &= ~1;
     difference = (s16)((u16)angle - object->facing);
     if (difference > 0x1000)
       difference = 0x400;
@@ -465,10 +465,10 @@ counted:
       difference = -0x400;
     object->facing += difference;
   }
-  if (object->animationKind == 1)
+  if (object->spriteStorageKind == 1)
     WorldMap_GetCollision((struct WorldPosition *)&object->x);
   Field_CheckConfiguredKeys();
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 #undef SAME_CELL
@@ -633,7 +633,7 @@ update_object:
                           (struct FieldPosition *)&object->velocityX);
     if (object->timer != 0)
       object->timer--;
-    object->actionFlags &= ~1;
+    object->steeringFlags &= ~1;
     difference = (s16)(direction - object->facing);
     if (difference > 0x1000)
       difference = 0x400;
@@ -653,7 +653,7 @@ update_object:
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
-  kind = object->animationKind;
+  kind = object->spriteStorageKind;
   if (kind == 1) {
     WorldMap_GetCollision((struct WorldPosition *)&object->x);
     if (object->timer == 0 && collision == 0) {
@@ -662,7 +662,7 @@ update_object:
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gActor_RippleScript);
         ripple->motionFlags = 0;
-        ripple->terrainId = kind;
+        ripple->layer = kind;
         if (rippleSprite != 0) {
           Animation_ApplyChildArgument(rippleSprite, 2);
           rippleSprite->flags = 0;
@@ -674,7 +674,7 @@ update_object:
     }
   }
   Field_CheckConfiguredKeys();
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -836,7 +836,7 @@ update_object:
                           (struct FieldPosition *)&object->velocityX);
     if (object->timer != 0)
       object->timer--;
-    object->actionFlags &= ~1;
+    object->steeringFlags &= ~1;
     difference = (s16)(direction - object->facing);
     if (difference > 0x1000)
       difference = 0x400;
@@ -857,7 +857,7 @@ update_object:
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
-  kind = object->animationKind;
+  kind = object->spriteStorageKind;
   if (kind == 1) {
     if (object->y < 0x40000) {
       if (object->timer == 0 && collision == 0) {
@@ -866,7 +866,7 @@ update_object:
           rippleSprite = ripple->sprite;
           Actor_StartScript(ripple, gActor_RippleScript);
           ripple->motionFlags = 0;
-          ripple->terrainId = kind;
+          ripple->layer = kind;
           if (rippleSprite != 0) {
             Animation_ApplyChildArgument(rippleSprite, 1);
             rippleSprite->flags = 0;
@@ -896,6 +896,6 @@ update_object:
     object->y = px(12);
   if (object->y <= 0)
     object->y = 0;
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }

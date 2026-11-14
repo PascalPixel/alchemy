@@ -98,7 +98,7 @@ void HoverGlow_Update(void) {
   struct EffectSprite *sprite;
 
   // The glow's strength.
-  if (MapGrid_IsHoverCell(player->x, player->z, player->terrainId) == 0) {
+  if (MapGrid_IsHoverCell(player->x, player->z, player->layer) == 0) {
     if (event->glowHeld != 0)
       event->glow--;
   } else {
@@ -207,7 +207,7 @@ void FieldPsynergy_Hover(void) {
   Task_Add(HoverGlow_Update, TASK_PASS_VBLANK);
 
   found = 0;
-  if (MapGrid_IsHoverCell(player->x, player->z, player->terrainId) == 0) {
+  if (MapGrid_IsHoverCell(player->x, player->z, player->layer) == 0) {
     found = 1;
   } else {
     for (n = 0; n < 80; n++) {
@@ -215,7 +215,7 @@ void FieldPsynergy_Hover(void) {
       if (other != NULL && other->script != NULL &&
           (other->collisionFlags & 1) && other != scene->mainObject) {
         position[0] = other->x;
-        position[1] = other->terrainHeight;
+        position[1] = other->groundHeight;
         position[2] = other->z;
         if (FieldPsynergy_CheckOverlap(&player->x, player->radius, &other->x,
                                        other->radius - 2) >= 0) {
@@ -246,7 +246,7 @@ void FieldPsynergy_Hover(void) {
     HeapSlot_Release(92);
   } else {
     player->motionFlags = 0;
-    player->y = player->terrainHeight;
+    player->y = player->groundHeight;
     work->scale = 0;
     event->glowHeld = 0;
     event->glow = 100;
@@ -258,7 +258,7 @@ void FieldPsynergy_Hover(void) {
       wait(1);
     }
     player->motionFlags = 4;
-    player->y = player->terrainHeight + 0x248000;
+    player->y = player->groundHeight + 0x248000;
     player->gravity = px(3);
     gMainRoutineWork.movementMode = 10;
     work->fading = 1;
@@ -280,27 +280,27 @@ void FieldPsynergy_EndHover(void) {
   object->motionFlags = 3;
   gMainRoutineWork.movementMode = 0;
   for (i = 0; i < 60; i++) {
-    if (object->y <= object->terrainHeight)
+    if (object->y <= object->groundHeight)
       break;
     wait(1);
   }
   Sound_PlayFar(SE_WATER);
   wait(1);
   for (i = 0; i < 20; i++) {
-    if (object->y <= object->terrainHeight)
+    if (object->y <= object->groundHeight)
       break;
     wait(1);
   }
   wait(1);
   for (i = 0; i < 20; i++) {
-    if (object->y <= object->terrainHeight)
+    if (object->y <= object->groundHeight)
       break;
     wait(1);
   }
   wait(1);
   object->bounce = 0;
   object->velocityY = 0;
-  object->y = object->terrainHeight;
+  object->y = object->groundHeight;
   object->gravity = px(1);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(92);

@@ -142,13 +142,12 @@ void TundariaTower_SetColumnCell(struct Actor *object) {
   s32 z = object->z >> 20;
   s32 attr0 = MapCell_GetAttributes(0, x, z);
   s32 attr2 = MapCell_GetAttributes(2, x, z);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
+  s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
 
   if (GameFlag_Get(object->timer)) {
     attr2 &= 0xffff00ff;
     attr0 &= ~128;
-    if ((object->terrainHeight >> 19) != height)
+    if ((object->groundHeight >> 19) != height)
       height -= 4;
     Scene_SetActorSpritePriority(object, 3);
   } else {
@@ -159,7 +158,7 @@ void TundariaTower_SetColumnCell(struct Actor *object) {
   }
   MapCell_SetAttributes(0, x, z, attr0);
   MapCell_SetAttributes(2, x, z, attr2);
-  MapGrid_SetCellHeight(x << 20, z << 20, object->terrainId, height);
+  MapGrid_SetCellHeight(x << 20, z << 20, object->layer, height);
 }
 
 void Actor_SelectAnimation();
@@ -433,7 +432,7 @@ void TundariaTower_RefluxAppears(void) {
   Event_Wait(2);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(2);
-  object->actionFlags = 0;
+  object->steeringFlags = 0;
   object->update = 0;
   Actor_SetDestination(8, 424, 536);
   TundariaTower_StartEffectScript(object, gTundariaTower_RefluxHops);
@@ -569,13 +568,13 @@ void TundariaTower_SetDownPillar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
-    object->terrainId = 2;
+    object->layer = 2;
     object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
     Sound_Play(SE_THUMP);
     OverlayObject_WaitUntilIdle(object);
     object->motionFlags = 0;
-    object->terrainId = 0;
+    object->layer = 0;
   }
   Actor_PlaceMovedBlock();
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6) {
@@ -878,7 +877,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteFlags(Actor_GetById(8), 0);
         object->collisionFlags = 0;
         object->motionFlags = 0;
-        object->terrainHeight = px(8);
+        object->groundHeight = px(8);
         object->y = px(8);
         Actor_SetItemIcon(object, ITEM_CENTER_PRONG);
         if (GameFlag_Get(FLAG_CRYSTAL_BROKEN)) {
@@ -1063,7 +1062,7 @@ top:
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         GameFlag_Set(flag);
-        Actor_SetCellOpen(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->layer);
         object->scaleY = Q16_ONE;
       }
       return;
@@ -1099,7 +1098,7 @@ next:
   object = Actor_GetById(id);
   flag = table[1];
   nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
+  cells = map->layers[object->layer].cells;
   shapes = Ram_MapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   if (GameFlag_Get(nextFlag)) {
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
@@ -1111,12 +1110,11 @@ next:
     index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
+    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
     Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot =
-        MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
+    *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
     if (GameFlag_Get(flag))
       Actor_SelectAnimation(object, 0);
   }
@@ -1125,9 +1123,9 @@ next:
     goto next;
 done:
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+  ground = Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
   if (leader->y < ground) {
-    leader->terrainHeight = ground;
+    leader->groundHeight = ground;
     leader->y = ground;
   }
 }
@@ -1180,10 +1178,10 @@ next:
         TundariaTower_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(trap, 2);
-        TundariaTower_SetLeaderCellShape(-2, trap->terrainId);
+        TundariaTower_SetLeaderCellShape(-2, trap->layer);
         TundariaTower_SpawnRubble(1);
         wait(16);
-        TundariaTower_SetLeaderCellShape(-2, trap->terrainId);
+        TundariaTower_SetLeaderCellShape(-2, trap->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -1226,7 +1224,7 @@ loop:
     TundariaTower_SpawnRubble(0);
     wait(8);
     Actor_SelectAnimation(object, 2);
-    Actor_SetCellShape(-4, object->terrainId, id);
+    Actor_SetCellShape(-4, object->layer, id);
     TundariaTower_SpawnRubble(1);
     wait(16);
     TundariaTower_SetWork(-1, -1, 0xe666);
@@ -1287,7 +1285,7 @@ next:
   object = Actor_GetById(id);
   flag = list[1];
   nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
+  cells = map->layers[object->layer].cells;
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   object->retainSpriteCache = 3;
   if (GameFlag_Get(nextFlag)) {
@@ -1300,12 +1298,11 @@ next:
     index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
+    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
     Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot =
-        MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
+    *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
     if (GameFlag_Get(flag))
       Actor_CopyGraphics(id, 9);
   }
@@ -1380,10 +1377,10 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
         TundariaTower_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(partner, 2);
-        TundariaTower_SetLeaderCellShape(-2, trap->terrainId);
+        TundariaTower_SetLeaderCellShape(-2, trap->layer);
         TundariaTower_SpawnRubble(1);
         wait(16);
-        TundariaTower_SetLeaderCellShape(-2, trap->terrainId);
+        TundariaTower_SetLeaderCellShape(-2, trap->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);

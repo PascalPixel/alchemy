@@ -367,10 +367,10 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Event_Wait(7);
   Actor_ShowItemIconById(10, actor);
   Actor_SetHorizontalPositionWithTerrain(10, 648 << 16, 196 << 16);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
   Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, -16, -8);
   Event_Wait(1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_EAST);
   Event_Wait(10);
@@ -378,7 +378,7 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
 
 void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_SetSpeed(8, 0.8);
-  Actor_GetById(8)->actionFlags &= 0xfe;
+  Actor_GetById(8)->steeringFlags &= 0xfe;
   Actor_WalkByAndWaitById(8, 0, 6);
   Event_Wait(1);
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
@@ -390,7 +390,7 @@ void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_SetModeById(8, 1);
   Event_Wait(15);
   if (value == 0) {
-    Actor_GetById(8)->actionFlags &= 0xfe;
+    Actor_GetById(8)->steeringFlags &= 0xfe;
     Actor_WalkByAndWait(8, 0, -6);
     Event_Wait(1);
     ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
@@ -618,10 +618,10 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     Event_Wait(10);
   }
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  object->actionFlags &= ~1;
+  object->steeringFlags &= ~1;
   Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, 12, 12);
   Event_Wait(1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_SOUTHEAST);
   Event_Wait(10);
@@ -646,10 +646,10 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_SetModeById(8, 1);
   Actor_Jump(ACTOR_FELIX, 6, 0);
   Sound_Play(SE_194);
-  Actor_GetById(ACTOR_FELIX)->actionFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
   Actor_WalkByAndWait(ACTOR_FELIX, -12, -12);
   Event_Wait(1);
-  Actor_GetById(ACTOR_FELIX)->actionFlags |= 1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags |= 1;
   Event_Wait(10);
   Actor_StartRepeatedMotion(8, 3);
   FieldEffect_SetAttached(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -672,7 +672,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   thrown->motionFlags = 2;
   thrown->y = px(24);
   thrown->update = ChampaCliffCaves_GrowThrown;
-  thrown->terrainHeight = 0;
+  thrown->groundHeight = 0;
   thrown->scaleX = 0;
   thrown->scaleY = 0;
   Actor_Jump(10, 5, 0);
@@ -935,7 +935,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_PlaceThrown(656 << 16, 256 << 16, 0, -4);
     WORD_AT(object, 72) = 0x4000;
     object->motionFlags = 2;
-    object->terrainHeight = 0xfc190000;
+    object->groundHeight = 0xfc190000;
     Actor_Jump(12, 10, 0);
     Sound_Play(SE_ENEMY_CRY);
     Actor_SetSpritePriority(12, 1);
@@ -971,7 +971,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Actor_SetPosition(13, 664, 248);
     WORD_AT(object, 72) = 0x10000;
     object->motionFlags = 2;
-    object->terrainHeight = 0;
+    object->groundHeight = 0;
     object->y = px(32);
     WORD_AT(object, 24) = 0x4000;
     WORD_AT(object, 108) = (s32)ChampaCliffCaves_GrowThrownSlowly;

@@ -410,7 +410,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   MarsLighthouseStarRoom_ClearDragonIce();
   Event_PlaySound(MUS_SILENCE);
   FieldEvent_Wait(40);
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -930,17 +930,17 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   object = *slot;
   if (object != 0)
     Actor_Release(object);
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 680, 186);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
   gMainRoutineWork.battleBackground = SCENE_NARIBWE;
@@ -1012,10 +1012,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     }
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-    Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
     FieldEvent_Wait(1);
-    Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
     object = *slot;
     if (object != 0)
       Actor_Release(object);
@@ -1112,10 +1112,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   object2 = *slot2;
   if (object2 != 0)
     Actor_Release(object2);
@@ -1204,7 +1204,7 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
     Actor_SetSpriteFlags(object, 0);
     object->scaleX = Q16_ONE / 2;
     object->scaleY = Q16_ONE / 2;
-    *(s32 *)&object->watchedObject = 60;
+    *(s32 *)&object->watchedActor = 60;
     object->update = MarsLighthouseStarRoom_UpdateThawSpark;
     Actor_SelectAnimation(object, 5);
     Actor_SetBlendMode(object, 1);
@@ -1892,7 +1892,7 @@ extern u32 gEmbers_Script[];
 
 /// An attached actor holds still while an event runs.
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->movementState = Event_GetFlag(260);
+  object->paused = Event_GetFlag(260);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1930,7 +1930,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     flag = Event_GetFlag(FLAG_MENU_OPEN);
     if (work->psynergy != 0)
       flag |= 1;
-    actor->movementState = flag;
+    actor->paused = flag;
 
     position.x = actor->x;
     position.y = actor->y;
@@ -1946,8 +1946,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(5, 5, 1);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      if (actor->watchedObject != NULL)
-        ((void (*)(struct Actor *))actor->watchedObject)(actor);
+      if (actor->watchedActor != NULL)
+        ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
     map = Ram_HeapSlots->mapWork;
@@ -2005,7 +2005,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       work2->stepTrigger = other->value0a + 2;
     }
   } else if (state == 1) {
-    actor->movementState = 0;
+    actor->paused = 0;
     if (actor->scaleX > 0) {
       actor->scaleX -= Q16_ONE / 16;
       actor->scaleY -= Q16_ONE / 16;

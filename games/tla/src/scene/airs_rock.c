@@ -783,7 +783,7 @@ fade:
   Window_LoadGraphics();
   DebugText_Clear();
   work = &gMainRoutineWork;
-  WindowColor_Apply(work->paletteGlow[0], work->paletteGlow[1]);
+  WindowColor_Apply(work->windowHue, work->windowBrightness);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   {
@@ -808,7 +808,7 @@ fade:
 // where it ends.
 void AirsRock_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *ride = leader->watchedObject;
+  struct Actor *ride = leader->watchedActor;
   struct Actor *rider, *dust;
   u8 *riding, *motion;
   s32 rise, dx, dz, moved, i, height;
@@ -838,7 +838,7 @@ void AirsRock_RideWhirlwind(void) {
   Sound_Play(SE_STOP_ACTION_SE);
   facing = ride->facing;
   if (facing == 0xc000) {
-    rider = ride->watchedObject;
+    rider = ride->watchedActor;
     dx = 0;
     dz = 0;
     leader->priorityFlags = 4;
@@ -898,7 +898,7 @@ void AirsRock_RideWhirlwind(void) {
     height =
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
     leader->y = height;
-    leader->terrainHeight = height;
+    leader->groundHeight = height;
     Actor_SelectAnimation(leader, 6);
     wait(6);
     Sound_Play(SE_JUMP);
@@ -908,7 +908,7 @@ void AirsRock_RideWhirlwind(void) {
     leader->velocityY = px(4);
     *motion = 2;
     leader->priorityFlags = 1;
-    leader->terrainId = ((u8 *)rider)[98];
+    leader->layer = ((u8 *)rider)[98];
     FieldActor_SetMoveTargetFixed(leader, leader->x + dx, leader->y,
                                   leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
@@ -999,7 +999,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     }
     if (i && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
-      leader->watchedObject = shot;
+      leader->watchedActor = shot;
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
@@ -1013,7 +1013,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
   for (i = 8; i != 64; i++) {
     other = *objects++;
     if (other->script != 0) {
-      launcher = shot->watchedObject;
+      launcher = shot->watchedActor;
       if (launcher->x >> 20 != other->x >> 20 ||
           launcher->y >> 20 != other->y >> 20 ||
           launcher->z >> 20 != other->z >> 20) {
@@ -1065,7 +1065,7 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
     ((u8 *)shot)[0x63] = 0;
     shot->facing = object->facing;
     shot->update = AirsRock_MoveWhirlwind;
-    shot->watchedObject = object;
+    shot->watchedActor = object;
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
@@ -1103,13 +1103,13 @@ void AirsRock_PlacePillar(void) {
   Actor_PlaceMovedBlock__airs_rock();
   Blocks_MarkCells(((u8 *)gAirsRock_Room2Pillars));
   if (Map_GetTerrainHeight(2, object->x, object->z) != object->y) {
-    object->terrainId = 2;
+    object->layer = 2;
     object->motionFlags = 3;
     OverlayObject_WaitUntilIdle(object);
     OverlayObject_WaitUntilIdle(object);
     Event_PlaySound(SE_THUMP);
     object->motionFlags = 0;
-    object->terrainId = 0;
+    object->layer = 0;
   }
   x = object->x >> 20;
   z = object->z >> 20;
@@ -1343,8 +1343,8 @@ fade2:
   System_Wait(70);
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                         gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                         gMainRoutineWork.windowBrightness);
   REG_BLDCNT = 0;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
@@ -1554,8 +1554,8 @@ void AirsRock_WhirlwindClearsFog(void) {
   }
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                         gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                         gMainRoutineWork.windowBrightness);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
@@ -1763,14 +1763,14 @@ s32 Scene_Initialize(void) {
       ((u8 *)Actor_GetById(9))[98] = 0;
       Actor_GetById(9)->update = AirsRock_StatueBreathesWhirlwind;
       Actor_SetSpriteFlags(Actor_GetById(9), 0);
-      Actor_GetById(10)->terrainId = 2;
+      Actor_GetById(10)->layer = 2;
       Actor_SetSpritePriority(10, 1);
       Actor_GetById(10)->y = px(208);
-      Actor_GetById(10)->terrainHeight = Actor_GetById(10)->y;
-      Actor_GetById(11)->terrainId = 2;
+      Actor_GetById(10)->groundHeight = Actor_GetById(10)->y;
+      Actor_GetById(11)->layer = 2;
       Actor_SetSpritePriority(11, 1);
       Actor_GetById(11)->y = px(208);
-      Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
+      Actor_GetById(11)->groundHeight = Actor_GetById(11)->y;
       if (GameFlag_Get(FLAG_AREA_TEMP_10))
         Actor_SetPosition(10, 504, 872);
       if (GameFlag_Get(FLAG_AREA_TEMP_11))
@@ -1872,8 +1872,8 @@ s32 Scene_Initialize(void) {
       System_Wait(1);
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         leader = LEADER();
-        leader->terrainId = 0;
-        leader->y = leader->terrainHeight =
+        leader->layer = 0;
+        leader->y = leader->groundHeight =
             Map_GetTerrainHeight(0, leader->x, leader->z - leader->y);
         EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }

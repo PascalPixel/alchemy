@@ -803,7 +803,7 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   obj->y += px(1);
   obj->scaleX = scale;
   if ((s32)scale < 0x3000) {
-    obj->animationKind = 0;
+    obj->spriteStorageKind = 0;
   }
 }
 
@@ -939,10 +939,10 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   s32 scale;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  limit = particle->terrainHeight + 0xA0000;
-  source = particle->watchedObject;
+  limit = particle->groundHeight + 0xA0000;
+  source = particle->watchedActor;
   if (party->mapId == SCENE_CLEAR)
-    limit = particle->terrainHeight + 0x40000;
+    limit = particle->groundHeight + 0x40000;
 
   y = particle->y;
   if (y <= limit) {
@@ -966,10 +966,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   s32 scale;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  limit = particle->terrainHeight + 0xA0000;
-  source = particle->watchedObject;
+  limit = particle->groundHeight + 0xA0000;
+  source = particle->watchedActor;
   if (party->mapId == SCENE_CLEAR)
-    limit = particle->terrainHeight + 0x40000;
+    limit = particle->groundHeight + 0x40000;
 
   y = particle->y;
   if (y <= limit) {
@@ -1711,7 +1711,7 @@ void FieldPsynergy_GatherNearbyCells(void) {
   for (i = 0; i <= 20; i++) {
     x = owner->x + (gFieldPsynergy_NearbyCellOffsets[i * 2] << 20);
     z = owner->z + (gFieldPsynergy_NearbyCellOffsets[i * 2 + 1] << 20);
-    kind = MapGrid_GetCycloneCellKind(x, z, owner->terrainId);
+    kind = MapGrid_GetCycloneCellKind(x, z, owner->layer);
     // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;
     position[2] = z;
@@ -1821,7 +1821,7 @@ void TileCopies_CopyTouchedCells(s32 toX, s32 toZ, s32 width, s32 height,
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
-  s32 ownerHeight = owner->terrainHeight >> 20;
+  s32 ownerHeight = owner->groundHeight >> 20;
   struct TouchMap *map = (struct TouchMap *)Ram_HeapSlots->mapWork;
   struct TouchLayer *layer = &map->layers[layerIndex];
   s32 i;

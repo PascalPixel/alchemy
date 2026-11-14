@@ -234,7 +234,7 @@ void JupiterLighthouse_FlashSky(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   FieldActor_Jump(ACTOR_FELIX, 6, 0);
-  Actor_Get(ACTOR_FELIX)->actionFlags &= ~1;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= ~1;
   Actor_WalkBy(ACTOR_FELIX, -16, 0);
   Actor_Get(20)->update = Actor_EmitRisingSparks;
   for (i = 0; i != 32; i++) {
@@ -249,8 +249,8 @@ void JupiterLighthouse_FlashSky(void) {
   PaletteFade_Interpolate(60);
   Window_LoadGraphics();
   DebugText_Clear();
-  FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                         gMainRoutineWork.paletteGlow[1]);
+  FieldWindowColor_Apply(gMainRoutineWork.windowHue,
+                         gMainRoutineWork.windowBrightness);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
   REG_DISPCNT |= 0x100;
@@ -291,13 +291,13 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     object->motionFlags = 3;
     System_Wait(2);
     i = 0;
-    if (object->y > object->terrainHeight || object->velocityY != 0) {
+    if (object->y > object->groundHeight || object->velocityY != 0) {
       do {
         System_Wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y > object->terrainHeight || object->velocityY != 0);
+      } while (object->y > object->groundHeight || object->velocityY != 0);
     }
     object->motionFlags = 0;
     Event_PlaySound(SE_HEAVY_IMPACT);
@@ -342,7 +342,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     PaletteCycle_SetPausesInEvents(0);
     JupiterLighthouse_FlashSky();
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+    Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
     FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
     Actor_SetAttachedEffect(ACTOR_FELIX,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -410,15 +410,15 @@ void JupiterLighthouse_OpenFloor(void) {
     Sound_Play(SE_310);
     object->gravity = px(1) / 2;
     object->motionFlags = 2;
-    object->terrainHeight = px(-80);
+    object->groundHeight = px(-80);
     i = 0;
-    if (object->y > object->terrainHeight) {
+    if (object->y > object->groundHeight) {
       do {
         System_Wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y > object->terrainHeight);
+      } while (object->y > object->groundHeight);
     }
     MapGrid_SetShake(3, 3, 0.95);
     Sound_Play(SE_HEAVY_IMPACT);
@@ -432,7 +432,7 @@ void JupiterLighthouse_OpenFloor(void) {
     Event_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = px(1) / 2;
-    object->terrainHeight = px(-240);
+    object->groundHeight = px(-240);
     Event_Wait(80);
     MapGrid_SetShake(5, 5, 1);
     Sound_Play(SE_CLATTER);
@@ -448,7 +448,7 @@ void JupiterLighthouse_OpenFloor(void) {
     Sound_Play(SE_310);
     object->gravity = px(1) / 2;
     object->motionFlags = 2;
-    object->terrainHeight = px(-240);
+    object->groundHeight = px(-240);
     Event_Wait(20);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     Event_Wait(60);
@@ -776,7 +776,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 5);
-  Actor_Get(ACTOR_MIA)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_MIA)->steeringFlags &= 0xfe;
   Actor_SetSpeed(ACTOR_MIA, 0.1);
   Actor_SetDestinationOffset(ACTOR_MIA, 4, 2);
   FieldActor_WaitForMoveById(ACTOR_MIA);
@@ -807,7 +807,7 @@ void JupiterLighthouse_PartyArrivesAtTheFight(s32 arg) {
     FieldEvent_Wait(33);
   } while (0);
   FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 5);
-  Actor_Get(ACTOR_MIA)->actionFlags |= 1;
+  Actor_Get(ACTOR_MIA)->steeringFlags |= 1;
   Actor_SetDestinationOffset(ACTOR_MIA, -2, -8);
   FieldActor_WaitForMoveById(ACTOR_MIA);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -1656,11 +1656,11 @@ s32 Scene_Initialize(void) {
   object = Actor_Get(24);
   object->motionFlags = 0;
   object->y = 0;
-  object->terrainHeight = 0;
+  object->groundHeight = 0;
   object = Actor_Get(25);
   object->motionFlags = 0;
   object->y = px(32);
-  object->terrainHeight = px(32);
+  object->groundHeight = px(32);
   if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
     MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
     MapGrid_CopyCellAttributes(49, 45, 4, 1, 49, 44);

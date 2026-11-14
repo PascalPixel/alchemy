@@ -440,11 +440,11 @@ void Actor_MoveWithCarriers(void) {
 
         if (carrier != NULL) {
           if (WORD_AT(carrier, 0x74) != 0) {
-            if (y == object->terrainHeight) {
-              object->terrainHeight = carrier->y + 0x100000;
-              y = object->terrainHeight;
+            if (y == object->groundHeight) {
+              object->groundHeight = carrier->y + 0x100000;
+              y = object->groundHeight;
             } else {
-              object->terrainHeight += WORD_AT(carrier, 0x74);
+              object->groundHeight += WORD_AT(carrier, 0x74);
               y += WORD_AT(carrier, 0x74);
             }
           }

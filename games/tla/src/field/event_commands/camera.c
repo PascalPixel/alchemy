@@ -120,7 +120,7 @@ void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
   object = ((struct FieldWork *)HeapSlot_AllocEwram(108, 0xd50))->camera;
   if (target != NULL) {
     Actor_StartCameraFar(object, NULL);
-    object->watchedObject = target;
+    object->watchedActor = target;
     if (keepCurrentPosition == 0) {
       SET_POSITION(object, target->x, target->y, target->z);
     }

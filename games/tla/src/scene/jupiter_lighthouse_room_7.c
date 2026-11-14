@@ -331,7 +331,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
     object->motionFlags = 3;
     i++;
-    object->y = object->terrainHeight;
+    object->y = object->groundHeight;
     if (i <= 5)
       goto L_02008684;
     /* FAKEMATCH(dead): an empty once-only block keeps the loop's exit branch
@@ -395,18 +395,18 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   s32 spot;
   s32 i;
 
-  if (object->terrainHeight !=
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
+  if (object->groundHeight !=
+      Map_GetTerrainHeight(object->layer, object->x, object->z)) {
     object->motionFlags = 3;
     wait(2);
     i = 0;
-    if (object->y > object->terrainHeight || object->velocityY != 0) {
+    if (object->y > object->groundHeight || object->velocityY != 0) {
       do {
         wait(1);
         i++;
         if (i > 29)
           break;
-      } while (object->y > object->terrainHeight || object->velocityY != 0);
+      } while (object->y > object->groundHeight || object->velocityY != 0);
     }
     Event_PlaySound(SE_THUMP);
     object->motionFlags = 0;
@@ -442,7 +442,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
-    FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
+    FieldMapGrid_SetCellBehavior(object->x, object->z, object->layer, 255);
     Event_Wait(30);
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
     FieldCamera_WaitForArrival();
@@ -465,7 +465,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
     Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(object, 3);
     object->priorityFlags &= ~2;
-    FieldMapGrid_SetCellBehavior(object->x, object->z, object->terrainId, 255);
+    FieldMapGrid_SetCellBehavior(object->x, object->z, object->layer, 255);
   } else {
     MapGrid_SetCellHeight(object->x, object->z, 0, 8);
     MapGrid_SetAttributeBBitsAt(object->x, object->z, 0, 128);
@@ -484,7 +484,7 @@ void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
 
   Actor_SetPositionFixed(id, (x << 20) + px(8), (z << 20) + px(8));
   object->motionFlags = 3;
-  object->terrainHeight = px(-16);
+  object->groundHeight = px(-16);
   object->y = px(-16);
   object->velocityY = px(8);
   Actor_SetSpeed(id, 1.6);
@@ -531,24 +531,24 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   System_Wait(2);
   object = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
   i = 0;
-  if (object->y > object->terrainHeight || object->velocityY != 0) {
+  if (object->y > object->groundHeight || object->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
       if (i > 29)
         break;
-    } while (object->y > object->terrainHeight || object->velocityY != 0);
+    } while (object->y > object->groundHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
   object = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
   i = 0;
-  if (object->y > object->terrainHeight || object->velocityY != 0) {
+  if (object->y > object->groundHeight || object->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
       if (i > 29)
         break;
-    } while (object->y > object->terrainHeight || object->velocityY != 0);
+    } while (object->y > object->groundHeight || object->velocityY != 0);
   }
   object->motionFlags = 0;
   FieldEvent_Wait(30);
@@ -568,7 +568,7 @@ void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
   System_Wait(2);
   object = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
   for (i = 0; i < 30; i++) {
-    if (object->y <= object->terrainHeight && object->velocityY == 0)
+    if (object->y <= object->groundHeight && object->velocityY == 0)
       break;
     System_Wait(1);
   }
@@ -838,7 +838,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
-          leader->watchedObject = self;
+          leader->watchedActor = self;
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
@@ -960,7 +960,7 @@ top:
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         Event_SetFlag(flag);
-        Actor_SetCellOpen(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->layer);
         object->scaleY = Q16_ONE;
       }
       return;

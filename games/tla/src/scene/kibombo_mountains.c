@@ -393,7 +393,7 @@ s32 Scene_Initialize(void) {
       lift = Actor_GetById(17);
       lift->priorityFlags |= 0x40;
       lift->y = px(224);
-      lift->terrainHeight = px(224);
+      lift->groundHeight = px(224);
       lift->collisionFlags = flag;
     } else {
       Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT |
@@ -418,7 +418,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(20, 72, 456);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);
-      object->terrainHeight = height;
+      object->groundHeight = height;
       object->y = height;
       MapGrid_CopyCellAttributes(3, 28, 1, 1, 4, 28);
     }
@@ -427,7 +427,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(13, 456, 488);
       object->motionFlags = 0;
       height = Map_GetTerrainHeight(0, object->x, object->z);
-      object->terrainHeight = height;
+      object->groundHeight = height;
       object->y = height;
       MapGrid_CopyCellAttributes(32, 30, 1, 2, 28, 30);
     }
@@ -558,10 +558,10 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   FieldActor_WatchAndSetScript(27, owner);
   FieldActor_WatchAndSetScript(28, owner);
   FieldEvent_Wait(2);
-  Actor_Get(owner)->actionFlags &= ~1;
+  Actor_Get(owner)->steeringFlags &= ~1;
   Actor_WalkToAndWait(owner, 256, 552);
   FieldEvent_Wait(1);
-  Actor_Get(owner)->actionFlags |= 1;
+  Actor_Get(owner)->steeringFlags |= 1;
   Actor_SetAnimation(23, 1);
   Actor_SetAnimation(24, 1);
   FieldEvent_Wait(20);

@@ -211,7 +211,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
   map->unk11c = 0xd000;
   Iwram_ClearWordsEntry((void *)0x050001c0, 32);
   wait(1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->animationKind = 0;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 64;
   Event_StartScreenTransition();
   Camera_MoveWithinMapBounds_(gStaffCredit_FlightEnds[stage][0] << 16,
@@ -627,7 +627,7 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
-  Actor_Get(gMainRoutineWork.leaderActorId)->animationKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -773,11 +773,11 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
     child = (FieldActor_Create(271, parent->x, parent->y, parent->z));
     pair[i] = child;
     if (child != NULL) {
-      child->terrainHeight = parent->terrainHeight;
+      child->groundHeight = parent->groundHeight;
       sprite = child->sprite;
       child->motionFlags = 0;
       child->timer = 0;
-      child->watchedObject = parent;
+      child->watchedActor = parent;
       if (sprite != NULL) {
         Animation_ApplyChildArgument((struct ActorSpriteView *)sprite, 0);
         sprite->nextFrame = 0;

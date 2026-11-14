@@ -768,7 +768,7 @@ s32 WorldPicture_Show(s32 mode) {
   } else {
     do {
       /* FAKEMATCH(dead): the statement in a once-only block. */
-      event->camera->movementState = 1;
+      event->camera->paused = 1;
     } while (0);
     savedDelay = event->transitionFrames;
     event->transitionFrames = 6;
@@ -951,7 +951,7 @@ done:
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     event->transitionFrames = savedDelay;
-    event->camera->movementState = 0;
+    event->camera->paused = 0;
   }
   return 0;
 }

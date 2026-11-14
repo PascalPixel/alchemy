@@ -1040,10 +1040,10 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     FieldEffect_SetAttached(ACTOR_LOOKOUT,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    Actor_GetById(ACTOR_LOOKOUT)->actionFlags &= 0xfe;
+    Actor_GetById(ACTOR_LOOKOUT)->steeringFlags &= 0xfe;
     Actor_WalkToAndWaitById(ACTOR_LOOKOUT, 192, 736);
     Event_Wait(1);
-    Actor_GetById(ACTOR_LOOKOUT)->actionFlags |= 1;
+    Actor_GetById(ACTOR_LOOKOUT)->steeringFlags |= 1;
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
     Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -1059,10 +1059,10 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
       gFieldWork->message = (gFieldWork->message + 1);
       Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
     }
-    Actor_GetById(ACTOR_FELIX)->actionFlags &= 0xfe;
+    Actor_GetById(ACTOR_FELIX)->steeringFlags &= 0xfe;
     Actor_WalkToAndWait(ACTOR_FELIX, 152, 752);
     Event_Wait(1);
-    Actor_GetById(ACTOR_FELIX)->actionFlags |= 1;
+    Actor_GetById(ACTOR_FELIX)->steeringFlags |= 1;
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
     Event_Wait(20);
     Motion_SetModeAndWaitAnimation(ACTOR_LOOKOUT, ANIM_NOD);

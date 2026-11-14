@@ -48,10 +48,10 @@ next:
         MagmaRockInside_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(trap, 2);
-        MagmaRockInside_SetLeaderCellShape(-2, trap->terrainId);
+        MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
         MagmaRockInside_SpawnRubble(1);
         wait(16);
-        MagmaRockInside_SetLeaderCellShape(-2, trap->terrainId);
+        MagmaRockInside_SetLeaderCellShape(-2, trap->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);

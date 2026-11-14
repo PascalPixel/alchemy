@@ -384,7 +384,7 @@ s32 Contigo_FaceTalker(struct Actor *self) {
       self, BattleEffect_GetObjectPriority(
                 Actor_GetById(gMainRoutineWork.leaderActorId)));
   mode = 0x3ff & event->psynergy;
-  state = &self->movementState;
+  state = &self->paused;
   if (mode == 141) {
     effect = Ram_HeapSlots->effectWork;
     if (effect[0x713] != 0)
@@ -2457,7 +2457,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;
   s32 i, j;
-  struct SparkleWork *work = (struct SparkleWork *)object->watchedObject;
+  struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;
   struct SparkleSprite *sprite;
 
@@ -2570,7 +2570,7 @@ void Contigo_StartSparkle(struct Actor *object,
   ((u8 *)object)[0x63] = 0;
   object->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
-  object->watchedObject = (struct Actor *)work;
+  object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);

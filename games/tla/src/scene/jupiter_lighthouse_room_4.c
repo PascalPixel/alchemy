@@ -259,15 +259,15 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
-    leader->y = leader->terrainHeight = -px(120);
+    leader->y = leader->groundHeight = -px(120);
     Event_StartScreenTransition();
     FieldEvent_Wait(10);
     for (i = 0; i <= 89 && leader->y < 0; i++) {
-      leader->terrainHeight = leader->y = leader->y + px(3);
+      leader->groundHeight = leader->y = leader->y + px(3);
       leader->facing += 0x1800;
       System_Wait(2);
     }
-    leader->terrainHeight = leader->y = 0;
+    leader->groundHeight = leader->y = 0;
     leader->facing = FACING_SOUTH;
     leader->motionFlags = 3;
     leader->velocityY = px(3);
@@ -383,7 +383,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           near = 1;
         if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
-          leader->watchedObject = self;
+          leader->watchedActor = self;
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
@@ -468,11 +468,11 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   Actor_SetPosition(10, 552, 256);
   Actor_Get(24)->scaleX = 0;
   rider->motionFlags = 0;
-  rider->y = rider->terrainHeight;
+  rider->y = rider->groundHeight;
   left->motionFlags = 0;
-  left->y = left->terrainHeight;
+  left->y = left->groundHeight;
   right->motionFlags = 0;
-  right->y = right->terrainHeight;
+  right->y = right->groundHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
     left->y += 0x66640;
     rider->y += 0x1eb80;

@@ -354,7 +354,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       object->userValue = phase;
       object->update = MarsLighthouseAerie_SwingBeaconFlame;
       zero = 0;
-      object->watchedObject = anchor;
+      object->watchedActor = anchor;
       object->speedLimit = Math_Sin((offset & 0xfffff) >> 4) * 24 >> 16;
       ((u8 *)sprite)[26] = zero;
       sprite->layer =
@@ -368,7 +368,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
 void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object) {
   u16 *pangle = (u16 *)&object->timer;
   u16 angle = *pangle;
-  struct Actor *parent = object->watchedObject;
+  struct Actor *parent = object->watchedActor;
 
   object->x = parent->x + Trig_Cos(angle) * (object->speedLimit + 28);
   object->z = (Math_Sin(angle) << 4) + 0x1080000;
@@ -1695,10 +1695,10 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 40);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
-  Actor_Get(ACTOR_GARET)->actionFlags &= 0xfe;
+  Actor_Get(ACTOR_GARET)->steeringFlags &= 0xfe;
   Actor_WalkToAndWait(ACTOR_GARET, 542, 328);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_GARET)->actionFlags |= 1;
+  Actor_Get(ACTOR_GARET)->steeringFlags |= 1;
   FieldCamera_SetSpeed(0.8);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(540, 76, 340, 1);
@@ -3092,7 +3092,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;
   s32 i, j;
-  struct SparkleWork *work = (struct SparkleWork *)object->watchedObject;
+  struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;
   struct SparkleSprite *sprite;
 
@@ -3212,7 +3212,7 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
   ((u8 *)object)[0x63] = 0;
   object->update = MarsLighthouseAerie_UpdateRisingRings;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
-  object->watchedObject = (struct Actor *)work;
+  object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
     offset = (row * 2) * sizeof(struct SparkleSprite__s53e4);

@@ -137,7 +137,7 @@ extern u16 gSeaOfTime_RippleLines[160];
 
 s32 SeaOfTime_HideSprite(struct Actor *object) {
   ((struct SeaOfTimeSprite *)object->sprite)->visible = 0;
-  object->terrainId = 1;
+  object->layer = 1;
   return 1;
 }
 

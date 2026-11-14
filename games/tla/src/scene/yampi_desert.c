@@ -478,7 +478,7 @@ void YampiDesert_StepOntoStakeTops(void) {
 
     list += 2;
     if (!GameFlag_Get(*list)) {
-      s32 layer = object->terrainId;
+      s32 layer = object->layer;
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
@@ -521,7 +521,7 @@ next:
     list += 2;
     set = GameFlag_Get(*list);
     if (!set) {
-      s32 layer = object->terrainId;
+      s32 layer = object->layer;
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes =
           (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
@@ -592,7 +592,7 @@ void YampiDesert_UnblockStakes(u16 *list) {
 void YampiDesert_CastSand(void) {
   s16 scene;
 
-  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_1)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room1Stakes);
@@ -608,7 +608,7 @@ void YampiDesert_EndSand(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s16 scene;
 
-  leader->terrainId = 0;
+  leader->layer = 0;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_1)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room1Stakes);
@@ -912,7 +912,7 @@ void YampiDesert_ScoopCenterPit(s32 mode) {
     Actor_SetPositionFixed(9, px(232), px(200));
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->y = height;
-    object->terrainHeight = height;
+    object->groundHeight = height;
     GameFlag_Set(FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP);
   }
 }
@@ -2290,7 +2290,7 @@ loop:
 
     object->collisionFlags &= 0xfe;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
   }
   if (entry[0] != 0xffff)

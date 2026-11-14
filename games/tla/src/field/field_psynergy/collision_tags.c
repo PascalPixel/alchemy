@@ -36,20 +36,20 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     struct Actor *object = Actor_GetById(list->actor);
     u16 flag = list->flag;
     s32 slot = Actor_GetCellIndex(object);
-    struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
+    struct MapCell *cell = &map->layers[object->layer].cells[slot];
 
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
-    Func_080ea8a8__f0ea8d4(object->x + 0x100000, object->z, object->terrainId,
-                           object->terrainHeight);
-    Func_080ea8a8__f0ea8d4(object->x - 0x100000, object->z, object->terrainId,
-                           object->terrainHeight);
-    Func_080ea8a8__f0ea8d4(object->x, object->z + 0x100000, object->terrainId,
-                           object->terrainHeight);
-    Func_080ea8a8__f0ea8d4(object->x, object->z - 0x100000, object->terrainId,
-                           object->terrainHeight);
+    Func_080ea8a8__f0ea8d4(object->x + 0x100000, object->z, object->layer,
+                           object->groundHeight);
+    Func_080ea8a8__f0ea8d4(object->x - 0x100000, object->z, object->layer,
+                           object->groundHeight);
+    Func_080ea8a8__f0ea8d4(object->x, object->z + 0x100000, object->layer,
+                           object->groundHeight);
+    Func_080ea8a8__f0ea8d4(object->x, object->z - 0x100000, object->layer,
+                           object->groundHeight);
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(object, 0);
       GameFlag_Clear(flag);
@@ -59,10 +59,10 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
   }
   FlagBlock_ApplyFlags(first);
   owner = Actor_GetById(Party_GetLeaderActor());
-  if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->terrainId,
-                             owner->terrainHeight))
-    owner->terrainHeight = owner->y =
-        MapGrid_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);
+  if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->layer,
+                             owner->groundHeight))
+    owner->groundHeight = owner->y =
+        MapGrid_GetTerrainHeightFar(owner->layer, owner->x, owner->z);
 }
 
 struct SwitchCell {
@@ -106,7 +106,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
     }
     if (change) {
       struct SwitchCell *cells = ((struct RestoreMap *)Ram_HeapSlots->mapWork)
-                                     ->layers[object->terrainId]
+                                     ->layers[object->layer]
                                      .cells;
       u8 *shapes;
       s32 slot;
@@ -115,10 +115,10 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
       shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       slot = Actor_GetCellIndex(object);
-      key = MapGrid_GetTerrainKindFar(object->terrainId, object->x, object->z);
-      height = MapGrid_GetTerrainHeightFar(object->terrainId, object->x,
-                                           object->z) >>
-               19;
+      key = MapGrid_GetTerrainKindFar(object->layer, object->x, object->z);
+      height =
+          MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z) >>
+          19;
 
       *(struct Actor **)(event + 0xcbc) = object;
       if (GameFlag_Get(flag)) {
@@ -132,7 +132,7 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
         cells += slot;
         shapes += slot;
-        *shapes = MapCollision_FindOrAddTag(object->terrainId, key, height);
+        *shapes = MapCollision_FindOrAddTag(object->layer, key, height);
         if (GameFlag_Get(flag)) {
           s32 bits;
 

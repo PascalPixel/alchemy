@@ -240,7 +240,7 @@ void FieldPsynergy_Scoop(void) {
     goto end;
   object->motionFlags = 0;
   if (event->unkd4c & 2) {
-    if ((object->animationKind & 15) == 1) {
+    if ((object->spriteStorageKind & 15) == 1) {
       ((struct EffectSprite *)object->sprite)->oam.priority = 1;
       object->priorityFlags &= 254;
     }
@@ -289,11 +289,11 @@ void FieldPsynergy_Scoop(void) {
       break;
     }
   }
-  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->terrainId) == 255)
+  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) == 255)
     failed = 4;
   if (Field_MeasurePsynergyHeight(scene->fieldKind, caster, &scene->x) == -1)
     failed = 2;
-  if (MapGrid_CanScoop(scene->x, scene->z, caster->terrainId) == 0)
+  if (MapGrid_CanScoop(scene->x, scene->z, caster->layer) == 0)
     failed = 3;
   if (failed) {
     wait(2);
@@ -493,7 +493,7 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   }
   if (*((s8 *)event + 394) == 3) {
     object->motionFlags = 2;
-    object->terrainHeight = 0;
+    object->groundHeight = 0;
   } else {
     object->motionFlags = 3;
   }

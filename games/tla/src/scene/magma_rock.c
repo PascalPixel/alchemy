@@ -178,7 +178,7 @@ void Blocks_MarkCells(u16 *ids) {
 void MagmaRock_SettleBlocks(u16 *ids) {
   while (*ids != 0xffff) {
     struct Actor *object = Actor_Get(*ids);
-    u8 *terrainId = &object->terrainId;
+    u8 *terrainId = &object->layer;
     s32 height = Map_GetTerrainHeight(*terrainId, object->x, object->z);
     u8 *blocked;
     struct MapWork *map;
@@ -363,7 +363,7 @@ struct MagmaRockEffectParams {
 extern u32 gMagmaRock_FlameEmberScript[];
 
 void MagmaRock_ThrowEmbers(struct Actor *object) {
-  struct Actor *linked = object->watchedObject;
+  struct Actor *linked = object->watchedActor;
   s16 *timer = &object->timer;
 
   if (*timer < 50) {
@@ -486,7 +486,7 @@ void MagmaRock_RollMagmaRock(struct Actor *object) {
     BYTE_AT(object, 98) ^= 1;
     partner->timer = 0;
     partner->update = (void *)MagmaRock_ThrowEmbers;
-    partner->watchedObject = object;
+    partner->watchedActor = object;
   }
 }
 
@@ -853,7 +853,7 @@ void Actor_Release(struct Actor *part);
 // One of the four parts MagmaRock_BurnStatue builds: rises and falls with its
 // owner's action counter.
 void MagmaRock_RaiseFlamePart(struct Actor *part) {
-  struct Actor *owner = part->watchedObject;
+  struct Actor *owner = part->watchedActor;
 
   if (owner->timer > 35 && owner->timer < BYTE_AT(part, 98) * 2 + 36) {
     PART_Y(part) = owner->y + px(32);
@@ -913,7 +913,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
           watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
       EFFECT_Y(object) -= (watched->timer << 19) - (332 << 19);
     } else if ((object->effect.unk5a[8] << 1) + 333 < watched->timer) {
-      object->effect.y = object->actor.terrainHeight;
+      object->effect.y = object->actor.groundHeight;
       object->effect.update = 0;
     }
   }
@@ -930,7 +930,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
                       object->effect.z, ((Random16() & mask) - 3) << 14,
                       -0x20000, step, 0x1330000, &config);
   }
-  MagmaRockInside_SetCellShape(watched->terrainId, watched->x >> 20,
+  MagmaRockInside_SetCellShape(watched->layer, watched->x >> 20,
                                watched->z >> 20, (object->effect.y >> 19) + 1);
 }
 #undef BYTE_AT
@@ -1016,7 +1016,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       part = parts[i];
       // Byte 98 lies in actor.h's callback.
       part->riseCounter = 3 - i;
-      part->watchedObject = object;
+      part->watchedActor = object;
       part->update = MagmaRock_RaiseFlamePart;
       FieldActor_SetSpriteColor(part, 3);
     }
@@ -1030,7 +1030,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       /* FAKEMATCH(dead): part set again to parts[0], which it holds. */
       part = parts[0];
       part->riseCounter = 3;
-      part->watchedObject = object;
+      part->watchedActor = object;
       part->update = MagmaRock_RaiseFlamePart;
       FieldActor_SetSpriteColor(part, 3);
     }
@@ -1054,7 +1054,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     }
     fifthPart = Actor_Get(id);
     fifthPart->riseCounter = 4;
-    fifthPart->watchedObject = object;
+    fifthPart->watchedActor = object;
     fifthPart->update = MagmaRock_RaiseFlameTop;
     object->timer++;
   } else if (object->timer > 364) {
@@ -1246,12 +1246,12 @@ void MagmaRock_PushPillarEast(void) {
   cell[2] = leader->z;
   object = Actor_FindInCell(cell, leader);
   MagmaRockInside_ClearBlockCells(object);
-  terrainId = &object->terrainId;
+  terrainId = &object->layer;
   {
     /* FAKEMATCH(temporary): the three values held in locals. */
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
-    s32 height = object->terrainHeight >> 19;
+    s32 height = object->groundHeight >> 19;
 
     MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   }
@@ -1260,7 +1260,7 @@ void MagmaRock_PushPillarEast(void) {
   *terrainId = 0;
   MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
   MagmaRockInside_SetCellShape(*terrainId, object->x >> 20, object->z >> 20,
-                               (object->terrainHeight >> 19) + 4);
+                               (object->groundHeight >> 19) + 4);
   Blocks_MarkCells(gMagmaRock_Room2UpperPillars);
   cell[0] = object->x >> 20;
   cell[2] = object->z >> 20;
@@ -1279,12 +1279,12 @@ void MagmaRock_PushPillarWest(void) {
   position[2] = leader->z;
   object = Actor_FindInCell(position, leader);
   MagmaRockInside_ClearBlockCells(object);
-  terrainId = &object->terrainId;
+  terrainId = &object->layer;
   {
     /* FAKEMATCH(temporary): the three values held in locals. */
     s32 x = object->x >> 20;
     s32 z = object->z >> 20;
-    s32 height = object->terrainHeight >> 19;
+    s32 height = object->groundHeight >> 19;
 
     MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   }
@@ -1293,7 +1293,7 @@ void MagmaRock_PushPillarWest(void) {
   *terrainId = 0;
   MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
   MagmaRockInside_SetCellShape(*terrainId, object->x >> 20, object->z >> 20,
-                               (object->terrainHeight >> 19) + 4);
+                               (object->groundHeight >> 19) + 4);
   Blocks_MarkCells(gMagmaRock_Room2TopPillars);
   position[0] = object->x >> 20;
   position[2] = object->z >> 20;
@@ -1508,9 +1508,9 @@ void MagmaRock_LandLeader(void) {
     s32 height;
 
     System_Wait(1);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
     object->velocityY = 0;
-    object->terrainHeight = height;
+    object->groundHeight = height;
     object->y = height;
     object->targetY = px(-32768);
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
@@ -1544,7 +1544,7 @@ struct LayeredSprite {
 static inline void AttachPart(struct Actor *part, struct Actor *anchor,
                               u8 order) {
   BYTE_AT(part, 98) = order;
-  part->watchedObject = anchor;
+  part->watchedActor = anchor;
   part->update = MagmaRock_RaiseFlamePart;
   FieldActor_SetSpriteColor(part, 3);
 }
@@ -1586,7 +1586,7 @@ next:
 void MagmaRock_RebuildFlameParts(u16 id) {
   if (Actor_Get(id)->update != MagmaRock_RaiseFlameTop)
     return;
-  BuildParts(Actor_Get(id)->watchedObject);
+  BuildParts(Actor_Get(id)->watchedActor);
 }
 
 void MagmaRock_SettleBlocks();
@@ -1634,7 +1634,7 @@ s32 Scene_Initialize(void) {
       actor->x += px(1);
       actor->motionFlags = zero;
       actor->collisionFlags = zero;
-      actor->terrainHeight = actor->y += px(24);
+      actor->groundHeight = actor->y += px(24);
       Actor_SetSpriteFlags(actor, 0);
     }
     MagmaRock_RebuildFlameParts(20);
@@ -1708,13 +1708,13 @@ s32 Scene_Initialize(void) {
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           rise = 0x180000;
-          actor->terrainHeight = actor->y += rise;
+          actor->groundHeight = actor->y += rise;
           Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(18);
           actor->x += other;
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
-          actor->terrainHeight = actor->y += rise;
+          actor->groundHeight = actor->y += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
         MagmaRock_RebuildFlameParts(15);
@@ -1751,13 +1751,13 @@ s32 Scene_Initialize(void) {
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
           rise = 0x180000;
-          actor->terrainHeight = actor->y += rise;
+          actor->groundHeight = actor->y += rise;
           Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(12);
           actor->x += other;
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
-          actor->terrainHeight = actor->y += rise;
+          actor->groundHeight = actor->y += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
         MagmaRock_RebuildFlameParts(10);
@@ -1773,7 +1773,7 @@ s32 Scene_Initialize(void) {
           actor->x += px(1);
           actor->motionFlags = zero;
           actor->collisionFlags = zero;
-          actor->terrainHeight = actor->y += px(24);
+          actor->groundHeight = actor->y += px(24);
           Actor_SetSpriteFlags(actor, 0);
         }
         MagmaRock_RebuildFlameParts(13);
@@ -1857,7 +1857,7 @@ next:
   object = Actor_Get(id);
   flag = table[1];
   nextFlag = flag + 1;
-  cells = map->layers[object->terrainId].cells;
+  cells = map->layers[object->layer].cells;
   shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   if (Event_GetFlag(nextFlag)) {
     Actor_SetPosition(id, 0, 0);
@@ -1869,12 +1869,11 @@ next:
     index = Actor_GetCellIndex(object);
     cell = &cells[index];
     slot = shapes + index;
-    shape = MapGrid_GetTerrainKind(object->terrainId, object->x, object->z);
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    shape = MapGrid_GetTerrainKind(object->layer, object->x, object->z);
+    height = Map_GetTerrainHeight(object->layer, object->x, object->z);
     Actor_DisableById(id);
     cell->attributeB = 128;
-    *slot =
-        MapCollision_FindOrAddTag(object->terrainId, shape, (height >> 19) + 4);
+    *slot = MapCollision_FindOrAddTag(object->layer, shape, (height >> 19) + 4);
     if (Event_GetFlag(flag))
       Actor_SelectAnimation(object, 0);
   }
@@ -1883,9 +1882,9 @@ next:
     goto next;
 done:
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+  ground = Map_GetTerrainHeight(leader->layer, leader->x, leader->z);
   if (leader->y < ground) {
-    leader->terrainHeight = ground;
+    leader->groundHeight = ground;
     leader->y = ground;
   }
 }
@@ -1938,10 +1937,10 @@ body:
         MagmaRock_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(target, 2);
-        MagmaRock_SetLeaderCellShape(-2, target->terrainId);
+        MagmaRock_SetLeaderCellShape(-2, target->layer);
         MagmaRock_SpawnRubble(1);
         wait(16);
-        MagmaRock_SetLeaderCellShape(-2, target->terrainId);
+        MagmaRock_SetLeaderCellShape(-2, target->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
@@ -1985,7 +1984,7 @@ body:
     MagmaRock_SpawnRubble(0);
     System_Wait(8);
     Actor_SelectAnimation(target, 2);
-    MagmaRock_SetActorCellShape(-4, target->terrainId, id);
+    MagmaRock_SetActorCellShape(-4, target->layer, id);
     MagmaRock_SpawnRubble(1);
     System_Wait(16);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -2088,10 +2087,10 @@ body:
         MagmaRock_SpawnRubble(0);
         wait(8);
         Actor_SelectAnimation(actor8, 2);
-        MagmaRock_SetLeaderCellShape(-2, target->terrainId);
+        MagmaRock_SetLeaderCellShape(-2, target->layer);
         MagmaRock_SpawnRubble(1);
         wait(16);
-        MagmaRock_SetLeaderCellShape(-2, target->terrainId);
+        MagmaRock_SetLeaderCellShape(-2, target->layer);
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);

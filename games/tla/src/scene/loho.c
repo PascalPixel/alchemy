@@ -505,7 +505,7 @@ crewLeaves:
   FieldCamera_MoveTo(460, CAMERA_KEEP, 350, 1);
   Event_Wait(30);
   t233 = Actor_GetById(16);
-  t233->actionFlags &= 254;
+  t233->steeringFlags &= 254;
   Actor_WalkBy(18, -40, -20);
   Actor_WalkBy(17, -40, -20);
   Actor_WalkBy(16, -40, -20);
@@ -694,7 +694,7 @@ void Loho_ClimbDownLadder(void) {
     Actor_SetPosition(8, 224, 224);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->actionFlags &= 0xfe;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= 0xfe;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);

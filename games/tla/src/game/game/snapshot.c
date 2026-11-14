@@ -50,8 +50,8 @@ void InventorySnapshot_Save(void) {
   save = gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-    firstShortcut = gMainRoutineWork.packedEvents[0];
-    secondShortcut = gMainRoutineWork.packedEvents[1];
+    firstShortcut = gMainRoutineWork.firstShortcut;
+    secondShortcut = gMainRoutineWork.secondShortcut;
     // Save each inventory before dropping its unequipped weapons and armor.
     for (unitId = FELIX; unitId <= PIERS; unitId++) {
       unit = Unit_Get(unitId);
@@ -106,8 +106,8 @@ void InventorySnapshot_Restore(void) {
       Unit_UpdateClass(unitId);
       Unit_Calculate(unitId);
     }
-    gMainRoutineWork.packedEvents[0] = *src++;
-    gMainRoutineWork.packedEvents[1] = *src++;
+    gMainRoutineWork.firstShortcut = *src++;
+    gMainRoutineWork.secondShortcut = *src++;
 #ifdef UBFIX
     gMainRoutineWork.party[0] = src[0];
     gMainRoutineWork.party[1] = src[0] >> 8;

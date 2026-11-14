@@ -215,11 +215,11 @@ s32 Scene_Initialize(void) {
   Actor_SetSpritePriority(10, 2);
   object = Actor_GetById(15);
   object->motionFlags = 0;
-  object->terrainHeight = 0;
+  object->groundHeight = 0;
   object->y = 0;
   object = Actor_GetById(17);
   object->motionFlags = 0;
-  object->terrainHeight = 0;
+  object->groundHeight = 0;
   object->y = 0;
   if (Event_GetFlag(0x966)) {
     Actor_WalkToAndWait(10, 100, 112);
@@ -420,11 +420,11 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_PIERS, 0.3);
   object0 = Actor_GetById(ACTOR_PIERS);
-  object0->actionFlags &= 254;
+  object0->steeringFlags &= 254;
   Actor_WalkByAndWait(ACTOR_PIERS, 12, 0);
   Event_Wait(1);
   object1 = Actor_GetById(ACTOR_PIERS);
-  object1->actionFlags |= 1;
+  object1->steeringFlags |= 1;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_PIERS, 3);
   Actor_SetAttachedEffect(ACTOR_PIERS,
@@ -665,13 +665,13 @@ visited:
   FieldEvent_Wait(20);
   {
     struct Actor *other = (struct Actor *)((s32)Actor_GetById(10));
-    other->actionFlags &= 254;
+    other->steeringFlags &= 254;
   }
   Actor_WalkByAndWait(10, -8, 0);
   FieldEvent_Wait(1);
   {
     struct Actor *other = (struct Actor *)((s32)Actor_GetById(10));
-    other->actionFlags |= 1;
+    other->steeringFlags |= 1;
   }
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
@@ -1214,19 +1214,19 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetSpeed(18, 1.9);
   Event_PlaySound(SE_IMPACT);
   Actor_Jump(18, 2, 0);
-  Actor_GetById(18)->actionFlags &= 0xfe;
+  Actor_GetById(18)->steeringFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -12);
   Event_Wait(1);
-  Actor_GetById(18)->actionFlags |= 1;
+  Actor_GetById(18)->steeringFlags |= 1;
   MapGrid_SetShake(0, 0, 0);
   Event_Wait(10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetSpeed(18, 0.6);
-  Actor_GetById(18)->actionFlags &= 0xfe;
+  Actor_GetById(18)->steeringFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -24);
   Event_Wait(1);
-  Actor_GetById(18)->actionFlags |= 1;
+  Actor_GetById(18)->steeringFlags |= 1;
   Event_Wait(20);
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(20);
@@ -1241,10 +1241,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   target = Actor_GetById(18);
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_SetShake(4, 4, 1);
-  Actor_GetById(18)->actionFlags &= 0xfe;
+  Actor_GetById(18)->steeringFlags &= 0xfe;
   Actor_WalkByAndWait(18, 0, -16);
   Event_Wait(1);
-  Actor_GetById(18)->actionFlags |= 1;
+  Actor_GetById(18)->steeringFlags |= 1;
   target->timer = 3;
   wait(1);
   target->update = 0;

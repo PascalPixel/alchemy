@@ -20,7 +20,7 @@ void Actors_SetCellsOpen(const u16 *list) {
     flag = spec[2];
     object->collisionFlags &= 0xfe;
     Actor_SetSpriteFlags(object, 0);
-    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->terrainId);
+    Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->layer);
     limit = 0xff;
     spec += 3;
     first = spec[0];

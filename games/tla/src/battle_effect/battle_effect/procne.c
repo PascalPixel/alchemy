@@ -614,7 +614,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     alternate = 0;
 
     if (((struct Actor *)BattleObject_GetFar(effect->actors[0])->object)
-            ->animationKind == 2)
+            ->spriteStorageKind == 2)
       alternate = 1;
 
     // Mode 1 on the far side mirrors everything sideways, and starts from

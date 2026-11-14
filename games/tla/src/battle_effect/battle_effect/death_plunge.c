@@ -151,7 +151,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   Actor_SetMoveTargetFar(user, x, 0, z);
   Actor_SelectAnimationFar(user, 2);
   user->snapToTarget = 1;
-  user->actionFlags = 1;
+  user->steeringFlags = 1;
   user->acceleration = px(2);
   user->speedLimit = px(8);
   wait(20);
@@ -183,7 +183,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
       user->gravity = 0x7851;
       user->acceleration = px(1);
       user->speedLimit = px(2);
-      user->actionFlags = 0;
+      user->steeringFlags = 0;
       Actor_StartIdleFar(user);
       Actor_SetMoveTargetFar(user, 0, 0, user->z);
     }

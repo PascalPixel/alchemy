@@ -32,7 +32,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     flag = Event_GetFlag(FLAG_MENU_OPEN);
     if (work->psynergy != 0)
       flag |= 1;
-    actor->movementState = flag;
+    actor->paused = flag;
 
     position.x = actor->x;
     position.y = actor->y;
@@ -48,8 +48,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(5, 5, 1);
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-      if (actor->watchedObject != NULL)
-        ((void (*)(struct Actor *))actor->watchedObject)(actor);
+      if (actor->watchedActor != NULL)
+        ((void (*)(struct Actor *))actor->watchedActor)(actor);
     }
 
     map = Ram_HeapSlots->mapWork;
@@ -107,7 +107,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       work2->stepTrigger = other->unk0a + 2;
     }
   } else if (state == 1) {
-    actor->movementState = 0;
+    actor->paused = 0;
     if (actor->scaleX > 0) {
       actor->scaleX -= Q16_ONE / 16;
       actor->scaleY -= Q16_ONE / 16;

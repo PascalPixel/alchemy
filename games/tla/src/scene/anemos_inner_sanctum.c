@@ -979,7 +979,7 @@ void AnemosInnerSanctum_SinkIntoSand(void) {
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   t1 = FieldMapGrid_GetCellBehaviorAt(2, object->x, object->z);
   if (t1 == 0xe8) {
-    object->terrainId = 2;
+    object->layer = 2;
   }
 }
 
@@ -1016,7 +1016,7 @@ void AnemosInnerSanctum_PressSecondSwitch(void) {
   FieldEvent_ResolvePendingActions(0);
   object->x = px(536);
   object->z = px(360);
-  object->terrainHeight = -917504;
+  object->groundHeight = -917504;
   object->y = -917504;
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
   Event_PlaySound(SE_BUTTON_PRESS);
@@ -1088,15 +1088,14 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   if (ahead[2] >> 16 > 248)
     return;
   FieldVector_AddPolarOffset(px(7), 0x8000 - leader->facing, ahead);
-  if (FieldMapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) ==
-      255)
+  if (FieldMapGrid_GetCellBehaviorAt(self->layer, ahead[0], ahead[2]) == 255)
     return;
   {
     s32 x = next[0];
 
     self->x = x;
     self->z = next[1];
-    kind = FieldMapGrid_GetCellBehaviorAt(self->terrainId, x, next[1]);
+    kind = FieldMapGrid_GetCellBehaviorAt(self->layer, x, next[1]);
   }
   if (kind == 52) {
     gFieldWork->raisedTrigger = 201;
@@ -1482,7 +1481,7 @@ L_0200a1b4:
   v_two = 2;
   v_r5 = 1;
   t60->motionFlags = v_two;
-  t60->terrainHeight = 0xfff20000;
+  t60->groundHeight = 0xfff20000;
   t60->y = 0xfff20000;
   t60->priorityFlags |= 128;
   FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;

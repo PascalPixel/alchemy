@@ -324,11 +324,11 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 
   object = Actor_CreateFar(kind, x, y, z);
   if (object != NULL) {
-    if (object->animationKind == 0) {
+    if (object->spriteStorageKind == 0) {
       Actor_ReleaseFar(object);
       return NULL;
     }
-    object->terrainHeight = scene->mainObject->terrainHeight;
+    object->groundHeight = scene->mainObject->groundHeight;
     object->motionFlags = 4;
     object->priorityFlags = 4;
     mask = ~0xc;
@@ -352,7 +352,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
     object = ObjectTable_Get(objectId);
     if (objectId != *activeObjectId && object != NULL &&
         object != excludedObject) {
-      object->movementState = groupMode;
+      object->paused = groupMode;
       Actor_SetAnimationSpeedFar(object, action);
     }
     objectId++;

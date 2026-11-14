@@ -127,10 +127,10 @@ s32 Party_CheckShortcut(u32 packed_id) {
 }
 
 void Party_ClearUnusableShortcuts(void) {
-  if (Party_CheckShortcut(gMainRoutineWork.packedEvents[0]))
-    gMainRoutineWork.packedEvents[0] = 0;
-  if (Party_CheckShortcut(gMainRoutineWork.packedEvents[1]))
-    gMainRoutineWork.packedEvents[1] = 0;
+  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut))
+    gMainRoutineWork.firstShortcut = 0;
+  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut))
+    gMainRoutineWork.secondShortcut = 0;
 }
 
 void Party_RemoveMemberRestored(s32 unit) {
@@ -277,7 +277,7 @@ void Inventory_ReservedNoOp(void) {}
 void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
   struct Actor *obj = ObjectTable_Get(objectId);
 
-  if (obj != 0 && obj->animationKind == 1) {
+  if (obj != 0 && obj->spriteStorageKind == 1) {
     s32 cnt = 0;
     u8 *anim = (u8 *)obj->sprite;
 

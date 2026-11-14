@@ -31,13 +31,11 @@ void Actor_PlaceBlocks(u16 *actors) {
 
   for (; *actors != 0xffff; actors++) {
     struct Actor *object = Actor_GetById(*actors);
-    u32 key =
-        MapGrid_GetTerrainKindFar(object->terrainId, object->x, object->z);
+    u32 key = MapGrid_GetTerrainKindFar(object->layer, object->x, object->z);
     s32 level =
-        MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
-        19;
+        MapGrid_GetTerrainHeightFar(object->layer, object->x, object->z) >> 19;
     s32 slot = Actor_GetCellIndex(object);
-    struct SwitchCell__f0eabd0 *cells = map->layers[object->terrainId].cells;
+    struct SwitchCell__f0eabd0 *cells = map->layers[object->layer].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
     // grid first.
     u8 *shapes =
@@ -50,7 +48,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     object->collisionFlags = 0;
     Actor_SetSpriteFlagsFar(object, 0);
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(object->terrainId, key, level + 4);
+    tag = MapCollision_FindOrAddTag(object->layer, key, level + 4);
     cell = &cells[slot];
     flags = cell->flags;
     object->riseBaseY = flags;
@@ -61,9 +59,9 @@ void Actor_PlaceBlocks(u16 *actors) {
     cell->block = 0xff;
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  height = MapGrid_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
+  height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x, leader->z);
   if (leader->y < height)
-    leader->y = leader->terrainHeight = height;
+    leader->y = leader->groundHeight = height;
 }
 
 // Only so the shape store has an alias set of its own; the grid holds bytes.
@@ -93,19 +91,17 @@ void Actor_LiftTargetBlock(u16 *actors) {
       struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
       s32 zero = 0;
       u8 *grid = gMapShapeGrid;
-      struct SwitchCell__f0eabd0 *cells = map->layers[target->terrainId].cells;
+      struct SwitchCell__f0eabd0 *cells = map->layers[target->layer].cells;
       struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
-      u32 key =
-          MapGrid_GetTerrainKindFar(target->terrainId, target->x, target->z);
+      u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x, target->z);
       s32 level =
-          MapGrid_GetTerrainHeightFar(target->terrainId, target->x, target->z);
+          MapGrid_GetTerrainHeightFar(target->layer, target->x, target->z);
       s32 slot = Actor_GetCellIndex(target);
       s32 tag;
 
       shapes += slot;
-      tag =
-          MapCollision_FindOrAddTag(target->terrainId, key, (level >> 19) - 4);
+      tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) - 4);
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
@@ -128,7 +124,7 @@ void Actor_PlaceMovedBlock(void) {
     struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
     /* FAKEMATCH(temporary): the cell table read split into its byte offset and
      * the read. */
-    s32 offset = offsetof(struct RestoreMap, layers[target->terrainId].cells);
+    s32 offset = offsetof(struct RestoreMap, layers[target->layer].cells);
     u8 *grid = gMapShapeGrid;
     struct SwitchCell__f0eabd0 *cells =
         *(struct SwitchCell__f0eabd0 **)((u8 *)map + offset);
@@ -145,13 +141,13 @@ void Actor_PlaceMovedBlock(void) {
      * blocks. */
     asm("" : "+l"(index) : "l"(blocks));
     shapes = &grid[index];
-    key = MapGrid_GetTerrainKindFar(target->terrainId, target->x, target->z);
+    key = MapGrid_GetTerrainKindFar(target->layer, target->x, target->z);
     /* FAKEMATCH(wrapper): x read through ActorX for the height call. */
-    level = MapGrid_GetTerrainHeightFar(target->terrainId, ActorX(target),
-                                        target->z);
+    level =
+        MapGrid_GetTerrainHeightFar(target->layer, ActorX(target), target->z);
     slot = Actor_GetCellIndex(target);
     shapes += slot;
-    tag = MapCollision_FindOrAddTag(target->terrainId, key, (level >> 19) + 4);
+    tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) + 4);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
     flags = cells->flags;

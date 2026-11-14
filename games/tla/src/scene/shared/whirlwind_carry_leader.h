@@ -3,7 +3,7 @@
 void Whirlwind_CarryLeader(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *linked = actor->watchedObject;
+  struct Actor *linked = actor->watchedActor;
   struct Actor *shadow;
   u8 *p;
   s32 angle;
@@ -45,13 +45,13 @@ void Whirlwind_CarryLeader(void) {
   FieldActor_SetMoveTargetFixed(
       shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
-  if (actor->y > actor->terrainHeight + px(16)) {
+  if (actor->y > actor->groundHeight + px(16)) {
     do {
       System_Wait(1);
       i++;
       if (i > 59)
         break;
-    } while (actor->y > actor->terrainHeight + px(16));
+    } while (actor->y > actor->groundHeight + px(16));
   }
   Event_PlaySound(SE_LANDING_THUD);
   i = 0;

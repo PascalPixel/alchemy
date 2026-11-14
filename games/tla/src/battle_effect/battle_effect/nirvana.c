@@ -934,7 +934,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         caster->velocityY = px(6);
         caster->gravity = 0x13333;
         caster->bounce = 0;
-        caster->actionFlags = 1;
+        caster->steeringFlags = 1;
         Actor_StartIdleFar(caster);
         Actor_SetMoveTargetFar(caster, x, 0, z);
         Actor_SelectAnimationFar(caster, 2);

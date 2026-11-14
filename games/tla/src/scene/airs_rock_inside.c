@@ -313,7 +313,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         GameFlag_Set(flag);
-        Actor_SetCellOpen(id, a, flag, object->terrainId);
+        Actor_SetCellOpen(id, a, flag, object->layer);
         object->scaleY = Q16_ONE;
       }
       break;
@@ -463,8 +463,7 @@ void AirsRockInside_SetConeCells(struct Actor *object) {
   s32 z = object->z >> 20;
   s32 ground = MapCell_GetAttributes(0, x, z);
   s32 cell = MapCell_GetAttributes(2, x, z);
-  s32 height =
-      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
+  s32 height = Map_GetTerrainHeight(object->layer, object->x, object->z) >> 19;
   s32 set = GameFlag_Get(object->timer);
   u8 *flags = &object->priorityFlags;
   s32 px = x << 20;
@@ -473,7 +472,7 @@ void AirsRockInside_SetConeCells(struct Actor *object) {
   if (set) {
     cell &= 0xffff00ff;
     ground = 0;
-    if (object->terrainHeight >> 19 != height)
+    if (object->groundHeight >> 19 != height)
       height -= 4;
     // Through the field: through flags the byte, not the 2, would take the
     // result register.
@@ -488,7 +487,7 @@ void AirsRockInside_SetConeCells(struct Actor *object) {
   }
   MapCell_SetAttributes(0, x, z, ground);
   MapCell_SetAttributes(2, x, z, cell);
-  MapGrid_SetCellHeight(px, pz, object->terrainId, height);
+  MapGrid_SetCellHeight(px, pz, object->layer, height);
 }
 
 // One step of two paired objects trading places: the effect work's halfword
@@ -513,26 +512,26 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     second->y += -px(28);
     wait(1);
     entry = &gVramCacheEntries[secondSprite->vramBlock];
-    second->watchedObject = (void *)(entry->offset + OBJ_VRAM0);
+    second->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
     entry = &gVramCacheEntries[firstSprite->vramBlock];
-    first->watchedObject = (void *)(entry->offset + OBJ_VRAM0);
-    Dma_Fill32(step, second->watchedObject, entry->size);
-    Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(192),
+    first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
+    Dma_Fill32(step, second->watchedActor, entry->size);
+    Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(192),
             REG_DMA3);
-    first->watchedObject = (void *)((u8 *)first->watchedObject + 0x300);
-    second->watchedObject = (void *)((u8 *)second->watchedObject + 0x300);
+    first->watchedActor = (void *)((u8 *)first->watchedActor + 0x300);
+    second->watchedActor = (void *)((u8 *)second->watchedActor + 0x300);
   } else if (step <= 5) {
     second->y += 0x53333;
-    Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(48),
+    Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
             REG_DMA3);
-    first->watchedObject = (void *)((u8 *)first->watchedObject + 0x100);
-    second->watchedObject = (void *)((u8 *)second->watchedObject + 0x100);
+    first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
+    second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
   }
   if (step <= 7)
     first->scaleY += -0x1f00;
   if (mode == 1) {
     first->scaleY = Q16_ONE;
-    second->y = second->terrainHeight;
+    second->y = second->groundHeight;
     GameFlag_Set(first->timer);
     GameFlag_Clear(second->timer);
     Actor_SelectAnimation(first,
@@ -587,7 +586,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag);
 // The leader rides a statue's whirlwind along its path until it fades.
 void AirsRockInside_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *ride = leader->watchedObject;
+  struct Actor *ride = leader->watchedActor;
   struct Actor *rider, *dust;
   u8 *riding, *motion, *priority;
   s32 rise, dx, dz, moved, i, height;
@@ -624,7 +623,7 @@ void AirsRockInside_RideWhirlwind(void) {
   facing = ride->facing;
   switch (facing) {
   case 0xc000:
-    rider = ride->watchedObject;
+    rider = ride->watchedActor;
     dx = 0;
     dz = 0;
     *priority = 4;
@@ -685,7 +684,7 @@ void AirsRockInside_RideWhirlwind(void) {
     height =
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
     leader->y = height;
-    leader->terrainHeight = height;
+    leader->groundHeight = height;
     Actor_SelectAnimation(leader, 6);
     wait(6);
     Sound_Play(SE_JUMP);
@@ -695,7 +694,7 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->velocityY = px(4);
     *motion = 2;
     *priority = 1;
-    leader->terrainId = ((u8 *)rider)[98];
+    leader->layer = ((u8 *)rider)[98];
     Actor_SetMoveTarget(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
     Actor_WaitForMove(leader);
@@ -795,7 +794,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     }
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
-      leader->watchedObject = shot;
+      leader->watchedActor = shot;
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
@@ -852,7 +851,7 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
     ((u8 *)shot)[0x63] = 0;
     shot->facing = object->facing;
     shot->update = AirsRockInside_MoveWhirlwind;
-    shot->watchedObject = object;
+    shot->watchedActor = object;
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
@@ -919,7 +918,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     }
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
-      leader->watchedObject = shot;
+      leader->watchedActor = shot;
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
@@ -983,7 +982,7 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
     ((u8 *)shot)[0x62] = 0;
     ((u8 *)shot)[0x63] = 0;
     shot->facing = object->facing;
-    shot->watchedObject = object;
+    shot->watchedActor = object;
     shot->update = AirsRockInside_MovePooledWhirlwind;
     object->timer = 0;
     options.priority = 1;
@@ -1167,14 +1166,14 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 // (x in the high half, z in the low).
 #define PICK_UP(object, at)                                                    \
   do {                                                                         \
-    (object)->watchedObject = gust;                                            \
+    (object)->watchedActor = gust;                                             \
     (object)->update = AirsRockInside_FollowGust;                              \
     (object)->motionFlags = 0;                                                 \
     (object)->priorityFlags &= ~1;                                             \
     Actor_SetSpriteFlags(object, 0);                                           \
     ((struct FieldSprite *)(object)->sprite)->priority =                       \
         ((struct FieldSprite *)gust->sprite)->priority;                        \
-    gust->watchedObject = (object);                                            \
+    gust->watchedActor = (object);                                             \
     carried = (at);                                                            \
   } while (0)
 
@@ -1215,7 +1214,7 @@ void AirsRockInside_BlowGust(void) {
           ->priority;
   Actor_SetMoveTarget(gust, TARGET(effect)->x, TARGET(effect)->y,
                       TARGET(effect)->z + 0xffff0000);
-  gust->terrainHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
+  gust->groundHeight = Map_GetTerrainHeight(0, gust->x, gust->z);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
     FieldEvent_Wait(1);
@@ -1228,7 +1227,7 @@ void AirsRockInside_BlowGust(void) {
           0x2a0, TARGET(effect)->x, TARGET(effect)->y, TARGET(effect)->z);
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
-      spark->terrainHeight = Map_GetTerrainHeight(0, spark->x, spark->z);
+      spark->groundHeight = Map_GetTerrainHeight(0, spark->x, spark->z);
       spark->bounce = spark->x;
       spark->gravity = 0xcccc;
       spark->riseBaseY = spark->z;
@@ -1269,7 +1268,7 @@ void AirsRockInside_BlowGust(void) {
     hit = MapCell_GetAttributes(2, cell.x, cell.z);
     hit >>= 8;
     if (Map_GetTerrainHeight(2, cell.x << 20, cell.z << 20) !=
-        gust->terrainHeight)
+        gust->groundHeight)
       hit = 0;
     cell.x += dir.x;
     cell.z += dir.z;
@@ -1323,7 +1322,7 @@ void AirsRockInside_BlowGust(void) {
     FieldEvent_Wait(1);
   }
   if (carried != 0) {
-    object = gust->watchedObject;
+    object = gust->watchedActor;
     object->x = (carried >> 16) << 19;
     object->z = carried << 19;
     object->velocityY = px(8);
@@ -1334,7 +1333,7 @@ void AirsRockInside_BlowGust(void) {
     Actor_SetSpriteFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
     if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_6) {
-      object->terrainHeight = 0xffe00000;
+      object->groundHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
       GameFlag_Set(FLAG_AIRS_ROCK_STATUE_MOVED);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_8) {
@@ -1343,7 +1342,7 @@ void AirsRockInside_BlowGust(void) {
       wait(1);
       OverlayObject_WaitUntilIdle(object);
       object->motionFlags = 0;
-      object->terrainHeight = 0;
+      object->groundHeight = 0;
       object->y = 0;
       MapGrid_SetCellHeight(0x1400000, 0x3400000, 0, 4);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_9) {
@@ -1352,7 +1351,7 @@ void AirsRockInside_BlowGust(void) {
       OverlayObject_WaitUntilIdle(object);
       Actor_SetSpriteFlags(object, 0);
       object->motionFlags = 0;
-      object->terrainHeight = 0;
+      object->groundHeight = 0;
       object->y = 0;
       MapGrid_SetCellHeight(0x780000, 0x1980000, 0, 4);
       if (GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN))
@@ -1747,7 +1746,7 @@ next:
 }
 
 void AirsRockInside_SpiralGust(struct Actor *object) {
-  s32 radius = ((object->y - object->terrainHeight) >> 1) + 0x100000;
+  s32 radius = ((object->y - object->groundHeight) >> 1) + 0x100000;
 
   object->x = WORD_AT(object, 68) +
               Iwram_MulQ16(Trig_Cos((WORD_AT(object, 48) & 255) << 11), radius);
@@ -1924,8 +1923,8 @@ fade:
   AirsRockInside_WakeStatue(Actor_GetById(10), 8, 0);
   Window_LoadGraphics();
   DebugText_Clear();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -2017,13 +2016,13 @@ void AirsRockInside_FinishPushingPillar(void) {
   Event_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
   if (Map_GetTerrainHeight(2, pushed->x, pushed->z) != pushed->y) {
-    pushed->terrainId = 2;
+    pushed->layer = 2;
     pushed->motionFlags = 3;
     OverlayObject_WaitUntilIdle(pushed);
     Sound_Play(SE_THUMP);
     OverlayObject_WaitUntilIdle(pushed);
     pushed->motionFlags = 0;
-    pushed->terrainId = 0;
+    pushed->layer = 0;
   }
   x = pushed->x >> 19;
   z = pushed->z >> 19;
@@ -2224,8 +2223,8 @@ fade:
   AirsRockInside_WakeStatue(Actor_GetById(8), 8, 0);
   Window_LoadGraphics();
   DebugText_Clear();
-  WindowColor_Apply(gMainRoutineWork.paletteGlow[0],
-                    gMainRoutineWork.paletteGlow[1]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -2533,7 +2532,7 @@ second:
     spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
     spark->riseBaseY = 0x7a0000;
-    spark->watchedObject = b;
+    spark->watchedActor = b;
     ((union SparkView *)spark)->bytes.unk62 = (16 - i) * 8 + 15;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
@@ -2572,7 +2571,7 @@ third:
     spark->bounce = spark->x;
     spark->riseBaseY = 0;
     spark->gravity = spark->z;
-    spark->watchedObject = b;
+    spark->watchedActor = b;
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);
@@ -2796,26 +2795,26 @@ found:
   second->y += -px(28);
   wait(1);
   entry = &gVramCacheEntries[secondSprite->vramBlock];
-  second->watchedObject = (void *)(entry->offset + 0x6010000);
+  second->watchedActor = (void *)(entry->offset + 0x6010000);
   entry = &gVramCacheEntries[firstSprite->vramBlock];
-  first->watchedObject = (void *)(entry->offset + 0x6010000);
-  Dma_Fill32(busy, second->watchedObject, entry->size);
-  Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(192),
+  first->watchedActor = (void *)(entry->offset + 0x6010000);
+  Dma_Fill32(busy, second->watchedActor, entry->size);
+  Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(192),
           REG_DMA3);
-  first->watchedObject = (void *)((u8 *)first->watchedObject + 0x300);
-  second->watchedObject = (void *)((u8 *)second->watchedObject + 0x300);
+  first->watchedActor = (void *)((u8 *)first->watchedActor + 0x300);
+  second->watchedActor = (void *)((u8 *)second->watchedActor + 0x300);
   leader->motionFlags = busy;
   i = 0;
 step:
   if (i <= 4) {
     second->y += 0x53333;
-    Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(48),
+    Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
             REG_DMA3);
-    first->watchedObject = (void *)((u8 *)first->watchedObject + 0x100);
-    second->watchedObject = (void *)((u8 *)second->watchedObject + 0x100);
+    first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
+    second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
   }
   leader->y += -0x38000;
-  leader->terrainHeight = leader->y;
+  leader->groundHeight = leader->y;
   first->scaleY += -0x1f00;
   wait(1);
   i++;
@@ -2823,7 +2822,7 @@ step:
     goto step;
   leader->motionFlags = 3;
   first->scaleY = Q16_ONE;
-  second->y = second->terrainHeight;
+  second->y = second->groundHeight;
   GameFlag_Set(first->timer);
   GameFlag_Clear(second->timer);
   Actor_SelectAnimation(first,
@@ -2850,7 +2849,7 @@ void AirsRockInside_RideFaceWarp(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x40000, 0x20000);
   switch (*warp) {
   case 50:
@@ -2884,7 +2883,7 @@ void AirsRockInside_RideFaceWarp(void) {
     break;
   }
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, x, z);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
   Event_End();
 }
 
@@ -2969,7 +2968,7 @@ void AirsRockInside_RiseOnLift(void) {
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   height = Map_GetTerrainHeight(0, lift->x, lift->z - px(16));
   leader->y = height;
-  leader->terrainHeight = height;
+  leader->groundHeight = height;
   Actor_SelectAnimation(leader, 6);
   wait(6);
   Sound_Play(SE_JUMP);
@@ -2987,7 +2986,7 @@ void AirsRockInside_RiseOnLift(void) {
   wait(12);
   Actor_Release(lift);
   leader->motionFlags = 3;
-  leader->terrainHeight = leader->y;
+  leader->groundHeight = leader->y;
   Actor_SetSpriteFlags(leader, 1);
 #if TLA_PATCH_1
   leader->priorityFlags = priorityFlags;
@@ -3173,7 +3172,7 @@ s32 Scene_Initialize(void) {
     // The Japanese release arrives here whatever flag 265 says.
     if (gMainRoutineWork.entrance == 16 &&
         (!TLA_PATCH_1 || !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))) {
-      Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 1;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 1;
       wait(8);
       Map_CenterOnFollowedPoint();
       wait(1);
@@ -3257,9 +3256,9 @@ s32 Scene_Initialize(void) {
       AirsRockInside_WakeStatue(Actor_GetById(10), 180, 0);
       AirsRockInside_WakeStatue(Actor_GetById(13), 200, 0);
     }
-    Actor_GetById(9)->actionFlags = 0;
-    Actor_GetById(10)->actionFlags = 0;
-    Actor_GetById(13)->actionFlags = 0;
+    Actor_GetById(9)->steeringFlags = 0;
+    Actor_GetById(10)->steeringFlags = 0;
+    Actor_GetById(13)->steeringFlags = 0;
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     Actor_SetSpriteFlags(Actor_GetById(10), 0);
     Actor_SetSpriteFlags(Actor_GetById(13), 0);
@@ -3306,7 +3305,7 @@ s32 Scene_Initialize(void) {
       goto loop;
     Actor_GetById(8)->motionFlags = 0;
     object = Actor_GetById(8);
-    Actor_GetById(8)->terrainHeight = px(16);
+    Actor_GetById(8)->groundHeight = px(16);
     object->y = px(16);
     Actor_SetActionCallback(Actor_GetById(8), 9);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_6) {
@@ -3332,7 +3331,7 @@ s32 Scene_Initialize(void) {
       Call3(Actor_SetHorizontalPositionWithTerrain, 8, px(312), px(296));
       Actor_SetSpritePriority(8, 2);
       Actor_GetById(8)->motionFlags = 2;
-      Actor_GetById(8)->terrainHeight = 0xffe00000;
+      Actor_GetById(8)->groundHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_7) {
@@ -3391,7 +3390,7 @@ s32 Scene_Initialize(void) {
     Actor_PlaceBlocks(gAirsRockInside_Room9Pillars);
     MapCell_SetAttributes(2, Actor_GetById(10)->x >> 20,
                           Actor_GetById(10)->z >> 20, 0);
-    Actor_GetById(10)->actionFlags = 0;
+    Actor_GetById(10)->steeringFlags = 0;
     if (!GameFlag_Get(FLAG_AIRS_ROCK_ROOM2_STATUE_WOKEN))
       Actor_SetSpriteColor(Actor_GetById(10), 6);
     else

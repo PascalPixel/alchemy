@@ -538,7 +538,7 @@ void GabombaStatueChamber_RideLiftUp(void) {
   wait(1);
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 1;
   GameFlag_Set(FLAG_SCENE_TEMP_06);
   GameFlag_Set(FLAG_SCENE_TEMP_07);
   Event_End();

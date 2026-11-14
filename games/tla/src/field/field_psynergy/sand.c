@@ -29,7 +29,7 @@ void FieldPsynergy_WatchSandGround(void) {
 
   if ((s8)party->unk2c3 != 0)
     reason = 1;
-  if (MapGrid_IsSandCell(object->x, object->z, object->terrainId) == 0)
+  if (MapGrid_IsSandCell(object->x, object->z, object->layer) == 0)
     reason = 2;
   if (party->movementMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
       object->timer == 0) {
@@ -437,7 +437,7 @@ void FieldPsynergy_Sand(void) {
     goto end;
   FieldPsynergy_MarkWorldMapTilesUsed();
   Actor_SetOthersPaused(owner, 1, 0);
-  if (MapGrid_IsSandCell(owner->x, owner->z, owner->terrainId) == 0)
+  if (MapGrid_IsSandCell(owner->x, owner->z, owner->layer) == 0)
     event->standing = 1;
   else
     event->standing = 0;

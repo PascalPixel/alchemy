@@ -1,5 +1,6 @@
 /// @file
-/// Putting characters 4 to 7's inventories aside, and giving them back.
+/// The equipment put aside for the Trial Road, as The Broken Seal's for the
+/// Colosso: characters 4 to 7's inventories, and giving them back.
 // Part of game.c.
 
 #include "../game_internal.h"
@@ -8,16 +9,16 @@
 // Added in patch 1; the Japanese release has no such function.
 #if TLA_PATCH_1
 /// Returns 1 for the six items that raise a stat for good: Power Bread,
-/// Cookie, Apple, Hard Nut, Mint and Lucky Pepper (items 191 to 196; an
-/// inventory entry may be passed).
+/// Cookie, Apple, Hard Nut, Mint and Lucky Pepper (an inventory entry may be
+/// passed).
 s32 Item_RaisesStat(s32 id) {
-  switch (id & 0x1ff) {
-  case 191: // Power Bread
-  case 192: // Cookie
-  case 193: // Apple
-  case 194: // Hard Nut
-  case 195: // Mint
-  case 196: // Lucky Pepper
+  switch (id & ITEM_ID_MASK) {
+  case ITEM_POWER_BREAD:
+  case ITEM_COOKIE:
+  case ITEM_APPLE:
+  case ITEM_HARD_NUT:
+  case ITEM_MINT:
+  case ITEM_LUCKY_PEPPER:
     return 1;
   }
   return 0;
@@ -26,67 +27,84 @@ s32 Item_RaisesStat(s32 id) {
 
 extern u8 gInventorySnapshot[];
 
-// XXX: what this snapshot puts aside and when; the twin of The Broken Seal's
-// Colosso snapshot, its callers in this game would settle it.
+/// The first halfword of gInventorySnapshot while it holds the party's
+/// equipment, put aside while the Trial Road takes it away.
+#define INVENTORY_SNAPSHOT_SENTINEL 0x6774
+
+/// Saves characters 4 to 7's inventories (Felix's party), the shortcuts and
+/// the party order as the leader and Moapa set off on the Trial Road
+/// (ShamanVillage_TakeLeftPath and its twin), then drops every weapon and
+/// piece of armor not equipped (and, from patch 1, every item that raises a
+/// stat), sets FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT and restores everyone's HP and
+/// PP. As The Broken Seal's Colosso snapshot; nothing is saved again while a
+/// snapshot is held.
 void InventorySnapshot_Save(void) {
   u16 *save;
   struct BattleUnit *unit;
   s16 *inventory;
-  s32 owner;
-  s32 i;
-  s16 first;
-  s16 second;
+  s32 unitId;
+  s32 slot;
+  s16 firstShortcut;
+  s16 secondShortcut;
 
   save = gInventorySnapshot;
-  if (*save != 0x6774) {
-    *save++ = 0x6774;
-    first = gMainRoutineWork.packedEvents[0];
-    second = gMainRoutineWork.packedEvents[1];
-    for (owner = 4; owner < 8; owner++) {
-      unit = Unit_Get(owner);
-      for (i = 0; i < 15; i++)
-        *save++ = unit->inventory[i];
-      for (i = 0; i < 15; i++) {
-        struct ItemDefinition *item = Item_GetDirect(unit->inventory[i]);
+  if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
+    *save++ = INVENTORY_SNAPSHOT_SENTINEL;
+    firstShortcut = gMainRoutineWork.packedEvents[0];
+    secondShortcut = gMainRoutineWork.packedEvents[1];
+    // Save each inventory before dropping its unequipped weapons and armor.
+    for (unitId = FELIX; unitId <= PIERS; unitId++) {
+      unit = Unit_Get(unitId);
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++)
+        *save++ = unit->inventory[slot];
+      for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+        struct ItemDefinition *item = Item_GetDirect(unit->inventory[slot]);
 
-        if ((u8)(item->type - 1) <= 3 && (unit->inventory[i] & 0x200) == 0)
-          unit->inventory[i] = 0;
+        // ITEM_TYPE_WEAPON to ITEM_TYPE_HELM, as one unsigned test.
+        if ((u8)(item->type - ITEM_TYPE_WEAPON) <=
+                ITEM_TYPE_HELM - ITEM_TYPE_WEAPON &&
+            (unit->inventory[slot] & INVENTORY_EQUIPPED) == 0)
+          unit->inventory[slot] = 0;
 #if TLA_PATCH_1
         // Added in patch 1; the Japanese release has no such check.
-        if (Item_RaisesStat(unit->inventory[i]))
-          unit->inventory[i] = 0;
+        if (Item_RaisesStat(unit->inventory[slot]))
+          unit->inventory[slot] = 0;
 #endif
       }
       inventory = (s16 *)unit->inventory;
       Inventory_CompactSlots(inventory);
-      Unit_UpdateClass(owner);
-      Unit_Calculate(owner);
+      Unit_UpdateClass(unitId);
+      Unit_Calculate(unitId);
     }
-    *save++ = first;
-    *save++ = second;
-    inventory = (s16 *)Data_02000458;
+    // Keep shortcuts and party order with the inventory snapshot.
+    *save++ = firstShortcut;
+    *save++ = secondShortcut;
+    inventory = (s16 *)gMainRoutineWork.activeOwners;
     save[0] = inventory[0];
     save[1] = inventory[1];
   }
-  GameFlag_Set(0x9ff);
+  GameFlag_Set(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT);
   Party_RestoreHpPp(1);
-  for (i = 0xe50; i <= 0xe59; i++)
-    GameFlag_Clear(i);
+  for (slot = 0xe50; slot <= 0xe59; slot++)
+    GameFlag_Clear(slot);
 }
 
+/// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
+/// put aside, empties the snapshot and clears FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT:
+/// at the end of the Trial Road, and from the clear scene.
 void InventorySnapshot_Restore(void) {
   u16 *src = gInventorySnapshot;
-  s32 owner;
+  s32 unitId;
 
-  if (*src++ == 0x6774) {
-    for (owner = 4; owner <= 7; owner++) {
-      u16 *dst = ((struct OwnerInventoryState *)Unit_Get(owner))->inventory;
-      s32 i;
+  if (*src++ == INVENTORY_SNAPSHOT_SENTINEL) {
+    for (unitId = FELIX; unitId <= PIERS; unitId++) {
+      u16 *dst = ((struct OwnerInventoryState *)Unit_Get(unitId))->inventory;
+      s32 slot;
 
-      for (i = 14; i >= 0; i--)
+      for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--)
         *dst++ = *src++;
-      Unit_UpdateClass(owner);
-      Unit_Calculate(owner);
+      Unit_UpdateClass(unitId);
+      Unit_Calculate(unitId);
     }
     gMainRoutineWork.packedEvents[0] = *src++;
     gMainRoutineWork.packedEvents[1] = *src++;
@@ -109,5 +127,5 @@ void InventorySnapshot_Restore(void) {
     src = gInventorySnapshot;
     *src = 0;
   }
-  GameFlag_Clear(0x9ff);
+  GameFlag_Clear(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT);
 }

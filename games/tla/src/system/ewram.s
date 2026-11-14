@@ -11,8 +11,6 @@ gMainRoutineWork:
 	.global Data_0200024c
 Data_0200024c:
 	.space 0x000001d6
-	.global Data_02000422
-Data_02000422:
 	.space 0x00000014
 	.global Data_02000436
 Data_02000436:
@@ -26,14 +24,8 @@ Data_0200044c:
 	.global Data_02000452
 Data_02000452:
 	.space 0x00000002
-	.global Data_02000454
-Data_02000454:
 	.space 0x00000004
-	.global Data_02000458
-Data_02000458:
 	.space 0x00000040
-	.global Data_02000498
-Data_02000498:
 	.space 0x00000004
 	.global Data_0200049c
 Data_0200049c:
@@ -41,8 +33,6 @@ Data_0200049c:
 	.global gPlayerObjectId
 gPlayerObjectId:
 	.space 0x00000002
-	.global Data_020004ac
-Data_020004ac:
 	.space 0x0000000c
 	.global Data_020004b8
 Data_020004b8:

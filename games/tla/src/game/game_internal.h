@@ -135,6 +135,4 @@ struct StatWork {
 
 extern u8 gItemCounters[ITEM_COUNTER_COUNT];
 
-extern u16 Data_02000458[];
-
 #endif

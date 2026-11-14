@@ -179,6 +179,11 @@
 /// permission to these four travelers!"); the drawbridge guards let the party
 /// by once it is set.
 #define FLAG_OSENIA_PASSAGE_GRANTED 0x913
+/// Set while the Trial Road holds the party's equipment, from the race's start
+/// (InventorySnapshot_Save) to its end (InventorySnapshot_Restore), as The
+/// Broken Seal's FLAG_COLOSSO_HOLDS_EQUIPMENT; the Trial Road's music rule and
+/// its triggers test it.
+#define FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT 0x9ff
 
 /// Set once the old werewolf of Garoh's inn has asked the party whether they
 /// learned Reveal; he then only sighs about his wasted years.

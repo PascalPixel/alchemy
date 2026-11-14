@@ -89,10 +89,6 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
-  FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
-
 static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   Map_CopyCellAttributeRect(a, b, c, d, e, f);

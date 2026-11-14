@@ -92,7 +92,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != args->count * 20 + 56; frame++) {
     if (frame == 32)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     for (member = 0; member != args->count; member++) {
       s32 offset;
 
@@ -100,7 +100,8 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *args) {
       // The target's cue: a chime and a flash.
       if (frame == member * 20) {
         Sound_PlayFar(SE_CRACK);
-        BattleEffect_TintBattler(args->actors[member], 7, -1, member, 20);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.
       if (frame > member * 20) {
@@ -128,9 +129,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Abilities: Drain, Psy Drain (kind 42).
@@ -240,16 +239,19 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *args, s32 mode) {
     user = BattleObject_GetFar(args->actor)->object;
     half = BattleUnit_GetEffectHeightFar(args->actor) / 2;
     if (frame == 64)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
     if (frame == 40)
-      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == args->count * 20 + 52)
-      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
     for (member = 0; member != args->count; member++) {
       if (frame == member * 20)
-        BattleEffect_TintBattler(args->actors[member], 7, 5, member, 42);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, member, 42);
       if (frame > member * 20) {
         for (i = 0; i != 32; i++) {
           struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
@@ -293,7 +295,5 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *args, s32 mode) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

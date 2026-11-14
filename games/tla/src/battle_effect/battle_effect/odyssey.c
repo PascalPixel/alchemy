@@ -173,7 +173,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *args) {
 
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       Sound_PlayFar(SE_CLATTER);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
       work->shakeFrames = 8;
       shard = Data_02016000;
       for (i = 0; i != 128; i++) {
@@ -263,7 +264,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *args) {
           spark->variant = (Random16() & 7) + 17;
         }
         Sound_PlayFar(SE_IMPACT);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 64);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 64);
         work->shakeFrames = 4;
       }
       if (frame >= start && frame <= 89) {
@@ -349,9 +351,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *args) {
       if (frame == i * 8 + 72) {
         s32 none = 0;
 
-        BattleEffect_TintBattler(args->actor, 7, -1, 0, none);
+        BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP, 0,
+                                 none);
       } else if (frame == i * 8 + 76)
-        BattleEffect_TintBattler(args->actor, 0, -1, 0, 0);
+        BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP, 0,
+                                 0);
       if (frame >= start && frame < start + 11) {
         s32 scale = Q16_ONE * 3 - ((frame - start) << 14);
 
@@ -434,9 +438,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *args) {
   transition->active = 0;
   gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(1, BACKGROUND(Ram_HeapSlots->battleWork), 24);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // The swirl runs until A is pressed, at most this many frames.

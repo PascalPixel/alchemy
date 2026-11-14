@@ -80,7 +80,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *args) {
         camera->yaw += speed;
     }
     if (frame == 24)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // Pillar i strikes at frame 8i: a flash, then its first cel for one
     // frame and its second for two.
@@ -130,7 +130,8 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *args) {
       if (frame == start + 4) {
         for (k = 0; k != args->count; k++) {
           BattleMotion_ApplyKnockbackFar(args->actors[k], 1);
-          BattleEffect_TintBattler(args->actors[k], 7, 5, k, 8);
+          BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, k, 8);
         }
       }
     }
@@ -164,10 +165,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
@@ -304,13 +302,13 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *args, s32 kind) {
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
       if (frame == 2) {
         Sound_PlayFar(SE_CRASH);
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
       }
     } else {
       if (frame == 2)
         Sound_PlayFar(SE_CRASH);
       if (frame == 24)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     for (i = 0; i != GROUP_COUNT; i++) {
@@ -385,7 +383,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *args, s32 kind) {
       // The targets flash and recoil six frames after the burst.
       for (j = 0; j != args->count; j++) {
         if (frame == start + 6) {
-          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 10);
+          BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, j, 10);
           BattleMotion_ApplyKnockbackFar(args->actors[j], 4);
         }
       }
@@ -396,8 +395,5 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *args, s32 kind) {
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

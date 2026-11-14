@@ -230,13 +230,14 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *args) {
           work->shakeFrames = 4;
           if (i == 6) {
             BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
-            BattlePlayback_StartFar(134);
+            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x80000,
                                           0x20000, i * 10 + 110);
             Sound_PlayFar(SE_IMPACT);
           }
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 4);
           blade->variant = 1;
           if (args->side == 0) {
             blade->x = pos.x / 2 - Q_16_16_UPPER_HALF(blade->x);
@@ -295,10 +296,7 @@ void BattleEffect_RunVengeance(struct BattleEffectArgument *args) {
   }
   REG_WIN0V = WIN_RANGE(16, 136);
   REG_WIN1V = WIN_RANGE(16, 136);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // The scythe, in the work's first particle: swing is its velocityZ and timer
@@ -454,7 +452,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *args) {
         work->shakeFrames = 4;
         speed = 0;
         Sound_PlayFar(SE_IMPACT);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
       }
       if (scythe->timer == 35) {
         scythe->velocityX = still;
@@ -487,9 +486,10 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *args) {
       Sound_PlayFar(SE_POWER_UP);
     }
     if (phase == 0) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 12;
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
     }
@@ -575,9 +575,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *args) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Abilities: Purgatory (kind 114).
@@ -691,7 +689,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *args, s32 mode) {
       }
       if (frame == GEYSER_PEAK_FRAME) {
         work->shakeFrames = 8;
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         BattleMotion_ApplyKnockbackFar(args->actors[0], 1);
       }
 
@@ -836,8 +834,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *args, s32 mode) {
       EFFECT_END_FRAME(work);
     }
   }
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -958,12 +955,15 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *args, s32 mode) {
         starCount = 48;
       if (frame == start) {
         if (mode == 0)
-          BattleEffect_TintBattler(args->actors[member], 7, 5, member, 16);
+          BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, member, 16);
         else
-          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, member, 16);
       }
       if (frame == start + 55 && mode != 0)
-        BattleEffect_TintBattler(args->actors[member], 7, -1, member, 16);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, member, 16);
 
       // The swarm turns about its point, which rises from frame 4.
       Transform_Reset();
@@ -1058,7 +1058,6 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 
 #define BUBBLE_COUNT 256
 #define BUBBLE_FRAMES 60
-#define BUBBLE_HIT_CUE 126
 
 /// A column of bubbles. On the first frame 256 glowing ovals of random size
 /// appear over the bottom left of the canvas; for 60 frames they float up
@@ -1125,17 +1124,19 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *args) {
       bubble++;
     }
 
-    // The targets flash in turn from frame 18; the first hit also starts
-    // battle phase 126.
+    // The targets flash in turn from frame 18; the first hit lets the
+    // battle show the damage.
     for (i = 0; i != args->count; i++) {
       if (frame == i * 8 + 18) {
         if (i == 0) {
-          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 16);
-          BattlePlayback_StartFar(BUBBLE_HIT_CUE);
-          Sound_PlayFar(BUBBLE_HIT_CUE);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 16);
+          EFFECT_SHOW_DAMAGE(SE_RECOVERY);
+          Sound_PlayFar(SE_RECOVERY);
         } else {
-          Sound_PlayFar(BUBBLE_HIT_CUE);
-          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 16);
+          Sound_PlayFar(SE_RECOVERY);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 16);
         }
       }
     }
@@ -2102,12 +2103,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
     for (i = 0; i != args->count; i++) {
       if (frame == i * 8 + 18) {
         if (i == 0) {
-          BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 16);
-          BattlePlayback_StartFar(126);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, 0, 16);
+          EFFECT_SHOW_DAMAGE(SE_RECOVERY);
           Sound_PlayFar(SE_RECOVERY);
         } else {
           Sound_PlayFar(SE_RECOVERY);
-          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 16);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 16);
         }
       }
     }
@@ -2168,7 +2171,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
 #undef STAR_TOTAL
 #undef BUBBLE_COUNT
 #undef BUBBLE_FRAMES
-#undef BUBBLE_HIT_CUE
 #undef EFFECT_STEPS
 #undef OBJ_TILES
 #undef COLOR_RED

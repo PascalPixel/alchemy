@@ -170,10 +170,11 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *args) {
           else
             Actor_SetMoveTargetFar(target, target->x + 0x280000, 0, target->z);
           if (i == 2) {
-            BattlePlayback_StartFar(134);
+            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
             Sound_PlayFar(SE_HEAVY_IMPACT);
-            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+            BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, 0, 8);
           }
           work->shakeFrames = 4;
         }
@@ -183,10 +184,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #undef RING_STEPS
@@ -257,7 +255,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *args) {
   for (frame = 0; frame != 128; frame++) {
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != STAR_COUNT; i++) {
       star = &work->particles[i];
       if (frame >= star->variant) {
@@ -311,7 +309,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *args) {
           work->shakeFrames = 4;
           Sound_PlayFar(SE_HEAVY_IMPACT);
           for (j = 0; j != args->count; j++)
-            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 8);
+            BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 8);
         }
         star->x += star->velocityX;
         star->y += star->velocityY;
@@ -322,8 +321,5 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

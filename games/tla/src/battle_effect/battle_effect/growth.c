@@ -20,8 +20,7 @@ void BattleEffect_RunPunji(void *object) {
 #define COLUMN_COUNT 16
 #define COLUMN_INTERVAL 4
 #define PUFF_COUNT 512
-#define PUFF_LIFE 14      // seven cels, two frames each
-#define PHASE_RESULTS 133 // BattlePlayback_StartFar: the results phase begins
+#define PUFF_LIFE 14 // seven cels, two frames each
 #define CUE_COLUMN 133
 
 // BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
@@ -124,7 +123,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *args,
     fadeEnd = duration - 4;
     do {
       if (frame == cueFrame) {
-        BattlePlayback_StartFar(PHASE_RESULTS);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
         // Fade the canvas out over the last 16 frames.
@@ -197,7 +196,8 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *args,
                   if (!(i & 1)) {
                     Sound_PlayFar(CUE_COLUMN);
                   }
-                  BattleEffect_TintBattler(args->actors[n], 7, 5, n, 3);
+                  BattleEffect_TintBattler(args->actors[n], SPRITE_COLOR_WHITE,
+                                           POSE_DAMAGE, n, 3);
                 }
                 n++;
               } while (n != args->count);
@@ -260,10 +260,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *args,
     } while (frame != duration);
   }
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #define VINE_COUNT 16
@@ -344,7 +341,8 @@ void BattleEffect_RunVine(struct BattleEffectArgument *args) {
     if (frame == CUE_FRAME) {
       Sound_PlayFar(CUE_VINES);
       for (i = 0; i != args->count; i++)
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
     }
     i = 0;
     vine = work->particles;
@@ -375,10 +373,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *args) {
   } while (frame != VINE_FRAMES);
 
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #undef PUFF_COUNT
@@ -439,7 +434,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != total; frame++) {
     if (frame == total - 64) {
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     if (frame >= total - 16) {
       // Fade the canvas out over the last 16 frames.
@@ -519,7 +514,8 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *args) {
       for (j = 0; j != args->count; j++) {
         if (frame == start + 4) {
           Sound_PlayFar(CUE_THORN);
-          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 3);
+          BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, j, 3);
         }
       }
     }
@@ -547,8 +543,5 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *args) {
   }
 
   // Tear down: stop the transfer, free both blitters, close the layer.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

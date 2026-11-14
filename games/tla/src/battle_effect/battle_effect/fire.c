@@ -79,7 +79,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *args) {
     else
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[args->variant] >> 1) + 108)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     BattleCamera_SetViewFar(0, 0, 0, 100);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
@@ -137,7 +137,8 @@ void BattleEffect_RunFire(struct BattleEffectArgument *args) {
             Sound_PlayFar(SE_HEAVY_IMPACT);
           else
             Sound_PlayFar(SE_WHOOSH);
-          BattleEffect_TintBattler(args->actors[i % args->count], 10, 5,
+          BattleEffect_TintBattler(args->actors[i % args->count],
+                                   SPRITE_COLOR_RED_TINT, POSE_DAMAGE,
                                    i % args->count, 4);
           work->shakeFrames = 2;
         }
@@ -169,7 +170,6 @@ void BattleEffect_RunFire(struct BattleEffectArgument *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleCamera_ApplyPhasedDelta);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

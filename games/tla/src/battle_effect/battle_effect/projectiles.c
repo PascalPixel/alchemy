@@ -218,9 +218,11 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *args,
     }
     SceneTransform_ApplyPosition(base);
     if (frame == 0)
-      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
 
     // The 32 sparks spin about the centre, each on its own axis, and from
     // their 24th frame fall into it; a spark that has arrived stops.
@@ -324,8 +326,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *args,
     EFFECT_PRESENT_CANVAS(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -462,8 +463,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
 
 #define CUE_FIRE 136
 #define CUE_IMPACT 132
-#define PHASE_RESULTS 133 // BattlePlayback_StartFar: the results phase begins
-#define PHASE_LATE_RESULTS 134
 
 void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
                                       s32 mode) {
@@ -748,16 +747,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
         if (frame == 4)
           Sound_PlayFar(CUE_FIRE);
         if (frame == 32)
-          BattlePlayback_StartFar(PHASE_LATE_RESULTS);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       } else if (mode == 2) {
         if (frame == 32)
-          BattlePlayback_StartFar(PHASE_RESULTS);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
       } else if (mode == 7) {
         if (frame == 48)
-          BattlePlayback_StartFar(PHASE_RESULTS);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
       } else if (mode != 5) {
         if (frame == 16)
-          BattlePlayback_StartFar(PHASE_RESULTS);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
       }
 
       // The prelude: a small Mercury Djinn circles, then from frame 70
@@ -857,7 +856,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
 
               shot->variant = 1;
               if (mode == 5) {
-                BattlePlayback_StartFar(PHASE_LATE_RESULTS);
+                EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
               } else if (mode != 6 && mode != 12 && mode != 13 && mode != 14 &&
                          seWait == 0) {
                 seWait = 8;
@@ -877,7 +876,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
               SET_POSITION(flash, pos->x, pos->y, 0);
               if (mode != 7)
                 work->shakeFrames = 2;
-              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+              BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, i, 8);
               if (mode != 7 && mode != 9 && mode != 10 && mode != 18 &&
                   mode != 14 && mode != 15 && mode != 16 && mode != 17) {
                 if (mode == 5)
@@ -1149,9 +1149,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 void BattleEffect_InitializeRisingObject(s32 slot) {

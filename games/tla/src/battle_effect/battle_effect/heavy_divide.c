@@ -99,10 +99,10 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *args, s32 mode) {
     }
     if (mode == 0) {
       if (frame == 8) {
-        BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
+        BattleEffect_TintBattler(args->actor, TINT_KEEP, 2, 0, -1);
       }
     } else if (frame == 0) {
-      BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
+      BattleEffect_TintBattler(args->actor, TINT_KEEP, 2, 0, -1);
       Actor_SetAnimationSpeedFar(caster, 32);
     }
 
@@ -210,9 +210,10 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *args, s32 mode) {
     Heap_Release(vertices);
 
     if (frame == gHeavyBlow_StrikeFrames[mode]) {
-      BattlePlayback_StartFar(144);
+      EFFECT_SHOW_DAMAGE(SE_CLATTER);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
       work->shakeFrames = 8;
     }
     if (frame >= gHeavyBlow_StrikeFrames[mode]) {
@@ -328,7 +329,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *args) {
         }
       }
       if (frame == 32)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
       if (frame >= 0) {
         u32 mode = BLITTER_MAX;
@@ -355,7 +356,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *args) {
           if (age == 2) {
             s32 member = i % args->count;
 
-            BattleEffect_TintBattler(args->actors[member], 7, 5, member, 3);
+            BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, member, 3);
             BattleMotion_ApplyKnockbackFar(args->actors[member], 0);
             Sound_PlayFar(SE_POWER_UP);
             work->shakeFrames = 3;
@@ -424,8 +426,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *args) {
           }
         }
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
 
       BattleCamera_Shake(4, 4);
       EFFECT_END_FRAME(work);
@@ -676,9 +677,10 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *args) {
       if (frame == i * 4 + 80) {
         work->shakeFrames = 2;
         BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 2);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 2);
         if (i == 0) {
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         } else {
           Sound_PlayFar(SE_IMPACT);
         }
@@ -796,8 +798,9 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *args) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
       BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
-      BattlePlayback_StartFar(145);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
+      EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
 
     if (frame >= 8) {
@@ -811,7 +814,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *args) {
           Sound_PlayFar(SE_CLATTER);
           work->shakeFrames = 8;
           BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 8);
         }
         if (burst->variant >= 0 && burst->variant < 32) {
           s32 diameter;
@@ -865,9 +869,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // The map cell buffer holds 1,024 more particles while an effect runs.
@@ -958,7 +960,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *args) {
     if (frame == 32)
       BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 8, px(3));
     if (frame == 46) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
     }
 
@@ -979,7 +981,8 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *args) {
     // The target is struck every four frames from frame 6.
     for (i = 0; i != 8; i++) {
       if (frame == i * 4 + 6) {
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 3);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 3);
         Sound_PlayFar(SE_WATER);
       }
     }

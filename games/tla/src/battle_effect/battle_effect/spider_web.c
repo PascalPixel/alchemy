@@ -680,7 +680,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *args) {
 
             BattleEffect_StartActorMotion(args->actors[j], 1, 0x20000, 0x80000,
                                           m, delay + (Random16() & 31) + 52);
-            BattleEffect_TintBattler(args->actors[j], 7, -1, j, 4);
+            BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                     TINT_KEEP, j, 4);
           }
         }
         if (draw && (u32)(step->variant - 64) <= 11) {
@@ -825,7 +826,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *args) {
     }
   }
 
-  BattlePlayback_StartFar(134);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
   /* FAKEMATCH(dead): a once-only block. */
@@ -842,8 +843,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *args) {
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   transition[4] = 0;
   battle = Ram_HeapSlots->battleWork;
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
@@ -991,11 +991,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *args, s32 mode) {
     // The hit.
     if (frame == 8) {
       if (mode == 0) {
-        BattlePlayback_StartFar(0x85);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
         BattleMotion_ApplyKnockbackFar(args->actors[0], 1);
       } else {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 4);
       }
       work->shakeFrames = 8;
     }
@@ -1008,7 +1009,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *args, s32 mode) {
       }
       if (frame == 65) {
         work->shakeFrames = 4;
-        BattlePlayback_StartFar(0x86);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
     }
     BattleCamera_Shake(8, 8);
@@ -1016,9 +1017,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *args, s32 mode) {
   }
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -1098,10 +1097,11 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *args) {
 
     // The battle resumes, hit cue 143; every target flashes at frame 10.
     if (frame == 32)
-      BattlePlayback_StartFar(143);
+      EFFECT_SHOW_DAMAGE(SE_CRACK);
     for (i = 0; i != args->count; i++) {
       if (frame == 10)
-        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 i, 8);
     }
     EFFECT_END_FRAME(work);
     frame++;

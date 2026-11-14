@@ -217,9 +217,9 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *args) {
     // The battle resumes: hit cue 134 for a flagged summon entry, else 133.
     if (frame == 5) {
       if (BattleSprite_HasHeavyImpactFar(unit->enemyId))
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        BattlePlayback_StartFar(133);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     // The target recoils, harder for some kinds.
     if (frame == 4) {
@@ -309,8 +309,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *args) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
@@ -495,7 +494,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *args) {
   for (frame = 0; frame != 32; frame++) {
     // The battle resumes, hit cue 134; the target recoils a frame before.
     if (frame == 5)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 4)
       BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
     EffectPosition_ProjectScaledBattler(args->actor, &pos);
@@ -537,8 +536,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *args) {
 
   // Teardown: the background palette steps back over seven frames.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
   for (frame = 0, background = (u16 *)Ram_HeapSlots->battleWork->unk670;
        frame != 7; frame++) {

@@ -431,7 +431,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
         object->verticalMotionStrength = 0xab85;
       }
       if (frame == i * 5 + 302) {
-        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 i, 8);
         Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }
@@ -440,8 +441,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
     // Switch to the explosion: the blast sheet, max blitters, and ten
     // embers 72 degrees apart around each target.
     if (frame == 302) {
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
@@ -524,9 +524,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattlePlayback_StartFar(134);
+  EFFECT_RELEASE_BLITTERS();
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   // Tear down.
   /* FAKEMATCH(wrapper): the burst through BurstAt_. */
   BurstAt_(2, px(128), height);

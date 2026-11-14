@@ -104,7 +104,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *args) {
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Flames fly 12 pixels left a frame and shatter on their fifth frame.
     for (i = 0; i != FLAME_COUNT; i++) {
@@ -157,7 +157,8 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *args) {
         // Six frames later every target flashes and recoils.
         if (frame == gDjinnAttacks_LaunchFrames[i] + 6) {
           for (j = 0; j != args->count; j++) {
-            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 6);
+            BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 6);
             BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
           }
         }
@@ -184,10 +185,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *args) {
   } while (frame != 96);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // The dots live in the map cell buffer: 32 for each of the eight balls.
@@ -240,7 +238,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *args) {
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
@@ -277,7 +275,8 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *args) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != args->count; j++) {
-            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 6);
+            BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 6);
             BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
           }
         }
@@ -305,10 +304,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *args) {
   } while (frame != 96);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // Resources: decompress a resource with a palette.
@@ -392,7 +388,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *args) {
     }
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == 56)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Column i starts at frame 16 + 4i and climbs 12 pixels a frame.
     for (i = 0, start = 16; i != COLUMN_COUNT; start += 4, i++) {
@@ -420,7 +416,8 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *args) {
           work->shakeFrames = 4;
           // Every target flashes for six frames and recoils.
           for (j = 0; j != args->count; j++) {
-            BattleEffect_TintBattler(args->actors[j], 7, 5, j, 6);
+            BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, j, 6);
             BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
           }
         }
@@ -449,10 +446,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *args) {
   } while (frame != 96);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // The sparks live in the map cell buffer: sixteen under each of nine puffs.
@@ -520,7 +514,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *args) {
   do {
     // The battle resumes and resolves the targets, hit cue 0x85.
     if (frame == 56)
-      BattlePlayback_StartFar(0x85);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The orb swells, a cel every four frames.
     if (frame <= 23)
@@ -593,7 +587,8 @@ void BattleEffect_RunMars(struct BattleEffectArgument *args) {
     // Every target flashes for sixteen frames and recoils.
     if (frame == 38) {
       for (member = 0; member != args->count; member++) {
-        BattleEffect_TintBattler(args->actors[member], 7, 5, member, 16);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, member, 16);
         BattleMotion_ApplyKnockbackFar(args->actors[member], 6);
       }
     }
@@ -605,8 +600,5 @@ void BattleEffect_RunMars(struct BattleEffectArgument *args) {
   } while (frame != 112);
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

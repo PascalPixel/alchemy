@@ -94,7 +94,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     if (frame < 16) {
       // Wipe the canvas every five frames.
       if (frame % 5 == 2)
@@ -166,15 +166,13 @@ void BattleEffect_RunRay(struct BattleEffectArgument *args) {
     if (frame >= 4 && frame < 96) {
       for (i = 0; i != args->count; i++) {
         if (frame == i * 4 + 4)
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 10);
       }
     }
     BattleCamera_Shake(2, 4);
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

@@ -1288,8 +1288,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   for (i = 0; i != 48; i++) {
     Sprite_DestroyFar((struct ResourceObjectWork *)SPRITES[i]);
   }
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
@@ -1387,7 +1386,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       for (i = 0; i != arg->count; i++) {
         struct ActorPos *actor = BattleObject_GetFar(arg->actors[i])->object;
 
-        BattleEffect_TintBattler(arg->actors[i], 0, 5, -1, -1);
+        BattleEffect_TintBattler(arg->actors[i], SPRITE_COLOR_NORMAL,
+                                 POSE_DAMAGE, TINT_KEEP, -1);
         actor->x = -(i + 4) * 0x800000;
         actor->z = 0;
         actor->y = px(20);
@@ -1405,7 +1405,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame == 160) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame >= 140) {
       if (frame == 140) {
@@ -1448,7 +1448,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
           BattleEffect_StartActorMotion(arg->actors[i], 1, 0x40000, 0x80000,
                                         speed, delay);
-          BattleEffect_TintBattler(arg->actors[i], 7, 5, i, 32);
+          BattleEffect_TintBattler(arg->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 32);
         }
         work->shakeFrames = 3;
       }
@@ -1594,14 +1595,16 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           }
         }
         if (member->timer == 2 || member->timer == 7) {
-          BattleEffect_TintBattler(arg->actors[i], 7, 5, i, 32);
+          BattleEffect_TintBattler(arg->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 32);
         }
         /* FAKEMATCH(dead): landed set to 2 though nothing reads it again. */
         if (actor == 0) {
           landed = 2;
         }
         if (member->timer == 6) {
-          BattleEffect_TintBattler(arg->actors[i], 15, -1, i, 32);
+          BattleEffect_TintBattler(arg->actors[i], SPRITE_COLOR_HIDDEN,
+                                   TINT_KEEP, i, 32);
         }
         if (member->timer == 8) {
           SET_POSITION(actor, 0, px(148), 0);

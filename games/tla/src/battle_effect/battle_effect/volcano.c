@@ -86,7 +86,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *args) {
         camera->yaw = (s16)camera->yaw - 192;
     }
     if (frame == 16)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
 
@@ -156,7 +156,8 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *args) {
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
           for (i = 0; i != args->count; i++) {
-            BattleEffect_TintBattler(args->actors[i], 10, 5, i, 8);
+            BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_RED_TINT,
+                                     POSE_DAMAGE, i, 8);
             BattleMotion_ApplyKnockbackFar(args->actors[i], 1);
           }
         }
@@ -199,8 +200,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

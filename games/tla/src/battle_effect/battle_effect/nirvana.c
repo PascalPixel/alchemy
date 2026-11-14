@@ -50,15 +50,18 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *args) {
     s32 userHalf = BattleUnit_GetEffectHeightFar(args->actor) / 2;
 
     if (frame == 64)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     Transform_Reset();
     Transform_SetLookAt(view->eye, view->pos);
     if (frame == 72)
-      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 79)
-      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 0)
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 42);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 42);
     if (orb->variant == 0) {
       s32 size = 6;
 
@@ -106,9 +109,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *args) {
     }
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // The pixel half of a 16.16 fixed-point value.
@@ -260,7 +261,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *args) {
       }
       BattleEffect_StartActorMotion(args->actors[0], 1, px(2), px(4), px(2),
                                     150);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 4);
       work->shakeFrames = 2;
     }
 
@@ -269,9 +271,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *args) {
   }
 
   Actor_SetAnimationSpeedFar(user, 16);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #define SPARK_OFFSET 0x460
@@ -366,22 +366,25 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *args) {
     if (frame == 10) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CLATTER);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 80);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 80);
       target->verticalMotionStrength = 0;
       target->y = px(32);
     }
     if (frame == 80)
       target->verticalMotionStrength = 0xab85;
     if (frame == 24)
-      BattleEffect_TintBattler(args->actor, -1, 3, -1, 0);
+      BattleEffect_TintBattler(args->actor, TINT_KEEP, 3, TINT_KEEP, 0);
     if (frame == 40)
       Sound_PlayFar(SE_SWIRL);
     if (frame == 32)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 64)
-      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 88)
-      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
 
     // The column: two 14-pixel halves, the right one mirrored.
     if (frame > 7) {
@@ -495,8 +498,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *args) {
       }
     }
 
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     if (frame <= 7)
       BattleCamera_Shake(4, 4);
     else
@@ -779,20 +781,23 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *args) {
       }
       if (frame == 64) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
       }
       if (frame == 30) {
-        BattleEffect_TintBattler(args->actors[0], 9, 5, -1, 0);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_BLUE_TINT,
+                                 POSE_DAMAGE, TINT_KEEP, 0);
       }
       if (frame == 26) {
         work->shakeFrames = 8;
       }
       if (frame == 64) {
         work->shakeFrames = 4;
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 4);
       }
       if (frame == 70) {
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 4);
       }
       if (frame == 56) {
         // The caster closes four fifths of the way.
@@ -960,10 +965,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *args) {
       EFFECT_END_FRAME(work);
     }
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Heavy Divide (kind 101).

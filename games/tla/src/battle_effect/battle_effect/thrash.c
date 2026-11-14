@@ -220,7 +220,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *args,
     if ((u32)(frame - FLOOD_FRAME) <= 3)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (frame == RESULTS_FRAME)
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == HIT_FRAME) {
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(args->actors[0], 4);

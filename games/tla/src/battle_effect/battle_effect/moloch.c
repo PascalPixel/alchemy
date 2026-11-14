@@ -283,7 +283,8 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
       for (i = 0; i != 8; i++) {
         if (frame == i * 8 + 212) {
           for (k = 0; k != work->effect->count; k++) {
-            BattleEffect_TintBattler(work->effect->actors[k], 7, 5, k, 8);
+            BattleEffect_TintBattler(work->effect->actors[k],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
             BattleEffect_StartActorMotion(args->actors[k], 1, 0x10000, 0x40000,
                                           0x10000, i * 16 + 100);
           }
@@ -306,7 +307,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
       // Frames 256-271 brighten the whole screen to white; at 272 the battle
       // phase resumes and the canvas fades back.
       if (frame == 272) {
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Graphics_LoadGreyRamp();
       } else if ((u32)(frame - 256) <= 15) {
@@ -323,8 +324,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
     } while (frame != SUMMON16_FRAMES);
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(5, focus.x, focus.y);
     for (i = 0; i != 12; i++)
       Sprite_DestroyFar(work->objects[i]);
@@ -1020,7 +1020,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
           BattleEffect_SelectLivingTargets(work->effect);
           Palette_LoadBasicSpriteColors();
           for (i = 0; i != work->effect->count; i++)
-            BattleEffect_TintBattler(work->effect->actors[i], -1, 5, -1, 0);
+            BattleEffect_TintBattler(work->effect->actors[i], TINT_KEEP,
+                                     POSE_DAMAGE, TINT_KEEP, 0);
         }
         frame = 446;
       } else {
@@ -1294,7 +1295,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
         BattleEffect_SelectLivingTargets(work->effect);
         Palette_LoadBasicSpriteColors();
         for (i = 0; i != work->effect->count; i++)
-          BattleEffect_TintBattler(work->effect->actors[i], -1, 5, -1, 0);
+          BattleEffect_TintBattler(work->effect->actors[i], TINT_KEEP,
+                                   POSE_DAMAGE, TINT_KEEP, 0);
       }
       if (frame <= 191) {
         for (i = 0; i != 3; i++) {

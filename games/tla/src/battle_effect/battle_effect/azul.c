@@ -468,7 +468,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *args) {
                j++) {
             Sprite_RemoveAnimationFar(record, (s32)slot->effectEntry);
           }
-          BattleEffect_TintBattler(args->actors[i], 9, 5, i, 8);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_BLUE_TINT,
+                                   POSE_DAMAGE, i, 8);
           BattleEffect_StartActorMotion(args->actors[i], 1, 0, 0,
                                         (Random16() << 1) + 0x10000, 100);
           // record is 0 here; the store reuses its register.
@@ -711,14 +712,15 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != args->count; i++) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
         BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
       }
       Sound_PlayFar(SE_CRASH);
       work->shakeFrames = 16;
     }
     if (frame == 214) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame > 185) {
       BattleCamera_Shake(8, 8);

@@ -180,7 +180,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
           do {
             if (frame == gProcne_Frames[slot]) {
               object->velocityY = 0;
-              BattleEffect_TintBattler(args->actors[index], 7, 5, index, 8);
+              BattleEffect_TintBattler(args->actors[index], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, index, 8);
             }
             slot++;
           } while (slot != 4);
@@ -516,7 +517,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
     } while (frame != 400);
 
     // The results; the enemies go back where they stood, facing as before.
-    BattlePlayback_StartFar(134);
+    EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (index = 0; index != args->count; index++) {
       struct MotionObject *enemy;
 
@@ -535,10 +536,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
       index++;
     } while (index != COMETS);
 
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    BattleEffect_EndCanvasLayer();
+    EFFECT_FINISH_CANVAS();
   }
 }
 
@@ -664,7 +662,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
           Animation_ApplyChildArgumentFar(work->objects[4], 11);
         }
         for (i = 0; i != args->count; i++) {
-          BattleEffect_TintBattler(args->actors[i], 10, 5, -1, 0);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_RED_TINT,
+                                   POSE_DAMAGE, TINT_KEEP, 0);
           BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
         frame = 160;
@@ -672,7 +671,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
       if (frame == 178)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
       // From frame 128 the trails halve; from 160 to 175 the canvas is filled
       // and the palette brightens; from 176 the canvas fades by 2 a frame.
@@ -882,7 +881,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
       }
       if (frame == 138) {
         for (i = 0; i != args->count; i++) {
-          BattleEffect_TintBattler(args->actors[i], 10, 5, -1, 0);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_RED_TINT,
+                                   POSE_DAMAGE, TINT_KEEP, 0);
           BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
       }
@@ -926,8 +926,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
 
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     if (mode == 0) {
       if (alternate == 1)
         BattleEffect_RunImpactBurst(6, focus.x, focus.y);

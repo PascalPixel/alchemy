@@ -133,17 +133,18 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *args, u32 mode) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     // Mode 7 sends the caster at the first target 46 frames before the
-    // end and strikes it 14 frames later; the others begin phase 133.
+    // end and strikes it 14 frames later; the others let the battle show the
+    // damage.
     if (mode == 7) {
       if (frame == total - 46)
         BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 16, 0);
       if (frame == total - 32) {
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
         work->shakeFrames = 8;
       }
     } else if (frame == total - 32) {
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
 
     // Ripple the canvas: one horizontal offset for each line.
@@ -272,8 +273,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *args, u32 mode) {
           }
         }
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
 
       // The target flashes 16 frames into its turn, until the end.
       if (frame == member * 8 + 16) {
@@ -281,7 +281,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *args, u32 mode) {
 
         if (delay > 31)
           delay = 31;
-        BattleEffect_TintBattler(args->actors[member], 7, 5, member, delay);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, member, delay);
       }
     }
 
@@ -366,7 +367,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *args) {
 
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 80)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // Place each target, and from frame 64 restore its palette, one
     // target every 16 frames.
@@ -381,7 +382,8 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *args) {
       record[2] = object->z;
       SceneTransform_ApplyPosition(record);
       if (frame == member * 16 + 64)
-        BattleEffect_TintBattler(args->actors[member], 0, 5, -1, 0);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_NORMAL,
+                                 POSE_DAMAGE, TINT_KEEP, 0);
     }
 
     // The sheep fall and bounce, each spinning through its eight cels:
@@ -413,10 +415,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #define MARKER_FRAMES 72 // how long each marker stays
@@ -465,7 +464,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *args) {
   frame = 0;
   while (frame != (args->count << 5) + 32) {
     if (frame == 32) {
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     }
     i = 0;
     if (args->count != 0) {
@@ -499,9 +498,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
@@ -583,9 +580,11 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *args) {
 
     // The caster flashes for the first 24 frames.
     if (frame == 0)
-      BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
 
     // Each spark spins in one of four planes, smaller further away, and
     // after 30 frames is pulled back toward the Djinn.
@@ -689,9 +688,11 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *args) {
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
-        BattleEffect_TintBattler(args->actors[member], 7, -1, -1, 0);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, TINT_KEEP, 0);
       if (frame == start + 64)
-        BattleEffect_TintBattler(args->actors[member], 0, -1, -1, 0);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_NORMAL,
+                                 TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {
@@ -735,10 +736,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Balm (kind 230).

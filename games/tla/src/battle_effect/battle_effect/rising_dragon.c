@@ -150,18 +150,19 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *args) {
         work->shakeFrames = 8;
         if (frame == 28) {
           if (args->variant == 0) {
-            BattlePlayback_StartFar(144);
+            EFFECT_SHOW_DAMAGE(SE_CLATTER);
           } else {
             Sound_PlayFar(SE_CLATTER);
           }
           BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x40000,
                                         0x40000, 150);
         } else {
-          BattlePlayback_StartFar(144);
+          EFFECT_SHOW_DAMAGE(SE_CLATTER);
           BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x40000,
                                         0x70000, TARGET_ANCHOR_PERCENT);
         }
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
       }
       for (i = 0; i != 64; i++) {
         mote = &work->particles[i];
@@ -499,14 +500,16 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *args) {
 
     if (frame == FIGURE_HIT_FRAME) {
       work->shakeFrames = 6;
-      BattlePlayback_StartFar(134);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
     }
     if (frame == FIGURE_SWING_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       work->shakeFrames = 3;
       Sound_PlayFar(SE_POWER_UP);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
     }
 
     BattleCamera_Shake(4, 4);
@@ -516,8 +519,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *args) {
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleBackground_LoadFar(1, *(u16 *)((u8 *)Ram_HeapSlots->battleWork + 0x670),
                            24);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
 #undef TARGET_ANCHOR_PERCENT

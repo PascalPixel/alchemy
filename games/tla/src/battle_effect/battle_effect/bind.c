@@ -161,7 +161,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != args->count * 20 + 72; frame++) {
     if (frame == 64)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
     // The prelude: the Djinn circles where the effect was prepared, and
@@ -179,8 +179,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *args) {
       if (frame <= 3)
         draw[1](canvas, work->sheet + DJINN_SHEET, x, y, DJINN_SIZE,
                 DJINN_SIZE);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
     }
 
     // A fresh pair of max blitters each frame, the second flipped.
@@ -251,8 +250,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *args) {
         }
       }
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     EFFECT_PRESENT_CANVAS(work);
   }
 
@@ -310,7 +308,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != args->count * 20 + 72; frame++) {
     if (frame == 64)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     if (frame == 46)
       BattleMotion_ApproachTargetFar(args->actor, args->actors[0], 16, 0);
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
@@ -383,8 +381,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *args) {
         }
       }
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     EFFECT_PRESENT_CANVAS(work);
   }
 

@@ -60,8 +60,6 @@ struct FxPartyList;
 #define SPOUT_END_FRAME 80
 #define RESULTS_FRAME 120
 
-#define PHASE_SUMMON_RESULTS 134
-
 /// Unused: nothing reaches it (no handler, summon case or call). A second
 /// copy of The Broken Seal's BattleEffect_RunNereid, which this game keeps
 /// for summon 2 as BattleEffect_RunNereid. As written:
@@ -140,7 +138,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *args) {
           frame < SKIP_TO_FRAME)
         frame = SKIP_TO_FRAME;
       if (frame == RESULTS_FRAME)
-        BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       if (frame <= 15)
         rise += 2;
 
@@ -269,12 +267,14 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *args) {
               struct MotionObject *target =
                   BattleObject_GetFar(args->actors[k])->object;
 
-              BattleEffect_TintBattler(args->actors[k], 7, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, TINT_KEEP, 0);
               target->velocityY = px(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
-              BattleEffect_TintBattler(args->actors[k], 0, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_NORMAL,
+                                       POSE_DAMAGE, TINT_KEEP, 0);
           }
         }
       }
@@ -282,8 +282,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectArgument *args) {
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       Sprite_DestroyFar(work->objects[k]);
@@ -509,8 +508,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
 }
 
 /// Adds the deltas to BG palette entries 1 to 63, as The Broken Seal does, but
@@ -747,7 +745,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *args,
 
     user->velocityY = px(10);
     user->verticalMotionStrength = 0x91eb;
-    BattleEffect_TintBattler(args->actor, -1, 2, -1, 0);
+    BattleEffect_TintBattler(args->actor, TINT_KEEP, 2, TINT_KEEP, 0);
     Sound_PlayFar(SE_CRASH);
     direction = args->side == 1 ? mode : -1;
   } else {
@@ -1125,7 +1123,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *args,
         Sprite_DestroyFar(work->objects[1]);
         BattleObject_PutFar();
       }
-      BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     // The embers fountain up from the ground in front of the camera.

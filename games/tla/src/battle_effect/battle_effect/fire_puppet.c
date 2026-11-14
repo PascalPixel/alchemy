@@ -114,23 +114,26 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *args) {
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     if (frame == 0) {
-      BattleEffect_TintBattler(args->actor, 6, 4, 0, -1);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_GREY, POSE_PARTY_HELD,
+                               0, -1);
     }
     if (frame == 8) {
       Sound_PlayFar(SE_CURSE);
     }
     if (frame == 100) {
-      BattleEffect_TintBattler(args->actor, 0, 0, 0, -1);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL,
+                               POSE_ENEMY_HELD, 0, -1);
     }
     if (frame == 54) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       Sound_PlayFar(SE_POWER_UP);
-      BattlePlayback_StartFar(212);
+      EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       work->shakeFrames = 8;
       for (i = 0; i != args->count; i++) {
         BattleEffect_StartActorMotion(args->actors[i], 1, 0x20000, 0x40000,
                                       0x40000, 150);
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
       }
     }
     if (frame > 15) {
@@ -330,8 +333,9 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *args) {
     // The hit, and the sparks sprayed from 48 pixels out.
     if (frame == SWING_HIT_FRAME) {
       BattleMotion_ApplyKnockbackFar(args->actors[0], 1);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
-      BattlePlayback_StartFar(134);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
       for (i = 0; i != SPARK_COUNT; i++) {
         s32 angle;
@@ -375,9 +379,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef SLOT_BLITTER
 #undef BLITTER

@@ -48,7 +48,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != args->count * BOLT_INTERVAL + 40; frame++) {
     if (frame == 24)
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The sky flashes as each bolt starts.
     for (i = 0; i != args->count; i++) {
@@ -64,7 +64,8 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *args) {
       if (frame == start + 1)
         work->shakeFrames = 4;
       if (frame == start + 4) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 6);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 6);
         BattleMotion_ApplyKnockbackFar(args->actors[i], 6);
       }
 
@@ -154,7 +155,5 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *args) {
   }
 
   // Tear down: stop the transfer, free the blitter, close the layer.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

@@ -196,13 +196,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *args, s32 mode) {
           focus[1] += work->particles[63].y / 2;
           focus[2] += work->particles[63].z / 2;
           if (frame == 72) {
-            BattlePlayback_StartFar(134);
+            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
             work->shakeFrames = 8;
           } else {
             Sound_PlayFar(SE_ITEM_BREAK);
             work->shakeFrames = 2;
           }
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 6);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 6);
           for (i = 0, p = work->particles; i != 63; i++, p++) {
             if (p->variant != -1) {
               continue;
@@ -231,8 +232,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *args, s32 mode) {
         }
         if (frame == 15) {
           work->shakeFrames = 6;
-          BattlePlayback_StartFar(134);
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 6);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 6);
           BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
           for (i = 0; i != 63; i++) {
             s32 angle;
@@ -326,10 +328,10 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *args, s32 mode) {
       }
       if (mode == 0) {
         if (frame == 24) {
-          BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
+          BattleEffect_TintBattler(args->actor, TINT_KEEP, 2, 0, -1);
         }
       } else if (frame == 0) {
-        BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
+        BattleEffect_TintBattler(args->actor, TINT_KEEP, 2, 0, -1);
       }
 
       // Core's glowing orb.

@@ -252,11 +252,12 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *args,
       if (frame == start + 2) {
         if (RECORD(RECORD_FILL) == 1)
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 4);
         if (i == blows - 1) {
           BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
           work->shakeFrames = 8;
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         } else {
           if (i & 1)
             BattleMotion_ApplyKnockbackFar(args->actors[0], 7);
@@ -271,8 +272,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *args,
         draw[0](canvas, ORB_CELS + ((frame - start - 2) / 2) * 960,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
 
     // The motes, until their life runs out, bouncing off the ground.
     Transform_Reset();
@@ -303,8 +303,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *args,
         mote->variant--;
       }
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
 
     if (frame > 3) {
       // The glints: three a frame around the target, each with its own

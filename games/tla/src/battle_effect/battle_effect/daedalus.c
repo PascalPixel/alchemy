@@ -102,12 +102,14 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *args, s32 mode) {
   for (frame = 0; frame != BURST_FRAMES; frame++) {
     if (frame == 0) {
       if (mode == 2)
-        BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 32);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 0, 32);
       else
-        BattleEffect_TintBattler(args->actors[0], 10, -1, 0, 32);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_RED_TINT,
+                                 TINT_KEEP, 0, 32);
     }
     if (frame == 24)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     if (frame == 8 && mode == 0)
       Sound_PlayFar(SE_RECOVERY);
 
@@ -1349,7 +1351,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             for (j = 0; j != arg->count; j++) {
               BattleEffect_StartActorMotion(arg->actors[j], 1, 0, 0, 0x20000,
                                             100);
-              BattleEffect_TintBattler(arg->actors[j], 7, 5, j, 7);
+              BattleEffect_TintBattler(arg->actors[j], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, j, 7);
               work->shake = 4;
             }
           } else {
@@ -1406,10 +1409,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     }
     for (i = 0; i != 16; i++)
       Sprite_DestroyFar(work->sprites[i]);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    BattleEffect_EndCanvasLayer();
+    EFFECT_FINISH_CANVAS();
   }
 }
 
@@ -1526,7 +1526,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *args) {
         for (j = 0; j != args->count; j++) {
           BattleEffect_StartActorMotion(args->actors[j], 1, 0x20000, 0x80000,
                                         0x20000, 120);
-          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 7);
+          BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, j, 7);
         }
         work->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);

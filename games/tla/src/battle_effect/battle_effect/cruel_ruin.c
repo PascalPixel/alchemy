@@ -163,7 +163,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *args) {
   IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
   Iwram_FillWords((void *)(BG_PLTT + 6 * 16), 0x100, 0x7fff7fff);
   Sound_PlayFar(SE_POWER_UP);
-  BattleEffect_TintBattler(args->actors[0], 7, 3, 0, 30);
+  BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
   for (frame = 0; frame != 128; frame++) {
     if (frame == 2)
@@ -171,7 +171,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *args) {
     if (frame == 3)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 28)
-      BattleEffect_TintBattler(args->actors[0], -1, 3, -1, 0);
+      BattleEffect_TintBattler(args->actors[0], TINT_KEEP, 3, TINT_KEEP, 0);
     if (frame == 32)
       Sound_PlayFar(SE_MONSTER_ROAR);
     if (frame == 5)
@@ -371,10 +371,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *args) {
   }
 
   // Put the background and the display back.
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_TintBattler(args->actors[0], -1, 1, -1, 0);
+  BattleEffect_TintBattler(args->actors[0], TINT_KEEP, POSE_STANDING, TINT_KEEP,
+                           0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
@@ -474,7 +474,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *args) {
       REG_BLDALPHA = (0x70 - frame * 2) | 0x1000;
     if (frame == 26) {
       Sound_PlayFar(SE_POWER_UP);
-      BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 20);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, TINT_KEEP,
+                               0, 20);
     }
 
     // The burst, a picture every three frames.
@@ -1603,11 +1604,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *args) {
 
       if (frame == 0) {
         for (i = 0; i != args->count; i++) {
-          BattleEffect_TintBattler(args->actors[i], 0, -1, i, 16);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_NORMAL,
+                                   TINT_KEEP, i, 16);
         }
       }
       if (frame == 127) {
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       if (frame == 107) {
         Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
@@ -1712,9 +1714,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *args) {
     }
   }
   Palette_LoadBasicSpriteColors();
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef SLOT_BLITTER
 #undef SLOT_BLITTER_ALTERNATE

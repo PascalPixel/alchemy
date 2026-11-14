@@ -127,12 +127,13 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *args) {
           spark->variant = (Random16() & 7) + 16;
         }
         if (i == 2)
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
         BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x80000, 0,
                                       i * 20 + 120);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
         work->shakeFrames = 8;
       }
 

@@ -893,7 +893,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
       for (i = 0; i != args->count; i++) {
         BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 150);
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
       }
     }
@@ -905,7 +906,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
       for (i = 0; i != args->count; i++) {
         BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 50);
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
       }
     }
@@ -914,7 +916,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
       for (i = 0; i != args->count; i++) {
         BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                       0x40000, 200);
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
       }
     }
@@ -998,9 +1001,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
   for (i = 0; i != 11; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // The two rings sit at y = -36 and y = -18.

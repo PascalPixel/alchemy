@@ -194,7 +194,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *args) {
       Sound_PlayFar(SE_CRASH);
     // The battle resumes and resolves the targets, hit cue 134.
     if (frame == 120)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // The ground heaves up (frames 0-81), then pulses between two cels.
     if (frame <= 81) {
@@ -336,7 +336,8 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *args) {
       for (i = 0; i != args->count; i++) {
         if (frame > 85) {
           if (frame % 12 == 0)
-            BattleEffect_TintBattler(args->actors[i], 7, 5, i, 6);
+            BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, i, 6);
           if ((frame & 3) == 0)
             BattleMotion_ApplyKnockbackFar(args->actors[i], 5);
         }
@@ -352,8 +353,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *args) {
 
   // Teardown.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != ROCK_COUNT; i++)
     Sprite_DestroyFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();
@@ -483,7 +483,6 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 #undef Actor_SetAnimationSpeedFar
 #undef PARTICLES
 #undef CLIP
-#undef PHASE_RESULTS
 #undef HEAP_BLITTER
 #undef HEAP_BLITTER_ALTERNATE
 #undef BLITTER

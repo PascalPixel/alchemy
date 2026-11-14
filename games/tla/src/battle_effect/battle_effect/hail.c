@@ -105,8 +105,9 @@ void BattleEffect_RunHail(struct BattleEffectArgument *args) {
     // flashes for sixteen frames and recoils.
     if (frame == 8) {
       work->shakeFrames = frame;
-      BattlePlayback_StartFar(0x86);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 3);
     }
 
@@ -130,10 +131,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *args) {
   }
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
@@ -327,7 +325,8 @@ void BattleEffect_RunGround(struct BattleEffectArgument *args) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);
-              BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+              BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, 0, 4);
               BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
             }
           }
@@ -339,9 +338,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *args) {
   }
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Shakes the battle view while the effect work's shakeFrames lasts, moving

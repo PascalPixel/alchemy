@@ -81,4 +81,3 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
 #undef IWRAM
 #undef PLTT
 #undef SPARKS
-#undef PHASE_RESULTS

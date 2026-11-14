@@ -123,7 +123,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *args) {
   vertices = (s16 *)((s32)&center - 8);
   for (pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
     if (frame == 64) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame > 31 && (frame & 3) == 0) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_MercuryDjinnSheet);
@@ -282,7 +282,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *args) {
         work->shakeFrames = 4;
         Sound_PlayFar(SE_CRASH);
         BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 2);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 2);
       }
       EffectPosition_ProjectPoint((struct EffectStep *)head, out);
       vertices[8] = out->x / 2 - 2;
@@ -340,9 +341,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *args) {
     BattleCamera_Shake(4 + ((shade & 255) >> 8), 4);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Abilities: Whorl (kind 232).

@@ -137,7 +137,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *args, s32 mode) {
     if (frame == 64)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 80)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // The Djinn sways 20 pixels either way and rises from frame 32.
     prelude = args->prelude;
@@ -152,8 +152,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *args, s32 mode) {
       draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -214,9 +213,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *args, s32 mode) {
         Transform_Reset();
         Transform_SetLookAt(camera->eye, camera->pos);
         if (frame == start + 72)
-          BattleEffect_TintBattler(args->actors[i], 1, -1, -1, 0);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_GRB, TINT_KEEP,
+                                   TINT_KEEP, 0);
         if (frame == start + 88)
-          BattleEffect_TintBattler(args->actors[i], 0, -1, -1, 0);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_NORMAL,
+                                   TINT_KEEP, TINT_KEEP, 0);
         ground[0] = target->x;
         ground[1] = 0;
         ground[2] = target->z;
@@ -246,8 +247,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *args, s32 mode) {
         }
       }
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     EFFECT_PRESENT_CANVAS(work);
   }
 
@@ -421,9 +421,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *args, s32 mode) {
           struct EffectStep *shot = &PARTICLES[k * 16 + i];
 
           if (frame == start + 17) {
-            BattleEffect_TintBattler(args->actors[k % args->count], 7, 5, k,
-                                     16);
-            BattlePlayback_StartFar(133);
+            BattleEffect_TintBattler(args->actors[k % args->count],
+                                     SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
+            EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
           if (shot->variant >= 0) {
             s32 step = (frame - start) / 3;
@@ -509,8 +509,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *args, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == 3 || mode == 5) {

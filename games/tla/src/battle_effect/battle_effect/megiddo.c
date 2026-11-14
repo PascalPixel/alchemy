@@ -318,7 +318,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *args) {
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
     }
     /* FAKEMATCH(temporary): f, a copy of frame tested below. */
@@ -600,9 +601,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *args) {
   // The background id is the low halfword of the word at 0x670.
   BattleBackground_LoadFar(
       1, (u16)*(s32 *)((u8 *)Ram_HeapSlots->battleWork + 0x670), 24);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef SLOT_BLITTER
 #undef BLITTER

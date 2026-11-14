@@ -87,7 +87,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *args) {
     else
       work->cameraDelta = 0;
     if (frame == gVortices_Counts[args->variant * 2 + 1] - 16)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->pos);
 
@@ -125,7 +125,8 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *args) {
           point->variant = 0;
           point->x = pos.x;
           point->y = pos.y + (Random16() & 31) - 16;
-          BattleEffect_TintBattler(args->actors[i % args->count], 7, 5,
+          BattleEffect_TintBattler(args->actors[i % args->count],
+                                   SPRITE_COLOR_WHITE, POSE_DAMAGE,
                                    i % args->count, 4);
           BattleMotion_ApplyKnockbackFar(args->actors[i % args->count], 0);
           work->shakeFrames = 4;
@@ -151,10 +152,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *args) {
 
   // Tear down.
   Task_Remove(BattleCamera_ApplyPhasedDelta);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #define TORNADO_FRAMES 80
@@ -206,7 +204,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *args) {
   for (frame = 0; frame != TORNADO_FRAMES; frame++) {
     wave = Trig_Sin(frame << 10) << 4;
     if (frame == 32)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Wipe the canvas every eight frames from frame 16, leaving a trail.
     for (i = 0; i != 7; i++) {
@@ -265,7 +263,8 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *args) {
     for (j = 0; j != args->count; j++) {
       for (i = 0; i != 7; i++) {
         if (frame == i * 8 + j * 3 + 16) {
-          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 4);
+          BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, j, 4);
           BattleMotion_ApplyKnockbackFar(args->actors[j], 6);
         }
       }
@@ -278,8 +277,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

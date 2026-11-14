@@ -132,7 +132,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *args, s32 mode) {
       }
     }
     if (frame == 38)
-      BattlePlayback_StartFar(-1);
+      EFFECT_SHOW_DAMAGE(-1);
     if (mode == 0) {
       if (frame == 32)
         Sound_PlayFar(SE_POWER_UP);
@@ -140,7 +140,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *args, s32 mode) {
       if (frame > 7)
         BattleEffect_StepPaletteToResource((s32)&ResourceId_StarCrossSheet);
       if (frame == 32)
-        BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 24);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 0, 24);
     }
 
     // The Djinni rises a pixel a frame, swaying, until it leaves the top.

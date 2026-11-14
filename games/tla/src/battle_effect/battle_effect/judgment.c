@@ -396,10 +396,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *args) {
     }
     if (frame == 300) {
       for (i = 0; i != args->count; i++) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
         BattleMotion_ApplyKnockbackFar(args->actors[i], 1);
       }
-      BattlePlayback_StartFar(145);
+      EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
     if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
@@ -787,7 +788,5 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *args) {
   for (i = 0; i != 16; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

@@ -14,8 +14,6 @@
 #define RIPPLE_FADE_OUT_FRAME 72
 #define RIPPLE_HIT_FRAME 48
 
-#define PHASE_RESULTS 134
-
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
 /// cycling outward one ring a frame while each scanline sways on a sine wave.
 /// Abilities: Torch (kind 214).
@@ -131,9 +129,9 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *args) {
     if (frame > RIPPLE_FADE_OUT_FRAME)
       REG_BLDALPHA = BLEND_ALPHA(RIPPLE_FRAMES * 2 - frame * 2, 16);
 
-    // The hit: results phase, shake, and the target knocked back.
+    // The hit: the damage shown, a shake, and the target knocked back.
     if (frame == RIPPLE_HIT_FRAME) {
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
     }
@@ -162,10 +160,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *args) {
   }
 
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Kite (kind 217).

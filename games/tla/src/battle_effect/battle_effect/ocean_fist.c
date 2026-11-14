@@ -73,11 +73,12 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *args) {
         sheet = gData_02014000;
       }
       if (frame == 32) {
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
         BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0xf0000, 100);
       }
       if (frame == 38) {
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         work->shakeFrames = 16;
       }
 
@@ -211,10 +212,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *args) {
       EFFECT_END_FRAME(work);
     }
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 #undef BLITTER
 #undef OCEAN_FIST_FRAMES

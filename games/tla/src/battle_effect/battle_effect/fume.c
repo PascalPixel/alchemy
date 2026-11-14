@@ -125,11 +125,12 @@ void BattleEffect_RunFume(struct BattleEffectArgument *args) {
     }
     if (frame == 22) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-      BattlePlayback_StartFar(144);
+      EFFECT_SHOW_DAMAGE(SE_CLATTER);
       work->shakeFrames = 8;
       BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x40000,
                                     0x20000, 120);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 20);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 20);
       for (i = 0; i != 32; i++) {
         spark = &work->particles[i];
         spark->variant = -i / 4 + 2;

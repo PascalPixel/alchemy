@@ -314,7 +314,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *args) {
             Sound_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < args->count) {
-              BattleEffect_TintBattler(args->actors[member], 7, 5, member, 8);
+              BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, member, 8);
               BattleMotion_ApplyKnockbackFar(args->actors[member], 1);
             }
           }
@@ -324,8 +325,5 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *args) {
     BattleCamera_Shake(4, 8);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

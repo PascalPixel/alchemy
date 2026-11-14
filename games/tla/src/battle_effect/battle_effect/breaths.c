@@ -460,7 +460,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *args, s32 mode) {
         }
         if (frame == 16) {
           Sound_PlayFar(SE_HEAVY_IMPACT);
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         }
         for (i = 0; i != args->count; i++) {
           if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
@@ -468,9 +468,11 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *args, s32 mode) {
             work->shakeFrames = 8;
             // DEAD: never true inside Blast Breath; the source keeps the test.
             if (mode == 6)
-              BattleEffect_TintBattler(args->actors[i], 14, 5, i, 3);
+              BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_BLACK,
+                                       POSE_DAMAGE, i, 3);
             else
-              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 3);
+              BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, i, 3);
             BattleEffect_StartActorMotion(args->actors[i], 1, 0x10000, 0x40000,
                                           0x20000, frame + 100);
           }
@@ -479,10 +481,11 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *args, s32 mode) {
         // The others hit every target at once, and the screen flashes.
         for (i = 0; i != args->count; i++) {
           BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 16);
         }
         work->shakeFrames = 8;
-        BattlePlayback_StartFar(144);
+        EFFECT_SHOW_DAMAGE(SE_CLATTER);
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       BattleCamera_Shake(8, 8);
@@ -490,8 +493,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *args, s32 mode) {
     }
   }
 
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
@@ -570,9 +572,9 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *args,
     // Frame 12: the hit. Echo Cut throws the target up.
     if (frame == 12) {
       if (mode == 1)
-        BattlePlayback_StartFar(144);
+        EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_StartActorMotion(args->actors[0], 1, 0x40000, 0x100000,
                                     0x40000, 250);
       work->shakeFrames = 4;
@@ -631,9 +633,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *args,
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width,

@@ -115,10 +115,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *args) {
           EMBERS[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
           EMBERS[i].variant = (Random16() & 15) + 16;
         }
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
         for (i = 0; i != args->count; i++) {
           BattleMotion_ApplyKnockbackFar(args->actors[i], 0);
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 16);
         }
         work->shakeFrames = 16;
       }
@@ -229,10 +230,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *args) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
@@ -374,11 +372,12 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *args) {
 
     // The strike: sparks burst from every target.
     if (frame == RING_HIT_FRAME) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->count; i++) {
         EffectPosition_ProjectSprite(args->actors[i], &target);
         BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
         for (j = 0; j != gJuggle_Styles[args->variant][RING_SPARKS]; j++) {
           struct EffectStep *spark =
               &((struct EffectStep *)Ram_MapCellBuffer)[i * 128 + j];
@@ -417,8 +416,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

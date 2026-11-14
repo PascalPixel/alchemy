@@ -117,11 +117,12 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *args) {
       // from it. The last sword ends the action.
       if (frame == i * 16 + 59) {
         if (i == args->variant)
-          BattlePlayback_StartFar(144);
+          EFFECT_SHOW_DAMAGE(SE_CLATTER);
         else
           Sound_PlayFar(SE_CLATTER);
         BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0, 100);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
         for (j = 0; j != 128; j++) {
           struct EffectStep *spark = &SPARKS[i * 128 + j];
@@ -283,9 +284,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Abilities: Bramble Card (kind 88).
@@ -533,10 +532,11 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *args, s32 mode) {
           else
             Sound_PlayFar(SE_IMPACT);
           if (i == 0)
-            BattlePlayback_StartFar(134);
+            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           BattleEffect_StartActorMotion(args->actors[i], 1, 0x20000, 0x80000,
                                         0x10000, 100 + speed);
-          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 8);
           burst = 0;
           EffectPosition_ProjectScaledBattler(args->actors[i], &aim);
           for (j = 0; j != 64; j++) {
@@ -711,9 +711,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *args, s32 mode) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Abilities: Sleep Card (kind 92).

@@ -74,13 +74,13 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *args) {
   for (frame = 0; frame != gSpire_DropFrames[rocks - 1] + 65; frame++) {
     // 48 frames after the last drop the battle resumes, hit cue 133.
     if (frame == gSpire_DropFrames[rocks - 1] + 48)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     for (i = 0; i != rocks; i++) {
       rock = &work->particles[i];
       // The crash: the first one resumes the battle, the others sound.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
         if (i == 0)
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
@@ -118,7 +118,8 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *args) {
       // Every target flashes for eight frames at each crash.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {
         for (j = 0; j != args->count; j++)
-          BattleEffect_TintBattler(args->actors[j], 7, 5, j, 8);
+          BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, j, 8);
       }
     }
     BattleCamera_Shake(2, 4);
@@ -126,9 +127,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *args) {
   }
 
   // Teardown.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 // Effects: burst effect entry points.

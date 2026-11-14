@@ -332,11 +332,12 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *args) {
       for (i = 0; i != 8; i++) {
         if (frame == i * 4 + 54) {
           if (i == 7)
-            BattlePlayback_StartFar(144);
+            EFFECT_SHOW_DAMAGE(SE_CLATTER);
           else
             Sound_PlayFar(SE_CLATTER);
           BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0, 100);
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 5);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 5);
           work->shakeFrames = 4;
         }
       }
@@ -348,10 +349,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #include "battle/battle.h"
@@ -602,16 +600,17 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *args, u32 mode) {
       if (frame == hitFrame) {
         // The hit: the targets recoil (mode 1 keeps them still) and flash.
         if (mode == 0 || mode == 2 || mode == 3) {
-          BattlePlayback_StartFar(145);
+          EFFECT_SHOW_DAMAGE(SE_CRASH);
           for (i = 0; i != args->count; i++)
             BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         } else {
-          BattlePlayback_StartFar(133);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
           for (i = 0; i != args->count; i++)
             BattleMotion_ApplyKnockbackFar(args->actors[i], 0);
         }
         for (i = 0; i != args->count; i++)
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 8);
         work->shakeFrames = 8;
 
         // Sixteen flames, faster one by one.

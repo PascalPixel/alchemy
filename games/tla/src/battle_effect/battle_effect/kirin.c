@@ -401,7 +401,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *args) {
         work->transferMode = CANVAS_COPY_AND_FADE;
       if (frame == 58) {
         for (i = 0; i != args->count; i++)
-          BattleEffect_TintBattler(args->actors[i], 14, 5, -1, 0);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_BLACK,
+                                   POSE_DAMAGE, TINT_KEEP, 0);
       }
 
       BattleCamera_Shake(8, 8);
@@ -410,15 +411,13 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *args) {
     } while (frame != 96);
   }
 
-  BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;
   do {
     Sprite_DestroyFar(work->objects[i]);
     i++;
   } while (i != 9);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// BG2 back to one texel per pixel across.

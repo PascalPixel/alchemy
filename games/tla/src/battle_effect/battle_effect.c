@@ -36,7 +36,6 @@
 #include "battle_effect/dispatch.c"
 #include "battle_effect/battler_tint.c"
 
-#undef PHASE_RESULTS
 #undef SHARD_COUNT
 #undef DROP_COUNT
 #undef EFFECT_STEPS
@@ -96,7 +95,6 @@
 #undef ALTERNATE_BLITTER_SLOT
 #undef OBJ_VRAM
 #undef COLUMN_COUNT
-#undef PHASE_RESULTS
 #undef PREPARE_KIND
 #undef PREPARE_ANCHOR
 

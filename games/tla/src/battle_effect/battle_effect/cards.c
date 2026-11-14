@@ -303,7 +303,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
       // Frame 48: the butterflies take flight, two a frame for 32 frames;
       // each flutters to the ground and skims along it.
       if (frame == 48) {
-        BattlePlayback_StartFar(136);
+        EFFECT_SHOW_DAMAGE(SE_WHOOSH);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
       }
@@ -342,7 +342,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
       if (frame == 48)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 64)
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
       if (frame >= 48 && frame <= 79) {
         struct EffectStep *sheep;
         u32 mask = 127; // Holds one constant for its whole life.
@@ -379,10 +379,11 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
       // Frame 72: it strikes; the screen flashes and 64 shards burst.
       if (time == 24) {
         Sound_PlayFar(SE_POWER_UP);
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
         work->shakeFrames = 4;
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
-        BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 16);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 0, 16);
         for (i = 0; i != 64; i++) {
           s32 angle = Random16() & 0xffff;
           s32 force = 127; // The AND lands in the register holding 127.
@@ -433,10 +434,11 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 64) {
         Sound_PlayFar(SE_CLATTER);
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
         BattleEffect_StartActorMotion(args->actors[0], 1, 0x20000, 0x80000,
                                       0x20000, 110);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
       }
       if (frame > 51) {
@@ -483,9 +485,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
 
   if (mode == CARD_BAFFLE)
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER

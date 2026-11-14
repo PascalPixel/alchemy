@@ -222,12 +222,13 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *args,
 
     // The hit.
     if (frame == LUNGE_HIT_FRAME) {
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, LUNGE_HIT_FRAME);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, LUNGE_HIT_FRAME);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
       if (mode == 5)
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
       else
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
     }
 
@@ -283,8 +284,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *args,
   }
 
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
 

@@ -131,7 +131,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *args) {
     if (frame == 8) {
       work->shakeFrames = frame;
       for (i = 0; i != args->count; i++) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
       }
     }
     if (frame == 48) {
@@ -139,7 +140,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *args) {
     }
     if (frame == 64) {
       work->shakeFrames = 16;
-      BattlePlayback_StartFar(144);
+      EFFECT_SHOW_DAMAGE(SE_CLATTER);
       for (i = 0; i != args->count; i++) {
         BattleEffect_StartActorMotion(args->actors[i], 1, 0x20000, 0x80000,
                                       0x80000, 120);
@@ -605,14 +606,16 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *args,
           }
           work->shakeFrames = 4;
           if (mode == 0) {
-            BattlePlayback_StartFar(145);
+            EFFECT_SHOW_DAMAGE(SE_CRASH);
             BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
-            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+            BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, 0, 8);
           } else {
             Sound_PlayFar(SE_CRASH);
             for (i = 0; i != args->count; i++) {
               BattleMotion_ApplyKnockbackFar(args->actors[i], 3);
-              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+              BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, i, 16);
             }
           }
         }
@@ -747,7 +750,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *args,
     }
 
     if (mode == 1 && frame == 50) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->count; i++)
         BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x100000,
                                       0x10000, 250);
@@ -776,9 +779,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *args,
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Meteor Blow's horizontal-blank callback, the same routine as

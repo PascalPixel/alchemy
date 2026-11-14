@@ -142,7 +142,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *args) {
     // Frame 54: the hit. The target flashes and both are thrown back, the
     // user to where he started.
     if (frame == 54) {
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 10);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 10);
       target->velocityY = px(8);
       target->gravity = 0xab85;
       user->velocityY = px(5);
@@ -258,9 +259,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *args) {
     }
     if (frame == 54) {
       if (args->variant == 0)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
     if (frame == 0) {
       Sound_PlayFar(SE_WHOOSH);
@@ -275,7 +276,5 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

@@ -360,41 +360,44 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *args, s32 mode) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 <= 2)
               Sound_PlayFar(SE_IMPACT);
             else
-              BattlePlayback_StartFar(133);
+              EFFECT_SHOW_DAMAGE(SE_IMPACT);
           } else if (mode == 7) {
             if (frame <= 8)
               Sound_PlayFar(SE_IMPACT);
             else
-              BattlePlayback_StartFar(133);
+              EFFECT_SHOW_DAMAGE(SE_IMPACT);
           } else if (mode == 13) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 > 6)
-              BattlePlayback_StartFar(134);
+              EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
             else
               Sound_PlayFar(SE_HEAVY_IMPACT);
           } else if ((RECORD(mode, RECORD_FLAGS) & FLAG_STAR) ||
                      (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH)) {
-            BattlePlayback_StartFar(144);
+            EFFECT_SHOW_DAMAGE(SE_CLATTER);
           } else if (mode == 8) {
-            BattlePlayback_StartFar(134);
+            EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
-            BattlePlayback_StartFar(133);
+            EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
 
           if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+            BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, 0, 12);
             BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
             for (i = 0; i != 32; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+            BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, 0, 12);
             BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
             for (i = 0; i != 256; i++)
               gSparks[i].variant = (Random16() & 15) + 15;
           } else {
             work->shakeFrames = 4;
-            BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+            BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, 0, 8);
             for (i = 0; i != 32; i++) {
               struct EffectStep *step =
                   &gSparks[frame / (RECORD(mode, RECORD_RATE) * 6) * 32 + i];
@@ -454,25 +457,28 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *args, s32 mode) {
       // The hit, on each column's fourth picture.
       if (frame % (RECORD(mode, RECORD_RATE) * 4) ==
           RECORD(mode, RECORD_RATE) * 3) {
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
         if ((RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) ||
             (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY))
-          BattlePlayback_StartFar(144);
+          EFFECT_SHOW_DAMAGE(SE_CLATTER);
         else if (frame > (RECORD(mode, RECORD_COUNT) * 4 - 4) *
                              RECORD(mode, RECORD_RATE))
-          BattlePlayback_StartFar(133);
+          EFFECT_SHOW_DAMAGE(SE_IMPACT);
         else
           Sound_PlayFar(SE_IMPACT);
         if (RECORD(mode, RECORD_FLAGS) & FLAG_FLASH) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 12);
           BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
           for (i = 0; i != 32; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
         } else if (RECORD(mode, RECORD_FLAGS) & FLAG_HEAVY) {
           work->shakeFrames = 8;
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 12);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 12);
           BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
           for (i = 0; i != 256; i++)
             gSparks[i].variant = (Random16() & 15) + 15;
@@ -579,9 +585,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *args, s32 mode) {
         if (mode == 11)
           size = 8;
         if (frame == 55)
-          BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                                   TINT_KEEP, 0);
         if (frame == 90)
-          BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                                   TINT_KEEP, 0);
         for (i = 0; i != 64; i++) {
           struct EffectStep *step = &gMotes[i];
 
@@ -628,8 +636,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *args, s32 mode) {
         }
       }
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
 
     // The star: a textured square, swelling on a sine from frame 8 to 17
     // over the target's middle (the canvas is cleared to colour 0x3f first).
@@ -790,7 +797,8 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *args) {
     // From frame 24 to 84, every 4 frames: flash the target for 2 frames
     // and shake the screen; every 8, a sound.
     if (frame >= 23 && frame <= 87 && (frame & 3) == 0) {
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 2);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 2);
       work->shakeFrames = 1;
       if ((frame & 7) == 0)
         Sound_PlayFar(SE_IMPACT);
@@ -799,10 +807,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
@@ -893,7 +898,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *args) {
     if (frame > 49)
       REG_BLDALPHA = (112 - frame * 2) | 0x1000;
     if (frame == 16)
-      BattleEffect_TintBattler(args->actors[0], 7, -1, 0, 20);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, TINT_KEEP,
+                               0, 20);
 
     // The pillar: the left half at x 47, then the right half mirrored at
     // x 64, each with its glow.
@@ -1032,7 +1038,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *args) {
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);
   Palette_BrightenSavedBattleBg(-31, -31, -31);
-  BattleEffect_TintBattler(args->actors[0], 7, 3, 0, 30);
+  BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, 3, 0, 30);
 
   // Fade the colours up a shade every two frames; B starts again, A ends.
   for (frame = 0; frame != 32096; frame++) {
@@ -1047,10 +1053,10 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *args) {
   }
 
   // Put the background and the display back.
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_TintBattler(args->actors[0], -1, 1, -1, 0);
+  BattleEffect_TintBattler(args->actors[0], TINT_KEEP, POSE_STANDING, TINT_KEEP,
+                           0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);

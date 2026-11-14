@@ -122,8 +122,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *args) {
     // the swirl bursts into sparks.
     if (frame == 18) {
       EffectPosition_ProjectBattler(args->actors[0], &position);
-      BattlePlayback_StartFar(134);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 6);
       work->shakeFrames = 4;
       for (i = 0; i != args->variant * 16 + 16; i++) {
@@ -168,10 +169,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 // The sparks live in the map cell buffer's second 16 KB: 128 at the target,

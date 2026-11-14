@@ -159,11 +159,12 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *args, s32 mode) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);
       work->shakeFrames = 16;
       BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
       if (mode == 0) {
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
       } else {
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
         Sound_PlayFar(SE_CRASH);
       }
     }
@@ -295,9 +296,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *args, s32 mode) {
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 512 sparks
@@ -386,7 +385,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
     }
   skipped:
     if (frame == 148) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame == 0) {
       position.x = px(32);
@@ -517,7 +516,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
     if (frame == 10) {
       work->shakeFrames = i;
       for (i = 0; i != args->count; i++) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
       }
     }
     if (frame > 107) {
@@ -649,8 +649,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_RunImpactBurst(4, position.x, position.y);
   for (i = 0; i != 11; i++) {
     Sprite_DestroyFar(work->objects[i]);
@@ -858,9 +857,10 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *args) {
         }
         if (frame == 72) {
           work->shakeFrames = 8;
-          BattlePlayback_StartFar(145);
+          EFFECT_SHOW_DAMAGE(SE_CRASH);
           BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 8);
         }
         for (i = 0; i != BEAM_SEGMENTS; i++) {
           point[0] = work->particles[0].x + work->particles[0].velocityX * i;
@@ -905,8 +905,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *args) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleCamera_ApplyPhasedDelta);
   BattleEffect_EndCanvasLayer();

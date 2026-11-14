@@ -62,7 +62,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
     ymin = px(120);
     ymax = 0;
     if (frame == TIMING(RISE_FRAME) + 11)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
     point[0] = 0;
     point[1] = 0;
     point[2] = px(512);
@@ -74,7 +74,8 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
       Sound_PlayFar(SE_WHOOSH);
     for (i = 0; i != args->count; i++) {
       if (frame == i * 4 + 40)
-        BattleEffect_TintBattler(args->actors[i], 9, 5, -1, 0);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_BLUE_TINT,
+                                 POSE_DAMAGE, TINT_KEEP, 0);
     }
 
     // The motes: before the burst they close in and climb to 48 pixels as
@@ -232,8 +233,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

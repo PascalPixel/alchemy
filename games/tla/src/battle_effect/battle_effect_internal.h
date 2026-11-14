@@ -524,6 +524,21 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 #define EFFECT_END_FRAME(work)                                                 \
   (BattleEffect_CountDownBattlerTints(), EFFECT_PRESENT_CANVAS(work))
 
+/// Frees the two blitters, the second first.
+#define EFFECT_RELEASE_BLITTERS()                                              \
+  (HeapSlot_Release(HEAP_SLOT_RAM_CODE_2), HeapSlot_Release(HEAP_SLOT_RAM_CODE))
+
+/// The usual end of a canvas effect: the transfer, the blitters, then the
+/// canvas layer.
+#define EFFECT_FINISH_CANVAS()                                                 \
+  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
+   EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
+
+/// The same for an effect that drew through one blitter.
+#define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
+  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
+   HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
+
 /// Marks particles[0] to particles[count - 1] free: a particle whose variant
 /// is -1 is not drawn or moved until an effect gives it a life.
 #define EFFECT_FREE_PARTICLES(i, particles, count)                             \
@@ -547,6 +562,14 @@ enum CanvasWipeFill {
   CANVAS_WIPE_FILL, ///< colour 1, which its callers make black first
   CANVAS_WIPE_CLEAR ///< colour 0: the canvas cleared
 };
+
+/// Lets the battle show the damage, playing hitSound (0 keeps the one queued)
+/// as the targets react; a second use changes nothing.
+#define EFFECT_SHOW_DAMAGE(hitSound) BattlePlayback_StartFar(hitSound)
+
+/// Passed to BattleEffect_TintBattler as its palette, pose or timer slot: leave
+/// that one as it is.
+#define TINT_KEEP (-1)
 
 // The declarations the parts share.
 

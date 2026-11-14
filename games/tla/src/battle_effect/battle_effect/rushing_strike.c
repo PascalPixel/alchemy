@@ -173,11 +173,12 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *args) {
         drop->velocityY = (Trig_Cos(angle) * speed) >> 5;
         drop->variant = (Random16() & 15) + 16;
       }
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       Sound_PlayFar(SE_CRASH);
       BattleEffect_StartActorMotion(args->actors[member], 1, 0x20000, 0x80000,
                                     0x20000, i * 5 + 110);
-      BattleEffect_TintBattler(args->actors[member], 7, 5, member, 16);
+      BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                               POSE_DAMAGE, member, 16);
       work->shakeFrames = 4;
       star->variant = -1;
     }
@@ -210,10 +211,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *args) {
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Fills the 32x30 tilemap at screen block 31: the upper 15 rows from tile
@@ -356,7 +354,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *args) {
       }
     }
     if (frame == 4) {
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 2);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 2);
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
     }
@@ -379,10 +378,11 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *args) {
       victim[3] = 200 << 15;
       victim[4] = savedZ;
       gBgScroll[1].y = 32;
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
     }
     if (frame == 179) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
     }
     if (frame > 165) {

@@ -194,7 +194,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *args) {
     if (frame == 72) {
       BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
       work->shakeFrames = 8;
-      BattlePlayback_StartFar(144);
+      EFFECT_SHOW_DAMAGE(SE_CLATTER);
     }
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
@@ -204,7 +204,6 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *args) {
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

@@ -102,10 +102,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *args) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #define BURST_IMAGE 0x1b00 // the burst pictures, after the smoke
@@ -206,10 +203,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *args) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #undef TRAILS

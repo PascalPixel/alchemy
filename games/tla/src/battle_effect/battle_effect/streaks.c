@@ -220,7 +220,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *args, s32 mode) {
               struck->x += px(1) / 2;
             else
               struck->x -= px(1) / 2;
-            BattleEffect_TintBattler(args->actors[k], -1, 5, -1, 0);
+            BattleEffect_TintBattler(args->actors[k], TINT_KEEP, POSE_DAMAGE,
+                                     TINT_KEEP, 0);
           }
 
           // The hit: a sound and two flashes, 16 frames apart. The first
@@ -229,11 +230,13 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *args, s32 mode) {
             if (frame == k * 32 + 24) {
               Sound_PlayFar(SE_IMPACT);
               if (k == 0)
-                BattlePlayback_StartFar(-1);
-              BattleEffect_TintBattler(args->actors[k], 7, 5, k, 8);
+                EFFECT_SHOW_DAMAGE(-1);
+              BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, k, 8);
             }
             if (frame == k * 32 + 40)
-              BattleEffect_TintBattler(args->actors[k], 7, 5, k, 8);
+              BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, k, 8);
           }
           if (RECORD(mode, RECORD_MOTION) != -1 && frame == k * 32 + 24) {
             work->shakeFrames = 4;
@@ -247,10 +250,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *args, s32 mode) {
     }
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Sleep Star (kind 349).
@@ -417,16 +417,18 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *args, s32 mode) {
     if (mode == MODE_SLEEP_STAR) {
       for (i = 0; i != args->count; i++) {
         if (frame == i * 8 + 48) {
-          BattlePlayback_StartFar(-1);
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+          EFFECT_SHOW_DAMAGE(-1);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 8);
         }
       }
     } else if (mode == MODE_SOOTHING_STAR) {
       for (i = 0; i != args->count; i++) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(SE_RECOVERY);
-          BattlePlayback_StartFar(-1);
-          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
+          EFFECT_SHOW_DAMAGE(-1);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 8);
         }
       }
     }
@@ -434,8 +436,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *args, s32 mode) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   if (mode == MODE_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);

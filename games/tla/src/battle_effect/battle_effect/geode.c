@@ -179,7 +179,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *args) {
       IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f44, 0x20000);
     }
     if (frame == 18) {
-      BattleEffect_TintBattler(args->actor, -1, 2, 0, -1);
+      BattleEffect_TintBattler(args->actor, TINT_KEEP, 2, 0, -1);
     }
     if (frame == 36) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -301,7 +301,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 64) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
     // Rings of dust.

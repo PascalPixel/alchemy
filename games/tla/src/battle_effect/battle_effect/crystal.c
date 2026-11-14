@@ -161,7 +161,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *args) {
       for (i = 0; i != args->count; i++) {
         if (frame == i * 4 + 64) {
           Sound_PlayFar(SE_RECOVERY);
-          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 24);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 24);
         }
       }
 
@@ -203,9 +204,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *args) {
       EFFECT_END_FRAME(work);
     }
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef BLITTER
 #undef CRYSTAL_FRAMES

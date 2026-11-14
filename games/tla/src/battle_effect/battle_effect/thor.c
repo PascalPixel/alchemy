@@ -340,7 +340,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *args) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 120) {
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
@@ -379,7 +379,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *args) {
       }
       if (frame == 10) {
         for (i = 0; i != args->count; i++) {
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 8);
           BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
       }
@@ -428,7 +429,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *args) {
               for (j = 0; j != args->count; j++) {
                 BattleEffect_TintBattler(args->actors[j],
                                          gThor_TargetPalettes[Random16() & 3],
-                                         5, j, 4);
+                                         POSE_DAMAGE, j, 4);
                 BattleMotion_ApplyKnockbackFar(args->actors[j], 4);
               }
             }

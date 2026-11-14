@@ -122,9 +122,10 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *args,
     // Frame 56: the next phase, and every target flashes.
     if (frame == 56) {
       Sound_PlayFar(SE_POWER_UP);
-      BattlePlayback_StartFar(-1);
+      EFFECT_SHOW_DAMAGE(-1);
       for (i = 0; i != args->count; i++)
-        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 i, 8);
     }
 
     // With a prelude the Djinn circles over the anchor and climbs away
@@ -348,14 +349,15 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
     }
     if (frame == 157) {
-      BattlePlayback_StartFar(145);
+      EFFECT_SHOW_DAMAGE(SE_CRASH);
       goto strike;
     }
     if (frame == 161 || frame == 165 || frame == 169) {
     strike:
       for (i = 0; i != args->count; i++) {
         BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
-        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 4);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 i, 4);
       }
     }
     if (frame == 0) {
@@ -620,8 +622,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *args) {
     }
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   transition[4] = 0;
   for (i = 0; i != ZAGAN_PARTS; i++) {
     Sprite_DestroyFar(work->objects[i]);

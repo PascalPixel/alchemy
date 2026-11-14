@@ -429,7 +429,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *args) {
   frame = 0;
   do {
     if (frame == 96)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     // Each pillar falls 16 pixels a frame and splashes where it lands.
     for (i = 0; i != 5; i++) {
       pillar = &work->particles[i];
@@ -477,7 +477,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *args) {
     }
     for (i = 0; i != args->count; i++) {
       if (frame == i * 16 + 8) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
         BattleMotion_ApplyKnockbackFar(args->actors[i], 2);
       }
     }
@@ -506,8 +507,5 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *args) {
 
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->objects[i]);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

@@ -12,6 +12,8 @@
 
 // The map cell buffer holds each column's sparks.
 
+// The sparks, in the map cell buffer.
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARKS_PER_COLUMN 340
 #define SPARKS_DRAWN 256
 #define FLASHES_PER_COLUMN 16
@@ -115,7 +117,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *args) {
     if (frame == 18)
       Sound_PlayFar(SE_CRASH);
     if (frame == RESULTS_FRAME)
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // The blade: down 16 pixels a frame, held, then creeping on; nothing
     // below y = 104 is drawn.
@@ -233,9 +235,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *args) {
       // sparks.
       for (i = 0; i != args->count; i++) {
         if (frame == start)
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 10);
         if (frame == start + 6) {
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 10);
           BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
         }
       }
@@ -248,10 +252,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *args) {
   } while (frame != BLADE_FRAMES);
 
   Actor_SetAnimationSpeedFar(user, 16);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 /// Abilities: Titan Blade (kind 61).
@@ -402,9 +403,9 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *args, s32 mode) {
       Sound_PlayFar(SE_SCATTER);
     if (frame == 60) {
       if (mode == 1)
-        BattlePlayback_StartFar(144);
+        EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
 
     // The flashes, from frame 56.
@@ -595,13 +596,15 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *args, s32 mode) {
     // The hit, and the canvas flooded at frames 9 and 60.
     if (frame == 68) {
       for (i = 0; i != args->count; i++) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 16);
         BattleMotion_ApplyKnockbackFar(args->actors[i], 7);
       }
     }
 
     if (frame == 9) {
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
       Iwram_FillWordsEntry(canvas, 128 << 7, 0x3F3F3F3F);
     }
     if (frame == 60)
@@ -612,10 +615,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *args, s32 mode) {
     frame++;
   } while (frame != 102);
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 struct Model;

@@ -419,8 +419,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *args) {
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->effect);
   for (i = 0; i != args->count; i++) {
-    BattleEffect_TintBattler(args->actors[i], 1, -1, -1, 0);
-    BattleEffect_TintBattler(args->actors[i], 0, -1, -1, 0);
+    BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_GRB, TINT_KEEP,
+                             TINT_KEEP, 0);
+    BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_NORMAL, TINT_KEEP,
+                             TINT_KEEP, 0);
   }
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1;
@@ -470,7 +472,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *args) {
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       for (i = 0; i != args->count; i++) {
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 4);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 4);
       }
     }
     if (frame <= 109) {
@@ -739,13 +742,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
   Graphics_LoadGreyRamp();
   Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-  BattlePlayback_StartFar(134);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   for (frame = 0; frame != 32; frame++) {
     EFFECT_PRESENT_CANVAS(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// Unused: two empty functions the ROM keeps after Eclipse; nothing calls them.
@@ -852,9 +853,11 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *args, s32 kind) {
     if (frame == 56)
       Sound_PlayFar(SE_BOSS_ROAR);
     if (frame == 32)
-      BattleEffect_TintBattler(args->actor, 7, -1, -1, -1);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, -1);
     if (frame == 68)
-      BattleEffect_TintBattler(args->actor, 0, -1, -1, -1);
+      BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, -1);
     if (kind == KIND_FINALE) {
       // The finale fades to white from frame 62.
       if (frame > 61) {
@@ -1313,8 +1316,8 @@ void BattleEffect_CountDownBattlerTints(void) {
     if (base[0x78dc + i] != 0) {
       if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0) {
         index = i * 2 + 36;
-        BattleEffect_TintBattler(*(s16 *)(*(u8 **)(base + 0x78f0) + index), 0,
-                                 -1, -1, 0);
+        BattleEffect_TintBattler(*(s16 *)(*(u8 **)(base + 0x78f0) + index),
+                                 SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
     i += 1;

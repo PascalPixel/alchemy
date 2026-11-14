@@ -808,7 +808,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
       }
     }
     if (frame == 56) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if ((u32)(frame - 57) <= 50) {
       for (i = 0; i != args->count; i++) {
@@ -819,16 +819,15 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
           work->shakeFrames = 4;
           Sound_PlayFar(SE_IMPACT);
           BattleMotion_ApplyKnockbackFar(args->actors[i], 0);
-          BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, i, 8);
         }
       }
     }
     BattleCamera_Shake(2, 2);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 /// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
@@ -942,14 +941,16 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *args) {
       if (frame == strikeFrame) {
         work->shakeFrames = 4;
         Sound_PlayFar(SE_IMPACT);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 6);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 6);
         BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, px(3), 100);
       }
     }
     if (frame == DAGGER_LAST_HIT) {
       work->shakeFrames = 4;
-      BattlePlayback_StartFar(134);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 10);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 10);
       BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, px(3), 100);
     }
 
@@ -1155,8 +1156,9 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *args) {
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;
       }
       work->shakeFrames = 4;
-      BattlePlayback_StartFar(134);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
       BattleEffect_StartActorMotion(args->actors[0], 1, px(8), px(20), px(6),
                                     10);
     }

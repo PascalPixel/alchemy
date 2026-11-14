@@ -6,71 +6,41 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-#undef FORMATION
-#undef FORMATION_SIZE
-#undef SCENE_FRAMES
+#define RAMSES_FRAMES 320
+#define RAMSES_STRIKE_FRAME 260   ///< the fist strikes the targets
+#define RAMSES_ROCKS 6            ///< rocks that fall and bounce
+#define RAMSES_FIRST_PUFF 6       ///< the first puff in work->particles
+#define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
+#define RAMSES_SPARKS 512         ///< sparks of the strike
+#define SPRITE_RAMSES 648 ///< the statue in seven parts, its fist, wrist
+#define SPRITE_BATTLE_ROCKS 653
 
-// The map cell buffer holds the sparks of the final blow.
-#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
-#define SPARK_COUNT 512
+/// The sparks of the strike, in the map cell buffer.
+#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-// The objects: the formation's seven, the orb's two halves, six rocks.
-#define FORMATION 648
-#define FORMATION_SIZE 9
-#define ORB_LEFT 7
-#define ORB_RIGHT 8
-#define ROCK_OBJECT 653
-#define FIRST_ROCK 9
-#define ROCK_COUNT 6
-#define PUFF_COUNT 58 // particles 6 to 63
+extern struct SpriteScale gRamses_UnitScale; // one to one
 
-#define SCENE_FRAMES 320
-#define CIRCLE_FRAMES 90  // the orb circles, then drops three times
-#define FIRST_DROP 91     // each drop 40 frames after the last
-#define ROCKS_FALL 96     // the rocks start falling
-#define WIND_UP_FRAME 244 // the orb draws back, then flies left
-#define THROW_FRAME 252
-#define HIT_FRAME 260
-
-struct FxScale {
-  s32 x;
-  s32 y;
-};
-
-extern struct FxScale gRamses_UnitScale; // one to one
-
-// Summon 1: the battlefield turns to desert; an orb circles over a standing
-// formation and slams down three times, raising dust, while six rocks rain
-// and bounce; then the orb draws back and is hurled at the enemies, bursting
-// into 512 sparks.
-//
-// Setup: open the canvas, spawn the formation and the six rocks, build the
-// blitters, set the windows, load the desert backdrop, the dust and spark
-// pictures, and drop the rocks from staggered heights. Each frame (320, or
-// until A or B): place the formation, the orb and the rocks; the orb circles
-// for 90 frames, then drops at frames 91, 131 and 171 (dust puffs on each
-// landing) and rises again; the rocks fall from frame 96 and bounce once in
-// dust; the orb draws back at frame 244 and flies left from 252; at frame 260
-// the targets are struck and the sparks burst. At the end the results phase
-// begins and every object is released.
+/// In a desert the giant statue of Ramses pounds the ground with its fist while
+/// rocks rain down, then launches the fist at the targets, which strikes them
+/// in a burst of sparks.
+///
+/// Abilities: Ramses.
 void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
   struct SpritePlacement position;
   DrawRectangle draw[2];
-  struct FxScale scale;
+  struct SpriteScale scale;
   void *canvas;
   struct BattleEffectWork *work;
   s32 frame;
-  u8 *cells;
-  struct FxScale base;
-  struct FxScale orb;
+  u8 *sheet;
+  struct Point2D base;
+  struct Point2D fist;
   s32 i;
   s32 k;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  cells = Ram_HeapSlots->unk64[0];
-
-  // Open the canvas over a black backdrop and spawn the objects.
+  sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   *(u16 *)BG_PLTT = 0;
@@ -79,15 +49,16 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->effect);
-  BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
-  for (i = 0; i != ROCK_COUNT; i++) {
-    struct FxAnimObject *rock = Sprite_CreateFar(ROCK_OBJECT);
+  // The statue, its fist and wrist, then six rocks.
+  BattleEffect_SpawnObjects(9, SPRITE_RAMSES, 2);
+  for (i = 0; i != RAMSES_ROCKS; i++) {
+    struct FxAnimObject *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
-    work->objects[FIRST_ROCK + i] = rock;
-    if (rock != 0) {
-      rock->flags = 0;
-      Animation_ApplyChildArgumentFar(rock, i % 3);
-      ((struct FxAnimObject *)work->objects[FIRST_ROCK + i])->priority = 1;
+    work->objects[9 + i] = sprite;
+    if (sprite != 0) {
+      sprite->flags = 0;
+      Animation_ApplyChildArgumentFar(sprite, i % 3);
+      ((struct FxAnimObject *)work->objects[9 + i])->priority = 1;
     }
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -101,78 +72,70 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
   REG_WIN0H = WIN_RANGE(0, 240);
   REG_WIN1V = WIN_RANGE(16, 136);
   wait(1);
-
-  // The desert, the dust and spark pictures, and the blend.
   BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-
-  // The formation's corner and the orb's start; the rocks wait above the
-  // screen one after another; every puff and spark is idle.
   base.x = px(188);
   base.y = px(92);
-  orb.x = px(160);
-  orb.y = px(92);
-  for (i = 0; i != ROCK_COUNT; i++) {
+  fist.x = px(160);
+  fist.y = px(92);
+  for (i = 0; i != RAMSES_ROCKS; i++) {
     struct EffectStep *rock = &work->particles[i];
 
     rock->x = (Random16() & 127) << 16;
-    rock->y = i * -0x100000;
+    rock->y = i * -px(16);
     rock->velocityX = 0;
     rock->velocityY = 0;
     rock->variant = 0;
   }
-  for (i = 0; i != PUFF_COUNT; i++)
-    work->particles[ROCK_COUNT + i].variant = 24;
-  for (i = 0; i != 1024; i++)
-    SPARKS[i].variant = -1;
+  for (i = 0; i != 58; i++)
+    work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
-  for (frame = 0; frame != SCENE_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
+  for (frame = 0; frame != RAMSES_FRAMES && !(gInput.repeat & (KEY_A | KEY_B));
        frame++) {
-    if (frame == FIRST_DROP + 3)
+    if (frame == 94)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
-    if (frame == FIRST_DROP + 45)
+    if (frame == 136)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
-    if (frame == FIRST_DROP + 87)
+    if (frame == 178)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
-    if (frame == HIT_FRAME)
+    if (frame == RAMSES_STRIKE_FRAME)
       Sound_PlayFar(SE_CRASH);
     scale = gRamses_UnitScale;
-    if (frame >= ROCKS_FALL && frame <= 251)
+    if (frame >= 96 && frame <= 251)
       work->shakeFrames = 1;
-    else if (frame >= HIT_FRAME && frame <= HIT_FRAME + 3)
+    else if (frame >= RAMSES_STRIKE_FRAME && frame <= 263)
       work->shakeFrames = 1;
-
-    // The formation, a 3 x 3 block behind the orb.
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = (gRamses_StatueColumns[i] << 16) + base.x - 0x200000;
-      position.y = (gRamses_StatueRows[i] << 16) + base.y - 0x200000;
+      position.x = px(gRamses_StatueColumns[i]) + base.x - px(32);
+      position.y = px(gRamses_StatueRows[i]) + base.y - px(32);
       Render_ApplyProjectedPlacementFar(work->objects[i], &position, &scale.x,
                                         0);
     }
-
-    // The orb circles, then drops three times: down 8 pixels a frame for
-    // four frames, a puff of dust, and back up 2 a frame 20 frames later.
-    if (frame <= CIRCLE_FRAMES) {
-      orb.x = Trig_Sin(frame << 9) * 16 + 0x9c0000;
-      orb.y = Trig_Cos(frame << 9) * 16 + 0x5c0000;
+    // The fist circles.
+    if (frame <= 90) {
+      fist.x = Trig_Sin(frame << 9) * 16 + px(156);
+      fist.y = Trig_Cos(frame << 9) * 16 + px(92);
     }
+    // Then it slams down three times, throwing up dust.
     if (frame <= 196) {
       s32 start;
 
-      for (i = 0, start = FIRST_DROP; i != 3; start += 40, i++) {
+      for (i = 0, start = 91; i != 3; start += 40, i++) {
         if (frame >= start && frame < start + 4)
-          orb.y += px(8);
+          fist.y += px(8);
         if (frame == start + 3) {
           for (k = 0; k != 4; k++) {
-            struct EffectStep *puff = &work->particles[ROCK_COUNT + i * 8 + k];
+            struct EffectStep *puff =
+                &work->particles[RAMSES_FIRST_PUFF + i * 8 + k];
 
             puff->x = px(64);
             puff->y = px(96);
@@ -182,50 +145,50 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
           }
         }
         if (frame >= start + 20 && frame < start + 36)
-          orb.y -= px(2);
+          fist.y -= px(2);
       }
     }
-
-    // The throw: back a pixel a frame, then left ever faster.
-    if (frame >= WIND_UP_FRAME && frame < THROW_FRAME)
-      orb.x -= px(1);
-    if (frame >= THROW_FRAME && frame <= 275)
-      orb.x -= (frame - 250) << 16;
-    if (frame < HIT_FRAME) {
-      position.x = orb.x;
+    // Then it flies off to the left at the targets.
+    if (frame >= 244 && frame <= 251)
+      fist.x -= px(1);
+    if (frame >= 252 && frame <= 275)
+      fist.x -= px(frame - 250);
+    // The fist's two sprites stand deep below the ground and as far up, which
+    // cancel on the screen but put them in front.
+    if (frame <= 259) {
+      position.x = fist.x;
       position.height = -px(256);
-      position.y = orb.y - 0x1000000;
-      Render_ApplyProjectedPlacementFar(work->objects[ORB_LEFT], &position,
-                                        &scale.x, 0);
-      position.x = orb.x + 0x200000;
-      Render_ApplyProjectedPlacementFar(work->objects[ORB_RIGHT], &position,
-                                        &scale.x, 0);
+      position.y = fist.y - px(256);
+      Render_ApplyProjectedPlacementFar(work->objects[7], &position, &scale.x,
+                                        0);
+      position.x = fist.x + px(32);
+      Render_ApplyProjectedPlacementFar(work->objects[8], &position, &scale.x,
+                                        0);
     }
-
-    // The rocks fall, bounce once at y = 120 in two puffs of dust, and are
-    // dropped again until frame 199.
     position.height = 0;
-    for (i = 0; i != ROCK_COUNT; i++) {
+    // The rocks fall.
+    for (i = 0; i != RAMSES_ROCKS; i++) {
       struct EffectStep *rock = &work->particles[i];
 
       if (rock->variant != 2) {
         position.x = rock->x;
         position.y = rock->y;
-        Render_ApplyProjectedPlacementFar(work->objects[FIRST_ROCK + i],
-                                          &position, &scale.x, 0);
+        Render_ApplyProjectedPlacementFar(work->objects[9 + i], &position,
+                                          &scale.x, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
-        if (frame > ROCKS_FALL)
+        if (frame > 96)
           rock->velocityY += px(1) / 4;
-        if (rock->y > 0x780000) {
+        if (rock->y > px(120)) {
           rock->variant++;
           if (rock->variant == 1) {
             rock->velocityY = -rock->velocityY / 2;
             for (k = 0; k != 2; k++) {
-              struct EffectStep *puff = &work->particles[30 + i * 2 + k];
+              struct EffectStep *puff =
+                  &work->particles[RAMSES_FIRST_ROCK_PUFF + i * 2 + k];
 
               puff->x = rock->x / 2;
-              puff->y = rock->y - 0x200000;
+              puff->y = rock->y - px(32);
               puff->velocityX = ((Random16() & 255) - 127) << 10;
               puff->velocityY = ((Random16() & 255) - 127) << 10;
               puff->variant = Random16() & 15;
@@ -238,37 +201,38 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
         }
       }
     }
-
-    // The dust: four pictures, six frames each, drifting up.
+    // Puffs of dust drift upwards.
     for (i = 0; i != 56; i++) {
-      struct EffectStep *puff = &work->particles[ROCK_COUNT + i];
+      struct EffectStep *puff = &work->particles[RAMSES_FIRST_PUFF + i];
 
       if (puff->variant >= 0) {
         if (puff->variant >= 0 && puff->variant <= 23) {
-          s32 cell = puff->variant / 6 + 3;
+          s32 picture = puff->variant / 6 + 3;
 
-          draw[0](canvas, work->sheet + gRamses_PuffPictures[cell],
-                  Q_16_16_UPPER_HALF(puff->x) - gRamses_PuffSizes[cell] / 2,
-                  Q_16_16_UPPER_HALF(puff->y) - gRamses_PuffSizes[cell] / 2,
-                  gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
+          draw[0](canvas, work->sheet + gRamses_PuffPictures[picture],
+                  Q_16_16_UPPER_HALF(puff->x) - gRamses_PuffSizes[picture] / 2,
+                  Q_16_16_UPPER_HALF(puff->y) - gRamses_PuffSizes[picture] / 2,
+                  gRamses_PuffSizes[picture], gRamses_PuffSizes[picture]);
         }
-        BattleEffectKernels_IntegrateVector2(puff, 60, -0x4000);
+        BattleEffectKernels_IntegrateVector2(puff, 60, -px(1) / 4);
         puff->variant++;
       }
     }
-
-    // The blow: every target struck and flashed, and the sparks burst from
-    // (32, 92).
-    if (frame == HIT_FRAME) {
+    if (frame == RAMSES_STRIKE_FRAME) {
+      // The strike: every target recoils and flashes white.
       for (i = 0; i != args->count; i++) {
         BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
-        BattleEffect_TintBattler(args->actors[i], 7, -1, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE, TINT_KEEP,
+                                 i, 8);
       }
       work->shakeFrames = 8;
     }
-    if (frame == HIT_FRAME) {
-      for (i = 0; i != SPARK_COUNT; i++) {
-        struct EffectStep *spark = &SPARKS[i];
+    // DEAD: the strike frame tested a second time; the ROM keeps the second
+    // compare.
+    if (frame == RAMSES_STRIKE_FRAME) {
+      // Sparks fly from the strike.
+      for (i = 0; i != RAMSES_SPARKS; i++) {
+        struct EffectStep *spark = &PARTICLES[i];
         s32 speed;
         s32 angle;
 
@@ -282,16 +246,17 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
         spark->variant = (Random16() & 15) + 32;
       }
     }
-    for (i = 0; i != SPARK_COUNT; i++) {
-      struct EffectStep *spark = &SPARKS[i];
+    // Sparks shrink as they die.
+    for (i = 0; i != RAMSES_SPARKS; i++) {
+      struct EffectStep *spark = &PARTICLES[i];
 
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        draw[i & 1](canvas, cells + gBattleEffect_MotePictures[size - 1],
+        draw[i & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     Q_16_16_UPPER_HALF(spark->x) - size / 2,
                     Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 62, 0x1000);
+        BattleEffectKernels_IntegrateVector2(spark, 62, px(1) / 16);
         spark->variant--;
       }
     }
@@ -299,12 +264,19 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
+  EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_SetupBlendedDisplay();
-  for (i = 0; i != FIRST_ROCK + ROCK_COUNT; i++)
+  for (i = 0; i != 15; i++)
     Sprite_DestroyFar(work->objects[i]);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
+
+#undef RAMSES_FRAMES
+#undef RAMSES_STRIKE_FRAME
+#undef RAMSES_ROCKS
+#undef RAMSES_FIRST_PUFF
+#undef RAMSES_FIRST_ROCK_PUFF
+#undef RAMSES_SPARKS
+#undef SPRITE_RAMSES
+#undef SPRITE_BATTLE_ROCKS
+#undef PARTICLES

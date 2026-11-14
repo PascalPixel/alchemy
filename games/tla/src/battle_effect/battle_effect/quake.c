@@ -87,7 +87,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *args) {
     Transform_SetLookAt(camera->eye, camera->pos);
     // The results begin 16 frames before the end.
     if (frame == gQuake_Timings[args->variant][TIMING_FRAMES] - 16)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {
@@ -127,7 +127,8 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *args) {
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)
-            BattleEffect_TintBattler(args->actors[member], 0, 5, -1, 0);
+            BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_NORMAL,
+                                     POSE_DAMAGE, TINT_KEEP, 0);
         }
       }
     }
@@ -141,7 +142,8 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *args) {
       state = &work->particles[member];
       if (state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
         state->variant = 1;
-        BattleEffect_TintBattler(args->actors[member], 7, 5, member, 5);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, member, 5);
       }
     }
     BattleCamera_Shake(gQuake_Timings[args->variant][TIMING_SHAKE],
@@ -149,7 +151,5 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

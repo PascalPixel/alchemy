@@ -98,7 +98,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *args, s32 mode) {
     if (frame == 2)
       Sound_PlayFar(SE_CLATTER);
     if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // The motes: depth 160-799 gives sizes 9 down to 1.
     for (i = 0; i != gEruption_Counts[variant][FIELD_MOTES]; i++) {
@@ -152,14 +152,16 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *args, s32 mode) {
     if (mode == 0) {
       for (i = 0; i != args->count; i++) {
         if (frame == i + 6) {
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 10);
           BattleMotion_ApplyKnockbackFar(args->actors[i], 2);
         }
       }
     } else {
       for (i = 0; i != args->count; i++) {
         if (frame == i + 6)
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 10);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 10);
       }
     }
     if (frame == 2)
@@ -168,9 +170,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *args, s32 mode) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
 #include "field_sprite.h"

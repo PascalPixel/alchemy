@@ -79,7 +79,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *args) {
         camera->yaw += speed;
     }
     if (frame == gPrism_Counts[args->variant * 3 + 2])
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // Darken over the last eight frames.
     if (frame == gPrism_Counts[args->variant * 3 + 1] - 8) {
@@ -129,7 +129,8 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *args) {
             work->shakeFrames = 8;
             Sound_PlayFar(SE_CLATTER);
             for (j = 0; j != args->count; j++)
-              BattleEffect_TintBattler(args->actors[j], 7, 5, j, 4);
+              BattleEffect_TintBattler(args->actors[j], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, j, 4);
           }
         }
       }
@@ -140,10 +141,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 
 #undef SPARK_COUNT

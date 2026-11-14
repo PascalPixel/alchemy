@@ -125,9 +125,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *args) {
 
     if (frame == 83) {
       if (args->variant == 0)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        BattlePlayback_StartFar(145);
+        EFFECT_SHOW_DAMAGE(SE_CRASH);
     }
     if (frame == 0)
       Sound_PlayFar(SE_WHOOSH);
@@ -362,12 +362,14 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *args) {
     // Frame 83: the strike. Frame 50: the puffs burst.
     if (frame == 83) {
       work->shakeFrames = 8;
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 1);
     }
     if (frame == 50) {
       work->shakeFrames = 12;
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
     }
     if (frame > 49) {
       for (i = 0; i != 8; i++) {
@@ -389,10 +391,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }
 #undef HEAP_SLOT_BLITTER
 #undef BLITTER

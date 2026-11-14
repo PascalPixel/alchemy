@@ -710,8 +710,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
       Actor_SelectAnimationFar(object, 3);
       if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS)
         BattleEffect_RunProjectileVolley(action, 9);
@@ -733,8 +732,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
       action->variant = 3;
       BattleEffect_RunSparkGroups(action, 2);
       return;
@@ -1167,9 +1165,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (kind == CASTING_IMPACT_IMPACT_FLARE_BURST)
           start = 0;
         if (frame == 50)
-          BattleEffect_TintBattler(action->actor, 7, -1, -1, 0);
+          BattleEffect_TintBattler(action->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                                   TINT_KEEP, 0);
         if (frame == 79)
-          BattleEffect_TintBattler(action->actor, 0, -1, -1, 0);
+          BattleEffect_TintBattler(action->actor, SPRITE_COLOR_NORMAL,
+                                   TINT_KEEP, TINT_KEEP, 0);
         if (frame == start) {
           struct Particle *p;
           p = SPARKS;
@@ -1296,8 +1296,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 gBattleEffect_GlintPictureWidths[m] / 2;
             y = ((Trig_Cos(angle) * amp) >> 16) + off -
                 gBattleEffect_GlintPictureHeights[m] / 2;
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-            HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+            EFFECT_RELEASE_BLITTERS();
             /* FAKEMATCH(dead): a once-only block. */
             do {
               BattleEffect_BuildBlitter(
@@ -1355,8 +1354,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Sound_PlayFar(SE_RISE_WITH_SPARKS);
       } else if (kind == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
         s32 count;
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+        EFFECT_RELEASE_BLITTERS();
         if (frame >= 0 && frame < 24) {
           s32 x;
           x = target[0] / 2;
@@ -1396,8 +1394,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       } else if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
         s32 x;
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+        EFFECT_RELEASE_BLITTERS();
         if (frame >= 4 && frame < 24) {
           s32 h;
           x = target[0] / 2;
@@ -1498,8 +1495,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         s32 y;
         REG_BLDCNT = 0;
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+        EFFECT_RELEASE_BLITTERS();
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_TRANSPARENT);
         drawFuncs.draw[0] = BLITTER;
@@ -1621,8 +1617,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       } else if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
         s32 m;
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+        EFFECT_RELEASE_BLITTERS();
         if (action->side == 0)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                               BLITTER_TRANSPARENT);
@@ -1677,8 +1672,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Sound_PlayFar(SE_HEAVY_IMPACT);
         if (frame == 15)
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-        HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+        EFFECT_RELEASE_BLITTERS();
         if (action->side == 0)
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                               BLITTER_TRANSPARENT);
@@ -1837,7 +1831,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             p->x -= 6;
             if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
               Sound_PlayFar(SE_IMPACT);
-              BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
+              BattleEffect_TintBattler(action->actors[0], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, 0, 4);
             }
           }
         }
@@ -2584,8 +2579,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         if (frame == 24) {
           BattleEffect_StartActorMotion(action->actors[0], 1, 0, 0, 0x90000,
                                         100);
-          BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
-          BattlePlayback_StartFar(134);
+          BattleEffect_TintBattler(action->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 4);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           work->shakeFrames = 8;
         }
         if (frame >= 24 && frame < 36)
@@ -2596,7 +2592,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       if (kind == CASTING_IMPACT_IMPACT_POWER_DRIVE) {
         for (i = 0; i != 4; i++) {
           if (frame == i * 4 + 8) {
-            BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 2);
+            BattleEffect_TintBattler(action->actors[0], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, 0, 2);
             work->shakeFrames = 2;
             Sound_PlayFar(SE_IMPACT);
           }
@@ -2612,7 +2609,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         origin[2] += center[2];
       }
       if (kind != CASTING_IMPACT_IMPACT_ECHO && frame == 3)
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
       if (frame == 4) {
         if (kind == CASTING_IMPACT_IMPACT_STUN_JIP)
           Sound_PlayFar(SE_CRASH);
@@ -2670,9 +2667,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
       }
       if (frame == 6)
-        BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(action->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 4);
       if (frame == 14)
-        BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 4);
+        BattleEffect_TintBattler(action->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 4);
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
     }
@@ -2690,8 +2689,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
       if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||
           kind == CASTING_IMPACT_IMPACT_CHILL ||
           kind == CASTING_IMPACT_IMPACT_ICE_CRUSH ||
@@ -2716,9 +2714,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
         kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
       Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    BattleEffect_EndCanvasLayer();
+    EFFECT_FINISH_CANVAS();
   }
 }

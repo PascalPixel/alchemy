@@ -19,8 +19,6 @@
 #define FLASH_FRAME 14
 #define BURST_FRAME 16 // the burst on the target, until frame 47
 
-#define PHASE_RESULTS 134
-
 // The user lunges, a streak of fire leaves them, and the target bursts into
 // flame, throwing 64 burning shards away from the user.
 //
@@ -28,7 +26,7 @@
 // the user four frames toward the target, and seed the shards at the target
 // with random speeds (flipped to fly away from the user's side). Each frame:
 // the streak's six pictures at the user from frame 6; the hit at frame 8
-// (results phase, the stronger variant's cue, the canvas flooded, the target
+// (the damage shown, the stronger variant's cue, the canvas flooded, the target
 // knocked back); the burst's three pictures (two frames each, then held) on
 // the target from frame 16 to 47; from frame 4 the shards in 3D, their
 // picture shrinking with their life.
@@ -86,7 +84,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != SHARDS_FRAMES; frame++) {
     if (frame == HIT_FRAME)
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (args->variant != 0 && frame == HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
 
@@ -155,8 +153,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *args) {
           shard->variant--;
         }
       }
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
     }
 
     // The hit's knock-back, and the target's flashes.
@@ -165,9 +162,11 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *args) {
       work->shakeFrames = 4;
     }
     if (frame == STREAK_FRAME)
-      BattleEffect_TintBattler(args->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_RED_TINT,
+                               TINT_KEEP, TINT_KEEP, 0);
     if (frame == FLASH_FRAME)
-      BattleEffect_TintBattler(args->actors[0], 10, -1, -1, 0);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_RED_TINT,
+                               TINT_KEEP, TINT_KEEP, 0);
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
   }

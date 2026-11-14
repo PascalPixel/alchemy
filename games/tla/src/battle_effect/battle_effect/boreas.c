@@ -328,7 +328,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *args) {
   for (frame = 0; frame != 146; frame++) {
     count = 0;
     if (frame == 96)
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 16)
       work->shakeFrames = 32;
     // One boulder every two frames, up to 16.
@@ -405,7 +405,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *args) {
 
     for (i = 0; i != args->count; i++) {
       if (frame == i * 8 + 32)
-        BattleEffect_TintBattler(args->actors[i], 9, 5, -1, 0);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_BLUE_TINT,
+                                 POSE_DAMAGE, TINT_KEEP, 0);
     }
 
     // Puffs of smoke, sent up again until frame 127.
@@ -434,8 +435,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *args) {
   }
 
   // Tear down.
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

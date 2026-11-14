@@ -15,8 +15,6 @@
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-#define PHASE_RESULTS 133
-
 #define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
 #define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
@@ -131,7 +129,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
     if (frame == FRAME_COUNT(args->variant) - 16)
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     for (i = 0; i != SHARD_COUNT(args->variant); i++) {
       shard = &work->particles[i];
@@ -156,7 +154,8 @@ void BattleEffect_RunIce(struct BattleEffectArgument *args) {
           work->shakeFrames = 2;
           shard->variant = 0;
           for (k = 0; k != args->count; k++)
-            BattleEffect_TintBattler(args->actors[k], 9, 5, k, 8);
+            BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_BLUE_TINT,
+                                     POSE_DAMAGE, k, 8);
         }
       }
 
@@ -214,8 +213,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmWin0HBlankDma);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
   BattleEffect_ConfigureEffectDisplay();
 }
@@ -335,7 +333,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *args) {
 
   for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
     if (frame == FRAME_COUNT(args->variant) - 64)
-      BattlePlayback_StartFar(PHASE_RESULTS);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     for (i = 0; i != DROP_COUNT(args->variant); i++) {
       s32 x;
@@ -372,7 +370,8 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *args) {
           if ((i & 3) == 0)
             Sound_PlayFar(SE_WATER);
           for (k = 0; k != args->count; k++)
-            BattleEffect_TintBattler(args->actors[k], 7, 5, k, 2);
+            BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, k, 2);
         }
       } else {
         // Landed: four frames of the small splash, four of the large one.
@@ -405,9 +404,6 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *args) {
   }
 
   Task_Remove(BattleEffect_ArmWin0HBlankDma);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
   BattleEffect_ConfigureEffectDisplay();
 }

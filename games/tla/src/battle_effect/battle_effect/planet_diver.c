@@ -61,7 +61,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *args) {
 
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 92)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // The background waves sideways, one sine step per line.
     row = work->bg2xLines;
@@ -87,7 +87,8 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *args) {
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
-          BattleEffect_TintBattler(args->actors[k], 7, 5, k, 32);
+          BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, k, 32);
 
         // A skull moves one part in its distance toward the centre each
         // frame, and is gone once it arrives.
@@ -120,8 +121,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
 
@@ -208,7 +208,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectArgument *args) {
 
           // Halfway through, the target's flash stops.
           if (frame == (member * 16) + 32)
-            BattleEffect_TintBattler(args->actors[member], 0, 5, -1, 0);
+            BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_NORMAL,
+                                     POSE_DAMAGE, TINT_KEEP, 0);
           point[0] = target->x;
           point[1] = px(40);
           point[2] = target->z;
@@ -239,8 +240,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectArgument *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
 
@@ -335,11 +335,11 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *args,
 
     if (frame == 80) {
       if (mode == 0)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else if (mode == 3)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
-        BattlePlayback_StartFar(133);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
@@ -372,7 +372,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *args,
           Sound_PlayFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
-        BattleEffect_TintBattler(args->actors[k], 7, 5, k, 26);
+        BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, k, 26);
       if (frame > k * 20) {
         for (i = 0; i != gGatheringLights_Counts[mode * 2]; i++) {
           struct EffectStep *mote = &PARTICLES[k * 128 + i];
@@ -428,8 +429,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *args,
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+  EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ArmBg1HBlankDma);
   BattleEffect_EndCanvasLayer();
 }

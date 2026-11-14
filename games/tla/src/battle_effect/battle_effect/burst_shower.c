@@ -544,12 +544,12 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *args,
       if (mode == 8) {
       } else if (mode == 6) {
         if (frame == 60)
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       } else if (mode == 24) {
         if (frame == 48)
-          BattlePlayback_StartFar(134);
+          EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       } else if (frame == 24) {
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
 
       // The Djinni sways, and after frame 56 rises two pixels a frame.
@@ -732,8 +732,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *args,
               heights = gBattleEffect_GlintPictureHeights;
               y -= heights[cel] >> 1;
 
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-              HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+              EFFECT_RELEASE_BLITTERS();
               BattleEffect_BuildBlitter(
                   188, 7, 7,
                   gProjectileVolleyB_GlintFlips[Random16() & 3] | CLIP,
@@ -754,31 +753,38 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *args,
         for (i = 0; i != args->count; i++) {
           if (frame >= i * 4 + 2 && (frame & 7) == i) {
             work->shakeFrames = 8;
-            BattleEffect_TintBattler(args->actors[i], 7, 5, i, 4);
+            BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                     POSE_DAMAGE, i, 4);
           }
         }
       } else if (mode == 10) {
         if (frame == 18) {
           work->shakeFrames = 4;
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 4);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 4);
         }
         if (frame == 46)
-          BattleEffect_TintBattler(args->actor, 7, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, SPRITE_COLOR_WHITE, TINT_KEEP,
+                                   TINT_KEEP, 0);
         if (frame == 54)
-          BattleEffect_TintBattler(args->actor, 0, -1, -1, 0);
+          BattleEffect_TintBattler(args->actor, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                                   TINT_KEEP, 0);
       } else if (mode == 8) {
         if (frame == 20) {
           for (i = 0; i != args->count; i++)
-            BattleEffect_TintBattler(args->actors[i], 6, 5, i, 60);
+            BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_GREY,
+                                     POSE_DAMAGE, i, 60);
         }
       } else {
         for (i = 0; i != args->count; i++) {
           if (frame >= i * 4 + 16 && frame < shots - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
             if (mode == 6)
-              BattleEffect_TintBattler(args->actors[i], 14, 5, i, 3);
+              BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_BLACK,
+                                       POSE_DAMAGE, i, 3);
             else
-              BattleEffect_TintBattler(args->actors[i], 7, 5, i, 3);
+              BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, i, 3);
             if (mode != 11 && mode != 14)
               BattleEffect_StartActorMotion(args->actors[i], 1, 0x10000,
                                             0x40000, 0x20000, frame + 100);
@@ -840,8 +846,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *args,
     }
 
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     if (mode == 11 || mode == 14 || mode == 18) {
       // Hand over to the canvas effect: clear both canvases first.
       Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);

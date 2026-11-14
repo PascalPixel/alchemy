@@ -94,7 +94,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *args) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
         frame = 98;
       if (frame == 120)
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       if (frame <= 15)
         rise += 2;
 
@@ -226,12 +226,14 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *args) {
               struct MotionObject *target =
                   BattleObject_GetFar(args->actors[k])->object;
 
-              BattleEffect_TintBattler(args->actors[k], 7, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, TINT_KEEP, 0);
               target->velocityY = px(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
-              BattleEffect_TintBattler(args->actors[k], 0, 5, -1, 0);
+              BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_NORMAL,
+                                       POSE_DAMAGE, TINT_KEEP, 0);
           }
         }
       }
@@ -240,8 +242,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *args) {
 
     // Tear down: the formation bursts where it stands and is released.
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
       Sprite_DestroyFar(work->objects[k]);

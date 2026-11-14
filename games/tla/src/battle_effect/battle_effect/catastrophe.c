@@ -956,8 +956,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
   BattleEffect_SelectLivingTargets(work->effect);
   for (i = 0; i != args->count; i++) {
-    BattleEffect_TintBattler(args->actors[i], 1, -1, -1, 0);
-    BattleEffect_TintBattler(args->actors[i], 0, -1, -1, 0);
+    BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_GRB, TINT_KEEP,
+                             TINT_KEEP, 0);
+    BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_NORMAL, TINT_KEEP,
+                             TINT_KEEP, 0);
   }
   Palette_LoadBasicSpriteColors();
   BattleEffect_SetupBlendedDisplay();
@@ -1348,7 +1350,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
         gBgScroll[1].x = savedScroll;
         gCameraSceneParameters[3] = 120;
         work->scrollStepX = 0;
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       if (frame == 0) {
         IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
@@ -1375,7 +1377,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
         for (i = 0; i != args->count; i++) {
           BattleEffect_StartActorMotion(args->actors[i], 1, 0x40000, 0x80000,
                                         0x40000, 150);
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 16);
           {
             s32 a = args->actors[i];
             s32 k = 448;
@@ -1614,9 +1617,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
       wait(1);
     } while (frame != 104);
     transition[4] = 0;
-    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-    BattleEffect_EndCanvasLayer();
+    EFFECT_FINISH_CANVAS_ONE_BLITTER();
   }
 }
 #undef SLOT_BLITTER

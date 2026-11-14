@@ -476,7 +476,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *args) {
                                         (s32 *)&summonScale, 0);
     }
     if (frame == 34) {
-      BattlePlayback_StartFar(134);
+      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame == 16) {
       struct EffectStep *p;
@@ -509,7 +509,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *args) {
       Sound_PlayFar(SE_CRASH);
       for (i = 0; i != args->count; i++) {
         BattleMotion_ApplyKnockbackFar(args->actors[i], 4);
-        BattleEffect_TintBattler(args->actors[i], 7, 5, i, 8);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, i, 8);
       }
     }
 

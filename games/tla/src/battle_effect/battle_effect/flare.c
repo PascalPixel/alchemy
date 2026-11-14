@@ -74,7 +74,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *args) {
   frame = 0;
   do {
     if (frame == 24)
-      BattlePlayback_StartFar(133);
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // A flame moves to its next picture every four frames and goes out
     // after the sixth.
@@ -107,7 +107,8 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *args) {
     i = 0;
     while (i != args->count) {
       if (frame == (i * 8) + 16)
-        BattleEffect_TintBattler(args->actors[i], 10, 5, i, 12);
+        BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_RED_TINT,
+                                 POSE_DAMAGE, i, 12);
       i += 1;
     }
     EFFECT_END_FRAME(work);

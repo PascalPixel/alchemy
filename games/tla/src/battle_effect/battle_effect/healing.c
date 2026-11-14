@@ -302,7 +302,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *args, u32 mode) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
     if (frame == 40)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     if (mode == 7 && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
 
@@ -346,12 +346,15 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *args, u32 mode) {
         Sound_PlayFar(SE_RECOVERY);
       if (mode == 8) {
         if (frame == start + 41)
-          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 32);
+          BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, member, 32);
       } else if (mode == 11) {
         if (frame == start + 24)
-          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 28);
+          BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, member, 28);
       } else if (frame == start + 36) {
-        BattleEffect_TintBattler(args->actors[member], 7, -1, member, 28);
+        BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, member, 28);
       }
       if (frame > start) {
         if (mode == 0 || mode == 6 || mode == 7 || mode == 8 || mode == 10 ||
@@ -453,8 +456,5 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *args, u32 mode) {
     EFFECT_END_FRAME(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

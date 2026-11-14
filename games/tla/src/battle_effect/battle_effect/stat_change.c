@@ -249,7 +249,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *args, u32 mode) {
     if (mode == 11 && (frame & 3) == 0)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_JupiterDjinnSheet);
     if (frame == 80)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
 
     // The Djinni sways, and after frame 32 rises two pixels a frame; for
     // the first four frames it is drawn ADDITIVE as well.
@@ -270,8 +270,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *args, u32 mode) {
       draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
       if (frame <= 3)
         draw[1](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+      EFFECT_RELEASE_BLITTERS();
     }
 
     for (member = 0; member != args->count; member++) {
@@ -290,10 +289,12 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *args, u32 mode) {
       SceneTransform_ApplyPosition(point);
       if (start != 0) {
         if (frame == member * 8 + 53)
-          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, member, 16);
       } else {
         if (frame == member * 8 + 48)
-          BattleEffect_TintBattler(args->actors[member], 7, -1, member, 16);
+          BattleEffect_TintBattler(args->actors[member], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, member, 16);
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
@@ -348,8 +349,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *args, u32 mode) {
               }
             }
           }
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+          EFFECT_RELEASE_BLITTERS();
         }
       }
 
@@ -412,8 +412,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *args, u32 mode) {
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
           draw[0](canvas, picture, screen.x - 32, screen.y - 24, 64, 32);
           draw[1](canvas, picture, screen.x - 32, screen.y + 8, 64, 32);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+          EFFECT_RELEASE_BLITTERS();
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
@@ -565,7 +564,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *args,
   for (frame = 0; frame != args->count * 4 + 64; frame++) {
     camera = Ram_HeapSlots->cameraWork;
     if (frame == 72)
-      BattlePlayback_StartFar(0);
+      EFFECT_SHOW_DAMAGE(0);
     for (j = 0; j != args->count; j++) {
       struct MotionObject *object;
       s32 time;
@@ -636,8 +635,5 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *args,
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS();
 }

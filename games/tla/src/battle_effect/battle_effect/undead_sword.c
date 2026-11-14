@@ -18,8 +18,6 @@
 #define COLUMN_PEAK_FRAME 31
 #define COLUMN_MAX_HEIGHT 80
 
-#define PHASE_HIT 212
-
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.
 //
@@ -83,12 +81,13 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *args) {
   work->shakeFrames = 8;
 
   for (frame = 0; frame != BURST_FRAMES; frame++) {
-    // The hit: results phase, shake, knock-back and a flash.
+    // The hit: the damage shown, a shake, knock-back and a flash.
     if (frame == BURST_HIT_FRAME) {
       work->shakeFrames = 8;
-      BattlePlayback_StartFar(PHASE_HIT);
+      EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       BattleMotion_ApplyKnockbackFar(args->actors[0], 0);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 8);
     }
 
     // The columns: up 12 pixels a frame until frame 31, then down 6.
@@ -141,8 +140,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *args) {
       }
       particle++;
     }
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-    HeapSlot_Release(HEAP_SLOT_RAM_CODE);
+    EFFECT_RELEASE_BLITTERS();
 
     if (frame < COLUMN_RISE_FRAME)
       BattleCamera_Shake(4, 4);
@@ -218,7 +216,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *args) {
       target->verticalMotionStrength = 0;
       target->y = 0;
       pillarY = position.y;
-      BattleEffect_TintBattler(args->actors[0], -1, 5, 0, -1);
+      BattleEffect_TintBattler(args->actors[0], TINT_KEEP, POSE_DAMAGE, 0, -1);
       work->shakeFrames = 4;
       Sound_PlayFar(SE_CLATTER);
     }
@@ -238,9 +236,10 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *args) {
         step->variant = (Random16() & 7) + 48;
       }
       BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
-      BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+      BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                               0, 16);
       work->shakeFrames = 8;
-      BattlePlayback_StartFar(145);
+      EFFECT_SHOW_DAMAGE(SE_CRASH);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
 
@@ -510,9 +509,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *args, s32 mode) {
 
     if (mode == 0) {
       if (frame == 17) {
-        BattlePlayback_StartFar(144);
+        EFFECT_SHOW_DAMAGE(SE_CLATTER);
         BattleEffect_StartActorMotion(args->actors[0], 1, 0, 0, 0x80000, 100);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 16);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 16);
         work->shakeFrames = 8;
       }
     } else {
@@ -520,15 +520,17 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *args, s32 mode) {
         Sound_PlayFar(SE_CRASH);
         for (i = 0; i != args->count; i++) {
           BattleMotion_ApplyKnockbackFar(args->actors[i], 0);
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 16);
         }
         work->shakeFrames = 8;
       }
       if (frame == 46) {
-        BattlePlayback_StartFar(134);
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         for (i = 0; i != args->count; i++) {
           BattleEffect_StartActorMotion(args->actors[i], 1, 0, 0, 0x80000, 100);
-          BattleEffect_TintBattler(args->actors[i], 7, 5, i, 16);
+          BattleEffect_TintBattler(args->actors[i], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, i, 16);
         }
         work->shakeFrames = 8;
       }
@@ -887,17 +889,19 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *args, s32 mode) {
     if (mode == 0) {
       if (frame == 28) {
         work->shakeFrames = 6;
-        BattlePlayback_StartFar(133);
-        BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 8);
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
+        BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
       }
     } else {
       if (frame == 12) {
-        BattlePlayback_StartFar(-1);
+        EFFECT_SHOW_DAMAGE(-1);
       }
       for (k = 0; k != args->count; k++) {
         if (frame == k * 4 + 12) {
           Sound_PlayFar(SE_RECOVERY);
-          BattleEffect_TintBattler(args->actors[k], 7, -1, k, 8);
+          BattleEffect_TintBattler(args->actors[k], SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, k, 8);
         }
       }
     }
@@ -1055,10 +1059,11 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *args) {
                                            70);
           } else {
             BattleMotion_ApplyKnockbackFar(args->actors[0], 4);
-            BattlePlayback_StartFar(144);
+            EFFECT_SHOW_DAMAGE(SE_CLATTER);
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           }
-          BattleEffect_TintBattler(args->actors[0], 7, 5, 0, 6);
+          BattleEffect_TintBattler(args->actors[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 6);
           top += 8;
           for (k = 0; k != 8; k++) {
             struct EffectStep *shard;
@@ -1221,9 +1226,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *args) {
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
   }
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  BattleEffect_EndCanvasLayer();
+  EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef EMBERS
 #undef BLITTER
@@ -1240,7 +1243,6 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *args) {
 #undef COLUMN_RISE_FRAME
 #undef COLUMN_PEAK_FRAME
 #undef COLUMN_MAX_HEIGHT
-#undef PHASE_HIT
 #undef WATER_COLUMNS
 #undef WATER_ROWS
 #undef WATER_QUADS

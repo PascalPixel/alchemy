@@ -4,14 +4,6 @@
 
 #include "battle_internal.h"
 
-/// An enemy's memory of its action choice, in Unit.aiActionIndex.
-struct BattleAIState {
-  unsigned initialized
-      : 1;                 ///< ACTION_STRATEGY_RANDOM_START has drawn its start
-  unsigned selection : 3;  ///< the place in its action list, 0 to 7
-  unsigned remaining : 28; ///< not used here
-};
-
 /// Chooses an enemy's action: one of the eight in its definition, picked by its
 /// strategy, and a target worth it; after 18 tries that fail, the enemy
 /// defends. retry is 0 as the turn is built, when only a guard is chosen, and 1
@@ -77,7 +69,7 @@ UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
     return;
 
   enemy = Enemy_GetDefinitionFar(unit->id);
-  selectionMemory = (struct BattleAIState *)&unit->aiActionIndex;
+  selectionMemory = &unit->aiState;
   actionStrategy = &enemy->actionStrategy;
   itemActionMask = &enemy->itemActions;
 

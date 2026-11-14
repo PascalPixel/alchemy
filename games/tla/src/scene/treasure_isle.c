@@ -407,7 +407,7 @@ void TreasureIsle_MeetWaterGuardian(void) {
   FieldEvent_Wait(20);
   gMainRoutineWork.pendingDjinnEvent = 0x19bb;
   gMainRoutineWork.battleRule24b = 2;
-  Call2(Field_RequestBattleFromEncounterTable, 0x67, 0);
+  Field_RequestBattleFromEncounterTable(0x67, 0);
 }
 
 extern struct Trigger gTreasureIsle_Room1Triggers[];

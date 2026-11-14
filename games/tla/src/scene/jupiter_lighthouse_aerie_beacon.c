@@ -1068,7 +1068,7 @@ void Func_02001388(void) {
   FieldEvent_SetAfterBattleDestination(
       (s32)&SceneId_JupiterLighthouseAerieBeacon, 11);
   Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 11);
-  Call2(Field_RequestBattleFromEncounterTable, 0xd, 6);
+  Field_RequestBattleFromEncounterTable(0xd, 6);
 }
 
 void Func_020016e8(void) {
@@ -1443,22 +1443,22 @@ void Func_02001bc4(void) {
   Actor_FaceDirectionAndWait(30, mid);
   Actor_WalkByAndWait(3, -48, 0);
   Actor_FaceDirection(3, mid, 0);
-  Call2(Func_02001ac4, 3, 4);
+  Func_02001ac4(3, 4);
   Actor_FaceDirection(4, slow, 0);
   actor = Actor_Get(4);
   actor->scaleX = -actor->scaleX;
   Actor_WalkByAndWait(3, 40, 0);
   Actor_WalkByAndWait(3, 8, -16);
   Actor_FaceDirection(3, mid, 0);
-  Call2(Func_02001ac4, 3, 6);
+  Func_02001ac4(3, 6);
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   actor = Actor_Get(6);
   actor->scaleX = -actor->scaleX;
   Actor_FaceDirection(3, fast, 0);
-  Call2(Func_02001ac4, 3, 7);
+  Func_02001ac4(3, 7);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(3, FACING_WEST, 0);
-  Call2(Func_02001ac4, 3, 5);
+  Func_02001ac4(3, 5);
   Actor_FaceDirection(5, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(0, 2);
   Actor_FaceDirectionAndWait(0, fast);
@@ -1820,11 +1820,11 @@ void Func_02002ae4(void) {
   Actor_FaceDirectionAndWait(29, mid);
   Actor_WalkByAndWait(29, 20, -20);
   Actor_FaceDirectionAndWait(29, FACING_WEST);
-  Call2(Func_02001ac4, 0x1d, 0x1b);
+  Func_02001ac4(0x1d, 0x1b);
   FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_FaceDirectionAndWait(29, mid);
-  Call2(Func_02001ac4, 0x1d, 0x1c);
+  Func_02001ac4(0x1d, 0x1c);
   Actor_WalkByAndWait(29, -20, 20);
   Actor_FaceDirectionAndWait(29, FACING_EAST);
   FieldActor_ShowEmote(29, EMOTE_IN_FRONT | EMOTE_SMILE, 30);

@@ -1148,7 +1148,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseAerie1, 2);
-  Call2(Field_RequestBattleFromEncounterTable, 102, 1);
+  Field_RequestBattleFromEncounterTable(102, 1);
   return;
 }
 

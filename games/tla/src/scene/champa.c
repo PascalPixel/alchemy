@@ -1246,7 +1246,7 @@ void Champa_CatchUpWithBriggs(void) {
   Actor_FaceDirection(5, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(6, 1);
   FieldEvent_Wait(25);
-  Call2(Champa_JennaAndShebaGlare, 5, 6);
+  Champa_JennaAndShebaGlare(5, 6);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(5, FACING_WEST, 0);
@@ -1265,7 +1265,7 @@ void Champa_CatchUpWithBriggs(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Call11(Champa_ShowTwoMessages, 5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
+  Champa_ShowTwoMessages(5, 8, 5, 0x12, 8, 6, 8, 0xe, 8, 9, 0);
   Actor_FaceDirectionAndWait(4, FACING_SOUTHWEST);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Champa_CloseTwoMessages(5, 6);

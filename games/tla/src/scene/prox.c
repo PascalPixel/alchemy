@@ -1027,7 +1027,7 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     FIELD_AT(t0, s32, 28) = 0x8000;
     FIELD_AT(t0, s32, 104) = 0x3c;
     FIELD_AT(t0, s32, 108) = (s32)Func_0200181c;
-    Call2(Actor_SelectAnimation, t0, 5);
+    Actor_SelectAnimation(t0, 5);
     Actor_SetBlendMode(t0, 1);
   }
 }
@@ -1099,7 +1099,7 @@ void Func_02001af0(void) { Prox_EnterDoor(0x33, 0x27, 0x3d, 0xd, 1, 2); }
 
 void Func_02001b0c(void) { Prox_EnterDoor(0x33, 0x27, 0x50, 0x10, 1, 2); }
 
-void Func_02001b28(void) { Call6(Prox_EnterDoor, 0x34, 0x27, 0x32, 9, 2, 2); }
+void Func_02001b28(void) { Prox_EnterDoor(0x34, 0x27, 0x32, 9, 2, 2); }
 
 void Func_02001b44(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
 

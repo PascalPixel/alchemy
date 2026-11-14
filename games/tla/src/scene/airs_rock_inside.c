@@ -2608,7 +2608,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     Actor_ArmCallback(6, FACING_WEST, 0);
     FieldEvent_Wait(10);
-    Call2(Event_ShowMessageAndWait, 6, 0);
+    Event_ShowMessageAndWait(6, 0);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
     FieldEvent_Wait(30);
     Actor_WalkToAndWaitById(gMainRoutineWork.currentOwner, 256, 152);
@@ -2627,8 +2627,8 @@ void AirsRockInside_ReadRevealTablet(void) {
     Call3(MapGrid_SetScreenShake, 0x50000, 0x70000, 0x10000);
     Call3(MapGrid_SetScreenShake, -1, -1, 0xe666);
     /* FAKEMATCH(wrapper): the call through Call0's pointer. */
-    Call0(MapGrid_WaitForShakeToSettle);
-    Call2(Func_02004138, 8, 6);
+    MapGrid_WaitForShakeToSettle();
+    Func_02004138(8, 6);
     Party_LearnAbility(SHEBA, ABILITY_REVEAL);
     GameFlag_Set(0x8d4);
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);

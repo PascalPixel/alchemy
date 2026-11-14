@@ -1053,7 +1053,7 @@ s32 Scene_Initialize(void) {
       Actor_SetModeById(id, 0);
     }
     if (GameFlag_Get(0x950))
-      Call3(Actor_SetHorizontalPositionWithTerrain, 25, px(520), px(584));
+      Actor_SetPositionFixed(25, px(520), px(584));
     x = GameFlag_GetByte(0x310);
     z = GameFlag_GetByte(0x318);
     if (z != 0)
@@ -1078,19 +1078,19 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 5)
       Func_0200169c();
     if (GameFlag_Get(0x955)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 17, px(392), px(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 18, px(424), px(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 19, px(456), px(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 20, px(488), px(824));
-      Call3(Actor_SetHorizontalPositionWithTerrain, 21, px(520), px(824));
-      Call6(Map_CopyCellAttributeRect, 64, 66, 9, 3, 24, 53);
-      Call6(Map_CopyCellsRect, 64, 66, 11, 7, 87, 50);
+      Actor_SetPositionFixed(17, px(392), px(824));
+      Actor_SetPositionFixed(18, px(424), px(824));
+      Actor_SetPositionFixed(19, px(456), px(824));
+      Actor_SetPositionFixed(20, px(488), px(824));
+      Actor_SetPositionFixed(21, px(520), px(824));
+      MapGrid_CopyCellAttributes(64, 66, 9, 3, 24, 53);
+      MapGrid_CopyCells(64, 66, 11, 7, 87, 50);
       Actor_GetById(21)->update = Func_02001670;
     }
     if (GameFlag_Get(0xa6b)) {
-      Call6(Map_CopyCellAttributeRect, 62, 41, 1, 2, 33, 41);
+      MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
       MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 96, 32);
-      Call6(MapGrid_CopyCellPictureCellsRect, 122, 95, 3, 13, 0x20, 0x60);
+      MapGrid_CopyCellsLayered(122, 95, 3, 13, 0x20, 0x60);
       Func_02001f60(12);
     }
     Func_02000844();
@@ -1099,20 +1099,20 @@ s32 Scene_Initialize(void) {
   } else if (scene == (s32)&SceneId_AquaRock2) {
     Actor_SetSpriteFlags(Actor_GetById(14), 0);
     if (GameFlag_Get(FLAG_SCENE_TEMP_21))
-      Call6(Map_CopyCellAttributeRect, 42, 32, 1, 1, 44, 32);
+      MapGrid_CopyCellAttributes(42, 32, 1, 1, 44, 32);
     if (GameFlag_Get(FLAG_SCENE_TEMP_22))
-      Call6(Map_CopyCellAttributeRect, 48, 32, 1, 1, 46, 32);
+      MapGrid_CopyCellAttributes(48, 32, 1, 1, 46, 32);
     if (GameFlag_Get(FLAG_SCENE_TEMP_23))
-      Call6(Map_CopyCellAttributeRect, 44, 44, 1, 1, 46, 44);
+      MapGrid_CopyCellAttributes(44, 44, 1, 1, 46, 44);
     Actor_SetModeById(12, 2);
     if (GameFlag_Get(0x951)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 12, px(856), px(840));
-      Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 52);
+      Actor_SetPositionFixed(12, px(856), px(840));
+      MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 52);
     }
     Actor_SetModeById(13, 2);
     if (GameFlag_Get(0x952)) {
-      Call3(Actor_SetHorizontalPositionWithTerrain, 13, px(856), px(936));
-      Call6(Map_CopyCellAttributeRect, 54, 58, 1, 1, 53, 58);
+      Actor_SetPositionFixed(13, px(856), px(936));
+      MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
       Func_02002550();

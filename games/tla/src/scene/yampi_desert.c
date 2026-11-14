@@ -1949,8 +1949,8 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Call4(FieldCamera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call4(FieldCamera_MoveWithinMapBounds, px(232), -1, px(184), 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveToFixed(px(232), -1, px(184), 0);
   Map_CenterOnFollowedPoint();
   wait(1);
   Actor_SetSpriteFlags(Actor_GetById(party->currentOwner), 0);
@@ -1997,7 +1997,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   FieldEvent_Wait(20);
   actor8->velocityY = Q16_ONE * 8;
   actor8->gravity = 0xe666;
-  Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(8, 0x19999, 0xcccc);
   Actor_MoveToAndWaitById(8, 232, 184);
   party->battleRule24b = 2;
   Event_SetAfterBattleDestination((s32)&SceneId_YampiDesert10, 2);

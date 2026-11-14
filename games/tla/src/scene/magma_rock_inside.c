@@ -2071,7 +2071,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     MapGrid_SetShake(5, 7, 1);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     FieldMapGrid_WaitForShakeToSettle();
-    Call2(MagmaRockInside_LearnBlaze, 8, 5);
+    MagmaRockInside_LearnBlaze(8, 5);
     Party_LearnAbility(JENNA, ABILITY_BLAZE);
     Event_SetFlag(0x9fa);
     Actor_FaceEachOther(gMainRoutineWork.currentOwner, 5, 0);

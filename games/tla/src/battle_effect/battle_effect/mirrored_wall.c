@@ -523,9 +523,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == 3)
-      SummonEffect_RunCanvasMode1(effect);
+      BattleEffect_RunImpair(effect);
     else
-      SummonEffect_RunCanvasMode3(effect);
+      BattleEffect_RunDull(effect);
   } else {
     BattleEffect_EndCanvasLayer();
   }

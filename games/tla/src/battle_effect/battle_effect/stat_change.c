@@ -45,7 +45,7 @@ DEFINE_EFFECT_KIND(BattleEffect_RunCoal, BattleEffect_RunStatBoost, 9)
 
 /// Effect kind 182: the stat boost's mode 10 (a burst with no gathering
 /// lights), with no prelude Djinni and the fade step cleared.
-void BattleEffect_RunStatBoostMode10(struct BattleEffectArgument *effect) {
+void BattleEffect_RunCrucibleFire(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
 
@@ -443,15 +443,15 @@ void SummonEffect_RunCanvasMode0(void *action) {
   SummonEffect_RunCanvasEffect(action, 0);
 }
 
-void SummonEffect_RunCanvasMode3(void *action) {
+void BattleEffect_RunDull(void *action) {
   SummonEffect_RunCanvasEffect(action, 3);
 }
 
-void SummonEffect_RunCanvasMode1(void *action) {
+void BattleEffect_RunImpair(void *action) {
   SummonEffect_RunCanvasEffect(action, 1);
 }
 
-void SummonEffect_RunCanvasMode2(void *action) {
+void BattleEffect_RunWeaken(void *action) {
   SummonEffect_RunCanvasEffect(action, 2);
 }
 

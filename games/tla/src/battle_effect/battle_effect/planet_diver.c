@@ -140,7 +140,8 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 // Member orbit: over each target in turn, sixteen frames apart, four
 // spirals circle a point 40 pixels above it for 60 frames, the blitter
 // flipping every sixteen frames; the background waves line by line.
-void BattleEffect_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUnusedOrbitingSpirals(
+    struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];

@@ -145,7 +145,7 @@ void BattleEffect_RunFromTable(s32 *script) {
   work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   work->script = script;
   work->active = 1;
-  gData_08197aa0[*script - 1](script);
+  gBattleEffect_Handlers[*script - 1](script);
   HeapSlot_Release(96);
   HeapSlot_Release(92);
   HeapSlot_Release(100);

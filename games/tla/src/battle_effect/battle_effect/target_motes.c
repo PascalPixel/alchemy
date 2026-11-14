@@ -24,8 +24,7 @@ void BattleEffect_RunTaint(struct BattleEffectArgument *effect) {
   BattleEffect_RunTargetMotes(effect, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunTargetMotesMode1,
-                   BattleEffect_RunTargetMotes, 1)
+DEFINE_EFFECT_KIND(BattleEffect_RunPoisonGel, BattleEffect_RunTargetMotes, 1)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunDelude, BattleEffect_RunTargetMotes, 2)
 

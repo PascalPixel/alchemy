@@ -412,8 +412,7 @@ void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunProjectileVolleyMode12WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunBlazeRush(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
@@ -423,8 +422,7 @@ void BattleEffect_RunProjectileVolleyMode12WithAction(
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunProjectileVolleyMode13WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunHydroSlash(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
@@ -434,8 +432,7 @@ void BattleEffect_RunProjectileVolleyMode13WithAction(
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunProjectileVolleyMode14WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunDiamondDust(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
@@ -445,21 +442,21 @@ void BattleEffect_RunProjectileVolleyMode14WithAction(
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode15,
+DEFINE_EFFECT_KIND(BattleEffect_RunBeastNeedle,
                    BattleEffect_RunProjectileVolley, 15)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode16,
+DEFINE_EFFECT_KIND(BattleEffect_RunPoisonSting,
                    BattleEffect_RunProjectileVolley, 16)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode17,
-                   BattleEffect_RunProjectileVolley, 17)
+DEFINE_EFFECT_KIND(BattleEffect_RunStunSting, BattleEffect_RunProjectileVolley,
+                   17)
 
 /// Kind 402: Ice Breath and Blue Dragon.
 // Named, as The Broken Seal names it, for Ice Blessing.
 DEFINE_EFFECT_KIND(BattleEffect_RunIceBlessing,
                    BattleEffect_RunProjectileVolley, 10)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode18,
+DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
                    BattleEffect_RunProjectileVolley, 18)
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))

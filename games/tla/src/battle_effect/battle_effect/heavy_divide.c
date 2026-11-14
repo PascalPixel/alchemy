@@ -989,7 +989,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
 extern char ResourceId_CyanPalette;
 extern char ResourceId_SmokeSheet;
 
-void SummonEffect_RunCanvasMode3(void *action);
+void BattleEffect_RunDull(void *action);
 
 // Hurricane: driving rain slants down over the target, each drop bursting
 // into a splash where it lands, while the target is struck eight times; the
@@ -1149,7 +1149,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   Iwram_ClearWordsEntry(canvas, size);
   Task_Remove(Palette_StepFadeTransfer);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  SummonEffect_RunCanvasMode3(effect);
+  BattleEffect_RunDull(effect);
 }
 
 void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode);

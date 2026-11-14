@@ -20,7 +20,7 @@ void BattleEffect_RunThrash(struct BattleEffectArgument *effect) {
   BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
 }
 
-void BattleEffect_LongApproachThenSpark(struct BattleEffectArgument *effect) {
+void BattleEffect_RunMightyPress(struct BattleEffectArgument *effect) {
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 0x18,
                                  0xc3333);
   wait(26);
@@ -33,8 +33,7 @@ void BattleEffect_LongApproachThenSpark(struct BattleEffectArgument *effect) {
 /// Jumps the user toward the first target and emits type 3 sparks after 12
 /// frames.
 /// effect: effect arguments.
-void BattleEffect_RunSparkApproachVariant3(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunSevereBlow(struct BattleEffectArgument *effect) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 7.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
@@ -92,7 +91,7 @@ extern char ResourceId_RevealMaskD;
 extern char ResourceId_RevealMaskE;
 extern char ResourceId_RevealMaskF;
 
-void SummonEffect_RunCanvasMode2(void *action);
+void BattleEffect_RunWeaken(void *action);
 
 // A picture flashes up over the target (four pictures, four frames each), the
 // canvas floods with one colour, and the target is struck.
@@ -261,7 +260,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    SummonEffect_RunCanvasMode2(effect);
+    BattleEffect_RunWeaken(effect);
   } else {
     if (variant == 4)
       Actor_SetAnimationSpeedFar(BattleObject_GetFar(effect->actor)->object,

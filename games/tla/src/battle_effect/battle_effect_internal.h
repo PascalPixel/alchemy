@@ -354,7 +354,7 @@ extern const u8 gCruelRuin_StreakEndY[];
 
 extern const s32 gCruelRuin_StreakRolls[];
 
-extern void (*gData_08197aa0[])(s32 *script);
+extern void (*gBattleEffect_Handlers[])(s32 *script);
 
 extern char ResourceId_Data0D0; // directory row 0xd0
 

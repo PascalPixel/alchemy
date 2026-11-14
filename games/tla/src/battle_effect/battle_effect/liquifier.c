@@ -384,10 +384,9 @@ void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect) {
     BattleEffect_RunCanvasBurst(effect, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunCanvasMode0, BattleEffect_RunCanvasBurst, 0)
+DEFINE_EFFECT_KIND(BattleEffect_RunShred, BattleEffect_RunCanvasBurst, 0)
 
-void BattleEffect_RunCanvasMode3WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunMineBall(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
@@ -432,14 +431,14 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 // in mode 0 a growing glow at the target, with sixteen rays that close on
 // it) hits the target; at the hit the targets flash and recoil, sixteen
 // flames rise and 47 sparks scatter. Modes:
-//   0  (BattleEffect_RunCanvasMode0): 78 frames, the glow at the target; the
+//   0  (BattleEffect_RunShred): 78 frames, the glow at the target; the
 //      hit at frame 54, then the canvas is cleared and
-//      SummonEffect_RunCanvasMode1 runs on;
+//      BattleEffect_RunImpair runs on;
 //   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
 //      half-speed sparks, hit at 32, no flames;
 //   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
 //      32;
-//   3  (BattleEffect_RunCanvasMode3WithAction): 58 frames, the ball flies to
+//   3  (BattleEffect_RunMineBall): 58 frames, the ball flies to
 //   the
 //      midpoint of the targets, its own palette, hit at 24.
 // Modes 1 and 2 close by restoring the battle display themselves.
@@ -702,7 +701,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    SummonEffect_RunCanvasMode1(effect);
+    BattleEffect_RunImpair(effect);
   } else if (mode == 3) {
     BattleEffect_EndCanvasLayer();
   } else {

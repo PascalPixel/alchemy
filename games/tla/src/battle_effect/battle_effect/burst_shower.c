@@ -47,74 +47,69 @@ void BattleEffect_ArmBg1HBlankDma(void) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode0,
+DEFINE_EFFECT_KIND(BattleEffect_RunFireBreath,
                    BattleEffect_RunProjectileVolleyB, 0)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode12,
+DEFINE_EFFECT_KIND(BattleEffect_RunToxicBreath,
                    BattleEffect_RunProjectileVolleyB, 12)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode2,
+DEFINE_EFFECT_KIND(BattleEffect_RunWaterBreath,
                    BattleEffect_RunProjectileVolleyB, 2)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode6,
+DEFINE_EFFECT_KIND(BattleEffect_RunDarkBreath,
                    BattleEffect_RunProjectileVolleyB, 6)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode3,
+DEFINE_EFFECT_KIND(BattleEffect_RunAcidBreath,
                    BattleEffect_RunProjectileVolleyB, 3)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode5,
+DEFINE_EFFECT_KIND(BattleEffect_RunStormBreath,
                    BattleEffect_RunProjectileVolleyB, 5)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode23,
                    BattleEffect_RunProjectileVolleyB, 23)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode7,
+DEFINE_EFFECT_KIND(BattleEffect_RunEvilBlessing,
                    BattleEffect_RunProjectileVolleyB, 7)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode21,
+DEFINE_EFFECT_KIND(BattleEffect_RunDarksolGasp,
                    BattleEffect_RunProjectileVolleyB, 21)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode4,
-                   BattleEffect_RunProjectileVolleyB, 4)
+DEFINE_EFFECT_KIND(BattleEffect_RunDeadlyGas, BattleEffect_RunProjectileVolleyB,
+                   4)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode8,
-                   BattleEffect_RunProjectileVolleyB, 8)
+DEFINE_EFFECT_KIND(BattleEffect_RunPetra, BattleEffect_RunProjectileVolleyB, 8)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode24,
-                   BattleEffect_RunProjectileVolleyB, 24)
+DEFINE_EFFECT_KIND(BattleEffect_RunChar, BattleEffect_RunProjectileVolleyB, 24)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode22,
-                   BattleEffect_RunProjectileVolleyB, 22)
+DEFINE_EFFECT_KIND(BattleEffect_RunFury, BattleEffect_RunProjectileVolleyB, 22)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode9,
-                   BattleEffect_RunProjectileVolleyB, 9)
+DEFINE_EFFECT_KIND(BattleEffect_RunFugue, BattleEffect_RunProjectileVolleyB, 9)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode13,
+DEFINE_EFFECT_KIND(BattleEffect_RunSandBreath,
                    BattleEffect_RunProjectileVolleyB, 13)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode14,
+DEFINE_EFFECT_KIND(BattleEffect_RunDesertGasp,
                    BattleEffect_RunProjectileVolleyB, 14)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode15,
-                   BattleEffect_RunProjectileVolleyB, 15)
+DEFINE_EFFECT_KIND(BattleEffect_RunBlackIce, BattleEffect_RunProjectileVolleyB,
+                   15)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode16,
+DEFINE_EFFECT_KIND(BattleEffect_RunTyphoonBlow,
                    BattleEffect_RunProjectileVolleyB, 16)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode17,
-                   BattleEffect_RunProjectileVolleyB, 17)
+DEFINE_EFFECT_KIND(BattleEffect_RunDjinnfest, BattleEffect_RunProjectileVolleyB,
+                   17)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode18,
-                   BattleEffect_RunProjectileVolleyB, 18)
+DEFINE_EFFECT_KIND(BattleEffect_RunHeatKiss, BattleEffect_RunProjectileVolleyB,
+                   18)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode19,
                    BattleEffect_RunProjectileVolleyB, 19)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode20,
+DEFINE_EFFECT_KIND(BattleEffect_RunGravelBlow,
                    BattleEffect_RunProjectileVolleyB, 20)
 
-void BattleEffect_RunVolleyBMode10WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunAgingGas(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
@@ -124,8 +119,7 @@ void BattleEffect_RunVolleyBMode10WithAction(
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-void BattleEffect_RunVolleyBMode11WithAction(
-    struct BattleEffectArgument *effect) {
+void BattleEffect_RunFireDance(struct BattleEffectArgument *effect) {
   struct Actor *object;
 
   object = (struct Actor *)BattleObject_GetFar(effect->actor)->object;
@@ -850,9 +844,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       effect->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
       if (mode == 14)
-        SummonEffect_RunCanvasMode1(effect);
+        BattleEffect_RunImpair(effect);
       else
-        SummonEffect_RunCanvasMode3(effect);
+        BattleEffect_RunDull(effect);
     } else {
       BattleEffect_EndCanvasLayer();
     }

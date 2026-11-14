@@ -225,9 +225,9 @@ void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_RunMysticFlame(struct BattleEffectArgument *);
-void SummonEffect_RunCanvasMode3(void *action);
-void SummonEffect_RunCanvasMode1(void *action);
-void SummonEffect_RunCanvasMode2(void *action);
+void BattleEffect_RunDull(void *action);
+void BattleEffect_RunImpair(void *action);
+void BattleEffect_RunWeaken(void *action);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 
 void Canvas_BlitAtFoot(void *, s32, s32, s32);
@@ -249,6 +249,97 @@ void Render_DrawModelList__ability_effects(struct Model *);
   do {                                                                         \
     HeapSlot_Release(104);                                                     \
   } while (0)
+
+/// The casting impacts, by effect kind less 100: each is named for the first
+/// ability whose effect entry selects it as a casting impact, as The Broken
+/// Seal's are; those no ability selects are named UNUSED_ and for what they
+/// load or share. Kinds up to CASTING_IMPACT_LAST_DJINNI are Djinn;
+/// Terra Strike on are the enemies' abilities, in The Broken Seal's order.
+enum CastingImpact {
+  CASTING_IMPACT_IMPACT_BANE = 0,
+  CASTING_IMPACT_IMPACT_SMOG,
+  CASTING_IMPACT_IMPACT_MIST,
+  CASTING_IMPACT_IMPACT_FEVER,
+  CASTING_IMPACT_IMPACT_FLINT,
+  CASTING_IMPACT_IMPACT_SCORCH,
+  CASTING_IMPACT_IMPACT_SQUALL,
+  CASTING_IMPACT_IMPACT_SAP,
+  CASTING_IMPACT_IMPACT_ECHO,
+  CASTING_IMPACT_IMPACT_SOUR,
+  CASTING_IMPACT_IMPACT_CHILL,
+  CASTING_IMPACT_IMPACT_GEL,
+  CASTING_IMPACT_IMPACT_STEEL,
+  CASTING_IMPACT_IMPACT_FOG,
+  CASTING_IMPACT_IMPACT_UNUSED_BOLTS,
+  CASTING_IMPACT_IMPACT_UNUSED_SKULLS,
+  CASTING_IMPACT_IMPACT_WHEEZE,
+  CASTING_IMPACT_IMPACT_BLITZ,
+  CASTING_IMPACT_IMPACT_TERRA_STRIKE = 38,
+  CASTING_IMPACT_IMPACT_POISON_CLOUD,
+  CASTING_IMPACT_IMPACT_POISON_DEATH,
+  CASTING_IMPACT_IMPACT_MORTAL_DANGER, ///< also Death Scythe
+  CASTING_IMPACT_IMPACT_BAD_OMEN,
+  CASTING_IMPACT_IMPACT_LIFE_NOURISH,
+  CASTING_IMPACT_IMPACT_AQUA_SOCK,
+  CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS,
+  CASTING_IMPACT_IMPACT_FROST_BITE,
+  CASTING_IMPACT_IMPACT_UNUSED_GATHERING,
+  CASTING_IMPACT_IMPACT_LIFE_LEECH,
+  CASTING_IMPACT_IMPACT_PSY_LEECH,
+  CASTING_IMPACT_IMPACT_BROIL,
+  CASTING_IMPACT_IMPACT_MELTDOWN,
+  CASTING_IMPACT_IMPACT_HEAT_MIRAGE, ///< also Heat Flash
+  CASTING_IMPACT_IMPACT_BARRAGE,
+  CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME,
+  CASTING_IMPACT_IMPACT_ACID_BATH,
+  CASTING_IMPACT_IMPACT_UNUSED_COMETS,
+  CASTING_IMPACT_IMPACT_STUN_VOLTAGE,
+  CASTING_IMPACT_IMPACT_BLINDING_SMOG,
+  CASTING_IMPACT_IMPACT_MURK,
+  CASTING_IMPACT_IMPACT_CYCLONE_SLASH,
+  CASTING_IMPACT_IMPACT_PSYPHON_SEAL,
+  CASTING_IMPACT_IMPACT_ASURA,
+  CASTING_IMPACT_IMPACT_FORCIBLE_ARM, ///< also Grand Golem
+  CASTING_IMPACT_IMPACT_TRUNCHEON_FIST,
+  CASTING_IMPACT_IMPACT_SEVERE_BLOW,
+  CASTING_IMPACT_IMPACT_POWER_DRIVE,
+  CASTING_IMPACT_IMPACT_HEAT_SMASH,
+  CASTING_IMPACT_IMPACT_STUN_CLOUD,
+  CASTING_IMPACT_IMPACT_SEARING_FOG,
+  CASTING_IMPACT_IMPACT_ICE_CRUSH,
+  CASTING_IMPACT_IMPACT_SARGASSO,
+  CASTING_IMPACT_IMPACT_EVIL_EYE,
+  CASTING_IMPACT_IMPACT_VEIN_TAP,
+  CASTING_IMPACT_IMPACT_SCORPIONFISH,
+  CASTING_IMPACT_IMPACT_MOON_AIR,
+  CASTING_IMPACT_IMPACT_FLASH_EDGE,
+  CASTING_IMPACT_IMPACT_HIGH_VITALS,
+  CASTING_IMPACT_IMPACT_FLARE_BURST,
+  CASTING_IMPACT_IMPACT_HAMMERSPHERE,
+  CASTING_IMPACT_IMPACT_FLASH_FORCE,
+  CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE,
+  CASTING_IMPACT_IMPACT_REVERSE_STAR,
+  CASTING_IMPACT_IMPACT_SUPERNOVA,
+  CASTING_IMPACT_IMPACT_STUN_BOLT,
+  CASTING_IMPACT_IMPACT_SARCOPHAGUS,
+  CASTING_IMPACT_IMPACT_RAIDENS_WRATH,
+  CASTING_IMPACT_IMPACT_UNUSED_TILED_CANVAS,
+  CASTING_IMPACT_IMPACT_APOCALYPSE,
+  CASTING_IMPACT_IMPACT_FLASH_PUNCH,
+  CASTING_IMPACT_IMPACT_ARMOR_CRUSH,
+  CASTING_IMPACT_IMPACT_STUN_JIP,
+  CASTING_IMPACT_IMPACT_QUICK_SLASH,
+  CASTING_IMPACT_IMPACT_BOSCA_HIT,
+  CASTING_IMPACT_IMPACT_MOTHER_EARTH,
+  CASTING_IMPACT_IMPACT_ROC,       ///< also Orc
+  CASTING_IMPACT_IMPACT_WILD_WOLF, ///< also Fatal Fang
+  CASTING_IMPACT_IMPACT_DINOX,     ///< also Power Bite
+  CASTING_IMPACT_IMPACT_TERRIBLE_BITE,
+  CASTING_IMPACT_IMPACT_CALL_ZOMBIE,
+  CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI,
+  /// The last of the kinds a Djinni selects.
+  CASTING_IMPACT_LAST_DJINNI = 37
+};
 
 void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                                    s32 kind) {
@@ -291,8 +382,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   scrollA = 0;
   scrollB = 0;
 
-  if (kind == 41 || kind == 38 || kind == 62 || kind == 85 || kind == 86 ||
-      kind == 87 || kind == 88)
+  if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER ||
+      kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE ||
+      kind == CASTING_IMPACT_IMPACT_ASURA ||
+      kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS ||
+      kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH ||
+      kind == CASTING_IMPACT_IMPACT_UNUSED_TILED_CANVAS ||
+      kind == CASTING_IMPACT_IMPACT_APOCALYPSE)
     BattleEffect_StartTiledCanvas(0x2000);
   else
     BattleEffect_StartCanvasLayer(0);
@@ -304,11 +400,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, buffer, 1, 0);
   BattleEffect_PackTileRows(buffer, work->frames + 0x5100, 40, 0x120);
 
-  if (kind == 5 || kind == 53 || kind == 78) {
+  if (kind == CASTING_IMPACT_IMPACT_SCORCH ||
+      kind == CASTING_IMPACT_IMPACT_BARRAGE ||
+      kind == CASTING_IMPACT_IMPACT_FLARE_BURST) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, buffer, 1, 0);
-  } else if (kind == 42 || kind == 15) {
+  } else if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN ||
+             kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS) {
     Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, buffer, 1, 0);
-  } else if (kind == 16) {
+  } else if (kind == CASTING_IMPACT_IMPACT_WHEEZE) {
 
     s32 j;
     s32 v;
@@ -332,33 +431,36 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         buffer[j + i * 0x400] = v;
       }
     }
-  } else if (kind == 10) {
+  } else if (kind == CASTING_IMPACT_IMPACT_CHILL) {
     Resource_LoadAndDecompress((s32)&ResourceId_CloudPuffSheet, buffer, 1, 0);
-  } else if (kind == 6 || kind == 57 || kind == 14 || kind == 17) {
+  } else if (kind == CASTING_IMPACT_IMPACT_SQUALL ||
+             kind == CASTING_IMPACT_IMPACT_STUN_VOLTAGE ||
+             kind == CASTING_IMPACT_IMPACT_UNUSED_BOLTS ||
+             kind == CASTING_IMPACT_IMPACT_BLITZ) {
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                                buffer + 0xc56, 1, 0);
-  } else if (kind == 68) {
+  } else if (kind == CASTING_IMPACT_IMPACT_STUN_CLOUD) {
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, buffer + 0x1809, 1,
                                0);
-  } else if (kind == 61) {
+  } else if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer, 1, 1);
-  } else if (kind == 38) {
+  } else if (kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
     Resource_LoadAndDecompress((s32)&ResourceId_RockSpireSheet, buffer, 1, 1);
-  } else if (kind == 44) {
+  } else if (kind == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, buffer, 1, 0);
-  } else if (kind == 60) {
+  } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
-  } else if (kind == 46) {
+  } else if (kind == CASTING_IMPACT_IMPACT_FROST_BITE) {
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, buffer, 1, 0);
-  } else if (kind == 50) {
+  } else if (kind == CASTING_IMPACT_IMPACT_BROIL) {
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, buffer, 1, 0);
-  } else if (kind == 90) {
+  } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, buffer, 0, 0);
-  } else if (kind == 91) {
+  } else if (kind == CASTING_IMPACT_IMPACT_STUN_JIP) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, buffer + 0x4000, 0, 0);
-  } else if (kind == 84) {
+  } else if (kind == CASTING_IMPACT_IMPACT_STUN_BOLT) {
     s32 j;
     s32 k;
 
@@ -375,15 +477,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     }
     Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->frames,
                                1, 0);
-  } else if (kind == 63 || kind == 64) {
+  } else if (kind == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
+             kind == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA, buffer, 1, 0);
-  } else if (kind == 71 || kind == 82) {
+  } else if (kind == CASTING_IMPACT_IMPACT_SARGASSO ||
+             kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, buffer, 0, 0);
-  } else if (kind == 96 || kind == 97 || kind == 98) {
+  } else if (kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
+             kind == CASTING_IMPACT_IMPACT_DINOX ||
+             kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, buffer, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, buffer + 0xd80,
                                1, 0);
-  } else if (kind == 80) {
+  } else if (kind == CASTING_IMPACT_IMPACT_FLASH_FORCE) {
     s32 k;
     s32 i;
 
@@ -396,7 +502,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         buffer[0x237 + i * 64 - k] = buffer[0x1000 + i * 24 + k];
       }
     }
-  } else if (kind == 79) {
+  } else if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
     s32 i;
     s32 k;
 
@@ -409,64 +515,65 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         buffer[0x800 + (95 - i) * 48 + 47 - k] = buffer[i * 24 + k];
       }
     }
-  } else if (kind == 94) {
+  } else if (kind == CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, buffer, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture, buffer + 0x2000,
                                1, 1);
-  } else if (kind == 73) {
+  } else if (kind == CASTING_IMPACT_IMPACT_VEIN_TAP) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
-  } else if (kind == 70) {
+  } else if (kind == CASTING_IMPACT_IMPACT_ICE_CRUSH) {
     Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, buffer, 1, 0);
-  } else if (kind == 66) {
+  } else if (kind == CASTING_IMPACT_IMPACT_POWER_DRIVE) {
     Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, buffer, 1, 1);
-  } else if (kind != 41 && kind != 62) {
+  } else if (kind != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
+             kind != CASTING_IMPACT_IMPACT_ASURA) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, buffer, 1, 0);
   }
 
   switch (kind) {
-  case 0:
-  case 4:
-  case 7:
-  case 8:
-  case 12:
-  case 38:
-  case 39:
-  case 40:
-  case 41:
-  case 42:
-  case 43:
-  case 63:
-  case 72:
-  case 73:
-  case 79:
-  case 85:
-  case 94:
-  case 97:
-  case 98:
+  case CASTING_IMPACT_IMPACT_BANE:
+  case CASTING_IMPACT_IMPACT_FLINT:
+  case CASTING_IMPACT_IMPACT_SAP:
+  case CASTING_IMPACT_IMPACT_ECHO:
+  case CASTING_IMPACT_IMPACT_STEEL:
+  case CASTING_IMPACT_IMPACT_TERRA_STRIKE:
+  case CASTING_IMPACT_IMPACT_POISON_CLOUD:
+  case CASTING_IMPACT_IMPACT_POISON_DEATH:
+  case CASTING_IMPACT_IMPACT_MORTAL_DANGER:
+  case CASTING_IMPACT_IMPACT_BAD_OMEN:
+  case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
+  case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
+  case CASTING_IMPACT_IMPACT_EVIL_EYE:
+  case CASTING_IMPACT_IMPACT_VEIN_TAP:
+  case CASTING_IMPACT_IMPACT_HAMMERSPHERE:
+  case CASTING_IMPACT_IMPACT_SARCOPHAGUS:
+  case CASTING_IMPACT_IMPACT_MOTHER_EARTH:
+  case CASTING_IMPACT_IMPACT_DINOX:
+  case CASTING_IMPACT_IMPACT_TERRIBLE_BITE:
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BlastSheet), PLTT,
             0x84000020, REG_DMA3);
     if (action->prelude == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                  buffer + 0x3c56, 1, 0);
     break;
-  case 2:
-  case 9:
-  case 10:
-  case 11:
-  case 13:
-  case 44:
-  case 45:
-  case 46:
-  case 47:
-  case 48:
-  case 49:
-  case 68:
-  case 69:
-  case 70:
-  case 71:
-  case 80:
-  case 82:
-  case 99:
+  case CASTING_IMPACT_IMPACT_MIST:
+  case CASTING_IMPACT_IMPACT_SOUR:
+  case CASTING_IMPACT_IMPACT_CHILL:
+  case CASTING_IMPACT_IMPACT_GEL:
+  case CASTING_IMPACT_IMPACT_FOG:
+  case CASTING_IMPACT_IMPACT_AQUA_SOCK:
+  case CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS:
+  case CASTING_IMPACT_IMPACT_FROST_BITE:
+  case CASTING_IMPACT_IMPACT_UNUSED_GATHERING:
+  case CASTING_IMPACT_IMPACT_LIFE_LEECH:
+  case CASTING_IMPACT_IMPACT_PSY_LEECH:
+  case CASTING_IMPACT_IMPACT_STUN_CLOUD:
+  case CASTING_IMPACT_IMPACT_SEARING_FOG:
+  case CASTING_IMPACT_IMPACT_ICE_CRUSH:
+  case CASTING_IMPACT_IMPACT_SARGASSO:
+  case CASTING_IMPACT_IMPACT_FLASH_FORCE:
+  case CASTING_IMPACT_IMPACT_REVERSE_STAR:
+  case CASTING_IMPACT_IMPACT_CALL_ZOMBIE:
     if (action->prelude == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                  buffer + 0x3c56, 1, 1);
@@ -474,25 +581,25 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet),
               PLTT, 0x84000020, REG_DMA3);
     break;
-  case 3:
-  case 5:
-  case 14:
-  case 15:
-  case 50:
-  case 51:
-  case 52:
-  case 53:
-  case 54:
-  case 55:
-  case 64:
-  case 65:
-  case 66:
-  case 67:
-  case 74:
-  case 78:
-  case 81:
-  case 90:
-  case 91:
+  case CASTING_IMPACT_IMPACT_FEVER:
+  case CASTING_IMPACT_IMPACT_SCORCH:
+  case CASTING_IMPACT_IMPACT_UNUSED_BOLTS:
+  case CASTING_IMPACT_IMPACT_UNUSED_SKULLS:
+  case CASTING_IMPACT_IMPACT_BROIL:
+  case CASTING_IMPACT_IMPACT_MELTDOWN:
+  case CASTING_IMPACT_IMPACT_HEAT_MIRAGE:
+  case CASTING_IMPACT_IMPACT_BARRAGE:
+  case CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME:
+  case CASTING_IMPACT_IMPACT_ACID_BATH:
+  case CASTING_IMPACT_IMPACT_TRUNCHEON_FIST:
+  case CASTING_IMPACT_IMPACT_SEVERE_BLOW:
+  case CASTING_IMPACT_IMPACT_POWER_DRIVE:
+  case CASTING_IMPACT_IMPACT_HEAT_SMASH:
+  case CASTING_IMPACT_IMPACT_SCORPIONFISH:
+  case CASTING_IMPACT_IMPACT_FLARE_BURST:
+  case CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE:
+  case CASTING_IMPACT_IMPACT_ARMOR_CRUSH:
+  case CASTING_IMPACT_IMPACT_STUN_JIP:
     if (action->prelude == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                  buffer + 0x3c56, 1, 1);
@@ -500,26 +607,26 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
               PLTT, 0x84000020, REG_DMA3);
     break;
-  case 1:
-  case 6:
-  case 16:
-  case 17:
-  case 56:
-  case 57:
-  case 58:
-  case 59:
-  case 60:
-  case 61:
-  case 62:
-  case 75:
-  case 76:
-  case 77:
-  case 83:
-  case 84:
-  case 86:
-  case 88:
-  case 89:
-  case 92:
+  case CASTING_IMPACT_IMPACT_SMOG:
+  case CASTING_IMPACT_IMPACT_SQUALL:
+  case CASTING_IMPACT_IMPACT_WHEEZE:
+  case CASTING_IMPACT_IMPACT_BLITZ:
+  case CASTING_IMPACT_IMPACT_UNUSED_COMETS:
+  case CASTING_IMPACT_IMPACT_STUN_VOLTAGE:
+  case CASTING_IMPACT_IMPACT_BLINDING_SMOG:
+  case CASTING_IMPACT_IMPACT_MURK:
+  case CASTING_IMPACT_IMPACT_CYCLONE_SLASH:
+  case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
+  case CASTING_IMPACT_IMPACT_ASURA:
+  case CASTING_IMPACT_IMPACT_MOON_AIR:
+  case CASTING_IMPACT_IMPACT_FLASH_EDGE:
+  case CASTING_IMPACT_IMPACT_HIGH_VITALS:
+  case CASTING_IMPACT_IMPACT_SUPERNOVA:
+  case CASTING_IMPACT_IMPACT_STUN_BOLT:
+  case CASTING_IMPACT_IMPACT_RAIDENS_WRATH:
+  case CASTING_IMPACT_IMPACT_APOCALYPSE:
+  case CASTING_IMPACT_IMPACT_FLASH_PUNCH:
+  case CASTING_IMPACT_IMPACT_QUICK_SLASH:
     if (action->prelude == 1)
       Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                  buffer + 0x3c56, 1, 1);
@@ -527,22 +634,26 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSmallSheet),
               PLTT, 0x84000020, REG_DMA3);
     break;
-  case 93:
-  case 95:
-  case 96:
+  case CASTING_IMPACT_IMPACT_BOSCA_HIT:
+  case CASTING_IMPACT_IMPACT_ROC:
+  case CASTING_IMPACT_IMPACT_WILD_WOLF:
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_DustPuffSheet), PLTT,
             0x84000020, REG_DMA3);
     break;
-  case 100:
+  case CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI:
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                buffer + 0x3c56, 1, 1);
     break;
   }
 
-  if (kind == 81 || kind == 83 || kind == 91 || kind == 92 || kind == 93)
+  if (kind == CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE ||
+      kind == CASTING_IMPACT_IMPACT_SUPERNOVA ||
+      kind == CASTING_IMPACT_IMPACT_STUN_JIP ||
+      kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
+      kind == CASTING_IMPACT_IMPACT_BOSCA_HIT)
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, buffer, 0, 0);
   work->unk7780 = 2;
-  if (kind == 42)
+  if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN)
     work->unk7784 = 75;
   else
     work->unk7784 = 50;
@@ -632,9 +743,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             Transform_ApplyYaw(p->vy);
             EffectPosition_ProjectPoint(p, pos);
             pos[0] = pos[0] / 2 + base[0];
-            if (kind <= 37)
+            if (kind <= CASTING_IMPACT_LAST_DJINNI)
               pos[1] = pos[1] + base[1] - 8;
-            else if (kind == 65)
+            else if (kind == CASTING_IMPACT_IMPACT_SEVERE_BLOW)
               pos[1] = pos[1] + base[1] + 44;
             else
               pos[1] = pos[1] + base[1] + 12;
@@ -651,7 +762,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           count++;
         }
       }
-      if (kind <= 37 && count < 64) {
+      if (kind <= CASTING_IMPACT_LAST_DJINNI && count < 64) {
         Transform_Reset();
         Transform_SetLookAt(bg, (u8 *)bg + 12);
         EffectPosition_ProjectPoint(origin, pos);
@@ -665,19 +776,19 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       wait(1);
     }
 
-    if (kind == 41) {
+    if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       REG_BG2PA = 0x100;
       if (action->side == 0)
         REG_BG2X = (frame - target[0]) << 8;
       else
         REG_BG2X = (96 - target[0]) << 8;
-    } else if (kind == 85) {
+    } else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
       REG_BG2PA = 0x100;
       if (action->side == 0)
         REG_BG2X = (64 - target[0]) << 8;
       else
         REG_BG2X = (64 - target[0]) << 8;
-    } else if (kind == 88) {
+    } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
       REG_BG2PA = 0x100;
       if (action->side == 0) {
         scrollA = 0xffc00000;
@@ -687,7 +798,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         scrollB = 0xfffe0000;
       }
       REG_BG2X = (scrollA >> 16) << 8;
-    } else if (kind == 62 || kind == 86) {
+    } else if (kind == CASTING_IMPACT_IMPACT_ASURA ||
+               kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
       REG_BG2PA = 0x100;
       if (action->side == 0) {
         scrollA = 0xff800000;
@@ -698,7 +810,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       }
       REG_BG2X = (scrollA >> 16) << 8;
     }
-    if (kind == 38) {
+    if (kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
       REG_BG2PA = 0x100;
       REG_BG2X = (64 - target[0]) << 8;
       work->unk7780 = 1;
@@ -707,14 +819,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       Iwram_ClearWords(screen, 0x3c00);
       REG_BLDCNT = 0;
     }
-    if (kind == 61) {
+    if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
       REG_BG2PA = 0x100;
       if (action->side == 0)
         REG_BG2X = (32 - target[0]) << 8;
       else
         REG_BG2X = (96 - target[0]) << 8;
     }
-    if (kind == 45 || kind == 47 || kind == 54 || kind == 56) {
+    if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS ||
+        kind == CASTING_IMPACT_IMPACT_UNUSED_GATHERING ||
+        kind == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME ||
+        kind == CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
       Iwram_ClearWords(BG_VRAM, 0x3c00);
       Iwram_ClearWords(screen, 0x3c00);
       action->prelude = 0;
@@ -723,11 +838,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       Actor_SelectAnimationFar(object, 3);
-      if (kind == 45)
+      if (kind == CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS)
         BattleEffect_RunProjectileVolley(action, 9);
-      if (kind == 54)
+      if (kind == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME)
         BattleEffect_RunMysticFlame(action);
-      if (kind == 56)
+      if (kind == CASTING_IMPACT_IMPACT_UNUSED_COMETS)
         BattleEffect_RunProjectileVolley(action, 8);
       return;
     }
@@ -737,7 +852,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     object->velocityZ = save2c;
     object->acceleration = save34;
     object->verticalMotionStrength = save48;
-    if (kind == 65) {
+    if (kind == CASTING_IMPACT_IMPACT_SEVERE_BLOW) {
       Iwram_ClearWords(BG_VRAM, 0x3c00);
       Iwram_ClearWords(screen, 0x3c00);
       action->prelude = 0;
@@ -751,7 +866,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     }
     Iwram_ClearWords(screen, 0x3c00);
     Iwram_ClearWords(BG_VRAM, 0x3c00);
-    if (kind == 79) {
+    if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
       for (i = 1; i != 64; i++) {
         v = 31 - ((Trig_Cos(i << 8) << 5) >> 16);
         BG_PLTT[i] = (v << 10) | (v << 5) | v;
@@ -765,13 +880,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     }
     for (i = 0; i != 64; i++)
       work->particle[i].life = 0;
-    if (kind != 44) {
+    if (kind != CASTING_IMPACT_IMPACT_AQUA_SOCK) {
       half = BattleUnit_GetEffectHeightFar(action->actors[0]) / 2;
       i = 0;
       p = work->particle;
       for (; i != 32; i++, p++) {
         SET_POSITION(p, object2->x, half, object2->z);
-        if (kind == 61) {
+        if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
           p->vx = ((Random16() & 255) - 127) << 12;
           p->vy = ((Random16() & 255) - 64) << 10;
           p->vz = ((Random16() & 255) - 127) << 12;
@@ -786,37 +901,49 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         p->life = i / 2 + 32;
       }
     }
-    if (kind == 41) {
+    if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet,
                                  work->frames, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, buffer, 1,
                                  0);
       REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
-    if (kind == 86) {
+    if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0F1, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(16, 8);
     }
-    if (kind == 88) {
+    if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0DD, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(16, 8);
     }
-    if (kind == 62) {
+    if (kind == CASTING_IMPACT_IMPACT_ASURA) {
       Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet, work->frames,
                                  1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB, buffer, 1,
                                  0);
       REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
-    if (kind == 85) {
+    if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0F0, buffer, 1, 1);
       REG_BLDALPHA = BLEND_ALPHA(16, 14);
     }
 
-    if (kind == 7 || kind == 43 || kind == 48 || kind == 73 || kind == 77 ||
-        kind == 78 || kind == 41 || kind == 62 || kind == 49 || kind == 12 ||
-        kind == 83 || kind == 84 || kind == 85 || kind == 86 || kind == 88) {
-    } else if (kind == 66) {
+    if (kind == CASTING_IMPACT_IMPACT_SAP ||
+        kind == CASTING_IMPACT_IMPACT_LIFE_NOURISH ||
+        kind == CASTING_IMPACT_IMPACT_LIFE_LEECH ||
+        kind == CASTING_IMPACT_IMPACT_VEIN_TAP ||
+        kind == CASTING_IMPACT_IMPACT_HIGH_VITALS ||
+        kind == CASTING_IMPACT_IMPACT_FLARE_BURST ||
+        kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER ||
+        kind == CASTING_IMPACT_IMPACT_ASURA ||
+        kind == CASTING_IMPACT_IMPACT_PSY_LEECH ||
+        kind == CASTING_IMPACT_IMPACT_STEEL ||
+        kind == CASTING_IMPACT_IMPACT_SUPERNOVA ||
+        kind == CASTING_IMPACT_IMPACT_STUN_BOLT ||
+        kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS ||
+        kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH ||
+        kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
+    } else if (kind == CASTING_IMPACT_IMPACT_POWER_DRIVE) {
       for (i = 0; i != 64; i++) {
         struct Particle *q;
         q = &SPARKS[i];
@@ -831,27 +958,34 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       }
     } else {
       struct Particle *p;
-      if (kind == 42 || kind == 15)
+      if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN ||
+          kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS)
         height = 0;
       else
         height = 0x140000;
       p = SPARKS;
       for (i = 0; i != 64; i++, p++) {
         SET_POSITION(p, object2->x, height, object2->z);
-        if (kind == 5 || kind == 53) {
+        if (kind == CASTING_IMPACT_IMPACT_SCORCH ||
+            kind == CASTING_IMPACT_IMPACT_BARRAGE) {
           p->vx = ((Random16() & 255) - 127) << 11;
           p->vy = (Random16() & 255) << 11;
           p->vz = ((Random16() & 255) - 127) << 11;
-        } else if (kind == 68 || kind == 69 || kind == 74 || kind == 75 ||
-                   kind == 16 || kind == 97 || kind == 10) {
+        } else if (kind == CASTING_IMPACT_IMPACT_STUN_CLOUD ||
+                   kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
+                   kind == CASTING_IMPACT_IMPACT_SCORPIONFISH ||
+                   kind == CASTING_IMPACT_IMPACT_MOON_AIR ||
+                   kind == CASTING_IMPACT_IMPACT_WHEEZE ||
+                   kind == CASTING_IMPACT_IMPACT_DINOX ||
+                   kind == CASTING_IMPACT_IMPACT_CHILL) {
           p->vx = ((Random16() & 255) - 127) << 13;
           p->vy = ((Random16() & 255) - 127) << 12;
           p->vz = ((Random16() & 255) - 127) << 13;
-        } else if (kind == 98) {
+        } else if (kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
           p->vx = ((Random16() & 255) - 127) << 14;
           p->vy = ((Random16() & 255) - 127) << 13;
           p->vz = ((Random16() & 255) - 127) << 14;
-        } else if (kind == 55) {
+        } else if (kind == CASTING_IMPACT_IMPACT_ACID_BATH) {
           p->vx = ((Random16() & 255) - 127) << 11;
           p->vy = (Random16() & 127) << 10;
           p->vz = ((Random16() & 255) - 127) << 11;
@@ -867,33 +1001,90 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       }
     }
 
-    if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||
-        kind == 72 || kind == 59 || kind == 58 || kind == 69 || kind == 89)
+    if (kind == CASTING_IMPACT_IMPACT_MIST ||
+        kind == CASTING_IMPACT_IMPACT_FEVER ||
+        kind == CASTING_IMPACT_IMPACT_BAD_OMEN ||
+        kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS ||
+        kind == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
+        kind == CASTING_IMPACT_IMPACT_EVIL_EYE ||
+        kind == CASTING_IMPACT_IMPACT_MURK ||
+        kind == CASTING_IMPACT_IMPACT_BLINDING_SMOG ||
+        kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
+        kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
       Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 3200);
 
-    if (kind == 4 || kind == 5 || kind == 6 || kind == 17 || kind == 53 ||
-        kind == 60 || kind == 57 || kind == 14 || kind == 63 || kind == 64 ||
-        kind == 100 || kind == 83 || kind == 90 || kind == 91 || kind == 76 ||
-        kind == 66 || kind == 92 || kind == 93 || kind == 96 || kind == 97)
+    if (kind == CASTING_IMPACT_IMPACT_FLINT ||
+        kind == CASTING_IMPACT_IMPACT_SCORCH ||
+        kind == CASTING_IMPACT_IMPACT_SQUALL ||
+        kind == CASTING_IMPACT_IMPACT_BLITZ ||
+        kind == CASTING_IMPACT_IMPACT_BARRAGE ||
+        kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH ||
+        kind == CASTING_IMPACT_IMPACT_STUN_VOLTAGE ||
+        kind == CASTING_IMPACT_IMPACT_UNUSED_BOLTS ||
+        kind == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
+        kind == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST ||
+        kind == CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI ||
+        kind == CASTING_IMPACT_IMPACT_SUPERNOVA ||
+        kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH ||
+        kind == CASTING_IMPACT_IMPACT_STUN_JIP ||
+        kind == CASTING_IMPACT_IMPACT_FLASH_EDGE ||
+        kind == CASTING_IMPACT_IMPACT_POWER_DRIVE ||
+        kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
+        kind == CASTING_IMPACT_IMPACT_BOSCA_HIT ||
+        kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
+        kind == CASTING_IMPACT_IMPACT_DINOX)
       duration = 32;
-    else if (kind == 0 || kind == 1 || kind == 2 || kind == 3 || kind == 13 ||
-             kind == 38 || kind == 39 || kind == 74 || kind == 75 ||
-             kind == 40 || kind == 52 || kind == 72 || kind == 69 ||
-             kind == 55 || kind == 59 || kind == 61 || kind == 44 ||
-             kind == 70 || kind == 86 || kind == 88 || kind == 89 ||
-             kind == 16 || kind == 10)
+    else if (kind == CASTING_IMPACT_IMPACT_BANE ||
+             kind == CASTING_IMPACT_IMPACT_SMOG ||
+             kind == CASTING_IMPACT_IMPACT_MIST ||
+             kind == CASTING_IMPACT_IMPACT_FEVER ||
+             kind == CASTING_IMPACT_IMPACT_FOG ||
+             kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE ||
+             kind == CASTING_IMPACT_IMPACT_POISON_CLOUD ||
+             kind == CASTING_IMPACT_IMPACT_SCORPIONFISH ||
+             kind == CASTING_IMPACT_IMPACT_MOON_AIR ||
+             kind == CASTING_IMPACT_IMPACT_POISON_DEATH ||
+             kind == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
+             kind == CASTING_IMPACT_IMPACT_EVIL_EYE ||
+             kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
+             kind == CASTING_IMPACT_IMPACT_ACID_BATH ||
+             kind == CASTING_IMPACT_IMPACT_MURK ||
+             kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL ||
+             kind == CASTING_IMPACT_IMPACT_AQUA_SOCK ||
+             kind == CASTING_IMPACT_IMPACT_ICE_CRUSH ||
+             kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH ||
+             kind == CASTING_IMPACT_IMPACT_APOCALYPSE ||
+             kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH ||
+             kind == CASTING_IMPACT_IMPACT_WHEEZE ||
+             kind == CASTING_IMPACT_IMPACT_CHILL)
       duration = 48;
-    else if (kind == 51 || kind == 67 || kind == 9 || kind == 11 ||
-             kind == 95 || kind == 99)
+    else if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||
+             kind == CASTING_IMPACT_IMPACT_HEAT_SMASH ||
+             kind == CASTING_IMPACT_IMPACT_SOUR ||
+             kind == CASTING_IMPACT_IMPACT_GEL ||
+             kind == CASTING_IMPACT_IMPACT_ROC ||
+             kind == CASTING_IMPACT_IMPACT_CALL_ZOMBIE)
       duration = 20;
-    else if (kind == 41 || kind == 62 || kind == 50 || kind == 81 ||
-             kind == 84 || kind == 91 || kind == 79 || kind == 98)
+    else if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER ||
+             kind == CASTING_IMPACT_IMPACT_ASURA ||
+             kind == CASTING_IMPACT_IMPACT_BROIL ||
+             kind == CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE ||
+             kind == CASTING_IMPACT_IMPACT_STUN_BOLT ||
+             kind == CASTING_IMPACT_IMPACT_STUN_JIP ||
+             kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE ||
+             kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE)
       duration = 40;
-    else if (kind == 85)
+    else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS)
       duration = 72;
-    else if (kind == 58 || kind == 42 || kind == 15 || kind == 68)
+    else if (kind == CASTING_IMPACT_IMPACT_BLINDING_SMOG ||
+             kind == CASTING_IMPACT_IMPACT_BAD_OMEN ||
+             kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS ||
+             kind == CASTING_IMPACT_IMPACT_STUN_CLOUD)
       duration = 64;
-    else if (kind == 8 || kind == 71 || kind == 80 || kind == 94)
+    else if (kind == CASTING_IMPACT_IMPACT_ECHO ||
+             kind == CASTING_IMPACT_IMPACT_SARGASSO ||
+             kind == CASTING_IMPACT_IMPACT_FLASH_FORCE ||
+             kind == CASTING_IMPACT_IMPACT_MOTHER_EARTH)
       duration = 54;
     else
       duration = 80;
@@ -901,89 +1092,93 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
     for (frame = 0; frame != duration; frame++) {
       struct Particle *p;
       struct Particle *particle;
-      if (kind != 41 && kind != 62 && kind != 83 && kind != 85 && kind != 86 &&
-          kind != 88) {
+      if (kind != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
+          kind != CASTING_IMPACT_IMPACT_ASURA &&
+          kind != CASTING_IMPACT_IMPACT_SUPERNOVA &&
+          kind != CASTING_IMPACT_IMPACT_SARCOPHAGUS &&
+          kind != CASTING_IMPACT_IMPACT_RAIDENS_WRATH &&
+          kind != CASTING_IMPACT_IMPACT_APOCALYPSE) {
         s32 *w;
         w = work->wave;
         for (i = 0; i != 160; i++)
           *w++ = (0x40000 - (Trig_Sin((frame << 12) + (i << 11)) << 2)) >> 10;
       }
       switch (kind) {
-      case 10:
+      case CASTING_IMPACT_IMPACT_CHILL:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_CloudPuffSheet);
         break;
-      case 66:
+      case CASTING_IMPACT_IMPACT_POWER_DRIVE:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_FireballSheet);
         break;
-      case 69:
+      case CASTING_IMPACT_IMPACT_SEARING_FOG:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette01);
         break;
-      case 63:
+      case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
         break;
-      case 44:
-      case 68:
+      case CASTING_IMPACT_IMPACT_AQUA_SOCK:
+      case CASTING_IMPACT_IMPACT_STUN_CLOUD:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
         break;
-      case 61:
+      case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_RuneSheet);
         break;
-      case 38:
+      case CASTING_IMPACT_IMPACT_TERRA_STRIKE:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
         break;
-      case 0:
-      case 40:
-      case 74:
+      case CASTING_IMPACT_IMPACT_BANE:
+      case CASTING_IMPACT_IMPACT_POISON_DEATH:
+      case CASTING_IMPACT_IMPACT_SCORPIONFISH:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
         break;
-      case 42:
-      case 43:
-      case 55:
+      case CASTING_IMPACT_IMPACT_BAD_OMEN:
+      case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
+      case CASTING_IMPACT_IMPACT_ACID_BATH:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
         break;
-      case 48:
-      case 77:
+      case CASTING_IMPACT_IMPACT_LIFE_LEECH:
+      case CASTING_IMPACT_IMPACT_HIGH_VITALS:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
         break;
-      case 49:
+      case CASTING_IMPACT_IMPACT_PSY_LEECH:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
         break;
-      case 2:
-      case 59:
-      case 75:
-      case 82:
-      case 91:
+      case CASTING_IMPACT_IMPACT_MIST:
+      case CASTING_IMPACT_IMPACT_MURK:
+      case CASTING_IMPACT_IMPACT_MOON_AIR:
+      case CASTING_IMPACT_IMPACT_REVERSE_STAR:
+      case CASTING_IMPACT_IMPACT_STUN_JIP:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);
         break;
-      case 1:
-      case 13:
-      case 58:
-      case 89:
+      case CASTING_IMPACT_IMPACT_SMOG:
+      case CASTING_IMPACT_IMPACT_FOG:
+      case CASTING_IMPACT_IMPACT_BLINDING_SMOG:
+      case CASTING_IMPACT_IMPACT_FLASH_PUNCH:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_CyanPalette);
         break;
-      case 3:
-      case 50:
-      case 52:
-      case 78:
+      case CASTING_IMPACT_IMPACT_FEVER:
+      case CASTING_IMPACT_IMPACT_BROIL:
+      case CASTING_IMPACT_IMPACT_HEAT_MIRAGE:
+      case CASTING_IMPACT_IMPACT_FLARE_BURST:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
         break;
-      case 39:
-      case 83:
+      case CASTING_IMPACT_IMPACT_POISON_CLOUD:
+      case CASTING_IMPACT_IMPACT_SUPERNOVA:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_LimePalette);
         break;
-      case 5:
-      case 53:
+      case CASTING_IMPACT_IMPACT_SCORCH:
+      case CASTING_IMPACT_IMPACT_BARRAGE:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
         break;
-      case 81:
-      case 90:
-      case 98:
+      case CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE:
+      case CASTING_IMPACT_IMPACT_ARMOR_CRUSH:
+      case CASTING_IMPACT_IMPACT_TERRIBLE_BITE:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
         break;
-      case 73:
+      case CASTING_IMPACT_IMPACT_VEIN_TAP:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_RedPaletteB);
         break;
-      case 84:
+      case CASTING_IMPACT_IMPACT_STUN_BOLT:
         BattleEffect_StepPaletteToResource((s32)&ResourceId_EffectPalette05);
         break;
       }
@@ -992,9 +1187,20 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         base[0] = base[0] / 2;
         base[1] += 8;
       }
-      if (kind != 41 && kind != 38 && kind != 62 && kind != 63 && kind != 64 &&
-          kind != 79 && kind != 70 && kind != 82 && kind != 85 && kind != 86 &&
-          kind != 88 && kind != 89 && kind != 94 && kind != 96 && frame < 12) {
+      if (kind != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
+          kind != CASTING_IMPACT_IMPACT_TERRA_STRIKE &&
+          kind != CASTING_IMPACT_IMPACT_ASURA &&
+          kind != CASTING_IMPACT_IMPACT_FORCIBLE_ARM &&
+          kind != CASTING_IMPACT_IMPACT_TRUNCHEON_FIST &&
+          kind != CASTING_IMPACT_IMPACT_HAMMERSPHERE &&
+          kind != CASTING_IMPACT_IMPACT_ICE_CRUSH &&
+          kind != CASTING_IMPACT_IMPACT_REVERSE_STAR &&
+          kind != CASTING_IMPACT_IMPACT_SARCOPHAGUS &&
+          kind != CASTING_IMPACT_IMPACT_RAIDENS_WRATH &&
+          kind != CASTING_IMPACT_IMPACT_APOCALYPSE &&
+          kind != CASTING_IMPACT_IMPACT_FLASH_PUNCH &&
+          kind != CASTING_IMPACT_IMPACT_MOTHER_EARTH &&
+          kind != CASTING_IMPACT_IMPACT_WILD_WOLF && frame < 12) {
         if (action->side == 0)
           drawFuncs.draw[0](screen, work->frames + (frame / 2) * 0xd80,
                             base[0] - 28, base[1] - 40, 48, 72);
@@ -1002,8 +1208,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           drawFuncs.draw[0](screen, work->frames + (frame / 2) * 0xd80,
                             base[0] - 20, base[1] - 40, 48, 72);
       }
-      if (kind != 41 && kind != 38 && kind != 62 && kind != 83 && kind != 85 &&
-          kind != 86 && kind != 88 && kind != 94) {
+      if (kind != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
+          kind != CASTING_IMPACT_IMPACT_TERRA_STRIKE &&
+          kind != CASTING_IMPACT_IMPACT_ASURA &&
+          kind != CASTING_IMPACT_IMPACT_SUPERNOVA &&
+          kind != CASTING_IMPACT_IMPACT_SARCOPHAGUS &&
+          kind != CASTING_IMPACT_IMPACT_RAIDENS_WRATH &&
+          kind != CASTING_IMPACT_IMPACT_APOCALYPSE &&
+          kind != CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
         if (frame >= 4 && frame < 16)
           drawFuncs.draw[1](screen,
                             work->frames + 0x5100 + ((frame - 4) / 2) * 0x3c0,
@@ -1011,7 +1223,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         Transform_Reset();
         Transform_SetLookAt(bg, (u8 *)bg + 12);
         if (frame > 3) {
-          if (kind == 79) {
+          if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
             struct Particle *r;
             for (i = 0; i != 64; i++) {
               r = &work->particle[i];
@@ -1029,7 +1241,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 // never holds; the source keeps it.
                 {
                   s32 gravity;
-                  if (kind == 89)
+                  if (kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
                     gravity = 0;
                   else
                     gravity = -0x800;
@@ -1057,8 +1269,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
       }
 
-      if (kind == 7 || kind == 43 || kind == 48 || kind == 73 || kind == 77 ||
-          kind == 78 || kind == 49 || kind == 12 || kind == 82) {
+      if (kind == CASTING_IMPACT_IMPACT_SAP ||
+          kind == CASTING_IMPACT_IMPACT_LIFE_NOURISH ||
+          kind == CASTING_IMPACT_IMPACT_LIFE_LEECH ||
+          kind == CASTING_IMPACT_IMPACT_VEIN_TAP ||
+          kind == CASTING_IMPACT_IMPACT_HIGH_VITALS ||
+          kind == CASTING_IMPACT_IMPACT_FLARE_BURST ||
+          kind == CASTING_IMPACT_IMPACT_PSY_LEECH ||
+          kind == CASTING_IMPACT_IMPACT_STEEL ||
+          kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
         s32 start;
         struct MotionObject *object3;
         s32 half;
@@ -1070,7 +1289,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         start = 12;
         if (frame == 12)
           Sound_PlayFar(SE_SWIRL);
-        if (kind == 78)
+        if (kind == CASTING_IMPACT_IMPACT_FLARE_BURST)
           start = 0;
         if (frame == 50)
           BattleEffect_TintBattler(action->actor, 7, -1, -1, 0);
@@ -1084,7 +1303,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             p->vx = ((Random16() & 255) - 128) << 10;
             p->vy = ((Random16() & 255) - 128) << 10;
             p->vz = ((Random16() & 255) - 128) << 10;
-            if (kind == 78) {
+            if (kind == CASTING_IMPACT_IMPACT_FLARE_BURST) {
               p->vx <<= 1;
               p->vy <<= 1;
               p->vz <<= 1;
@@ -1096,7 +1315,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           p = SPARKS;
           object3 = BattleObject_GetFar(action->actor)->object;
           half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
-          slot = kind == 78;
+          slot = kind == CASTING_IMPACT_IMPACT_FLARE_BURST;
           for (i = 0; i != 32; i++, p++) {
             if (p->life >= 0) {
               n = (i & 1) + 6;
@@ -1122,9 +1341,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
       }
 
-      if (kind == 7 || kind == 43 || kind == 48 || kind == 73 || kind == 77 ||
-          kind == 49 || kind == 12) {
-      } else if (kind == 66) {
+      if (kind == CASTING_IMPACT_IMPACT_SAP ||
+          kind == CASTING_IMPACT_IMPACT_LIFE_NOURISH ||
+          kind == CASTING_IMPACT_IMPACT_LIFE_LEECH ||
+          kind == CASTING_IMPACT_IMPACT_VEIN_TAP ||
+          kind == CASTING_IMPACT_IMPACT_HIGH_VITALS ||
+          kind == CASTING_IMPACT_IMPACT_PSY_LEECH ||
+          kind == CASTING_IMPACT_IMPACT_STEEL) {
+      } else if (kind == CASTING_IMPACT_IMPACT_POWER_DRIVE) {
         struct Particle *p;
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
@@ -1137,24 +1361,32 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             p->life++;
           }
         }
-      } else if (kind == 51 || kind == 67 || kind == 9 || kind == 95 ||
-                 kind == 99) {
-      } else if (kind == 6 || kind == 57 || kind == 14 || kind == 17) {
+      } else if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||
+                 kind == CASTING_IMPACT_IMPACT_HEAT_SMASH ||
+                 kind == CASTING_IMPACT_IMPACT_SOUR ||
+                 kind == CASTING_IMPACT_IMPACT_ROC ||
+                 kind == CASTING_IMPACT_IMPACT_CALL_ZOMBIE) {
+      } else if (kind == CASTING_IMPACT_IMPACT_SQUALL ||
+                 kind == CASTING_IMPACT_IMPACT_STUN_VOLTAGE ||
+                 kind == CASTING_IMPACT_IMPACT_UNUSED_BOLTS ||
+                 kind == CASTING_IMPACT_IMPACT_BLITZ) {
         s32 y;
-        if (kind == 17) {
+        if (kind == CASTING_IMPACT_IMPACT_BLITZ) {
           if (frame == 4)
             work->unk77a8 = 12;
           if (frame == 8)
             Sound_PlayFar(SE_RISE_WITH_SPARKS);
         }
-        if (kind == 6 || kind == 57) {
+        if (kind == CASTING_IMPACT_IMPACT_SQUALL ||
+            kind == CASTING_IMPACT_IMPACT_STUN_VOLTAGE) {
           if (frame >= 6 && frame < 20) {
             for (i = 0; i != 2; i++)
               drawFuncs.draw[0](
                   screen, buffer + 0xc56 + (((frame + i * 3) / 2) & 3) * 2880,
                   target[0] / 2 - 8, 0, 24, 104);
           }
-        } else if (kind == 17 && (frame >= 6 && frame < 20)) {
+        } else if (kind == CASTING_IMPACT_IMPACT_BLITZ &&
+                   (frame >= 6 && frame < 20)) {
           s32 x;
           for (i = 0; i != 4; i++) {
             s32 m;
@@ -1173,7 +1405,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           s32 off;
           s32 amp;
 
-          if (kind == 14) {
+          if (kind == CASTING_IMPACT_IMPACT_UNUSED_BOLTS) {
             amp = 12;
             off = 24;
           } else {
@@ -1203,7 +1435,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
           }
         }
-      } else if (kind == 68) {
+      } else if (kind == CASTING_IMPACT_IMPACT_STUN_CLOUD) {
         s32 angle;
         if (frame >= 8 && frame < 24) {
           s32 y;
@@ -1245,7 +1477,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         if (frame == 6)
           Sound_PlayFar(SE_RISE_WITH_SPARKS);
-      } else if (kind == 44) {
+      } else if (kind == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
         s32 count;
         HeapSlot_Release(188);
         HeapSlot_Release(104);
@@ -1285,7 +1517,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
         }
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
-      } else if (kind == 61) {
+      } else if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
         s32 x;
         HeapSlot_Release(188);
         HeapSlot_Release(104);
@@ -1301,7 +1533,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           HeapSlot_Release(188);
         }
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
-      } else if (kind == 60) {
+      } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
         s32 m;
         if (frame > 15)
           REG_BLDALPHA = (32 - frame) | 0x1000;
@@ -1320,7 +1552,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             drawFuncs.draw[0](screen, o0, x, 80, 40, 32);
           }
         }
-      } else if (kind == 5 || kind == 53 || kind == 78) {
+      } else if (kind == CASTING_IMPACT_IMPACT_SCORCH ||
+                 kind == CASTING_IMPACT_IMPACT_BARRAGE ||
+                 kind == CASTING_IMPACT_IMPACT_FLARE_BURST) {
         if (frame < 24) {
           p = SPARKS;
           for (i = 0; i != 16; i++, p++) {
@@ -1340,9 +1574,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             }
           }
         }
-      } else if (kind == 4) {
-      } else if (kind == 8) {
-      } else if (kind == 41) {
+      } else if (kind == CASTING_IMPACT_IMPACT_FLINT) {
+      } else if (kind == CASTING_IMPACT_IMPACT_ECHO) {
+      } else if (kind == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
         y = (target[1] >> 16) + ((Trig_Cos(frame << 9) << 2) >> 16) + 16;
         if (frame < 4) {
           drawFuncs.draw[0](screen, work->frames,
@@ -1379,7 +1613,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                               gData_0819750c[action->side * 7 + 6],
                               y + gData_0819751a[6], 76, 25);
         }
-      } else if (kind == 85) {
+      } else if (kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
         s32 h;
         s32 y;
         REG_BLDCNT = 0;
@@ -1450,7 +1684,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
-      } else if (kind == 96 || kind == 97 || kind == 98) {
+      } else if (kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
+                 kind == CASTING_IMPACT_IMPACT_DINOX ||
+                 kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
         if (frame < 20) {
           s32 m;
           if (frame < 8)
@@ -1473,8 +1709,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           HeapSlot_Release(104);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
-        if ((kind == 97 || kind == 98) && frame < 24) {
-          if (kind == 97)
+        if ((kind == CASTING_IMPACT_IMPACT_DINOX ||
+             kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) &&
+            frame < 24) {
+          if (kind == CASTING_IMPACT_IMPACT_DINOX)
             limit = 16;
           else
             limit = 24;
@@ -1497,7 +1735,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             }
           }
         }
-      } else if (kind == 86) {
+      } else if (kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH) {
         s32 m;
         work->unk7780 = 1;
         work->unk7784 = 0;
@@ -1537,7 +1775,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
-      } else if (kind == 88) {
+      } else if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
         s32 m;
         work->unk7780 = 1;
         work->unk7784 = 0;
@@ -1602,7 +1840,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
-      } else if (kind == 62) {
+      } else if (kind == CASTING_IMPACT_IMPACT_ASURA) {
         s32 t;
         scrollA += scrollB;
         if (frame > 6)
@@ -1642,7 +1880,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           if (frame >= 14 && frame < 16)
             drawFuncs.draw[0](screen, buffer + 0x5980, 0, 16, 128, 26);
         }
-      } else if (kind == 50) {
+      } else if (kind == CASTING_IMPACT_IMPACT_BROIL) {
         s32 m;
         for (i = 0; i != 12; i++) {
           if (frame >= i + 6 && frame < i + 18) {
@@ -1666,7 +1904,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             }
           }
         }
-      } else if (kind == 46) {
+      } else if (kind == CASTING_IMPACT_IMPACT_FROST_BITE) {
         if (frame == 0) {
           struct Particle *p;
           p = SPARKS;
@@ -1698,7 +1936,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             }
           }
         }
-      } else if (kind == 38) {
+      } else if (kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
         if (frame >= 5 && frame < 50) {
           if (frame > 25)
             h = 196 - frame * 4;
@@ -1708,7 +1946,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             h = 96;
           drawFuncs.draw[0](screen, buffer, 48, 104 - h, 32, h);
         }
-      } else if (kind == 79) {
+      } else if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
         struct Particle *p;
         p = SPARKS;
         if (frame == 0) {
@@ -1745,7 +1983,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Sound_PlayFar(SE_CLATTER);
           work->unk77a8 = 16;
         }
-      } else if (kind == 63 || kind == 64) {
+      } else if (kind == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
+                 kind == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
         s32 x;
         s32 y;
         if (frame < 6) {
@@ -1758,7 +1997,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
           drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
         }
-      } else if (kind == 70) {
+      } else if (kind == CASTING_IMPACT_IMPACT_ICE_CRUSH) {
         s32 x;
         s32 y;
         if (frame > 31)
@@ -1809,7 +2048,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               particle->z--;
           }
         }
-      } else if (kind == 94) {
+      } else if (kind == CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
         s32 x;
         s32 y;
         if (frame == 0) {
@@ -1870,7 +2109,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               particle->vz--;
           }
         }
-      } else if (kind == 84) {
+      } else if (kind == CASTING_IMPACT_IMPACT_STUN_BOLT) {
         s32 fade;
         s32 angle;
         if (frame == 0) {
@@ -1951,7 +2190,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Heap_Release(model);
           Heap_Release(matrix);
         }
-      } else if (kind == 71 || kind == 80 || kind == 82) {
+      } else if (kind == CASTING_IMPACT_IMPACT_SARGASSO ||
+                 kind == CASTING_IMPACT_IMPACT_FLASH_FORCE ||
+                 kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
         void *matrix;
         struct Model *model;
         s32 fade;
@@ -1978,7 +2219,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Sound_PlayFar(SE_104);
         if (fade >= -63) {
           fade = frame << 12;
-          if (kind == 82) {
+          if (kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
             Transform_ApplyPitch(-TRIG_TURN / 32);
             Transform_ApplyYaw(-frame << 11);
             Transform_ApplyPitch(-frame << 4);
@@ -1990,7 +2231,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, matrix,
                                    4);
           Render_DrawModelList(model);
-          if (kind != 82) {
+          if (kind != CASTING_IMPACT_IMPACT_REVERSE_STAR) {
             Transform_ApplyYaw(-frame << 12);
             SceneTransform_ApplyUniformScale(Q16_ONE / 2);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, matrix,
@@ -2000,7 +2241,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         Heap_Release(model);
         Heap_Release(matrix);
-        if (kind == 82) {
+        if (kind == CASTING_IMPACT_IMPACT_REVERSE_STAR) {
           s32 m;
           s32 two;
           m = frame / 4;
@@ -2015,7 +2256,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             BattleEffect_LoadBlitter(188, 15);
           }
         }
-      } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
+      } else if (kind == CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE ||
+                 kind == CASTING_IMPACT_IMPACT_SUPERNOVA ||
+                 kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
+                 kind == CASTING_IMPACT_IMPACT_BOSCA_HIT) {
         void *matrix;
         s32 t;
         matrix = Heap_AllocEwram(0x200);
@@ -2027,7 +2271,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         model->kind = 7;
         model->mesh = gBattleEffect_SquareMesh128;
         model->matrix = matrix;
-        if (kind == 92 || kind == 93) {
+        if (kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
+            kind == CASTING_IMPACT_IMPACT_BOSCA_HIT) {
           s32 fade;
           for (i = 0; i != 3; i++) {
             t = frame - i * 2;
@@ -2051,7 +2296,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               }
             }
           }
-        } else if (kind == 83) {
+        } else if (kind == CASTING_IMPACT_IMPACT_SUPERNOVA) {
           s32 fade;
           s32 angle;
           t = frame - 4;
@@ -2099,7 +2344,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
         Heap_Release(model);
         Heap_Release(matrix);
-        if (kind != 92 && kind != 93) {
+        if (kind != CASTING_IMPACT_IMPACT_QUICK_SLASH &&
+            kind != CASTING_IMPACT_IMPACT_BOSCA_HIT) {
           s32 x;
           if (frame == 4) {
             struct Particle *p;
@@ -2133,7 +2379,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             }
           }
         }
-      } else if (kind == 91) {
+      } else if (kind == CASTING_IMPACT_IMPACT_STUN_JIP) {
         void *matrix;
         s32 t;
         matrix = Heap_AllocEwram(0x200);
@@ -2197,7 +2443,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         Heap_Release(matrix);
         if (frame == 4)
           work->unk77a8 = 8;
-      } else if (kind == 90) {
+      } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
         struct Texture *tex;
         s32 scale;
         matrix = Heap_AllocEwram(0x200);
@@ -2242,7 +2488,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         Heap_Release(matrix);
         if (frame == 4)
           work->unk77a8 = 20;
-      } else if (kind == 15) {
+      } else if (kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS) {
         if (frame == 0) {
           struct Particle *p;
           p = SPARKS;
@@ -2273,7 +2519,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             p->x += p->vx;
             // Unused: this arm runs only for kind 15, so the kind 16 draw never
             // runs; the source keeps it.
-            if (kind == 16)
+            if (kind == CASTING_IMPACT_IMPACT_WHEEZE)
               drawFuncs.draw[0](screen, buffer, x - 16, y - 16, 32, 32);
             else
               drawFuncs.draw[0](screen, buffer + m * 0x240, x - 12, y - 12, 24,
@@ -2281,7 +2527,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
           p->life++;
         }
-      } else if (kind == 16) {
+      } else if (kind == CASTING_IMPACT_IMPACT_WHEEZE) {
         p = SPARKS;
         for (i = 0; i != 32; i++, p++) {
           if (frame >= i / 2 + 4 && p->life <= 23) {
@@ -2302,7 +2548,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           work->unk77a8 = 12;
         if (frame == 8)
           Sound_PlayFar(SE_CURSE);
-      } else if (kind == 10) {
+      } else if (kind == CASTING_IMPACT_IMPACT_CHILL) {
         if (frame == 0) {
           work->unk7780 = 1;
           work->unk7784 = 0;
@@ -2327,7 +2573,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           work->unk77a8 = 12;
         if (frame == 8)
           Sound_PlayFar(SE_CURSE);
-      } else if (kind == 42) {
+      } else if (kind == CASTING_IMPACT_IMPACT_BAD_OMEN) {
         s32 m;
         if (frame > 47)
           REG_BLDALPHA = (64 - frame) | 0x1000;
@@ -2341,7 +2587,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
           p->life++;
         }
-      } else if (kind == 76) {
+      } else if (kind == CASTING_IMPACT_IMPACT_FLASH_EDGE) {
         if (frame == 18)
           Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
         for (i = 0; i != 3; i++) {
@@ -2350,7 +2596,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             Iwram_FillWords(screen, 0x4000, 0x2f2f2f2f);
           }
         }
-      } else if (kind == 74) {
+      } else if (kind == CASTING_IMPACT_IMPACT_SCORPIONFISH) {
         if (frame == 8)
           Sound_PlayFar(SE_CURSE);
         p = SPARKS;
@@ -2371,7 +2617,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             }
           }
         }
-      } else if (kind != 100) {
+      } else if (kind != CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI) {
         s32 m;
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
@@ -2384,13 +2630,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               point[0] = point[0] / 2;
               // DEAD: kind 74 has its own arm above, so only kind 69 reaches
               // this test.
-              if (kind == 69 || kind == 74)
+              if (kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
+                  kind == CASTING_IMPACT_IMPACT_SCORPIONFISH)
                 drawFuncs.draw[1](screen, buffer + m * 0x480, point[0] - 12,
                                   point[1] - 24, 24, 48);
               else
                 drawFuncs.draw[i & 1](screen, buffer + m * 0x480, point[0] - 12,
                                       point[1] - 24, 24, 48);
-              if (kind == 55)
+              if (kind == CASTING_IMPACT_IMPACT_ACID_BATH)
                 BattleEffectKernels_IntegrateVector3(p, 60, 0x400);
               else
                 BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
@@ -2400,7 +2647,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         }
       }
 
-      if (kind == 8 && frame < 44) {
+      if (kind == CASTING_IMPACT_IMPACT_ECHO && frame < 44) {
         s32 half;
         EffectPosition_ProjectPoint(origin, point);
         point[0] = point[0] / 2;
@@ -2435,7 +2682,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                             work->frames + 0x5100 + ((frame - 24) / 2) * 0x3c0,
                             target[0] / 2 - 8, 28, 20, 48);
       }
-      if (kind == 66) {
+      if (kind == CASTING_IMPACT_IMPACT_POWER_DRIVE) {
         for (i = 0; i != 4; i++) {
           if (frame == i * 4 + 8) {
             BattleEffect_TintBattler(action->actors[0], 7, 5, 0, 2);
@@ -2444,7 +2691,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           }
         }
       }
-      if (kind <= 37 && frame <= 5) {
+      if (kind <= CASTING_IMPACT_LAST_DJINNI && frame <= 5) {
         EffectPosition_ProjectPoint(origin, point);
         point[0] = point[0] / 2;
         drawFuncs.draw[1](screen, buffer + 0x3c56, point[0] - 10, point[1] - 4,
@@ -2453,34 +2700,60 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         origin[1] += center[1];
         origin[2] += center[2];
       }
-      if (kind != 8 && frame == 3)
+      if (kind != CASTING_IMPACT_IMPACT_ECHO && frame == 3)
         BattlePlayback_StartFar(-1);
       if (frame == 4) {
-        if (kind == 91)
+        if (kind == CASTING_IMPACT_IMPACT_STUN_JIP)
           Sound_PlayFar(SE_CRASH);
-        else if (kind == 78 || kind == 81 || kind == 98)
+        else if (kind == CASTING_IMPACT_IMPACT_FLARE_BURST ||
+                 kind == CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE ||
+                 kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE)
           Sound_PlayFar(SE_CLATTER);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
       }
       if (frame == 6) {
-        if (kind == 4 || kind == 5 || kind == 7 || kind == 43 || kind == 48 ||
-            kind == 73 || kind == 77 || kind == 78 || kind == 49 ||
-            kind == 12 || kind == 53 || kind == 64 || kind == 100 ||
-            kind == 66 || kind == 81 || kind == 83 || kind == 76 ||
-            kind == 98) {
+        if (kind == CASTING_IMPACT_IMPACT_FLINT ||
+            kind == CASTING_IMPACT_IMPACT_SCORCH ||
+            kind == CASTING_IMPACT_IMPACT_SAP ||
+            kind == CASTING_IMPACT_IMPACT_LIFE_NOURISH ||
+            kind == CASTING_IMPACT_IMPACT_LIFE_LEECH ||
+            kind == CASTING_IMPACT_IMPACT_VEIN_TAP ||
+            kind == CASTING_IMPACT_IMPACT_HIGH_VITALS ||
+            kind == CASTING_IMPACT_IMPACT_FLARE_BURST ||
+            kind == CASTING_IMPACT_IMPACT_PSY_LEECH ||
+            kind == CASTING_IMPACT_IMPACT_STEEL ||
+            kind == CASTING_IMPACT_IMPACT_BARRAGE ||
+            kind == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST ||
+            kind == CASTING_IMPACT_IMPACT_UNUSED_MERCURY_DJINNI ||
+            kind == CASTING_IMPACT_IMPACT_POWER_DRIVE ||
+            kind == CASTING_IMPACT_IMPACT_CRUCIBLE_FIRE ||
+            kind == CASTING_IMPACT_IMPACT_SUPERNOVA ||
+            kind == CASTING_IMPACT_IMPACT_FLASH_EDGE ||
+            kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
           BattleMotion_ApplyKnockbackFar(action->actors[0], 4);
           work->unk77a8 = 12;
-        } else if (kind == 8 || kind == 79 || kind == 85) {
+        } else if (kind == CASTING_IMPACT_IMPACT_ECHO ||
+                   kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE ||
+                   kind == CASTING_IMPACT_IMPACT_SARCOPHAGUS) {
           work->unk77a8 = 8;
-        } else if (kind == 50 || kind == 44 || kind == 63) {
+        } else if (kind == CASTING_IMPACT_IMPACT_BROIL ||
+                   kind == CASTING_IMPACT_IMPACT_AQUA_SOCK ||
+                   kind == CASTING_IMPACT_IMPACT_FORCIBLE_ARM) {
           BattleMotion_ApplyKnockbackFar(action->actors[0], 1);
           work->unk77a8 = 2;
-        } else if (kind == 60 || kind == 38) {
+        } else if (kind == CASTING_IMPACT_IMPACT_CYCLONE_SLASH ||
+                   kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
           BattleMotion_ApplyKnockbackFar(action->actors[0], 3);
           work->unk77a8 = 16;
-        } else if (kind == 95 || kind == 99 || kind == 96 || kind == 97 ||
-                   kind == 92 || kind == 93 || kind == 86 || kind == 74) {
+        } else if (kind == CASTING_IMPACT_IMPACT_ROC ||
+                   kind == CASTING_IMPACT_IMPACT_CALL_ZOMBIE ||
+                   kind == CASTING_IMPACT_IMPACT_WILD_WOLF ||
+                   kind == CASTING_IMPACT_IMPACT_DINOX ||
+                   kind == CASTING_IMPACT_IMPACT_QUICK_SLASH ||
+                   kind == CASTING_IMPACT_IMPACT_BOSCA_HIT ||
+                   kind == CASTING_IMPACT_IMPACT_RAIDENS_WRATH ||
+                   kind == CASTING_IMPACT_IMPACT_SCORPIONFISH) {
           BattleMotion_ApplyKnockbackFar(action->actors[0], 0);
           work->unk77a8 = 12;
         }
@@ -2495,8 +2768,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       wait(1);
     }
 
-    if (kind == 51 || kind == 67 || kind == 9 || kind == 10 || kind == 11 ||
-        kind == 70 || kind == 79 || kind == 90) {
+    if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||
+        kind == CASTING_IMPACT_IMPACT_HEAT_SMASH ||
+        kind == CASTING_IMPACT_IMPACT_SOUR ||
+        kind == CASTING_IMPACT_IMPACT_CHILL ||
+        kind == CASTING_IMPACT_IMPACT_GEL ||
+        kind == CASTING_IMPACT_IMPACT_ICE_CRUSH ||
+        kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE ||
+        kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
       Iwram_ClearWords(BG_VRAM, 0x3c00);
       Iwram_ClearWords(screen, 0x3c00);
       action->prelude = 0;
@@ -2504,16 +2783,29 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
       Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
-      if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
-        SummonEffect_RunCanvasMode1(action);
-      else if (kind == 9 || kind == 67)
-        SummonEffect_RunCanvasMode2(action);
-      else if (kind == 11)
-        SummonEffect_RunCanvasMode3(action);
+      if (kind == CASTING_IMPACT_IMPACT_MELTDOWN ||
+          kind == CASTING_IMPACT_IMPACT_CHILL ||
+          kind == CASTING_IMPACT_IMPACT_ICE_CRUSH ||
+          kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE ||
+          kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH)
+        BattleEffect_RunImpair(action);
+      else if (kind == CASTING_IMPACT_IMPACT_SOUR ||
+               kind == CASTING_IMPACT_IMPACT_HEAT_SMASH)
+        BattleEffect_RunWeaken(action);
+      else if (kind == CASTING_IMPACT_IMPACT_GEL)
+        BattleEffect_RunDull(action);
       return;
     }
-    if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||
-        kind == 72 || kind == 58 || kind == 59 || kind == 69 || kind == 89)
+    if (kind == CASTING_IMPACT_IMPACT_MIST ||
+        kind == CASTING_IMPACT_IMPACT_FEVER ||
+        kind == CASTING_IMPACT_IMPACT_BAD_OMEN ||
+        kind == CASTING_IMPACT_IMPACT_UNUSED_SKULLS ||
+        kind == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
+        kind == CASTING_IMPACT_IMPACT_EVIL_EYE ||
+        kind == CASTING_IMPACT_IMPACT_BLINDING_SMOG ||
+        kind == CASTING_IMPACT_IMPACT_MURK ||
+        kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
+        kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
       Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     HeapSlot_Release(188);

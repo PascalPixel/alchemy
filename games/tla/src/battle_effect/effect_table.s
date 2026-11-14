@@ -376,7 +376,7 @@ gCondemn_PictureY:
 	.global gBind_Vertex
 gBind_Vertex:
 	.4byte 0, 24, 0
-@ The Broken Seal's gBind_Vertex; read by BattleEffect_RunTriangleStrike
+@ The Broken Seal's gBind_Vertex; read by BattleEffect_RunUnusedTriangleStrike
 	.global gBind_TriangleStrikeVertex
 gBind_TriangleStrikeVertex:
 	.4byte 0, 24, 0
@@ -532,8 +532,8 @@ gZagan_RingHeights:
 	.byte 32, 12, -24, 0
 @ The effect handlers by effect kind - 1, as The Broken Seal's
 @ gBattleEffect_EffectHandlers (effect/effect_table.c); 0 where a kind has none.
-	.global gData_08197aa0
-gData_08197aa0:
+	.global gBattleEffect_Handlers
+gBattleEffect_Handlers:
 	.4byte BattleEffect_RunQuake               @ 1
 	.4byte BattleEffect_RunSpire               @ 2
 	.4byte BattleEffect_RunGaia                @ 3
@@ -560,14 +560,14 @@ gData_08197aa0:
 	.4byte BattleEffect_RunCurePoison          @ 24
 	.4byte BattleEffect_RunRevive              @ 25
 	.4byte BattleEffect_RunImpact              @ 26
-	.4byte SummonEffect_RunCanvasMode3         @ 27
+	.4byte BattleEffect_RunDull         @ 27
 	.4byte BattleEffect_RunGuard               @ 28
-	.4byte SummonEffect_RunCanvasMode1         @ 29
+	.4byte BattleEffect_RunImpair         @ 29
 	.4byte BattleEffect_RunWard                @ 30
-	.4byte SummonEffect_RunCanvasMode2         @ 31
+	.4byte BattleEffect_RunWeaken         @ 31
 	.4byte BattleEffect_RunTaint               @ 32
 	.4byte BattleEffect_RunDelude              @ 33
-	.4byte BattleEffect_RunOrbitingSpirals     @ 34
+	.4byte BattleEffect_RunUnusedOrbitingSpirals     @ 34
 	.4byte BattleEffect_RunHeartrender         @ 35
 	.4byte BattleEffect_RunParalyze            @ 36
 	.4byte BattleEffect_RunSleep               @ 37
@@ -580,7 +580,7 @@ gData_08197aa0:
 	.4byte BattleEffect_RunWish                @ 44
 	.4byte BattleEffect_RunWish                @ 45
 	.4byte BattleEffect_RunImpact              @ 46
-	.4byte SummonEffect_RunCanvasMode1         @ 47
+	.4byte BattleEffect_RunImpair         @ 47
 	.4byte 0                               @ 48
 	.4byte BattleEffect_RunDragonCloud         @ 49
 	.4byte BattleEffect_RunDemonNight          @ 50
@@ -600,11 +600,11 @@ gData_08197aa0:
 	.4byte BattleEffect_RunDemonFire           @ 64
 	.4byte BattleEffect_RunVorpalSlash         @ 65
 	.4byte BattleEffect_RunDrown               @ 66
-	.4byte BattleEffect_RunTriangleStrike      @ 67
+	.4byte BattleEffect_RunUnusedTriangleStrike      @ 67
 	.4byte BattleEffect_RunAstralBlast         @ 68
 	.4byte BattleEffect_RunHeartbreak          @ 69
 	.4byte 0                               @ 70
-	.4byte BattleEffect_RunHealingMotesMode11  @ 71
+	.4byte BattleEffect_RunAura  @ 71
 	.4byte BattleEffect_RunFume                @ 72
 	.4byte BattleEffect_RunBeam                @ 73
 	.4byte BattleEffect_RunRagingHeat          @ 74
@@ -616,7 +616,7 @@ gData_08197aa0:
 	.4byte BattleEffect_RunWhiplash            @ 80
 	.4byte BattleEffect_RunPoisonFlow          @ 81
 	.4byte BattleEffect_RunFirePuppet          @ 82
-	.4byte BattleEffect_RunProjectileVolleyMode14WithAction @ 83
+	.4byte BattleEffect_RunDiamondDust @ 83
 	.4byte BattleEffect_RunDiamondBerg         @ 84
 	.4byte BattleEffect_RunPlumeEdge           @ 85
 	.4byte BattleEffect_RunThunderMine         @ 86
@@ -644,12 +644,12 @@ gData_08197aa0:
 	.4byte BattleEffect_RunRisingDragon        @ 108
 	.4byte BattleEffect_RunBoostHack           @ 109
 	.4byte BattleEffect_RunRadiantFire         @ 110
-	.4byte BattleEffect_RunVolleyBMode11WithAction @ 111
-	.4byte BattleEffect_RunProjectileVolleyMode12WithAction @ 112
-	.4byte BattleEffect_RunCanvasMode0         @ 113
+	.4byte BattleEffect_RunFireDance @ 111
+	.4byte BattleEffect_RunBlazeRush @ 112
+	.4byte BattleEffect_RunShred         @ 113
 	.4byte BattleEffect_RunPurgatory           @ 114
 	.4byte BattleEffect_RunSoulShatter         @ 115
-	.4byte BattleEffect_RunVolleyBMode10WithAction @ 116
+	.4byte BattleEffect_RunAgingGas @ 116
 	.4byte BattleEffect_RunMadZephyr           @ 117
 	.4byte BattleEffect_RunLunarSlash          @ 118
 	.4byte BattleEffect_RunNirvana             @ 119
@@ -714,8 +714,8 @@ gData_08197aa0:
 	.4byte 0                               @ 178
 	.4byte 0                               @ 179
 	.4byte 0                               @ 180
-	.4byte BattleEffect_RunStatBoostMode10                   @ 181
-	.4byte BattleEffect_RunHealingMotesMode13  @ 182
+	.4byte BattleEffect_RunCrucibleFire                   @ 181
+	.4byte BattleEffect_RunReverseStar  @ 182
 	.4byte 0                               @ 183
 	.4byte 0                               @ 184
 	.4byte 0                               @ 185
@@ -759,10 +759,10 @@ gData_08197aa0:
 	.4byte BattleEffect_RunImpact              @ 223
 	.4byte BattleEffect_RunCoal                @ 224
 	.4byte BattleEffect_RunCure                @ 225
-	.4byte BattleEffect_RunHealingMotesMode7   @ 226
-	.4byte BattleEffect_RunHealingMotesMode8   @ 227
-	.4byte BattleEffect_RunHealingMotesMode9   @ 228
-	.4byte BattleEffect_RunHealingMotesMode10  @ 229
+	.4byte BattleEffect_RunSalt   @ 226
+	.4byte BattleEffect_RunSpring   @ 227
+	.4byte BattleEffect_RunBreath   @ 228
+	.4byte BattleEffect_RunEther  @ 229
 	.4byte BattleEffect_RunBalm                @ 230
 	.4byte BattleEffect_RunTinder              @ 231
 	.4byte BattleEffect_RunWhorl               @ 232
@@ -772,13 +772,13 @@ gData_08197aa0:
 	.4byte BattleEffect_RunCore                @ 236
 	.4byte BattleEffect_RunMud                 @ 237
 	.4byte BattleEffect_RunHaze                @ 238
-	.4byte BattleEffect_RunVolleyBMode8        @ 239
+	.4byte BattleEffect_RunPetra        @ 239
 	.4byte BattleEffect_RunRime                @ 240
 	.4byte BattleEffect_RunLull                @ 241
 	.4byte BattleEffect_RunGasp                @ 242
-	.4byte BattleEffect_RunVolleyBMode9        @ 243
+	.4byte BattleEffect_RunFugue        @ 243
 	.4byte BattleEffect_RunCrystal             @ 244
-	.4byte BattleEffect_RunHealingMotesMode12  @ 245
+	.4byte BattleEffect_RunEddy  @ 245
 	.4byte BattleEffect_RunCannon              @ 246
 	.4byte BattleEffect_RunAroma               @ 247
 	.4byte BattleEffect_RunReflux              @ 248
@@ -789,8 +789,8 @@ gData_08197aa0:
 	.4byte BattleEffect_RunGeode               @ 253
 	.4byte BattleEffect_RunSerac               @ 254
 	.4byte BattleEffect_RunSpark               @ 255
-	.4byte BattleEffect_RunVolleyBMode22       @ 256
-	.4byte BattleEffect_RunVolleyBMode24       @ 257
+	.4byte BattleEffect_RunFury       @ 256
+	.4byte BattleEffect_RunChar       @ 257
 	.4byte 0                               @ 258
 	.4byte 0                               @ 259
 	.4byte 0                               @ 260
@@ -920,48 +920,48 @@ gData_08197aa0:
 	.4byte BattleEffect_RunOuterSpace          @ 384
 	.4byte BattleEffect_RunDragonDriver        @ 385
 	.4byte BattleEffect_RunDrainFang           @ 386
-	.4byte BattleEffect_RunSparkApproachVariant3 @ 387
+	.4byte BattleEffect_RunSevereBlow @ 387
 	.4byte BattleEffect_RunThrash              @ 388
 	.4byte BattleEffect_RunRecovery            @ 389
 	.4byte BattleEffect_RunEchoCut             @ 390
 	.4byte BattleEffect_RunWateryGrave         @ 391
 	.4byte BattleEffect_RunRagingFlood         @ 392
-	.4byte BattleEffect_RunProjectileVolleyMode13WithAction @ 393
-	.4byte BattleEffect_LongApproachThenSpark  @ 394
+	.4byte BattleEffect_RunHydroSlash @ 393
+	.4byte BattleEffect_RunMightyPress  @ 394
 	.4byte BattleEffect_RunSlaver              @ 395
 	.4byte BattleEffect_RunCounterRush         @ 396
-	.4byte BattleEffect_RunVolleyBMode17       @ 397
-	.4byte BattleEffect_RunVolleyBMode18       @ 398
+	.4byte BattleEffect_RunDjinnfest       @ 397
+	.4byte BattleEffect_RunHeatKiss       @ 398
 	.4byte BattleEffect_RunAngleSpike          @ 399
-	.4byte BattleEffect_RunVolleyBMode0        @ 400
-	.4byte BattleEffect_RunVolleyBMode2        @ 401
+	.4byte BattleEffect_RunFireBreath        @ 400
+	.4byte BattleEffect_RunWaterBreath        @ 401
 	.4byte BattleEffect_RunIceBlessing         @ 402
-	.4byte BattleEffect_RunVolleyBMode6        @ 403
-	.4byte BattleEffect_RunVolleyBMode3        @ 404
-	.4byte BattleEffect_RunVolleyBMode5        @ 405
-	.4byte BattleEffect_RunVolleyBMode7        @ 406
-	.4byte BattleEffect_RunVolleyBMode4        @ 407
-	.4byte BattleEffect_RunVolleyBMode13       @ 408
-	.4byte BattleEffect_RunVolleyBMode14       @ 409
-	.4byte BattleEffect_RunVolleyBMode15       @ 410
-	.4byte BattleEffect_RunVolleyBMode16       @ 411
-	.4byte BattleEffect_RunVolleyBMode12       @ 412
-	.4byte BattleEffect_RunVolleyBMode20       @ 413
+	.4byte BattleEffect_RunDarkBreath        @ 403
+	.4byte BattleEffect_RunAcidBreath        @ 404
+	.4byte BattleEffect_RunStormBreath        @ 405
+	.4byte BattleEffect_RunEvilBlessing        @ 406
+	.4byte BattleEffect_RunDeadlyGas        @ 407
+	.4byte BattleEffect_RunSandBreath       @ 408
+	.4byte BattleEffect_RunDesertGasp       @ 409
+	.4byte BattleEffect_RunBlackIce       @ 410
+	.4byte BattleEffect_RunTyphoonBlow       @ 411
+	.4byte BattleEffect_RunToxicBreath       @ 412
+	.4byte BattleEffect_RunGravelBlow       @ 413
 	.4byte BattleEffect_RunBlastBreath         @ 414
-	.4byte BattleEffect_RunVolleyBMode21       @ 415
-	.4byte BattleEffect_RunVolleyBMode0        @ 416
+	.4byte BattleEffect_RunDarksolGasp       @ 415
+	.4byte BattleEffect_RunFireBreath        @ 416
 	.4byte 0                               @ 417
 	.4byte 0                               @ 418
 	.4byte 0                               @ 419
 	.4byte 0                               @ 420
 	.4byte BattleEffect_RunManeater            @ 421
-	.4byte EffectStep_RunAnimationMode9    @ 422
-	.4byte EffectStep_RunAnimationMode10   @ 423
-	.4byte EffectStep_RunAnimationMode11   @ 424
+	.4byte BattleEffect_RunUrFlash    @ 422
+	.4byte BattleEffect_RunCrusherGrip   @ 423
+	.4byte BattleEffect_RunVanishClaw   @ 424
 	.4byte BattleEffect_RunTwinShear           @ 425
 	.4byte BattleEffect_RunTripleChomp         @ 426
-	.4byte EffectStep_RunAnimationMode6Or7Or8B @ 427
-	.4byte BattleEffect_RunTargetMotesMode1    @ 428
+	.4byte BattleEffect_RunDoublestep @ 427
+	.4byte BattleEffect_RunPoisonGel    @ 428
 	.4byte BattleEffect_RunDelude              @ 429
 	.4byte BattleEffect_RunRisingVenom         @ 430
 	.4byte BattleEffect_RunSack                @ 431
@@ -975,9 +975,9 @@ gData_08197aa0:
 	.4byte BattleEffect_RunTargetStrikeMode18                   @ 439
 	.4byte BattleEffect_RunPoisonTail          @ 440
 	.4byte BattleEffect_RunKillSting           @ 441
-	.4byte BattleEffect_RunProjectileVolleyMode15 @ 442
-	.4byte BattleEffect_RunProjectileVolleyMode16 @ 443
-	.4byte BattleEffect_RunProjectileVolleyMode17 @ 444
+	.4byte BattleEffect_RunBeastNeedle @ 442
+	.4byte BattleEffect_RunPoisonSting @ 443
+	.4byte BattleEffect_RunStunSting @ 444
 	.4byte BattleEffect_RunDemonEye            @ 445
 	.4byte BattleEffect_RunEmu                 @ 446
 	.4byte BattleEffect_RunOceanFist           @ 447
@@ -987,7 +987,7 @@ gData_08197aa0:
 	.4byte BattleEffect_RunTrueCollide         @ 451
 	.4byte BattleEffect_RunStarMine            @ 452
 	.4byte BattleEffect_RunFormicAcid          @ 453
-	.4byte EffectStep_RunAnimationMode12   @ 454
+	.4byte BattleEffect_RunClawAttack   @ 454
 	.4byte BattleEffect_RunBeatDance           @ 455
 	.4byte BattleEffect_RunTargetStrikeMode20                   @ 456
 	.4byte BattleEffect_RunLivingArmor         @ 457
@@ -996,14 +996,14 @@ gData_08197aa0:
 	.4byte BattleEffect_RunGuardAura           @ 460
 	.4byte BattleEffect_RunDjinnBlast          @ 461
 	.4byte BattleEffect_RunDjinnStorm          @ 462
-	.4byte BattleEffect_RunCanvasMode3WithAction @ 463
+	.4byte BattleEffect_RunMineBall @ 463
 	.4byte BattleEffect_RunElementSwap         @ 464
 	.4byte BattleEffect_RunDjinnStun           @ 465
 	.4byte BattleEffect_RunMysticCall          @ 466
 	.4byte BattleEffect_RunClarionCry          @ 467
 	.4byte BattleEffect_RunPsyBoost            @ 468
 	.4byte BattleEffect_RunStrongHit           @ 469
-	.4byte BattleEffect_RunProjectileVolleyMode18 @ 470
+	.4byte BattleEffect_RunChillBreath @ 470
 	.4byte BattleEffect_RunVolleyBMode23       @ 471
 @ The Broken Seal's table of this name; read by BattleEffect_RunCybele
 	.global gCybele_ObjectPoses

@@ -30,23 +30,23 @@ void BattleEffect_RunFlyingAttack(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 5);
 }
 
-void EffectStep_RunAnimationMode9(struct EffectStep *step) {
+void BattleEffect_RunUrFlash(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 9);
 }
 
-void EffectStep_RunAnimationMode12(struct EffectStep *step) {
+void BattleEffect_RunClawAttack(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 12);
 }
 
-void EffectStep_RunAnimationMode10(struct EffectStep *step) {
+void BattleEffect_RunCrusherGrip(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 10);
 }
 
-void EffectStep_RunAnimationMode11(struct EffectStep *step) {
+void BattleEffect_RunVanishClaw(struct EffectStep *step) {
   BattleEffect_RunBurstScene(step, 11);
 }
 
-void EffectStep_RunAnimationMode6Or7Or8B(struct EffectStep *step) {
+void BattleEffect_RunDoublestep(struct EffectStep *step) {
   if (step->variant == 0) {
     BattleEffect_RunBurstScene(step, 6);
     return;

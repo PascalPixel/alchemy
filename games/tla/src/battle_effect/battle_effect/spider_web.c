@@ -1140,7 +1140,7 @@ extern char ResourceId_SpiderWebSheet;
 // The middle between the first and the last target.
 void BattleEffect_GetTargetsMidpoint(struct EffectPosition *middle);
 
-void SummonEffect_RunCanvasMode1(void *action);
+void BattleEffect_RunImpair(void *action);
 
 // Builds the transparent blitter for one quarter.
 #define LOAD_QUARTER(flags)                                                    \
@@ -1236,7 +1236,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   Iwram_ClearWords(canvas, 0x3c00);
   effect->prelude = 0;
   Task_Remove(Palette_StepFadeTransfer);
-  SummonEffect_RunCanvasMode1(effect);
+  BattleEffect_RunImpair(effect);
 }
 
 #undef LOAD_QUARTER

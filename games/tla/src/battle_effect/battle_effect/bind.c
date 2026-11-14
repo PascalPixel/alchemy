@@ -104,10 +104,11 @@ void SceneTransform_ApplyScale(s32 *scale);
 #define CORNERS 3
 #define EDGE_STEPS 24 // flares drawn along each edge
 
-// Spinning triangle (kinds 38 and 218): as BattleEffect_RunTriangleStrike, a
-// triangle of flares spins down onto the target and leaves the rune picture
-// where it lands; when the effect has a prelude, the Jupiter Djinn also circles
-// above its place for the first frames and rises away after frame 32.
+// Spinning triangle (kinds 38 and 218): as
+// BattleEffect_RunUnusedTriangleStrike, a triangle of flares spins down onto
+// the target and leaves the rune picture where it lands; when the effect has a
+// prelude, the Jupiter Djinn also circles above its place for the first frames
+// and rises away after frame 32.
 void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   s32 origin[3];
   s32 originSize[3];
@@ -268,7 +269,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
 // target, shrinking, for 64 frames; then the rune picture is stamped in two
 // halves where it landed. The caster approaches the target at frame 46, the
 // palette pulses throughout and the trail fades a step every 16 frames.
-void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
+void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   s32 vector[3];
   struct EffectPosition screen;

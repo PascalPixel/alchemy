@@ -448,7 +448,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
-    SummonEffect_RunCanvasMode1(effect);
+    BattleEffect_RunImpair(effect);
   } else {
     BattleEffect_EndCanvasLayer();
   }

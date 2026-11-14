@@ -46,8 +46,8 @@ gRamses_UnitScale:
 	.global gJudgment_UnitScale
 gJudgment_UnitScale:
 	.4byte 0x10000, 0x10000
-	.global gKirin_RowScale
-gKirin_RowScale:
+	.global gKirin_SweepScale
+gKirin_SweepScale:
 	.4byte 0x10000, 0x10000
 	.global gKirin_ChargeScale
 gKirin_ChargeScale:

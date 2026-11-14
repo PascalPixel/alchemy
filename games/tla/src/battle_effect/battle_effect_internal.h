@@ -539,6 +539,12 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
   (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
+/// Draws mote picture `size` (1 to 10: size pixels wide, twice that tall),
+/// centred across x and standing on y.
+#define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
+  (draw)(canvas, (sheet) + gBattleEffect_MotePictures[(size) - 1],             \
+         (x) - (size) / 2, (y) - (size), size, (size) * 2)
+
 /// Marks particles[0] to particles[count - 1] free: a particle whose variant
 /// is -1 is not drawn or moved until an effect gives it a life.
 #define EFFECT_FREE_PARTICLES(i, particles, count)                             \

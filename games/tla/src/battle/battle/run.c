@@ -450,7 +450,7 @@ won_scripted:
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
                             26);
           MessageArgument_ClearAllFar();
-          MessageArgument_PushFar(128, 1);
+          MessageArgument_PushFar(128, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
           BattleMessage_WaitForAdvance();
         }

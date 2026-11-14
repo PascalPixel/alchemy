@@ -37,19 +37,19 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   price = Shop_RepairPrice(unit->inventory[slot]);
   kind = item->useType;
   if (kind != 2) {
-    MessageArgument_PushFar(itemId, 2);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
     // MsgRepairNotHandled: MsgCannotRepairKind
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotHandled);
     return;
   }
   if (!(unit->inventory[slot] & 0x400)) {
-    MessageArgument_PushFar(itemId, 2);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
     // MsgRepairNotDamaged: MsgNotDamaged
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotDamaged);
     return;
   }
   if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
-    MessageArgument_PushFar(itemId, 2);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
     // MsgRepairStuckOn: MsgCursedWontComeOff
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairStuckOn);
     return;
@@ -59,8 +59,8 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotEnoughMoney);
     return;
   }
-  MessageArgument_PushFar(itemId, 2);
-  MessageArgument_PushFar(price, 5);
+  MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+  MessageArgument_PushFar(price, MESSAGE_ARGUMENT_NUMBER);
   // MsgRepairOffer: MsgShopRepairConfirm, then its three replies
   message = (s32)MsgRepairOffer;
   Shop_ShowKeeperMessageHidingCursor(message);
@@ -71,7 +71,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   saved = unit->inventory[slot];
   unit->inventory[slot] = 0;
   Shop_DrawMemberItems(shop->itemWindow, unitId);
-  MessageArgument_PushFar(itemId, 2);
+  MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
   Shop_ShowKeeperMessageHidingCursor(message + 2);
   Message_CloseFinishedWindowsFar();
   wait(10);
@@ -88,7 +88,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   Party_AdjustCoinsFar(-price);
   Shop_DrawMoney();
   Shop_DrawMemberItems(shop->itemWindow, unitId);
-  MessageArgument_PushFar(itemId, 2);
+  MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
   Shop_ShowKeeperMessageHidingCursor(message + 3);
   if (Shop_ConfirmEquip(unitId, slot))
     Shop_SellOld(unitId, equipped);

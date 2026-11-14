@@ -8,6 +8,7 @@
 
 #include "types.h"
 #include "battle/battle.h"
+#include "module/window/window.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"

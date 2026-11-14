@@ -681,7 +681,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     wide = 0;
 #endif
   if (gMainRoutineWork.packedEvents[0] != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.packedEvents[0] & 0x3ff, 4);
+    MessageArgument_PushFar(gMainRoutineWork.packedEvents[0] & 0x3ff,
+                            MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 4, window, 0, 0);
 #if TLA_PATCH_2
     if (!wide)
@@ -701,7 +702,8 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     wide = 0;
 #endif
   if (gMainRoutineWork.packedEvents[1] != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.packedEvents[1] & 0x3ff, 4);
+    MessageArgument_PushFar(gMainRoutineWork.packedEvents[1] & 0x3ff,
+                            MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 5, window, 0, 8);
 #if TLA_PATCH_2
     if (!wide)

@@ -170,7 +170,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         }
         plan->targetCount = targetCount;
         if (targetCount <= 0) {
-          MessageArgument_PushFar(request->unitId, 1);
+          MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
           if (actor->guardLevel == 0)
             actor->guardLevel = 1;
@@ -228,23 +228,23 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   if (request->command != 9) {
     if (actor->immobile) {
       actor->immobile = 0;
-      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgUnableToMove);
       return -1;
     }
     if (actor->sleep) {
-      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgIsAsleep);
       return -1;
     }
     if (actor->stun) {
-      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgIsParalyzed);
       return -1;
     }
     if ((actor->restraint & 1) && request->command != COMMAND_DEFEND &&
         (Battle_RandomFar() & 3) == 0) {
-      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgIsBound);
       return -1;
     }
@@ -266,7 +266,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     if ((u16)request->unitId <= 7) {
       BattleMessage_ShowAndWaitFar((s32)&MsgPartyFlees);
     } else {
-      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgActorRuns);
     }
     BattleMessage_WaitForAdvance();
@@ -278,11 +278,12 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
     if (abilityId != 1) {
-      MessageArgument_PushFar(request->unitId, 1);
-      MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, 1), 2);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, 1),
+                              MESSAGE_ARGUMENT_ITEM);
       BattleMessage_ShowAndWaitFar((s32)&MsgWeaponHowls);
       BattleMessage_WaitForTyping();
-      MessageArgument_PushFar(abilityId, 4);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       BattleMessage_ShowAndWaitFar((s32)(MsgWeaponHowls + 1));
     }
     break;
@@ -307,8 +308,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     ability = Ability_Get(abilityId);
     if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
-    MessageArgument_PushFar(request->unitId, 1);
-    MessageArgument_PushFar(abilityId, 4);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     switch (abilityId) {
     case 600 ... 627:
       BattleMessage_ShowAndWaitFar((s32)&MsgActorCastsSpecial);
@@ -343,14 +344,14 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     struct ItemDefinition *item;
 
     if (request->parameter < 0) {
-      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgItemAlreadyUsed);
       return -1;
     }
     item = Item_GetDirectFar(actor->inventory[request->parameter]);
     abilityId = item->actionId;
     if (abilityId == 0 || (actor->inventory[request->parameter] & 0x400)) {
-      MessageArgument_PushFar(request->unitId, 1);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
       if (actor->guardLevel == 0)
         actor->guardLevel = 1;
@@ -358,8 +359,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
-    MessageArgument_PushFar(request->unitId, 1);
-    MessageArgument_PushFar(actor->inventory[request->parameter], 2);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_PushFar(actor->inventory[request->parameter],
+                            MESSAGE_ARGUMENT_ITEM);
     if (item->useType == 2 || item->useType == 0) {
       switch (item->type) {
       case 1:
@@ -380,7 +382,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
 
   case COMMAND_DEFEND:
   case COMMAND_DEFEND2:
-    MessageArgument_PushFar(request->unitId, 1);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
     return -1;
 
@@ -393,8 +395,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     abilityId = request->parameter;
     if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
-    MessageArgument_PushFar(request->unitId, 1);
-    MessageArgument_PushFar(abilityId, 4);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     if ((Ability_Get(abilityId)->flags & ABILITY_FORMULA_MASK) ==
         ABILITY_FORMULA_ENEMY_DAMAGE)
       message = (s32)&MsgActorUnleashesAbility;
@@ -492,8 +494,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         BattlePlayback_WaitForReady();
         return -2;
       }
-      MessageArgument_PushFar(request->unitId, 1);
-      MessageArgument_PushFar(abilityId, 4);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       Sound_PlayFar(SE_MENU_ERROR);
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnInRecovery);
       wait(60);
@@ -508,8 +510,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
                                   (request->parameter >> 8) & 15,
                                   request->parameter & 255);
       ability = Ability_Get(abilityId);
-      MessageArgument_PushFar(request->unitId, 1);
-      MessageArgument_PushFar(abilityId, 4);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       BattleMessage_ShowAndWaitFar((s32)&MsgActorUnleashesDjinn);
       plan->element = ability->element;
     }
@@ -542,13 +544,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     if (BattleActionRun_SetTargets(abilityId) == -1)
       return -1;
     if (index != 4) {
-      MessageArgument_PushFar(request->unitId, 1);
-      MessageArgument_PushFar(abilityId, 4);
+      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       BattleMessage_ShowAndWaitFar((s32)&MsgSummonLacksDjinn);
       return -1;
     }
-    MessageArgument_PushFar(request->unitId, 1);
-    MessageArgument_PushFar(abilityId, 4);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorSummons);
     for (index = 0; index != list->count; index++) {
       struct DjinnRecoveryEntryDraft *entry = &list->entries[index];
@@ -580,7 +582,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       plan->presentationFlags = 0;
       plan->presentationFlags = BattleUnit_GetPartyAttackEffect(actor->enemyId);
     }
-    MessageArgument_PushFar(request->unitId, 1);
+    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorAttacks);
     /* FAKEMATCH(dead): the rolls in a one-pass block left by break. */
     do {

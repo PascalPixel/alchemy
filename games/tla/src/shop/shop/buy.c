@@ -191,8 +191,8 @@ next_page:
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
-        MessageArgument_PushFar(unitId, 1);
-        MessageArgument_PushFar(shop->selectedItem, 2);
+        MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == 15)
           Shop_ShowKeeperMessage((s32)MsgPackFull);
         else
@@ -207,7 +207,7 @@ next_page:
         break;
       }
       if (Item_IsCompatibleWithUnitFar(unitId, shop->selectedItem) == 0) {
-        MessageArgument_PushFar(unitId, 1);
+        MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         Shop_ShowKeeperMessage((s32)MsgCannotEquipStillWant);
         if (Shop_AskYesNo(0) != 0) {
           repromptRecipient = 1;
@@ -566,7 +566,7 @@ void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
     if (slot != -1) {
       quantityOffset = slot * 2 + 216;
       MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1,
-                              5);
+                              MESSAGE_ARGUMENT_NUMBER);
       Text_DrawMessageAsTilesFar((s32)MsgYouHave, window, 0, 0);
     } else {
       Text_DrawMessageAsTilesFar((s32)MsgShopNoneInStock, window, 0, 0);
@@ -814,7 +814,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
       return 0;
   }
 
-  MessageArgument_PushFar(unitId, 1);
+  MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
   Shop_ShowKeeperMessage((s32)MsgEquipNowPrompt);
   if (Shop_AskYesNo(0) != 0)
     return 0;

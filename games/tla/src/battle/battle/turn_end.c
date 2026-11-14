@@ -415,7 +415,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 #define ANNOUNCE_END(test, message)                                            \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
-    MessageArgument_PushFar(unitId, 1);                                        \
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);                   \
     BattleMessage_ShowAndWaitFar(message);                                     \
     BattleMessage_WaitForAdvance();                                            \
   }
@@ -423,7 +423,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
 #define ANNOUNCE_END_POSE(test, message)                                       \
   if (test(unitId) != 0) {                                                     \
     BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));             \
-    MessageArgument_PushFar(unitId, 1);                                        \
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);                   \
     BattleObject_UpdatePose(unitId);                                           \
     BattleMessage_ShowAndWaitFar(message);                                     \
     BattleMessage_WaitForAdvance();                                            \
@@ -542,8 +542,8 @@ void Battle_ProcessTurnEnd(void) {
               hpAmount = unit->maxHp - unit->hp;
             }
             Unit_AddHpFar(unitId, hpAmount);
-            MessageArgument_PushFar(unitId, 1);
-            MessageArgument_PushFar(hpAmount, 5);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+            MessageArgument_PushFar(hpAmount, MESSAGE_ARGUMENT_NUMBER);
             if (unit->hp == unit->maxHp) {
               BattleMessage_ShowAndWaitFar((s32)&MsgHpFull);
             } else {
@@ -558,8 +558,8 @@ void Battle_ProcessTurnEnd(void) {
               ppAmount = unit->maxPp - unit->pp;
             }
             Unit_AddPpFar(unitId, ppAmount);
-            MessageArgument_PushFar(unitId, 1);
-            MessageArgument_PushFar(ppAmount, 5);
+            MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+            MessageArgument_PushFar(ppAmount, MESSAGE_ARGUMENT_NUMBER);
             if (unit->pp == unit->maxPp) {
               BattleMessage_ShowAndWaitFar((s32)&MsgPpFull);
             } else {

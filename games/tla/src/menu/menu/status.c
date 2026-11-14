@@ -946,7 +946,7 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
       MessageArgument_PushFar(
           Unit_GetExperienceForLevelFar(*owner, state->level + 1) -
               state->experience,
-          5);
+          MESSAGE_ARGUMENT_NUMBER);
   }
   buffer = Heap_Alloc(HELP_LENGTH * 2);
   Message_CopyExpandedFar(help + (s32)MsgYourNameAndLevelExperience, buffer,

@@ -27,10 +27,10 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
   if (creditCost > gMainRoutineWork.counterB)
     return;
   shop->selectedItem = 228;
-  MessageArgument_PushFar(228, 2);
+  MessageArgument_PushFar(228, MESSAGE_ARGUMENT_ITEM);
   message = (s32)MsgLetMeGiveYouThis;
   Shop_ShowKeeperMessageHidingCursor(message);
-  MessageArgument_PushFar(shop->selectedItem, 2);
+  MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
   Shop_ShowKeeperMessageHidingCursor(message + 1);
   redraw = 2;
   while (1) {
@@ -50,8 +50,8 @@ void Shop_GiveGameTicket(void *window, void *itemWindow) {
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
-        MessageArgument_PushFar(unitId, 1);
-        MessageArgument_PushFar(shop->selectedItem, 2);
+        MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+        MessageArgument_PushFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == 15)
           Shop_ShowKeeperMessage((s32)MsgPackFull);
         else

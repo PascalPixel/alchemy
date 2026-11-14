@@ -149,13 +149,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         break;
       case 0x106:
         target->baseAttack += amount + randomAdjust;
-        MessageArgument_PushFar(3, 5);
+        MessageArgument_PushFar(3, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = 0x14;
         changed = 1;
         break;
       case 0x107:
         target->baseDefense += amount + randomAdjust;
-        MessageArgument_PushFar(4, 5);
+        MessageArgument_PushFar(4, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = 0x15;
         changed = 1;
         break;

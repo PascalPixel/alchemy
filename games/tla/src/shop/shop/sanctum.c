@@ -283,8 +283,8 @@ s32 Sanctum_RunPartyService(void) {
         continue;
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
-      MessageArgument_PushFar(unitId, 1);
-      MessageArgument_PushFar(price, 5);
+      MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
+      MessageArgument_PushFar(price, MESSAGE_ARGUMENT_NUMBER);
       messageBase = (s32)MsgReviving;
       Sanctum_ShowKeeperMessage(messageBase);
       if (Sanctum_AskYesNo(0) != 0) {
@@ -298,14 +298,14 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      MessageArgument_PushFar(unitId, 1);
+      MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       Sanctum_ShowKeeperMessage(messageBase + 3);
       Message_CloseFinishedWindowsFar();
       Sanctum_ApplyService(unitId, serviceKind);
       Sanctum_RunMemberIconBurst(memberIndex % 4);
       Party_AdjustCoinsFar(-price);
       Shop_DrawMoney();
-      MessageArgument_PushFar(unitId, 1);
+      MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       Sanctum_ShowKeeperMessage(messageBase + 4);
       if (Sanctum_CountMembersInNeed() != 0) {
         chooseAgain = 1;
@@ -420,7 +420,7 @@ void Sanctum_DrawFee(s32 window, s32 unitId) {
     else
       kindOrMessage = (s32)MsgNoHealingNeeded;
     kindOrMessage = Sanctum_GetServiceMessage(kindOrMessage);
-    MessageArgument_PushFar(price, 5);
+    MessageArgument_PushFar(price, MESSAGE_ARGUMENT_NUMBER);
     Text_DrawMessageFar(kindOrMessage, window, 0, 0);
   }
 }

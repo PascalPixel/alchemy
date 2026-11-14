@@ -72,7 +72,7 @@ s32 Forge_OfferItem(s32 unitId, s32 slot) {
   if (Forge_GetMaterialChance(item) == 0) {
     Shop_ShowKeeperMessageHidingCursor((s32)MsgNoThatSNoGood);
   } else {
-    MessageArgument_PushFar(item, 2);
+    MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     Shop_ShowKeeperMessageHidingCursor(chance == 1 ? (s32)MsgItSOkIfIWork
                                                    : (s32)MsgYouWantItToShine);
     if (Shop_AskYesNo(0) != 0) {

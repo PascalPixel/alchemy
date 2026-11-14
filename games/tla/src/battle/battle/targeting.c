@@ -564,16 +564,18 @@ u32 BattlePlayback_RunAll(void) {
         BattleObject_DestroyTemporaryObject(queue->operands[i]);
         break;
       case BATTLE_EVENT_UNIT_NAME:
-        MessageArgument_PushFar(queue->operands[i], 1);
+        MessageArgument_PushFar(queue->operands[i], MESSAGE_ARGUMENT_ACTOR);
         break;
       case BATTLE_EVENT_NUMBER:
-        MessageArgument_PushFar(queue->operands[i], 5);
+        MessageArgument_PushFar(queue->operands[i], MESSAGE_ARGUMENT_NUMBER);
         break;
       case BATTLE_EVENT_ITEM_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x1ff, 2);
+        MessageArgument_PushFar(queue->operands[i] & 0x1ff,
+                                MESSAGE_ARGUMENT_ITEM);
         break;
       case BATTLE_EVENT_ABILITY_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x3fff, 4);
+        MessageArgument_PushFar(queue->operands[i] & 0x3fff,
+                                MESSAGE_ARGUMENT_ABILITY);
         break;
       case BATTLE_EVENT_MARK:
         ((struct BattleDisplayFlags *)Ram_HeapSlots->unk84[4])->marked = 1;

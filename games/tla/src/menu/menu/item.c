@@ -2386,7 +2386,7 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
     }
 #else
     amount = (item & 0xf800) / 2048;
-    MessageArgument_PushFar(amount + 1, 5);
+    MessageArgument_PushFar(amount + 1, MESSAGE_ARGUMENT_NUMBER);
     Text_DrawMessageAsTilesFar(i + 1, window, 0, row * 8);
     row++;
 #endif

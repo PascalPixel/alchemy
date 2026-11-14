@@ -203,7 +203,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
           if (selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
             MessageArgument_Push((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                                      DJINN_ENTRY_RECOVERY_SHIFT,
-                                 5);
+                                 MESSAGE_ARGUMENT_NUMBER);
             DJINN_MESSAGE_COPY(((selectedDjinn & 0xf00) >> 8) * 20 +
                                    (selectedDjinn & 0xff) + (s32)MsgDjinnEffect,
                                messageText, DJINN_MESSAGE_CAPACITY);
@@ -364,7 +364,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
           MessageArgument_ClearAll();
           MessageArgument_Push((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                    DJINN_ENTRY_RECOVERY_SHIFT,
-                               5);
+                               MESSAGE_ARGUMENT_NUMBER);
           Message_CopyExpanded((s32)MsgDjinniStillRecovering, messageText,
                                DJINN_MESSAGE_CAPACITY);
           Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);

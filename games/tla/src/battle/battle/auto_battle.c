@@ -190,7 +190,7 @@ s32 AutoBattle_ShowDefend(s16 *script) {
     return result;
   }
   MessageArgument_ClearAllFar();
-  MessageArgument_PushFar(objectId, 1);
+  MessageArgument_PushFar(objectId, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar((s32)MsgActorDefends);
   return 0;
 }
@@ -322,7 +322,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   Unit_Get(work.actor);
   Unit_Get(work.actors[0]);
   Random16();
-  MessageArgument_PushFar(work.actor, 1);
+  MessageArgument_PushFar(work.actor, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
   Actor_SetAnimationSpeedFar(
@@ -448,26 +448,26 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   if (unitId <= 7) {
     if (showMessage != 0)
       BattleMessage_ShowAndWaitFar((s32)MsgBitterBlow);
-    MessageArgument_PushFar(damage, 5);
-    MessageArgument_PushFar(unitId, 1);
+    MessageArgument_PushFar(damage, MESSAGE_ARGUMENT_NUMBER);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)MsgDmgP);
   } else {
     if (showMessage != 0)
       BattleMessage_ShowAndWaitFar((s32)MsgCritical);
-    MessageArgument_PushFar(damage, 5);
-    MessageArgument_PushFar(unitId, 1);
+    MessageArgument_PushFar(damage, MESSAGE_ARGUMENT_NUMBER);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)MsgDmgE);
-    MessageArgument_PushFar(unitId, 1);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
   }
 
   BattleMotion_PlayFall(unitId);
   if (unitId <= 7) {
     if (character->hp <= 0) {
-      MessageArgument_PushFar(unitId, 1);
+      MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)MsgGoesDown);
     }
   } else if (character->hp <= 0) {
-    MessageArgument_PushFar(unitId, 1);
+    MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)MsgDowned);
   }
 

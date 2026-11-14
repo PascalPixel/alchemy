@@ -710,7 +710,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         MessageArgument_ClearAll();
         if (entry & 0x10000) {
           if (entry & 0x3e0000) {
-            MessageArgument_Push((entry & 0x3e0000) >> 17, 5);
+            MessageArgument_Push((entry & 0x3e0000) >> 17,
+                                 MESSAGE_ARGUMENT_NUMBER);
             SUMMARY_TEXT_COPY(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
                                   (s32)MsgDjinnEffect,
                               psynergyText, SUMMARY_DJINN_HELP_CAPACITY);
@@ -1032,7 +1033,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             helpValue = -helpValue;
           break;
         }
-        MessageArgument_Push(helpValue, 5);
+        MessageArgument_Push(helpValue, MESSAGE_ARGUMENT_NUMBER);
         /* FAKEMATCH(dead): an empty once-only block between the two calls. */
         do {
         } while (0);
@@ -1042,7 +1043,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         MessageArgument_Push(
             Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
-            5);
+            MESSAGE_ARGUMENT_NUMBER);
         Message_CopyExpanded((s32)MsgKey0d20, helpText,
                              SUMMARY_HELP_TEXT_LENGTH);
       } else {

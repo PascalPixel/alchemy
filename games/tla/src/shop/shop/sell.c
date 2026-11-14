@@ -322,12 +322,12 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     }
     total = Shop_SalePrice(unit->inventory[slot]) * count;
     if (total == 0) {
-      MessageArgument_PushFar(itemId, 2);
+      MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       Shop_ShowKeeperMessageHidingCursor((s32)MsgWeDoNotBuy);
       return;
     }
     if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
-      MessageArgument_PushFar(itemId, 2);
+      MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       Shop_ShowKeeperMessageHidingCursor((s32)MsgCannotSellEquipped);
       return;
     }
@@ -341,8 +341,8 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
       message = (s32)MsgRareSellOffer;
     else
       message = (s32)MsgSellOffer;
-    MessageArgument_PushFar(itemId, 2);
-    MessageArgument_PushFar(total, 5);
+    MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
+    MessageArgument_PushFar(total, MESSAGE_ARGUMENT_NUMBER);
     Shop_ShowKeeperMessageHidingCursor(message);
     if (Shop_AskYesNo(0) != 0) {
       if (rare || all)

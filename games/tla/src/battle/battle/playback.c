@@ -125,18 +125,20 @@ void BattlePlayback_Run(void) {
                                            events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_UNIT_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex], 1);
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
+                                    MESSAGE_ARGUMENT_ACTOR);
             break;
           case BATTLE_EVENT_NUMBER:
-            MessageArgument_PushFar(events->queue.operands[eventIndex], 5);
+            MessageArgument_PushFar(events->queue.operands[eventIndex],
+                                    MESSAGE_ARGUMENT_NUMBER);
             break;
           case BATTLE_EVENT_ITEM_NAME:
             MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff,
-                                    2);
+                                    MESSAGE_ARGUMENT_ITEM);
             break;
           case BATTLE_EVENT_ABILITY_NAME:
             MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff,
-                                    4);
+                                    MESSAGE_ARGUMENT_ABILITY);
             break;
           case BATTLE_EVENT_MARK:
             ((struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4])->marked =

@@ -22,6 +22,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "battle/battle.h"
+#include "module/window/window.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"

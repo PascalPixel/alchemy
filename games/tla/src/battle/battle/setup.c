@@ -77,7 +77,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   if (enemyCount != 0) {
     enemy = enemies;
     do {
-      MessageArgument_PushFar((u16)*enemy++, 1);
+      MessageArgument_PushFar((u16)*enemy++, MESSAGE_ARGUMENT_ACTOR);
       if (announced == enemyCount - 1)
         BattleMessage_ShowAndWaitFar((s32)MsgLastEnemyAppeared);
       else

@@ -1159,17 +1159,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 #if TRADE_HELP_DJINNI_FIRST
         Window_SetTilemapEntryFar(
             helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 0, 0, 0);
-        MessageArgument_PushFar(menu->shownMember[0], 1);
+        MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                4);
+                                MESSAGE_ARGUMENT_ABILITY);
         Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel, helpWindow, 8, 0);
 #else
-        MessageArgument_PushFar(menu->shownMember[0], 1);
+        MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel, helpWindow, 0, 0);
         MessageArgument_PushFar(DJINN_ELEMENT(menu->pairEntries[0]) * 20 +
                                     DJINN_NUMBER(menu->pairEntries[0]) + 300,
-                                4);
+                                MESSAGE_ARGUMENT_ABILITY);
         Window_SetTilemapEntryFar(
             helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + 0x5001, 6, 0, 0);
         Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel + 1, helpWindow, 56,

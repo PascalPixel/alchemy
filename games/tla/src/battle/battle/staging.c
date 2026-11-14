@@ -258,7 +258,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       battle->plan.presentationFlags = BattleUnit_GetPartyAttackEffect(
           ((struct BattleUnit *)Unit_Get(battle->plan.actorId))->enemyId);
       if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
-        MessageArgument_PushFar(battle->plan.actorId, 1);
+        MessageArgument_PushFar(battle->plan.actorId, MESSAGE_ARGUMENT_ACTOR);
         if (battle->plan.actorId == battle->plan.targetIds[0])
           BattleMessage_ShowAndWaitFar((s32)&MsgStopHittingYourself);
         else

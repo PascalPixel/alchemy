@@ -38,6 +38,62 @@ struct DeArticles {
 extern const struct DeArticles gText_DeArticles;
 #endif
 
+/// The control codes of a message as stored (the PO catalogs' names), which
+/// Message_Decode expands into decoded text.
+enum {
+  MESSAGE_END = 0,        ///< kept as TEXT_END: the window stays open
+  MESSAGE_PAGE_BREAK = 1, ///< kept as TEXT_PAGE
+  MESSAGE_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
+  MESSAGE_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
+  MESSAGE_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOR
+  MESSAGE_TEXT_EFFECT = 9, ///< kept with its operand as TEXT_OUTLINE
+  /// German: a counted noun; Italian: a gender ending; Spanish and French: the
+  /// plural suffix
+  MESSAGE_LOCALIZED_WORD = 13,
+  /// The name of the unit gMainRoutineWork.currentOwner names.
+  MESSAGE_PROTAGONIST_NAME = 16,
+  MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
+  // The argument codes write out the next message argument of their kind
+  // (MESSAGE_ARGUMENT_).
+  MESSAGE_ARGUMENT_ACTOR_NAME = 18,
+  MESSAGE_ARGUMENT_CLASS_NAME = 19,
+  MESSAGE_ARGUMENT_ITEM_NAME = 20,
+  MESSAGE_ARGUMENT_ABILITY_NAME = 21,
+  /// The number argument, with a minus sign when negative; outside Japanese
+  /// any number but -1, 0 and 1 makes what follows plural.
+  MESSAGE_ARGUMENT_SIGNED_NUMBER = 22,
+  MESSAGE_ARGUMENT_LOCATION_NAME = 23,
+  /// English: the plural suffix; German, Spanish, French and Italian: the
+  /// item's possessive
+  MESSAGE_PLURAL_SUFFIX = 25,
+  /// A button drawn as two characters, codes 128 + 2 * n and the next for
+  /// operand value n.
+  MESSAGE_BUTTON_ICON = 26,
+  /// English: an apostrophe, and an s unless the name ended in s; German: an
+  /// apostrophe after s or z, else an s; nothing in Spanish, French and
+  /// Italian.
+  MESSAGE_POSSESSIVE_SUFFIX = 27,
+  /// The first letters of a unit's name, a stammer: its operands are the unit
+  /// and how many letters (a kana keeps its mark).
+  MESSAGE_ACTOR_NAME_START = 28,
+  /// The article class of the name it starts, in item and class names, which
+  /// Message_AppendArticleName reads and drops.
+  MESSAGE_ARTICLE_CLASS = 29,
+  /// Kept as TEXT_END_ALT, which the message ends as it ends TEXT_END.
+  MESSAGE_END_NOW = 30,
+  /// The em dash, stored as the character ° rather than The Broken Seal's
+  /// code 24: TEXT_ARGUMENT_SPACE and a hyphen, and outside English a space
+  /// after. The Japanese decoder keeps it as it is.
+  MESSAGE_EM_DASH = 176,
+};
+
+/// What the decode flags of Message_SetDecodeFlags put between characters.
+#define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
+/// With spacingAfter (English and Japanese): TEXT_MARK_VOICED after a character
+/// of codes 128 to 256, other than the kana marks and the Japanese full stop,
+/// comma and middle dot.
+#define ENTRY_WIDE_GAP TEXT_MARK_VOICED
+
 #if (LANGUAGE == LANGUAGE_ENGLISH)
 /// Copies a name into the decoded text at writePosition, with its English
 /// article in front when articleForm is 1 (or 3 with plural clear) and a
@@ -56,18 +112,15 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   s32 cnt;
 
   if (mode != 0) {
-    entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, ' ');
+    TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
+    TEXT_APPEND(entries, writePosition, 10);
   }
   if (articleForm == 1 || (articleForm == 3 && plural == 0)) {
     kind = 0;
     table = gArticle_Table;
     head = name[0];
-    if (head == 29) {
+    if (head == MESSAGE_ARTICLE_CLASS) {
       kind = name[1] - 1;
       name += 2;
     }
@@ -82,18 +135,16 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     for (cnt = 0; cnt < 8; cnt++) {
       if ((c8 = *p++) == 0)
         break;
-      entries[writePosition] = c8;
-      writePosition = (writePosition + 1) & 0x1ff;
+      TEXT_APPEND(entries, writePosition, c8);
     }
   } else {
     head = name[0];
-    if (head == 29)
+    if (head == MESSAGE_ARTICLE_CLASS)
       name += 2;
   }
   while (*name != 0) {
     c = *name++;
-    entries[writePosition] = (s16)c;
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, (s16)c);
     if (c == 'S' || c == 's')
       *suffix = 1;
     else
@@ -101,19 +152,14 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   }
   if (articleForm == 2 || (articleForm == 3 && plural != 0)) {
     if (*suffix != 0) {
-      entries[writePosition] = 'e';
-      writePosition = (writePosition + 1) & 0x1ff;
+      TEXT_APPEND(entries, writePosition, 'e');
     }
-    entries[writePosition] = 's';
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, 's');
   }
   if (mode != 0) {
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x08;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
+    TEXT_APPEND(entries, writePosition, 8);
+    TEXT_APPEND(entries, writePosition, ' ');
   }
   return writePosition;
 }
@@ -146,12 +192,9 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   indefinite = articleForm & 8;
 #endif
   if (mode != 0) {
-    entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, ' ');
+    TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
+    TEXT_APPEND(entries, writePosition, 10);
   }
 #if (LANGUAGE == LANGUAGE_FRENCH)
   if (articleForm == 4) {
@@ -169,8 +212,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     for (n = 0; n < 8; n++) {
       if ((letter = *word++) == 0)
         break;
-      entries[writePosition] = letter;
-      writePosition = (writePosition + 1) & 0x1ff;
+      TEXT_APPEND(entries, writePosition, letter);
     }
   }
 #endif
@@ -180,7 +222,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
   if (articleForm == 0 || articleForm == 4) {
 #endif
     head = name[0];
-    if (head == 29)
+    if (head == MESSAGE_ARTICLE_CLASS)
       name += 2;
   } else {
     kind = 0;
@@ -188,7 +230,7 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #if (LANGUAGE == LANGUAGE_SPANISH)
     indefiniteTable = gText_IndefiniteArticles;
 #endif
-    if (name[0] == 29) {
+    if (name[0] == MESSAGE_ARTICLE_CLASS) {
       kind = name[1];
       name += 2;
     }
@@ -205,18 +247,15 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
         break;
       if (cnt == 0 && *suffix == 2)
         c8 -= 'a' - 'A';
-      entries[writePosition] = c8;
-      writePosition = (writePosition + 1) & 0x1ff;
+      TEXT_APPEND(entries, writePosition, c8);
     }
   }
   while (*name != 0) {
     c = *name++;
 #if (LANGUAGE == LANGUAGE_ITALIAN)
-    entries[writePosition] = c;
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, c);
 #else
-    entries[writePosition] = (s16)c;
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, (s16)c);
 #if (LANGUAGE == LANGUAGE_GERMAN)
     if (c == 's' || c == 'S' || c == 'z' || c == 'Z' || c == 'x' || c == 'X')
 #else
@@ -228,19 +267,15 @@ u32 Message_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
   }
   if (mode != 0) {
-    entries[writePosition] = 0x0a;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = 0x08;
-    writePosition = (writePosition + 1) & 0x1ff;
-    entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & 0x1ff;
+    TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
+    TEXT_APPEND(entries, writePosition, 8);
+    TEXT_APPEND(entries, writePosition, ' ');
   }
   return writePosition;
 }
 #endif
 
 #define TEXT_DECODER_SLOT 200
-#define TEXT_BUFFER_MASK (UI_TEXT_ENTRY_COUNT - 1)
 
 // The European editions keep a second item name table after the first,
 // read for the plural forms; its distance from MsgItemName is a message id.
@@ -339,8 +374,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   u8 *nameBytes;
   u16 *nameOutput;
   u16 *p;
-  u16 name[24];
-  u8 numberBuffer[16];
+  u16 name[MESSAGE_NAME_HALFWORDS];
+  u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct TextReader reader;
 #if TLA_PATCH_2 && LANGUAGE != LANGUAGE_FRENCH
   struct PossessiveTable possessives;
@@ -368,7 +403,7 @@ s32 Message_Decode(s32 script, s32 clear) {
       code = (u32)decode(messageReader);
 #if TLA_PATCH_2
       // A full stop right after an item name that ends in one is skipped.
-      if (previousCode == 20 && afterItem == 1) {
+      if (previousCode == MESSAGE_ARGUMENT_ITEM_NAME && afterItem == 1) {
         if (code == '.')
           code = (u32)decode(messageReader);
         afterItem = 0;
@@ -377,51 +412,51 @@ s32 Message_Decode(s32 script, s32 clear) {
       }
 #endif
       if (code > 255)
-        code = 64;
+        code = '@';
 
       if (overflow != 0) {
-        if (code < 32 || code == 176) {
+        if (code < 32 || code == MESSAGE_EM_DASH) {
           switch (code) {
-          case 19:
+          case MESSAGE_ARGUMENT_CLASS_NAME:
             decode(messageReader);
-            MessageArgument_Lookup(3, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             break;
-          case 0:
-          case 2:
-          case 30:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case 22:
-            MessageArgument_Lookup(5, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
-          case 20:
+          case MESSAGE_ARGUMENT_ITEM_NAME:
             decode(messageReader);
-            MessageArgument_Lookup(2, clear);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             break;
-          case 21:
-            MessageArgument_Lookup(4, clear);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
             break;
-          case 23:
-            MessageArgument_Lookup(6, clear);
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
-          case 8:
-          case 9:
-            decode(messageReader);
-            break;
-          case 17:
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
             decode(messageReader);
             break;
-          case 18:
+          case MESSAGE_ACTOR_NAME:
             decode(messageReader);
             break;
-          case 29:
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
             decode(messageReader);
             break;
-          case 1:
+          case MESSAGE_ARTICLE_CLASS:
+            decode(messageReader);
+            break;
+          case MESSAGE_PAGE_BREAK:
             running = 0;
-            code = 2;
+            code = MESSAGE_END_WAIT;
             break;
-          case 16:
+          case MESSAGE_PROTAGONIST_NAME:
             break;
           case -1:
             break;
@@ -432,48 +467,46 @@ s32 Message_Decode(s32 script, s32 clear) {
       } else {
 #if TLA_PATCH_2
         if (work->unk138a[0] != 0) {
-          entry[writePosition] = 5;
-          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 #else
-        if (work->unk138a[0] != 0 && lineStart == 0 && code != 222 &&
-            code != 223) {
-          entry[writePosition] = 5;
-          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+        if (work->unk138a[0] != 0 && lineStart == 0 &&
+            code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
+          TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 
-        if (work->unk138a[1] != 0 && lineStart == 0 && code != 222 &&
-            code != 223 && previousCode <= 256 && previousCode > 127 &&
-            previousCode != 222 && previousCode != 223 && previousCode != 32 &&
-            previousCode != 165 && previousCode != 161 && previousCode != 164) {
-          entry[writePosition] = 222;
-          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+        if (work->unk138a[1] != 0 && lineStart == 0 &&
+            code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
+            previousCode <= 256 && previousCode > 127 &&
+            previousCode != TEXT_MARK_VOICED &&
+            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
+            previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
+            previousCode != TEXT_JAPANESE_FULL_STOP &&
+            previousCode != TEXT_JAPANESE_COMMA) {
+          TEXT_APPEND(entry, writePosition, ENTRY_WIDE_GAP);
         }
 #endif
 
-        if (code > 31 && code != 176) {
+        if (code > 31 && code != MESSAGE_EM_DASH) {
           if (work->unk138a[0] != 0 && (code == 32 || decodedCount > 10)) {
-            entry[writePosition] = '.';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = '.';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = '.';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            TEXT_APPEND(entry, writePosition, '.');
+            TEXT_APPEND(entry, writePosition, '.');
+            TEXT_APPEND(entry, writePosition, '.');
             overflow = 1;
             if (decodedCount > 10)
               code = 32;
           }
-          if (code == 34) {
+          if (code == '"') {
             quote ^= 1;
             if (quote != 0)
-              code = 142;
+              code = TEXT_OPENING_QUOTE;
           }
-          entry[writePosition] = (u16)code;
-          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          TEXT_APPEND(entry, writePosition, (u16)code);
 #if TLA_PATCH_2
           // suffix: 2 after a sentence ends, 1 after an s or z.
 #if LANGUAGE == LANGUAGE_SPANISH
-          if (code != ' ' && code != 161 && code != 191) {
+          if (code != ' ' && code != TEXT_INVERTED_EXCLAMATION_MARK &&
+              code != TEXT_INVERTED_QUESTION_MARK) {
 #else
           if (code != ' ') {
 #endif
@@ -488,21 +521,19 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
         } else {
           switch (code) {
-          case 0:
-          case 2:
-          case 30:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case 8:
-          case 9:
-          case 29:
-            entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = decode(messageReader) + 0xFFFFU;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
+          case MESSAGE_ARTICLE_CLASS:
+            TEXT_APPEND(entry, writePosition, (u16)code);
+            TEXT_APPEND(entry, writePosition, decode(messageReader) + 0xFFFFU);
             break;
-          case 22:
-            value = MessageArgument_Lookup(5, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             magnitude = value;
             if (magnitude < 0)
               magnitude = -value;
@@ -511,20 +542,20 @@ s32 Message_Decode(s32 script, s32 clear) {
               plural = 0;
             numberText = String_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
-            while (i != 16 && numberBuffer[i] != 0) {
-              entry[writePosition] = numberBuffer[i];
-              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            while (i != TEXT_NUMBER_BUFFER_SIZE && numberBuffer[i] != 0) {
+              TEXT_APPEND(entry, writePosition, numberBuffer[i]);
               i++;
             }
             break;
-          case 19:
+          case MESSAGE_ARGUMENT_CLASS_NAME:
             no = decode(messageReader) - 1;
-            argument = MessageArgument_Lookup(3, clear);
-            Message_DecodeRaw(argument + (s32)MsgClassName, name, 24);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
+            Message_DecodeRaw(argument + (s32)MsgClassName, name,
+                              MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
-          case 20:
+          case MESSAGE_ARGUMENT_ITEM_NAME:
             no = decode(messageReader) - 1;
 #if TLA_PATCH_2
             {
@@ -536,13 +567,15 @@ s32 Message_Decode(s32 script, s32 clear) {
 #else
               form = no;
 #endif
-              argument = MessageArgument_Lookup(2, clear) & ITEM_ID_MASK;
+              argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear) &
+                         ITEM_ID_MASK;
               if (form == 2 || (form == 3 && plural != 0) || form == 4)
                 Message_DecodeRaw(
                     argument + (s32)(MsgItemName + ITEM_PLURAL_NAME_OFFSET),
-                    name, 24);
+                    name, MESSAGE_NAME_HALFWORDS);
               else
-                Message_DecodeRaw(argument + (s32)MsgItemName, name, 24);
+                Message_DecodeRaw(argument + (s32)MsgItemName, name,
+                                  MESSAGE_NAME_HALFWORDS);
               writePosition = Message_AppendArticleName(
                   0, name, writePosition, entry, no, plural, &suffix);
               for (k = 0; name[k] != 0; k++)
@@ -553,16 +586,17 @@ s32 Message_Decode(s32 script, s32 clear) {
                 afterItem = 0;
             }
 #else
-            argument = MessageArgument_Lookup(2, clear);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             Message_DecodeRaw((argument & ITEM_ID_MASK) + (s32)MsgItemName,
-                              name, 24);
+                              name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
 #endif
             break;
-          case 21:
-            argument = MessageArgument_Lookup(4, clear);
-            Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name, 24);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
+            Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name,
+                              MESSAGE_NAME_HALFWORDS);
             p = name;
             nextPosition = writePosition;
             while (*p != 0) {
@@ -572,11 +606,13 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             writePosition = nextPosition;
             break;
-          case 23:
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
             Message_DecodeRaw(
-                Area_GetNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
+                Area_GetNameIndexFar(
+                    MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
+                    1) +
                     (s32)MsgDebugAreaName,
-                name, 24);
+                name, MESSAGE_NAME_HALFWORDS);
             p = name;
             nextPosition = writePosition;
             while (*p != 0) {
@@ -586,7 +622,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             writePosition = nextPosition;
             break;
-          case 16:
+          case MESSAGE_PROTAGONIST_NAME:
             nameBytes = Unit_Get(gMainRoutineWork.currentOwner)->name;
             nameOutput = name;
             i = 0;
@@ -599,9 +635,11 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = Message_AppendArticleName(0, name, writePosition,
                                                       entry, 0, 0, &suffix);
             break;
-          case 18:
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
             no = decode(messageReader) - 1;
-            nameBytes = Unit_Get(MessageArgument_Lookup(1, clear))->name;
+            nameBytes =
+                Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear))
+                    ->name;
             nameOutput = name;
             j = 0;
             do {
@@ -613,7 +651,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = Message_AppendArticleName(
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
-          case 17:
+          case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
             nameBytes = Unit_Get(argument)->name;
             nameOutput = name;
@@ -627,7 +665,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = Message_AppendArticleName(0, name, writePosition,
                                                       entry, 0, 0, &suffix);
             break;
-          case 28:
+          case MESSAGE_ACTOR_NAME_START:
             argument = decode(messageReader) - 1;
             unit = Unit_Get(argument);
             length = decode(messageReader);
@@ -640,7 +678,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #else
             for (j = 0; j < length; j++) {
               *nameOutput++ = *nameBytes++;
-              if ((u8)(*nameBytes + 34) <= 1)
+              if ((u8)(*nameBytes - TEXT_MARK_VOICED) <= 1)
                 *nameOutput++ = *nameBytes++;
             }
 #endif
@@ -654,35 +692,29 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             writePosition = nextPosition;
             break;
-          case 26:
+          case MESSAGE_BUTTON_ICON:
             argument = ((decode(messageReader) - 1) << 1) + 128;
-            entry[writePosition] = argument;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = argument + 1;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            TEXT_APPEND(entry, writePosition, argument);
+            TEXT_APPEND(entry, writePosition, argument + 1);
             break;
 #if TLA_PATCH_2
-          case 176:
-            entry[writePosition] = ' ';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = '-';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = ' ';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          case MESSAGE_EM_DASH:
+            TEXT_APPEND(entry, writePosition, ' ');
+            TEXT_APPEND(entry, writePosition, '-');
+            TEXT_APPEND(entry, writePosition, ' ');
             break;
 #if LANGUAGE == LANGUAGE_GERMAN
-          case 13:
+          case MESSAGE_LOCALIZED_WORD:
             // A counted noun, singular or plural, by its kind.
             no = decode(messageReader) - 1;
             for (nameBytes = (u8 *)gText_NumberWords[(no & 7) * 2 + plural];
                  *nameBytes != 0; nameBytes++) {
-              entry[writePosition] = *nameBytes;
-              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+              TEXT_APPEND(entry, writePosition, *nameBytes);
             }
             break;
 #endif
 #if LANGUAGE == LANGUAGE_ITALIAN
-          case 13:
+          case MESSAGE_LOCALIZED_WORD:
             // A gender ending, singular or plural: o or i after operand 1, else
             // a or e.
             if (decode(messageReader) == 1) {
@@ -700,29 +732,27 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
 #endif
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
-          case 13:
+          case MESSAGE_LOCALIZED_WORD:
             if (plural != 0) {
               if (suffix != 0) {
-                entry[writePosition] = 'e';
-                writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+                TEXT_APPEND(entry, writePosition, 'e');
               }
-              entry[writePosition] = 's';
-              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+              TEXT_APPEND(entry, writePosition, 's');
             }
             break;
 #endif
-          case 25:
+          case MESSAGE_PLURAL_SUFFIX:
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
             // The item's possessive, by its gender; c holds the gender
             // first.
-            argument = MessageArgument_Lookup(2, 0);
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
             argument &= ITEM_ID_MASK;
             possessives = gLocalizedWord_ItemPossessives;
             c = gLocalizedWord_ItemGenders[argument];
             word = possessives.text[c & 3];
 #else
             // DEAD: the item argument is read and dropped.
-            MessageArgument_Lookup(2, 0);
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, 0);
 #if LANGUAGE == LANGUAGE_FRENCH
             word = (s8 *)gLocalizedWord_ItemPronoun;
 #else
@@ -735,8 +765,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             for (value = 0; (c = *word++) != 0;) {
               if (value == 0 && suffix == 2)
                 c -= 32;
-              entry[writePosition] = c;
-              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+              TEXT_APPEND(entry, writePosition, c);
               value++;
               if (value > 15)
                 break;
@@ -745,7 +774,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             suffix = 0;
 #endif
             break;
-          case 27:
+          case MESSAGE_POSSESSIVE_SUFFIX:
 #if LANGUAGE == LANGUAGE_GERMAN
             // An apostrophe after s or z, else an s.
             if (suffix == 1)
@@ -757,44 +786,36 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case -1:
             break;
-          case 1:
+          case MESSAGE_PAGE_BREAK:
           default:
-            entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            TEXT_APPEND(entry, writePosition, (u16)code);
             break;
 #else
-          case 176:
-            entry[writePosition] = 143;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = '-';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          case MESSAGE_EM_DASH:
+            TEXT_APPEND(entry, writePosition, TEXT_ARGUMENT_SPACE);
+            TEXT_APPEND(entry, writePosition, '-');
             break;
-          case 25:
+          case MESSAGE_PLURAL_SUFFIX:
             if (plural != 0) {
               if (suffix != 0) {
-                entry[writePosition] = 'e';
-                writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+                TEXT_APPEND(entry, writePosition, 'e');
               }
-              entry[writePosition] = 's';
-              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+              TEXT_APPEND(entry, writePosition, 's');
             }
             break;
-          case 27:
-            entry[writePosition] = '\'';
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          case MESSAGE_POSSESSIVE_SUFFIX:
+            TEXT_APPEND(entry, writePosition, '\'');
             if (suffix == 0) {
-              entry[writePosition] = 's';
-              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+              TEXT_APPEND(entry, writePosition, 's');
             }
             break;
           case -1:
             break;
-          case 1:
-          case 3:
+          case MESSAGE_PAGE_BREAK:
+          case MESSAGE_LINE_BREAK:
             lineStart = 1;
           default:
-            entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            TEXT_APPEND(entry, writePosition, (u16)code);
             if (code == 's' || code == 'S')
               suffix = 1;
             else
@@ -807,8 +828,7 @@ s32 Message_Decode(s32 script, s32 clear) {
       decodedCount++;
     } while (running != 0 && decodedCount <= TEXT_BUFFER_MASK);
 
-    entry[writePosition] = (u16)code;
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    TEXT_APPEND(entry, writePosition, (u16)code);
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     work->count = (u16)nextPosition;
@@ -841,11 +861,10 @@ extern u8 MsgWaitingForOpponent[];
 #define MSG_MYSTERY_MAN ((s32)MsgWaitingForOpponent + 1)
 
 /// Copies a name into the decoded text at writePosition and returns the
-/// position after it. With mode set, a space and codes 10, 10 go before the
-/// name and codes 10, 8 and a space after it (The Broken Seal reads code 10 as
-/// line spacing, with its operand). The other editions' routine of this name,
-/// at the top of this file, also writes articles; Japanese has none, and its
-/// decoder inlines this copy.
+/// position after it. With mode set, a space and a line spacing of 10 go before
+/// the name, and a line spacing of 8 and a space after it. The other editions'
+/// routine of this name, at the top of this file, also writes articles;
+/// Japanese has none, and its decoder inlines this copy.
 static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
                                             u32 writePosition, u16 *entries,
                                             s32 articleForm, s32 plural,
@@ -853,25 +872,18 @@ static inline u32 Message_AppendArticleName(s32 mode, u16 *name,
   u16 c;
 
   if (mode != 0) {
-    entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    entries[writePosition] = 10;
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    entries[writePosition] = 10;
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    TEXT_APPEND(entries, writePosition, ' ');
+    TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
+    TEXT_APPEND(entries, writePosition, 10);
   }
   while (*name != 0) {
     c = *name++;
-    entries[writePosition] = c;
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    TEXT_APPEND(entries, writePosition, c);
   }
   if (mode != 0) {
-    entries[writePosition] = 10;
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    entries[writePosition] = 8;
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    entries[writePosition] = ' ';
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
+    TEXT_APPEND(entries, writePosition, 8);
+    TEXT_APPEND(entries, writePosition, ' ');
   }
   return writePosition;
 }
@@ -904,8 +916,8 @@ s32 Message_Decode(s32 script, s32 clear) {
   u8 *numberText;
   u8 *nameBytes;
   u16 *nameOutput;
-  u16 name[24];
-  u8 numberBuffer[16];
+  u16 name[MESSAGE_NAME_HALFWORDS];
+  u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct TextReader reader;
   struct TextReader *messageReader;
   struct HeapSlots *slots;
@@ -927,40 +939,40 @@ s32 Message_Decode(s32 script, s32 clear) {
       if (overflow != 0) {
         if (code < 32) {
           switch (code) {
-          case 19:
-            MessageArgument_Lookup(3, clear);
+          case MESSAGE_ARGUMENT_CLASS_NAME:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             break;
-          case 0:
-          case 2:
-          case 30:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case 8:
-          case 9:
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
             decode(messageReader);
             break;
-          case 22:
-            MessageArgument_Lookup(5, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
-          case 20:
-            MessageArgument_Lookup(2, clear);
+          case MESSAGE_ARGUMENT_ITEM_NAME:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             break;
-          case 21:
-            MessageArgument_Lookup(4, clear);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
             break;
-          case 23:
-            MessageArgument_Lookup(6, clear);
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
+            MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
-          case 17:
+          case MESSAGE_ACTOR_NAME:
             decode(messageReader);
             break;
-          case 18:
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
             break;
-          case 1:
+          case MESSAGE_PAGE_BREAK:
             running = 0;
-            code = 2;
+            code = MESSAGE_END_WAIT;
             break;
-          case 16:
+          case MESSAGE_PROTAGONIST_NAME:
             break;
           case -1:
             break;
@@ -969,94 +981,91 @@ s32 Message_Decode(s32 script, s32 clear) {
           }
         }
       } else {
-        if (work->unk138a[0] != 0 && lineStart == 0 && code != 222 &&
-            code != 223) {
-          entry[writePosition] = 5;
-          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+        if (work->unk138a[0] != 0 && lineStart == 0 &&
+            code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
+          TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 
-        if (work->unk138a[1] != 0 && lineStart == 0 && code != 222 &&
-            code != 223 && previousCode <= 256 && previousCode > 127 &&
-            previousCode != 222 && previousCode != 223 && previousCode != 32 &&
-            previousCode != 165 && previousCode != 161 && previousCode != 164) {
-          entry[writePosition] = 222;
-          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+        if (work->unk138a[1] != 0 && lineStart == 0 &&
+            code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
+            previousCode <= 256 && previousCode > 127 &&
+            previousCode != TEXT_MARK_VOICED &&
+            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
+            previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
+            previousCode != TEXT_JAPANESE_FULL_STOP &&
+            previousCode != TEXT_JAPANESE_COMMA) {
+          TEXT_APPEND(entry, writePosition, ENTRY_WIDE_GAP);
         }
 
         if (code > 31) {
           if (mode != 0 && code == ' ') {
-            entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            TEXT_APPEND(entry, writePosition, (u16)code);
           }
           // The ellipsis here is three of code 165, then code 161.
           if (work->unk138a[0] != 0 && (code == 32 || decodedCount > 10)) {
-            entry[writePosition] = 165;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = 165;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = 165;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = 161;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
+            TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
+            TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
+            TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_FULL_STOP);
             overflow = 1;
             if (decodedCount > 10)
               code = 32;
           }
-          entry[writePosition] = (u16)code;
-          writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          TEXT_APPEND(entry, writePosition, (u16)code);
           lineStart = 0;
         } else {
           switch (code) {
-          case 0:
-          case 2:
-          case 30:
+          case MESSAGE_END:
+          case MESSAGE_END_WAIT:
+          case MESSAGE_END_NOW:
             running = 0;
             break;
-          case 8:
-          case 9:
-            entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = decode(messageReader) + 0xFFFFU;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+          case MESSAGE_TEXT_COLOR:
+          case MESSAGE_TEXT_EFFECT:
+            TEXT_APPEND(entry, writePosition, (u16)code);
+            TEXT_APPEND(entry, writePosition, decode(messageReader) + 0xFFFFU);
             break;
-          case 22:
-            value = MessageArgument_Lookup(5, clear);
+          case MESSAGE_ARGUMENT_SIGNED_NUMBER:
+            value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             numberText = String_FormatNumber(numberBuffer, value, 0);
             i = numberText - numberBuffer;
-            while (i != 16 && numberBuffer[i] != 0) {
-              entry[writePosition] = numberBuffer[i];
-              writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            while (i != TEXT_NUMBER_BUFFER_SIZE && numberBuffer[i] != 0) {
+              TEXT_APPEND(entry, writePosition, numberBuffer[i]);
               i++;
             }
             break;
-          case 19:
-            argument = MessageArgument_Lookup(3, clear);
-            Message_DecodeRaw(argument + (s32)MsgClassName, name, 24);
+          case MESSAGE_ARGUMENT_CLASS_NAME:
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
+            Message_DecodeRaw(argument + (s32)MsgClassName, name,
+                              MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
-          case 20:
-            argument = MessageArgument_Lookup(2, clear);
+          case MESSAGE_ARGUMENT_ITEM_NAME:
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             Message_DecodeRaw((argument & ITEM_ID_MASK) + (s32)MsgItemName,
-                              name, 24);
+                              name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
-          case 21:
-            argument = MessageArgument_Lookup(4, clear);
-            Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name, 24);
+          case MESSAGE_ARGUMENT_ABILITY_NAME:
+            argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_ABILITY, clear);
+            Message_DecodeRaw(argument + (s32)MsgAbilityNothing, name,
+                              MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
-          case 23:
+          case MESSAGE_ARGUMENT_LOCATION_NAME:
             Message_DecodeRaw(
-                Area_GetNameIndexFar(MessageArgument_Lookup(6, clear), 1) +
+                Area_GetNameIndexFar(
+                    MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear),
+                    1) +
                     (s32)MsgDebugAreaName,
-                name, 24);
+                name, MESSAGE_NAME_HALFWORDS);
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
-          case 16:
+          case MESSAGE_PROTAGONIST_NAME:
             nameBytes = Unit_Get(gMainRoutineWork.currentOwner)->name;
             nameOutput = name;
             i = 0;
@@ -1069,8 +1078,9 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
-          case 18:
-            unit = Unit_Get(MessageArgument_Lookup(1, clear));
+          case MESSAGE_ARGUMENT_ACTOR_NAME:
+            unit =
+                Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
             if (work->menuState != 0 &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {
@@ -1094,7 +1104,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                   mode, name, writePosition, entry, 0, 0, 0);
             }
             break;
-          case 17:
+          case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
             nameBytes = Unit_Get(argument)->name;
             nameOutput = name;
@@ -1108,7 +1118,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             writePosition = Message_AppendArticleName(mode, name, writePosition,
                                                       entry, 0, 0, 0);
             break;
-          case 28:
+          case MESSAGE_ACTOR_NAME_START:
             argument = decode(messageReader) - 1;
             unit = Unit_Get(argument);
             length = decode(messageReader);
@@ -1116,7 +1126,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             nameOutput = name;
             for (j = 0; j < length; j++) {
               *nameOutput++ = *nameBytes++;
-              if ((u8)(*nameBytes + 34) <= 1)
+              if ((u8)(*nameBytes - TEXT_MARK_VOICED) <= 1)
                 *nameOutput++ = *nameBytes++;
             }
             *nameOutput = 0;
@@ -1125,12 +1135,11 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case -1:
             break;
-          case 1:
-          case 3:
+          case MESSAGE_PAGE_BREAK:
+          case MESSAGE_LINE_BREAK:
             lineStart = 1;
           default:
-            entry[writePosition] = (u16)code;
-            writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+            TEXT_APPEND(entry, writePosition, (u16)code);
             break;
           }
         }
@@ -1138,8 +1147,7 @@ s32 Message_Decode(s32 script, s32 clear) {
       decodedCount++;
     } while (running != 0 && decodedCount <= TEXT_BUFFER_MASK);
 
-    entry[writePosition] = (u16)code;
-    writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
+    TEXT_APPEND(entry, writePosition, (u16)code);
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     work->count = (u16)nextPosition;
@@ -1158,7 +1166,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 #undef ARTICLE_KINDS
 #undef ARTICLE_KIND_MASK
 #undef TEXT_DECODER_SLOT
-#undef TEXT_BUFFER_MASK
 #undef ITEM_PLURAL_NAME_OFFSET
 #undef SUFFIX_START
 #undef POSSESSIVE_COUNT

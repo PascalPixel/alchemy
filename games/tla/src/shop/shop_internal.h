@@ -17,6 +17,7 @@
 #include "graphics/render_input.h"
 #include "system/main_routine_work.h"
 #include "battle/battle.h"
+#include "module/window/window.h"
 #include "debug.h"
 #include "field/field.h"
 #include "game/game.h"

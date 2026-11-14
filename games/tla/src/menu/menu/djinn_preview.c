@@ -286,7 +286,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (page == 1) {
           Text_DrawMessageAsTilesFar((s32)MsgDjinnStatusHelp, help, 128, 16);
         } else {
-          MessageArgument_PushFar(menu->shownMember[page != 2], 1);
+          MessageArgument_PushFar(menu->shownMember[page != 2],
+                                  MESSAGE_ARGUMENT_ACTOR);
           Text_DrawMessageAsTilesFar((s32)MsgDjinnPsyHelp, help, 128, 16);
         }
       }

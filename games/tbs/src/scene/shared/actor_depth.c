@@ -8,12 +8,10 @@
 /// than on it.
 static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *actor) {
   struct Actor *ref;
-  u8 *fp;
   u8 flag;
   ref = Actor_GetById(ACTOR_PARTY_LEADER);
-  fp = &actor->priorityFlags;
-  flag = *fp | ACTOR_PRIORITY_UNDERFOOT;
-  *fp = flag;
+  flag = actor->priorityFlags | ACTOR_PRIORITY_UNDERFOOT;
+  actor->priorityFlags = flag;
   if (ref->z.fixed < actor->z.fixed) {
     s32 lim = actor->z.fixed - ref->z.fixed;
     s32 ay;
@@ -22,7 +20,7 @@ static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *actor) {
     ay += lim;
     if (ref->y.fixed <= ay) {
       flag &= ~ACTOR_PRIORITY_UNDERFOOT;
-      *fp = flag;
+      actor->priorityFlags = flag;
     }
   }
   RETURN_UNREAD(0);

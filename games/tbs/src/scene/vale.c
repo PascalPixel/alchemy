@@ -937,7 +937,6 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   struct Actor *leader;
   struct Actor *actor;
   u8 leaderMotionFlags;
-  u8 *leaderMotion;
   s32 i;
 
   Event_Start();
@@ -952,9 +951,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leaderMotion = &leader->motionFlags;
-  leaderMotionFlags = *leaderMotion;
-  *leaderMotion = 0;
+  leaderMotionFlags = leader->motionFlags;
+  leader->motionFlags = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, 407, 690);
   Actor_SetPosition(ACTOR_DORA, 392, 896);
   Actor_SetPosition(ACTOR_GARET, 298, 736);
@@ -1494,7 +1492,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(100);
   GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  *leaderMotion = leaderMotionFlags;
+  leader->motionFlags = leaderMotionFlags;
   Event_End();
 }
 

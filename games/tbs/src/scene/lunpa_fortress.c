@@ -3141,9 +3141,8 @@ static void LunpaFortress_ReadStartledResidentsThoughts(void) {
     // "Maybe that merchant is the reason they've closed off the..."
     Event_ShowMessage(ACTOR_GROUND_FLOOR_STARTLED_OLD_MAN, 0);
   } else {
-    s16 *psynergyRequest = &gFieldWork->psynergy;
 
-    *psynergyRequest = 0;
+    gFieldWork->psynergy = 0;
     FieldPsynergy_StopMindReadWave();
     LunpaFortress_TalkToStartledOldMan();
   }

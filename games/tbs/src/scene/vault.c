@@ -414,12 +414,10 @@ static void Vault_PraiseThievesCapture(void) {
 
 /// An old man talks about Ivan, Hammet's servant.
 static void Vault_TalkAboutIvan(void) {
-  struct FieldWork *workspace;
   Event_Start();
   Event_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0) {
-    workspace = gFieldWork;
-    ++workspace->message;
+    ++gFieldWork->message;
   }
   Vault_ShowStandingActorMessage(ACTOR_OLD_MAN_ON_HAMMETS_SERVANT);
   Event_End();

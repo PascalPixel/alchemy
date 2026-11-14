@@ -1479,7 +1479,6 @@ static void Kolima_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
   s32 framePhase;
-  s32 priorityFlags;
   s32 spawnX = px(98);
   s32 spawnZ = px(105);
   s32 targetX = px(98);
@@ -1498,9 +1497,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   }
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
-  priorityFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  priorityFlags &= sparkle->priorityFlags;
-  sparkle->priorityFlags = priorityFlags;
+  sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
   sparkle->speedLimit = px(8);

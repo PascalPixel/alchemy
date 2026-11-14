@@ -513,7 +513,6 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
 /// it.
 static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   struct Actor *leader;
-  u8 *flags;
   s32 savedMotionFlags;
   s32 jumpDirection;
 #if !TBS_PATCH_1
@@ -522,8 +521,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   struct FieldPosition destination;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  flags = &leader->motionFlags;
-  savedMotionFlags = *flags;
+  savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
   jumpDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
 #endif
@@ -564,13 +562,13 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       leader->speedLimit = px(3);
       leader->acceleration = px(2);
       leader->velocityY = px(4);
-      *flags &= 126;
+      leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
       Actor_SetSpriteFlags(leader, 0);
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.x >> 16,
                           destination.z >> 16);
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-      *flags = savedMotionFlags;
+      leader->motionFlags = savedMotionFlags;
       Event_End();
       return 1;
     }
@@ -1002,7 +1000,6 @@ static void CrossboneIsleSteppingStones_SortPillarActors(void) {
 static void CrossboneIsleSteppingStones_MovePillar(void) {
   u32 id;
   struct Actor *actor;
-  u8 *flags;
   u32 i;
   u32 k;
   struct Actor *other;
@@ -1025,19 +1022,17 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     if (FieldActor_CheckMovementCollision(actor, &sProbePosition) == -1) {
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     }
-    flags = &actor->motionFlags;
     CrossboneIsleSteppingStones_SetCellAttributes(
         0, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].cell);
     CrossboneIsleSteppingStones_SetCellAttributes(
         2, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].cell);
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
-    if (*flags & 1) {
+    if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) == 50) {
         Sound_Play(SE_STONE_GRIND);
-        /* FAKEMATCH(temporary): the priority flags changed. */
-        *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+        actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_LowerActorToLedge(id, 1);
-        *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+        actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) ==
                  51) {
         CrossboneIsleSteppingStones_StopAtGroundOrHeight(actor, 0);
@@ -1052,7 +1047,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       } else {
         CrossboneIsleSteppingStones_SettleActorOnGround(actor);
       }
-      *flags = 0;
+      actor->motionFlags = 0;
     }
     CrossboneIsleSteppingStones_ReadMapGridCell(0, FIELD_CELL(actor->x.fixed),
                                                 FIELD_CELL(actor->z.fixed),

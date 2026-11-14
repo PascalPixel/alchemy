@@ -9,8 +9,7 @@
 /// back. Returns 1 after a hop.
 static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
-  u8 *flags = &actor->motionFlags;
-  u8 saved = *flags;
+  u8 saved = actor->motionFlags;
   s32 ret = FieldActor_CheckMovementCollision(actor, request);
 
   if (ret == 0) {
@@ -22,14 +21,14 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
-    *flags &= ACTOR_JUMP_KEEPS_MOTION;
+    actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER,
                             ((union FieldCoordinate *)&request->x)->part.pixel,
                             ((union FieldCoordinate *)&request->z)->part.pixel);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-    *flags = ret;
+    actor->motionFlags = ret;
     Actor_SetAnimation(ACTOR_FIRST_PLACED + 2, 7);
     actor->y.fixed -= px(1);
     actor->groundHeight -= px(1);
@@ -42,7 +41,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     wait(4);
     actor->y.fixed += px(1);
     actor->groundHeight += px(1);
-    *flags = saved;
+    actor->motionFlags = saved;
     Event_End();
     return 1;
   }

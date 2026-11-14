@@ -807,7 +807,6 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   struct Actor *effect;
   struct Sprite *sprite;
   s32 phase;
-  s32 effectFlags;
   s32 spawnX = px(326);
   s32 spawnY = px(32);
   s32 spawnZ = px(192);
@@ -824,9 +823,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
     return;
   sprite = effect->sprite;
   sprite->flags = phase;
-  effectFlags = 0xff & ~ACTOR_PRIORITY_AUTOMATIC;
-  effectFlags &= effect->priorityFlags;
-  effect->priorityFlags = effectFlags;
+  effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
   effect->scaleX = Q16_ONE / 10;
   effect->speedLimit = px(4);

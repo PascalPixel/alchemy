@@ -428,7 +428,6 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
   s32 lowered;
   struct Actor *log;
   struct Actor *rider;
-  u8 *flags;
 
   actorId = gMainRoutineWork.leaderActorId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
@@ -445,15 +444,14 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, 4);
     rider = Actor_Get(actorId);
-    flags = &rider->motionFlags;
-    *flags = lowered;
+    rider->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(rider, 4);
     Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     Actor_WaitForMoveById(actorId);
     MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     wait(2);
     Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
-    *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    rider->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     rider->groundHeight = rider->y.fixed;
     GameFlag_Set(FLAG_ON_SCALES);
   }

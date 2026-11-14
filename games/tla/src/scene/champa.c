@@ -353,12 +353,7 @@ void Champa_FeizhiArrives(void) {
       FieldActor_LaunchFromLeader(30, 16, 0, 0x4000);
       FieldActor_WaitForMoveById(30);
       FieldEvent_Wait(20);
-      {
-        /* FAKEMATCH(pin): the emote pinned to r1. */
-        register s32 emote asm("r1") = 0x101;
-
-        Actor_ShowEmote(30, emote, 30);
-      }
+      Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
       FieldEvent_ShowMessageThenWait(30, 0, 5);
       Actor_RunRepeatedMotion(29, 2);
       FieldEvent_Wait(5);

@@ -5,6 +5,7 @@
 
 #include "../visual_attributes_internal.h"
 #include "fixed_math.h"
+#include "flags.h"
 #include "sounds.h"
 #include "module/field/field.h"
 
@@ -46,12 +47,12 @@ void Exit_PrepareAnimation(s32 animation) {
 
 void Exit_StartStairsUp(void) {
   Exit_PrepareAnimation(0x1A);
-  GameFlag_Set(0x120);
+  GameFlag_Set(FLAG_ARRIVAL_STAIRS_UP);
 }
 
 void Exit_StartStairsDown(void) {
   Exit_PrepareAnimation(0x19);
-  GameFlag_Set(0x121);
+  GameFlag_Set(FLAG_ARRIVAL_STAIRS_DOWN);
 }
 
 void Entrance_EndArrivalAnimation(s32 mode) {

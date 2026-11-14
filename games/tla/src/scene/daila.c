@@ -271,7 +271,7 @@ void Daila_MeetAlex(void) {
     return;
   if (GameFlag_Get(0x910))
     return;
-  if (GameFlag_Get(7))
+  if (GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS)))
     return;
   Event_Start();
   Event_ResolvePendingActions(0);

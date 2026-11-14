@@ -237,7 +237,7 @@ void AncientLemuria_HeadForTheDock(void) {
     Actor_ArmCallback(4, FACING_NORTH, 0);
     Actor_WaitForMoveById(11);
     Event_Wait(20);
-    if (GameFlag_Get(7)) {
+    if (GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS))) {
       Event_SetMessageId(MsgLemuriaStayExploring);
       Event_ShowMessageThenWait(11, 0, 10);
     } else {

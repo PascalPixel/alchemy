@@ -256,11 +256,15 @@ enum ExamineTarget {
 /// party member's actor takes its character's number as its actor id, as in
 /// The Broken Seal.
 enum ActorId {
-  ACTOR_FELIX = 4,
-  ACTOR_JENNA = 5,
-  ACTOR_SHEBA = 6,
-  ACTOR_PIERS = 7,
-  ACTOR_FIRST_PLACED = 8
+  ACTOR_ISAAC,
+  ACTOR_GARET,
+  ACTOR_IVAN,
+  ACTOR_MIA,
+  ACTOR_FELIX,
+  ACTOR_JENNA,
+  ACTOR_SHEBA,
+  ACTOR_PIERS,
+  ACTOR_FIRST_PLACED
 };
 
 /// Trigger.kind's low four bits: what the trigger answers.

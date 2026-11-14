@@ -5,6 +5,11 @@
 /// Game flags, named where their meaning is shown, as The Broken Seal's
 /// flags.h names its own.
 
+/// Set while the party member whose actor id is `actor` (ACTOR_FELIX to
+/// ACTOR_PIERS, 0 to 3 for Isaac's party) is in the party, as ☀️'s
+/// FLAG_IN_PARTY.
+#define FLAG_IN_PARTY(actor) (actor)
+
 /// The first of the 80 Djinn flags, DJINNI_FLINT's.
 #define FLAG_DJINN_FIRST 48
 /// Set once the party has `djinni` (djinn_ids.h), whose DjinniId counts from
@@ -38,6 +43,11 @@
 /// that!": the scenes set it while the party rides a moving platform, lift or
 /// raft.
 #define FLAG_NO_PLACE_TO_SAVE 0x17d
+/// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next scene plays
+/// the leader's arrival, unless its setup clears this first.
+#define FLAG_ARRIVAL_STAIRS_UP 0x120
+/// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
+#define FLAG_ARRIVAL_STAIRS_DOWN 0x121
 // Each lighthouse's scenes set its flag on every arrival, and Scene_Arrive
 // clears all four when the party enters another area, so a flag is set only
 // while the party is inside.

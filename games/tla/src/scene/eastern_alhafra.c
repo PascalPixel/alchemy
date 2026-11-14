@@ -937,7 +937,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   FieldActor_LaunchFromLeader(26, 0, -16, 0x4000);
   FieldActor_LaunchFromLeader(5, 16, 0, 0x8000);
   FieldActor_LaunchFromLeader(6, 16, -16, 0x6000);
-  result2 = Event_GetFlag(7);
+  result2 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
   if (result2 != 0) {
     FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
   }
@@ -963,7 +963,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   FieldEvent_Wait(30);
   Actor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   FieldEvent_ShowMessageThenWait(26, 0, 10);
-  result3 = Event_GetFlag(7);
+  result3 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
   if (result3 != 0) {
     Actor_SetSpeed(7, 1.2);
     Actor_SetAnimation(7, 2);
@@ -1024,7 +1024,7 @@ void EasternAlhafra_AskIfFinished(void) {
   FieldActor_LaunchFromLeader(26, 0, -16, 0x4000);
   FieldActor_LaunchFromLeader(5, 16, 0, 0x8000);
   FieldActor_LaunchFromLeader(6, 16, -16, 0x6000);
-  result0 = Event_GetFlag(7);
+  result0 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
   if (result0 != 0) {
     FieldActor_LaunchFromLeader(7, 8, 16, 0xc000);
   }
@@ -1091,7 +1091,7 @@ void EasternAlhafra_AskIfFinished(void) {
   Actor_SetAnimation(6, 3);
   Actor_SetAnimationAndWait(4, 3);
   FieldEvent_Wait(10);
-  result3 = Event_GetFlag(7);
+  result3 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
   if (result3 != 0) {
     Actor_SetSpeed(7, 1.2);
     Actor_SetAnimation(7, 2);

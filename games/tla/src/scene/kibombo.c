@@ -2844,7 +2844,8 @@ void Kibombo_InitializeRoom4(void) {
     actor->z += px(-42);
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
     Actor_SetSpritePriority(11, 1);
-    if (gMainRoutineWork.entrance == 19 && GameFlag_Get(7)) {
+    if (gMainRoutineWork.entrance == 19 &&
+        GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS))) {
       unit = Unit_Get(7);
       *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
       *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);

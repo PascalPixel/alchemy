@@ -309,8 +309,9 @@ void Champa_FeizhiArrives(void) {
   if (!Event_GetFlag(0x822)) {
   } else {
 #if TLA_PATCH_1
-    // The Japanese edition has no flag 0 test.
-    if (Event_GetFlag(0)) {
+    // Once Isaac is in the party Feizhi no longer comes; the Japanese edition
+    // has no such test.
+    if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_ISAAC))) {
     } else
 #endif
     {

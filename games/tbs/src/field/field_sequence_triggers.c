@@ -215,9 +215,7 @@ s32 Scene_TalkToActor(s32 id) {
     if (!actorPaused) {
       // Stop the actor; with talk facing 0, 1 or 3, also stop the leader
       // and make each watch the other.
-      u8 *movementState = &actor->paused;
-
-      *movementState = 1;
+      actor->paused = 1;
       Actor_SetAnimationSpeedFar(actor, 0);
       savedAngle = actor->facing;
       talkFacing = (u8)placement->talkFacing << 24;

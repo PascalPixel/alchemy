@@ -218,9 +218,8 @@ void Djinn_RestoreActorAfterBattle(void) {
 /// lost).
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
-  s16 *pending = &st->pendingDjinni;
-  s32 kind = *pending & DJINN_PENDING_KIND_MASK;
-  s32 flag = *pending & DJINN_PENDING_EVENT_MASK;
+  s32 kind = st->pendingDjinni & DJINN_PENDING_KIND_MASK;
+  s32 flag = st->pendingDjinni & DJINN_PENDING_EVENT_MASK;
 
   if (shown == 0) {
     if (kind == 0) {
@@ -233,11 +232,11 @@ void Djinn_ResolvePending(s32 shown) {
         return;
       // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
       GameFlag_SetFar(flag - 172);
-      *pending = kind;
+      st->pendingDjinni = kind;
     } else if (kind == CONDITION_FLAG_SET) {
       if (st->sequenceResult == 1)
         GameFlag_SetFar(flag);
-      *pending = shown;
+      st->pendingDjinni = shown;
     }
     return;
   }

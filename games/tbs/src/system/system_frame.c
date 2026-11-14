@@ -238,8 +238,7 @@ void wait(s32 frames) {
           "restore the hardware stack pointer after the proven stack copy")
       __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
       /* FAKEMATCH(dead): size dropped and the copy's size taken under
-       * complementary tests; as through size, 4 of 403 instructions differ in
-       * tbs-en. */
+       * complementary tests. */
       size = NULL;
       {
         u32 *copySize = NULL;

@@ -7,12 +7,10 @@
 /// Per-frame update: sways 4 pixels either side of anchorX, once every 128
 /// frames.
 void FieldEffect_SwayParticle(struct Actor *actor) {
-  s16 *phase;
-
-  phase = &actor->timer;
-  actor->x.fixed = actor->targetX + Iwram_MulQ16(px(4), Trig_Sin(*phase << 9));
-  (*phase)++;
-  *phase = (*phase + 128) % 128;
+  actor->x.fixed =
+      actor->targetX + Iwram_MulQ16(px(4), Trig_Sin(actor->timer << 9));
+  actor->timer++;
+  actor->timer = (actor->timer + 128) % 128;
 }
 
 /// Per-frame update: spirals in on a point 10 pixels above the Psynergy's
@@ -50,18 +48,17 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
 /// as it slowly falls.
 void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
   struct FieldEffectWork *effectWork;
-  s16 *phase;
   struct Actor *spark;
   s32 pos[3];
 
-  phase = &emitter->timer;
   effectWork = gFieldEffectWork;
-  if (*phase != -1) {
-    SET_ACTOR_POSITION(
-        emitter, effectWork->x + Iwram_MulQ16(px(6), Trig_Sin(*phase << 10)),
-        effectWork->y + ABOVE, effectWork->z);
-    (*phase)++;
-    *phase = (*phase + 64) % 64;
+  if (emitter->timer != -1) {
+    SET_ACTOR_POSITION(emitter,
+                       effectWork->x +
+                           Iwram_MulQ16(px(6), Trig_Sin(emitter->timer << 10)),
+                       effectWork->y + ABOVE, effectWork->z);
+    emitter->timer++;
+    emitter->timer = (emitter->timer + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.

@@ -100,7 +100,6 @@ s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
   s32 jumpKey;
-  u8 *repeatCount;
   s32 nextCount;
 
   arguments = &interpreter->script[interpreter->scriptCursor + 1];
@@ -109,13 +108,12 @@ s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   if (repeatLimit == SC_FOREVER) {
     interpreter->scriptCursor = ActorScript_FindLabel(interpreter, jumpKey);
   } else {
-    repeatCount = &interpreter->repeatCount;
-    nextCount = *repeatCount + 1;
-    *repeatCount = nextCount;
+    nextCount = interpreter->repeatCount + 1;
+    interpreter->repeatCount = nextCount;
     if ((u8)nextCount < (s16)repeatLimit) {
       interpreter->scriptCursor = ActorScript_FindLabel(interpreter, jumpKey);
     } else {
-      *repeatCount = 0;
+      interpreter->repeatCount = 0;
       interpreter->scriptCursor += 3;
     }
   }
@@ -242,14 +240,11 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
 /// (ACTOR_SOLID), each radius less 2 pixels; otherwise 0.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
   s32 actorIndex;
-  u8 *collisionFlags;
   struct Actor *candidate = gActors;
 
-  collisionFlags = &candidate->collisionFlags;
-  for (actorIndex = 0; actorIndex < ACTOR_COUNT;
-       actorIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
-    if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
-        candidate != actor) {
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
       if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
                                     values, actor->radius - 2) >= 0)
         return -1;
@@ -263,14 +258,11 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values) {
   s32 actorIndex;
-  u8 *collisionFlags;
   struct Actor *candidate = gActors;
 
-  collisionFlags = &candidate->collisionFlags;
-  for (actorIndex = 0; actorIndex < ACTOR_COUNT;
-       actorIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
-    if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
-        candidate != actor) {
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
       if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
                                     values, actor->radius - 2) >= 0)
         return candidate;

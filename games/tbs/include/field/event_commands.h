@@ -121,7 +121,7 @@ void Actor_StartRepeatedMotion(u32 actorId, s32 count);
 void Actor_RunRepeatedMotion(u32 actorId, s32 count);
 void FieldEffect_UpdateDustPuff(struct Actor *actor);
 void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param);
-void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param);
+void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param);
 void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames);
 void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames);
 void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);

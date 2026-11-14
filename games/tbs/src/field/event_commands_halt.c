@@ -11,14 +11,12 @@
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct FieldEffectWork *effectWork;
   struct Vector3 pos;
-  s8 *statePointer;
   s16 angle;
   s32 state;
 
   effectWork = gFieldEffectWork;
-  statePointer = &effect->state;
 top:
-  state = *statePointer;
+  state = effect->state;
   if (state == OUT_AND_BACK_AIM_OUT) {
     pos.x = effect->originX;
     pos.z = effect->originZ;
@@ -29,13 +27,13 @@ top:
     effect->acceleration = px(4);
     effect->speedMax = px(4);
     effect->turnStepLimited = state;
-    *statePointer = *statePointer + 1;
+    effect->state++;
     return;
   }
   if (state == OUT_AND_BACK_FLYING_OUT) {
     if (FieldParticle_HasPendingTarget(effect) != 0)
       return;
-    *statePointer = *statePointer + 1;
+    effect->state++;
     goto top;
   }
   if (state == OUT_AND_BACK_AIM_BACK) {
@@ -48,7 +46,7 @@ top:
     effect->targetZ = pos.z;
     effect->turnStepMax = TRIG_TURN / 16;
     effect->turnStepLimited = 1;
-    *statePointer = *statePointer + 1;
+    effect->state++;
     return;
   }
   if (state == OUT_AND_BACK_FLYING_BACK &&

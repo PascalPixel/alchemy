@@ -1595,7 +1595,6 @@ s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
 s32 ItemMenu_ChooseCommand(void) {
   struct ItemMenuWork *menu;
   s8 commandStorage[6];
-  u16 *redrawFlag;
   s32 column;
   s32 lastCommand;
   s32 row;
@@ -1614,9 +1613,8 @@ s32 ItemMenu_ChooseCommand(void) {
   redraw = 1;
   commandStates = commandStorage;
   ItemMenu_BuildCommands(commandStates);
-  redrawFlag = &menu->flags;
   // Draw the item's name and the command grid, unless they are up already.
-  if (*redrawFlag != 1) {
+  if (menu->flags != 1) {
     struct Window *messageWindow;
 
     ItemMenu_HideAllIcons();
@@ -1632,7 +1630,7 @@ s32 ItemMenu_ChooseCommand(void) {
                               MsgItemPlainName,
                           menu->descriptionWindow, 0, 0);
   }
-  *redrawFlag = 0;
+  menu->flags = 0;
 
   // Start on the command chosen last, or on the first one available. listMode
   // 0xff (none yet) reads as -1; the later tests win, so the order of

@@ -278,7 +278,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetCount = 0;
       for (i = 0; i < 6; i++)
         cursorTracks[i].flags &= (u8)~2;
-      for (i = 0; (u32)i < spread; i++) {
+      for (i = 0; i < spread; i++) {
         {
           n = targetIndex + i;
           if (n < candidateCount && candidateIds[n] != BATTLE_UNIT_REMOVED) {

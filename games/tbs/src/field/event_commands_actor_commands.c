@@ -367,17 +367,11 @@ void Actor_NoOp(void) {}
 /// frame with a jump sound (a higher one above 5), then waits frames frames.
 void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   struct Actor *actor;
-  u8 *flagsByte;
-  s32 updatedFlags;
-  s32 verticalVelocity;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    flagsByte = &actor->motionFlags;
-    updatedFlags = *flagsByte | ACTOR_FALLS;
-    verticalVelocity = px(speed);
-    *flagsByte = updatedFlags;
-    actor->velocityY = verticalVelocity;
+    actor->motionFlags |= ACTOR_FALLS;
+    actor->velocityY = px(speed);
     if (speed > 5) {
       Sound_PlayFar(SE_HIGH_JUMP);
     } else {
@@ -490,11 +484,10 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// past FACING_SOUTH) while sinking 28 pixels with a dust puff every other
 /// frame (none when param is -1), then jumps on to 16 pixels south of where it
 /// started and lands.
-void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
+void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
   struct Actor *actor;
-  u8 *flagsByte;
 
   actor = Actor_GetById(actorId);
   startZ = actor->z.fixed;
@@ -504,13 +497,8 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     wait(10);
 
     // Hop up and forward 12 pixels.
-    flagsByte = &actor->motionFlags;
     Actor_SelectAnimationFar(actor, ANIM_STAND);
-    {
-      u8 flags = 2;
-      flags |= *flagsByte;
-      *flagsByte = flags;
-    }
+    actor->motionFlags |= ACTOR_FALLS;
     actor->velocityY = px(4);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + px(12));
@@ -522,7 +510,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     // From here pose counts frames.
     pose = 0;
     Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
-    *flagsByte = 0;
+    actor->motionFlags = 0;
     do {
       nextY = actor->y.fixed - px(2);
       actor->y.fixed = nextY;
@@ -532,16 +520,16 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
         FieldEffect_SpawnDustPuff(actor, param);
       }
       pose++;
-    } while ((u32)pose <= 13);
+    } while (pose <= 13);
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
     // the ground and falling again.
-    *flagsByte = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->velocityY = px(3);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + px(16));
     Actor_WaitForMoveFar(actor);
-    for (pose = 0; (u32)pose <= 179 && actor->y.fixed > actor->groundHeight;
+    for (pose = 0; pose <= 179 && actor->y.fixed > actor->groundHeight;
          pose++) {
       wait(1);
     }

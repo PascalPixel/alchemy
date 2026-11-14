@@ -123,8 +123,7 @@ MapGrid_CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap, u32 screenRowOffset,
   u32 index = ((*cell << 20) >> 18) + tileHalf;
 
   /* FAKEMATCH(temporary): entry holds each row's table, then steps to the
-   * picture; as one expression, 30 of 81 instructions differ in tbs-en.
-   */
+   * picture. */
   entry = (u16 *)Ram_CellPictures;
   entry += index;
   screenTile =
@@ -146,8 +145,7 @@ static __inline__ void MapGrid_CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
   u32 index = (*cell << 20) >> 19;
 
   /* FAKEMATCH(temporary): as in MapGrid_CopyCellPictureHalfColumn, rows
-   * steps from each row's table to the picture; as one expression, 35 of
-   * 66 instructions differ in tbs-en. */
+   * steps from each row's table to the picture. */
   rows = (u32 *)Ram_CellPictures;
   rows += index;
   screenTile = screenMap + screenRowOffset * 2 + screenColumnOffset * 2;
@@ -636,8 +634,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
           u8 *screen, *cellPicture;
 
           /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
-           * time; as plain pointer expressions, 75 of 150 instructions
-           * differ in tbs-en. */
+           * time. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
           screen += offset;
@@ -770,8 +767,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
           u8 *screen, *cellPicture;
 
           /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
-           * time; as plain pointer expressions, 75 of 150 instructions
-           * differ in tbs-en. */
+           * time. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
           screen += offset;
@@ -868,8 +864,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
           u8 *screen, *cellPicture;
 
           /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
-           * time; as plain pointer expressions, 75 of 150 instructions
-           * differ in tbs-en. */
+           * time. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
           screen += offset;

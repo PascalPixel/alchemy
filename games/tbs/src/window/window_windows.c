@@ -190,7 +190,6 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   s32 tile;
   u32 bottom;
   u32 row;
-  u8 *inBattle;
 
   tile = WINDOW_TILE_BLANK;
   bottom = y + height;
@@ -210,11 +209,10 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
 
   row = 0;
   if (row < height) {
-    inBattle = &canvas->battleMode;
     do {
       u32 column;
 
-      if (*inBattle != 0) {
+      if (canvas->battleMode != 0) {
         if ((y + row) > 16)
           tile = WINDOW_TILE_COMMAND_PANEL;
         else

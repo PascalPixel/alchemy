@@ -366,11 +366,9 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
   u32 cell;
 
   if (buffer == NULL) {
-    u16 *counter = &canvas->textBufferEnd;
-
     buffer = canvas->textBuffer;
-    canvas->textBuffer[*counter] = 0;
-    *counter = (*counter + 1) & TEXT_BUFFER_MASK;
+    canvas->textBuffer[canvas->textBufferEnd] = 0;
+    canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   }
 
   cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;

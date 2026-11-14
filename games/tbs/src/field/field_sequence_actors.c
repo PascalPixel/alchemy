@@ -92,7 +92,8 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       continue;
     // Djinn_ResolvePending hides a Djinni after the party loses or flees.
     // Scene_Arrive clears these temporary flags on a normal entry.
-    if ((u32)(condition - FLAG_DJINN_FIRST) <= ACTOR_DJINNI_FLAG_COUNT - 1 &&
+    if (condition >= FLAG_DJINN_FIRST &&
+        condition < FLAG_DJINN_FIRST + ACTOR_DJINNI_FLAG_COUNT &&
         work->mode != ACTOR_SYSTEM_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + ACTOR_DJINNI_FLAG_COUNT))
       continue;

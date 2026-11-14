@@ -34,16 +34,14 @@ void Actor_SetRevealSpriteColor(s32 value) {
 void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct Actor *actor;
-  s16 *timer;
   s32 distanceX;
   s32 distanceZ;
 
   work = gFieldWork;
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   if (work->effectTimerRunning != 0) {
-    timer = &work->revealFrames;
-    if (*timer != 0)
-      (*timer)--;
+    if (work->revealFrames != 0)
+      work->revealFrames--;
   }
 
   // On screen pixels (y is z less the height). x is scaled by 0xd105 (about

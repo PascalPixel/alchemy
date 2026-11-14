@@ -104,8 +104,6 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapAffinePair(*affinePages)[160];
   s32 *cameraPosition;
   s32 *distance;
-  u16 *yaw;
-  u16 *pitch;
   s16 *zoomTransitionFrames;
   s32 farPlane;
   s32 tileIndex;
@@ -187,10 +185,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   SET_VECTOR(cameraPosition, 0, 0, 0);
   Transform_Reset();
   Transform_ApplyPosition(cameraPosition);
-  yaw = &perspective->yaw;
-  Transform_ApplyYaw(*yaw);
-  pitch = &perspective->pitch;
-  Transform_ApplyPitch(*pitch);
+  Transform_ApplyYaw(perspective->yaw);
+  Transform_ApplyPitch(perspective->pitch);
   // eyeOffset in the block that uses it: at function scope it would take
   // Dma_Fill32's word's place at the top of the stack frame.
   {
@@ -204,9 +200,9 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     Transform_SetLookAt(camera->eye, cameraPosition);
     RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVertices,
                      &Transform_UpdateVerticesSize);
-    WorldMap_BuildScanlineTable(
-        Iwram_RatioMulQ14(Trig_Cos(*pitch), Trig_Sin(*pitch)), cameraPosition,
-        affineWork->scanlines);
+    WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
+                                                  Trig_Sin(perspective->pitch)),
+                                cameraPosition, affineWork->scanlines);
     gScanlineAngle = 0;
     gScanlinePitch = perspective->pitch;
     ((WorldMapPlaneFn)gHeapSlots[HEAP_SLOT_RAM_CODE])(
@@ -216,12 +212,12 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     // of a turn) and yaw 0, with the eye one pixel beyond the distance.
     SET_VECTOR(cameraPosition, 0, 0, 0);
     Transform_Reset();
-    Io_Write16Swapped(pitch, TRIG_TURN * 7 / 8);
-    *yaw = 0;
+    Io_Write16Swapped(&perspective->pitch, TRIG_TURN * 7 / 8);
+    perspective->yaw = 0;
     Transform_Reset();
     Transform_ApplyPosition(cameraPosition);
-    Transform_ApplyYaw(*yaw);
-    Transform_ApplyPitch(*pitch);
+    Transform_ApplyYaw(perspective->yaw);
+    Transform_ApplyPitch(perspective->pitch);
     eyeOffset.x = 0;
     eyeOffset.y = 0;
     eyeOffset.z = *distance + Q16_ONE;

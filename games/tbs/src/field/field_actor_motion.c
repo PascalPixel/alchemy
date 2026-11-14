@@ -402,7 +402,6 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
   s32 distance;
   s32 dz;
   s32 squaredZ;
-  u8 *arrivalAxis;
 
   dx = (x - actor->x.fixed) / Q16_ONE;
   distance = (y - actor->y.fixed) / Q16_ONE;
@@ -454,17 +453,16 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
   dx = x - actor->x.fixed;
   distance = y - actor->y.fixed;
   dz = z - actor->z.fixed;
-  arrivalAxis = &actor->arrivalAxis;
-  *arrivalAxis = ARRIVAL_AXIS_X;
+  actor->arrivalAxis = ARRIVAL_AXIS_X;
   if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
-    *arrivalAxis = ARRIVAL_AXIS_Z;
+    actor->arrivalAxis = ARRIVAL_AXIS_Z;
     dx = dz;
   }
   if (actor->motionFlags == 0) {
     if (dx < 0)
       dx = -dx;
     if (dx < (distance < 0 ? -distance : distance))
-      *arrivalAxis = ARRIVAL_AXIS_Y;
+      actor->arrivalAxis = ARRIVAL_AXIS_Y;
   }
 }
 

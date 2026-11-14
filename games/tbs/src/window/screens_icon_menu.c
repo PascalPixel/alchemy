@@ -573,12 +573,11 @@ void Menu_DrawModeIndicator(void) {
 void Menu_DrawModeIndicator(void) {
   struct IconMenuWork *state = gIconMenuWork;
   s16 *shown = &state->previousMode;
-  s16 *current = &state->selection;
 
-  if (*shown != *current) {
-    *shown = *current;
+  if (*shown != state->selection) {
+    *shown = state->selection;
     WindowSprite_PrepareForRedraw(state->lowerWindow);
-    if (*current == TRANSFER_METHOD_PASSWORD) {
+    if (state->selection == TRANSFER_METHOD_PASSWORD) {
       TRANSFER_MODE_DRAW_HELP(MsgPasswordTransferHelp, state->lowerWindow,
                               TRANSFER_PASSWORD_HELP_X,
                               TRANSFER_PASSWORD_HELP_FIRST_Y);

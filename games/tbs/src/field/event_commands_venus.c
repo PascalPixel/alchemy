@@ -140,12 +140,10 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Actor *source;
   struct Vector3 position;
-  s8 *statePointer;
   s32 state;
 
   source = Actor_GetById(gMainRoutineWork.leaderActorId);
-  statePointer = &effect->state;
-  state = *statePointer;
+  state = effect->state;
 
   if (state == MERCURY_DROPLET_AIM) {
     position.x = source->x.fixed;
@@ -164,7 +162,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     effect->scaleY = Q16_ONE;
     effect->turnStepLimited = state;
     effect->stopAtTarget = 1;
-    (*statePointer)++;
+    effect->state++;
   } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
              MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
@@ -181,10 +179,10 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->scaleY = Q16_ONE / 2;
       Sound_PlayFar(SE_CRACK);
 
-      if (*statePointer == MERCURY_DROPLET_FALLING)
-        (*statePointer)--;
+      if (effect->state == MERCURY_DROPLET_FALLING)
+        effect->state--;
       else
-        (*statePointer)++;
+        effect->state++;
       effect->callbackDelay = 6;
     }
   } else if (state == MERCURY_DROPLET_DONE) {

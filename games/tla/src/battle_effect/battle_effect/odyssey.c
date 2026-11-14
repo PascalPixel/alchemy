@@ -183,7 +183,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *args) {
 
         if (args->side == 1)
           angle += TRIG_TURN / 2;
-        shard->x = (to.x / 2) << 16;
+        shard->x = px(to.x / 2);
         shard->y = to.y << 16;
         shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
@@ -257,7 +257,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *args) {
             angle += TRIG_TURN / 2;
           }
           spark = &work->particles[i * 32 + k];
-          spark->x = (to.x / 2) << 16;
+          spark->x = px(to.x / 2);
           spark->y = to.y << 16;
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           spark->velocityY = -(Trig_Cos(angle) * speed) >> 5;

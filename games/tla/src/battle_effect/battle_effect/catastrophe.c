@@ -1390,7 +1390,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
             s32 angle;
             s32 speed;
 
-            q->x = (pos.x / 2) << 16;
+            q->x = px(pos.x / 2);
             q->y = px(80);
             angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
             speed = (Random16() & 127) + 128;
@@ -1422,7 +1422,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
           s32 speed;
 
           q->x = sum << 16;
-          q->y = (Random16() % 112 + 4) << 16;
+          q->y = px(Random16() % 112 + 4);
           angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
           speed = (Random16() & 127) + 128;
           q->velocityX = Trig_Sin(angle) * speed >> 6;
@@ -1591,7 +1591,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *args) {
                 blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                         Q_16_16_UPPER_HALF(d->x) - n / 2,
                         Q_16_16_UPPER_HALF(d->y) - n, n, h);
-                BattleEffectKernels_IntegrateVector2(d, 56, 0x2000);
+                BattleEffectKernels_IntegrateVector2(d, 56, px(1) / 8);
                 d->velocityX -= work->scrollStepX << 12;
                 d->variant--;
               }

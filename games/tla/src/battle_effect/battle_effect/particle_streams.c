@@ -1131,8 +1131,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *args,
                  (gBattleEffect_MotePictures[size - 1] + (i & 1) * 770) +
                  0x3200,
              point.x - size / 2, point.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(ember, 64, -0x2000);
-        if (ember->y <= 0x140000) {
+        BattleEffectKernels_IntegrateVector3(ember, 64, -px(1) / 8);
+        if (ember->y <= px(20)) {
           ember->x = 0;
           ember->z = 0;
           ember->y = px(20);
@@ -1178,7 +1178,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *args,
         if (flash->variant == 14) {
           flash->y = px(20);
           flash->x = 0;
-          flash->z = ((Random16() & 255) - 127) << 16;
+          flash->z = px((Random16() & 255) - 127);
           flash->velocityX = 0;
           flash->velocityY = (Random16() & 255) << 11;
           flash->velocityZ = 0;

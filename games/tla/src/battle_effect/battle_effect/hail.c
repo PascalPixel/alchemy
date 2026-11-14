@@ -46,8 +46,8 @@ void BattleEffect_RunHail(struct BattleEffectArgument *args) {
 
     angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
     speed = (Random16() & 0x1ff) + 0x80;
-    CHIPS[i].x = ((spawn[0] / 2 + (Random16() & 0xf)) - 8) << 16;
-    CHIPS[i].y = (spawn[1] + 8) << 16;
+    CHIPS[i].x = px((spawn[0] / 2 + (Random16() & 0xf)) - 8);
+    CHIPS[i].y = px(spawn[1] + 8);
     CHIPS[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     CHIPS[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
     CHIPS[i].z = Random16() & 0x7f;
@@ -97,7 +97,7 @@ void BattleEffect_RunHail(struct BattleEffectArgument *args) {
                     Q_16_16_UPPER_HALF(chip->y) -
                         (height = gHail_PictureHeights[cel]) / 2,
                     width, height);
-        BattleEffectKernels_IntegrateVector3(chip, 63, 0x1000);
+        BattleEffectKernels_IntegrateVector3(chip, 63, px(1) / 16);
       }
     }
 
@@ -321,7 +321,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *args) {
               rock->velocityY = rock->velocityY * 60 / 64;
               rock->velocityZ = rock->velocityZ * 60 / 64;
             }
-            if (rock->y < 0x140000) {
+            if (rock->y < px(20)) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);

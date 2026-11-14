@@ -297,8 +297,8 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *args,
         size++;
         draw[(i / 2) & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                           pos.x - size / 2, pos.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(mote, 60, -0x400);
-        if (mote->y < 0x80000)
+        BattleEffectKernels_IntegrateVector3(mote, 60, -px(1) / 64);
+        if (mote->y < px(8))
           mote->velocityY = -mote->velocityY / 2;
         mote->variant--;
       }
@@ -347,7 +347,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *args,
             draw[0](canvas, SMOKE_CELS + (puff->variant / 4) * 0x480,
                     Q_16_16_UPPER_HALF(puff->x) - 12,
                     Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
-            BattleEffectKernels_IntegrateVector2(puff, 62, -0x1000);
+            BattleEffectKernels_IntegrateVector2(puff, 62, -px(1) / 16);
           }
           puff->variant++;
         }

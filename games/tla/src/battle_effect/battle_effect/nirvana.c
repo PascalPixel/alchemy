@@ -180,11 +180,11 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *args) {
       for (i = 0; i != ROCKS; i++) {
         rock = &work->particles[i];
         if (args->side == 0)
-          rock->x = (Random16() % 40 + 8) << 16;
+          rock->x = px(Random16() % 40 + 8);
         else
-          rock->x = (120 - Random16() % 40) << 16;
+          rock->x = px(120 - Random16() % 40);
         Random16();
-        rock->y = (i * 2 + 96) << 16;
+        rock->y = px(i * 2 + 96);
         rock->velocityX = 0;
         rock->velocityY = -((Random16() & 127) + 32) << 11;
         rock->z = (Random16() & 15) + 8;
@@ -335,7 +335,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *args) {
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           spark->x = position.x << 16;
-          spark->y = (96 - (Random16() & 31)) << 16;
+          spark->y = px(96 - (Random16() & 31));
           spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
           spark->variant = Random16() & 7;
@@ -440,7 +440,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *args) {
               y - gSoulShatter_SparkSizes[cell] / 2,
               gSoulShatter_SparkSizes[cell], gSoulShatter_SparkSizes[cell]);
           spark->variant++;
-          BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector2(spark, 62, -px(1) / 8);
         }
       }
     }
@@ -753,7 +753,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *args) {
           }
           picture = p->variant / 6;
           Render_ProjectPoint(p, &point);
-          BattleEffectKernels_IntegrateVector3(p, 60, 0x2000);
+          BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 8);
           x = point.x - 16;
           y = point.y - 16;
           blitters[0](canvas, work->sheet + 0x400 + (picture << 10), x, y, 32,
@@ -864,7 +864,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *args) {
             color[0] = p->variant;
             p->variant -= 2;
             model->shade = color;
-            BattleEffectKernels_IntegrateVector3(p, 62, 0x400);
+            BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 64);
             Transform_Push();
             SceneTransform_ApplyPosition3(p->x, p->y, p->z);
             Transform_ApplyPitch(angle);

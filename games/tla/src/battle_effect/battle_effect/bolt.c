@@ -137,7 +137,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *args) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
+        BattleEffectKernels_IntegrateVector2(spark, 60, px(1) / 16);
         if (spark->y > GROUND_Y << 16) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {

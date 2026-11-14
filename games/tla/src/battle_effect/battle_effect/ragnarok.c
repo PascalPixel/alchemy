@@ -96,7 +96,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *args) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & 0xffff;
-      spark->x = (gRagnarok_StrikeColumns[col + args->side * 3] + baseX) << 16;
+      spark->x = px(gRagnarok_StrikeColumns[col + args->side * 3] + baseX);
       spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -205,7 +205,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *args) {
             s32 y;
             s32 size;
 
-            BattleEffectKernels_IntegrateVector2(spark, 64, 0x1000);
+            BattleEffectKernels_IntegrateVector2(spark, 64, px(1) / 16);
             spark->variant--;
             y = spark->y;
             if (y > px(108)) {

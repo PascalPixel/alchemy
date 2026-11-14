@@ -556,17 +556,17 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         work->sprites[31]->rotation = 0;
         work->particles[20].x = 0;
         work->particles[20].y = 0;
-        work->particles[20].velocityX = -0x60000;
+        work->particles[20].velocityX = -px(6);
         work->particles[20].velocityY = 0;
         work->particles[20].variant = 0;
         work->particles[23].x = 0;
         work->particles[23].y = 0;
-        work->particles[23].velocityX = -0xc0000;
+        work->particles[23].velocityX = -px(12);
         work->particles[23].velocityY = 0;
         work->particles[23].variant = 0;
         work->particles[21].x = 0;
         work->particles[21].y = 0;
-        work->particles[21].velocityX = -0x10000;
+        work->particles[21].velocityX = -px(1);
         work->particles[21].velocityY = 0;
         work->particles[21].variant = 0;
         work->particles[22].x = px(160);
@@ -743,14 +743,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           struct EffectStep *q;
 
           p->variant++;
-          if (p->x > -0x100000) {
+          if (p->x > -px(16)) {
             p->x += p->velocityX;
             p->y += p->velocityY;
-            if (p->velocityY > -0x10000 && p->velocityY < 0x10000)
+            if (p->velocityY > -px(1) && p->velocityY < px(1))
               p->velocityY += p->velocityZ;
           }
-          if (p->velocityX > -0x80000)
-            p->velocityX -= 0x8000;
+          if (p->velocityX > -px(8))
+            p->velocityX -= px(1) / 2;
           q = &PARTICLES[i * 32 + (p->variant & 31)];
           q->variant = 0;
           q->x = p->x / 2;
@@ -803,7 +803,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           p->variant++;
           p->x += p->velocityX;
           p->y += p->velocityY;
-          p->velocityY += 0x2000;
+          p->velocityY += px(1) / 8;
           p->velocityX = p->velocityX * 48 / 64;
           p->velocityY = p->velocityY * 63 / 64;
           work->sprites[38]->rotation += 0x200;
@@ -844,14 +844,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           p->y =
               ((92 - gDaedalus_ShakeOffsets[work->shakeFrames]) << 16) + swayY;
           p->variant = 1;
-          p->velocityX = -0x40000;
-          p->velocityY = -0x5000;
+          p->velocityX = -px(4);
+          p->velocityY = -px(5) / 16;
           for (i = 0; i != 16; i++) {
             struct EffectStep *q;
 
             q = &PARTICLES[312 + i];
-            q->x = ((Random16() & 15) + 56) << 16;
-            q->y = ((Random16() & 31) + 64) << 16;
+            q->x = px((Random16() & 15) + 56);
+            q->y = px((Random16() & 31) + 64);
             q->velocityX = -((Random16() & 31) + 8) << 12;
             q->velocityY = -((Random16() & 31) + 8) << 12;
             q->variant = 0;
@@ -907,24 +907,24 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           if (p->variant < 80)
             p->velocityY += 0x200;
           if (p->variant > 29)
-            p->velocityX -= 0x4000;
+            p->velocityX -= px(1) / 4;
           if (p->variant >= 40 && p->variant < 68)
-            p->velocityY -= 0x1000;
+            p->velocityY -= px(1) / 16;
           if (p->variant >= 50 && p->variant < 60) {
             work->sprites[39]->rotation = (p->variant << 7) - 0x5900;
-            p->velocityY -= 0x1000;
+            p->velocityY -= px(1) / 16;
           }
           if (p->variant >= 108 && p->variant < 140) {
             if (p->variant >= 120 && p->variant < 123)
               work->sprites[39]->rotation -= 0x180;
             else
               work->sprites[39]->rotation += 0x100;
-            p->velocityY -= 0x1000;
+            p->velocityY -= px(1) / 16;
           }
           if (p->variant >= 140 && p->variant < 160)
-            p->velocityY -= 0x800;
+            p->velocityY -= px(1) / 32;
           if (p->variant > 159)
-            p->velocityY -= 0x2000;
+            p->velocityY -= px(1) / 8;
           for (i = 0; i != 32; i++) {
             struct EffectStep *q;
 
@@ -944,7 +944,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
               ((BlitFunc)blits[1])(
                   dest, &work->frames[(q->variant / 4 << 11) + 0x6c0],
                   (q->x >> 16) - 16, (q->y >> 16) - 32, 32, 64);
-              q->velocityX += 0x1000;
+              q->velocityX += px(1) / 16;
               BattleEffectKernels_IntegrateVector2(q, 64, 0);
               q->variant++;
             }
@@ -1003,7 +1003,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       if (frame == 568) {
         work->particles[30].x = 0;
-        work->particles[30].velocityX = 0x80000;
+        work->particles[30].velocityX = px(8);
       }
       for (j = 0; j != 1; j++) {
         ringX = &work->particles[30].x;
@@ -1100,7 +1100,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         if (p->variant == 1) {
           p->x += p->velocityX;
           p->y += p->velocityY;
-          p->velocityY += 0x2000;
+          p->velocityY += px(1) / 8;
           p->velocityX = p->velocityX * 60 / 64;
           p->velocityY = p->velocityY * 63 / 64;
         }
@@ -1123,7 +1123,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           p->variant++;
           p->x += p->velocityX;
           p->y += p->velocityY;
-          p->velocityY += 0x2000;
+          p->velocityY += px(1) / 8;
           p->velocityX = p->velocityX * 48 / 64;
           p->velocityY = p->velocityY * 63 / 64;
           work->sprites[31]->rotation += 0x100;
@@ -1192,7 +1192,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
                                 (q->x >> 16) - 2, (q->y >> 16) - 12, 12, 24);
             q->x += q->velocityX;
             q->y += q->velocityY;
-            q->velocityY -= 0x4000;
+            q->velocityY -= px(1) / 4;
             q->variant++;
           }
         }
@@ -1292,7 +1292,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         if (frame >= gDaedalus_ParticleStarts[i] && p->variant == 0) {
           particlePlace.x = p->x;
           particlePlace.y = p->y;
-          if (particlePlace.y > 0 && particlePlace.y < 0x800000)
+          if (particlePlace.y > 0 && particlePlace.y < px(128))
             Render_ApplyProjectedPlacementFar(work->sprites[i], &particlePlace,
                                               &particleScale, 0);
           if (p->y > 0x6fffff) {
@@ -1364,7 +1364,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           ((BlitFunc)blits[i & 1])(dest, &work->frames[v << 11],
                                    (q->x >> 16) - 16, (q->y >> 16) - 48, 32,
                                    64);
-          BattleEffectKernels_IntegrateVector2(q, 56, -0x2000);
+          BattleEffectKernels_IntegrateVector2(q, 56, -px(1) / 8);
           q->variant++;
         }
       }
@@ -1546,7 +1546,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *args) {
             draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
                     Q_16_16_UPPER_HALF(mote->x) - 16,
                     Q_16_16_UPPER_HALF(mote->y) - 48, 32, 64);
-            BattleEffectKernels_IntegrateVector2(mote, 62, -0x800);
+            BattleEffectKernels_IntegrateVector2(mote, 62, -px(1) / 32);
             mote->variant++;
           }
         }

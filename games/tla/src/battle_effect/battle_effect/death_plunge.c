@@ -184,8 +184,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *args) {
           s32 angle;
           s32 force;
 
-          spark->x = (targetScreen.x / 2) << 16;
-          spark->y = (targetScreen.y - 16) << 16;
+          spark->x = px(targetScreen.x / 2);
+          spark->y = px(targetScreen.y - 16);
           angle = Random16();
           force = (Random16() & 255) + 64;
           spark->velocityX = (Trig_Sin(angle) * force) >> 6;
@@ -202,7 +202,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *args) {
           draw[0](canvas, work->sheet + ((spark->variant / 4) << 11),
                   Q_16_16_UPPER_HALF(spark->x) - 16,
                   Q_16_16_UPPER_HALF(spark->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector2(spark, 62, -px(1) / 8);
         }
         spark->variant++;
       }

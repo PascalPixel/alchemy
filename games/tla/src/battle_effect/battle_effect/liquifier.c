@@ -125,8 +125,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *args) {
 
           step->velocityX = (Trig_Sin(angle) * speed) >> 8;
           step->velocityY = (Trig_Cos(angle) * speed) >> 7;
-          step->x = (from.x / 2) << 16;
-          step->y = (from.y - (Random16() & 15) - 8) << 16;
+          step->x = px(from.x / 2);
+          step->y = px(from.y - (Random16() & 15) - 8);
           step->variant = 0;
           step++;
         }
@@ -175,7 +175,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *args) {
 
           step->velocityX = (Trig_Sin(angle) * speed) >> 10;
           step->velocityY = (Trig_Cos(angle) * speed) >> 9;
-          step->x = (from.x / 2) << 16;
+          step->x = px(from.x / 2);
           y = from.y - (Random16() & 15) - 8;
           step->x -= step->velocityX << 6;
           step->y = (y << 16) - (step->velocityY << 6);
@@ -515,8 +515,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *args, u32 mode) {
       } else {
         // The ball leaves the caster's chest, aimed to arrive in 128
         // frames' worth of steps, already seven steps along.
-        ball->x = (from.x / 2) << 16;
-        ball->y = (from.y - 36) << 16;
+        ball->x = px(from.x / 2);
+        ball->y = px(from.y - 36);
         ball->velocityX = (to.x - from.x) << 10;
         ball->velocityY = (to.y - from.y) << 10;
         ball->x += ball->velocityX * 7;
@@ -620,8 +620,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *args, u32 mode) {
 
           newFlame = &work->particles[i];
           speed = i * 4 + 4;
-          newFlame->x = (to.x / 2) << 16;
-          newFlame->y = (to.y - 32) << 16;
+          newFlame->x = px(to.x / 2);
+          newFlame->y = px(to.y - 32);
           newFlame->velocityX = (speed * Trig_Sin(angle)) >> 3;
           newFlame->velocityY = -(speed * Trig_Cos(angle)) >> 3;
           newFlame->variant = i / 3 + 17;
@@ -634,8 +634,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *args, u32 mode) {
 
           newSpark = &work->particles[16 + i];
 
-          newSpark->x = (to.x / 2) << 16;
-          newSpark->y = (to.y - 32) << 16;
+          newSpark->x = px(to.x / 2);
+          newSpark->y = px(to.y - 32);
           newSpark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           newSpark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           if (mode == 1) {

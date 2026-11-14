@@ -191,7 +191,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       Q_16_16_UPPER_HALF(step->x) - size / 2,
                       Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 62, 0x4000);
+          BattleEffectKernels_IntegrateVector2(step, 62, px(1) / 4);
           if (step->y > ((i & 3) + 108) << 16)
             step->velocityY = -step->velocityY / 2;
           step->variant--;
@@ -310,12 +310,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *args) {
               draw[args->variant](canvas, Ram_MapCellBuffer + (cell << 11),
                                   position.x - 16, position.y - 40, 32, 64);
               step->variant++;
-              BattleEffectKernels_IntegrateVector3(step, 62, 0x2000);
+              BattleEffectKernels_IntegrateVector3(step, 62, px(1) / 8);
             }
           } else {
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 64, -0x2000);
+            BattleEffectKernels_IntegrateVector3(step, 64, -px(1) / 8);
           }
         }
       }
@@ -335,7 +335,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *args) {
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         position.x - size / 2, position.y - size, size,
                         size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 62, 0x2000);
+            BattleEffectKernels_IntegrateVector3(step, 62, px(1) / 8);
             step->variant--;
           }
         }
@@ -353,7 +353,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       Q_16_16_UPPER_HALF(spark->x) - size / 2,
                       Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
+          BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 4);
           spark->variant--;
         }
       }

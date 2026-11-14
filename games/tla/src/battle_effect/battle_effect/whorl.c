@@ -175,8 +175,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *args, u32 mode) {
             } else {
               q->x = -px(200);
             }
-            q->y = ((Random16() & 127) - 64) << 16;
-            q->z = ((Random16() & 127) - 64) << 16;
+            q->y = px((Random16() & 127) - 64);
+            q->z = px((Random16() & 127) - 64);
             q->velocityX = q->x;
             q->velocityZ = q->z;
             q->velocityY = q->y;
@@ -281,7 +281,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *args, u32 mode) {
                 q->y += (pos[1] - q->velocityY) / 32;
                 q->z += (pos[2] - q->velocityZ) / 32;
               } else {
-                BattleEffectKernels_IntegrateVector3(q, 62, 1024);
+                BattleEffectKernels_IntegrateVector3(q, 62, px(1) / 64);
               }
               EffectPosition_ProjectPoint(q, &proj);
               blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
@@ -400,8 +400,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *args, u32 mode) {
 
               q->velocityX = (Trig_Sin(a) * r) >> 7;
               q->velocityY = (Trig_Cos(a) * r) >> 7;
-              q->x = (apos.x / 2) << 16;
-              q->y = (apos.y - 8) << 16;
+              q->x = px(apos.x / 2);
+              q->y = px(apos.y - 8);
               q->variant = 0;
             }
           }
@@ -415,7 +415,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *args, u32 mode) {
                 blit[0](canvas,
                         (Ram_MapCellBuffer + 0x5000) + ((q->variant / 4) << 11),
                         (s16)(q->x >> 16) - 16, (s16)(q->y >> 16) - 32, 32, 64);
-                BattleEffectKernels_IntegrateVector2(q, 60, -0x2000);
+                BattleEffectKernels_IntegrateVector2(q, 60, -px(1) / 8);
                 q->variant++;
               }
             }

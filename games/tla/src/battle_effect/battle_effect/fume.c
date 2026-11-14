@@ -134,8 +134,8 @@ void BattleEffect_RunFume(struct BattleEffectArgument *args) {
       for (i = 0; i != 32; i++) {
         spark = &work->particles[i];
         spark->variant = -i / 4 + 2;
-        spark->x = (target.x / 2) << 16;
-        spark->y = (target.y + (Random16() & 15) - 32) << 16;
+        spark->x = px(target.x / 2);
+        spark->y = px(target.y + (Random16() & 15) - 32);
         spark->velocityX =
             ((Random16() % gFume_Levels[args->variant][FUME_SPREAD]) -
              (gFume_Levels[args->variant][FUME_SPREAD] >> 1))

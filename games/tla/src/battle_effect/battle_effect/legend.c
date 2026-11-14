@@ -171,7 +171,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *args) {
           step->y = px(104);
           step->velocityY = -step->velocityY / 2;
         }
-        BattleEffectKernels_IntegrateVector2(step, 62, 0x4000);
+        BattleEffectKernels_IntegrateVector2(step, 62, px(1) / 4);
         step->variant--;
       }
     }
@@ -546,7 +546,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *args, s32 mode) {
               s32 force;
 
               spark->x = aim.x << 15;
-              spark->y = (aim.y + 8) << 16;
+              spark->y = px(aim.y + 8);
               angle = Random16() % (TRIG_TURN * 3 / 4) + TRIG_TURN / 8;
               force = Random16() & 127;
               spark->velocityX = (Trig_Sin(angle) * force) >> 5;

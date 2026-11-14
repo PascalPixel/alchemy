@@ -110,8 +110,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *args) {
           s32 angle;
           s32 force;
 
-          spark->x = (position.x / 2) << 16;
-          spark->y = (position.y - 24) << 16;
+          spark->x = px(position.x / 2);
+          spark->y = px(position.y - 24);
           angle = Random16();
           force = (Random16() & 255) + 32;
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;

@@ -96,8 +96,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *args) {
           u32 spread;
 
           spark->variant = -i / 4 + 2;
-          spark->x = (centerX / 2) << 16;
-          spark->y = ((Random16() & 15) + y + 16) << 16;
+          spark->x = px(centerX / 2);
+          spark->y = px((Random16() & 15) + y + 16);
           random = Random16();
           spread = gRagingHeat_Styles[args->variant][1];
           spark->velocityX = ((random % spread) - (spread >> 1)) << 12;
@@ -107,8 +107,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *args) {
           s32 angle;
           s32 speed;
 
-          EMBERS[i].x = (centerX / 2) << 16;
-          EMBERS[i].y = ((Random16() & 15) + y + 24) << 16;
+          EMBERS[i].x = px(centerX / 2);
+          EMBERS[i].y = px((Random16() & 15) + y + 24);
           angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           speed = (Random16() & 255) + 127;
           EMBERS[i].velocityX = (Trig_Sin(angle) * speed) >> 5;
@@ -139,7 +139,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *args) {
                       Q_16_16_UPPER_HALF(particle->x) - 16,
                       Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
             }
-            BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
+            BattleEffectKernels_IntegrateVector2(particle, 60, -px(1) / 16);
           }
           particle->variant++;
         }
@@ -154,7 +154,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *args) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     Q_16_16_UPPER_HALF(particle->x) - size / 2,
                     Q_16_16_UPPER_HALF(particle->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
+            BattleEffectKernels_IntegrateVector2(particle, 60, px(1) / 16);
             particle->variant--;
           }
           i++;
@@ -320,14 +320,14 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *args) {
       lift = gJuggle_Styles[args->variant][RING_LIFT_MAX];
     if (frame < RING_THROW_FRAME) {
       ring->x = caster.x << 16;
-      ring->y = (caster.y - lift - 32) << 16;
+      ring->y = px(caster.y - lift - 32);
     } else {
       // The throw: z and velocityZ hold the pull toward the midpoint, and
       // the ring keeps three quarters of its speed each frame.
       if (frame == RING_THROW_FRAME) {
         BattleEffect_GetTargetsMidpoint(&midpoint);
         ring->x = caster.x << 16;
-        ring->y = (caster.y - lift - 32) << 16;
+        ring->y = px(caster.y - lift - 32);
         ring->velocityX = 0;
         ring->velocityY = 0;
         ring->z = ((midpoint.x << 16) - ring->x) / 64;
@@ -384,7 +384,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *args) {
           s32 angle;
           s32 speed;
 
-          spark->x = (target.x / 2) << 16;
+          spark->x = px(target.x / 2);
           spark->y = target.y << 16;
           angle = Random16();
           speed = (Random16() & 255) + 127;
@@ -407,7 +407,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *args) {
                         sparkCels + gBattleEffect_MotePictures[size - 1],
                         Q_16_16_UPPER_HALF(spark->x) - size / 2,
                         Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
+        BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 4);
         spark->variant--;
       }
     }

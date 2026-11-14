@@ -399,8 +399,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       swarmScale.x = Q16_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
-          PARTICLES[i].x = (Random16() % 160 + 40) << 16;
-          PARTICLES[i].y = ((Random16() & 63) + 32) << 16;
+          PARTICLES[i].x = px(Random16() % 160 + 40);
+          PARTICLES[i].y = px((Random16() & 63) + 32);
           PARTICLES[i].timer = Random16() & 255;
           PARTICLES[i].vx = ((Random16() & 255) - 127) << 9;
           PARTICLES[i].vy = (-(Random16() & 255) - 128) << 8;
@@ -420,8 +420,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         SPRITES[i]->tile = tiles[PARTICLES[64 + i].timer / 16];
       }
       for (i = 0; i != 128; i++) {
-        if (PARTICLES[i].y > -0x100000 && PARTICLES[i].x > -0x100000 &&
-            PARTICLES[i].x < 0x1000000) {
+        if (PARTICLES[i].y > -px(16) && PARTICLES[i].x > -px(16) &&
+            PARTICLES[i].x < px(256)) {
           PARTICLES[i].x += PARTICLES[i].vx;
           PARTICLES[i].y += PARTICLES[i].vy;
         }
@@ -1460,7 +1460,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           row += (s32)buffer;
           buffer = (u8 *)row;
           routine[0](canvas, buffer, x, (p->y >> 16) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(p, 60, -0x2000);
+          BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 8);
         }
         p->timer++;
       }
@@ -1557,14 +1557,14 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         struct Particle__f175f74 *member = &work->members[i];
         s32 landed = 0;
 
-        if (actor->y < 0x640000) {
+        if (actor->y < px(100)) {
           if (member->timer == -1) {
             actor->x += px(10);
           } else {
             actor->x += px(2);
           }
           if (member->timer == -1) {
-            if (actor->x > 0x300000) {
+            if (actor->x > px(48)) {
               landed = 1;
             }
             if (landed == 1) {
@@ -1637,7 +1637,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             drop->timer = 0;
           }
           if (drop->timer == 0) {
-            drop->x = (Random16() % 24 + shake - i * 2) << 16;
+            drop->x = px(Random16() % 24 + shake - i * 2);
             drop->y = (160 << 15) + i * (192 << 10);
             drop->vx = -(Random16() & 0xffff) - 0x4000;
             drop->vy = -0x10000;

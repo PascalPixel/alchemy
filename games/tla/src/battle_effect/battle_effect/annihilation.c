@@ -149,7 +149,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *args) {
           draw[(i / 2) & 1](
               canvas, cells + gBattleEffect_MotePictures[size - 1],
               screen.x - size / 2, screen.y - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector3(shard, 60, -0x400);
+          BattleEffectKernels_IntegrateVector3(shard, 60, -px(1) / 64);
           shard->variant--;
         }
       }

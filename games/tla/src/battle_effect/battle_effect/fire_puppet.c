@@ -339,10 +339,10 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *args) {
 
         spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
         if (args->side == 0)
-          spark->x = (caster.x / 2 - 48) << 16;
+          spark->x = px(caster.x / 2 - 48);
         else
-          spark->x = (caster.x / 2 + 48) << 16;
-        spark->y = (caster.y - (Random16() & 7)) << 16;
+          spark->x = px(caster.x / 2 + 48);
+        spark->y = px(caster.y - (Random16() & 7));
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = Random16() & 255;
         if (args->side == 0)
@@ -363,9 +363,9 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *args) {
                   Q_16_16_UPPER_HALF(spark->x) - size / 2,
                   Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           if (i & 1)
-            BattleEffectKernels_IntegrateVector2(spark, 60, -0x2000);
+            BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 8);
           else
-            BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
+            BattleEffectKernels_IntegrateVector2(spark, 60, px(1) / 16);
           spark->variant--;
         }
       }

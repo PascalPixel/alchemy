@@ -192,7 +192,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *args) {
                       Q_16_16_UPPER_HALF(particle->x) - 16,
                       Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
         }
-        BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
+        BattleEffectKernels_IntegrateVector2(particle, 60, -px(1) / 16);
         particle->variant++;
       }
     }
@@ -204,7 +204,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *args) {
         blitters[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     Q_16_16_UPPER_HALF(particle->x) - size / 2,
                     Q_16_16_UPPER_HALF(particle->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
+        BattleEffectKernels_IntegrateVector2(particle, 60, px(1) / 16);
         particle->variant--;
       }
     }
@@ -344,7 +344,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *args) {
         s32 angle;
         s32 speed;
 
-        spawned->x = (source.x / 2) << 16;
+        spawned->x = px(source.x / 2);
         spawned->y = 240 << 15;
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 1023) + 32;
@@ -549,7 +549,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *args) {
         s32 angle;
         s32 speed;
 
-        scatter->x = (source.x / 2) << 16;
+        scatter->x = px(source.x / 2);
         scatter->y = 0;
         angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         speed = (Random16() & 255) + 32;
@@ -566,7 +566,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *args) {
         s32 angle;
         s32 speed;
 
-        burst->x = (source.x / 2) << 16;
+        burst->x = px(source.x / 2);
         burst->y = 0;
         angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
         speed = (Random16() & 255) + 32;
@@ -584,7 +584,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *args) {
                   Q_16_16_UPPER_HALF(particle->x) - 16,
                   Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
         }
-        BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
+        BattleEffectKernels_IntegrateVector2(particle, 60, -px(1) / 16);
         particle->variant++;
       }
     }

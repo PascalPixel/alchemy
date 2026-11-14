@@ -107,8 +107,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *args) {
   for (i = 0; i != 16; i++) {
     struct EffectStep *slash = &work->particles[i];
 
-    slash->x = (Random16() % 96 + 12) << 16;
-    slash->y = ((Random16() & 63) + 32) << 16;
+    slash->x = px(Random16() % 96 + 12);
+    slash->y = px((Random16() & 63) + 32);
     slash->velocityX = 0;
     slash->velocityY = 0;
     slash->variant = 0;
@@ -142,7 +142,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *args) {
         for (column = 0; column != 3; column++) {
           if (row != 3 || column != 2) {
             position.x = (pathX + 80 + column * 32) * 65536;
-            position.y = (64 - pathY + row * 32) << 16;
+            position.y = px(64 - pathY + row * 32);
             if (row == 3)
               position.x = (pathX + 80 + column * 32 + 32) * 65536;
             Render_ApplyProjectedPlacementFar(work->objects[row * 3 + column],

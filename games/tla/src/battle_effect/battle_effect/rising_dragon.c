@@ -138,8 +138,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *args) {
 
           spark = &work->particles[i * 32 + j];
 
-          spark->x = (hit.x / 2) << 16;
-          spark->y = (hit.y - 16) << 16;
+          spark->x = px(hit.x / 2);
+          spark->y = px(hit.y - 16);
           angle = Random16();
           speed &= Random16();
           spark->velocityX = (Trig_Sin(angle) * (speed += 127)) >> 6;
@@ -172,7 +172,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *args) {
           blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(mote->x) - size / 2,
                   Q_16_16_UPPER_HALF(mote->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(mote, 60, 0x1000);
+          BattleEffectKernels_IntegrateVector2(mote, 60, px(1) / 16);
           mote->variant--;
         }
       }
@@ -386,9 +386,9 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *args) {
     // and comes down at it for 32 frames.
     if (frame == 0) {
       if (args->side == 0)
-        work->particles[0].x = (target.x + 40) << 16;
+        work->particles[0].x = px(target.x + 40);
       else
-        work->particles[0].x = (target.x - 168) << 16;
+        work->particles[0].x = px(target.x - 168);
       work->particles[0].y = -px(100);
       if (args->side == 0)
         work->particles[0].velocityX = -px(6);
@@ -410,7 +410,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectArgument *args) {
       s32 level = FIGURE_FRAMES - frame;
 
       REG_BLDALPHA = ((16 - level / 2) << 8) | level;
-      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, -0x8000);
+      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, -px(1) / 2);
     }
 
     // The sway, and the canvas moved with the figure.

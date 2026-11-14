@@ -174,7 +174,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(dot->x) - size / 2,
                 Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
+        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
         dot->variant--;
       }
     }
@@ -292,7 +292,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(dot->x) - size / 2,
                 Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
+        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
         dot->variant--;
       }
     }
@@ -406,7 +406,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *args) {
             direction = (Random16() & 0x7fff) + 0x4000;
             speed = (Random16() & 0x1ff) + 256;
             dot->x = column->x << 16;
-            dot->y = (column->y + 16) << 16;
+            dot->y = px(column->y + 16);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;
             dot->variant = (Random16() & 15) + 32;
@@ -434,7 +434,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(dot->x) - size / 2,
                 Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
+        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
         dot->variant--;
       }
     }
@@ -497,8 +497,8 @@ void BattleEffect_RunMars(struct BattleEffectArgument *args) {
     puff->variant = -(member * 2);
     for (i = 0; i != SPARKS_PER_PUFF; i++) {
       spark = &SPARKS[member * SPARKS_PER_PUFF + i];
-      spark->x = (((Random16() & 15) + puff->x) - 8) << 16;
-      spark->y = ((Random16() & 7) + 96) << 16;
+      spark->x = px(((Random16() & 15) + puff->x) - 8);
+      spark->y = px((Random16() & 7) + 96);
       spark->velocityX = ((Random16() & 127) - 64) << 11;
       spark->velocityY = ((Random16() & 127) - 64) << 10;
       spark->z = Random16() & 0xffff;
@@ -574,7 +574,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
                 size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 64, -0x2000);
+        BattleEffectKernels_IntegrateVector2(spark, 64, -px(1) / 8);
         wobble = spark->z;
         spark->z = wobble + 0x800;
         if (spark->z > 0xffff)

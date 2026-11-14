@@ -696,7 +696,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *args) {
                     Q_16_16_TO_INT(q->x) - n, Q_16_16_TO_INT(q->y) - n, n * 2,
                     n * 2);
           }
-          BattleEffectKernels_IntegrateVector2(q, 60, 0x2000);
+          BattleEffectKernels_IntegrateVector2(q, 60, px(1) / 8);
           q->variant--;
         }
       }

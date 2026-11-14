@@ -224,8 +224,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
 
       if (frame == 0) {
         work->transferValue = frame;
-        position.x = 0x6c0000;
-        position.y = 0x780000;
+        position.x = px(108);
+        position.y = px(120);
         velocity.x = 0;
         velocity.y = 0;
         Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle + 0x56c, 256);
@@ -321,7 +321,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
                   Render_ApplyProjectedPlacementFar(work->objects[16 + (i & 1)],
                                                     wingPlace,
                                                     gHaures_UnitScale, 0);
-                  BattleEffectKernels_IntegrateVector2(p, 63, 0x2000);
+                  BattleEffectKernels_IntegrateVector2(p, 63, px(1) / 8);
                   if (Q_16_16_UPPER_HALF(p->y) > 119) {
                     p->variant = 1;
                   }
@@ -444,18 +444,18 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
           position.x += velocity.x;
           position.y += velocity.y;
           if (frame <= 159) {
-            velocity.y += -0x4000;
+            velocity.y += -px(1) / 4;
           } else if ((u32)(frame - 210) <= 13) {
-            velocity.x += -0x800;
-            velocity.y += -0x1000;
+            velocity.x += -px(1) / 32;
+            velocity.y += -px(1) / 16;
           } else if ((u32)(frame - 236) <= 3) {
-            velocity.x += 0x2000;
-            velocity.y += -0x4000;
+            velocity.x += px(1) / 8;
+            velocity.y += -px(1) / 4;
           }
           velocity.x = velocity.x * 60 / 64;
           velocity.y = velocity.y * 60 / 64;
-          req.x = 0x10000;
-          req.y = 0x10000;
+          req.x = px(1);
+          req.y = px(1);
           for (i = 0; i != 2; i++) {
             bodyPlace[0] = position.x;
             bodyPlace[1] = 0x1100000 - (position.y + i * 0x200000);
@@ -486,12 +486,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           }
           req.x = frame * 1128 - 103664;
-          if (req.x > 0x40000) {
-            req.x = 0x40000;
+          if (req.x > px(4)) {
+            req.x = px(4);
           }
           req.y = frame * 564 - 19064;
-          if (req.y > 0x20000) {
-            req.y = 0x20000;
+          if (req.y > px(2)) {
+            req.y = px(2);
           }
           bodyPlace[0] = position.x;
           bodyPlace[1] = 0x780000 - position.y;
@@ -790,10 +790,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
     void *verts;
 
     if (frame == 0) {
-      position.x = 0x10e0000;
-      position.y = -0x160000;
-      velocity.x = -0xc0000;
-      velocity.y = 0x60000;
+      position.x = px(270);
+      position.y = -px(22);
+      velocity.x = -px(12);
+      velocity.y = px(6);
       {
         s32 *variant = &SPARKS->variant;
 
@@ -803,15 +803,15 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
       }
     }
     if (frame == 20) {
-      position.x = -0xa0000;
-      position.y = -0x160000;
-      velocity.x = 0xc0000;
-      velocity.y = 0x60000;
+      position.x = -px(10);
+      position.y = -px(22);
+      velocity.x = px(12);
+      velocity.y = px(6);
     }
     if (frame == 40) {
-      position.x = 0x1040000;
-      position.y = 0x400000;
-      velocity.x = -0x80000;
+      position.x = px(260);
+      position.y = px(64);
+      velocity.x = -px(8);
       velocity.y = 0;
     }
     {
@@ -823,7 +823,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
           draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                   Q_16_16_UPPER_HALF(p->x) - n / 2,
                   Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
-          BattleEffectKernels_IntegrateVector2(p, 63, -0x8000);
+          BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 2);
           p->variant--;
         }
       }
@@ -876,13 +876,13 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *args) {
       position.x += velocity.x;
       position.y += velocity.y;
       if ((u32)frame <= 19) {
-        velocity.x += -0x8000;
-        velocity.y += 0x8000;
+        velocity.x += -px(1) / 2;
+        velocity.y += px(1) / 2;
       } else if ((u32)t <= 19) {
-        velocity.x += 0x8000;
-        velocity.y += 0x4000;
+        velocity.x += px(1) / 2;
+        velocity.y += px(1) / 4;
       } else if ((u32)(frame - 40) <= 19) {
-        velocity.x += -0x8000;
+        velocity.x += -px(1) / 2;
       }
     }
     if (frame == 10) {

@@ -596,7 +596,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *args) {
                   Q_16_16_UPPER_HALF(p->x) - n / 2,
                   Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
           p->variant--;
-          BattleEffectKernels_IntegrateVector2(p, 56, 0x2000);
+          BattleEffectKernels_IntegrateVector2(p, 56, px(1) / 8);
         }
       }
     }

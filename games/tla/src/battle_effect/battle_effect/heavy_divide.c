@@ -90,8 +90,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *args, s32 mode) {
         s32 speed = 255;
 
         speed &= Random16();
-        chip->x = (hit.x / 2) << 16;
-        chip->y = (hit.y - 16) << 16;
+        chip->x = px(hit.x / 2);
+        chip->y = px(hit.y - 16);
         chip->velocityX = (Trig_Sin(angle) * (speed + 128)) >> 6;
         chip->velocityY = (Trig_Cos(angle) * (speed + 128)) >> 6;
         chip->variant = (Random16() & 15) + 16;
@@ -177,8 +177,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *args, s32 mode) {
       texture.logHeight = 6;
       if (frame == 0) {
         for (i = 0; i != 5; i++) {
-          work->particles[i].x = (source.x / 2) << 16;
-          work->particles[i].y = (source.y - 32) << 16;
+          work->particles[i].x = px(source.x / 2);
+          work->particles[i].y = px(source.y - 32);
           work->particles[i].velocityX = (target.x / 2 - source.x / 2) << 11;
           work->particles[i].velocityY = (target.y - source.y) << 11;
           work->particles[i].z = zero;
@@ -226,13 +226,13 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *args, s32 mode) {
           if (chip->variant >= 0) {
             blitter(canvas, gHeavyBlow_ChipPixels, Q_16_16_UPPER_HALF(chip->x),
                     Q_16_16_UPPER_HALF(chip->y) - 1, 1, 2);
-            BattleEffectKernels_IntegrateVector2(chip, 62, 0x1000);
+            BattleEffectKernels_IntegrateVector2(chip, 62, px(1) / 16);
             blitter(canvas, gHeavyBlow_ChipPixels, Q_16_16_UPPER_HALF(chip->x),
                     Q_16_16_UPPER_HALF(chip->y) - 1, 1, 2);
-            BattleEffectKernels_IntegrateVector2(chip, 62, 0x1000);
+            BattleEffectKernels_IntegrateVector2(chip, 62, px(1) / 16);
             blitter(canvas, gHeavyBlow_ChipPixels, Q_16_16_UPPER_HALF(chip->x),
                     Q_16_16_UPPER_HALF(chip->y) - 1, 1, 2);
-            BattleEffectKernels_IntegrateVector2(chip, 62, 0x1000);
+            BattleEffectKernels_IntegrateVector2(chip, 62, px(1) / 16);
             if (Q_16_16_UPPER_HALF(chip->y) > 104) {
               chip->velocityY = -chip->velocityY;
               chip->variant -= 8;
@@ -321,7 +321,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *args) {
           s32 speed = (Random16() & 0x1ff) + 128;
           s32 angle = Random16() & 0xffff;
 
-          spark->x = ((Random16() & 63) + 32) << 16;
+          spark->x = px((Random16() & 63) + 32);
           spark->y = px(96);
           spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 8;
@@ -422,7 +422,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *args) {
             size = gCool_SparkSizes[cell];
             draw[0](canvas, src, x - size / 2, y - size / 2, size, size);
             spark->variant++;
-            BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
+            BattleEffectKernels_IntegrateVector2(spark, 62, -px(1) / 8);
           }
         }
       }
@@ -558,7 +558,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *args) {
       EffectPosition_ProjectBattler(args->actors[0], &screen);
       still = 0;
       for (i = 0, drop = work->particles; i != WYRD_DROPS; i++, drop++) {
-        drop->x = (screen.x / 2 + (Random16() & 15) - 8) << 16;
+        drop->x = px(screen.x / 2 + (Random16() & 15) - 8);
         drop->y = -8;
         drop->velocityX = still;
         drop->velocityY = still;
@@ -569,7 +569,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *args) {
       {
         struct EffectStep *glow = &work->particles[63];
 
-        glow->x = (screen.x / 2) << 16;
+        glow->x = px(screen.x / 2);
         glow->y = px(112);
         glow->variant = zero;
       }
@@ -585,7 +585,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *args) {
                   Q_16_16_UPPER_HALF(drop->x) - dropSize / 2,
                   Q_16_16_UPPER_HALF(drop->y) - dropSize, dropSize,
                   dropSize * 2);
-          BattleEffectKernels_IntegrateVector2(drop, 64, 0x8000);
+          BattleEffectKernels_IntegrateVector2(drop, 64, px(1) / 2);
           if (Q_16_16_UPPER_HALF(drop->y) > 111) {
             drop->variant = 1;
             // DEAD: overwritten by the next store; the random number is still
@@ -660,7 +660,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *args) {
       Transform_ApplyPitch(-TRIG_TURN / 4);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
       Render_DrawModelList(model);
-      BattleEffectKernels_IntegrateVector2(drop, 60, -0x8000);
+      BattleEffectKernels_IntegrateVector2(drop, 60, -px(1) / 2);
     }
     i++;
     drop++;
@@ -945,12 +945,12 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *args) {
         PARTICLES[i].variant = -1;
       for (i = 0; i != STREAKS; i++) {
         streak = &work->particles[i];
-        streak->y = ((Random16() & 31) - 64) << 16;
+        streak->y = px((Random16() & 31) - 64);
         if (args->side == 0) {
-          streak->x = ((Random16() & 63) + 40) << 16;
+          streak->x = px((Random16() & 63) + 40);
           streak->velocityX = -px(1);
         } else {
-          streak->x = ((Random16() & 63) + 24) << 16;
+          streak->x = px((Random16() & 63) + 24);
           streak->velocityX = px(1);
         }
         streak->velocityY = px(16);
@@ -973,7 +973,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *args) {
                 work->sheet + SPLASH_OFFSET + splash->variant / 4 * SPLASH_SIZE,
                 Q_16_16_UPPER_HALF(splash->x) - 12,
                 Q_16_16_UPPER_HALF(splash->y) - 32, 24, 48);
-        BattleEffectKernels_IntegrateVector2(splash, 56, -0x4000);
+        BattleEffectKernels_IntegrateVector2(splash, 56, -px(1) / 4);
         splash->variant++;
       }
     }

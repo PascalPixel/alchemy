@@ -133,11 +133,11 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *args) {
           blitters[0](canvas, (u8 *)(((spray->variant / 3) << 11) + (s32)sheet),
                       Q_16_16_UPPER_HALF(spray->x) - 16,
                       Q_16_16_UPPER_HALF(spray->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(spray, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector2(spray, 62, -px(1) / 8);
         }
         if (++spray->variant == 0) {
-          spray->x = ((Random16() & 31) + target.x / 2 - 16) << 16;
-          spray->y = ((Random16() & 7) + 88) << 16;
+          spray->x = px((Random16() & 31) + target.x / 2 - 16);
+          spray->y = px((Random16() & 7) + 88);
           spray->velocityX = ((Random16() & 255) - 128) << 11;
           spray->velocityY = 0;
         }
@@ -165,7 +165,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *args) {
 
         for (i = 0, drop = drops; i != OCEAN_DROPS; i++, drop++) {
           if (drop->variant == -1) {
-            drop->x = ((Random16() & 31) + target.x / 2 - 16) << 16;
+            drop->x = px((Random16() & 31) + target.x / 2 - 16);
             drop->y = px(108);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
@@ -185,7 +185,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *args) {
                           Q_16_16_UPPER_HALF(drop->x) - size / 2,
                           Q_16_16_UPPER_HALF(drop->y) - size, size, size * 2);
           if (frame > 31) {
-            BattleEffectKernels_IntegrateVector2(drop, 62, 0x4000);
+            BattleEffectKernels_IntegrateVector2(drop, 62, px(1) / 4);
           } else {
             BattleEffectKernels_IntegrateVector2(drop, 62,
                                                  gOceanFist_DropGravity[i & 3]);

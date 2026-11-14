@@ -215,7 +215,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
           tall = gCybele_ThornHeights[cel];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
-          BattleEffectKernels_IntegrateVector2(thorn, 64, 0x1000);
+          BattleEffectKernels_IntegrateVector2(thorn, 64, px(1) / 16);
         }
       }
     }
@@ -224,8 +224,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
       for (i = 0; i != 48; i++) {
         struct EffectStep *chip = &work->particles[16 + i];
 
-        chip->x = (Random16() % 96) << 16;
-        chip->y = ((Random16() & 7) + 88) << 16;
+        chip->x = px(Random16() % 96);
+        chip->y = px((Random16() & 7) + 88);
         chip->velocityX = ((Random16() & 255) - 128) << 11;
         chip->velocityY = -(Random16() & 255) << 11;
         chip->variant = -(Random16() & 15) - 16;
@@ -306,8 +306,8 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
           chip->y += chip->velocityY;
           chip->velocityY += px(1) / 4;
           if ((chip->y < 0 || chip->y > 120 << 16) && frame <= 159) {
-            chip->x = (Random16() % 96) << 16;
-            chip->y = ((Random16() & 7) + 88) << 16;
+            chip->x = px(Random16() % 96);
+            chip->y = px((Random16() & 7) + 88);
             chip->velocityX = ((Random16() & 255) - 128) << 11;
             chip->velocityY = -(Random16() & 255) << 11;
           }
@@ -508,7 +508,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *args) {
               draw[0](canvas, source, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
-            BattleEffectKernels_IntegrateVector2(ember, 60, 0x1000);
+            BattleEffectKernels_IntegrateVector2(ember, 60, px(1) / 16);
             ember->variant++;
           }
         }

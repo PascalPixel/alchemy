@@ -189,7 +189,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *args) {
           EffectPosition_ProjectPoint((s32 *)p, &screen);
           screen.x >>= 1;
           if (i == 5) {
-            BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
+            BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
             rectangleA(canvas, work->sheet + cel * 0x480 + BURST_IMAGE,
                        screen.x - 12, screen.y - 36, 24, 48);
           } else {

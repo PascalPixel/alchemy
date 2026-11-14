@@ -1071,10 +1071,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
                   Q_16_16_UPPER_HALF(p->x) - size / 2,
                   Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
           if (mode == 13)
-            BattleEffectKernels_IntegrateVector2(p, 60, 0x4000);
+            BattleEffectKernels_IntegrateVector2(p, 60, px(1) / 4);
           else
-            BattleEffectKernels_IntegrateVector2(p, 60, 0x1000);
-          if (p->y > 0x700000)
+            BattleEffectKernels_IntegrateVector2(p, 60, px(1) / 16);
+          if (p->y > px(112))
             p->velocityY = -p->velocityY / 2;
           p->variant--;
         }
@@ -1090,7 +1090,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(p->x) - size / 2,
                   Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(p, 60, -0x4000);
+          BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 4);
           p->variant--;
         }
       }
@@ -1105,7 +1105,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *args,
             draw[0](canvas, work->sheet + 0x22 + p->variant / 4 * 1152,
                     Q_16_16_UPPER_HALF(p->x) - 12,
                     Q_16_16_UPPER_HALF(p->y) - 24, 24, 48);
-            BattleEffectKernels_IntegrateVector2(p, 62, -0x400);
+            BattleEffectKernels_IntegrateVector2(p, 62, -px(1) / 64);
             p->variant++;
           }
         }

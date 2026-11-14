@@ -224,8 +224,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *args) {
         mask = 31;
         p = &work->particles[31];
         for (; i != 27; i++, p++) {
-          p->x = ((Random16() & 63) + 32) << 16;
-          p->y = ((Random16() & 15) + 120) << 16;
+          p->x = px((Random16() & 63) + 32);
+          p->y = px((Random16() & 15) + 120);
           p->velocityX = ((Random16() & mask) - 16) << 13;
           p->velocityY = ((Random16() & mask) - 63) << 12;
           p->variant = (Trig_Cos(i << 9) << 5 >> 16) - 32;
@@ -239,7 +239,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *args) {
 
           blit(canvas, work->sheet + 0x2df8, ((p->x + (s << 4)) >> 16) - 6,
                Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
-          BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);
+          BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 4);
         }
         p->variant++;
       }
@@ -692,8 +692,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *args) {
         if (p->variant >= 0) {
           blit(canvas, work->sheet + 0x2df8, Q_16_16_UPPER_HALF(p->x) - 6,
                Q_16_16_UPPER_HALF(p->y) - 12, 12, 24);
-          BattleEffectKernels_IntegrateVector2(p, 63, 0x10000);
-          if (p->y > 0x600000) {
+          BattleEffectKernels_IntegrateVector2(p, 63, px(1));
+          if (p->y > px(96)) {
             p->velocityY = -p->velocityY / 2;
             p->velocityX <<= 2;
             p->variant -= 8;

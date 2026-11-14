@@ -375,11 +375,11 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *args) {
       Sound_PlayFar(SE_CURSE_FALL);
       if (args->side == 0) {
         work->particles[0].x = px(32);
-        work->particles[0].y = 0xffc00000;
+        work->particles[0].y = px(65472);
         work->particles[0].z = 0xffffe3d0;
       } else {
-        work->particles[0].x = 0xffe00000;
-        work->particles[0].y = 0xffc00000;
+        work->particles[0].x = px(65504);
+        work->particles[0].y = px(65472);
         work->particles[0].z = 0xffffe3d0;
       }
       work->particles[0].velocityZ = 0;
@@ -747,7 +747,7 @@ void BattleEffect_RunGeyser(struct BattleEffectArgument *args, s32 mode) {
         drop = &((struct EffectStep *)Ram_MapCellBuffer)[spawned & 511];
         speed = (Random16() & 1023) + 32;
         angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-        drop->x = (midpoint.x / 2) << 16;
+        drop->x = px(midpoint.x / 2);
         drop->y = px(108);
         if (mode == 2)
           drop->velocityX = (Trig_Sin(angle) * speed) >> 8;
@@ -1089,8 +1089,8 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *args) {
       struct EffectStep *spawn = gData_02015000;
 
       for (i = 0; i != BUBBLE_COUNT; i++) {
-        spawn->x = (Random16() & 127) << 16;
-        spawn->y = ((Random16() & 127) + 120) << 16;
+        spawn->x = px(Random16() & 127);
+        spawn->y = px((Random16() & 127) + 120);
         spawn->velocityX = ((Random16() & 31) - 16) << 13;
         spawn->velocityY = (8 - (Random16() & 31)) << 12;
         spawn->z = (Random16() & 7) + 5;
@@ -1114,7 +1114,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectArgument *args) {
                 Q_16_16_UPPER_HALF(bubble->y) -
                     ((height = gBubbleColumn_PictureHeights[cel]) >> 1),
                 width, height);
-        BattleEffectKernels_IntegrateVector2(bubble, 63, -0x4000);
+        BattleEffectKernels_IntegrateVector2(bubble, 63, -px(1) / 4);
         if (bubble->y < -(gBubbleColumn_PictureHeights[cel] << 16))
           bubble->variant = -1;
       }
@@ -1228,7 +1228,7 @@ struct SpriteView {
                                                                                \
       blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_);                       \
     }                                                                          \
-    BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);                      \
+    BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 4);                   \
     if ((p)->y < -(gCoatlicue_PictureHeights[n_] << 16)) {                     \
       (p)->variant = -1;                                                       \
     }                                                                          \
@@ -1362,8 +1362,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
       }
-      grid.x = 0x580000;
-      grid.y = 0x240000;
+      grid.x = px(88);
+      grid.y = px(36);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 82) {
@@ -1554,13 +1554,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
       place[1] = 0xff0000;
       place[3] = zero;
       if (frame == 360) {
-        grid.y = 0x240000;
+        grid.y = px(36);
       }
       if ((u32)(frame - 396) <= 111) {
-        grid.y += 0x4000;
+        grid.y += px(1) / 4;
       }
       if (frame > 539) {
-        grid.y += 0x100000;
+        grid.y += px(16);
       }
       for (i = 0; i != 12; i++) {
         place[0] = ((i % 3) << 21) + grid.x;
@@ -1589,8 +1589,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
       struct EffectStep *p = EFFECT_STEPS;
 
       for (i = 0; i != 80; i++, p++) {
-        p->x = ((Random16() & 63) + 28) << 16;
-        p->y = (Random16() % 80 + 56) << 16;
+        p->x = px((Random16() & 63) + 28);
+        p->y = px(Random16() % 80 + 56);
         p->velocityX = ((Random16() & 31) - 16) << 12;
         p->velocityY = (8 - (Random16() & 31)) << 12;
         p->z = (Random16() & 7) + 5;
@@ -1610,7 +1610,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
                  << 16;
           p->velocityX = gCoatlicue_BurstVelocityX[k] << 12;
           p->velocityY = gCoatlicue_BurstVelocityY[k] << 12;
-          p->z = ((Random16() & 3) + gCoatlicue_BurstZ[k]) << 16;
+          p->z = px((Random16() & 3) + gCoatlicue_BurstZ[k]);
           p->velocityZ = gCoatlicue_BurstVelocityZ[k] << 10;
           p->variant = zero;
         }
@@ -2081,8 +2081,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *args) {
         struct EffectStep *p = EFFECT_STEPS;
 
         for (i = 0; i != 256; i++, p++) {
-          p->x = (Random16() & 127) << 16;
-          p->y = ((Random16() & 255) + 120) << 16;
+          p->x = px(Random16() & 127);
+          p->y = px((Random16() & 255) + 120);
           p->velocityX = ((Random16() & 31) - 16) << 13;
           p->velocityY = (8 - (Random16() & 31)) << 12;
           p->z = (Random16() & 7) + 5;

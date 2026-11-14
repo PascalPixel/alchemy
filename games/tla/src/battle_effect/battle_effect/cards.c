@@ -325,7 +325,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
           draw[0](canvas, work->sheet + (step->variant / 4 << 10),
                   overflow + Q_16_16_UPPER_HALF(step->x) - 16,
                   Q_16_16_UPPER_HALF(step->y) - 16, 32, 32);
-          BattleEffectKernels_IntegrateVector2(step, 62, -0x1000);
+          BattleEffectKernels_IntegrateVector2(step, 62, -px(1) / 16);
           if (step->y > px(96)) {
             step->velocityY = 0;
             step->y = px(96);
@@ -361,7 +361,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
                   Ram_MapCellBuffer + 0x683e + ((step->variant / 4 & 3) << 10),
                   overflow + Q_16_16_UPPER_HALF(step->x) - 16,
                   Q_16_16_UPPER_HALF(step->y) - 16, 32, 32);
-          BattleEffectKernels_IntegrateVector2(step, 62, 0x2000);
+          BattleEffectKernels_IntegrateVector2(step, 62, px(1) / 8);
           step->variant++;
         }
       }
@@ -391,7 +391,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *args, s32 mode) {
 
           step = &work->particles[i];
           step->x = px(64);
-          step->y = (i + 48) << 16;
+          step->y = px(i + 48);
           step->velocityX = (Trig_Cos(angle) * (force + 64)) >> 6;
           step->velocityY = (Trig_Sin(angle) * (force + 64)) >> 6;
           step->variant = Random16() & 255;

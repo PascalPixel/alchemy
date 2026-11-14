@@ -120,7 +120,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *args, s32 mode) {
                     (gBattleEffect_MotePictures[size - 1] + (i & 1) * 770) +
                     MOTE_SHEET,
                 screen.x - size / 2, screen.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(mote, 64, -0x2000);
+        BattleEffectKernels_IntegrateVector3(mote, 64, -px(1) / 8);
       }
     }
 
@@ -143,7 +143,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *args, s32 mode) {
           }
           if (puff->variant <= 20)
             puff->variant++;
-          BattleEffectKernels_IntegrateVector3(puff, 64, -0x2000);
+          BattleEffectKernels_IntegrateVector3(puff, 64, -px(1) / 8);
         }
       }
     }

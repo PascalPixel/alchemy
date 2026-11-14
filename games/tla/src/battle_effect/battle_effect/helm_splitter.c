@@ -135,7 +135,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *args) {
         if (args->variant == 0)
           spark->x = px(64);
         else
-          spark->x = (position.x / 2) << 16;
+          spark->x = px(position.x / 2);
         spark->y = px(80);
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
@@ -149,7 +149,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *args) {
       if (spark->variant > 0) {
         spark->variant--;
         BattleEffectKernels_IntegrateVector2(spark, 60, 0);
-        if (spark->y > 0x680000) {
+        if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
           s32 sx = spark->x >> 16;

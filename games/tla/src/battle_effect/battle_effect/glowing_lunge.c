@@ -272,7 +272,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *args,
             screen.x >>= 1;
             draw[0](canvas, work->sheet + 0x800 + (cel << 11), screen.x - 16,
                     screen.y - 32, 32, 64);
-            BattleEffectKernels_IntegrateVector3(burst, 60, 0x2000);
+            BattleEffectKernels_IntegrateVector3(burst, 60, px(1) / 8);
             burst->variant++;
           }
         }

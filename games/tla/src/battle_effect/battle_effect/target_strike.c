@@ -556,7 +556,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *args, s32 mode) {
             draw[i & 1](canvas, work->sheet + picture * 1152 + 0x3200,
                         Q_16_16_UPPER_HALF(step->x) - 12,
                         Q_16_16_UPPER_HALF(step->y) - 24, 24, 48);
-            BattleEffectKernels_IntegrateVector2(step, 62, -0x400);
+            BattleEffectKernels_IntegrateVector2(step, 62, -px(1) / 64);
             step->variant++;
           }
         }
@@ -571,8 +571,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *args, s32 mode) {
             draw[0](canvas, work->sheet + (step->variant / 4 << 11) + 0x3200,
                     Q_16_16_UPPER_HALF(step->x) - 16,
                     Q_16_16_UPPER_HALF(step->y) - 32, 32, 64);
-            BattleEffectKernels_IntegrateVector2(step, 62, -0x800);
-            BattleEffectKernels_IntegrateVector2(step, 62, -0x800);
+            BattleEffectKernels_IntegrateVector2(step, 62, -px(1) / 32);
+            BattleEffectKernels_IntegrateVector2(step, 62, -px(1) / 32);
             step->variant++;
           }
         }
@@ -733,7 +733,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *args) {
     dagger = &work->particles[i];
     column = Random16() % 96 + 16;
     dagger->x = column;
-    dagger->y = (24 - i / 4) << 16;
+    dagger->y = px(24 - i / 4);
     if (column <= 43)
       dagger->velocityX = 3;
     else if (column <= 51)
@@ -943,7 +943,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *args) {
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
-        fleck->x += 0x400;
+        fleck->x += px(1) / 64;
         fleck->y += px(5);
         fleck->z += 64;
         EffectPosition_ProjectPoint(point, &pos);

@@ -136,7 +136,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *args) {
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, picture, px - size / 2, py - size / 2, size, size);
         particle->variant++;
-        BattleEffectKernels_IntegrateVector2(particle, 62, -0x2000);
+        BattleEffectKernels_IntegrateVector2(particle, 62, -px(1) / 8);
       }
       particle++;
     }
@@ -207,7 +207,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *args) {
         s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
         step = &work->particles[i];
-        step->x = (position.x / 2) << 16;
+        step->x = px(position.x / 2);
         step->y = position.y << 16;
         step->velocityX = (Trig_Sin(angle) * speed) >> 8;
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 8;
@@ -229,8 +229,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *args) {
         s32 angle = Random16();
 
         step = &PARTICLES[256 + i];
-        step->x = (position.x / 2) << 16;
-        step->y = (position.y - 16) << 16;
+        step->x = px(position.x / 2);
+        step->y = px(position.y - 16);
         step->velocityX = (Trig_Sin(angle) * speed) >> 7;
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
         step->variant = (Random16() & 7) + 48;
@@ -262,7 +262,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *args) {
         if (size < 2)
           size = 2;
         step->variant--;
-        BattleEffectKernels_IntegrateVector2(step, 60, 0x2000);
+        BattleEffectKernels_IntegrateVector2(step, 60, px(1) / 8);
         draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(step->x) - size / 2,
                 Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
@@ -277,7 +277,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *args) {
       if (step->variant >= 0 && step->variant < 18) {
         s32 picture = step->variant / 3;
 
-        BattleEffectKernels_IntegrateVector2(step, 60, -0x2000);
+        BattleEffectKernels_IntegrateVector2(step, 60, -px(1) / 8);
         draw[0](canvas, work->sheet + 0x2000 + picture * 0x800,
                 Q_16_16_UPPER_HALF(step->x) - 16,
                 Q_16_16_UPPER_HALF(step->y) - 32, 32, 64);
@@ -665,7 +665,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *args, s32 mode) {
           position->y = y + 64;
           blit[0](canvas, work->sheet + 0x3000 + picture * 0x480, x + 52,
                   y + 40, 24, 48);
-          BattleEffectKernels_IntegrateVector3(step, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector3(step, 62, -px(1) / 8);
         }
         if (++step->variant == 6) {
           step->variant = 0;
@@ -1127,7 +1127,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *args) {
         height = heights[cell];
         y -= height >> 1;
         blit[0](canvas, pixels, x, y, width, height);
-        BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
+        BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 4);
         if (Q_16_16_UPPER_HALF(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }

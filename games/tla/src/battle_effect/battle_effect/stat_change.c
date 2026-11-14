@@ -543,11 +543,11 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *args,
     angle = Random16() & 0xffff;
     shard->x = 0;
     if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
-      shard->y = ((i & 31) / 4 * 6 - 10) << 16;
-      shard->z = (i % 4 * 2 - 2) << 16;
+      shard->y = px((i & 31) / 4 * 6 - 10);
+      shard->z = px(i % 4 * 2 - 2);
     } else {
-      shard->y = ((i & 31) / 4 * 6 - 10) << 16;
-      shard->z = (i % 4 * 8 - 16) << 16;
+      shard->y = px((i & 31) / 4 * 6 - 10);
+      shard->z = px(i % 4 * 8 - 16);
     }
     if (args->side == 1)
       shard->velocityX = Q16_ONE * 2;

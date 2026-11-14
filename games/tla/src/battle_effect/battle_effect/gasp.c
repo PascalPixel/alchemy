@@ -361,7 +361,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *args, s32 mode) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                     Q_16_16_UPPER_HALF(p->x) - n / 2,
                     Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, 0x400);
+            BattleEffectKernels_IntegrateVector2(p, 60, px(1) / 64);
             p->variant--;
           }
         }
@@ -770,7 +770,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *args, s32 mode) {
             q->velocityY /= 2;
           }
           q->x = to.x / 2 << 16;
-          q->y = (to.y + 16) << 16;
+          q->y = px(to.y + 16);
           q->variant = (Random16() & 15) + 8;
         }
       }
@@ -783,7 +783,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *args, s32 mode) {
         // Index first, as a plain integer sum: the add takes the offset first.
         p = (void *)((twice * 28) + (s32)work->particles);
         p->x = from.x / 2 << 16;
-        p->y = (from.y + 8) << 16;
+        p->y = px(from.y + 8);
         v = ((Random16() & mask) + 256) << 8;
         p->velocityX = v;
         if (args->side == 1)
@@ -798,7 +798,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *args, s32 mode) {
           draw[0](canvas, work->sheet + p->variant / 4 * 1152,
                   Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
                   24, 48);
-          BattleEffectKernels_IntegrateVector2(p, 60, -0x1000);
+          BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 16);
           p->variant++;
         }
       }
@@ -1005,8 +1005,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *args, s32 mode) {
               draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                       Q_16_16_UPPER_HALF(p->x) - n / 2,
                       Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector2(p, 63, 0x800);
-              if (p->y > 0x680000) {
+              BattleEffectKernels_IntegrateVector2(p, 63, px(1) / 32);
+              if (p->y > px(104)) {
                 p->y = px(104);
                 p->velocityY = -p->velocityY / 2;
               }

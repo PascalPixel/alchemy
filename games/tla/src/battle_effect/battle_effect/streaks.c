@@ -397,11 +397,11 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *args, s32 mode) {
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
         if (mode == MODE_SLAVER) {
-          BattleEffectKernels_IntegrateVector3(mote, 62, -0x2000);
+          BattleEffectKernels_IntegrateVector3(mote, 62, -px(1) / 8);
           if (mote->y <= 0x4ffff)
             mote->velocityY = -mote->velocityY;
         } else {
-          BattleEffectKernels_IntegrateVector3(mote, 62, 0x400);
+          BattleEffectKernels_IntegrateVector3(mote, 62, px(1) / 64);
         }
         if (mode == MODE_SLEEP_STAR) {
           if (source->x < 0)

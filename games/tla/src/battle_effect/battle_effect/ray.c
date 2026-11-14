@@ -129,7 +129,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *args) {
             speed = (Random16() & 0x1ff) + 128;
             spread = (Random16() & 0x7fff) - 0x4000;
             spark->x = x << 16;
-            spark->y = (y + 112) << 16;
+            spark->y = px(y + 112);
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
@@ -148,10 +148,10 @@ void BattleEffect_RunRay(struct BattleEffectArgument *args) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 60, -0x800);
-        if (spark->y > 0x780000) {
+        BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 32);
+        if (spark->y > px(120)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
+        } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;
           s32 size = spark->variant / 8 + 1;

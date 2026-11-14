@@ -1134,7 +1134,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 drawFuncs.draw[(i / 2) & 1](
                     screen, (u8 *)tiles + gBattleEffect_MotePictures[n - 1],
                     point[0] - n / 2, point[1] - n, n, n * 2);
-                BattleEffectKernels_IntegrateVector3(p, 62, -0x800);
+                BattleEffectKernels_IntegrateVector3(p, 62, -px(1) / 32);
                 p->life--;
               }
             }
@@ -1345,7 +1345,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               point[0] = point[0] / 2;
               drawFuncs.draw[1](screen, buffer + 0x1809 + m * 0x480,
                                 point[0] - 12, point[1] - 24, 24, 48);
-              BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
+              BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 16);
               p->life++;
             }
           }
@@ -1445,7 +1445,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 point[0] = point[0] / 2;
                 drawFuncs.draw[0](screen, buffer + half * 0x800, point[0] - 16,
                                   point[1] - 32, 32, 64);
-                BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
+                BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 16);
                 p->life++;
               }
             }
@@ -1608,7 +1608,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 point[0] = point[0] / 2;
                 drawFuncs.draw[0](screen, buffer + 0xd80 + half * 0x800,
                                   point[0] - 16, point[1] - 32, 32, 64);
-                BattleEffectKernels_IntegrateVector3(p, 64, 0x1000);
+                BattleEffectKernels_IntegrateVector3(p, 64, px(1) / 16);
                 p->life++;
               }
             }
@@ -1850,8 +1850,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
         struct Particle *p;
         p = SPARKS;
         if (frame == 0) {
-          p->x = (target[0] / 2) << 16;
-          p->y = (target[1] + 48) << 16;
+          p->x = px(target[0] / 2);
+          p->y = px(target[1] + 48);
           if (action->side == 0)
             p->vx = -0x30000;
           else
@@ -1875,7 +1875,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
           else if (frame == 12)
             p->vy = -p->vy / 3;
           else if (frame < 13 || frame > 18)
-            BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0x4000);
+            BattleEffectKernels_IntegrateVector2(SPARKS, 64, px(1) / 4);
         }
         if (frame == 11) {
           Sound_PlayFar(SE_CLATTER);
@@ -1918,7 +1918,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             p = SPARKS;
             table = gPrism_ShardStarts;
             for (i = 0; i != 16; i++, p++) {
-              p->x = (*table++ + x - 40) << 16;
+              p->x = px(*table++ + x - 40);
               p->y = *table++ << 16;
               p->vx = ((Random16() & 127) - 64) << 11;
               p->vy = -(Random16() & 127) << 11;
@@ -1940,7 +1940,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 (particle->x >> 16) - gPrism_ShardWidths[m] / 2,
                 (particle->y >> 16) - gPrism_ShardHeights[m] / 2,
                 gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
-            BattleEffectKernels_IntegrateVector2(particle, 64, 0x2000);
+            BattleEffectKernels_IntegrateVector2(particle, 64, px(1) / 8);
             particle->life += particle->z;
             if (particle->z > 1 && (frame & 1))
               particle->z--;
@@ -2000,7 +2000,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             top -= h / 2;
             drawFuncs.draw[0](screen, buffer + 0x83c + gSpire_ShardPictures[m],
                               left, top, w, h);
-            BattleEffectKernels_IntegrateVector2(particle, 63, 0x8000);
+            BattleEffectKernels_IntegrateVector2(particle, 63, px(1) / 2);
             particle->z += particle->vz;
             if ((frame & 1) && particle->vz > 0)
               particle->vz--;
@@ -2446,8 +2446,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, buffer + m * 0x400, point[0] - 16,
                               point[1] - 16, 32, 32);
-            BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
-            BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
+            BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
+            BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
             p->life++;
           }
         }
@@ -2471,7 +2471,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
             point[0] = point[0] / 2;
             drawFuncs.draw[0](screen, buffer + m * 0x800, point[0] - 16,
                               point[1] - 32, 32, 64);
-            BattleEffectKernels_IntegrateVector3(p, 58, 0x1000);
+            BattleEffectKernels_IntegrateVector3(p, 58, px(1) / 16);
             p->life++;
           }
         }
@@ -2517,8 +2517,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
               point[0] = point[0] / 2;
               drawFuncs.draw[1](screen, buffer + m * 0x480, point[0] - 12,
                                 point[1] - 24, 24, 48);
-              BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
-              BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
+              BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
+              BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
               p->life++;
             }
           }
@@ -2544,9 +2544,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
                 drawFuncs.draw[i & 1](screen, buffer + m * 0x480, point[0] - 12,
                                       point[1] - 24, 24, 48);
               if (kind == CASTING_IMPACT_IMPACT_ACID_BATH)
-                BattleEffectKernels_IntegrateVector3(p, 60, 0x400);
+                BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 64);
               else
-                BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
+                BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 16);
               p->life++;
             }
           }

@@ -307,7 +307,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *args) {
                 Q_16_16_UPPER_HALF(piece->x), Q_16_16_UPPER_HALF(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
-          BattleEffectKernels_IntegrateVector2(piece, 64, 0x4000);
+          BattleEffectKernels_IntegrateVector2(piece, 64, px(1) / 4);
       }
     }
 
@@ -337,8 +337,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *args) {
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       for (i = 0; i != 32; i++) {
         piece = &work->particles[i];
-        piece->x = ((Random16() & 31) + 32) << 16;
-        piece->y = ((Random16() & 31) + 80) << 16;
+        piece->x = px((Random16() & 31) + 32);
+        piece->y = px((Random16() & 31) + 80);
         piece->velocityX = ((Random16() & 0x1ff) - 0x100) << 12;
         piece->velocityY = 0;
         piece->variant = 0;
@@ -361,7 +361,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *args) {
           draw[1](canvas, work->sheet + (cell << 11),
                   Q_16_16_UPPER_HALF(piece->x) - 16,
                   Q_16_16_UPPER_HALF(piece->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(piece, 60, -0x1000);
+          BattleEffectKernels_IntegrateVector2(piece, 60, -px(1) / 16);
           piece->variant++;
         }
       }

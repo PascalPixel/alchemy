@@ -462,8 +462,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *args) {
         struct EffectStep *p = work->particles;
 
         for (i = 0; i != 16; i++, p++) {
-          p->x = ((Random16() & 63) + 32) << 16;
-          p->y = ((Random16() & 31) + 96) << 16;
+          p->x = px((Random16() & 63) + 32);
+          p->y = px((Random16() & 31) + 96);
           p->velocityY = ((Random16() & 15) + 16) << 15;
           p->z = 0x8000 - (p->x >> 7);
           p->variant = 1;
@@ -480,8 +480,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *args) {
         struct EffectStep *p = work->particles;
 
         for (i = 0; i != 16; i++, p++) {
-          p->x = ((Random16() & 63) + 256) << 16;
-          p->y = ((Random16() & 31) + 96) << 16;
+          p->x = px((Random16() & 63) + 256);
+          p->y = px((Random16() & 31) + 96);
           p->velocityY = ((Random16() & 15) + 16) << 15;
           p->z = 0;
         }
@@ -741,9 +741,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *args) {
           p->y -= p->velocityY;
           if (p->y <= 0xfffff) {
             if (frame <= 279) {
-              p->x = ((Random16() & 63) + shift + 32) << 16;
+              p->x = px((Random16() & 63) + shift + 32);
             } else {
-              p->x = ((Random16() & 63) + shift - 32) << 16;
+              p->x = px((Random16() & 63) + shift - 32);
             }
             if (frame > 301) {
               p->variant = 0;

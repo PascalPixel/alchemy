@@ -355,29 +355,29 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
 
       if (i == 0) {
         if (frame == 0) {
-          w->x[i] = 0xf00000;
-          w->y[i] = 0x300000;
+          w->x[i] = px(240);
+          w->y[i] = px(48);
         } else if (frame <= 47) {
-          w->x[i] += -0x30000;
-          w->y[i] += 0x18000;
+          w->x[i] += -px(3);
+          w->y[i] += px(3) / 2;
         } else if (frame <= 79) {
-          w->x[i] += -0x10000;
-          w->y[i] += -0x10000;
+          w->x[i] += -px(1);
+          w->y[i] += -px(1);
         } else if (frame <= 111) {
-          w->x[i] += 0x30000;
+          w->x[i] += px(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
           w->y[i] += 0;
         }
         if (frame == 112) {
-          w->x[i] = 0x1000000;
+          w->x[i] = px(256);
         }
       } else if (i == 1) {
         if (frame <= 27) {
-          w->x[i] = 0x1000000;
-          w->y[i] = 0x300000;
+          w->x[i] = px(256);
+          w->y[i] = px(48);
         } else if (frame == 28) {
-          w->x[i] = 0x100000;
-          w->y[i] = 0x200000;
+          w->x[i] = px(16);
+          w->y[i] = px(32);
         } else if (frame <= 62) {
           w->x[i] += 0x1d6d8;
           w->y[i] += 0x1fde8;
@@ -385,83 +385,83 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
           w->x[i] += 0x19c40;
           w->y[i] += 0x6710;
         } else if (frame <= 141) {
-          w->x[i] += 0x30000;
+          w->x[i] += px(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
           w->y[i] += 0;
         }
         if (frame == 112) {
-          w->x[i] = 0x1000000;
+          w->x[i] = px(256);
         }
       } else if (i == 2) {
         if (frame <= 49) {
-          w->x[i] = 0x1000000;
-          w->y[i] = 0x300000;
+          w->x[i] = px(256);
+          w->y[i] = px(48);
         } else if (frame == 50) {
           w->x[i] = 0;
-          w->y[i] = 0x7c0000;
+          w->y[i] = px(124);
         } else if (frame <= 62) {
-          w->x[i] += 0x40000;
-          w->y[i] += -0x14000;
+          w->x[i] += px(4);
+          w->y[i] += -px(5) / 4;
         } else if (frame <= 93) {
-          w->x[i] += 0x30000;
-          w->y[i] += 0xc000;
+          w->x[i] += px(3);
+          w->y[i] += px(3) / 4;
         } else if (frame <= 125) {
-          w->x[i] += 0x30000;
-          w->y[i] += -0x10000;
+          w->x[i] += px(3);
+          w->y[i] += -px(1);
         }
         if (frame == 112) {
-          w->x[i] = 0x1000000;
+          w->x[i] = px(256);
         }
       } else if (i == 3) {
         if (frame <= 49) {
-          w->x[i] = 0x1000000;
-          w->y[i] = 0x300000;
+          w->x[i] = px(256);
+          w->y[i] = px(48);
         } else if (frame == 50) {
           w->x[i] = 0;
-          w->y[i] = 0x6c0000;
+          w->y[i] = px(108);
         } else if (frame <= 103) {
-          w->x[i] += 0x30000;
-          w->y[i] += -0x14000;
+          w->x[i] += px(3);
+          w->y[i] += -px(5) / 4;
         } else if (frame <= 135) {
-          w->x[i] += 0x10000;
-          w->y[i] += 0x10000;
+          w->x[i] += px(1);
+          w->y[i] += px(1);
         }
         if (frame == 112) {
-          w->x[i] = 0x1000000;
+          w->x[i] = px(256);
         }
       } else if (i == 4) {
         if (frame <= 59) {
-          w->x[i] = 0x1000000;
-          w->y[i] = 0x300000;
+          w->x[i] = px(256);
+          w->y[i] = px(48);
         } else if (frame == 60) {
-          w->x[i] = 0x100000;
-          w->y[i] = 0x200000;
+          w->x[i] = px(16);
+          w->y[i] = px(32);
         } else if (frame <= 82) {
-          w->x[i] += 0x40000;
-          w->y[i] += 0x30000;
+          w->x[i] += px(4);
+          w->y[i] += px(3);
         } else if (frame <= 135) {
-          w->x[i] += 0x40000;
+          w->x[i] += px(4);
         }
         if (frame == 112) {
-          w->x[i] = 0x1000000;
+          w->x[i] = px(256);
         }
       } else if (i == 5) {
         if (frame <= 85) {
-          w->x[i] = 0x1000000;
-          w->y[i] = 0x300000;
+          w->x[i] = px(256);
+          w->y[i] = px(48);
         } else if (frame == 86) {
-          w->x[i] = 0x900000;
-          w->y[i] = 0x200000;
+          w->x[i] = px(144);
+          w->y[i] = px(32);
         } else if (frame <= 135) {
-          w->x[i] += 0x10000;
-          w->y[i] += 0x30000;
+          w->x[i] += px(1);
+          w->y[i] += px(3);
         }
         if (frame == 112) {
-          w->x[i] = 0x1000000;
+          w->x[i] = px(256);
         }
       } else if (i <= 15) {
         if (frame == 0) {
-          w->x[i] = 0xf80000;
+          w->x[i] = px(248);
           w->y[i] = frame;
         } else if (frame == start) {
           w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
@@ -469,7 +469,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
           w->vx[i] = (Random16() & 0xffff) * 12 + -0xc0000;
           w->vy[i] = 0x40000;
         } else if (frame >= start) {
-          if (w->x[i] >= -0x100000 && w->y[i] <= 0xa80000) {
+          if (w->x[i] >= -px(16) && w->y[i] <= px(168)) {
             w->x[i] += w->vx[i];
             w->y[i] += w->vy[i];
           } else if (frame <= 251) {
@@ -479,7 +479,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
         }
       } else if (i <= 31) {
         if (frame == 0) {
-          w->x[i] = 0xf80000;
+          w->x[i] = px(248);
           w->y[i] = frame;
         } else if (frame == 112) {
           u32 a = Random16() & 0xffff;
@@ -504,7 +504,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
           w->vy[i] = w->vy[i] * 63 / 64;
           if ((u32)(w->vx[i] + 0xffff) <= 0x1fffe &&
               (u32)(w->vy[i] + 0xffff) <= 0x1fffe) {
-            w->x[i] = 0x1000000;
+            w->x[i] = px(256);
             w->y[i] = 0;
           }
         }
@@ -787,7 +787,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *args) {
     if (frame == 0) {
       p = (struct EffectStep *)source;
       for (i = 0; i != 128; i++, p++) {
-        p->x = ((Random16() & 63) + 96) << 16;
+        p->x = px((Random16() & 63) + 96);
         p->y = -(Random16() & 63) << 16;
         p->velocityX = -((Random16() & 255) + 128) << 7;
         p->velocityY = ((Random16() & 255) + 128) << 9;
@@ -845,7 +845,7 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     object->acceleration = px(2);
     object->speedLimit = px(8);
-    if (object->y < 0xa0000)
+    if (object->y < px(10))
       object->velocityY += px(5) / 2;
     Actor_StartIdleFar(object);
     if (slot->anchorX > 0)
@@ -990,7 +990,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *args) {
       if (frame >= DAGGER_FALL_FRAME)
         BattleEffectKernels_IntegrateVector3(dagger, 64, 0);
       else
-        BattleEffectKernels_IntegrateVector3(dagger, 64, -0x1000);
+        BattleEffectKernels_IntegrateVector3(dagger, 64, -px(1) / 16);
     }
     Heap_Release(quad);
     Heap_Release(vertices);
@@ -1091,8 +1091,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *args) {
 
         step = &work->particles[i];
         step->variant = 0;
-        step->x = (caster.x / 2) << 16;
-        step->y = (caster.y - 8) << 16;
+        step->x = px(caster.x / 2);
+        step->y = px(caster.y - 8);
         angle = Random16();
         speed = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * speed) >> 5;
@@ -1112,7 +1112,7 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *args) {
           draw[0](canvas, work->sheet + (puff->variant / 4) * 0x480,
                   Q_16_16_UPPER_HALF(puff->x) - 12,
                   Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
-          BattleEffectKernels_IntegrateVector2(puff, 48, -0x2000);
+          BattleEffectKernels_IntegrateVector2(puff, 48, -px(1) / 8);
           puff->variant++;
         }
       }
@@ -1145,8 +1145,8 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *args) {
         s32 speed;
 
         step->variant = (Random16() & 15) + 16;
-        step->x = (target.x / 2) << 16;
-        step->y = (target.y - 8) << 16;
+        step->x = px(target.x / 2);
+        step->y = px(target.y - 8);
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * speed) >> 7;

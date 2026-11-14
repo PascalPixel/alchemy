@@ -51,7 +51,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
 
     seed->x = Random16() & 0xffff;
     seed->z = (Random16() & 63) + 56;
-    seed->y = ((Random16() & 31) - 64) << 16;
+    seed->y = px((Random16() & 31) - 64);
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -117,7 +117,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
             }
           } else {
             mote->z += 8;
-            mote->y -= (i % 5 + 2) << 16;
+            mote->y -= px(i % 5 + 2);
             if (ymin > mote->y)
               ymin = mote->y;
             if (ymax < mote->y)
@@ -197,11 +197,11 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *puff = &work->particles[i];
 
-        puff->velocityX = (Random16() & 127) << 16;
+        puff->velocityX = px(Random16() & 127);
         if (ymax == ymin)
           puff->velocityY = ymin << 16;
         else
-          puff->velocityY = (Random16() % (ymax - ymin) + ymin) << 16;
+          puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
         puff->variant = (Random16() & 15) + 20;
       }
     }
@@ -225,8 +225,8 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *args) {
         if ((puff->variant == -1 || puff->variant == 17) &&
             frame < TIMING(RISE_FRAME) + 35) {
           puff->variant = 17;
-          puff->velocityX = (Random16() & 127) << 16;
-          puff->velocityY = (Random16() % (ymax - ymin) + ymin) << 16;
+          puff->velocityX = px(Random16() & 127);
+          puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
         }
       }
     }

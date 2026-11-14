@@ -341,7 +341,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *args) {
   // The sheep wait above the screen with a random spin and starting cel.
   for (i = 0; i != 32; i++) {
     one = &sheep[i];
-    one->x = ((Random16() & 63) + 32) << 16;
+    one->x = px((Random16() & 63) + 32);
     one->y = -px(32);
     one->velocityY = Random16() & 0;
     one->z = Random16() & 3;

@@ -81,7 +81,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
           mote = &motes[i];
           Random16();
           mote->variant = i;
-          mote->x = ((Random16() & 255) - 64) << 16;
+          mote->x = px((Random16() & 255) - 64);
           mote->y = 0;
           mote->velocityX = 0;
           mote->velocityY = 0;
@@ -90,7 +90,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
         // Twelve flame columns rise from y = 72, four pixels apart.
         for (i = 0; i != 16; i++) {
           flame = &work->particles[i];
-          flame->x = (i * 3 + i + 44) << 16;
+          flame->x = px(i * 3 + i + 44);
           flame->y = px(72);
           flame->velocityX = 0;
           flame->velocityY = -((Random16() & 3) + 2) << 16;
@@ -155,12 +155,12 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
                 // Late motes fly back in from the right.
                 mote->variant = 0;
                 mote->x = px(120);
-                mote->y = ((Random16() & 127) - 32) << 16;
-                mote->velocityX = ((Random16() & 3) - 8) << 16;
+                mote->y = px((Random16() & 127) - 32);
+                mote->velocityX = px((Random16() & 3) - 8);
                 mote->velocityY = 0;
               } else {
                 mote->variant = Random16() & 255;
-                mote->x = ((Random16() & 255) - 64) << 16;
+                mote->x = px((Random16() & 255) - 64);
                 mote->y = -px(8);
                 mote->velocityX = 0;
                 mote->velocityY = 0;
@@ -192,7 +192,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *args) {
               flame->y += flame->velocityY;
             }
             if (++flame->variant == 24) {
-              flame->x = (i * 3 + i + 44) << 16;
+              flame->x = px(i * 3 + i + 44);
               flame->y = px(72);
               flame->variant = 0;
               flame->velocityY = -((Random16() & 3) + 2) << 16;
@@ -356,7 +356,7 @@ void Iris_ChangeBackdrop(void) {
         BattleObject_GetFar(work->effect->actors[i])->object;
 
     object->x = 0;
-    object->y = (16 - (Random16() & 15)) << 16;
+    object->y = px(16 - (Random16() & 15));
     object->z /= 2;
     object->verticalMotionStrength = 0;
   }
@@ -819,8 +819,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
         Render_ApplyProjectedPlacementFar(objects[i], place, (s32 *)&scale, 0);
         sparks->x[i] += sparks->vx[i];
         sparks->y[i] += sparks->vy[i];
-        if (sparks->x[i] < -0x100000 || sparks->x[i] > 0xf00000 ||
-            sparks->y[i] < 0 || sparks->y[i] > 0xa00000) {
+        if (sparks->x[i] < -px(16) || sparks->x[i] > px(240) ||
+            sparks->y[i] < 0 || sparks->y[i] > px(160)) {
           sparks->life[i] = 0;
           continue;
         }
@@ -864,8 +864,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
         s32 py = work->particles[i].y >> 16;
         s32 offset = 0;
 
-        if (work->particles[i].x < 0 || work->particles[i].x > 0x7f0000 ||
-            work->particles[i].y < 0 || work->particles[i].y > 0x7f0000) {
+        if (work->particles[i].x < 0 || work->particles[i].x > px(127) ||
+            work->particles[i].y < 0 || work->particles[i].y > px(127)) {
           work->particles[i].variant = 0;
           continue;
         }
@@ -1775,9 +1775,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
           if (n != -1) {
             work->particles[n].x = px(32);
             if (frame <= 509)
-              work->particles[n].x += (Random16() & 63) << 16;
+              work->particles[n].x += px(Random16() & 63);
             else
-              work->particles[n].x += (Random16() & motesMask) << 16;
+              work->particles[n].x += px(Random16() & motesMask);
             work->particles[n].y = px(127);
             work->particles[n].velocityX = (Random16() & 15) << 12;
             work->particles[n].velocityY =
@@ -1966,8 +1966,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
       s = FindFreeSpark();
       if (s != -1) {
         sparks->life[s] = (Random16() & 15) << 15;
-        sparks->x[s] = 0xef0000;
-        sparks->y[s] = (Random16() & 255) << 16;
+        sparks->x[s] = px(239);
+        sparks->y[s] = px(Random16() & 255);
         sparks->vx[s] = -(Random16() & 31) << 12;
         sparks->vy[s] = ((Random16() & 31) - 16) << 12;
       }
@@ -1989,7 +1989,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *args) {
         n = FindFreeParticle();
         if (n != -1) {
           work->particles[n].x = ((Random16() & 31) << 16) + 0x600000;
-          work->particles[n].y = (Random16() & 31) << 16;
+          work->particles[n].y = px(Random16() & 31);
           work->particles[n].z = frame;
           work->particles[n].velocityX = -((Random16() & 15) << 13);
           work->particles[n].velocityY = (Random16() & 15) << 14;

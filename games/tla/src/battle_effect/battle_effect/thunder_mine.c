@@ -102,15 +102,15 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *args, s32 mode) {
       EffectPosition_ProjectBattler(args->actors[0], &target);
       if (mode == 0) {
         ball->x = source.x << 16;
-        ball->y = (source.y - 32) << 16;
+        ball->y = px(source.y - 32);
         ball->velocityX = ((target.x << 16) - ball->x) / frames;
       } else {
         if (args->side == 0) {
-          ball->x = (source.x - 32) << 16;
+          ball->x = px(source.x - 32);
         } else {
-          ball->x = (source.x + 32) << 16;
+          ball->x = px(source.x + 32);
         }
-        ball->y = (source.y - 80) << 16;
+        ball->y = px(source.y - 80);
         ball->velocityX = (((target.x - 32) << 16) - ball->x) / frames;
       }
       ball->velocityY = (((target.y - 32) << 16) - ball->y) / frames;
@@ -354,8 +354,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
     p->variant = -(Random16() & 15);
   }
   for (i = 0, p = work->particles; i != 32; i++, p++) {
-    p->x = ((Random16() & 31) + 28) << 16;
-    p->y = ((Random16() % 48) + 56) << 16;
+    p->x = px((Random16() & 31) + 28);
+    p->y = px((Random16() % 48) + 56);
     p->velocityX = ((Random16() & 255) - 128) << 12;
     p->velocityY = (16 - (Random16() & 127)) << 10;
     p->variant = ~i;
@@ -476,7 +476,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
 
           rects[which](canvas, smoke, Q_16_16_UPPER_HALF(p->x) - 16,
                        Q_16_16_UPPER_HALF(p->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(p, 62, -0x4000);
+          BattleEffectKernels_IntegrateVector2(p, 62, -px(1) / 4);
         }
         p->variant++;
         if (frame == 108) {
@@ -490,8 +490,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
             p->variant = v = 0;
           }
           if (v == 0) {
-            p->x = ((Random16() & 31) + 28) << 16;
-            p->y = ((Random16() % 48) + 56) << 16;
+            p->x = px((Random16() & 31) + 28);
+            p->y = px((Random16() % 48) + 56);
             p->velocityX = ((Random16() & 255) - 128) << 12;
             p->velocityY = (16 - (Random16() & 127)) << 10;
           }
@@ -634,7 +634,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *args) {
               canvas, sprites + gBattleEffect_MotePictures[size - 1],
               Q_16_16_UPPER_HALF(p->x) - size / 2,
               Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(p, 62, 0x4000);
+          BattleEffectKernels_IntegrateVector2(p, 62, px(1) / 4);
           p->variant++;
           if (p->velocityY > 0 && Q_16_16_UPPER_HALF(p->y) > 104) {
             p->variant = -1;

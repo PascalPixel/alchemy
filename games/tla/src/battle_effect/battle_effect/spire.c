@@ -62,7 +62,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *args) {
     for (j = 0; j != SHARDS_PER_ROCK; j++) {
       struct EffectStep *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
 
-      seed->x = (gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]) << 16;
+      seed->x = px(gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]);
       seed->y = gSpire_ShardOffsets[j * 2 + 1] << 16;
       seed->velocityX = ((Random16() % 96) - 48) << 10;
       seed->velocityY = -((Random16() & 127) + 32) << 11;
@@ -97,7 +97,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *args) {
                Q_16_16_UPPER_HALF(shard->y) -
                    ((height = gSpire_ShardHeights[cel]) >> 1),
                width, height);
-          BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
+          BattleEffectKernels_IntegrateVector2(shard, 64, px(1) / 4);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;
@@ -112,7 +112,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *args) {
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += px(1);
-        if (rock->y > 0x320000)
+        if (rock->y > px(50))
           rock->y = px(50);
       }
       // Every target flashes for eight frames at each crash.

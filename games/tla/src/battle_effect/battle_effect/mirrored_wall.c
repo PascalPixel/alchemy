@@ -441,7 +441,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *args, s32 mode) {
                   canvas, work->sheet + step * 768, position.x - 12,
                   position.y - 16, 24, 32);
             if (shot->variant == 0)
-              BattleEffectKernels_IntegrateVector3(shot, 63, -0x8000);
+              BattleEffectKernels_IntegrateVector3(shot, 63, -px(1) / 2);
             if (shot->y < 0) {
               s32 count;
               s32 n;
@@ -497,9 +497,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *args, s32 mode) {
               gLobbedShells_ShardHeights[picture]);
         }
         if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0)
-          BattleEffectKernels_IntegrateVector3(burst, 62, 0x800);
+          BattleEffectKernels_IntegrateVector3(burst, 62, px(1) / 32);
         else
-          BattleEffectKernels_IntegrateVector3(burst, 62, -0x8000);
+          BattleEffectKernels_IntegrateVector3(burst, 62, -px(1) / 2);
         burst->variant++;
       }
     }

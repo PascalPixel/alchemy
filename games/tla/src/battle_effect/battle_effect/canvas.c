@@ -616,7 +616,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *args) {
             blit[0](canvas,
                     sprites + *(const u16 *)((const u8 *)sizeOffsets + off),
                     (p->x >> 16) - n / 2, (p->y >> 16) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, -0x4000);
+            BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 4);
             p->variant--;
           }
         }
@@ -916,7 +916,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *args, s32 kind) {
             draw[0](canvas, work->sheet + (flash->variant / 3 << 11),
                     Q_16_16_UPPER_HALF(flash->x) - 16,
                     Q_16_16_UPPER_HALF(flash->y) - 48, 32, 64);
-            BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
+            BattleEffectKernels_IntegrateVector2(flash, 62, -px(1) / 32);
             flash->variant++;
           }
         }

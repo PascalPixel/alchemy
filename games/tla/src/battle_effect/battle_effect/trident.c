@@ -353,7 +353,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *args) {
             p->variant = (16 - i) / 4;
           } else {
             p->x = x;
-            p->y = (Random16() % 104) << 16;
+            p->y = px(Random16() % 104);
             p->variant = -i / 4;
           }
         }
@@ -375,7 +375,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *args) {
                   Ram_MapCellBuffer + 0x5000 + ((drawn->variant / 4) << 11),
                   Q_16_16_UPPER_HALF(drawn->x) - 16,
                   Q_16_16_UPPER_HALF(drawn->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(drawn, 62, -0x4000);
+          BattleEffectKernels_IntegrateVector2(drawn, 62, -px(1) / 4);
         }
         drawn->variant++;
       }
@@ -394,7 +394,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *args) {
                 Q_16_16_UPPER_HALF(drawn->x) - spark / 2,
                 Q_16_16_UPPER_HALF(drawn->y) - spark, spark, spark * 2);
         drawn->variant--;
-        BattleEffectKernels_IntegrateVector2(drawn, 56, 0x2000);
+        BattleEffectKernels_IntegrateVector2(drawn, 56, px(1) / 8);
       }
     }
 
@@ -598,7 +598,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *args,
 
             speed += 32;
             spark->x = pos.x << 16;
-            spark->y = (pos.y - 24) << 16;
+            spark->y = px(pos.y - 24);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
             spark->variant = (Random16() & 7) + 32;
@@ -761,7 +761,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *args,
     for (i = 0; i != 256; i++) {
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 56, 0x2000);
+        BattleEffectKernels_IntegrateVector2(spark, 56, px(1) / 8);
         if (spark->y > px(112)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((u32)spark->x < px(127) && spark->y >= 0) {

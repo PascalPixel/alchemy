@@ -322,7 +322,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *args, s32 mode) {
           EffectPosition_ProjectPoint(p, &debris);
           blit[0](canvas, work->sheet + 0x2000 + (picture << 11),
                   debris.x / 2 - 16, debris.y - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector3(p, 62, -0x400);
+          BattleEffectKernels_IntegrateVector3(p, 62, -px(1) / 64);
           p->variant--;
         }
       }

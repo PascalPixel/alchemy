@@ -488,7 +488,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *args) {
         s32 y;
 
         PARTICLES[i].variant--;
-        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, 0x4000);
+        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, px(1) / 4);
         y = PARTICLES[i].y >> 16;
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;

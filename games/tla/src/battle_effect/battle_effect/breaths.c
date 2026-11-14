@@ -165,8 +165,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *args, s32 mode) {
         step->y = (Random16() & 31) + 32;
       }
       step = &work->particles[0];
-      step->x = (user.x / 2) << 16;
-      step->y = (user.y - 32) << 16;
+      step->x = px(user.x / 2);
+      step->y = px(user.y - 32);
       step->velocityX = 0;
       step->velocityY = 0;
       step->z = (target.x / 2 - user.x / 2) << 10;

@@ -193,7 +193,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *args,
             quad->y -= quad->velocityY;
           else
             quad->y += quad->velocityY;
-          if (quad->velocityY < -0x20000)
+          if (quad->velocityY < -px(2))
             quad->z += px(1);
           else
             quad->z += px(3) / 4;
@@ -428,7 +428,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *args) {
       velocity.y += px(1) / 8;
     } else if (frame > 99) {
       velocity.x += -(px(1) / 8);
-      velocity.y += 0x800;
+      velocity.y += px(1) / 32;
     }
     if (frame == 156) {
       Iwram_FillWordsEntry(canvas, 0x3c00, 0x3f3f3f3f);

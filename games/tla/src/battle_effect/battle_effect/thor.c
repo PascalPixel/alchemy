@@ -475,7 +475,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *args) {
           if (spark->variant > 0) {
             spark->variant--;
             BattleEffectKernels_IntegrateVector2(spark, 60, 0);
-            if (spark->y > 0x780000) {
+            if (spark->y > px(120)) {
               spark->velocityY = -spark->velocityY / 2;
             } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
               s32 x = spark->x >> 16;

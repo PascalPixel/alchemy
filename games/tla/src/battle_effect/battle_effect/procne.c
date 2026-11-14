@@ -150,7 +150,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
               object->y += px(6);
             else
               object->y += px(1) / 2;
-            if (object->y > 0x7c0000)
+            if (object->y > px(124))
               object->y = px(124);
           }
 
@@ -224,14 +224,14 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
             if (point[index].z > 24)
               point[index].z -= 4;
             point[index].velocityY += point[index].velocityX * 2;
-            if (point[index].velocityY > 0x10000)
+            if (point[index].velocityY > px(1))
               point[index].velocityY -= px(1);
             point[index].velocityX += 50;
             if (point[index].velocityX > 4096)
               point[index].velocityX = 4096;
             point[index].velocityY += 2048;
             point[index].y += point[index].velocityY * 2;
-            if (point[index].y > 0x300000) {
+            if (point[index].y > px(48)) {
               point[index].y = 0;
               point[index].z = 100;
               point[index].velocityY = 0;
@@ -266,7 +266,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
         for (index = 0; index != args->count; index++) {
           context = BattleObject_GetFar(args->actors[index]);
           object = context->object;
-          object->y = ((Random16() & 15) + 8) << 16;
+          object->y = px((Random16() & 15) + 8);
         }
 
         gCameraSceneParameters[3] = 72;
@@ -277,7 +277,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *args) {
           angle = (Random16() & 0x7fff) + 0x9fff;
           work->particles[index].x = Trig_Sin(angle) * speed;
           work->particles[index].y = Trig_Cos(angle) * speed;
-          work->particles[index].z = (Random16() % 200 - 100) << 16;
+          work->particles[index].z = px(Random16() % 200 - 100);
           work->particles[index].variant = 0;
           index++;
         } while (index != 32);
@@ -688,7 +688,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
           struct EffectStep *grain = &PARTICLES[i];
 
           if (grain->variant == -1) {
-            grain->x = ((Random16() & 255) - 32) << 16;
+            grain->x = px((Random16() & 255) - 32);
             grain->y = px(112);
             grain->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                                << 9;
@@ -716,14 +716,14 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *args, s32 mode) {
 
               if (mode == 0) {
                 if (alternate == 1) {
-                  spark->x = ((Random16() & 7) + 78) << 16;
+                  spark->x = px((Random16() & 7) + 78);
                   spark->y = px(78);
                 } else {
-                  spark->x = ((Random16() & 7) + 78) << 16;
+                  spark->x = px((Random16() & 7) + 78);
                   spark->y = px(70);
                 }
               } else {
-                spark->x = ((Random16() & 7) + origin.x - 8) << 16;
+                spark->x = px((Random16() & 7) + origin.x - 8);
                 spark->y = origin.y << 16;
               }
               spark->velocityX = speed * Trig_Sin(angle) >> 9;

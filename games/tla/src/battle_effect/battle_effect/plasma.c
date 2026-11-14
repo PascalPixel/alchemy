@@ -142,7 +142,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *args) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
+        BattleEffectKernels_IntegrateVector2(spark, 60, px(1) / 16);
         if (spark->y > PILLAR_BASE_Y << 16) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
@@ -274,9 +274,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *args, s32 kind) {
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & 0xffff;
       if (args->side == 1)
-        spark->x = (originX - GROUP_X(i) + 28) << 16;
+        spark->x = px(originX - GROUP_X(i) + 28);
       else
-        spark->x = (originX + GROUP_X(i) - 28) << 16;
+        spark->x = px(originX + GROUP_X(i) - 28);
       spark->y = originY << 16;
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
@@ -367,7 +367,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *args, s32 kind) {
             spark->variant--;
             if (spark->y > GROUND_Y) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
+            } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
               s16 y = spark->y >> 16;
               s16 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;

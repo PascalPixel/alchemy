@@ -1,11 +1,11 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global Data_0200274a
-Data_0200274a:
+	.global gClear_PasswordText
+gClear_PasswordText:
 	.space 0x00000104
-	.global Data_0200284e
-Data_0200284e:
+	.global gClear_PasswordCodes
+gClear_PasswordCodes:
 	.space 0x0000003c
-	.global Data_0200288a
-Data_0200288a:
+	.global gClear_PasswordWork
+gClear_PasswordWork:

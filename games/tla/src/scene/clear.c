@@ -1,4 +1,8 @@
 /// @file
+/// The clear-data screen: Golden Sun's data brought over by password or link
+/// cable (Clear_EnterPassword, Clear_ReceiveByLink) and applied to Isaac's
+/// party (Clear_ApplyImportedData), with two secret button codes on its title
+/// (Clear_FollowSecretCodes).
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -46,9 +50,9 @@
 #include "macros.h"
 
 // The two secret button codes: unlocked, held and progress of each.
-extern s16 gData_020024f6;
+extern s16 gClear_CodeEntered;
 
-extern u16 gData_0200271c[];
+extern u16 gClear_PackedKeptItems[];
 
 struct Panel_02001804 {
   u8 unk00[8];
@@ -58,23 +62,23 @@ struct Panel_02001804 {
   s16 y;
 };
 
-extern u16 gData_020024f4[];
-extern s16 gData_020024f8;
-extern s16 gData_020024fa;
-extern s16 gData_020024fc;
-extern s16 gData_020024fe;
-extern s16 gData_02002500;
-extern u16 gData_02002410[];
-extern u16 gData_02002418[];
+extern u16 gClear_BlendFrame[];
+extern s16 gClear_SecondCodeStarted;
+extern s16 gClear_FirstCodeStep;
+extern s16 gClear_SecondCodeStep;
+extern s16 gClear_FirstCodeStarted;
+extern s16 gClear_SecondCodeDone;
+extern u16 gClear_FirstCode[];
+extern u16 gClear_SecondCode[];
 
-s32 Func_02000b24(void);
+s32 Clear_ReceiveByLink(void);
 
-s32 Func_02000e44(void);
+s32 Clear_EnterPassword(void);
 
-extern s8 gData_02002438[];
-void Func_020018e0(s32 mode, u8 *data);
-s32 Func_02002068(u8 *src, s32 length, u8 *dst);
-extern u16 gData_02002490[];
+extern s8 gClear_CursorWobble[];
+void Clear_ApplyImportedData(s32 mode, u8 *data);
+s32 Clear_ScrambleData(u8 *src, s32 length, u8 *dst);
+extern u16 gClear_ImportedFlags[];
 
 struct Window;
 
@@ -84,15 +88,15 @@ void DataTransfer_Apply(void *data, s32 a, s32 b);
 void DataTransfer_GiveDefaultDjinn(void);
 void ClearData_Apply(void *data);
 void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance);
-extern u8 gData_02002440[];
-extern u8 gData_02002454[];
-extern u8 gData_02002468[];
-extern u8 Data_0200274a[];
-extern u8 Data_0200288a[];
-extern u8 Data_0200284e[];
+extern u8 gClear_FirstPasswordRow[];
+extern u8 gClear_SecondPasswordRow[];
+extern u8 gClear_ThirdPasswordRow[];
+extern u8 gClear_PasswordText[];
+extern u8 gClear_PasswordWork[];
+extern u8 gClear_PasswordCodes[];
 void *Glyph_AddBlankSprite(struct Window *window, void *glyph, s32 x, s32 y);
 
-extern u8 gData_0200265e[];
+extern u8 gClear_PasswordGrid[];
 extern u8 Data_02012f94[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -116,7 +120,7 @@ static __inline__ void Decode_(void *source, void *destination) {
 /// The logo background, as the title's Title_LoadBackground, then the party
 /// leader's motion flags cleared.
 // As ☀️'s Clear_LoadBackground.
-void Func_0200005c(void) {
+void Clear_LoadBackground(void) {
   u8 *res;
   s32 id;
   u16 *map;
@@ -179,12 +183,12 @@ scroll_pair:
 /// weight rises by one every second frame (the second weight 16 less), and
 /// removes the callback once the first weight passes 15.
 // As ☀️'s Clear_UpdateBlend.
-void Func_0200015c(void) {
+void Clear_FadeInBlend(void) {
   s32 frame;
   u32 level;
 
-  frame = gData_020024f4[0] + 1;
-  gData_020024f4[0] = frame;
+  frame = gClear_BlendFrame[0] + 1;
+  gClear_BlendFrame[0] = frame;
   level = (u16)frame >> 1;
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
@@ -194,57 +198,57 @@ void Func_0200015c(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - (u16)level) << 8) | (u16)level,
                       IO_WRITE_16);
   if (level > 15)
-    FieldTask_Remove(Func_0200015c);
+    FieldTask_Remove(Clear_FadeInBlend);
 }
 
 /// Follows the two secret button codes: each held key that matches the next
 /// key of a code advances it, a wrong key starts it again, and finishing a
 /// code unlocks it with a sound.
-void Func_020001f4(void) {
-  if (gData_020024f6 == 0) {
+void Clear_FollowSecretCodes(void) {
+  if (gClear_CodeEntered == 0) {
     /* FAKEMATCH(pin): the held keys pointer pinned to r4, with the key pinned
      * to r3 below. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
-    if (gData_020024fe != 0) {
+    if (gClear_FirstCodeStarted != 0) {
       /* FAKEMATCH(pin): the key pinned to r3, with the pointer above. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
-        gData_020024fe = keys;
+        gClear_FirstCodeStarted = keys;
     } else if (*held != 0) {
-      if (*held == gData_02002410[gData_020024fa]) {
-        gData_020024fa++;
-        gData_020024fe = 1;
-        if (gData_02002410[gData_020024fa] == 0) {
-          gData_020024f6 = 1;
+      if (*held == gClear_FirstCode[gClear_FirstCodeStep]) {
+        gClear_FirstCodeStep++;
+        gClear_FirstCodeStarted = 1;
+        if (gClear_FirstCode[gClear_FirstCodeStep] == 0) {
+          gClear_CodeEntered = 1;
           Event_PlaySound(SE_CHIME);
         }
       } else {
-        gData_020024fa = 0;
+        gClear_FirstCodeStep = 0;
       }
     }
   }
-  if (gData_020024f8 == 0) {
+  if (gClear_SecondCodeStarted == 0) {
     /* FAKEMATCH(pin): the held keys pointer pinned to r4. */
     register volatile u32 *held asm("r4") = &gInput.held;
 
-    if (gData_02002500 != 0) {
+    if (gClear_SecondCodeDone != 0) {
       /* FAKEMATCH(pin): the key pinned to r3. */
       register u32 keys asm("r3") = *held;
 
       if (keys == 0)
-        gData_02002500 = keys;
+        gClear_SecondCodeDone = keys;
     } else if (*held != 0) {
-      if (*held == gData_02002418[gData_020024fc]) {
-        gData_020024fc++;
-        gData_02002500 = 1;
-        if (gData_02002418[gData_020024fc] == 0) {
-          gData_020024f8 = 1;
+      if (*held == gClear_SecondCode[gClear_SecondCodeStep]) {
+        gClear_SecondCodeStep++;
+        gClear_SecondCodeDone = 1;
+        if (gClear_SecondCode[gClear_SecondCodeStep] == 0) {
+          gClear_SecondCodeStarted = 1;
           Event_PlaySound(SE_CHIME);
         }
       } else {
-        gData_020024fc = 0;
+        gClear_SecondCodeStep = 0;
       }
     }
   }
@@ -257,7 +261,7 @@ void Func_020001f4(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_020002e0(void) {
+s32 Clear_CanRetreat(void) {
   struct MainRoutineWork *party;
   s32 mode;
 
@@ -327,8 +331,8 @@ s32 Scene_Initialize(void) {
   u32 mask;
   s32 result, i, limit, status, message, failure, recovery;
 
-  Func_0200005c();
-  Task_Add(Func_020001f4, 0x480);
+  Clear_LoadBackground();
+  Task_Add(Clear_FollowSecretCodes, 0x480);
   gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -368,7 +372,7 @@ top:
   }
   if (result == 0 && !started) {
     wait(30);
-    Task_Add(Func_0200015c, 0x480);
+    Task_Add(Clear_FadeInBlend, 0x480);
     wait(1);
     started = 1;
   }
@@ -391,7 +395,7 @@ top:
       i--;
       goto open;
     }
-    if (gData_020024f6 != 0 || gData_020024f8 != 0)
+    if (gClear_CodeEntered != 0 || gClear_SecondCodeStarted != 0)
       limit = 8;
     if (++i < limit)
       goto open;
@@ -406,7 +410,7 @@ top:
         goto top;
       if (result == 1) {
         SAVE_CELLS();
-        status = Func_02000b24();
+        status = Clear_ReceiveByLink();
         if (status != -1)
           StatusScreen_Run();
         RESTORE_CELLS()
@@ -417,12 +421,12 @@ top:
         SAVE_CELLS();
         MainRoutineWork_InitializeDefaults();
 #if !TLA_PATCH_2
-        status = Func_02000e44();
+        status = Clear_EnterPassword();
         RESTORE_CELLS()
         if (status == -1)
           goto enter;
 #else
-        Func_02000e44();
+        Clear_EnterPassword();
         RESTORE_CELLS()
 #endif
         DataTransfer_Apply(MAP_CELL_BACKUP, 1, 0);
@@ -441,7 +445,7 @@ top:
       i--;
       goto close;
     }
-    if (gData_020024f8 != 0)
+    if (gClear_SecondCodeStarted != 0)
       limit = 4;
     if (++i < limit)
       goto close;
@@ -500,7 +504,7 @@ top:
       if (PARTY_WORD(party, 0) != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput.held & mask) == mask) {
-        if (Func_020002e0()) {
+        if (Clear_CanRetreat()) {
           failure = (s32)MsgDataCouldNotBeRecovered;
           goto refuse;
         }
@@ -515,7 +519,7 @@ top:
           goto top;
         }
         Message_CloseFinishedWindows();
-        if (Func_020002e0()) {
+        if (Clear_CanRetreat()) {
           failure = recovery + 2;
         refuse:
           FieldMessage_Show(failure, 9);
@@ -569,7 +573,7 @@ again:
     goto link;
   if (result == 1) {
     SAVE_CELLS();
-    status = Func_02000b24();
+    status = Clear_ReceiveByLink();
     if (status != -1)
       StatusScreen_Run();
     RESTORE_CELLS()
@@ -579,13 +583,13 @@ again:
   } else if (result == 0) {
     SAVE_CELLS();
     MainRoutineWork_InitializeDefaults();
-    status = Func_02000e44();
+    status = Clear_EnterPassword();
     RESTORE_CELLS()
     if (status == -1)
       goto again;
     DataTransfer_Apply(MAP_CELL_BACKUP, 1, 1);
   }
-  if (gData_020024f6 != 0 || gData_020024f8 != 0) {
+  if (gClear_CodeEntered != 0 || gClear_SecondCodeStarted != 0) {
     i = 0;
     limit = 1;
   shut:
@@ -597,7 +601,7 @@ again:
       i--;
       goto shut;
     }
-    if (gData_020024f8 != 0)
+    if (gClear_SecondCodeStarted != 0)
       limit = 4;
     if (++i < limit)
       goto shut;
@@ -620,7 +624,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The character a cell of the password grid stands for, in the Japanese
 /// font's codes: kana, the voiced ones with the dakuten mark in the high byte.
-void Func_02000a70(s32 cell, u16 *text) {
+void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
   text[1] = 0;
   text[2] = 0;
   if (cell <= 14)
@@ -646,7 +650,7 @@ void Func_02000a70(s32 cell, u16 *text) {
 /// The character a cell of the password grid stands for, in the font's
 /// codes: capitals without I and O, the digits 2 to 9, small letters without
 /// l and o, then symbols.
-void Func_02000a70(s32 cell, u16 *text) {
+void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
   text[1] = 0;
   text[2] = 0;
   if (cell <= 7)
@@ -723,7 +727,7 @@ void WindowSprite_PrepareForRedraw(struct Window *work);
 /// Receives clear data over the link cable: waits for a peer with a matching
 /// signature, then for the transfer, and copies the received flags and units
 /// in.
-s32 Func_02000b24(void) {
+s32 Clear_ReceiveByLink(void) {
   void *window;
   s32 i, idle, ok, shown;
   s32 mask, linkMask;
@@ -834,7 +838,7 @@ done:
 // This overlay's copy of Window_SetTilemapFlagRect (window/fixed_block.c): sets
 // the field in the tilemap flags of a rectangle of a window, clipped to the
 // screen.
-void Func_02000db4(const struct Window *object, s32 x, s32 y, s32 width,
+void Clear_DrawGridCell(const struct Window *object, s32 x, s32 y, s32 width,
                    s32 height, u32 field) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
 
@@ -876,14 +880,14 @@ void Func_02000db4(const struct Window *object, s32 x, s32 y, s32 width,
   }
 }
 
-extern u8 gData_0200247c[];
+extern u8 gClear_FourthPasswordRow[];
 
 extern u8 MsgFieldPasswordKana[];
 
 void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
                              u32 offsetX, u32 offsetY);
 s32 Party_RemoveMember(s32 value);
-u16 Func_0200217c(u32 length, u8 *p);
+u16 Clear_Crc16(u32 length, u8 *p);
 void Resource_CopyFixedBlockB(void);
 void Resource_CopyFixedBlockA(void);
 void Graphics_ExpandVramTilesByColorTable(void *vram);
@@ -915,14 +919,14 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
 #define CHECK_WINDOW_X 8
 #define CHECK_WINDOW_WIDTH 14
 // Japanese decodes into the bytes after its 260-byte entered password.
-#define DECODED_PASSWORD Data_0200284e
+#define DECODED_PASSWORD gClear_PasswordCodes
 #define CURSOR_ON_SIDE_COLUMN(column) ((column) == SIDE_COLUMN)
 #else
 #define SIDE_COLUMN 16
 #define SIDE_HIGHLIGHT_WIDTH 6
 #define CHECK_WINDOW_X 5
 #define CHECK_WINDOW_WIDTH 20
-#define DECODED_PASSWORD Data_0200288a
+#define DECODED_PASSWORD gClear_PasswordWork
 #define CURSOR_ON_SIDE_COLUMN(column) ((column) > SIDE_COLUMN - 1)
 #endif
 
@@ -954,10 +958,10 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
 /// Draws the password screen's title and key help into the main window.
 #define DRAW_TITLE(window)                                                     \
   {                                                                            \
-    Text_DrawStringInWindow(gData_02002440, window, 0, 0);                     \
-    Text_DrawStringInWindow(gData_02002454, window, 0, 8);                     \
-    Text_DrawStringInWindow(gData_02002468, window, 0, 16);                    \
-    Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                    \
+    Text_DrawStringInWindow(gClear_FirstPasswordRow, window, 0, 0);            \
+    Text_DrawStringInWindow(gClear_SecondPasswordRow, window, 0, 8);           \
+    Text_DrawStringInWindow(gClear_ThirdPasswordRow, window, 0, 16);           \
+    Text_DrawStringInWindow(gClear_FourthPasswordRow, window, 0, 24);          \
     message = MSGNO(MsgFieldSpace);                                            \
     Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
     Text_DrawMessageAsTiles(message++, window, 160, 0);                        \
@@ -966,7 +970,7 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
   }
 #endif
 
-s32 Func_02000e44(void) {
+s32 Clear_EnterPassword(void) {
   struct ShopCursor cursorStore;
   struct ShopCursor gridStore;
   u16 glyph[12];
@@ -1028,7 +1032,7 @@ s32 Func_02000e44(void) {
   for (i = 0; i != 26; i++)
     work->unk1c2[i] = 0;
   for (i = 0; i != 260; i++)
-    Data_0200274a[i] = 99;
+    gClear_PasswordText[i] = 99;
   for (i = 0; i != 50; i++) {
     s32 col = i % 10;
     s32 y;
@@ -1071,7 +1075,7 @@ s32 Func_02000e44(void) {
     action = -1;
     if (state == 2)
       state = 1;
-    Func_02000db4(window, drawColumn, drawRow, drawMode, height, 15);
+    Clear_DrawGridCell(window, drawColumn, drawRow, drawMode, height, 15);
     if (state == 0) {
       if (gInput.repeat & KEY_RIGHT) {
         Sound_Play(SE_MENU_CURSOR_MOVE);
@@ -1121,7 +1125,7 @@ s32 Func_02000e44(void) {
       drawColumn++;
     if (column > SIDE_COLUMN - 1)
       drawColumn++;
-    Func_02000db4(window, drawColumn, row, drawMode, height, 14);
+    Clear_DrawGridCell(window, drawColumn, row, drawMode, height, 14);
     {
       s32 x = ((s16)window->x + column) * 8 - 8;
       s32 y = ((s16)window->y + row) * 8 + 11;
@@ -1150,8 +1154,8 @@ s32 Func_02000e44(void) {
 
       if (col > 4)
         x += 10;
-      x += gData_02002438[frame];
-      y += gData_02002438[(frame + 5) & 7];
+      x += gClear_CursorWobble[frame];
+      y += gClear_CursorWobble[(frame + 5) & 7];
       Cursor_Show(&gridStore, x, y);
     }
     if (advance > 0 && ++advance == 8) {
@@ -1184,11 +1188,11 @@ s32 Func_02000e44(void) {
           else if (row == 3)
             action = 3;
         } else if (cursor < length) {
-          s32 code = gData_0200265e[column + row * SIDE_COLUMN];
+          s32 code = gClear_PasswordGrid[column + row * SIDE_COLUMN];
 
           if (code <= 63) {
             Sound_Play(SE_MENU_CONFIRM);
-            Data_0200274a[cursor] = code;
+            gClear_PasswordText[cursor] = code;
             __modsi3(cursor, 10);
             if (cursor < length - 1) {
               if (cursor % 50 == 49)
@@ -1208,9 +1212,10 @@ s32 Func_02000e44(void) {
           struct MainRoutineWork *party;
           s16 crc;
 
-          action = Func_02002068(Data_0200274a, length, DECODED_PASSWORD);
+          action =
+              Clear_ScrambleData(gClear_PasswordText, length, DECODED_PASSWORD);
           size2 = action - 2;
-          check = Func_0200217c(size2, DECODED_PASSWORD);
+          check = Clear_Crc16(size2, DECODED_PASSWORD);
 
           state = 0;
           box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3, 2);
@@ -1235,7 +1240,7 @@ s32 Func_02000e44(void) {
             Party_AddMember(1);
             Party_AddMember(2);
             Party_AddMember(3);
-            Func_020018e0(mode, DECODED_PASSWORD);
+            Clear_ApplyImportedData(mode, DECODED_PASSWORD);
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
@@ -1309,7 +1314,7 @@ s32 Func_02000e44(void) {
         action = 50;
     }
     for (i = 0; i != action; i++) {
-      u8 *entered = Data_0200274a;
+      u8 *entered = gClear_PasswordText;
       s32 index = i + page * 50;
       s32 raw = entered[index];
       u8 code = raw;
@@ -1319,7 +1324,7 @@ s32 Func_02000e44(void) {
         if (code == 99) {
           Iwram_ClearWordsEntry(work->cells[i], 128);
         } else {
-          Func_02000a70(entered[index], glyph);
+          Clear_GetPasswordCharacter(entered[index], glyph);
           Glyph_DrawToTiles(glyph[0], work->cells[i]);
         }
       }
@@ -1338,7 +1343,7 @@ s32 Func_02000e44(void) {
 /// at the panel's cell into the BG map at 0x06002000 and into the window
 /// tilemap's shadow: palette 15, the tile of each cell the row times the
 /// panel's stride plus the column.
-void Func_02001804(struct Panel_02001804 *panel, const void *source) {
+void Clear_DrawPanel(struct Panel_02001804 *panel, const void *source) {
   /* FAKEMATCH(pin): the shadow pointer in r5. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
   void *work = Heap_AllocEwram(0x300);
@@ -1375,7 +1380,7 @@ next_column:
   Heap_Release(work);
 }
 
-void Func_0200187c(struct Panel_02001804 *panel) {
+void Clear_DrawLowerPanel(struct Panel_02001804 *panel) {
   /* FAKEMATCH(pin): the shadow pointer in r5. */
   register u16 *shadow asm("r5") = (u16 *)Ram_HeapSlots->windowTiles;
   void *work = Heap_AllocEwram(0x300);
@@ -1409,13 +1414,13 @@ next_column:
   Heap_Release(work);
 }
 
-extern s32 gData_020026a0[];
-extern u16 gData_020026b0[];
-extern u16 gData_020026c0[];
+extern s32 gClear_ImportedUnits[];
+extern u16 gClear_ImportedItems[];
+extern u16 gClear_KeptItems[];
 
 s32 Unit_GetExperienceForLevel(s32 id, s32 level);
 
-void Func_020018e0(s32 mode, u8 *in) {
+void Clear_ApplyImportedData(s32 mode, u8 *in) {
   u32 levelBits;
   u32 djinnBits;
   u8 flagBits;
@@ -1452,7 +1457,8 @@ void Func_020018e0(s32 mode, u8 *in) {
       statsOffset += 15;
     }
     for (i = 0; i != 4; i++) {
-      s16 *stats = &((struct BattleUnit *)Unit_Get(gData_020026a0[i]))->baseHp;
+      s16 *stats =
+          &((struct BattleUnit *)Unit_Get(gClear_ImportedUnits[i]))->baseHp;
       s32 at = i * 8;
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))
@@ -1469,13 +1475,13 @@ void Func_020018e0(s32 mode, u8 *in) {
 
   for (i = 0; i != 6; i++) {
     if ((flagBits >> i) & 1)
-      GameFlag_Set(gData_02002490[i]);
+      GameFlag_Set(gClear_ImportedFlags[i]);
     else
-      GameFlag_Clear(gData_02002490[i]);
+      GameFlag_Clear(gClear_ImportedFlags[i]);
   }
 
   for (i = 0; i != 4; i++) {
-    struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
+    struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
     *(u8 *)&unit->level = levelBits >> (i * 7) & 0x7f;
 #if TLA_PATCH_1
@@ -1485,7 +1491,7 @@ void Func_020018e0(s32 mode, u8 *in) {
 
   Djinn_GetRecoveryTable(0)->count = 0;
   for (i = 0; i != 4; i++) {
-    struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
+    struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
     for (n = 0; n != 4; n++)
       Iwram_ClearWordsEntry(unit->djinnAvailable, 40);
@@ -1504,10 +1510,10 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 
   if (mode != 0) {
-    Unit_Get(gData_020026a0[0]);
+    Unit_Get(gClear_ImportedUnits[0]);
     for (i = 0; i != 8; i++) {
       if ((keyItemBits >> i) & 1)
-        PartyInventory_Add(gData_020026b0[i]);
+        PartyInventory_Add(gClear_ImportedItems[i]);
     }
   }
 
@@ -1515,7 +1521,7 @@ void Func_020018e0(s32 mode, u8 *in) {
     position = 39;
     bit = 0;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
+      struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
       for (n = 0; n != 15; n++) {
         unit->inventory[n] =
@@ -1532,7 +1538,7 @@ void Func_020018e0(s32 mode, u8 *in) {
     position = 107;
     bit = -1;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
+      struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
       for (m = 0; m != 23; m++) {
         j = 0;
@@ -1549,7 +1555,7 @@ void Func_020018e0(s32 mode, u8 *in) {
         }
         j &= 0x1f;
         for (n = 0; n != 15; n++) {
-          if ((unit->inventory[n] & 0x1ff) == gData_020026c0[m])
+          if ((unit->inventory[n] & 0x1ff) == gClear_KeptItems[m])
             unit->inventory[n] |= j << 11;
         }
       }
@@ -1559,16 +1565,16 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 
   for (i = 0; i != 4; i++) {
-    Unit_UpdateClass(gData_020026a0[i]);
-    Unit_Calculate(gData_020026a0[i]);
+    Unit_UpdateClass(gClear_ImportedUnits[i]);
+    Unit_Calculate(gClear_ImportedUnits[i]);
   }
 }
 
-extern u16 gData_02002700[];
-extern s32 gData_020026f0[];
-extern u16 gData_0200270c[];
+extern u16 gClear_PackedFlags[];
+extern s32 gClear_PackedUnits[];
+extern u16 gClear_PackedItems[];
 
-s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
+s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
   s32 size;
   u32 levels;
   u32 djinn;
@@ -1604,13 +1610,13 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   for (i = 0; i != 8; i++)
     stats[i] = 0;
   for (i = 0; i != 6; i++) {
-    if (GameFlag_Get(gData_02002700[i]))
+    if (GameFlag_Get(gClear_PackedFlags[i]))
       flags |= 1 << i;
   }
   i = 0;
   pos = 4;
   for (; i != 4; i++) {
-    struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
+    struct BattleUnit *unit = Unit_Get(gClear_PackedUnits[i]);
     struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;
     s32 value;
 
@@ -1663,7 +1669,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
       s32 item = unit->inventory[j] & 0x1ff;
 
       for (k = 0; k != 8; k++) {
-        if (item == gData_0200270c[k])
+        if (item == gClear_PackedItems[k])
           found |= 1 << k;
       }
     }
@@ -1673,7 +1679,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     pos = 39;
     bit = 0;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
+      struct BattleUnit *unit = Unit_Get(gClear_PackedUnits[i]);
 
       for (n = 0; n != 15; n++) {
         u16 item = unit->inventory[n] & 0x1ff;
@@ -1691,7 +1697,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     pos = 107;
     bit = -1;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
+      struct BattleUnit *unit = Unit_Get(gClear_PackedUnits[i]);
 
       for (m = 0; m != 23; m++) {
         s32 count = 0;
@@ -1699,7 +1705,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
         /* FAKEMATCH(dead): a halfword copy of the count nothing reads. */
 
         for (n = 0; n != 15; n++) {
-          if ((unit->inventory[n] & 0x1ff) == gData_0200271c[m])
+          if ((unit->inventory[n] & 0x1ff) == gClear_PackedKeptItems[m])
             count = unit->inventory[n] >> 11;
         }
         quantity = count;
@@ -1757,7 +1763,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   return size;
 }
 
-s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
+s32 Clear_ScrambleData(u8 *src, s32 length, u8 *dst) {
   u8 saved[260];
   s32 i;
   s32 shift = 2;
@@ -1810,7 +1816,7 @@ s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
 /// The CRC-16 of length bytes at p (polynomial 0x1021, seed 0xffff, the
 /// result inverted): the clear screen checks each decoded block with it,
 /// over all but the block's last two bytes.
-u16 Func_0200217c(u32 length, u8 *p) {
+u16 Clear_Crc16(u32 length, u8 *p) {
   u32 crc;
   u32 i;
   u32 j;
@@ -1842,7 +1848,7 @@ u16 Func_0200217c(u32 length, u8 *p) {
   return ~crc;
 }
 
-u16 gData_02002410[] = {
+u16 gClear_FirstCode[] = {
     4,
     4,
     4,
@@ -1850,7 +1856,7 @@ u16 gData_02002410[] = {
 };
 
 // clang-format off
-u16 gData_02002418[] = {
+u16 gClear_SecondCode[] = {
     64, 128, 64, 128, 32, 16, 32, 16,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     64, 16, 128, 32, 64, 4, 0,
@@ -1859,38 +1865,38 @@ u16 gData_02002418[] = {
 #endif
 };
 
-s8 gData_02002438[] = {
+s8 gClear_CursorWobble[] = {
     0, 1, 2, 3, 3, 2, 1, 0,
 };
 
 // Alphabet table, absent in Japanese ("ABCDE FGHJK LMNPQ R" ...).
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-u8 gData_02002440[] = {
+u8 gClear_FirstPasswordRow[] = {
     65, 66, 67, 68, 69, 32, 70, 71,
     72, 74, 75, 32, 76, 77, 78, 80,
     81, 32, 82, 0,
 };
 
-u8 gData_02002454[] = {
+u8 gClear_SecondPasswordRow[] = {
     83, 84, 85, 86, 87, 32, 88, 89,
     90, 50, 51, 32, 52, 53, 54, 55,
     56, 32, 57, 0,
 };
 
-u8 gData_02002468[] = {
+u8 gClear_ThirdPasswordRow[] = {
     97, 98, 99, 100, 101, 32, 102, 103,
     104, 105, 106, 32, 107, 109, 110, 112,
     113, 32, 114, 0,
 };
 
-u8 gData_0200247c[] = {
+u8 gClear_FourthPasswordRow[] = {
     115, 116, 117, 118, 119, 32, 120, 121,
     122, 33, 63, 32, 35, 38, 36, 37,
     43, 32, 61, 0,
 };
 #endif
 
-u16 gData_02002490[] = {
+u16 gClear_ImportedFlags[] = {
     0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868,
 };
 // clang-format on
@@ -1912,21 +1918,21 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-u16 gData_020024f4[] = {
+u16 gClear_BlendFrame[] = {
     0,
 };
 
-s16 gData_020024f6 = 0;
+s16 gClear_CodeEntered = 0;
 
-s16 gData_020024f8 = 0;
+s16 gClear_SecondCodeStarted = 0;
 
-s16 gData_020024fa = 0;
+s16 gClear_FirstCodeStep = 0;
 
-s16 gData_020024fc = 0;
+s16 gClear_SecondCodeStep = 0;
 
-s16 gData_020024fe = 0;
+s16 gClear_FirstCodeStarted = 0;
 
-s16 gData_02002500 = 0;
+s16 gClear_SecondCodeDone = 0;
 
 #undef FIELD_AT
 #undef PARTY_WORD
@@ -1954,33 +1960,33 @@ s16 gData_02002500 = 0;
 #undef WORD
 
 // clang-format off
-LATE_DATA s32 gData_020026a0[] = {
+LATE_DATA s32 gClear_ImportedUnits[] = {
     0, 1, 2, 3,
 };
 
-LATE_DATA u16 gData_020026b0[] = {
+LATE_DATA u16 gClear_ImportedItems[] = {
     200, 201, 202, 203, 204, 205, 206, 207,
 };
 
-LATE_DATA u16 gData_020026c0[] = {
+LATE_DATA u16 gClear_KeptItems[] = {
     180, 181, 182, 183, 186, 187, 188, 189,
     191, 192, 193, 194, 195, 196, 226, 227,
     228, 229, 236, 238, 239, 240, 241, 0,
 };
 
-LATE_DATA s32 gData_020026f0[] = {
+LATE_DATA s32 gClear_PackedUnits[] = {
     0, 1, 2, 3,
 };
 
-LATE_DATA u16 gData_02002700[] = {
+LATE_DATA u16 gClear_PackedFlags[] = {
     2369, 2385, 2227, 2257, 2078, 2152,
 };
 
-LATE_DATA u16 gData_0200270c[] = {
+LATE_DATA u16 gClear_PackedItems[] = {
     200, 201, 202, 203, 204, 205, 206, 207,
 };
 
-LATE_DATA u16 gData_0200271c[] = {
+LATE_DATA u16 gClear_PackedKeptItems[] = {
     180, 181, 182, 183, 186, 187, 188, 189,
     191, 192, 193, 194, 195, 196, 226, 227,
     228, 229, 236, 238, 239, 240, 241,

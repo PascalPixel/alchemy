@@ -3117,14 +3117,10 @@ static void VenusLighthouse_EmitEastPassageParticles(void) {
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST.
 static void VenusLighthouse_AnimateWestTileWave(void) {
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
   u32 extraBursts;
-  s32 zero;
   u32 row;
-  s32 rowOffset;
-  s32 particleZ;
   u32 particleIndex;
-  struct EffectOptions *options;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
@@ -3140,24 +3136,15 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   // The wave holds on its fourth row for three more bursts, and the passage
   // it opens starts to smoke.
   extraBursts = 0;
-  row = 0;
-  /* FAKEMATCH(temporary): options holds &optionsStorage. */
-  options = &optionsStorage;
-  rowOffset = 0;
-  do {
-    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
+  for (row = 0; row <= 12; row++) {
+    VenusLighthouse_RubbleSetScaleAndSpin(&options);
     // One burst of rubble: four bits down the row, each over a random one of
     // seven 8-pixel columns.
   burst:
-    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each burst
-     * starts. */
-    particleZ = px(192);
-    for (particleIndex = 0, zero = 0, particleZ += rowOffset;
-         particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(416), 0, particleZ, 0,
-                        zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-                        options);
-      particleZ += px(4);
+    for (particleIndex = 0; particleIndex <= 3; particleIndex++) {
+      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(416), 0,
+                        px(192) + row * px(16) + particleIndex * px(4), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
     wait(3);
     if (row == 3) {
@@ -3170,9 +3157,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
                       TASK_PASS_FRAME);
     }
     MapGrid_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
-    rowOffset += px(16);
-    row++;
-  } while (row <= 12);
+  }
   MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
   FieldCamera_WaitForMove();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -3188,14 +3173,10 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
 /// VenusLighthouseFourthFloor by
 /// VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST.
 static void VenusLighthouse_AnimateEastTileWave(void) {
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
   u32 extraBursts;
-  s32 zero;
   u32 row;
-  s32 rowOffset;
-  s32 particleZ;
   u32 particleIndex;
-  struct EffectOptions *options;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_Start();
@@ -3210,24 +3191,13 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   FieldCamera_MoveTo(568, CAMERA_KEEP, 360, 1);
   // As the western wave, but its smoke task is added again on every row.
   extraBursts = 0;
-  row = 0;
-  /* FAKEMATCH(temporary): options holds &optionsStorage. */
-  options = &optionsStorage;
-  rowOffset = 0;
-  do {
-    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
-    // One burst of rubble: four bits down the row, each over a random one of
-    // seven 8-pixel columns.
+  for (row = 0; row <= 12; row++) {
+    VenusLighthouse_RubbleSetScaleAndSpin(&options);
   burst:
-    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each burst
-     * starts. */
-    particleZ = px(192);
-    for (particleIndex = 0, zero = 0, particleZ += rowOffset;
-         particleIndex <= 3; particleIndex++) {
-      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(544), 0, particleZ, 0,
-                        zero, zero, EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-                        options);
-      particleZ += px(4);
+    for (particleIndex = 0; particleIndex <= 3; particleIndex++) {
+      FieldEffect_Spawn(((Random_Below(7)) << 19) + px(544), 0,
+                        px(192) + row * px(16) + particleIndex * px(4), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_SPIN, &options);
     }
     wait(3);
     if (row == 3 && extraBursts <= 2) {
@@ -3236,9 +3206,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     }
     Task_AddFrame(VenusLighthouse_EmitEastPassageParticles, TASK_PASS_FRAME);
     MapGrid_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
-    rowOffset += px(16);
-    row++;
-  } while (row <= 12);
+  }
   MapGrid_CopyCellsTo(86, 41, 97, 14, 5, 2);
   FieldCamera_WaitForMove();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);

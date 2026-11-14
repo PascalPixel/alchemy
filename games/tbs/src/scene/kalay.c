@@ -468,11 +468,8 @@ static void Kalay_TalkAboutLeavingHome(void) {
 /// Entrance asks `Do you want to go to the cave up ahead?`, and turns the
 /// party away either way.
 static void Kalay_AskAboutCaveAccess(void) {
-  struct Actor *leader;
-
   // From the north he only stands in the way.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_EAST_SOUTHEAST) >
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_EAST_SOUTHEAST) >
       FACING_WEST_SOUTHWEST - FACING_EAST_SOUTHEAST) {
     Event_Start();
     Actor_TurnToFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_TUNNEL_GUARD, 0);
@@ -507,11 +504,8 @@ static void Kalay_TalkAboutLayana(void) {
 /// Talking to the weapon merchant in Kalay across the counter, with the leader
 /// facing north, opens the weapon shop.
 static void Kalay_TalkToWeaponMerchant(void) {
-  struct Actor *leader;
-
   // Across the counter: between northwest and southeast, by way of north.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_SOUTHEAST) >
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
       FACING_NORTHWEST - FACING_SOUTHEAST) {
     Shop_Run(22, ACTOR_WEAPON_MERCHANT);
   } else {
@@ -526,11 +520,8 @@ static void Kalay_TalkToWeaponMerchant(void) {
 /// Talking to the armor merchant in Kalay across the counter, with the leader
 /// facing west to north, opens the armor shop.
 static void Kalay_TalkToArmorMerchant(void) {
-  struct Actor *leader;
-
   // Across the counter: between southwest and northeast, by way of west.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - (FACING_SOUTHWEST + 1)) <=
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - (FACING_SOUTHWEST + 1)) <=
       FACING_NORTHEAST - FACING_SOUTHWEST - 2) {
     Shop_Run(23, ACTOR_ARMOR_MERCHANT);
   } else {
@@ -547,11 +538,8 @@ static void Kalay_TalkToArmorMerchant(void) {
 /// Talking to the item merchant in Kalay across the counter, with the leader
 /// facing east, opens the item shop.
 static void Kalay_TalkToItemMerchant(void) {
-  struct Actor *leader;
-
   // Across the counter: between northeast and southeast, by way of east.
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_SOUTHEAST) >
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
       FACING_NORTHEAST - FACING_SOUTHEAST) {
     Shop_Run(24, ACTOR_ITEM_MERCHANT);
   } else {
@@ -629,18 +617,8 @@ static void Kalay_EnterPalace(void) {
 /// the inn, the party watches the tour group stop.
 static void Kalay_WatchTourGroupDeparture(void) {
   s32 message;
-  struct Actor *headWait;
-  struct Actor *lastWait;
   struct Actor *closing;
-  struct Actor *late;
-  struct Actor *headEnd;
-  struct Actor *lastEnd;
-  struct Actor *leader;
   struct Actor *last;
-  struct Actor *head;
-  struct Actor *headBack;
-  struct Actor *headAgain;
-  struct Actor *headHome;
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -737,24 +715,20 @@ static void Kalay_WatchTourGroupDeparture(void) {
     // "Everything will be just fine, folks!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
-    head = Actor_Get(ACTOR_HEAD_GUIDE);
-    head->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 172, 264);
     Event_Wait(1);
-    headBack = Actor_Get(ACTOR_HEAD_GUIDE);
-    headBack->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 20);
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Event_Wait(20);
-    headAgain = Actor_Get(ACTOR_HEAD_GUIDE);
-    headAgain->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 172, 272);
     Event_Wait(1);
-    headHome = Actor_Get(ACTOR_HEAD_GUIDE);
-    headHome->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_HEAD_GUIDE)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 180, 272);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     // "We're just checking to make sure no one is missing!"
@@ -869,10 +843,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_Stop(ACTOR_HEAD_GUIDE);
     Actor_Stop(ACTOR_SECOND_GUIDE);
     wait(1);
-    headWait = Actor_Get(ACTOR_HEAD_GUIDE);
-    headWait->timer = 0;
-    lastWait = Actor_Get(ACTOR_SECOND_GUIDE);
-    lastWait->timer = 0;
+    Actor_Get(ACTOR_HEAD_GUIDE)->timer = 0;
+    Actor_Get(ACTOR_SECOND_GUIDE)->timer = 0;
     Actor_SetSpeed(ACTOR_HEAD_GUIDE, 0.8);
     Actor_SetSpeed(ACTOR_SECOND_GUIDE, 0.8);
     Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_HeadGuideStopScript);
@@ -1084,14 +1056,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
       wait(1);
     } while (Actor_Get(ACTOR_LATE_TOURIST)->timer != 1);
     Actor_SetPosition(ACTOR_LATE_TOURIST, 359, 314);
-    late = Actor_Get(ACTOR_LATE_TOURIST);
-    late->facing = FACING_NORTH_NORTHEAST;
+    Actor_Get(ACTOR_LATE_TOURIST)->facing = FACING_NORTH_NORTHEAST;
     Actor_SetPosition(ACTOR_HEAD_GUIDE, 455, 434);
-    headEnd = Actor_Get(ACTOR_HEAD_GUIDE);
-    headEnd->facing = FACING_NORTH_NORTHEAST;
+    Actor_Get(ACTOR_HEAD_GUIDE)->facing = FACING_NORTH_NORTHEAST;
     Actor_SetPosition(ACTOR_SECOND_GUIDE, 464, 416);
-    lastEnd = Actor_Get(ACTOR_SECOND_GUIDE);
-    lastEnd->facing = FACING_SOUTH_SOUTHWEST;
+    Actor_Get(ACTOR_SECOND_GUIDE)->facing = FACING_SOUTH_SOUTHWEST;
     Actor_ReleaseById(ACTOR_FIRST_TOURIST);
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 1);
     Actor_ReleaseById(ACTOR_FIRST_TOURIST + 2);
@@ -1103,12 +1072,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Sound_Play(SOUND_FADE_OUT_BGM);
     if (work->stepTrigger == 9) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      leader->facing = FACING_NORTH;
+      Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
     } else {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 248);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      leader->facing = FACING_SOUTH;
+      Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
     }
     Scene_PlayMusic();
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
@@ -1251,14 +1218,11 @@ static void Kalay_PrepareHammetPalace(void) {
 
 /// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance).
 static void Kalay_PrepareTunnelEntrance(void) {
-  struct Actor *guard;
-
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT) == 0) {
     Scene_FloatNut(ACTOR_TUNNEL_ENTRANCE_NUT);
   }
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
-    guard = Actor_Get(ACTOR_TUNNEL_GUARD);
-    guard->facing = FACING_EAST;
+    Actor_Get(ACTOR_TUNNEL_GUARD)->facing = FACING_EAST;
   }
   if (gMainRoutineWork.entrance == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();

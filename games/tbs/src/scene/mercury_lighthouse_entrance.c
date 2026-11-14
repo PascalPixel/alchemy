@@ -348,12 +348,10 @@ static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
 /// Mercury Lighthouse, the doorway: touching cell behavior 41 while the Lizard
 /// Man stands in the doorway.
 static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
-  struct Actor *leader;
   s32 leaderX;
   s32 leaderColumn;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leaderX = leader->x.fixed;
+  leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
   leaderColumn = leaderX / px(16);
   GameFlag_Set(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   if (leaderColumn == 7) {
@@ -558,7 +556,6 @@ s32 Scene_Initialize(void) {
 /// after a battle.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   s32 paceCycle;
-  struct Actor *mia;
   struct Actor *actor;
 
   Event_Start();
@@ -590,8 +587,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    mia = Actor_Get(ACTOR_MIA);
-    mia->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_Get(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkTo(ACTOR_MIA, 136, 184);
     Event_Wait(10);
     Actor_SetScript(ACTOR_LIZARD_MAN,

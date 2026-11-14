@@ -417,11 +417,7 @@ s32 Scene_Initialize(void) {
 /// In Vale's shops, opens the weapon shop across the counter, or the
 /// merchant speaks.
 static void CottageRoomsA_TalkToWeaponMerchant(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-
-  if (FACING_IS_NORTH(leader->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(1, ACTOR_WEAPON_MERCHANT);
     return;
   }
@@ -447,10 +443,7 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
 /// In Vale's shops, opens the armor shop across the counter, or the merchant
 /// speaks.
 static void CottageRoomsA_TalkToArmorMerchant(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(actor->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(2, ACTOR_ARMOR_MERCHANT);
   } else {
     Event_Start();
@@ -471,10 +464,7 @@ static void CottageRoomsA_TalkToArmorMerchant(void) {
 /// In Vale's shops, opens the item shop across the counter, or the merchant
 /// speaks.
 static void CottageRoomsA_TalkToItemMerchant(void) {
-  struct Actor *actor;
-
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(actor->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(3, ACTOR_ITEM_MERCHANT);
   } else {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {

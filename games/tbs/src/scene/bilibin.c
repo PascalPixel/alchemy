@@ -531,7 +531,6 @@ static void Bilibin_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
 /// Jill and her friends thank the leader with a Hard Nut.
 static void Bilibin_JillGivesHardNut(void) {
   struct Actor *leader;
-  struct Actor *eastMember;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0 ||
@@ -544,8 +543,7 @@ static void Bilibin_JillGivesHardNut(void) {
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(263, CAMERA_KEEP, 173, 1);
   FieldCamera_WaitForMove();
-  eastMember = Actor_Get(ACTOR_GANG_MEMBER_EAST);
-  if (eastMember->x.fixed > leader->x.fixed) {
+  if (Actor_Get(ACTOR_GANG_MEMBER_EAST)->x.fixed > leader->x.fixed) {
     Actor_FaceDirection(ACTOR_GANG_MEMBER_WEST, FACING_SOUTH_SOUTHWEST, 20);
     Actor_ShowEmote(ACTOR_GANG_MEMBER_WEST, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     20);

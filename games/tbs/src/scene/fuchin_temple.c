@@ -1505,11 +1505,9 @@ static void FuchinTemple_OpenLockedDoor(void) {
 /// Talking to the healer at Fuchin Temple (FuchinTempleGrounds): he heals, or
 /// speaks of his travels.
 static void FuchinTemple_TalkToHealer(void) {
-  struct Actor *leader;
   u32 facing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  facing = leader->facing;
+  facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   Event_Start();
 
   if (FACING_IS_NORTH(facing)) {
@@ -1611,7 +1609,6 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
 /// (FuchinTempleGrounds, step trigger 3): spray falls over Isaac as the screen
 /// fades, and he enters Fuchin Falls Cave.
 static void FuchinTemple_EnterWaterfallGrotto(void) {
-  struct Actor *leader;
   TaskFunc particleTask;
 
   Event_Start();
@@ -1625,8 +1622,7 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Task_Remove(particleTask);
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -1661,8 +1657,6 @@ static void FuchinTemple_EnterTemple(void) {
 /// Back inside Fuchin Temple from the grotto with the Orb of Force
 /// (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Nyunpa praises Isaac.
 static void FuchinTemple_NyunpaTeachesKi(void) {
-  struct Actor *nyunpa;
-
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 168, 504);
@@ -1677,8 +1671,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Event_Wait(60);
   Actor_Get(ACTOR_NYUNPA)->paused = 0;
   Sound_Play(SE_JUMP);
-  nyunpa = Actor_Get(ACTOR_NYUNPA);
-  nyunpa->velocityY = px(8);
+  Actor_Get(ACTOR_NYUNPA)->velocityY = px(8);
   Actor_SetAnimation(ACTOR_NYUNPA, ANIM_STAND);
   // Praise the completed test before answering the follow-up questions.
   Event_SetMessageId(MsgXianExcellentIsaac);
@@ -2605,9 +2598,8 @@ static void FuchinTemple_AnimateRevealLesson(void) {
     if ((particleIndex & 3) == 0) {
       Sound_Play(SE_GLITTER);
     }
-    particleX = hama->x.fixed +
-                ((((u32)(Random_Next() * 3) << 4) >> 16) << 16) - px(12);
-    particleY = hama->y.fixed + ((Random_Below(32)) << 16) - px(16);
+    particleX = hama->x.fixed + px(Random_Below(48)) - px(12);
+    particleY = hama->y.fixed + px(Random_Below(32)) - px(16);
     riseSpeed = ((Random_Below(4)) << 15) + (128 << 8);
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,

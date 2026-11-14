@@ -491,9 +491,6 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
   s32 x;
   s32 z;
   s32 velocityY;
-  s32 drawX;
-  s32 drawZ;
-  s32 drawY;
   struct EffectOptions options;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -502,13 +499,9 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     options.palette = 10;
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
-    drawX = Random_Next();
-    x = leader->x.fixed + px(((u32)((drawX << 4) + drawX) >> 16) - 8);
-    drawZ = Random_Next();
-    z = leader->z.fixed + px(((u32)((drawZ << 4) + drawZ) >> 16) - 8);
-    drawY = Random_Next();
-    velocityY =
-        Math_Divide((((u32)((drawY << 2) + drawY) >> 16) << 16) + px(3), 10);
+    x = leader->x.fixed + px(Random_Below(17) - 8);
+    z = leader->z.fixed + px(Random_Below(17) - 8);
+    velocityY = Math_Divide(px(Random_Below(5)) + px(3), 10);
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                           EFFECT_SCRIPT_MEDIUM,

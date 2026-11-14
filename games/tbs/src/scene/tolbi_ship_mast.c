@@ -410,13 +410,10 @@ static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
 
 /// Keeps the leader visible for the course announcement.
 static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
-  struct Actor *leader;
-
   Event_Start();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 164, 321);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -578,12 +575,10 @@ static inline void TolbiShipMast_PrepareGroupDeparture(void) {
 /// attack, a bird swoops at the lookout twice and Sean cries out. "Monsters!"
 static void TolbiShipMast_ShowMonsters(void) {
   struct Actor *approachingActor;
-  struct Actor *leader;
 
   Event_Start();
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_SetSpriteFlags(leader, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
   Event_AppendActorPlacements(gTolbiShipMast_BirdActorPlacements);
   wait(1);

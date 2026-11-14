@@ -600,15 +600,14 @@ static void MercuryLighthouse_PushGateSwitchStatue(void) {
 static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
   s32 column;
   s32 row;
-  struct Actor *statue;
 
   column = Actor_Get(ACTOR_GATE_STATUE)->x.fixed / px(16);
   row = Actor_Get(ACTOR_GATE_STATUE)->z.fixed / px(16);
   Event_Start();
   if (column == 5 && row == 13) {
     Actor_Get(ACTOR_GATE_STATUE)->y.fixed -= px(2);
-    statue = Actor_Get(ACTOR_GATE_STATUE);
-    statue->targetY = Actor_Get(ACTOR_GATE_STATUE)->y.fixed;
+    Actor_Get(ACTOR_GATE_STATUE)->targetY =
+        Actor_Get(ACTOR_GATE_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
     Sound_Play(SE_FLOOR_SWITCH);
     MapGrid_PlayMapEdit(gMercuryLighthouse_GateCells, 9, 7);
@@ -624,7 +623,6 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
 static void MercuryLighthouse_PressGateFloorSwitch(void) {
   s32 x;
   s32 z;
-  struct Actor *leader;
 
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) == 0) {
     x = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
@@ -634,8 +632,8 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
       GameFlag_Set(FLAG_LEADER_ON_FLOOR_SWITCH);
       Event_Wait(5);
       Actor_Get(ACTOR_PARTY_LEADER)->y.fixed -= px(2);
-      leader = Actor_Get(ACTOR_PARTY_LEADER);
-      leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+      Actor_Get(ACTOR_PARTY_LEADER)->targetY =
+          Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
       MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
       Sound_Play(SE_FLOOR_SWITCH);
       MapGrid_PlayMapEdit(gMercuryLighthouse_GateCells, 9, 7);
@@ -647,14 +645,12 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
 /// MercuryLighthouseMiddle, touching cell behavior 10 or 13: stepping off
 /// the switch closes the gate again.
 static void MercuryLighthouse_CloseFloorSwitch(void) {
-  struct Actor *leader;
-
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     Event_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += px(2);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+    Actor_Get(ACTOR_PARTY_LEADER)->targetY =
+        Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
     Event_Wait(5);
     MapGrid_CopyCellsTo(7, 2, 5, 11, 1, 1);
     Sound_Play(SE_FLOOR_SWITCH);
@@ -918,10 +914,9 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
 
   Event_Start();
   if (column == 10 && row == 23) {
-    struct Actor *statue;
     Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed -= px(2);
-    statue = Actor_Get(ACTOR_FALLEN_STATUE);
-    statue->targetY = Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed;
+    Actor_Get(ACTOR_FALLEN_STATUE)->targetY =
+        Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
     Sound_Play(SE_FLOOR_SWITCH);
     MapGrid_PlayMapEdit(gMercuryLighthouse_FloorSwitchCells, 10, 18);
@@ -962,14 +957,12 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
 /// MercuryLighthouseUpper, touching cell behavior 10: stepping off the
 /// switch closes the stair gate.
 static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
-  struct Actor *leader;
-
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     Event_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += px(2);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
+    Actor_Get(ACTOR_PARTY_LEADER)->targetY =
+        Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
     Event_Wait(5);
     MapGrid_CopyCellsTo(8, 29, 10, 23, 1, 1);
     Sound_Play(SE_FLOOR_SWITCH);

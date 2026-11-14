@@ -528,11 +528,7 @@ static void Altin_TalkToItemMerchant(void) {
 
 /// Altin's innkeeper opens the inn when spoken to across the counter.
 static void CottageRoomsD_TalkToInnkeeper(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-
-  if (ALTIN_FACES_COUNTER(leader->facing)) {
+  if (ALTIN_FACES_COUNTER(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Inn_CheckIn(ALTIN_INN, ACTOR_INNKEEPER);
     return;
   }

@@ -571,7 +571,6 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   struct Actor *actor;
   struct Actor *shadow;
-  struct Actor *target;
   u8 frame;
 
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
@@ -582,8 +581,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Event_Wait(10);
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   actor = Actor_Get(actorId);
-  target = Actor_Get(actorId);
-  Actor_SetSpriteFlags(target, 0);
+  Actor_SetSpriteFlags(Actor_Get(actorId), 0);
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   actor->motionFlags = 0;
   Sound_Play(SE_ASCEND);

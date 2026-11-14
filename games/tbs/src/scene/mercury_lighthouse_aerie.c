@@ -1685,7 +1685,6 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   u32 j;
   u32 n;
   s32 speed;
-  struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = px(1) / 10;
@@ -1710,8 +1709,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     lift->offsetY -= speed;
     for (j = 0; j < n; j++) {
       Actor_Get(ids[j])->z.fixed += speed;
-      actor = Actor_Get(ids[j]);
-      actor->targetZ = Actor_Get(ids[j])->z.fixed;
+      Actor_Get(ids[j])->targetZ = Actor_Get(ids[j])->z.fixed;
     }
     if ((i & 3) == 3)
       speed += px(1) / 10;
@@ -1731,7 +1729,6 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   u32 j;
   u32 n;
   s32 speed;
-  struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = px(3) / 2;
@@ -1750,8 +1747,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
     lift->offsetY += speed;
     for (j = 0; j < n; j++) {
       Actor_Get(ids[j])->z.fixed -= speed;
-      actor = Actor_Get(ids[j]);
-      actor->targetZ = Actor_Get(ids[j])->z.fixed;
+      Actor_Get(ids[j])->targetZ = Actor_Get(ids[j])->z.fixed;
     }
     if ((i & 3) == 3 && i > 75)
       speed -= px(1) / 5;

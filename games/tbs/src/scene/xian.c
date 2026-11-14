@@ -470,7 +470,6 @@ static void Xian_FreezeSpilledWater(void) {
 /// Talking to the kung fu student in Xian.
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
-  struct Actor *leader;
   s32 reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
@@ -493,8 +492,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     SET_VECTOR(stepBackOffset, demonstrationSeen, demonstrationSeen,
                demonstrationSeen);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    FieldVector_AddPolarOffset(-8, leader->facing,
+    FieldVector_AddPolarOffset(-8, Actor_Get(ACTOR_PARTY_LEADER)->facing,
                                (struct FieldPosition *)stepBackOffset);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, stepBackOffset[0] / px(1),

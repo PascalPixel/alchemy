@@ -1851,10 +1851,7 @@ static void VenusLighthouse_JumpOrPushSwitchPillar(void) {
 /// Keep a stacked pillar sixteen pixels above its supporting actor.
 static UNREAD_RESULT
 VenusLighthouse_FollowSupportingPillarHeight(struct Actor *pillar) {
-  struct Actor *support;
-
-  support = Actor_Get(pillar->timer);
-  pillar->y.fixed = support->y.fixed + px(16);
+  pillar->y.fixed = Actor_Get(pillar->timer)->y.fixed + px(16);
   RETURN_UNREAD(0);
 }
 

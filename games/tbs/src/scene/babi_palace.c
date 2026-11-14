@@ -328,12 +328,11 @@ static void BabiPalace_AskAboutSoldiers(s32 actorId) {
 /// The attendant leads the party to the beds when spoken to before Babi's
 /// rescue.
 static void BabiPalace_ShowBeds(s32 actorId) {
-  struct Actor *leader;
   s16 roundedFacing;
   s32 facingOrMessage;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  roundedFacing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & 0xc000;
   Event_Start();
   Field_EndBusyAndReveal();
   if (Event_GetFlag(FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS) == 0) {
@@ -697,12 +696,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
 /// Searching the beds sends the party to bed, talking it over the first night.
 /// "Would you like to sleep now?"
 static void BabiPalace_RestInPalaceBeds(void) {
-  struct Actor *leader;
   s16 roundedFacing;
   u16 facing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  roundedFacing = (leader->facing + TRIG_TURN / 8) & -0x4000;
+  roundedFacing =
+      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & -0x4000;
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgTolbiLikeSleep);

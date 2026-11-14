@@ -743,16 +743,13 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
 /// Mogall Forest, the second area: Force on the south hiding place the first
 /// time.
 static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
-  struct Actor *ape;
-
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480, 7.6);
   Event_Wait(2);
   MogallForest_SpawnPuffRing(ACTOR_SECOND_AREA_SOUTH_APE);
   Actor_SetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
-  ape = Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE);
-  Actor_SetSpriteFlags(ape, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE), 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED);
   Actor_SetPosition(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 424, 480);
@@ -946,7 +943,6 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
 /// Mogall Forest, the third area: Force on the attacking ape's hiding place.
 static void MogallForest_ThirdArea_ApeAttacks(void) {
   struct Actor *ape;
-  struct Actor *leaderForX;
   s32 leaderX;
   struct Actor *leaderForZ;
 
@@ -966,8 +962,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Sound_Play(SE_BEAST_CRY);
   Event_Wait(60);
-  leaderForX = Actor_Get(ACTOR_PARTY_LEADER);
-  leaderX = leaderForX->x.part.pixel;
+  leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
   leaderForZ = Actor_Get(ACTOR_PARTY_LEADER);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, leaderX,
                           leaderForZ->z.part.pixel, 6);
@@ -1058,16 +1053,13 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
 /// Mogall Forest, the third area: Force on the east hiding place the first
 /// time.
 static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
-  struct Actor *ape;
-
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 504, 1);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, 9);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-  ape = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
-  Actor_SetSpriteFlags(ape, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Event_Wait(30);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE_STUMP, 744, 504);

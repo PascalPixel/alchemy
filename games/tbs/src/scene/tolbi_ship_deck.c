@@ -1217,8 +1217,6 @@ static void TolbiShipDeck_PlacePassengersAgreedToRow(void) {
 /// Under sail, the crew take their places, the two lookouts start their rounds
 /// and, when the party keeps its position, the leader stands on deck.
 static void TolbiShipDeck_SetUpUnderSail(void) {
-  struct Actor *actor;
-
   Event_Start();
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
@@ -1226,8 +1224,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, 238, 626);
   Actor_SetPosition(ACTOR_SEA_SEAN, 204, 521);
-  actor = Actor_Get(ACTOR_SEA_SEAN);
-  actor->y.fixed = px(16);
+  Actor_Get(ACTOR_SEA_SEAN)->y.fixed = px(16);
   Actor_Get(ACTOR_SEA_SEAN)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   Actor_SetSpeed(ACTOR_SEA_SEAN, 0.6);
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_SeanPacesActions);
@@ -1242,8 +1239,6 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
 
 /// After the Kraken, the deck is as under sail, with Sean at the helm.
 static void TolbiShipDeck_SetUpAfterKraken(void) {
-  struct Actor *actor;
-
   Event_Start();
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
@@ -1251,8 +1246,7 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, 238, 626);
   Actor_SetPosition(ACTOR_SEA_SEAN, 268, 678);
-  actor = Actor_Get(ACTOR_SEA_SEAN);
-  actor->facing = FACING_EAST;
+  Actor_Get(ACTOR_SEA_SEAN)->facing = FACING_EAST;
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_SeanLooksAboutActions);
   Actor_Get(ACTOR_SEA_OURANOS)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 0.8);
@@ -1830,8 +1824,6 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
 
 /// Isaac is thanked for the Kraken.
 static void TolbiShipDeck_ThankForKraken(void) {
-  struct Actor *actor;
-
   Event_Start();
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
@@ -1839,8 +1831,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Actor_SetPosition(ACTOR_SEA_KAJA, 182, 618);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, 238, 626);
   Actor_SetPosition(ACTOR_SEA_SEAN, 268, 678);
-  actor = Actor_Get(ACTOR_SEA_SEAN);
-  actor->facing = FACING_EAST;
+  Actor_Get(ACTOR_SEA_SEAN)->facing = FACING_EAST;
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_SeanLooksAboutActions);
   Actor_Get(ACTOR_SEA_OURANOS)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 0.8);
@@ -2699,13 +2690,10 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
 
 /// Places the leader on the deck facing south, with the camera on them.
 static void TolbiShipDeck_PlaceLeaderOnDeck(void) {
-  struct Actor *actor;
-
   FieldCamera_MoveTo(232, CAMERA_KEEP, 676, 0);
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 232, 676);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->facing = FACING_SOUTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
   wait(1);
 }
 

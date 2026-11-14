@@ -968,14 +968,10 @@ static void SolSanctumStatue_RightBeamStatueMoved(void) {
 /// Starting Move beside the centre statue blocks its cells while the leader
 /// stands in their row.
 static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
-  struct Actor *leaderPosition;
   s32 column;
-  struct Actor *leader;
 
-  leaderPosition = Actor_Get(ACTOR_PARTY_LEADER);
-  column = FIELD_CELL(leaderPosition->x.fixed);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FIELD_CELL(leader->z.fixed) == 8) {
+  column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
+  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) == 8) {
     if (column >= 17 && column <= 18) {
       Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
       Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);

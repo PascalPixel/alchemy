@@ -619,13 +619,11 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
   struct Actor *overlay;
   s32 randomX;
-  struct Actor *actor;
   s32 randomZ;
   struct EffectOptions options;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR);
-  if (FIELD_CELL(actor->x.fixed) == 46) {
+  if (FIELD_CELL(Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->x.fixed) == 46) {
     Event_Wait(30);
     overlay = Actor_Prepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
@@ -691,15 +689,13 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
   u32 i;
   struct Actor *overlay;
   s32 randomX;
-  struct Actor *actor;
   s32 randomZ;
   s32 effectX;
   s32 effectZ;
   struct EffectOptions options;
 
   Event_Start();
-  actor = Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR);
-  if (FIELD_CELL(actor->x.fixed) == 48) {
+  if (FIELD_CELL(Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->x.fixed) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
       overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
@@ -806,12 +802,9 @@ static void TunnelRuins_PushDousePillar(void) {
 /// As Douse begins on the pillar, water splashes on it and it is soaked. Its
 /// Frost target follows it from then on.
 static void TunnelRuins_DouseStartsOnPillar(void) {
-  struct Actor *frostTarget;
-
   Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
-  frostTarget = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET);
-  frostTarget->update =
+  Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update =
       (void (*)(struct Actor *))TunnelRuins_FrostTargetFollowsPillar;
 }
 

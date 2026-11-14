@@ -255,8 +255,6 @@ CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
 /// In CrossboneIsleBane, the first time the party comes near
 /// (step trigger 20): Bane notices them and hops away.
 static void CrossboneIsleKeys_BaneFirstEscape(void) {
-  struct Actor *djinni;
-
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
     Event_Start();
@@ -270,8 +268,7 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, 1);
     Sound_Play(SE_JUMP);
-    djinni = Actor_Get(ACTOR_BANE);
-    djinni->velocityY = px(8);
+    Actor_Get(ACTOR_BANE)->velocityY = px(8);
     Actor_WalkToAndWait(ACTOR_BANE, 584, 680);
     Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
     Event_End();
@@ -282,7 +279,6 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
 /// second time.
 static void CrossboneIsleKeys_BaneSecondEscape(void) {
   struct Actor *spinningDjinni;
-  struct Actor *jumpingDjinni;
 
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
     if (Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) == 0) {
@@ -300,8 +296,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Event_Wait(20);
       Actor_SetSpeed(ACTOR_BANE, 1);
       Sound_Play(SE_JUMP);
-      jumpingDjinni = Actor_Get(ACTOR_BANE);
-      jumpingDjinni->velocityY = px(10);
+      Actor_Get(ACTOR_BANE)->velocityY = px(10);
       Actor_WalkToAndWait(ACTOR_BANE, 584, 664);
       Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE,
@@ -472,10 +467,7 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
 /// Facing CrossboneIsleKeys's red door with the Red Key (step trigger
 /// 50): the door rumbles open, and the key is used up.
 static void CrossboneIsleKeys_UseRedKey(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->facing == FACING_NORTH) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_NORTH) {
     if (Event_GetFlag(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
       if (PartyInventory_FindMember(ITEM_RED_KEY) != -1) {
         GameFlag_Set(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
@@ -520,13 +512,11 @@ static void CrossboneIsleKeys_OpenSecondBlueDoor(void) {
 /// Touching CrossboneIsleKeys's third blue door (step trigger 53, the walkway
 /// cell in front of it).
 static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
-  struct Actor *leader;
   s16 *blockedSteps;
   s32 resetSteps = 0;
 
   CrossboneIsleKeys_UseBlueKey(2);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->facing == FACING_SOUTH) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Field_TryJumpForward();
@@ -538,13 +528,11 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
 /// Touching CrossboneIsleKeys's fourth blue door (step trigger 54, the walkway
 /// cell in front of it).
 static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
-  struct Actor *leader;
   s16 *blockedSteps;
   s32 resetSteps = 0;
 
   CrossboneIsleKeys_UseBlueKey(3);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->facing == FACING_SOUTH) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_SOUTH) {
     blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Field_TryJumpForward();

@@ -383,10 +383,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// inn; otherwise the innkeeper offers a room or, while Lunpa is sealed, a bed
 /// at home.
 static void RockRooms_TalkToInnkeeper(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(leader->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       Inn_CheckIn(LUNPA_INN, ACTOR_INNKEEPER);
       return;
@@ -449,10 +446,7 @@ static void RockRooms_AskWhetherDonpasGuest(void) {
 /// Lunpa Temple: across the counter, the Sanctum's services; otherwise the
 /// Healer talks about Dodonpa.
 static void RockRooms_TalkToHealer(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(leader->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Sanctum_Run(ACTOR_HEALER);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
@@ -488,10 +482,7 @@ static void RockRooms_ReadItemMerchantsThoughts(void) {
 
 /// Lunpa, the item shop: across the counter, the shop; otherwise small talk.
 static void RockRooms_TalkToItemMerchant(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(leader->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Shop_Run(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     Event_Start();
@@ -524,11 +515,9 @@ static void RockRooms_ReadWeaponMerchantsThoughts(void) {
 /// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
 /// counter, the weapon shop; otherwise small talk.
 static void RockRooms_TalkToWeaponMerchant(void) {
-  struct Actor *leader;
   s32 facing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  facing = leader->facing;
+  facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
       Shop_Run(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
@@ -562,11 +551,9 @@ static void RockRooms_ReadArmorMerchantsThoughts(void) {
 /// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
 /// counter, the armor shop; otherwise small talk.
 static void RockRooms_TalkToArmorMerchant(void) {
-  struct Actor *leader;
   s32 facing;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  facing = leader->facing;
+  facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
       Shop_Run(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
@@ -606,10 +593,7 @@ s32 Scene_Initialize(void) {
 /// Gate to Suhalla: the traveling Healer offers the Sanctum's services across
 /// the counter; otherwise he speaks of his good will.
 static void RockRooms_TalkToTravelingHealer(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_IS_NORTH(leader->facing)) {
+  if (FACING_IS_NORTH(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     // BUG: the temple's Healer, not the traveling one. The Sanctum only takes
     // its keeper's portrait from the actor (Sanctum_Run), and both
     // Healers are placed in this scene in the same sprite, so the player sees

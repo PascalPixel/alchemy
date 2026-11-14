@@ -1378,10 +1378,8 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
 
 /// The travelling healer in the hold.
 static void ShipRooms_TalkToHealer(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((u16)(leader->facing - FACING_SOUTHEAST) > TRIG_TURN * 3 / 4) {
+  if ((u16)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
+      TRIG_TURN * 3 / 4) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0 &&
         GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
       Sanctum_Run(ACTOR_SEA_HOLD_HEALER);

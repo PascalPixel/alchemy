@@ -894,8 +894,6 @@ static void ValeKradensCottage_OverhearKraden(void) {
 /// Arriving in Kraden's part of Vale places the actors for the storm or for the
 /// day, and plays the arrival from the cottage.
 s32 Scene_Initialize(void) {
-  struct Actor *actor;
-
   if (gMainRoutineWork.entrance ==
           VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_UNUSED ||
       gMainRoutineWork.entrance ==
@@ -919,8 +917,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
     Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
-    actor = Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR);
-    actor->radius = 12;
+    Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR)->radius = 12;
     Actor_SetScript(ACTOR_ROCKSLIDE_SURVIVOR,
                     gValeKradensCottage_RockslideSurvivorSquashes);
     if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {

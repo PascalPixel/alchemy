@@ -1447,8 +1447,6 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 /// treasure room: the captain shows the four chests and the soldier who keeps
 /// the treasure explains that only one may be chosen.
 static void McCoyPalace_PresentRewardChests(void) {
-  struct Actor *actor;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -1465,8 +1463,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_POTION_CHEST), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PSY_CRYSTAL_CHEST), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST), 0);
-  actor = Actor_Get(ACTOR_VIAL_CHEST);
-  actor->motionFlags = 0;
+  Actor_Get(ACTOR_VIAL_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_POTION_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->motionFlags = 0;

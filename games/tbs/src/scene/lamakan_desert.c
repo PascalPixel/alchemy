@@ -728,7 +728,6 @@ static void HeatGauge_CountStep(void) {
 /// an Ant Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
   struct Actor *leader;
-  struct Actor *turned;
   struct Actor *pit;
   s32 id;
   s32 best;
@@ -771,8 +770,7 @@ static void LamakanDesert_FallIntoPit(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // The leader turns his back on the pit.
-  turned = Actor_Get(ACTOR_PARTY_LEADER);
-  turned->facing =
+  Actor_Get(ACTOR_PARTY_LEADER)->facing =
       (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2) & -0x1000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);

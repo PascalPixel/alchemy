@@ -802,7 +802,6 @@ static void Vale_ClimbDownFromRoof(void) {
 /// behavior 50) jumps out in front of Isaac, then keeps watching him.
 static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   struct Actor *guard;
-  struct Actor *actor;
 
   guard = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
   Event_Start();
@@ -843,8 +842,8 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   // Yes: "Mt. Aleph is a sacred peak. No one can climb it without..."
   // No: "Well, I'll overlook it this time... But I've got my eye on..."
   Event_AskYesNo(ACTOR_MAN_GUARDING_MT_ALEPH, 0);
-  actor = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
-  actor->update = (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
+  Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
+      (void (*)(struct Actor *))Vale_HaveGuardWatchTheLeader;
   Actor_SetScript(ACTOR_MAN_GUARDING_MT_ALEPH, gVale_AlephGuardPatrol);
   GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Event_End();

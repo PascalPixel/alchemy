@@ -780,7 +780,6 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
 /// cannot get around it.
 static void ValePrologue_FirstRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
   struct Sprite *rockSprite;
 
@@ -823,8 +822,7 @@ static void ValePrologue_FirstRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(326, 918);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, 918);
           } else {
@@ -851,7 +849,6 @@ static void ValePrologue_ApplyFirstRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_SecondRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) == 0) {
@@ -890,8 +887,7 @@ static void ValePrologue_SecondRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(219, 843);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 829);
           } else {
@@ -991,7 +987,6 @@ static void ValePrologue_ApplyThirdRockCollision(void) {
 /// down the path as Isaac walks past.
 static void ValePrologue_FourthRockFalls(void) {
   struct Actor *rock;
-  struct Actor *leader;
   s32 targetHeight;
 
   if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) == 0) {
@@ -1026,8 +1021,7 @@ static void ValePrologue_FourthRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          leader = Actor_Get(ACTOR_PARTY_LEADER);
-          if (leader->z.fixed < px(1146)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < px(1146)) {
             ValePrologue_GaretCommentsOnBlockedPath(412, 1120);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 414, 1068);
           } else {
@@ -1185,7 +1179,6 @@ static void ValePrologue_GaretLeavesHisChest(void) {
 /// Unused: another version of Garet joining Isaac on the stormy night,
 /// which the game never plays.
 static void ValePrologue_UnusedGaretJoinsIsaac(void) {
-  struct Actor *actor;
   s32 message;
 
   if (Event_GetFlag(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -1208,8 +1201,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_SetScript(ACTOR_GARET_CHILD, gValePrologue_UnusedGaretPantingScript);
     // "*Hah* *Hah*"
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-    actor = Actor_Get(ACTOR_GARET_CHILD);
-    actor->scaleY = Q16_ONE;
+    Actor_Get(ACTOR_GARET_CHILD)->scaleY = Q16_ONE;
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
     Event_Wait(20);
     // "Are you trapped, too?"

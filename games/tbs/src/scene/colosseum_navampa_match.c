@@ -484,7 +484,6 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
   struct Actor *probe;
   struct Actor *log;
   struct Actor *upper;
-  struct Actor *lower;
   s32 x;
   s32 z;
 
@@ -501,8 +500,7 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
       upper = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
       upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       ColosseumNavampaMatch_MoveOnScales(upper, 32);
-      lower = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
-      ColosseumNavampaMatch_MoveOnScales(lower, 4);
+      ColosseumNavampaMatch_MoveOnScales(Actor_Get(ACTOR_SCALES_WEST_LEDGE), 4);
       GameFlag_Set(FLAG_WEIGHT_ON_SCALES);
       MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, z);
       MapGrid_CopyCellAttributes(1, 25, 1, 1, x, z);

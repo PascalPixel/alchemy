@@ -403,11 +403,8 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 
 /// Once Move pushes the crate aside, the way up to the inn's loft opens.
 static void LogRoomsA_CheckCrateMoved(void) {
-  struct Actor *crate;
-
   Event_Start();
-  crate = Actor_Get(ACTOR_CRATE);
-  if (FIELD_CELL(crate->x.fixed) == 42) {
+  if (FIELD_CELL(Actor_Get(ACTOR_CRATE)->x.fixed) == 42) {
     MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     GameFlag_Set(FLAG_VAULT_CRATE_MOVED);
   }

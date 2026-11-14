@@ -193,12 +193,7 @@ static void FileScreen_LoadBackground(void) {
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  {
-    struct Actor *leader;
-
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    leader->motionFlags = 0;
-  }
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 }
 
 /// The task that fades BG0 and the sprites in over the logo.

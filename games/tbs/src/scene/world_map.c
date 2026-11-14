@@ -2271,15 +2271,12 @@ static void WorldMap_UpdateLighthouseQuake(void) {
 /// A leg of the Tolbi-bound Ship's crossing, in which the ship sails north to
 /// its anchorage off the island.
 static void WorldMap_SailTolbiShipToIsland(void) {
-  struct Actor *actor;
-
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetAnimation(ACTOR_CROSSING_SHIP, ANIM_WALK);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 4872, 808);
-  actor = Actor_Get(ACTOR_CROSSING_SHIP);
-  actor->facing = FACING_NORTHWEST;
+  Actor_Get(ACTOR_CROSSING_SHIP)->facing = FACING_NORTHWEST;
   wait(1);
   WorldMap_StartZoom(6 * Q16_ONE / 5, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2486,8 +2483,6 @@ static void WorldMap_StartDousingStorm(void) {
 /// it begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
 /// Desert's storms.
 static void WorldMap_DouseMapStorm(void) {
-  struct Actor *leader;
-
   if (gFieldWork->raisedTrigger == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedTrigger = 0;
   }
@@ -2497,8 +2492,7 @@ static void WorldMap_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  leader->motionFlags = ACTOR_FALLS;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 }
 
 /// The storm drops the party outside Suhalla when its time in the air runs out.

@@ -410,9 +410,6 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
 /// The old man in the old couple's house moans for help, and his wife hurries
 /// to fetch Mia (FLAG_IMIL_MIA_SENT_FOR).
 static void Imil_TalkToOldMan(void) {
-  struct Actor *oldMan;
-  struct Actor *oldWoman;
-
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Event_Start();
     Actor_FaceActor(ACTOR_OLD_MAN, ACTOR_PARTY_LEADER, 0);
@@ -436,8 +433,7 @@ static void Imil_TalkToOldMan(void) {
       Event_End();
     } else {
       Event_Start();
-      oldMan = Actor_Get(ACTOR_OLD_MAN);
-      oldMan->timer = 10;
+      Actor_Get(ACTOR_OLD_MAN)->timer = 10;
       Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
       Event_SetMessageId(MsgMercuryOoohHelpMe);
       // "Oooh... Help me..."
@@ -463,8 +459,7 @@ static void Imil_TalkToOldMan(void) {
       Actor_StartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
       // "Get Mia... Please, get Mia!"
       Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
-      oldWoman = Actor_Get(ACTOR_OLD_WOMAN);
-      oldWoman->collisionFlags ^= ACTOR_PUSHABLE;
+      Actor_Get(ACTOR_OLD_WOMAN)->collisionFlags ^= ACTOR_PUSHABLE;
       Import_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
       Event_End();
     }
@@ -725,10 +720,7 @@ static void Imil_TalkToItemMerchant(void) {
 
 /// Across the counter of Imil's inn, the leader facing north, the inn opens.
 static void Imil_TalkToInnkeeper(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
+  if (IMIL_FACES_COUNTER_HALFWORD(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Inn_CheckIn(IMIL_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
@@ -747,10 +739,7 @@ static void Imil_TalkToInnkeeper(void) {
 
 /// Justin offers the Sanctum's services across its counter.
 static void Imil_TalkToJustin(void) {
-  struct Actor *leader;
-
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
+  if (IMIL_FACES_COUNTER_HALFWORD(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Event_Start();
     if (Event_GetFlag(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
       Event_SetMessageId(MSGNO(MsgImilMayOnlyStudentButCan));
@@ -1293,11 +1282,8 @@ static void Imil_PlaceMovedSnowman(void) {
 /// Walking into the way north out of Imil (step trigger 4): the leader faces
 /// north and goes into Imil Falls Cave (IMIL_TO_IMIL_FALLS_CAVE).
 static void Imil_LeaveNorth(void) {
-  struct Actor *work;
-
   Event_Start();
-  work = Actor_Get(ACTOR_PARTY_LEADER);
-  work->facing = FACING_NORTH;
+  Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

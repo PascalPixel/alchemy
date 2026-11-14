@@ -322,12 +322,10 @@ static void ColosseumSatrageMatch_PushPillar(void) { Colosso_PushActorAhead(); }
 
 /// Move on the stone pillar by The Wall, and each push, keeps where it stands.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
-  struct Actor *obstacle;
   s32 column;
   s32 row;
 
-  obstacle = Actor_Get(ACTOR_WALL_PILLAR);
-  if (FIELD_CELL(obstacle->x.fixed) == 36) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WALL_PILLAR)->x.fixed) == 36) {
     GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
     column = 35;
     row = 77;
@@ -424,22 +422,16 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
 /// Frost on the Log-Rolling Stage's western target freezes it and opens its
 /// crossing (FLAG_WEST_TARGET_FROZEN).
 static void ColosseumSatrageMatch_FreezeWestTarget(void) {
-  struct Actor *obstacle;
-
   GameFlag_Set(FLAG_WEST_TARGET_FROZEN);
-  obstacle = Actor_Get(ACTOR_PUDDLE_WEST);
-  obstacle->motionFlags = 0;
+  Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = 0;
   MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
 }
 
 /// Frost on the Log-Rolling Stage's eastern target freezes it and opens its
 /// crossing (FLAG_EAST_TARGET_FROZEN).
 static void ColosseumSatrageMatch_FreezeEastTarget(void) {
-  struct Actor *obstacle;
-
   GameFlag_Set(FLAG_EAST_TARGET_FROZEN);
-  obstacle = Actor_Get(ACTOR_PUDDLE_EAST);
-  obstacle->motionFlags = 0;
+  Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = 0;
   MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
 }
 

@@ -433,7 +433,7 @@
 	export EffectSprite_Draw, EffectSprite_DrawFar
 	export BattleEffect_StepVector3, BattleEffect_StepVector3Far
 	export BattleEffect_GetObjectPriority, BattleEffect_GetObjectPriorityFar
-	export Func_02005a60, FieldItem_JumpToLeaderFar
+	export Import_MadPlantLeapAtLeader, MadPlant_LeapAtLeaderFar
 	export EndingPicture_Start, EndingPicture_StartFar
 	export Event_PlayCueNearFocus, Event_PlayCueNearFocusFar
 	export MapGrid_GetAttributeBAt, MapGrid_GetAttributeBAtFar
@@ -471,7 +471,7 @@
 	export AlhafraManor_CountAnswer, Func_080c8930
 	export BattleEffect_FillOverlayTiles, BattleEffect_FillOverlayTilesFar
 	export Cyclone_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
-	export Func_02000f14, FieldItem_JumpToLeaderFar
+	export Import_DebugMadPlantLeap, MadPlant_LeapAtLeaderFar
 	export Tightrope_Settle, Tightrope_SettleFar
 	export EffectSprite_InitFromSlot94, EffectSprite_InitFromSlot94Far
 	export BattleEffect_DrawSpriteAtWorldPosition, BattleEffect_DrawSpriteAtWorldPositionFar
@@ -481,7 +481,7 @@
 	export EffectSprite_InitFromSlot94Blended, EffectSprite_InitFromSlot94BlendedFar
 	export Sanctum_Run, Sanctum_RunFar
 	export WorldMap_SetReturnLeavingScene, WorldMap_SetReturnLeavingSceneFar
-	export FieldItem_JumpToLeader, FieldItem_JumpToLeaderFar
+	export MadPlant_LeapAtLeader, MadPlant_LeapAtLeaderFar
 	export StatusScreen_Run, StatusScreen_RunFar
 	export MenuCursor_Advance, MenuCursor_AdvanceFar
 	export Inn_CheckIn, Inn_CheckInFar

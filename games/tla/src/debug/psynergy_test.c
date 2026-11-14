@@ -354,7 +354,7 @@ void Func_02000650(void) {
 extern u8 gData_020017b0__psynergy_test[] __asm__("gData_020017b0");
 
 void Func_02000660(void) {
-  Func_02000f14(249, 40, 168);
+  Import_DebugMadPlantLeap(249, 40, 168);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(14, 0);
 }

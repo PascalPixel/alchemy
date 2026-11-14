@@ -48,7 +48,7 @@ void FieldCamera_WaitForArrival(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
-void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
+void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
 
@@ -158,7 +158,7 @@ static __inline__ struct Actor *TaopoSwamp_CreateActor(s32 type, s32 x, s32 y,
 }
 
 static __inline__ void Func_020029a8_(s32 a, s32 b, s32 c) {
-  FieldItem_JumpToLeader(a, b, c);
+  MadPlant_LeapAtLeader(a, b, c);
 }
 
 s32 Vent_IsActive(s32 hole);

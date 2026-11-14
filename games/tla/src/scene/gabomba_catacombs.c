@@ -26,6 +26,7 @@
 #include "system/system.h"
 #include "version.h"
 #include "objcmd.h"
+#include "module/field/event_commands.h"
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -36,7 +37,7 @@ void Event_End(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void Scene_TalkToActor(s32 a);
 void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
+void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 
 extern u32 gGabombaCatacombs_SprayScript[];
 
@@ -51,8 +52,8 @@ static __inline__ void GabombaCatacombs_ClearBushes(s32 a, s32 b, s32 c, s32 d,
   Cyclone_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
-static __inline__ void GabombaCatacombs_GiveItem(s32 a, s32 b, s32 c) {
-  FieldItem_JumpToLeader(a, b, c);
+static __inline__ void GabombaCatacombs_MadPlantLeaps(s32 a, s32 b, s32 c) {
+  MadPlant_LeapAtLeader(a, b, c);
 }
 
 struct GabombaCatacombsVec {
@@ -64,11 +65,6 @@ struct GabombaCatacombsVec {
 struct GabombaCatacombsFollower {
   u8 unk00[0x10];
   s32 z;
-};
-
-struct GabombaCatacombsParty {
-  u8 unk000[0x254];
-  u16 value254;
 };
 
 extern u32 gFieldEffect_MediumScript[];
@@ -97,7 +93,9 @@ void Actor_DepartInRing(s32 id);
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
-void GabombaCatacombs_FightMud(void) { Field_RequestDjinnBattle(8, DJINNI_MUD); }
+void GabombaCatacombs_FightMud(void) {
+  Field_RequestDjinnBattle(8, DJINNI_MUD);
+}
 
 void GabombaCatacombs_ClearRoom1Bushes(void) {
   GabombaCatacombs_ClearBushes(7, 63, 1, 16, 16, 57, 63);
@@ -232,11 +230,11 @@ void GabombaCatacombs_ClearRoom4Bushes(void) {
 // Cyclone on the last bushes: a Mad Plant hides there, and attacks.
 void GabombaCatacombs_UncoverMadPlant(void) {
   GabombaCatacombs_ClearBushes(7, 23, 0, 4, 5, 60, 56);
-  if (GameFlag_Get(0x9b5) == 0) {
-    GabombaCatacombs_GiveItem(249, 168, 424);
-    ((struct GabombaCatacombsParty *)&gMainRoutineWork)->value254 = 0x19b5;
+  if (GameFlag_Get(FLAG_MAD_PLANT(0)) == 0) {
+    GabombaCatacombs_MadPlantLeaps(SPRITE_MAD_PLANT, 168, 424);
+    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(0));
     gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-    Field_RequestBattleFromEncounterTable(106, 0);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 0);
   }
 }
 

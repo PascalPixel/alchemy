@@ -170,7 +170,7 @@ extern struct ActorPlacement gGaiaRockInside_Room5Placements[];
 extern s32 gGaiaRockInside_PlatformUpScript[];
 
 void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
-void FieldItem_JumpToLeader(s32 a, s32 b, s32 c);
+void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 
 extern u32 gGaiaRockInside_LeaderStepsBackScript[];
 extern s32 gGaiaRockInside_AltarShakesScript[];
@@ -674,8 +674,8 @@ void GaiaRockInside_CycloneClearsHallBushes(void) {
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
-static __inline__ void GaiaRockInside_GiveItem(s32 a, s32 b, s32 c) {
-  FieldItem_JumpToLeader(a, b, c);
+static __inline__ void GaiaRockInside_MadPlantLeaps(s32 a, s32 b, s32 c) {
+  MadPlant_LeapAtLeader(a, b, c);
 }
 
 static __inline__ void GaiaRockInside_CopyTouchedCells(s32 a, s32 b, s32 c,
@@ -694,11 +694,11 @@ void GaiaRockInside_CycloneStartsPlatforms(void) {
 
 void GaiaRockInside_CycloneMadPlant(void) {
   GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
-  if (Event_GetFlag(0x9b7) == 0) {
-    GaiaRockInside_GiveItem(249, 328, 344);
-    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(0x9b7);
+  if (Event_GetFlag(FLAG_MAD_PLANT(2)) == 0) {
+    GaiaRockInside_MadPlantLeaps(SPRITE_MAD_PLANT, 328, 344);
+    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(2));
     gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-    Field_RequestBattleFromEncounterTable(106, 2);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MAD_PLANTS, 2);
   }
 }
 

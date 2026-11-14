@@ -716,4 +716,11 @@
 #define FLAG_AREA_TEMP_FE 0x3fe
 #define FLAG_AREA_TEMP_FF 0x3ff
 
+/// The Mad Plants hidden in bushes, one flag each, set once it is beaten, in
+/// the order of their battles in ENCOUNTER_TABLE_MAD_PLANTS: the Gabomba
+/// Catacombs' (0), Taopo Swamp's, Gaia Rock's, Jupiter Lighthouse's and
+/// Trial Road's (4).
+#define FLAG_MAD_PLANT_FIRST 0x9b5
+#define FLAG_MAD_PLANT(n) (FLAG_MAD_PLANT_FIRST + (n))
+
 #endif

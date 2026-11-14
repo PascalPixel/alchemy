@@ -239,7 +239,7 @@ struct Object {
   u16 rest22 : 2;
 };
 
-void Func_02000f14(s32, s32, s32);
+void Import_DebugMadPlantLeap(s32, s32, s32);
 
 extern char ResourceId_FallingRock;
 

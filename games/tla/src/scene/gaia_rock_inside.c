@@ -4014,7 +4014,7 @@ void Func_0200495c(s32 layer, s32 keep) {
 
 void Func_020049e4(void) {
   if (gMainRoutineWork.renderMode == 2) {
-    u8 *event = Ram_HeapSlots->fieldWork;
+    struct FieldWork *event = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapWork;
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
     s32 x = object->x / 0x100000;
@@ -4024,7 +4024,7 @@ void Func_020049e4(void) {
     s32 code = cell->collisionCode;
 
     if (code >= 1 && code <= 230)
-      *(u16 *)(event + 340) = code;
+      event->stepTrigger = code;
   }
 }
 

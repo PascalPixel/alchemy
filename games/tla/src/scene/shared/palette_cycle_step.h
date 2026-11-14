@@ -7,14 +7,14 @@ void PaletteCycle_Step(void) {
   u16 *p;
 
   if (gPaletteCyclePausesInEvents != 0) {
-    u8 *work = Ram_HeapSlots->fieldWork;
-    s16 *state = (s16 *)(work + 358);
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    s16 *state = &work->psynergy;
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct FieldWork *)work)->revealActive != 0)
+    if (work->revealActive != 0)
       return;
-    if (*(s16 *)(work + 350) != 0)
+    if (work->pauseMenu != 0)
       return;
   }
   i = 0;

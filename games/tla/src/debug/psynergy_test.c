@@ -418,11 +418,11 @@ void Actor_FallOverById(s32 actor, s32 angle);
 void Actor_DepartInRing(s32 actor);
 
 s32 Func_0200079c(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  *(s32 *)(work + 428) = 0x100;
-  work[3383] = 0;
-  work[3382] = 0;
+  work->transition = 0x100;
+  work->sceneAttributeHigh = 0;
+  work->sceneAttributeLow = 0;
   Item_AdjustCounter(5, 1);
   Item_AdjustCounter(5, 1);
   Item_AdjustCounter(5, 1);

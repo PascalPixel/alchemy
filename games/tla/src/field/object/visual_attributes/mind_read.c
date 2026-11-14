@@ -675,7 +675,7 @@ loop:
 /// once the leader is 60 pixels from the centre or the timer has run out,
 /// requests the effect's end.
 void FieldPsynergy_WatchLeaderDistance(void) {
-  u8 *work;
+  struct FieldWork *work;
   struct Actor *actor;
   s16 *timer;
   s32 dx;
@@ -685,16 +685,16 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   work = Ram_HeapSlots->fieldWork;
   party = &gMainRoutineWork;
   actor = ObjectTable_Get(party->currentOwner);
-  if (*(s8 *)(work + 0xca5) != 0) {
-    timer = (s16 *)(work + 0xca6);
+  if (work->effectTimerRunning != 0) {
+    timer = &work->revealFrames;
     if (*timer != 0)
       (*timer)--;
   }
 
-  dx = Iwram_MulQ16(*(s16 *)(work + 0xca8) - actor->x / Q16_ONE, 0xd105);
-  dz = *(s16 *)(work + 0xcaa) - (actor->z - actor->y) / Q16_ONE;
-  if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 0xca6) == 0) {
-    u16 *slot = (u16 *)(work + 358);
+  dx = Iwram_MulQ16(work->revealCenterX - actor->x / Q16_ONE, 0xd105);
+  dz = work->revealCenterY - (actor->z - actor->y) / Q16_ONE;
+  if (dx * dx + dz * dz >= 3600 || work->revealFrames == 0) {
+    u16 *slot = &work->psynergy;
     u32 request = 0x2090;
 
     *slot = request;

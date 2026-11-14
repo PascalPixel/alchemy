@@ -35,7 +35,7 @@ void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 void Camera_WorldToScreen(struct EffectVector *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
 
-  if (*(s8 *)((u8 *)slots->fieldWork + 0x18a) == 3) {
+  if (((struct FieldWork *)slots->fieldWork)->mode == 3) {
     s32 result[3];
 
     Render_ProjectPoint(position, result);
@@ -218,7 +218,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 
 void EventObject_Initialize(void) {
   struct FinishWork *work = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->object;
   s32 quantity = work->quantity;
   s32 zero;
@@ -258,7 +258,7 @@ void EventObject_Initialize(void) {
   } else {
     BattleEffect_StopMainActor();
   }
-  event[0xcb7] = 1;
+  event->castStarted = 1;
 }
 
 #include "system/frame.h"
@@ -327,7 +327,7 @@ void BattleEffect_CleanupSceneObjects(void) {
 /// work's byte at 0x970.
 void Func_080dc954(void) {
   struct HeapSlots *slots = Ram_HeapSlots;
-  s32 mode = *(s8 *)((u8 *)slots->fieldWork + 0x18a);
+  s32 mode = ((struct FieldWork *)slots->fieldWork)->mode;
 
   if (mode == 3)
     *((u8 *)slots->mapWork + 0x970) = mode;

@@ -558,7 +558,7 @@ UNUSED s32 DebugShortcut_Run(void) {
   s32 column;
   s32 ability;
   s32 owner;
-  u8 *events;
+  struct FieldWork *events;
   s32 x;
   s32 y;
   s32 pp;
@@ -639,7 +639,7 @@ done:
       owner = gMainRoutineWork.currentOwner;
     if (ability == 0) {
       if (result == 0)
-        *(u16 *)(events + 0x166) = 0;
+        events->psynergy = 0;
       if (result == 1)
         gMainRoutineWork.packedEvents[0] = 0;
       if (result == 2) {
@@ -649,7 +649,7 @@ done:
     } else {
       owner = (owner << 10) | (ability & 0x3fff);
       if (result == 0)
-        *(u16 *)(events + 0x166) = owner;
+        events->psynergy = owner;
       if (result == 1)
         gMainRoutineWork.packedEvents[0] = owner;
       if (result == 2) {

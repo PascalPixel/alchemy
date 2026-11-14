@@ -160,9 +160,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000118(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event[0xd38] = 1;
+  event->unkd38 = 1;
 }
 
 extern struct MapCell gMapCellBuffer[];
@@ -2789,7 +2789,7 @@ void Func_020046b4(void) {
 }
 
 void Func_02004718(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
+  gFieldWork->transition = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 

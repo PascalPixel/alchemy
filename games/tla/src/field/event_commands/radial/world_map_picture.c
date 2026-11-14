@@ -1021,7 +1021,7 @@ void WorldMap_StartZoom(s32 scale, s32 frames);
 void WorldMap_ZoomOutWhileLHeld(void) {
   struct MainRoutineWork *party;
 
-  if (*(s8 *)((u8 *)Ram_HeapSlots->fieldWork + 394) == 3) {
+  if (gFieldWork->mode == 3) {
     Leader_StopMoving();
     WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
     while (gInput.held & KEY_L)

@@ -197,7 +197,7 @@ const void *Scene_GetPlacements(void) {
 /// from 8 to 63, shows the picture the event work's index names and moves the
 /// party's current owner to it.
 void Func_020004cc(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 index;
   s32 i;
 
@@ -214,7 +214,7 @@ loop:
   i++;
   if ((u32)i <= 63)
     goto loop;
-  index = ((struct FieldWork *)work)->stepTrigger;
+  index = work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gData_02005de0[index].steps, gData_02005de0[index].x,
@@ -230,7 +230,7 @@ loop:
       Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(6);
-  FieldEvent_SetExitRequest(((struct FieldWork *)work)->stepTrigger);
+  FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
@@ -1434,13 +1434,11 @@ void Func_02002694(void) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_ShowMessageThenWait(9, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     FieldEvent_ShowMessageThenWait(9, 0, 0);
   }
   FieldEvent_ShowMessageThenWait(8, 0, 0);
@@ -1596,14 +1594,12 @@ void Func_02002694(void) {
       asm volatile("" : "+l"(a0));
       FieldEvent_ShowMessageThenWait(a0, 0, 0);
     }
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(30);
     Actor_RunRepeatedMotion(10, 2);
     FieldEvent_Wait(10);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     FieldEvent_ShowMessageThenWait(10, 0, 0);
   }
   Actor_RunRepeatedMotion(8, 2);
@@ -1668,8 +1664,7 @@ void Func_02002694(void) {
     Actor_RunRepeatedMotion(5, 2);
     FieldEvent_Wait(20);
     FieldEvent_ShowMessageThenWait(5, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(30);
     {
@@ -1680,8 +1675,7 @@ void Func_02002694(void) {
     }
     FieldEvent_Wait(20);
     FieldEvent_Wait(20);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     FieldEvent_ShowMessageThenWait(5, 0, 0);
   }
   Actor_FaceDirection(10, FACING_NORTHEAST, 0);
@@ -2422,12 +2416,10 @@ L_0200c400:;
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(25);
     FieldEvent_ShowMessageThenWait(6, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(40);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     FieldEvent_ShowMessageThenWait(6, 0, 0);
   }
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2546,8 +2538,7 @@ L_0200c694:;
     FieldEvent_Wait(20);
     FieldEvent_Wait(10);
   } else {
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   }
   Actor_WalkByAndWait(9, -42, 0);
   Actor_FaceDirection(4, FACING_NORTH, 0);
@@ -2687,12 +2678,10 @@ L_0200cc42:;
   if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 10, 0, 0);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
     FieldEvent_Wait(40);
-    *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-        (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     {
       s32 a0 = 0x200a;
       FieldEvent_ShowMessageThenWait(a0, 0, 0);
@@ -2739,8 +2728,7 @@ L_0200cda2:;
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Actor_FaceDirection(10, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  *(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) =
-      (*(u16 *)(((s32)Ram_HeapSlots->fieldWork + 0x1c4)) + 1);
+  gFieldWork->message = (gFieldWork->message + 1);
   Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(6, 0, 0);
   Actor_FaceDirection(5, FACING_EAST, 0);

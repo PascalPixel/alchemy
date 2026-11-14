@@ -99,8 +99,7 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 }
 
 void Shop_RestoreFieldPalette(void) {
-  BattleEffect_ApplyColorToTargetBufferFar(
-      (s32)Ram_HeapSlots->fieldWork + 0x222, 1);
+  BattleEffect_ApplyColorToTargetBufferFar((s32)gFieldWork->savedFadeTarget, 1);
   PaletteFade_StartInterpolationFar(16);
 }
 

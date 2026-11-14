@@ -1250,8 +1250,7 @@ void AquaRockInside_ReadParchTablet(void) {
     goto L_02009c56;
   }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
-  FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), s16, 0) =
-      (gFieldWork->message + 1);
+  gFieldWork->message = (gFieldWork->message + 1);
   Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
   FieldEvent_Wait(1);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 256, 184);

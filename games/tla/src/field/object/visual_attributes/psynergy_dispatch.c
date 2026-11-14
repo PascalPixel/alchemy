@@ -345,7 +345,7 @@ void FieldPsynergy_RunHandler(s32 kind) {
 /// yet: each kind runs its effect to the end.
 void FieldPsynergy_Run(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
   s32 objectId;
@@ -429,7 +429,7 @@ void FieldPsynergy_Run(void) {
     }
   } else if (animation == FIELD_PSYNERGY_MIND_READ) {
     // A wave still running from the last cast is reset first.
-    if (*(s8 *)(event + 0xca4) != 0)
+    if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
     FieldPsynergy_StartMindReadWave(scene->firstObjectId, targetId);
   }
@@ -439,7 +439,7 @@ void FieldPsynergy_Run(void) {
 /// chose (BattleFxScene.secondObjectId).
 void FieldPsynergy_Dispatch(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
 
@@ -503,7 +503,7 @@ void FieldPsynergy_Dispatch(void) {
     // is not the paused object stops walking while the wave runs.
     struct MainRoutineWork *party;
 
-    if (*(s8 *)(event + 0xca4) != 0)
+    if (event->revealActive != 0)
       FieldPsynergy_EndReveal();
     party = &gMainRoutineWork;
     if (party->pausedObject != scene->secondObjectId)
@@ -626,7 +626,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
   s32 depth;
   s32 *out;
 
-  if (*((s8 *)Ram_HeapSlots->fieldWork + 394) == 3) {
+  if (gFieldWork->mode == 3) {
     point[0] = object->x;
     out = screen;
     point[1] = object->y;

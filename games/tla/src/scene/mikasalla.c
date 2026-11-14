@@ -100,7 +100,7 @@ extern struct WarpEntry__mikasalla gMikasalla_Doors[];
 /// in and leaves by the exit of the door's number. The fifth door is entered
 /// without the walk.
 void Mikasalla_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 id;
   s16 *choice;
   s32 index;
@@ -113,7 +113,7 @@ void Mikasalla_EnterDoor(void) {
     if (actor != NULL)
       actor->motionFlags = 0;
   }
-  choice = (s16 *)(work + 340);
+  choice = &work->stepTrigger;
   index = *choice;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
@@ -198,7 +198,7 @@ void Mikasalla_CastParch(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
+  gFieldWork->transition = 0x100;
   return 0;
 }
 

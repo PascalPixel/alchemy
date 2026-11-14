@@ -1673,14 +1673,14 @@ void PaletteCycle_StepAt(void) {
   u16 *p;
 
   if (gTrialRoad_PaletteCycleRunning != 0) {
-    u8 *work = Ram_HeapSlots->fieldWork;
-    s16 *state = (s16 *)(work + 358);
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    s16 *state = &work->psynergy;
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct FieldWork *)work)->revealActive != 0)
+    if (work->revealActive != 0)
       return;
-    if (*(s16 *)(work + 350) != 0)
+    if (work->pauseMenu != 0)
       return;
   }
   i = 0;
@@ -1768,7 +1768,7 @@ s32 Scene_Initialize(void) {
   s32 entrance = gMainRoutineWork.entrance;
   s32 pattern = gTrialRoadState->pattern;
 
-  if (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 344) != 0)
+  if (gFieldWork->exit != 0)
     return 0;
   if (scene == (s32)&SceneId_TrialRoad1) {
     if (entrance <= 7) {

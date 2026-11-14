@@ -218,7 +218,7 @@ void Func_0200058c(void) {
        ->v)
 
 void Func_020005d0(void) {
-  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *choice;
   s32 x = 37;
   s32 *owner;
@@ -228,7 +228,7 @@ void Func_020005d0(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  choice = (s16 *)(work + 340);
+  choice = &work->stepTrigger;
   if (*choice == 3)
     x = 25;
   Event_PlaySound(SE_DOOR_OPEN);

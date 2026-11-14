@@ -559,10 +559,10 @@ struct Trigger gIncreaseItemAndLevel_NameTriggers[] = {
 // FieldWork has transition and transitionFrames there, which a shared
 // declaration here would settle.
 void IncreaseItemAndLevel_RequestExit(s32 countdown) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  *(s32 *)(event + 428) = 513;
-  *(s32 *)(event + 436) = 24;
+  event->transition = 513;
+  event->transitionFrames = 24;
   Import_EventSetExitRequest(countdown);
 }
 
@@ -570,10 +570,10 @@ void IncreaseItemAndLevel_RequestExit(s32 countdown) {
 /// debug room (entrances up to 89) draws ACTOR_LEVEL_EDITOR 1.7 times its
 /// size, as The Broken Seal's Japanese edition does.
 s32 IncreaseItemAndLevel_Initialize(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  *(s32 *)(event + 428) = 516;
-  *(s32 *)(event + 436) = 24;
+  event->transition = 516;
+  event->transitionFrames = 24;
   if (gMainRoutineWork.entrance <= 89) {
     Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = 0x1b333;
     Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = 0x1b333;

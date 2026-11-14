@@ -141,7 +141,7 @@ void MercuryLighthouse_HearVoices(void) {
   Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);
   Actor_SetSpritePriority(8, 2);
   Actor_SetSpritePriority(9, 2);
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 436) = 40;
+  gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -220,8 +220,8 @@ void MercuryLighthouse_HearVoices(void) {
   Event_Wait(20);
   *(u16 *)BG_PLTT = 0;
   wait(1);
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 436) = 16;
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0x201;
+  gFieldWork->transitionFrames = 16;
+  gFieldWork->transition = 0x201;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetFlag(0xa3c);

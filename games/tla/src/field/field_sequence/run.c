@@ -522,7 +522,7 @@ struct Object__field_sequence {
 };
 
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
-  u8 *workBytes;
+  struct FieldWork *workBytes;
   u8 *mapBytes;
   struct Object__field_sequence *leader;
   union PolarOffsetPosition probePosition;
@@ -544,7 +544,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
       Vector_AddPolarOffset(px(16), leader->angle, position);
     }
-    if ((s8)workBytes[0x18a] == 3) {
+    if ((s8)workBytes->mode == 3) {
       s32 x, z;
 
       x = probePosition.vector.x;
@@ -570,7 +570,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     } else if (Scene_FindTrigger(3, collisionCode) != 0) {
       result = collisionCode;
     }
-    if (result == 0 && (s8)workBytes[0x18a] == 3) {
+    if (result == 0 && (s8)workBytes->mode == 3) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           WorldMap_GetCollisionFar(probePosition.coordinates) == 3)
         result = 99;

@@ -332,7 +332,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// The world map's render mode 8 start: with flag 0x147 a blank message is
 /// shown first, the event work's counters are cleared.
 void WorldMap_SetUpFlyingShip(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   gMainRoutineWork.renderMode = 8;
   if (Event_GetFlag(0x147)) {
@@ -344,25 +344,19 @@ void WorldMap_SetUpFlyingShip(void) {
     Actor_StartRenderModeScript();
   Leader_Search();
   if (Event_GetFlag(0x147))
-    work[3387] = 0;
+    work->climbing = 0;
   else
-    work[3387] = 1;
+    work->climbing = 1;
   if (Event_GetFlag(0x147)) {
     Message_CloseFinishedWindows();
     WorldMap_ReloadPendingAreaGraphics();
   }
   Gauge_Init();
-  {
-    s32 zero;
-
-    /* FAKEMATCH(temporary): the halfword counters take an s32 zero assigned
-     * inside the first store. */
-    *(u16 *)(work + 346) = zero = 0;
-    *(u16 *)(work + 350) = zero;
-    *(u16 *)(work + 348) = zero;
-    ((struct FieldWork *)work)->encounter = zero;
-    *(u16 *)(work + 358) = zero;
-  }
+  work->fieldMenu = 0;
+  work->pauseMenu = 0;
+  work->aButton = 0;
+  work->encounter = 0;
+  work->psynergy = 0;
 }
 
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
@@ -1115,10 +1109,10 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       FieldEvent_ShowMessageThenWait(20, 0, 5);
-      (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+      (gFieldWork->message)++;
     } else {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-      (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+      (gFieldWork->message)++;
       FieldEvent_ShowMessageThenWait(20, 0, 5);
     }
     Actor_TurnToFaceEachOther(4, 23, 0);

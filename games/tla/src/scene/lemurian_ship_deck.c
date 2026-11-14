@@ -59,7 +59,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// opening first unless it already has (flag 0x201).
 void LemurianShipDeck_EnterCabin(void) {
   if (Event_GetFlag(0x985)) {
-    u8 *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
     u32 i;
 
     Event_Start();
@@ -86,7 +86,7 @@ void LemurianShipDeck_EnterCabin(void) {
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
     Event_PlaySound(SE_MAP_EXIT);
-    FieldEvent_SetExitRequest(((struct FieldWork *)work)->stepTrigger);
+    FieldEvent_SetExitRequest(work->stepTrigger);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Event_End();
@@ -505,7 +505,7 @@ s32 Scene_Initialize(void) {
   if (party->scene == (s32)&SceneId_LemurianShipDeck1) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
-    *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
+    gFieldWork->transition = 0x100;
     /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);

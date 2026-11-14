@@ -6,6 +6,7 @@
 /// party ties the second with Lash (OseniaCliffs_LashRope).
 
 #include "shared/tables.h"
+#include "field/field_work.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -80,7 +81,7 @@ s32 Scene_Initialize(void) {
 
   map->mode = 1;
   gOseniaCliffs_PaletteCycleStep[0] = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 256;
+  gFieldWork->transition = 256;
   Task_Add(OseniaCliffs_CyclePalette, 0x480);
   {
     u8 *flags =

@@ -328,9 +328,9 @@ void Func_020002c8(void) {
 }
 
 void Func_020002e8(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event[3384] = 1;
+  event->unkd38 = 1;
 }
 
 void Func_020002fc(void) {
@@ -613,14 +613,14 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.scene;
   entrance = gMainRoutineWork.entrance;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0x100;
+  gFieldWork->transition = 0x100;
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_LIT);
   Palette_SetColorsFade((s32)gData_0200338c, (s32)gData_0200339c,
                         (s32)gData_020033c8, (s32)gData_020033f4);
   if (scene != (s32)&SceneId_MarsLighthouseRoomM6 &&
       scene == (s32)&SceneId_MarsLighthouseRoomM1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0x204;
+    gFieldWork->transition = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       s32 unset = Event_GetFlag(0xa31);
@@ -1034,7 +1034,7 @@ void Func_0200055c(void);
 void PaletteCycle_Fade(void);
 
 void Func_0200166c(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
+  gFieldWork->transition = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 

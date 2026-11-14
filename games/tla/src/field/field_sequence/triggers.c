@@ -183,7 +183,7 @@ s32 Scene_TalkToActor(s32 id) {
   s32 paused;
   s32 busyFlags;
   s32 silent;
-  u8 *event;
+  struct FieldWork *event;
   struct Actor *leader;
   struct Actor *shown;
   struct ContainerRow *row;
@@ -196,7 +196,7 @@ s32 Scene_TalkToActor(s32 id) {
   s32 contents;
   s32 index;
   s32 slot;
-  u8 *work;
+  struct FieldWork *work;
 
   placement = Scene_FindActorPlacement(id);
   result = -1;
@@ -229,7 +229,7 @@ s32 Scene_TalkToActor(s32 id) {
       type = 131;
       noHint = result;
       flag = result;
-      contents = *(s16 *)(event + 0xd34);
+      contents = event->unkd34;
       index = 79;
       found = 1;
     }
@@ -307,10 +307,9 @@ s32 Scene_TalkToActor(s32 id) {
         if (flag != -1)
           gMainRoutineWork.pendingDjinnEvent = flag | 0x1000;
         if (contents > 7)
-          *(u16 *)(work + 356) =
-              Encounter_GetFormationAtSlot(105, contents - 8);
+          work->encounter = Encounter_GetFormationAtSlot(105, contents - 8);
         else
-          *(u16 *)(work + 356) = Encounter_GetFormationAtSlot(104, contents);
+          work->encounter = Encounter_GetFormationAtSlot(104, contents);
         gMainRoutineWork.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gMainRoutineWork.sceneCue);

@@ -25,11 +25,11 @@ void FieldPsynergy_ReleaseSceneSprite(void) {
 /// Returns the map cell at position x, z in the given layer, read from the
 /// world map's blocks or the cell buffer by the event work's mode.
 struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cells;
 
-  if ((s8)event[394] == 3) {
+  if ((s8)event->mode == 3) {
     cells = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
                                                (((z / 0x200000) & 31) << 5)];
   } else {
@@ -46,9 +46,9 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
 /// on a Cyclone cell, water or raised ground, and then on sand, or where
 /// attribute bit 1 is set (clear, when the event work's byte 0xd36 is set).
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (*(s8 *)(event + 394) == 3)
+  if (event->mode == 3)
     return MapGrid_IsSandCell(x, z, layer);
   if (MapGrid_GetCycloneCellKind(x, z, layer) != 0 ||
       MapGrid_IsWaterCell(x, z, layer) != 0 ||
@@ -56,7 +56,7 @@ s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
     return 0;
   if (MapGrid_IsSandCell(x, z, layer) != 0)
     return 1;
-  if (*(s8 *)(event + 0xd36) == 0)
+  if (event->sceneAttributeLow == 0)
     return MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
   return ~MapGrid_GetCellAt(x, z, layer)->attributeB & 1;
 }
@@ -77,9 +77,9 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z) {
 /// collision code 232, or on the world map collision 5 or 6; the event work's
 /// byte 0xd37 turns the answer round.
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 column = x;
-  if (*(s8 *)(event + 394) == 3) {
+  if (event->mode == 3) {
     s32 position[3];
 
     SET_VECTOR(position, column, 0, z);
@@ -91,7 +91,7 @@ s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
     column = (u32)(-code | code) >> 31;
     column = 1 - column;
   }
-  if (*(s8 *)(event + 0xd37) != 0)
+  if (event->sceneAttributeHigh != 0)
     column = 1 - ((u32)(-column | column) >> 31);
   return column;
 }
@@ -105,9 +105,9 @@ u8 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer) {
 /// Whether the cell at (x, z) is water: attribute bit 16, or on the world map
 /// collision 2 to 4.
 s32 MapGrid_IsWaterCell(s32 x, s32 z, s32 layer) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (*(s8 *)(event + 394) == 3) {
+  if (event->mode == 3) {
     s32 position[3];
     s32 collision;
 

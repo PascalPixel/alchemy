@@ -722,12 +722,12 @@ void Loho_TurnAndClimbDownLadder(void) {
 }
 
 void Loho_SetUpTown(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
+  gFieldWork->transition = 256;
   Actor_SetSpriteFlags(Actor_GetById(20), 0);
 }
 
 void Loho_SetUpRoom2(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 521;
+  gFieldWork->transition = 521;
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
 }
 

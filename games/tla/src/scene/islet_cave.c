@@ -353,7 +353,7 @@ void Func_02000580(s32 scale) {
 extern struct MapGridCellAnimation gData_020019ec[];
 
 void Func_020005fc(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 i;
   u32 index;
 
@@ -370,7 +370,7 @@ loop:
   i++;
   if (i <= 63)
     goto loop;
-  index = ((struct FieldWork *)work)->stepTrigger - 1;
+  index = work->stepTrigger - 1;
   Sound_Play(SE_DOOR_OPEN);
   index >>= 1;
   {
@@ -387,7 +387,7 @@ loop:
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_Wait(6);
-  Import_EventSetExitRequest(((struct FieldWork *)work)->stepTrigger);
+  Import_EventSetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

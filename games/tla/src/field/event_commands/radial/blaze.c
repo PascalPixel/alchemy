@@ -309,9 +309,9 @@ s32 Actor_CheckBlocked(struct Actor *object) {
   struct Actor *other;
   s32 i;
 
-  s8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   result = 0;
-  if (work[394] != EVENT_MODE_NO_CELL_TEST) {
+  if (work->mode != EVENT_MODE_NO_CELL_TEST) {
     if (MapGrid_CheckCollisionAtFar(object->x, object->z, 0,
                                     object->terrainHeight) != 0)
       result = 1;

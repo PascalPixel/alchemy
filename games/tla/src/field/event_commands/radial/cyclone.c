@@ -240,10 +240,10 @@ void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 
 void FieldPsynergy_Cyclone(void) {
   struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *effect = Ram_HeapSlots->effectWork;
   struct Actor *owner = *(struct Actor **)(effect + 16);
-  s16 *points = (s16 *)(event + 0xcc0);
+  s16 *points = &event->psynergyCells[0];
   s32 spread = 0x40000;
   s32 step = 0xe000;
   struct CanvasSpriteWork *canvas;
@@ -326,9 +326,9 @@ void FieldPsynergy_Cyclone(void) {
   work->state = 0;
   work->timer = 0;
   work->state = 0;
-  if (*(s16 *)(event + 0xd40) != -1)
+  if (event->unkd40 != -1)
     mode = 3;
-  else if (*(s16 *)(event + 0xd3c) != -1)
+  else if (event->unkd3c != -1)
     mode = 2;
   else {
     point = points[0];
@@ -350,9 +350,9 @@ void FieldPsynergy_Cyclone(void) {
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
-    work->to[0] = *(s16 *)(event + 0xd40) << 16;
+    work->to[0] = event->unkd40 << 16;
     work->to[1] = owner->y + 0x200000;
-    work->to[2] = *(s16 *)(event + 0xd42) << 16;
+    work->to[2] = event->unkd42 << 16;
     Task_Add(Cyclone_LiftLeader, 0x480);
     while (work->state != 999) {
       /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
@@ -381,9 +381,9 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
-    work->to[0] = *(s16 *)(event + 0xd3c) << 16;
+    work->to[0] = event->unkd3c << 16;
     work->to[1] = owner->y;
-    work->to[2] = *(s16 *)(event + 0xd3e) << 16;
+    work->to[2] = event->unkd3e << 16;
     Task_Add(Cyclone_CarryLeader, 0x480);
     frame = 0;
     while (work->state != 999) {

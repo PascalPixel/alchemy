@@ -71,7 +71,7 @@ struct Actor *Actor_GetById(u32 objectId);
 void FieldPsynergy_EndSand(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
   u8 *effect = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 pictureEntry;
   struct Actor *owner = *(struct Actor **)(effect + 16);
   s32 particleEntry;
@@ -104,7 +104,7 @@ void FieldPsynergy_EndSand(void) {
   particleSprite = work + 0x800;
   for (; i < 64; i++) {
     Sand_SpawnGrain(particleSprite, particle, i, particleTiles,
-                    *(s16 *)(event + 0xd48));
+                    event->standing);
     *(s32 *)(particle + 24) = delay;
     particleSprite += 40;
     delay -= 2;
@@ -123,7 +123,7 @@ void FieldPsynergy_EndSand(void) {
   mask &= ((u8 *)owner->sprite)[7];
   mask |= 128;
   ((u8 *)owner->sprite)[7] = mask;
-  if (*(s8 *)(event + 394) == 3)
+  if (event->mode == 3)
     *(s32 *)((u8 *)owner->sprite + 12) = 0xc000;
   owner->facing = TRIG_TURN / 4;
   Actor_SelectAnimationFar(owner, 0);
@@ -168,14 +168,14 @@ void FieldPsynergy_EndSand(void) {
       Actor_SetSpriteFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
       FieldCamera_FollowActor(*(s16 *)(effect + 24), 1);
       Sound_PlayFar(SE_539);
-      if (*(s8 *)(event + 394) == 3) {
+      if (event->mode == 3) {
         Data_02000452 = 1;
         *motionFlags = 2;
       } else {
         Data_02000452 = 0;
         *motionFlags = 3;
       }
-      if (*(s16 *)(event + 0xd48) == 0)
+      if (event->standing == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
                 0x40000005, *(s16 *)(effect + 30),

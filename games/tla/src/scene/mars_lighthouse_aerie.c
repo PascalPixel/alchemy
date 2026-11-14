@@ -2795,7 +2795,7 @@ void Func_02004fac(void) {
 }
 
 void Func_02005010(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
+  gFieldWork->transition = 256;
   FieldTask_Remove(PaletteCycle_Fade);
 }
 

@@ -197,9 +197,9 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
 #if !TLA_PATCH_1
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x201;
+  gFieldWork->transition = 0x201;
 #else
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x209;
+  gFieldWork->transition = 0x209;
 #endif
   Actor_SetSpritePriority(11, 1);
   Actor_SetSpritePriority(14, 2);
@@ -515,12 +515,10 @@ visited:
   if (answer == 0) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
   } else {
     FieldEvent_Wait(40);
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   }
   Actor_SetAnimationAndWait(10, 3);
@@ -543,12 +541,10 @@ visited:
   if (answer == 0) {
     FieldEvent_Wait(30);
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
   } else {
     FieldEvent_Wait(40);
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   }
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 40);

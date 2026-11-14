@@ -443,7 +443,7 @@ void YampiDesertCave_StopLeaderAtLog(struct Actor *object) {
 #include "shared/palette_cycle_start_vblank.h"
 
 void YampiDesertCave_StopMarkGlow(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 256;
+  gFieldWork->transition = 256;
   Task_Remove(PaletteCycle_Fade);
 }
 
@@ -834,7 +834,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 px = column * 8;
   s16 row = gYampiDesertCave_RipplePath[index + 1];
   s32 pz = row * 8;
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *tracked =
       *(struct Actor **)(Ram_HeapSlots->battleFxWork[0] + 0x1930);
   s32 x = 0, z = 0;
@@ -858,7 +858,7 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
     chest->gravity = 0x170a;
     wait(50);
     {
-      s16 *counter = (s16 *)(work + 0x160);
+      s16 *counter = &work->talk;
       s32 value = 17;
 
       *counter = value;

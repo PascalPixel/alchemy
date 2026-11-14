@@ -201,7 +201,7 @@ void MadraInteriors_TalkToMushroomLover(void) {
       FieldEvent_SetMessageId((s32)MsgMadraInteriors106);
       Event_ShowMessage(10, 0);
     }
-    FIELD_AT(Ram_HeapSlots->fieldWork, u16, 346) = 1;
+    gFieldWork->fieldMenu = 1;
   }
 }
 
@@ -328,7 +328,7 @@ static inline void MadraInteriors_PlaceFacing(s32 actorId, s32 x, s32 z,
 /// interrogators by the story flags.
 void MadraInteriors_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    FIELD_AT(Ram_HeapSlots->fieldWork, u16, 0xd4c) = 3;
+    gFieldWork->unkd4c = 3;
     if (!Event_GetFlag(0x911)) {
       MadraInteriors_InterrogatePiers();
     } else {
@@ -358,7 +358,7 @@ s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
   void *event;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 521;
+  gFieldWork->transition = 521;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.scene == (s32)&SceneId_MadraInteriors1) {

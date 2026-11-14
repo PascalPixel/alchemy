@@ -50,12 +50,12 @@ s32 Field_CountRequests(void) {
 /// knows Hover (ABILITY_HOVER); clears it otherwise. The world map's pad
 /// movement reads it.
 void Field_UpdateHoverReady(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (GameFlag_Get(FLAG_SHIP_FLIES) && Party_FindOwnerWithActionFar(153) != -1)
-    work[0xd39] = 1;
+    work->hoverReady = 1;
   else
-    work[0xd39] = 0;
+    work->hoverReady = 0;
 }
 
 s32 Field_GetCollisionAheadOfLeader(void) {

@@ -285,7 +285,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 /// work's halfword 0x160 or byte 4 of the window tiles is nonzero.
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 flag = 0;
   struct Actor *target;
 
@@ -303,7 +303,7 @@ s32 Func_020003bc(struct Actor *actor) {
     target = Actor_Get(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.currentOwner);
-    if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->timer & 2))
+    if ((work->talk != 0 || tiles[4] != 0) && (actor->timer & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);
   }
@@ -314,7 +314,7 @@ s32 Func_020003bc(struct Actor *actor) {
 
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *action = &actor->timer;
   s32 flag = 0;
   struct Actor *target;
@@ -327,7 +327,7 @@ s32 Func_020003bc(struct Actor *actor) {
     target = Actor_Get(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.currentOwner);
-    if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (*action & 2))
+    if ((work->talk != 0 || tiles[4] != 0) && (*action & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);
   }

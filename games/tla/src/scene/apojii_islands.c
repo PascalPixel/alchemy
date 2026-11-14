@@ -206,13 +206,13 @@ extern u16 gData_02002998[];
 extern u16 gData_020029b8[];
 
 void Func_020003e8(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 phase, k, offset;
   u16 *firstCopy, *secondCopy;
 
-  if (*(s16 *)(work + 0x166) != 0)
+  if (work->psynergy != 0)
     return;
-  if (((struct FieldWork *)work)->revealActive != 0)
+  if (work->revealActive != 0)
     return;
   if (gData_020024c4 == -1) {
     Iwram_CopyWords(Data_02002958, (void *)0x05000060, 32);
@@ -242,12 +242,12 @@ extern u16 Data_02002a18[];
 extern u16 Data_02002a38[];
 
 void Func_02000540(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 busy, phase, k, j;
 
-  if (*(s16 *)(work + 0x166) != 0)
+  if (work->psynergy != 0)
     return;
-  busy = ((struct FieldWork *)work)->revealActive;
+  busy = work->revealActive;
   if (busy != 0)
     return;
   if (gData_020024c8 == -1) {
@@ -453,7 +453,7 @@ DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(Func_02000ba8, 67, 11, 6, 8, 0xf9e,
 // Stepping onto a door: the leader walks through it and the scene leaves by
 // the exit of its number.
 void ApojiiIslands_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -464,7 +464,7 @@ void ApojiiIslands_EnterDoor(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_CenterOnColumn_(gMainRoutineWork.currentOwner, 2, -6);
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(((struct FieldWork *)work)->stepTrigger);
+  FieldEvent_SetExitRequest(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

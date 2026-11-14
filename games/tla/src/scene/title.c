@@ -256,11 +256,11 @@ fade:
   wait(3);
   if (++i <= 16)
     goto fade;
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0;
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 436) = 1;
+  gFieldWork->transition = 0;
+  gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 436) = 60;
+  gFieldWork->transitionFrames = 60;
 }
 
 static __inline__ void Decode_(void *source, void *destination) {

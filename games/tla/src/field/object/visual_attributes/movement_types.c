@@ -301,9 +301,9 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
 /// layered map; never on the world map or with no map.
 s32 MapGrid_BlocksJump(struct Actor *object, s32 *position) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  if (map == 0 || event[0x18a] == 3 ||
+  if (map == 0 || event->mode == 3 ||
       MapGrid_GetTerrainKindFar(object->terrainId, position[0], position[2]) <=
           2)
     return 0;

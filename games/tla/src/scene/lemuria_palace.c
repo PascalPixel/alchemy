@@ -3,6 +3,7 @@
 /// show it two maps, the ancient world and the one Lunpa had.
 
 #include "shared/tables.h"
+#include "field/field_work.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -139,7 +140,7 @@ void LemuriaPalace_CycleGlowColors(void) {
 /// The room's setup: it schedules the palette cycle
 /// LemuriaPalace_CycleGlowColors.
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x201;
+  gFieldWork->transition = 0x201;
   Task_AddFrame(LemuriaPalace_CycleGlowColors, 0xc80);
   FieldActor_SetSpritePriority(8, 3);
   if (gMainRoutineWork.entrance == 6)
@@ -416,8 +417,7 @@ answeredNo:
   Event_Wait(10);
   Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
-  FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452) =
-      (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+  gFieldWork->message = (gFieldWork->message) + 1;
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 5);
   Actor_FaceDirection(7, FACING_SOUTH, 0);
   Actor_FaceDirection(14, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -777,14 +777,12 @@ waitForCycle:
   if (!Event_AskYesNoWithActorAnimation(4, 0)) {
     Event_Wait(15);
     Event_ShowMessageThenWait(15, 0, 5);
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
     r2 = ((s32)Ram_HeapSlots->fieldWork) + 452;
-    r3 = (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+    r3 = (gFieldWork->message) + 1;
   } else {
     Event_Wait(35);
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork), u16, 452)) + 1;
+    gFieldWork->message = (gFieldWork->message) + 1;
     Event_ShowMessageThenWait(15, 0, 5);
   }
   Actor_FaceDirectionAndWait(15, FACING_WEST);

@@ -127,8 +127,7 @@ static inline s32 ActorX(struct Actor *actor) { return actor->x; }
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the
 /// cell it has moved to, as Actor_PlaceBlocks places each.
 void Actor_PlaceMovedBlock(void) {
-  struct Actor *target =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 0xcbc);
+  struct Actor *target = gFieldWork->unkcbc;
 
   if (target != NULL) {
     struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;

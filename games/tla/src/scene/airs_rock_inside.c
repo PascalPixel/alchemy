@@ -357,10 +357,10 @@ void Func_020004d4(struct Actor *object) {
 }
 
 void Func_02000550(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(object, 0);
     TilesetAnim_SuspendAll();
     return;
@@ -725,15 +725,14 @@ s32 Trig_Sin(s32 angle);
 // is 0xc000.
 void Func_02000d48(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
   s32 speed = 0x18000;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      gMainRoutineWork.renderMode == 5) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0 || gMainRoutineWork.renderMode == 5) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -767,7 +766,7 @@ void Func_02000d48(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct FieldWork *)work)->raisedTrigger = 200;
+      work->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
@@ -791,13 +790,13 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // 240 launches a shot 8 pixels ahead along its angle with a dust effect below
 // it.
 void Func_02000f34(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   if (object->timer == 240) {
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
@@ -845,15 +844,14 @@ extern u32 gData_020061cc[];
 
 void Func_020010b4(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
   s32 speed = 0x18000;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0 ||
-      *(u16 *)(work + 0x1b2) == 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0 || work->transitionActive == 0) {
     Actor_SetAnimationSpeed(shot, 0);
     return;
   }
@@ -892,7 +890,7 @@ void Func_020010b4(struct Actor *shot) {
       leader->priorityFlags &= ~1;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      ((struct FieldWork *)work)->raisedTrigger = 200;
+      work->raisedTrigger = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
       ((struct Shot *)shot)->unk63 = 1;
@@ -913,14 +911,14 @@ void Func_020010b4(struct Actor *shot) {
 // of objects 13 to 15 from 8 pixels ahead along its angle, with Func_020010b4
 // as its update, and a dust effect below it.
 void Func_02001290(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
   s32 i;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   for (i = 0; i != 3;)
     Actor_GetById(13 + i++);
@@ -976,7 +974,7 @@ void Func_02001420(struct Actor *object, s16 timer, u8 value) {
 }
 
 void Func_02001458(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *other;
   s32 *pos;
@@ -984,10 +982,10 @@ void Func_02001458(struct Actor *object) {
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->block32 + 0x2a01) != 0)
     return;
-  if (*(u16 *)(work + 0x1b2) == 0)
+  if (work->transitionActive == 0)
     return;
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(object, 0);
     return;
   }
@@ -1004,7 +1002,7 @@ void Func_02001458(struct Actor *object) {
   if (Position_FlatDistance(&leader->x, pos = &object->x) <= 8 &&
       ((s16 *)&leader->y)[1] == ((s16 *)&object->y)[1]) {
     {
-      s16 *counter = (s16 *)(work + 0x16a);
+      s16 *counter = &work->raisedTrigger;
       s32 value = 201;
 
       *counter = value;
@@ -1066,12 +1064,12 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
 // leader's position and flags 0x200 to 0x202. Places the two frame arms share
 // are one call, reached by goto from the other arm.
 void Func_02001690(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 frame;
   s32 scene;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   frame = gFrameCount;
   if ((frame & 6) != 0)
@@ -1528,7 +1526,7 @@ void Func_020026c0(void) {
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
-  u8 *work;
+  struct FieldWork *work;
 
   if (object->velocityX != 0 || object->velocityZ != 0)
     return;
@@ -1548,7 +1546,7 @@ void Func_020026c0(void) {
     /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
      */
     s32 delay = value + 200;
-    *(s16 *)(work + 362) = delay;
+    work->raisedTrigger = delay;
   }
 }
 
@@ -2792,7 +2790,7 @@ void Func_02004ab8(void) {
 
   x = 0;
   z = 0;
-  warp = (s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x154);
+  warp = &gFieldWork->stepTrigger;
   if (*warp == 0)
     return;
   Event_Start();

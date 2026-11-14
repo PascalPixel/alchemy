@@ -107,9 +107,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000060(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
-  event[3384] = 1;
+  event->unkd38 = 1;
 }
 
 void Func_02000074(void) { Func_020014f4(); }
@@ -533,11 +533,9 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
     Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
     Actor_SetAnimation(13, 7);
     Event_ShowMessage(13, 0);
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), s16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), u16, 0) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   } else {
-    FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), s16, 0) =
-        (FIELD_AT(((s32)Ram_HeapSlots->fieldWork + 0x1c4), u16, 0) + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
     /* FAKEMATCH(dead): an empty once-only block ends the scheduling block here.
      */
     do {

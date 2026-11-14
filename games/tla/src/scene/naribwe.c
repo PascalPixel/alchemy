@@ -4,6 +4,7 @@
 /// shows the stone that hides the Unicorn Ring.
 
 #include "types.h"
+#include "field/field_work.h"
 #include "flags.h"
 #include "text/msg_ids.h"
 #include "system/ram_buffer.h"
@@ -238,11 +239,11 @@ void Naribwe_BlowAwayIvy(void) {
 /// Unused: writes the rope's posts (24 and 25) into the event work; nothing
 /// calls it.
 UNUSED void Naribwe_SetRopeWork(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  work[0xd31] = 0;
-  work[0xd32] = 24;
-  work[0xd33] = 25;
+  work->targetX = 0;
+  work->targetY = 24;
+  work->targetZ = 25;
 }
 
 /// Reveal shows the stone that hides the Unicorn Ring.
@@ -257,7 +258,7 @@ void Naribwe_HideStone(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
+  gFieldWork->transition = 0x100;
   Actor_SetSpriteFlags(Actor_GetById(9), 0);
   Actor_SetSpriteFlags(Actor_GetById(10), 0);
   Actor_SetSpriteFlags(Actor_GetById(23), 0);

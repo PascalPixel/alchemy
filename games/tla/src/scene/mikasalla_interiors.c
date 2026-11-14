@@ -192,7 +192,7 @@ void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x209;
+  gFieldWork->transition = 0x209;
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 0x20;
   if (gMainRoutineWork.scene == (s32)&SceneId_MikasallaInteriors1) {
     if (gMainRoutineWork.entrance == 5)

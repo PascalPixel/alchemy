@@ -146,7 +146,7 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
 /// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
 s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 force = 0;
 
@@ -173,7 +173,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
       target = Actor_Get(9);
     if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
       leader = Actor_Get(gMainRoutineWork.currentOwner);
-      if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+      if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
         force = 1;
       Yallam_FaceIfNear(object, leader, 24, force);
     }
@@ -183,7 +183,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
 #else
 s32 Yallam_WatchSongGame(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 force = 0;
   struct Actor *target;
   u16 *flags = (u16 *)&object->timer;
@@ -195,7 +195,7 @@ s32 Yallam_WatchSongGame(struct Actor *object) {
   if (Yallam_FaceIfNear(object, target, 24, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
-    if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+    if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
       force = 1;
     Yallam_FaceIfNear(object, leader, 24, force);
   }
@@ -225,7 +225,7 @@ const u8 *Scene_GetPlacements(void) {
 /// The party leader walks into one of Yallam's doors, which opens with its cell
 /// animation, and leaves by the exit of the door's number.
 void Yallam_EnterDoor(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u32 i;
   s32 index;
 
@@ -241,7 +241,7 @@ void Yallam_EnterDoor(void) {
       *flags = zero;
     }
   }
-  index = ((struct FieldWork *)event)->stepTrigger;
+  index = event->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
@@ -257,7 +257,7 @@ void Yallam_EnterDoor(void) {
       Actor_CenterAndWalk(owner, 2, -4);
   }
   FieldEvent_Wait(10);
-  FieldEvent_SetExitRequest(((struct FieldWork *)event)->stepTrigger);
+  FieldEvent_SetExitRequest(event->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

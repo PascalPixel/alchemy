@@ -538,9 +538,9 @@ void Madra_AskAboutJenna(void) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_SetFlag(FLAG_AREA_TEMP_01);
     Event_ShowMessage(11, 0);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
   } else {
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
     Event_ShowMessage(11, 0);
   }
   Event_End();
@@ -815,9 +815,9 @@ void Madra_GrantPassageToOsenia(void) {
   FieldMessage_ShowAtActor(33, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_ShowMessageThenWait(33, 0, 10);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
   } else {
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
     Event_ShowMessageThenWait(33, 0, 10);
   }
   Actor_FaceActorById(33, 34, 0);
@@ -912,11 +912,11 @@ void Madra_StopPartyAfterRaid(void) {
     Event_Wait(25);
     Actor_FaceDirection(32, FACING_NORTHWEST + FACING_STEP, 0);
     Event_ShowMessageThenWait(25, 0, 10);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
   } else {
     Event_Wait(25);
     Actor_FaceDirection(32, FACING_NORTH + FACING_STEP, 0);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
     Event_ShowMessageThenWait(25, 0, 10);
   }
   Actor_RunRepeatedMotion(32, 2);
@@ -938,10 +938,10 @@ void Madra_StopPartyAfterRaid(void) {
       Event_Wait(20);
       Actor_SetAnimationAndWait(32, 3);
       Event_ShowMessage(32, 0);
-      (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+      (gFieldWork->message)++;
     } else {
       Event_Wait(20);
-      (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+      (gFieldWork->message)++;
       Actor_SetAnimationAndWait(32, 4);
       Event_ShowMessage(32, 0);
     }
@@ -1057,7 +1057,7 @@ void Madra_MeetKarst(void) {
     Event_Wait(33);
     Event_Wait(20);
     Event_ShowMessageAndWait(34, 0);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
   } else {
     Actor_FaceDirection(32, FACING_NORTH, 0);
     Actor_FaceDirection(5, FACING_NORTH, 0);
@@ -1068,7 +1068,7 @@ void Madra_MeetKarst(void) {
     SET_MODE(34, 4);
     Event_Wait(33);
     Event_Wait(20);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
     Event_ShowMessageThenWait(34, 0, 0);
   }
   FieldActor_ShowEmote(34, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1095,24 +1095,24 @@ void Madra_MeetKarst(void) {
   if (PartyInventory_FindRoom(210) >= 0) {
     ItemDisplay_ShowItem(ITEM_CYCLONE_CHIP, 3);
     PartyInventory_GiveItem(ITEM_CYCLONE_CHIP, 0);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
     Actor_ArmCallback(4, FACING_NORTH, 0);
     GameFlag_Set(0x918);
   } else {
-    s32 count = *(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4) + 1;
+    s32 count = gFieldWork->message + 1;
 
     Event_SetMessageId(MsgTheMayorTried);
     MessageArgument_Push(210, 2);
-    FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++, 5);
+    FieldMessage_Show((gFieldWork->message)++, 5);
     Motion_SetVarCbAndRefresh(34, 2);
     Event_ShowMessageAndWait(34, 0);
     Actor_WalkByAndWaitById(34, 16, 0);
     MessageArgument_Push(210, 2);
-    FieldMessage_Show((*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++, 5);
+    FieldMessage_Show((gFieldWork->message)++, 5);
     Actor_WalkByAndWait(34, -16, 0);
     Actor_FaceDirectionAndWait(34, FACING_SOUTH);
     Actor_SetPosition(66, 192, 256);
-    *(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4) = count;
+    gFieldWork->message = count;
   }
   Actor_WalkByAndWait(34, -16, -8);
   Actor_FaceDirectionAndWait(34, FACING_SOUTH);
@@ -1310,10 +1310,10 @@ void Madra_MeetKarst(void) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     Event_ShowMessageThenWait(33, 0, 0);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
   } else {
     FieldActor_ShowEmote(33, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
     Event_ShowMessageThenWait(33, 0, 0);
   }
   FieldActor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1498,7 +1498,7 @@ void Madra_ClimbDownLadder(void) {
   s32 next;
 
   next = 16;
-  if (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x154) > 34)
+  if (gFieldWork->stepTrigger > 34)
     next = 15;
   Actor_FaceDirection(4, FACING_NORTH, 0);
   Event_Wait(10);

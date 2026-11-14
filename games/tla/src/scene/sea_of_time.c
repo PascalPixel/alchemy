@@ -467,7 +467,7 @@ extern u8 gSeaOfTime_LapsNeeded[];
 // Tracks actor 8 around the ring of cells: counts steps made in one direction,
 // spawning an effect every fourth frame once past 3, and rewards a full count.
 void SeaOfTime_CountLaps(void) {
-  u8 *work = (u8 *)Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(8);
   s16 index;
   s32 now;
@@ -486,8 +486,8 @@ void SeaOfTime_CountLaps(void) {
     gSeaOfTime_LapTurn = 0;
   }
   last = gSeaOfTime_LastLapCell;
-  now = ((struct FieldWork *)work)->stepTrigger;
-  nowRaw = *(u16 *)(work + 340);
+  now = work->stepTrigger;
+  nowRaw = (u16)work->stepTrigger;
   if (last != now) {
     s16 *delta = &gSeaOfTime_LapTurn;
     s32 raw;
@@ -517,7 +517,7 @@ void SeaOfTime_CountLaps(void) {
       *delta = 0;
     }
   }
-  gSeaOfTime_LastLapCell = *(u16 *)(work + 340);
+  gSeaOfTime_LastLapCell = work->stepTrigger;
   if (gSeaOfTime_LapCount > 3) {
     phase = gFrameCount & 3;
     if (phase == 0) {
@@ -543,7 +543,7 @@ void SeaOfTime_CountLaps(void) {
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
     s32 zero = 0;
 
-    ((struct FieldWork *)work)->raisedTrigger = 200;
+    work->raisedTrigger = 200;
     gSeaOfTime_LapCount = zero;
     gSeaOfTime_LapTurn = zero;
   }

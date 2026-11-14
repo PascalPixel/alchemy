@@ -1208,7 +1208,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 513;
+  gFieldWork->transition = 513;
   if (scene == (s32)&SceneId_TaopoSwamp2) {
     gMainRoutineWork.retreatScene = (s32)&SceneId_TaopoSwamp1;
     gMainRoutineWork.retreatEntrance = 1;
@@ -1396,7 +1396,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  s32 *effect = (s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac);
+  s32 *effect = &gFieldWork->transition;
   struct Actor *object, *dummy, *piece;
   s32 id, entrance;
 

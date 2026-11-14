@@ -464,7 +464,7 @@ void AttekaInlet_RotateWaterColors(void) {
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
 void AttekaInlet_OpenDoorAndEnter(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -476,7 +476,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   Event_Wait(8);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(((struct FieldWork *)work)->stepTrigger);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 s32 Scene_Initialize(void) {

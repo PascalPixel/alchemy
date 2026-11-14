@@ -121,7 +121,7 @@ struct FieldWork {
   /// lasting Psynergy.
   s16 busy;
   s8 revealActive;       ///< nonzero while Reveal is active
-  u8 effectTimerRunning; ///< lets the Reveal countdown advance
+  s8 effectTimerRunning; ///< lets the Reveal countdown advance
   s16 revealFrames;      ///< the frames Reveal has left
   s16 revealCenterX;     ///< where Reveal was cast, in pixels
   s16 revealCenterY;
@@ -140,18 +140,21 @@ struct FieldWork {
   struct Actor *unkcbc;
   /// The cells a Psynergy touches, as cell coordinates, ended by -1.
   s16 psynergyCells[56];
-  u8 unkd30;
+  s8 unkd30;
   s8 targetX;
   s8 targetY;
   s8 targetZ;
-  u8 unkd34[2];
-  u8 sceneAttributeLow;
-  u8 sceneAttributeHigh;
+  s16 unkd34;
+  s8 sceneAttributeLow;
+  s8 sceneAttributeHigh;
   s8 unkd38;
   s8 hoverReady; ///< a party member knows Hover and the ship flies
-  u8 terrainKind;
+  s8 terrainKind;
   s8 climbing;
-  u8 unkd3c[8];
+  s16 unkd3c;
+  s16 unkd3e;
+  s16 unkd40;
+  s16 unkd42;
   s16 glow;
   s16 glowHeld;
   s16 standing;

@@ -803,8 +803,7 @@ void Func_0200109c(void) {
 // running the event at x 67, z 45 of room 3 and moving object 13 to object 12
 // at x 91, z 59 until flag 0xa84 is set.
 void Func_02001160(void) {
-  struct Actor *leader =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 0xcbc);
+  struct Actor *leader = gFieldWork->unkcbc;
   s32 x;
   s32 z;
 

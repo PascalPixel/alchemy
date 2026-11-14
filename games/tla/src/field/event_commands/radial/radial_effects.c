@@ -1574,7 +1574,7 @@ extern char ResourceId_BowDraw, ResourceId_FlamingArrow;
 void FieldPsynergy_Unnamed29(void) {
   struct BowWork *work = HeapSlot_Alloc(92, sizeof(struct BowWork));
   struct BowScene *scene = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
   struct BowMotion *motion;
@@ -1678,7 +1678,7 @@ void FieldPsynergy_Unnamed29(void) {
     wait(1);
   Task_Remove(FieldPsynergy_UpdateUnnamed29);
   if (work->done != 0 && work->result != -1)
-    event[0xd30] = work->result;
+    event->unkd30 = work->result;
   VramCache_FreeEntry(arrowSlot);
   VramCache_FreeEntry(bowSlot);
   FieldPsynergy_FadeFromCastColor();
@@ -1762,8 +1762,7 @@ static inline s32 Index(s32 i) { return i; }
 /// effect's kind.
 void FieldPsynergy_RunTouchedEvents(void) {
   struct TouchWork *work = Ram_HeapSlots->effectWork;
-  struct TouchCell *cells =
-      (struct TouchCell *)((u8 *)Ram_HeapSlots->fieldWork + 0xcc0);
+  struct TouchCell *cells = (struct TouchCell *)gFieldWork->psynergyCells;
   struct TouchOwner *owner = work->owner;
   s32 count = 0;
   s16 ids[24];

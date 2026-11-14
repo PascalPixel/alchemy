@@ -375,7 +375,7 @@ void GabombaStatue_LashRope(void) {
     Func_020020f0(0);
     Event_SetFlag(FLAG_SCENE_TEMP_03);
     /* FAKEMATCH(temporary): the 0 stored from a u16 local holding it. */
-    *(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x166) = zero;
+    gFieldWork->psynergy = zero;
     i = 0;
   loop:
     actor->phase += gData_02006b38[i] * direction;
@@ -1223,10 +1223,10 @@ DEFINE_GABOMBA_STATUE_RAISE_ACTORS(Func_02001b68, 29, 2)
 void Func_02001b98(void) {
   s32 value = 16;
   s32 open = 0;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 i;
 
-  if (Event_GetFlag(FLAG_MENU_OPEN) || *(s16 *)(event + 358) != 0) {
+  if (Event_GetFlag(FLAG_MENU_OPEN) || event->psynergy != 0) {
     open = 1;
     value = 0;
   }
@@ -3368,21 +3368,21 @@ s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);
 
 void Func_02005210(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
-  if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
-      *(s16 *)(event + 350) == 0 && clock->timer > 0)
+  if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
+      clock->timer > 0)
     clock->timer--;
   Func_02005090();
 }
 
 void Func_0200525c(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ClockWork *clock = (struct ClockWork *)(gInventorySnapshot + 0x288);
 
-  if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
-      *(s16 *)(event + 350) == 0 && clock->timer > 0)
+  if (event->psynergy == 0 && event->fieldMenu == 0 && event->pauseMenu == 0 &&
+      clock->timer > 0)
     clock->timer--;
 }
 

@@ -386,14 +386,14 @@ void PaletteCycle_Step(void) {
   u16 *p;
 
   if (gPaletteCyclePausesInEvents != 0) {
-    u8 *work = Ram_HeapSlots->fieldWork;
-    s16 *state = (s16 *)(work + 358);
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
+    s16 *state = &work->psynergy;
 
     if (*state != 0 && (*state & 0x3ff) != 153)
       return;
-    if (((struct FieldWork *)work)->revealActive != 0)
+    if (work->revealActive != 0)
       return;
-    if (*(s16 *)(work + 350) != 0)
+    if (work->pauseMenu != 0)
       return;
   }
   i = 0;
@@ -510,14 +510,14 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 void Whirlwind_Update(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -555,7 +555,7 @@ void Whirlwind_Update(struct Actor *self) {
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
+            work->raisedTrigger = delay;
           }
           gMainRoutineWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;
@@ -698,8 +698,7 @@ struct BeamWork {
 
 void Func_02001080(void) {
   struct BeamWork *work = Ram_HeapSlots->menuRuntime;
-  struct Actor *carrier =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 460);
+  struct Actor *carrier = gFieldWork->camera;
   s32 t = work->frame;
   s32 position[3];
   s32 a[3];
@@ -895,8 +894,7 @@ static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
 void Func_020017a8(s32 a, s32 b, s32 side) {
   struct BeamWork__s17a8 *work =
       HeapSlot_Alloc(220, sizeof(struct BeamWork__s17a8));
-  struct Actor *carrier =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 460);
+  struct Actor *carrier = gFieldWork->camera;
   struct EffectSprite *sprite;
   struct EffectSprite *large;
   struct BeamSpark *spark;

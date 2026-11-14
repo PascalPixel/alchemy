@@ -1380,7 +1380,7 @@ void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 
 void YampiDesert_UpdateSandSlide(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 speed = 0x18000;
   struct MapWork *map;
@@ -1388,8 +1388,7 @@ void YampiDesert_UpdateSandSlide(void) {
   s32 index, column, row;
   struct MapCell *cells;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0) {
     Actor_SetAnimationSpeed(leader, 0);
     TilesetAnim_SuspendAll();
     return;
@@ -1521,8 +1520,7 @@ void YampiDesert_TrackLeaderInPitArea(void) {
 }
 
 void YampiDesert_PlayScorpionRumble(void) {
-  if (*(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 358) == 0 &&
-      gFrameCount % 5 == 0) {
+  if (gFieldWork->psynergy == 0 && gFrameCount % 5 == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode != 5 || gInput.held == 0)

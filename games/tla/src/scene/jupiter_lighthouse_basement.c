@@ -162,10 +162,10 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 void Func_020001d8(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(object, 0);
     TilesetAnim_SuspendAll();
     return;

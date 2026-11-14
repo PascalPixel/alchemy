@@ -251,7 +251,7 @@ void Izumo_CycloneNinthPatch(void) {
 }
 
 void Izumo_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -259,7 +259,7 @@ void Izumo_EnterDoor(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
-  Func_02000db0(((struct FieldWork *)work)->stepTrigger);
+  Func_02000db0(work->stepTrigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

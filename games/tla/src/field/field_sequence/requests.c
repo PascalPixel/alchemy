@@ -37,7 +37,7 @@ void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
     "Field_RequestDjinnBattle");
 #define Field_RequestDjinnBattle Field_RequestDjinnBattle__event_commands
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 noPrepare = flags & 0x800;
   u32 group;
   s32 index;
@@ -56,8 +56,8 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   if (noPrepare == 0)
     Djinn_RunBattleStartHop(flags);
   gMainRoutineWork.pendingDjinnEvent = (djinn + 300) | noPrepare;
-  *(s16 *)(work + 356) = Encounter_GetDjinnFormation(djinn);
-  if (*(s8 *)(work + 394) == 3)
+  work->encounter = Encounter_GetDjinnFormation(djinn);
+  if (work->mode == 3)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &ObjectTable_Get(Party_GetLeaderActor())->x);
   BattleEffect_SelectBattleCue(0, 0);

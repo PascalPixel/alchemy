@@ -950,13 +950,13 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *shapes;
   u8 *code;
 
   if (map == NULL)
     return 0;
-  if (*(s8 *)(event + 0x18a) == 3)
+  if (event->mode == 3)
     return 0;
   if (layer <= 2)
     shapes = map->layers[layer].terrainIds;
@@ -976,7 +976,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -985,7 +985,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
 
   if (map == NULL)
     return 0;
-  if (*(s8 *)(event + 0x18a) == 3)
+  if (event->mode == 3)
     return 0;
   if (layer <= 2) {
     cells = (u8 *)map->layers[layer].cells;
@@ -1015,7 +1015,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1024,7 +1024,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, s16 *position) {
 
   if (map == NULL)
     return 0;
-  if (*(s8 *)(event + 0x18a) == 3)
+  if (event->mode == 3)
     return 0;
   if (actor->terrainId <= 2) {
     cells = (u8 *)map->layers[actor->terrainId].cells;
@@ -1055,7 +1055,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
   u8 *shapes;
   u8 *code;
@@ -1063,7 +1063,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor, s16 *position) {
 
   if (map == NULL)
     return 0;
-  if (*(s8 *)(event + 0x18a) == 3)
+  if (event->mode == 3)
     return 0;
   if (actor->terrainId <= 2) {
     cells = (u8 *)map->layers[actor->terrainId].cells;
@@ -1173,10 +1173,10 @@ s32 WorldMap_IsWalkable(void *object, struct WorldPosition *position) {
 s32 WorldMap_IsSailable(void *object, struct WorldPosition *position) {
   if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
-    u8 *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s32 mode;
 
-    mode = *(s8 *)(work + 0xd3a);
+    mode = work->terrainKind;
     if (mode == 0) {
       if ((u32)(collision - 1) <= 3 || collision == 6)
         return 0;
@@ -1197,7 +1197,7 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
                        struct WorldPosition *position) {
   if (WorldMap_GetBlockPlace(position) != 255) {
     s32 collision = WorldMap_GetCollision(position);
-    u8 *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     s32 height = mover->height;
 
@@ -1206,7 +1206,7 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
         return -1;
       return 0;
     } else {
-      s32 mode = *(s8 *)(work + 0xd3a);
+      s32 mode = work->terrainKind;
 
       if (mode == 0) {
         if ((u32)(collision - 1) <= 5)

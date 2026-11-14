@@ -3,6 +3,7 @@
 // Part of window.c.
 
 #include "../window_internal.h"
+#include "field/field_work.h"
 #include "sounds.h"
 
 // The part's functions its code calls before their definitions, declared
@@ -1642,7 +1643,7 @@ s32 StatusScreen_RunFar(void);
 s32 FieldMenu_Run(void) {
   s32 ret;
   s32 selection;
-  u8 *state;
+  struct FieldWork *state;
 
   state = Ram_HeapSlots->fieldWork;
   selection = 0;
@@ -1667,7 +1668,7 @@ s32 FieldMenu_Run(void) {
       ret = Actor_GetTriggerCellAheadOfCurrentFar();
       if (ret == 0)
         ret = 0xff;
-      *(u16 *)(state + 0x162) = ret;
+      state->examineCell = ret;
       break;
     case 1:
       ret = PsynergyMenu_RunFar();

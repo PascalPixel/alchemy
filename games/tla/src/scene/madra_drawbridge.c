@@ -64,7 +64,7 @@ void MadraDrawbridge_AskGoingToOsenia(void) {
     Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   } else {
-    (*(u16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1c4))++;
+    (gFieldWork->message)++;
     Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 2);
   }
   Event_End();
@@ -127,7 +127,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
 }
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 0x1ac) = 0x100;
+  gFieldWork->transition = 0x100;
   return 0;
 }
 

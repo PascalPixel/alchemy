@@ -616,14 +616,14 @@ extern s32 gData_02003400;
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 void Func_02001070(struct Actor *self) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 distance;
   s32 near;
 
-  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
-      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }
@@ -661,7 +661,7 @@ void Func_02001070(struct Actor *self) {
           leader->priorityFlags &= ~1;
           {
             s32 delay = 200;
-            *(u16 *)(work + 362) = delay;
+            work->raisedTrigger = delay;
           }
           gMainRoutineWork.renderMode = 0;
           *((u8 *)self + 0x62) = 1;

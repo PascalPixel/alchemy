@@ -343,7 +343,7 @@ void Settlements_CutStairsBush(void) {
 }
 
 void Settlements_EnterDoor(void) {
-  s32 next = *(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x154);
+  s32 next = gFieldWork->stepTrigger;
 
   Actor_FaceDirection(4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -547,7 +547,7 @@ extern s16 gSettlements_WallCrate[];
 void Settlements_StartWaterfall(void);
 
 s32 Scene_Initialize(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 0x100;
+  gFieldWork->transition = 0x100;
   if (gMainRoutineWork.scene == (s32)&SceneId_Settlements7)
     Settlements_SetUpKaltIsland();
   if (gMainRoutineWork.scene == (s32)&SceneId_Settlements9) {
@@ -704,7 +704,7 @@ void Settlements_CycleWaterColors(void) {
 }
 
 void Settlements_StartWaterfall(void) {
-  *(s32 *)((u8 *)Ram_HeapSlots->fieldWork + 428) = 514;
+  gFieldWork->transition = 514;
   FieldTask_AddFrame(Settlements_CycleWaterColors, 0x480);
   Scene_QueueMusic(SE_170);
   Scroll_StartHBlank();

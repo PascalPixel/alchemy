@@ -998,13 +998,13 @@ void Func_02001908(struct Actor *shot) {
 // frames in its action parameter, and at 240 launches a shot 8 pixels ahead
 // along its angle with a dust effect below it.
 void Func_02001b54(struct Actor *object) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
   struct Vector3 position;
   struct EffectOptions options;
 
-  if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
-      *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0)
     return;
   if (object->timer == 240) {
     if (!Event_GetFlag(FLAG_SCENE_TEMP_50))
@@ -1054,8 +1054,7 @@ void Func_02001ca4(void) {
 extern void Func_02003cc0__airs_rock(void) __asm__("Actor_PlaceMovedBlock");
 
 void Func_02001cc8(void) {
-  struct Actor *object =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->fieldWork + 0xcbc);
+  struct Actor *object = gFieldWork->unkcbc;
   s32 x, z;
 
   Event_Start();

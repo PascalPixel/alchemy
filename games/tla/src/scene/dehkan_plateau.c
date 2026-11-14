@@ -1885,7 +1885,7 @@ void DehkanPlateau_TakePoundCube(void) {
 }
 
 void DehkanPlateau_LeaveRoom(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1894,7 +1894,7 @@ void DehkanPlateau_LeaveRoom(void) {
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Import_EventSetExitRequest(((struct FieldWork *)work)->stepTrigger);
+  Import_EventSetExitRequest(work->stepTrigger);
 }
 
 s32 Scene_Initialize(void) {

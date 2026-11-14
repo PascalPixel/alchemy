@@ -383,7 +383,7 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
 s32 Func_020006d0(struct Actor *self) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
   s8 *effect;
@@ -392,7 +392,7 @@ s32 Func_020006d0(struct Actor *self) {
   Actor_SetSpritePriorityDirect(
       self, BattleEffect_GetObjectPriority(
                 Actor_GetById(gMainRoutineWork.currentOwner)));
-  mode = 0x3ff & *(u16 *)(event + 0x166);
+  mode = 0x3ff & event->psynergy;
   state = &self->movementState;
   if (mode == 141) {
     effect = Ram_HeapSlots->effectWork;

@@ -154,7 +154,7 @@ UNUSED void SuhallaGate_OpenRoom2Cell(void) {
 }
 
 void SuhallaGate_EnterHouse(void) {
-  s32 value = *(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x154);
+  s32 value = gFieldWork->stepTrigger;
 
   Actor_GetById(0)->motionFlags = 0;
   Event_PlaySound(SE_DOOR_OPEN);
@@ -169,7 +169,7 @@ void SuhallaGate_EnterHouse(void) {
 
 /// The leader takes control again and the party leaves for Idejima.
 void SuhallaGate_LeaveForIdejima(void) {
-  s32 value = *(s16 *)((u8 *)Ram_HeapSlots->fieldWork + 0x154);
+  s32 value = gFieldWork->stepTrigger;
 
   gMainRoutineWork.currentOwner = 4;
   Event_PlaySound(SE_MAP_EXIT);

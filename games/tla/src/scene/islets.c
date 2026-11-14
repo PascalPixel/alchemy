@@ -2278,7 +2278,7 @@ void Func_02003620(void) {
   Actor_SetSpriteFlags((s32)object0, 0);
   Actor_SetAnimation(*(s32 *)((u8 *)v5 + 0), 18);
   FieldEvent_Wait(40);
-  *(s32 *)((u8 *)((s32)Ram_HeapSlots->fieldWork + 0x1ac) + 0) = 0x209;
+  gFieldWork->transition = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(3);

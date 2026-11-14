@@ -16,5 +16,5 @@ gSettlements_WaterfallScrollAbove:
 	.global gSettlements_WaterfallScrollBelow
 gSettlements_WaterfallScrollBelow:
 	.space 0x00000002
-	.global gSettlements_SlideStopped
-gSettlements_SlideStopped:
+	.global gSlideOnIce_Stopped
+gSlideOnIce_Stopped:

@@ -2283,7 +2283,7 @@ void Actor_SteerByPad(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-void Func_02002d90(void) {
+void Leader_StopIfPending(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (work->busy != 0) {
@@ -2295,7 +2295,7 @@ void Func_02002d90(void) {
 }
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-extern s16 gData_0200483c[];
+extern s16 gSlideOnIce_AnglesByKey[];
 
 void Leader_SlideOnIce(void) {
   struct Vector3 probe;
@@ -2321,7 +2321,7 @@ void Leader_SlideOnIce(void) {
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
 
 top:
-  Func_02002d90();
+  Leader_StopIfPending();
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
@@ -2340,7 +2340,7 @@ top:
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
   if (distance < px(4)) {
-    heading = gData_0200483c[(gInput.held >> 4) & 15];
+    heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
     }
@@ -2435,14 +2435,14 @@ done:
   Actor_SelectAnimation(actor, 1);
 }
 
-extern volatile s16 gMarsLighthouseStarRoom_SlideStopped;
+extern volatile s16 gSlideOnIce_Stopped;
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
 
 #define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
-#define SLIDE_STOPPED gMarsLighthouseStarRoom_SlideStopped
-#define SLIDE_STOP_LEADER Func_02002d90
-#define SLIDE_ANGLES gData_0200483c
+#define SLIDE_STOPPED gSlideOnIce_Stopped
+#define SLIDE_STOP_LEADER Leader_StopIfPending
+#define SLIDE_ANGLES gSlideOnIce_AnglesByKey
 #define SLIDE_SET_ANIMATION Actor_SelectAnimation
 #define SLIDE_HAS_ARRIVED Actor_HasArrived
 #define SLIDE_KEEP_SLIDING Actor_SteerByPad
@@ -2459,9 +2459,7 @@ s32 Actor_HasArrived(struct Actor *object);
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-void Leader_SetSlideStopped(s32 value) {
-  gMarsLighthouseStarRoom_SlideStopped = value;
-}
+void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 void Leader_SlideOnIceAhead(void) {
   struct Vector3 probe;
@@ -2489,7 +2487,7 @@ void Leader_SlideOnIceAhead(void) {
   heading = (s16)((actor->facing + 0x2000) & -0x4000);
 
 top:
-  Func_02002d90();
+  Leader_StopIfPending();
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
@@ -3100,7 +3098,7 @@ s16 gData_020047fc[] = {
     16384, -1, -1, 16384, -1, 0, -32768, -1,
 };
 
-s16 gData_0200483c[] = {
+s16 gSlideOnIce_AnglesByKey[] = {
     -1, 0, -32768, -1, -16384, 0, -32768, -16384,
     16384, 0, -32768, 16384, -1, 0, -32768, -1,
 };

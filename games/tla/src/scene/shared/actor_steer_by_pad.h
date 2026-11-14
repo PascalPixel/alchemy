@@ -1,6 +1,6 @@
 /// Turns an actor toward the direction pad, at most a sixteenth of a turn a
 /// frame.
-void TundariaTower_KeepSliding(struct Actor *object) {
+void Actor_SteerByPad(struct Actor *object) {
   s32 angle;
   s32 turn;
 

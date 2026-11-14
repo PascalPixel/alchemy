@@ -237,7 +237,7 @@ void Leader_CenterInCell(void);
 s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
                                     s32 radiusB);
 
-extern volatile s16 gMarsLighthouseRoomF_SlideStopped;
+extern volatile s16 gSlideOnIce_Stopped;
 
 s32 Actor_HasArrived(struct Actor *object);
 
@@ -2966,7 +2966,7 @@ void Actor_SteerByPad(struct Actor *object) {
 #include "shared/leader_stop_if_pending.h"
 
 // A point on the map: 16.16 fixed-point pixels.
-extern s16 gData_02005f38[];
+extern s16 gSlideOnIce_AnglesByKey[];
 
 void Leader_SlideOnIce(void) {
   struct Vector3 probe;
@@ -3011,7 +3011,7 @@ top:
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
   if (distance < px(4)) {
-    heading = gData_02005f38[(gInput.held >> 4) & 15];
+    heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
     }
@@ -3107,9 +3107,9 @@ done:
 }
 
 #define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
-#define SLIDE_STOPPED gMarsLighthouseRoomF_SlideStopped
+#define SLIDE_STOPPED gSlideOnIce_Stopped
 #define SLIDE_STOP_LEADER Leader_StopIfPending
-#define SLIDE_ANGLES gData_02005f38
+#define SLIDE_ANGLES gSlideOnIce_AnglesByKey
 #define SLIDE_SET_ANIMATION Actor_SelectAnimation
 #define SLIDE_HAS_ARRIVED Actor_HasArrived
 #define SLIDE_KEEP_SLIDING Actor_SteerByPad
@@ -3124,9 +3124,7 @@ done:
 #undef SLIDE_KEEP_SLIDING
 #undef SLIDE_SPHERES_OVERLAP
 
-void Leader_SetSlideStopped(s32 value) {
-  gMarsLighthouseRoomF_SlideStopped = value;
-}
+void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 void Leader_SlideOnIceAhead(void) {
   struct Vector3 probe;
@@ -3852,7 +3850,7 @@ s16 gData_02005f18[] = {
     0x4000, -1, -1, 0x4000, -1, 0, -0x8000, -1,
 };
 
-s16 gData_02005f38[] = {
+s16 gSlideOnIce_AnglesByKey[] = {
     -1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1,
     0, -32768, -1,
 };

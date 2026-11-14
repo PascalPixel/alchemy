@@ -16,8 +16,8 @@ gData_0200708c:
 	.global gData_020070a8
 gData_020070a8:
 	.space 0x00000420
-	.global gMarsLighthouseRoomF_SlideStopped
-gMarsLighthouseRoomF_SlideStopped:
+	.global gSlideOnIce_Stopped
+gSlideOnIce_Stopped:
 	.space 0x00000004
 	.global gData_020074cc
 gData_020074cc:

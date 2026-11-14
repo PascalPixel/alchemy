@@ -369,7 +369,7 @@ void Func_02000920(void) {
   Event_End();
 }
 
-void Func_0200095c(void) { TundariaTower_SlideOnIce(); }
+void Func_0200095c(void) { Leader_SlideOnIce(); }
 
 extern u32 gData_02003370[];
 
@@ -696,7 +696,7 @@ struct Particle;
 struct ParticleSprite;
 union FieldObject;
 
-void TundariaTower_StopLeader(void);
+void Leader_StopIfPending(void);
 
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
@@ -723,7 +723,7 @@ void Func_0200058c(void);
 void Func_02000404(const u8 *data);
 
 extern s16 gTundariaTower_SlideAngles[];
-extern s16 gTundariaTower_SlideAnglesByKey[];
+extern s16 gSlideOnIce_AnglesByKey[];
 
 extern u32 gData_020032d4[];
 
@@ -960,7 +960,7 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 #include "shared/actor_steer_by_pad.h"
 
-void TundariaTower_StopLeader(void) {
+void Leader_StopIfPending(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (work->busy != 0) {
@@ -973,21 +973,21 @@ void TundariaTower_StopLeader(void) {
 
 #include "shared/leader_slide_on_ice.h"
 
-extern s16 gTundariaTower_SlideAnglesByKey[];
-void TundariaTower_KeepSliding(struct Actor *object);
-void TundariaTower_StopLeader(void);
+extern s16 gSlideOnIce_AnglesByKey[];
+void Actor_SteerByPad(struct Actor *object);
+void Leader_StopIfPending(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 s32 Actor_HasArrived(struct Actor *object);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
-#define SLIDE_FROM_EDGE TundariaTower_SlideOnIceFromEdge
-#define SLIDE_STOPPED gTundariaTower_SlideStopped
-#define SLIDE_STOP_LEADER TundariaTower_StopLeader
-#define SLIDE_ANGLES gTundariaTower_SlideAnglesByKey
+#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
+#define SLIDE_STOPPED gSlideOnIce_Stopped
+#define SLIDE_STOP_LEADER Leader_StopIfPending
+#define SLIDE_ANGLES gSlideOnIce_AnglesByKey
 #define SLIDE_SET_ANIMATION Actor_SelectAnimation
 #define SLIDE_HAS_ARRIVED Actor_HasArrived
-#define SLIDE_KEEP_SLIDING TundariaTower_KeepSliding
+#define SLIDE_KEEP_SLIDING Actor_SteerByPad
 #define SLIDE_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/slide_on_ice_from_edge.c"
 #undef SLIDE_FROM_EDGE
@@ -1001,9 +1001,7 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
-void TundariaTower_SetSlideStopped(s32 value) {
-  gTundariaTower_SlideStopped = value;
-}
+void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
@@ -1647,7 +1645,7 @@ s16 gTundariaTower_SlideAngles[] = {
       0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              
   };
 
-s16 gTundariaTower_SlideAnglesByKey[] = {
+s16 gSlideOnIce_AnglesByKey[] = {
     -1, 0, 0x8000, -1, 0xc000, 0, 0x8000, 0xc000,
     0x4000, 0, 0x8000, 0x4000, -1, 0, 0x8000, -1,
     0,

@@ -185,7 +185,7 @@ extern u32 gData_020060cc[];
 extern u32 gData_0200617c[];
 extern u32 gData_020061fc[];
 extern u32 gData_0200622c[];
-void Func_020038e8(void);
+void Leader_StopIfPending(void);
 void Particles_UpdateFalling(void);
 
 void Func_02000290(void);
@@ -2010,7 +2010,7 @@ void Actor_SteerByPad(struct Actor *object) {
   Actor_SetAnimationSpeed(object, 48);
 }
 
-void Func_020038e8(void) {
+void Leader_StopIfPending(void) {
   void *work = Ram_HeapSlots->fieldWork;
 
   if (FIELD_AT(work, s16, 0xca2) != 0) {
@@ -2033,7 +2033,7 @@ struct Position {
 
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
-extern s16 gData_02004780[];
+extern s16 gSlideOnIce_AnglesByKey[];
 
 void Leader_SlideOnIce(void) {
   struct Vector3 probe;
@@ -2059,7 +2059,7 @@ void Leader_SlideOnIce(void) {
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
 
 top:
-  Func_020038e8();
+  Leader_StopIfPending();
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
@@ -2078,7 +2078,7 @@ top:
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
   if (distance < px(4)) {
-    heading = gData_02004780[(gInput.held >> 4) & 15];
+    heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
     }
@@ -2173,14 +2173,14 @@ done:
   Actor_SelectAnimation(actor, 1);
 }
 
-extern volatile s16 gProx_SlideStopped;
+extern volatile s16 gSlideOnIce_Stopped;
 
 s32 Actor_HasArrived(struct Actor *object);
 
 #define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
-#define SLIDE_STOPPED gProx_SlideStopped
-#define SLIDE_STOP_LEADER Func_020038e8
-#define SLIDE_ANGLES gData_02004780
+#define SLIDE_STOPPED gSlideOnIce_Stopped
+#define SLIDE_STOP_LEADER Leader_StopIfPending
+#define SLIDE_ANGLES gSlideOnIce_AnglesByKey
 #define SLIDE_SET_ANIMATION Actor_SelectAnimation
 #define SLIDE_HAS_ARRIVED Actor_HasArrived
 #define SLIDE_KEEP_SLIDING Actor_SteerByPad
@@ -2202,7 +2202,7 @@ s32 Actor_HasArrived(struct Actor *object);
    } *)(base))                                                                 \
        ->v)
 
-void Leader_SetSlideStopped(s32 a0) { gProx_SlideStopped = a0; }
+void Leader_SetSlideStopped(s32 a0) { gSlideOnIce_Stopped = a0; }
 
 void Leader_SlideOnIceAhead(void) {
   struct Vector3 probe;
@@ -2230,7 +2230,7 @@ void Leader_SlideOnIceAhead(void) {
   heading = (s16)((actor->facing + 0x2000) & -0x4000);
 
 top:
-  Func_020038e8();
+  Leader_StopIfPending();
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
@@ -2497,7 +2497,7 @@ s32 gProx_EnterDoorScript[] = {
 
 s16 gData_02004740[] = {-1, 0, -32768, -1, -16384, -8192, -24576, -16384, 16384, 8192, 24576, 16384, -1, 0, -32768, -1, -1, 0, -32768, -1, -16384, -1, -1, -16384, 16384, -1, -1, 16384, -1, 0, -32768, -1};
 
-s16 gData_02004780[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
+s16 gSlideOnIce_AnglesByKey[] = {-1, 0, -32768, -1, -16384, 0, -32768, -16384, 16384, 0, -32768, 16384, -1, 0, -32768, -1};
 
 s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_02004644,

@@ -22,7 +22,7 @@ void Party_TakeFallDamage(void);
 
 void Actor_RollAndCrumble(struct Actor *actor);
 
-void Func_02002d90(void);
+void Leader_StopIfPending(void);
 void Actor_SteerByPad(struct Actor *object);
 
 extern struct CellTarget gData_02004cf4;

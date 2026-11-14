@@ -1,5 +1,5 @@
 /// The leader slides cell by cell over ice until something stops it.
-void TundariaTower_SlideOnIce(void) {
+void Leader_SlideOnIce(void) {
   struct Vector3 probe;
   s32 startBehavior;
   s32 x;
@@ -23,7 +23,7 @@ void TundariaTower_SlideOnIce(void) {
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
 
 top:
-  TundariaTower_StopLeader();
+  Leader_StopIfPending();
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   actor->targetX = 0x80000000;
@@ -42,7 +42,7 @@ top:
   dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
   if (distance < px(4)) {
-    heading = gTundariaTower_SlideAnglesByKey[(gInput.held >> 4) & 15];
+    heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     if ((heading << 16) == -0x10000) {
       return;
     }
@@ -72,7 +72,7 @@ top:
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   FieldActor_WaitForMove(actor);
-  actor->update = TundariaTower_KeepSliding;
+  actor->update = Actor_SteerByPad;
   goto test;
 body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {

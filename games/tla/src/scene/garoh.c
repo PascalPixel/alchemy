@@ -25,12 +25,12 @@ void Actor_PlaceBlocks(const void *data);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 
-void Func_02000e78(s32 id, struct Actor *object);
-void Func_02000eb0(void);
-void Func_02000eec(void);
-void Func_02000f28(void);
-void Func_02000f3c(void);
-void Func_020012a8(s32 id);
+void Garoh_RaiseBlock(s32 id, struct Actor *object);
+void Garoh_RaiseFirstBlockOnCell(void);
+void Garoh_RaiseSecondBlockOnCell(void);
+void Garoh_CheckThirdBlock(void);
+void Garoh_RaiseFourthBlockOnCell(void);
+void Garoh_PuffAround(s32 id);
 #include "field/event_inline.h"
 #include "map.h"
 #include "field/field.h"
@@ -64,7 +64,26 @@ void Func_020012a8(s32 id);
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
-void Func_02000280(void) {
+// Story flags of the werewolves' secret, in the order the party meets them.
+#define FLAG_GAROH_REACHED_VILLAGE 0x919
+#define FLAG_GAROH_SAW_WEREWOLF_PROWL 0x91c
+#define FLAG_GAROH_FOLLOWED_WEREWOLF 0x91d
+#define FLAG_GAROH_MET_WEREWOLVES 0x91e
+#define FLAG_GAROH_HEARD_MAHA 0x91f
+// For this visit to the area: the old werewolf has peered from the crevice, the
+// little werewolf has thanked the party, and the party is deep in room 3's
+// cave.
+#define FLAG_WEREWOLF_PEERED_OUT FLAG_AREA_TEMP_20
+#define FLAG_LITTLE_WEREWOLF_THANKED FLAG_AREA_TEMP_01
+#define FLAG_IN_DARK_CAVE FLAG_AREA_TEMP_18
+// Room 3: the blocks raised on their cells, and the rope Lashed.
+#define FLAG_FIRST_BLOCK_RAISED FLAG_SCENE_TEMP_01
+#define FLAG_SECOND_BLOCK_RAISED FLAG_SCENE_TEMP_02
+#define FLAG_ROPE_LASHED FLAG_SCENE_TEMP_03
+#define FLAG_FOURTH_BLOCK_RAISED FLAG_SCENE_TEMP_04
+
+// By day room 2's second layer scrolls with the first.
+void Garoh_MatchLayerScroll(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayer *to = &map->layers[1];
   struct MapLayer *from = &map->layers[0];
@@ -75,14 +94,16 @@ void Func_02000280(void) {
   to->unk2a = from->unk2a;
 }
 
-void Func_020002a4(void) {
+// By night room 2's second layer ripples: each line is offset by two sines of
+// the frame count, handed to an HBlank DMA.
+void Garoh_WaveRoom2Layer(void) {
   s32 x;
   // Trig_Sin is an 8-byte far-call veneer: its target address is the word
   // after its first instruction.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
   /* FAKEMATCH(pin): line held in r5. */
-  register u16 *line asm("r5") = Data_02006340;
+  register u16 *line asm("r5") = gGaroh_WaveLines;
 
   if (gFieldWork->revealActive == 0) {
     u32 frame;
@@ -112,7 +133,7 @@ void Func_020002a4(void) {
       a += 0x3300;
       b += 0x1320;
     }
-    line = Data_02006340;
+    line = gGaroh_WaveLines;
     REG_BG2HOFS = line[0];
     dma = REG_DMA0;
     dma[5] &= 0xc5ff;
@@ -123,8 +144,8 @@ void Func_020002a4(void) {
   }
 }
 
-extern u16 gData_020054ee[];
-extern u16 gData_020054b8[];
+extern u16 gGaroh_Room2DayColors[];
+extern u16 gGaroh_Room2NightColors[];
 
 // Build BG palette 1 colors 8-15 from the table.
 #define DEFINE_GAROH_LOAD_PALETTE(name, data1, n1, n2)                         \
@@ -151,10 +172,12 @@ extern u16 gData_020054b8[];
       goto loop;                                                               \
   }
 
-DEFINE_GAROH_LOAD_PALETTE(Func_02000390, gData_020054ee, 24, 8)
+DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadRoom2DayColors, gGaroh_Room2DayColors, 24,
+                          8)
 
 // Build BG palette 6 colors 1-9 from the table.
-DEFINE_GAROH_LOAD_PALETTE(Func_020003d8, gData_020054b8, 97, 9)
+DEFINE_GAROH_LOAD_PALETTE(Garoh_LoadRoom2NightColors, gGaroh_Room2NightColors,
+                          97, 9)
 
 s32 Garoh_ClearScriptedActorSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
@@ -174,7 +197,7 @@ extern struct ActorPlacement gGaroh_Room4Placements[];
 extern struct ActorPlacement gGaroh_Room2Placements[];
 extern struct ActorPlacement gGaroh_Room5Placements[];
 
-extern struct MapGridCellAnimation gData_02005de0[];
+extern struct MapGridCellAnimation gGaroh_Doors[];
 
 /// Return the table for the current room.
 const void *Scene_GetPlacements(void) {
@@ -182,7 +205,7 @@ const void *Scene_GetPlacements(void) {
 
   if (scene == (s32)&SceneId_Garoh1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
-      return gData_02005874;
+      return gGaroh_Room1DayPlacements;
     return gGaroh_Room1Placements;
   }
   if (scene == (s32)&SceneId_Garoh2)
@@ -196,10 +219,9 @@ const void *Scene_GetPlacements(void) {
   return gGaroh_Placements;
 }
 
-/// 6A6's Func_02000e54 for this overlay: clears the motion of every object
-/// from 8 to 63, shows the picture the event work's index names and moves the
-/// party's current owner to it.
-void Func_020004cc(void) {
+/// Stepping into a door: every placed actor stops, the door opens and the
+/// leader walks through, leaving by the step trigger's exit.
+void Garoh_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 index;
   s32 i;
@@ -220,8 +242,8 @@ loop:
   index = work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
-  MapGrid_AnimateCells(gData_02005de0[index].steps, gData_02005de0[index].x,
-                       gData_02005de0[index].y);
+  MapGrid_AnimateCells(gGaroh_Doors[index].steps, gGaroh_Doors[index].x,
+                       gGaroh_Doors[index].y);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   {
@@ -239,7 +261,8 @@ loop:
   Event_End();
 }
 
-void Func_02000580(s32 actor) {
+// "So, uh...you say you saw a werewolf?"
+void Garoh_AskIfSawWerewolf(s32 actor) {
   s32 msg = (s32)MsgGaroh02;
 
   FieldEvent_SetMessageId(msg);
@@ -255,7 +278,8 @@ void Func_02000580(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Func_020005cc(s32 actor) {
+// "Don't you love the sight of the full moon?"
+void Garoh_AskAboutFullMoon(s32 actor) {
   s32 msg = (s32)MsgGaroh06;
 
   FieldEvent_SetMessageId(msg);
@@ -271,7 +295,9 @@ void Func_020005cc(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Func_02000618(s32 actor) {
+// By day: "Maha said that you were the only outsiders we could share our secret
+// with..."
+void Garoh_AskAboutSecret(s32 actor) {
   s32 msg = (s32)MsgGaroh18;
 
   FieldEvent_SetMessageId(msg);
@@ -287,7 +313,8 @@ void Func_02000618(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-void Func_02000664(s32 actor) {
+// By day: "Awoooooh!" and no need to hide it any more.
+void Garoh_HowlOutLoud(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaroh17);
@@ -296,7 +323,8 @@ void Func_02000664(s32 actor) {
   Event_End();
 }
 
-void Func_02000698(s32 actor) {
+// "Gaaaroooooo!" ... "I was just calling my dog."
+void Garoh_HowlForDog(s32 actor) {
   s32 flag;
   s32 msg;
 
@@ -315,14 +343,16 @@ void Func_02000698(s32 actor) {
   Event_End();
 }
 
-void Func_020006ec(void) {
+// By day: "Hey, it's you guys! Thanks for last night!" from the little werewolf
+// of the cave.
+void Garoh_LittleWerewolfThanks(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_Stop(13);
   Actor_SetAnimation(13, 1);
   FieldEvent_Wait(10);
   Actor_FaceActor(13, 4, 0);
-  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
+  if (Event_GetFlag(FLAG_LITTLE_WEREWOLF_THANKED)) {
     FieldEvent_SetMessageId((s32)MsgGaroh21);
   } else {
     FieldEvent_SetMessageId((s32)MsgGaroh20);
@@ -349,16 +379,18 @@ void Func_020006ec(void) {
     FieldEvent_ShowMessageThenWait(13, 0, 5);
   }
   FieldEvent_ShowMessageThenWait(13, 0, 10);
-  Event_SetFlag(FLAG_AREA_TEMP_01);
+  Event_SetFlag(FLAG_LITTLE_WEREWOLF_THANKED);
   Actor_SetScript(13, 2);
   Event_End();
 }
 
-void Func_02000808(void) {
+// By the sanctuary, the first night: the old werewolf opens the crevice by
+// Reveal, sees the party ("What!? Outsiders, here?") and hides again.
+void Garoh_WerewolfPeersFromCrevice(void) {
   s32 flag;
   s32 speed;
 
-  void Func_020007a0(s32 id) {
+  void Garoh_OpenCrevice(s32 id) {
     BattleEffect_LoadActionEffectResources(144, 1);
     FieldPsynergy_SetupActorPair(id, 0);
     FieldPsynergy_RunHandler(1);
@@ -366,7 +398,7 @@ void Func_02000808(void) {
     BattleEffect_CleanupSceneObjects();
   }
 
-  void Func_020007d4(s32 id) {
+  void Garoh_CloseCrevice(s32 id) {
     BattleEffect_LoadActionEffectResources(144, 1);
     FieldPsynergy_SetupActorPair(id, 0);
     FieldPsynergy_RunHandler(3);
@@ -374,9 +406,9 @@ void Func_02000808(void) {
     BattleEffect_CleanupSceneObjects();
   }
 
-  flag = Event_GetFlag(FLAG_AREA_TEMP_20);
+  flag = Event_GetFlag(FLAG_WEREWOLF_PEERED_OUT);
   if (flag == 0) {
-    Event_SetFlag(FLAG_AREA_TEMP_20);
+    Event_SetFlag(FLAG_WEREWOLF_PEERED_OUT);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_Get(22), 0);
@@ -384,11 +416,11 @@ void Func_02000808(void) {
     Actor_SetPositionAndFacing(22, px(360), px(199), speed);
     FieldCamera_MoveTo(359, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
-    Func_020007a0(22);
+    Garoh_OpenCrevice(22);
     FieldEvent_Wait(30);
     Actor_SetPositionAndFacing(21, px(360), px(199), speed);
     Actor_WalkByAndWait(21, 0, 16);
-    Func_020007d4(22);
+    Garoh_CloseCrevice(22);
     FieldEvent_SetMessageId((s32)MsgGaroh12);
     Actor_FaceDirectionAndWait(21, 160 << 7);
     Actor_RunRepeatedMotion(21, 2);
@@ -399,14 +431,14 @@ void Func_02000808(void) {
     Actor_Get(21)->actionFlags &= ~1;
     Actor_FaceDirection(21, speed, 0);
     FieldEvent_Wait(30);
-    Func_020007a0(22);
+    Garoh_OpenCrevice(22);
     FieldEvent_Wait(20);
     Actor_WalkByAndWait(21, 0, -16);
     Actor_Get(21)->motionFlags = flag;
     Actor_WalkByAndWait(21, 0, -16);
     Actor_SetPosition(21, 0, 0);
     FieldEvent_Wait(10);
-    Func_020007d4(22);
+    Garoh_CloseCrevice(22);
     FieldEvent_Wait(60);
     Actor_SetPosition(22, 0, 0);
     Event_End();
@@ -415,14 +447,15 @@ void Func_02000808(void) {
 
 extern struct Trigger gGaroh_Triggers[];
 extern struct Trigger gGaroh_Room1Triggers[];
-extern struct Trigger gData_02005f78[];
+extern struct Trigger gGaroh_Room1DayTriggers[];
 extern struct Trigger gGaroh_Room2Triggers[];
 extern struct Trigger gGaroh_Room4Triggers[];
 extern struct Trigger gGaroh_Room5Triggers[];
 
-extern s32 gData_0200632c;
+extern s32 gGaroh_HowlCounter;
 
-void Func_02000960(void) {
+// Stepping into the opened crevice leaves for the cave below.
+void Garoh_EnterCrevice(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   Event_PlaySound(SE_MAP_EXIT);
@@ -432,13 +465,15 @@ void Func_02000960(void) {
   FieldEvent_SetExitRequest(event->stepTrigger);
 }
 
-void Func_020009a4(void) {
+// In the cave: the werewolves gather the first night, and Maha tells the legend
+// once the secret is shared.
+void Garoh_MeetInTheCave(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    if (!Flag_IsSet(0x91e))
-      Func_02002694();
+    if (!Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES))
+      Garoh_WerewolvesRevealThemselves();
   } else {
-    if (!Flag_IsSet(0x91f))
-      Func_02003878();
+    if (!Flag_IsSet(FLAG_GAROH_HEARD_MAHA))
+      Garoh_MahaTellsTheLegend();
   }
 }
 
@@ -448,7 +483,7 @@ const void *Scene_GetEvents(void) {
 
   if (scene == (s32)&SceneId_Garoh1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
-      return gData_02005f78;
+      return gGaroh_Room1DayTriggers;
     return gGaroh_Room1Triggers;
   }
   if (scene == (s32)&SceneId_Garoh2)
@@ -462,10 +497,11 @@ const void *Scene_GetEvents(void) {
   return gGaroh_Triggers;
 }
 
-void Func_02000a68(void) {
+// A howl every 1,024 frames while it is night.
+void Garoh_HowlAtNight(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
-    gData_0200632c++;
-    if ((gData_0200632c & 0x3ff) == 0)
+    gGaroh_HowlCounter++;
+    if ((gGaroh_HowlCounter & 0x3ff) == 0)
       Event_PlaySound(SE_525);
   }
 }
@@ -480,7 +516,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh5) {
     FieldActor_SetSpritePriority(13, 1);
     FieldActor_SetSpritePriority(14, 1);
-    if (Event_GetFlag(0x91f)) {
+    if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
       s32 angle = 0x4000;
 
       Actor_SetPositionAndFacing(10, px(328), px(162), angle);
@@ -499,13 +535,13 @@ s32 Scene_Initialize(void) {
   } else {
     gFieldWork->transition = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Garoh1) {
-      Event_SetFlag(0x919);
-      Func_02000be4();
+      Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
+      Garoh_InitializeRoom1();
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh2) {
       Garoh_InitializeRoom2();
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Garoh3) {
-      Func_02000e00();
-      if (Event_GetFlag(0x919)) {
+      Garoh_InitializeRoom3();
+      if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
         gMainRoutineWork.savedScene = (s32)&SceneId_GarohInteriors3;
         gMainRoutineWork.savedEntrance = 2;
       }
@@ -516,8 +552,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_02000be4(void) {
-  FieldTask_AddFrame(Func_02000a68, 0x480);
+// The village: night colours, or by day the cells of the opened crevice.
+void Garoh_InitializeRoom1(void) {
+  FieldTask_AddFrame(Garoh_HowlAtNight, 0x480);
   gFieldWork->transition = 0;
   if (Event_GetFlag(FLAG_GAROH_SECRET_SHARED) == 0 ||
       Event_GetFlag(FLAG_GAROH_NIGHT) != 0) {
@@ -557,7 +594,7 @@ void Func_02000be4(void) {
 
 void Garoh_InitializeRoom2(void) {
 
-  Task_AddFrame(Func_02000a68, 0x480);
+  Task_AddFrame(Garoh_HowlAtNight, 0x480);
   Tightrope_Initialize();
   Tightrope_Place(0, 10, 11);
   if (Event_GetFlag(FLAG_GAROH_NIGHT)) {
@@ -569,39 +606,44 @@ void Garoh_InitializeRoom2(void) {
     PaletteFade_Interpolate(1);
     Event_WaitTransitionFrames();
     BattleEffect_PackTargetBuffer();
-    Func_020003d8();
+    Garoh_LoadRoom2NightColors();
     PaletteFade_ApplyTarget(0x10000, 1);
-    Task_AddFrame((s32)Func_020002a4, 0xc80);
+    Task_AddFrame((s32)Garoh_WaveRoom2Layer, 0xc80);
   } else {
     MapGrid_CopyCellsTo(20, 7, 9, 7, 5, 5);
     MapGrid_CopyCellsTo(20, 71, 9, 71, 5, 5);
     MapGrid_CopyCellsTo(84, 7, 73, 7, 5, 5);
-    Func_02000390();
+    Garoh_LoadRoom2DayColors();
     PaletteFade_ApplyTarget(0x10000, 1);
-    Func_02000280();
+    Garoh_MatchLayerScroll();
   }
 }
 
-extern s16 gData_02005450[];
+extern s16 gGaroh_Room3Blocks[];
 
-void Func_02000e00(void) {
-  FieldTask_AddFrame(Func_02000a68, 1152);
+// The cave west of the village: the blocks Move, Lash and push place, darker
+// the deeper the party goes.
+void Garoh_InitializeRoom3(void) {
+  FieldTask_AddFrame(Garoh_HowlAtNight, 1152);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
-    if (Flag_IsSet(FLAG_AREA_TEMP_18))
+    if (Flag_IsSet(FLAG_IN_DARK_CAVE))
       PaletteFade_ApplyTarget(0x10003, 1);
     else
       PaletteFade_ApplyTarget(0x10007, 1);
   }
-  Actor_PlaceBlocks(gData_02005450);
+  Actor_PlaceBlocks(gGaroh_Room3Blocks);
   PaletteFade_Interpolate(1);
   Event_WaitTransitionFrames();
 }
 
-void Func_02000e58(void) { Actor_LiftTargetBlock(gData_02005450); }
+void Garoh_LiftRoom3Block(void) { Actor_LiftTargetBlock(gGaroh_Room3Blocks); }
 
-void Func_02000e68(void) { Actor_LiftTargetBlock(gData_02005450); }
+void Garoh_LiftRoom3BlockByLash(void) {
+  Actor_LiftTargetBlock(gGaroh_Room3Blocks);
+}
 
-void Func_02000e78(s32 id, struct Actor *object) {
+// A block left on its cell rises with a whoosh and a ring of dust.
+void Garoh_RaiseBlock(s32 id, struct Actor *object) {
   s32 i;
   s32 saved;
 
@@ -612,7 +654,7 @@ void Func_02000e78(s32 id, struct Actor *object) {
     FieldEvent_Wait(1);
   }
   Event_PlaySound(SE_WHOOSH);
-  Func_020012a8(saved);
+  Garoh_PuffAround(saved);
 }
 
 #define DEFINE_GAROH_TRIGGER_AT_CELL(name, n1, n2, n3, n4)                     \
@@ -625,85 +667,87 @@ void Func_02000e78(s32 id, struct Actor *object) {
     raw = object->z;                                                           \
     z = raw >> 20;                                                             \
     if (!Flag_IsSet(n2) && x == n3 && z == n4) {                               \
-      Func_02000e78(n1, object);                                               \
+      Garoh_RaiseBlock(n1, object);                                            \
       Flag_Set(n2);                                                            \
     }                                                                          \
   }
 
-DEFINE_GAROH_TRIGGER_AT_CELL(Func_02000eb0, 8, 0x201, 10, 29)
+DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseFirstBlockOnCell, 8,
+                             FLAG_FIRST_BLOCK_RAISED, 10, 29)
 
-DEFINE_GAROH_TRIGGER_AT_CELL(Func_02000eec, 9, 0x202, 15, 28)
+DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseSecondBlockOnCell, 9,
+                             FLAG_SECOND_BLOCK_RAISED, 15, 28)
 
-void Func_02000f28(void) {
+void Garoh_CheckThirdBlock(void) {
   Actor_Get(10);
-  Flag_IsSet(FLAG_SCENE_TEMP_03);
+  Flag_IsSet(FLAG_ROPE_LASHED);
 }
 
-void Func_02000f3c(void) {
+void Garoh_RaiseFourthBlockOnCell(void) {
   struct Actor *object = Actor_Get(11);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
-  if (!Flag_IsSet(FLAG_SCENE_TEMP_04) && x == 15 && z == 25) {
-    Func_02000e78(11, object);
-    Flag_Set(FLAG_SCENE_TEMP_04);
+  if (!Flag_IsSet(FLAG_FOURTH_BLOCK_RAISED) && x == 15 && z == 25) {
+    Garoh_RaiseBlock(11, object);
+    Flag_Set(FLAG_FOURTH_BLOCK_RAISED);
   }
 }
 
-void Func_02000f74(void) {
+void Garoh_PlaceFirstBlock(void) {
   Actor_PlaceMovedBlock();
-  Func_02000eb0();
+  Garoh_RaiseFirstBlockOnCell();
 }
 
-void Func_02000f80(void) {
+void Garoh_PlaceSecondBlock(void) {
   Actor_PlaceMovedBlock();
-  Func_02000eec();
+  Garoh_RaiseSecondBlockOnCell();
 }
 
-void Func_02000f8c(void) {
+void Garoh_PlaceThirdBlock(void) {
   Actor_PlaceMovedBlock();
-  Func_02000f28();
+  Garoh_CheckThirdBlock();
 }
 
-void Func_02000f98(void) {
+void Garoh_PlaceFourthBlock(void) {
   Actor_PlaceMovedBlock();
-  Func_02000f3c();
+  Garoh_RaiseFourthBlockOnCell();
 }
 
-void Func_02000fa4(void) {
+void Garoh_PlaceBlockByLash(void) {
   Actor_PlaceMovedBlock();
-  Func_02000eb0();
-  Func_02000eec();
-  Func_02000f28();
-  Func_02000f3c();
+  Garoh_RaiseFirstBlockOnCell();
+  Garoh_RaiseSecondBlockOnCell();
+  Garoh_CheckThirdBlock();
+  Garoh_RaiseFourthBlockOnCell();
 }
 
-void Func_02000fbc(void) {
+void Garoh_RevealSanctuaryCrevice(void) {
   MapGrid_CopyCellsTo(98, 8, 86, 8, 1, 2);
   MapGrid_CopyCellAttributes(34, 9, 1, 1, 22, 11);
 }
 
-void Func_02000fec(void) {
+void Garoh_RevealRoom4Passage(void) {
   MapGrid_CopyCellsTo(25, 47, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(25, 47, 1, 1, 11, 33);
 }
 
-void Func_0200101c(void) {
+void Garoh_RevealCavePassage(void) {
   MapGrid_CopyCellsTo(44, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(108, 5, 83, 5, 3, 2);
   MapGrid_CopyCellAttributes(44, 5, 3, 3, 19, 5);
 }
 
-void Func_0200105c(void) {
+void Garoh_HideSanctuaryCrevice(void) {
   MapGrid_CopyCellsTo(102, 8, 86, 8, 1, 2);
   MapGrid_CopyCellAttributes(22, 10, 1, 1, 22, 11);
 }
 
-s32 Func_0200108c(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
+s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
-void Func_02001098(void) {
+void Garoh_RestoreRoom3Dark(void) {
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
-    if (Flag_IsSet(FLAG_AREA_TEMP_18))
+    if (Flag_IsSet(FLAG_IN_DARK_CAVE))
       PaletteFade_ApplyTarget(0x10003, 1);
     else
       PaletteFade_ApplyTarget(0x10007, 1);
@@ -711,18 +755,20 @@ void Func_02001098(void) {
   }
 }
 
-void Func_020010d4(void) {
+void Garoh_HideRoom4Passage(void) {
   MapGrid_CopyCellsTo(8, 30, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(8, 30, 1, 1, 11, 33);
 }
 
-void Func_02001104(void) {
+void Garoh_HideCavePassage(void) {
   MapGrid_CopyCellsTo(39, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(103, 5, 83, 5, 3, 2);
   MapGrid_CopyCellAttributes(39, 5, 3, 3, 19, 5);
 }
 
-void Func_02001144(void) {
+// Crossing room 3's first threshold darkens or lightens the cave by the way the
+// party came in.
+void Garoh_CrossRoom3West(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
@@ -730,11 +776,11 @@ void Func_02001144(void) {
     if (gMainRoutineWork.entrance == 1) {
       PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Set(FLAG_AREA_TEMP_18);
+      Flag_Set(FLAG_IN_DARK_CAVE);
     } else {
       PaletteFade_ApplyTarget(0x10000, 1);
       Flag_Clear(FLAG_GAROH_NIGHT);
-      Flag_Clear(FLAG_AREA_TEMP_18);
+      Flag_Clear(FLAG_IN_DARK_CAVE);
     }
     work = Ram_HeapSlots->fieldWork;
     if (work->revealActive == 0)
@@ -742,7 +788,7 @@ void Func_02001144(void) {
   }
 }
 
-void Func_020011c8(void) {
+void Garoh_CrossRoom3East(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
@@ -750,11 +796,11 @@ void Func_020011c8(void) {
     if (gMainRoutineWork.entrance == 2) {
       PaletteFade_ApplyTarget(0x10003, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Set(FLAG_AREA_TEMP_18);
+      Flag_Set(FLAG_IN_DARK_CAVE);
     } else {
       PaletteFade_ApplyTarget(0x10007, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
-      Flag_Clear(FLAG_AREA_TEMP_18);
+      Flag_Clear(FLAG_IN_DARK_CAVE);
     }
     work = Ram_HeapSlots->fieldWork;
     if (work->revealActive == 0)
@@ -775,7 +821,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-void Func_020012a8(s32 objectId) {
+void Garoh_PuffAround(s32 objectId) {
   struct Actor *object;
   struct Vec vec;
   struct EffectOptions params;
@@ -803,22 +849,22 @@ burst:
     goto burst;
 }
 
-extern u32 gData_02006330[];
+extern u32 gGaroh_PuffScript[];
 
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 
-void Func_0200132c(void) {
+void Garoh_LashRope(void) {
   Rope_Lash(1, 10, 11);
-  Flag_Set(FLAG_SCENE_TEMP_03);
+  Flag_Set(FLAG_ROPE_LASHED);
 }
 
-s32 Func_02001344(void) {
+s32 Garoh_MetWerewolves(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
-    return Flag_IsSet(0x91e);
+    return Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES);
 }
 
 // Twin of DriftScene_SpawnObject: store the fifth argument at 0x5e.
-void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
+void Garoh_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   struct SpawnObject *object;
   struct FieldSprite *sprite;
 
@@ -826,7 +872,7 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   if (object != 0) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gData_02006330);
+    Actor_StartScript(object, gGaroh_PuffScript);
     object->motionFlags = 0;
     /* FAKEMATCH(barrier): an empty asm. */
     __asm__ volatile("");
@@ -840,24 +886,25 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 
 // The fourth argument is passed unextended (0xf000), where spawn.c's
 // definition takes an s16: the callers saw an int parameter.
-/* VIEW(push): routine Func_02001360 as void Func_02001360(s32 x, s32 y, s32 z,
- * s32 value, s32 timer); the definition has void Func_02001360(s32 x, s32 y,
- * s32 z, s16 value, s32 timer); tried as the definition's void
- * Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object
- * already declares, Func_020013b0 moves: 4 of 43 instructions in tla-ja
+/* VIEW(push): routine Garoh_SpawnPuff as void Garoh_SpawnPuff(s32 x, s32 y, s32
+ * z, s32 value, s32 timer); the definition has void Garoh_SpawnPuff(s32 x, s32
+ * y, s32 z, s16 value, s32 timer); tried as the definition's void
+ * Garoh_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object
+ * already declares, Garoh_PuffFrom moves: 4 of 43 instructions in tla-ja
  * (garoh.c). */
-extern void Func_02001360__push(s32 x, s32 y, s32 z, s32 value,
-                                s32 timer) __asm__("Func_02001360");
+extern void Garoh_SpawnPuff__puffs(s32 x, s32 y, s32 z, s32 value,
+                                   s32 timer) __asm__("Garoh_SpawnPuff");
 
-void Func_020013b0(s32 id) {
+// Two puffs rise from an actor's head.
+void Garoh_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Func_02001360__push(object->x + px(8), object->y + px(28), object->z, 0x1000,
-                      20);
+  Garoh_SpawnPuff__puffs(object->x + px(8), object->y + px(28), object->z,
+                         0x1000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
-  Func_02001360__push(object->x - px(8), object->y + px(28), object->z, 0xf000,
-                      20);
+  Garoh_SpawnPuff__puffs(object->x - px(8), object->y + px(28), object->z,
+                         0xf000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }
@@ -872,9 +919,9 @@ void Func_020013b0(s32 id) {
     BattleEffect_CleanupSceneObjects();                                        \
   }
 
-DEFINE_GAROH_PLAY_EFFECT(Func_02001418, 1, 44)
+DEFINE_GAROH_PLAY_EFFECT(Garoh_OpenCaveCrevice, 1, 44)
 
-DEFINE_GAROH_PLAY_EFFECT(Func_02001454, 3, 39)
+DEFINE_GAROH_PLAY_EFFECT(Garoh_CloseCaveCrevice, 3, 39)
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
@@ -899,7 +946,9 @@ static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
   return from + ((to - from) * i) / 8;
 }
 
-void Func_02001490(void) {
+// The first night: a werewolf howls ("Gaaaroooooo!") and runs along the path
+// back into the village.
+void Garoh_WerewolfProwls(void) {
   struct Actor *bird;
   s32 i;
   s32 position[3];
@@ -907,7 +956,7 @@ void Func_02001490(void) {
   s32 x, z;
   s32 toX, toZ;
 
-  Event_SetFlag(0x91c);
+  Event_SetFlag(FLAG_GAROH_SAW_WEREWOLF_PROWL);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(8, 96, 8);
@@ -976,7 +1025,7 @@ loop1:
   Actor_SetAnimation(8, 1);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
-  Actor_SetScript(8, gData_0200545c);
+  Actor_SetScript(8, gGaroh_WerewolfLookAroundScript);
   gFieldWork->message--;
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   FieldActor_Stop(8);
@@ -1166,7 +1215,7 @@ loop2:
   Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 0);
-  Func_020013b0(6);
+  Garoh_PuffFrom(6);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 6, 0, 0);
   Actor_RunRepeatedMotion(9, 2);
@@ -1254,13 +1303,15 @@ loop2:
   Event_End();
 }
 
-void Func_020022f4(void) {
+// Through the crevice: "Look! It's that werewolf!", the little werewolf, which
+// runs deeper in.
+void Garoh_FollowWerewolfIntoCave(void) {
   s32 v5;
   struct Actor *object;
   s32 t3;
   s32 b1;
 
-  Event_SetFlag(0x91d);
+  Event_SetFlag(FLAG_GAROH_FOLLOWED_WEREWOLF);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh13));
@@ -1368,7 +1419,9 @@ void Func_020022f4(void) {
   Event_End();
 }
 
-void Func_02002694(void) {
+// "Where could that werewolf have gone?" The werewolves surround the party and
+// Maha speaks with it.
+void Garoh_WerewolvesRevealThemselves(void) {
   s32 v5;
   s32 t3;
   s32 t12;
@@ -1382,7 +1435,7 @@ void Func_02002694(void) {
   s32 p1;
   s32 p2;
 
-  Event_SetFlag(0x91e);
+  Event_SetFlag(FLAG_GAROH_MET_WEREWOLVES);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh14));
@@ -1494,7 +1547,7 @@ void Func_02002694(void) {
   Actor_SetPosition(11, 328, 136);
   t3 = Actor_Get(11);
   Actor_SetSpriteFlags(t3, 0);
-  Func_02001418(11);
+  Garoh_OpenCaveCrevice(11);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(5, 0, 0);
   Actor_SetSpeed(8, 0.7);
@@ -1507,7 +1560,7 @@ void Func_02002694(void) {
   Actor_WalkBy(8, 0, 16);
   Actor_WalkByAndWait(10, 0, 16);
   FieldEvent_Wait(10);
-  Func_02001454(11);
+  Garoh_CloseCaveCrevice(11);
   Actor_SetPosition(11, 0, 0);
   EventCamera_FollowActor(10, 1);
   FieldEvent_Wait(20);
@@ -2052,7 +2105,7 @@ void Func_02002694(void) {
   }
   p2 = (s32)&gMainRoutineWork;
   EventCamera_FollowActor(*(s32 *)((p2 + 0x214)), 1);
-  Func_02001344();
+  Garoh_MetWerewolves();
   FieldEvent_SetExitRequest(11);
   Event_End();
 }
@@ -2066,7 +2119,9 @@ void Func_02002694(void) {
 
 s32 __divsi3();
 
-void Func_02003878(void) {
+// By day: "Ah, you came... I've been waiting for you." Maha tells of the
+// werewolves' legend and Mt. Aleph.
+void Garoh_MahaTellsTheLegend(void) {
   s32 v5;
   s32 v6;
   s32 v7;
@@ -2086,7 +2141,7 @@ void Func_02003878(void) {
   s32 p1;
   s32 p2;
 
-  Event_SetFlag(0x91f);
+  Event_SetFlag(FLAG_GAROH_HEARD_MAHA);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(((s32)MsgGaroh28));
@@ -2110,14 +2165,14 @@ void Func_02003878(void) {
   Actor_SetPosition(11, 328, 136);
   t2 = Actor_Get(11);
   Actor_SetSpriteFlags(t2, 0);
-  Func_02001418(11);
+  Garoh_OpenCaveCrevice(11);
   FieldEvent_Wait(30);
   Actor_SetSpeed(10, 0.7);
   Actor_SetPosition(10, 328, 128);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(10, 0, 16);
   FieldEvent_Wait(20);
-  Func_02001454(11);
+  Garoh_CloseCaveCrevice(11);
   Actor_SetPosition(11, 0, 0);
   EventCamera_FollowActor(10, 1);
   FieldEvent_Wait(20);
@@ -2552,8 +2607,8 @@ L_0200c694:;
   FieldEvent_ShowMessageThenWait(9, 0, 0);
   Actor_FaceDirection(10, FACING_NORTH, 0);
   FieldEvent_Wait(40);
-  Func_020013b0(10);
-  Func_020013b0(10);
+  Garoh_PuffFrom(10);
+  Garoh_PuffFrom(10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(10, 16, 0);
   FieldEvent_Wait(20);
@@ -2835,11 +2890,11 @@ L_0200d0fa:;
   Event_End();
 }
 
-void Func_020006ec(void);
-void Func_02000e58(void);
-void Func_02000e68(void);
-void Func_02000fbc(void);
-void Func_0200101c(void);
+void Garoh_LittleWerewolfThanks(void);
+void Garoh_LiftRoom3Block(void);
+void Garoh_LiftRoom3BlockByLash(void);
+void Garoh_RevealSanctuaryCrevice(void);
+void Garoh_RevealCavePassage(void);
 
 extern u32 gFieldEffect_MediumScript[];
 
@@ -2865,11 +2920,11 @@ u32 gFieldEffect_LongScript[] = {
       SC_END,                                                                  
   };
 
-s16 gData_02005450[] = {
+s16 gGaroh_Room3Blocks[] = {
     8, 9, 10, 11, -1, 0,
 };
 
-u32 gData_0200545c[] = {
+u32 gGaroh_WerewolfLookAroundScript[] = {
     SC_SET(SW_FACING, FACING_SOUTH + FACING_STEP),
     SC_WAIT(12),
     SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
@@ -2881,14 +2936,14 @@ u32 gData_0200545c[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u16 gData_020054b8[] = {
+u16 gGaroh_Room2NightColors[] = {
     31, 31, 31, 29, 29, 30, 27, 28,
     29, 25, 27, 28, 23, 25, 27, 21,
     24, 26, 15, 18, 19, 10, 12, 13,
     5, 6, 6,
 };
 
-u16 gData_020054ee[] = {
+u16 gGaroh_Room2DayColors[] = {
     24, 28, 30, 19, 24, 27, 15, 20,
     25, 11, 16, 23, 7, 12, 21, 3,
     8, 19, 27, 27, 27, 16, 24, 29,
@@ -2901,7 +2956,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-s32 gData_0200552c[] = {
+s32 gGaroh_ShrunkenSpriteScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, px(-4)),
     SC_ADD(SW_X, px(6)),
@@ -2984,7 +3039,7 @@ struct ActorPlacement gGaroh_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_02005874[] = {
+s16 gGaroh_Room1DayPlacements[] = {
     192, -1, 1, 0, 0, 232, 0, 0,
     0, 400, 0, 1, 190, -1, 1, 0,
     0, 416, 0, 0, 0, 424, 0x4000, 1,
@@ -3019,16 +3074,16 @@ struct ActorPlacement gGaroh_Room3Placements[] = {
 };
 
 struct ActorPlacement gGaroh_Room4Placements[] = {
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 128, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 208, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 152, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 248, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 352, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 216, 0, 424, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 96, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 328, 0, 440, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 456, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 136, 0, 664, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 128, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 208, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 152, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 248, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 352, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 216, 0, 424, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 96, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 328, 0, 440, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 456, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 136, 0, 664, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3052,38 +3107,38 @@ struct ActorPlacement gGaroh_Room5Placements[] = {
     ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 64, 0, 562, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 370, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 256, 0, 80, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 184, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 392, 0, 368, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 280, 0, 626, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gData_0200552c, 336, 0, 784, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 64, 0, 562, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 370, 0, 56, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 256, 0, 80, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 184, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 392, 0, 368, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 280, 0, 626, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(306, CONDITION_ALWAYS, (s32)gGaroh_ShrunkenSpriteScript, 336, 0, 784, FACING_NORTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
-s16 gData_02005d9c[] = {
+s16 gGaroh_DoorFrames[] = {
     82, 32, 1, 2, 6, 80, 32, 1,
     2, 6, -1,
 };
 
-s16 gData_02005db2[] = {
+s16 gGaroh_WideDoorFrames[] = {
     82, 35, 1, 2, 6, 80, 35, 1,
     2, 6, -1,
 };
 
-s16 gData_02005dc8[] = {
+s16 gGaroh_TallDoorFrames[] = {
     78, 32, 2, 2, 6, 78, 35, 2,
     2, 6, -1, 0,
 };
 
-struct MapGridCellAnimation gData_02005de0[] = {
-    {gData_02005d9c, 78, 21},
-    {gData_02005d9c, 0, 0},
-    {gData_02005d9c, 72, 10},
-    {gData_02005db2, 74, 22},
-    {gData_02005d9c, 85, 23},
-    {gData_02005dc8, 78, 13},
+struct MapGridCellAnimation gGaroh_Doors[] = {
+    {gGaroh_DoorFrames, 78, 21},
+    {gGaroh_DoorFrames, 0, 0},
+    {gGaroh_DoorFrames, 72, 10},
+    {gGaroh_WideDoorFrames, 74, 22},
+    {gGaroh_DoorFrames, 85, 23},
+    {gGaroh_TallDoorFrames, 78, 13},
 };
 
 struct Trigger gGaroh_Triggers[] = {
@@ -3095,29 +3150,30 @@ struct Trigger gGaroh_Triggers[] = {
 
 struct Trigger gGaroh_Room1Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT(Func_02000960)},
-    {TRIGGER_STEP, 20, 0x91e, EVENT(Func_02000808)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000580)},
+     EVENT(Garoh_EnterCrevice)},
+    {TRIGGER_STEP, 20, FLAG_GAROH_MET_WEREWOLVES,
+     EVENT(Garoh_WerewolfPeersFromCrevice)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Garoh_AskIfSawWerewolf)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGaroh03)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000698)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Garoh_HowlForDog)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgGaroh05)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Func_020005cc)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Garoh_AskAboutFullMoon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgGaroh07)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
@@ -3129,39 +3185,39 @@ struct Trigger gGaroh_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgGaroh11)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_02000fbc)},
+     CONDITION_ALWAYS, EVENT(Garoh_RevealSanctuaryCrevice)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_0200105c)},
+     CONDITION_ALWAYS, EVENT(Garoh_HideSanctuaryCrevice)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGaroh31))},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005f78[] = {
+struct Trigger gGaroh_Room1DayTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Func_020004cc)},
+     EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT(Func_02000960)},
+     EVENT(Garoh_EnterCrevice)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGaroh15)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGaroh16)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000664)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Func_02000618)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Garoh_HowlOutLoud)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Garoh_AskAboutSecret)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgGaroh19)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_020006ec)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Garoh_LittleWerewolfThanks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgGaroh22)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
@@ -3172,13 +3228,14 @@ struct Trigger gData_02005f78[] = {
      MSGNO(MsgGaroh25)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgGaroh26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1037, 0x301, EVENT(Func_020006ec)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1037, 0x301,
+     EVENT(Garoh_LittleWerewolfThanks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgGaroh27)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_02000fbc)},
+     CONDITION_ALWAYS, EVENT(Garoh_RevealSanctuaryCrevice)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_0200105c)},
+     CONDITION_ALWAYS, EVENT(Garoh_HideSanctuaryCrevice)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGaroh31))},
     {TRIGGER_TABLE_END},
@@ -3188,28 +3245,29 @@ struct Trigger gGaroh_Room2Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 30, 0x91c, EVENT(Func_02001490)},
+    {TRIGGER_STEP, 30, FLAG_GAROH_SAW_WEREWOLF_PROWL,
+     EVENT(Garoh_WerewolfProwls)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_0200108c)},
+     CONDITION_ALWAYS, EVENT(Garoh_IsNight)},
     {TRIGGER_TABLE_END},
 };
 
 s32 gGaroh_Room3Triggers[] = {
     1,          (s32)0xffff0001, 1,
     1,          (s32)0xffff0002, 2,
-    2,          0x2100014,       (s32)Func_02001144,
-    2,          0x2110015,       (s32)Func_020011c8,
-    0x10008c15, 0x2010008,       (s32)Func_02000e58,
-    0x8c15,     0x2010008,       (s32)Func_02000f74,
-    0x10008c15, 0x2020009,       (s32)Func_02000e58,
-    0x8c15,     0x2020009,       (s32)Func_02000f80,
-    0x10008c15, 0x203000a,       (s32)Func_02000e58,
-    0x8c15,     0x203000a,       (s32)Func_02000f8c,
-    0x10008c15, 0x204000b,       (s32)Func_02000e58,
-    0x8c15,     0x204000b,       (s32)Func_02000f98,
-    8,          0x2010000,       (s32)Func_02000e68,
-    9,          0x2010000,       (s32)Func_02000fa4,
-    0x40009085, -0x10000,        (s32)Func_02001098,
+    2,          0x2100014,       (s32)Garoh_CrossRoom3West,
+    2,          0x2110015,       (s32)Garoh_CrossRoom3East,
+    0x10008c15, 0x2010008,       (s32)Garoh_LiftRoom3Block,
+    0x8c15,     0x2010008,       (s32)Garoh_PlaceFirstBlock,
+    0x10008c15, 0x2020009,       (s32)Garoh_LiftRoom3Block,
+    0x8c15,     0x2020009,       (s32)Garoh_PlaceSecondBlock,
+    0x10008c15, 0x203000a,       (s32)Garoh_LiftRoom3Block,
+    0x8c15,     0x203000a,       (s32)Garoh_PlaceThirdBlock,
+    0x10008c15, 0x204000b,       (s32)Garoh_LiftRoom3Block,
+    0x8c15,     0x204000b,       (s32)Garoh_PlaceFourthBlock,
+    8,          0x2010000,       (s32)Garoh_LiftRoom3BlockByLash,
+    9,          0x2010000,       (s32)Garoh_PlaceBlockByLash,
+    0x40009085, -0x10000,        (s32)Garoh_RestoreRoom3Dark,
 };
 
 struct Trigger gGaroh_Room4Triggers[] = {
@@ -3225,9 +3283,9 @@ struct Trigger gGaroh_Room4Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 11, CONDITION_ALWAYS, 11},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_02000fec)},
+     CONDITION_ALWAYS, EVENT(Garoh_RevealRoom4Passage)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_020010d4)},
+     CONDITION_ALWAYS, EVENT(Garoh_HideRoom4Passage)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3238,24 +3296,25 @@ struct Trigger gGaroh_Room5Triggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {STEP_TRIGGER_FACING(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Func_02000960)},
+     EVENT(Garoh_EnterCrevice)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 30, 0x91d, EVENT(Func_020022f4)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Func_020009a4)},
+    {TRIGGER_STEP, 30, FLAG_GAROH_FOLLOWED_WEREWOLF,
+     EVENT(Garoh_FollowWerewolfIntoCave)},
+    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Garoh_MeetInTheCave)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGaroh29)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgGaroh30)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
-     CONDITION_ALWAYS, EVENT(Func_0200101c)},
+     CONDITION_ALWAYS, EVENT(Garoh_RevealCavePassage)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
-     CONDITION_ALWAYS, EVENT(Func_02001104)},
+     CONDITION_ALWAYS, EVENT(Garoh_HideCavePassage)},
     {TRIGGER_TABLE_END},
 };
 
-s32 gData_0200632c = 0;
+s32 gGaroh_HowlCounter = 0;
 
-u32 gData_02006330[] = {
+u32 gGaroh_PuffScript[] = {
     38,
 };
 #undef ACTOR_MODE_THEN_WAIT

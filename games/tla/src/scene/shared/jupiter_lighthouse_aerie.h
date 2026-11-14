@@ -1,5 +1,5 @@
-#ifndef TLA_JUPITER_LIGHTHOUSE_AERIE_H
-#define TLA_JUPITER_LIGHTHOUSE_AERIE_H
+#ifndef ALCHEMY_JUPITER_LIGHTHOUSE_AERIE_H
+#define ALCHEMY_JUPITER_LIGHTHOUSE_AERIE_H
 
 #include "types.h"
 #include "system/system.h"
@@ -19,13 +19,9 @@ struct JupiterLighthouseAerieSpark {
 };
 
 extern u8 gDecodeFillByte;
-extern struct CellTarget gData_02003488;
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02001010(struct Actor *object);
-void Func_02002438(struct CellTarget *work, struct CellTargetEntry *entry);
-void Func_02002640(void);
 void Map_CenterOnFollowedPoint(void);
 void Import_HangingVinePlace(s32 id, s32 a);
 

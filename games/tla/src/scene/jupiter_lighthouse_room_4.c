@@ -319,9 +319,7 @@ void Map_CenterOnFollowedPoint(void);
 
 extern s32 gPaletteCyclePausesInEvents;
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 extern s32 gPaletteCycleFrame;
 

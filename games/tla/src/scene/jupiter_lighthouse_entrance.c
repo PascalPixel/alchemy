@@ -150,9 +150,7 @@ s32 Scene_PrepareMap(void) {
 
 extern s32 gPaletteCyclePausesInEvents;
 
-void PaletteCycle_SetPausesInEvents(s32 a0) {
-  gPaletteCyclePausesInEvents = a0;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Map_CenterOnFollowedPoint(void);

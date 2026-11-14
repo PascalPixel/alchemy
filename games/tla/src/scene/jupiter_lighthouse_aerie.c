@@ -375,9 +375,7 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.c"
 
-void PaletteCycle_SetPausesInEvents(s32 value) {
-  gPaletteCyclePausesInEvents = value;
-}
+#include "shared/palette_cycle_set_pauses_in_events.h"
 
 #include "shared/palette_cycle_step.h"
 

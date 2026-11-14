@@ -591,7 +591,7 @@ s32 __udivsi3(s32, s32);
 
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopWork *shop;
-  struct ShopUnit *unit;
+  struct BattleUnit *unit;
   struct ItemDefinition *item;
   s32 quantity;
   s32 chance;
@@ -792,7 +792,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = Unit_Get(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
   s32 itemId;
   struct ItemDefinition *info;

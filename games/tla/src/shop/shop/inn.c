@@ -19,7 +19,8 @@ s32 Inn_RoomPrice(s32 innId) {
   guestCount = 0;
   pricePerGuest = gData_0810cf2c[innId];
   for (memberIndex = 0; memberIndex < inn->partyMemberCount; memberIndex++) {
-    if (((struct InnUnit *)Unit_Get(inn->partyMemberIds[memberIndex]))->hp != 0)
+    if (((struct BattleUnit *)Unit_Get(inn->partyMemberIds[memberIndex]))->hp !=
+        0)
       guestCount++;
   }
   return pricePerGuest * guestCount;

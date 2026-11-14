@@ -899,11 +899,6 @@ struct ItemMenuIcon {
   u8 unk006[2];
 };
 
-struct ItemMenuOwner {
-  u8 unk000[0xd8];
-  u16 inventory[15];
-};
-
 s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
                           s32 mode);
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items);
@@ -964,7 +959,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   s32 result;
   u8 sortMode;
   s32 showEquipment;
-  struct ItemMenuOwner *owner;
+  struct BattleUnit *owner;
   void *window;
 
   count = menu->sideCount[0];

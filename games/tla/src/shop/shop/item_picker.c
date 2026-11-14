@@ -57,7 +57,7 @@ s32 Forge_SelectItem(s32 unitId) { return Shop_SelectSell(unitId); }
 /// Returns 0 when the item was taken, else -1.
 s32 Forge_OfferItem(s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = Unit_Get(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
   u32 raw = unit->inventory[slot];
   s32 item;
   s32 chance;
@@ -207,7 +207,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   void *nameWindow;
   struct ShopWork *shop;
   void *priceWindow;
-  struct ShopUnit *unit;
+  struct BattleUnit *unit;
   s32 slot;
   s32 inventoryCount;
   s32 redraw;
@@ -365,7 +365,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 /// the cursor moves.
 void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = Unit_Get(unitId);
+  struct BattleUnit *unit = Unit_Get(unitId);
   s32 item = unit->inventory[slot] & ITEM_ID_MASK;
   u32 raw = unit->inventory[slot];
   s32 quantity = (raw >> INVENTORY_QUANTITY_SHIFT) + 1;

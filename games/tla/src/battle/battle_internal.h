@@ -157,11 +157,6 @@ struct LinkOfferTable {
   struct LinkOfferList list;
 };
 
-struct LinkUnit {
-  u8 unk000[0x12a];
-  u8 side;
-};
-
 struct SlotEffectObject {
   u8 unk00[0x50];
   void *resource;
@@ -175,11 +170,6 @@ struct SlotEffectEntry {
 struct SlotMotionRecord {
   u8 unk00[12];
   s32 height;
-};
-
-struct SummonOwnerState {
-  u8 unk000[0x14a];
-  u16 summon;
 };
 
 struct StatusIconRecord {

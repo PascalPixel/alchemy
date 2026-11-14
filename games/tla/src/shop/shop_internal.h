@@ -111,11 +111,6 @@ struct InnRuntime {
   u8 busy;
 };
 
-struct InnUnit {
-  u8 unk00[0x38];
-  s16 hp;
-};
-
 // The inn work block, as this function reads it.
 struct InnRuntimeState {
   u8 unk000[0x0c];
@@ -277,11 +272,6 @@ struct ShopCursorAnchor {
   u8 unk00[5];
   u8 active;
   u8 unk006[2];
-};
-
-struct ShopUnit {
-  u8 unk00[216];
-  u16 inventory[15];
 };
 
 struct ObjectSpriteInfo {

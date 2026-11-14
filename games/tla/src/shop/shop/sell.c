@@ -110,7 +110,7 @@ s32 Shop_SelectSell(s32 unitId) {
   struct ShopWork *shop;
   void *nameWindow;
   void *priceWindow;
-  struct ShopUnit *unit;
+  struct BattleUnit *unit;
   s32 inventoryCount;
   s32 slot;
   void *window;
@@ -279,7 +279,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 selection;
   struct ItemDefinition *item;
   struct ShopWork *shop;
-  struct ShopUnit *unit;
+  struct BattleUnit *unit;
 
   shop = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(unitId);

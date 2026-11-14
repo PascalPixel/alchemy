@@ -324,11 +324,11 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
 /// own, else 24 pixels for a small enemy and 48 for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
   s32 value = px((u8)BattleSprite_GetEffectHeight(
-      ((struct SummonOwnerState *)Unit_Get(unitId))->summon));
+      ((struct BattleUnit *)Unit_Get(unitId))->enemyId));
 
   if (value == 0) {
     if (BattleSprite_IsSmall(
-            ((struct SummonOwnerState *)Unit_Get(unitId))->summon) != 0)
+            ((struct BattleUnit *)Unit_Get(unitId))->enemyId) != 0)
       value = px(24);
     else
       value = px(48);

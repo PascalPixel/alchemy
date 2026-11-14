@@ -74,7 +74,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   s32 redrawList;
 #endif
   struct DjinnMenuNavigation *navigation;
-  struct DjinnMenuUnit *unit;
+  struct BattleUnit *unit;
   struct DjinnRecoveryList *list;
   struct DjinnMenuWindow *listWindow;
   struct DjinnMenuWindow *iconWindow;
@@ -127,11 +127,11 @@ s32 BattleDjinnMenu_Run(s32 member) {
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
          djinnIndex <= 19; djinnIndex++) {
-      if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
+      if (unit->djinnActive[element] & (u32)(1 << djinnIndex)) {
         *entryCursor = (u32)((element << 8) | djinnIndex);
         entryCursor++;
         djinnCount++;
-      } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
+      } else if (unit->djinnAvailable[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
 

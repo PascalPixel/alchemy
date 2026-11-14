@@ -166,12 +166,6 @@ struct DjinnMenuNavigation {
   u32 chosenDjinn[8];
 };
 
-struct DjinnMenuUnit {
-  u8 unk000[0xf8];
-  u32 djinnHeld[4];
-  u32 djinnSet[4];
-};
-
 struct DjinnMenuPartyStatus {
   struct DjinnMenuWindow *window;
   u8 unk04[8];

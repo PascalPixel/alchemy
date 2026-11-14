@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-u8 *IncreaseItemAndLevel_GetEntrances(void);
-u8 *IncreaseItemAndLevel_GetExits(void);
-u8 *IncreaseItemAndLevel_GetActorPlacements(void);
-u8 *IncreaseItemAndLevel_GetTriggers(void);
-s32 IncreaseItemAndLevel_Initialize(void);
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+u8 *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern char gIncreaseItemAndLevel_LvLabel[4];
 extern char gIncreaseItemAndLevel_ItemPrompt[12];
 extern char gIncreaseItemAndLevel_ItemHelp[24];

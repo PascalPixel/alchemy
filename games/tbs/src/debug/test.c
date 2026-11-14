@@ -31,7 +31,7 @@
 #define DEBUG_ITEM_ROW_STEP 10  ///< Right and Left move ten numbers.
 #define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
 
-// The level MenuTest_Initialize raises Isaac to, which the international
+// The level Scene_Initialize raises Isaac to, which the international
 // editions changed.
 #if TBS_PATCH_1
 #define DEBUG_ISAAC_LEVEL 50
@@ -82,16 +82,14 @@ static __inline__ void MenuTest_RecalculateParty(void) {
   Unit_Calculate(IVAN);
 }
 
-u8 *MenuTest_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
 
 /// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
+u8 *Scene_GetExits(void) { return (u8 *)gMenuTest_Exits; }
 
-u8 *MenuTest_GetActorPlacements(void) {
-  return (u8 *)gMenuTest_ActorPlacements;
-}
+u8 *Scene_GetActorPlacements(void) { return (u8 *)gMenuTest_ActorPlacements; }
 
 #if TBS_PATCH_1
 /// Finishes pending UI work, displays a message, and waits one final frame.
@@ -225,7 +223,7 @@ UNUSED static void MenuTest_GiveItemToParty(void) {
 }
 #endif
 
-s32 MenuTest_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
+s32 Scene_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
 static void MenuTest_RaisePartyLevels(void) {
@@ -732,7 +730,7 @@ static void MenuTest_GiveTreasureTestStock(void) {
 }
 
 /// Sets the debug party, stock counters and levels; returns zero.
-s32 MenuTest_Initialize(void) {
+s32 Scene_Initialize(void) {
   // Jenna leaves; Garet, Mia and Ivan join.
   Party_RemoveMember(JENNA);
   Party_AddMember(GARET);

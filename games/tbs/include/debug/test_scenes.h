@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-u8 *Test_GetEntrances(void);
-u8 *Test_GetExits(void);
-u8 *Test_GetActorPlacements(void);
-u8 *Test_GetTriggers(void);
-s32 Test_Initialize(void);
+u8 *Scene_GetEntrances(void);
+u8 *Scene_GetExits(void);
+u8 *Scene_GetActorPlacements(void);
+u8 *Scene_GetTriggers(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gTest_Entrances[];
 extern u32 gTest_Exits[];
 extern struct ActorPlacement gTest_ActorPlacements[];

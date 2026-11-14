@@ -531,13 +531,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tbs/src/debug/entry/test_scenes.o"(.text .padding)
+        "*/games/tbs/src/scene/entry.o"(.text .padding)
         "*/games/tbs/src/debug/test_scenes.o"(.text .padding)
         "*/imports.o"(.text .padding)
-        "*/games/tbs/src/debug/entry/test_scenes.o"(.rodata)
+        "*/games/tbs/src/scene/entry.o"(.rodata)
         "*/games/tbs/src/debug/test_scenes.o"(.rodata)
         "*/imports.o"(.rodata)
-        "*/games/tbs/src/debug/entry/test_scenes.o"(.data .overlays)
+        "*/games/tbs/src/scene/entry.o"(.data .overlays)
         "*/games/tbs/src/debug/test_scenes.o"(.data .overlays)
         "*/imports.o"(.data .overlays)
     }
@@ -547,13 +547,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tbs/src/debug/entry/level.o"(.text .padding)
+        "*/games/tbs/src/scene/entry.o"(.text .padding)
         "*/games/tbs/src/debug/level.o"(.text .padding)
         "*/imports.o"(.text .padding)
-        "*/games/tbs/src/debug/entry/level.o"(.rodata)
+        "*/games/tbs/src/scene/entry.o"(.rodata)
         "*/games/tbs/src/debug/level.o"(.rodata)
         "*/imports.o"(.rodata)
-        "*/games/tbs/src/debug/entry/level.o"(.data .overlays)
+        "*/games/tbs/src/scene/entry.o"(.data .overlays)
         "*/games/tbs/src/debug/level.o"(.data .overlays)
         "*/imports.o"(.data .overlays)
     }
@@ -563,13 +563,13 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tbs/src/debug/entry/test.o"(.text .padding)
+        "*/games/tbs/src/scene/entry.o"(.text .padding)
         "*/games/tbs/src/debug/test.o"(.text .padding)
         "*/imports.o"(.text .padding)
-        "*/games/tbs/src/debug/entry/test.o"(.rodata)
+        "*/games/tbs/src/scene/entry.o"(.rodata)
         "*/games/tbs/src/debug/test.o"(.rodata)
         "*/imports.o"(.rodata)
-        "*/games/tbs/src/debug/entry/test.o"(.data .overlays)
+        "*/games/tbs/src/scene/entry.o"(.data .overlays)
         "*/games/tbs/src/debug/test.o"(.data .overlays)
         "*/imports.o"(.data .overlays)
     }

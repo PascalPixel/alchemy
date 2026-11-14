@@ -42,7 +42,7 @@ void Import_ActorSetPosition(u32 actorId, s32 x, s32 z);
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 // ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
-// changed (IncreaseItemAndLevel_Initialize).
+// changed (Scene_Initialize).
 #if TBS_PATCH_1
 #define LEVEL_EDITOR_SCALE (Q16_ONE * 8 / 5)
 #else
@@ -76,18 +76,14 @@ enum IncreaseItemAndLevelActorId {
   ACTOR_SECOND_EMOTE_TESTER
 };
 
-u8 *IncreaseItemAndLevel_GetEntrances(void) {
-  return (u8 *)gIncreaseItemAndLevel_Entrances;
-}
+u8 *Scene_GetEntrances(void) { return (u8 *)gIncreaseItemAndLevel_Entrances; }
 
 /// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *IncreaseItemAndLevel_GetExits(void) {
-  return (u8 *)gIncreaseItemAndLevel_Exits;
-}
+u8 *Scene_GetExits(void) { return (u8 *)gIncreaseItemAndLevel_Exits; }
 
-u8 *IncreaseItemAndLevel_GetActorPlacements(void) {
+u8 *Scene_GetActorPlacements(void) {
   return (u8 *)gIncreaseItemAndLevel_ActorPlacements;
 }
 
@@ -109,9 +105,7 @@ static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
 }
 #endif
 
-u8 *IncreaseItemAndLevel_GetTriggers(void) {
-  return (u8 *)gIncreaseItemAndLevel_Triggers;
-}
+u8 *Scene_GetTriggers(void) { return (u8 *)gIncreaseItemAndLevel_Triggers; }
 
 /// Raises one party member's level by amount, then recalculates that unit.
 static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
@@ -445,7 +439,7 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
 }
 
 /// Sets up the scene: the window transition in, and the level editor's size.
-s32 IncreaseItemAndLevel_Initialize(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
   Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;

@@ -18,14 +18,14 @@ enum TestActorId {
   ACTOR_GUST
 };
 
-u8 *Test_GetEntrances(void) { return (u8 *)gTest_Entrances; }
+u8 *Scene_GetEntrances(void) { return (u8 *)gTest_Entrances; }
 
 /// The scene has no exit regions: its regions entry returns none.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-u8 *Test_GetExits(void) { return (u8 *)gTest_Exits; }
+u8 *Scene_GetExits(void) { return (u8 *)gTest_Exits; }
 
-u8 *Test_GetActorPlacements(void) { return (u8 *)gTest_ActorPlacements; }
+u8 *Scene_GetActorPlacements(void) { return (u8 *)gTest_ActorPlacements; }
 
 /// Gives the first Djinni of an element, then clears its flag so it stays.
 static __inline__ void Test_GiveDjinniForTesting(s32 actorId, s32 element) {
@@ -49,10 +49,10 @@ static void Test_ReceiveGust(void) {
   Test_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
-u8 *Test_GetTriggers(void) { return (u8 *)gTest_Triggers; }
+u8 *Scene_GetTriggers(void) { return (u8 *)gTest_Triggers; }
 
 /// Nothing to set up.
-s32 Test_Initialize(void) { return 0; }
+s32 Scene_Initialize(void) { return 0; }
 
 #include "debug/test_rows.h"
 

@@ -69,45 +69,7 @@ void Actor_StartScript(struct Actor *object, const void *script);
 // then lifts the leader if the new terrain is above the leader.
 #include "shared/pillars_raise.h"
 
-void Pillars_LowerHeldCells(u16 *list) {
-  struct Actor *held = Leader_FindActorAhead();
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  u8 *shapeGrid = gMapShapeGrid;
-
-  if (held == NULL) {
-    s32 id = Field_FindNearbyPsynergyTarget(gMainRoutineWork.currentOwner, 1);
-
-    if (id != -1)
-      held = Actor_GetById(id);
-  }
-  work->movedBlock = NULL;
-  if (*list != 0xffff) {
-  loop:
-    if (held == Actor_GetById(*list)) {
-      u8 *layer = &held->terrainId;
-      struct MapCell *cells = Ram_HeapSlots->mapWork->layers[*layer].cells;
-      u8 *shapes = shapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-      s32 shape = MapGrid_GetTerrainKind(*layer, held->x, held->z);
-      s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
-      s32 index = Actor_GetCellIndex(held);
-      s32 value;
-
-      shapes += index;
-      value = MapCollision_FindOrAddTag(*layer, shape, (level >> 19) - 4);
-      cells += index;
-      /* FAKEMATCH(signature): the shape grid byte stored through a bit-field
-       * view. */
-      ((struct ShapeBits *)shapes)->shape = value;
-      cells->attributeB &= 63;
-      cells += 128;
-      cells->attributeB &= 191;
-      work->movedBlock = held;
-    }
-    list++;
-    if (*list != 0xffff)
-      goto loop;
-  }
-}
+#include "shared/pillars_lower_held_cells.h"
 
 #include "shared/held_actor_raise_cell.h"
 

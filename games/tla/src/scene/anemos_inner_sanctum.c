@@ -1795,18 +1795,14 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "../field/field_effect/advance_motion.c"
 
 #undef BYTE_AT
-#undef BYTE_AT
 #undef FIELD_AT
 #undef DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF
-#undef FIELD_AT
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef Func_0200088c
 #undef Func_020009b8
 #undef Func_02000a78
-#undef Func_02000038
-#undef CrackedTile_PlaceLanding
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
@@ -2320,4 +2316,3 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gData_020037c8,
     (s32)gData_02003804,
 };
-#undef CrackedTile_PlaceLanding

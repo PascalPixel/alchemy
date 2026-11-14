@@ -620,7 +620,6 @@ void YampiDesert_WatchScorpionStop(void) {
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
-#undef gYampiDesert_Room2PlacementsAfterMeeting
 // The Yampi Desert, between Osenia's south and Alhafra: twelve rooms of sand.
 // Pound sinks its wooden stakes and Sand lets the party slip under them; a
 // group of Madra's travelers hunting Briggs is stuck halfway (Room2); the King
@@ -2628,7 +2627,6 @@ u32 gYampiDesert_SlideDust[] = {
 #undef Actor_SetMovementTypeAndWaitById
 #undef gYampiDesert_FinderRunsAhead
 #undef gYampiDesert_TravelersFollow
-#undef gYampiDesert_LastTravelersFollow
 
 // The Yampi Desert's data: its effect and travelers' scripts, stake lists,
 // rooms' tables and triggers.

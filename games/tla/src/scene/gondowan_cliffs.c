@@ -103,7 +103,6 @@ u32 gFieldEffect_LongScript[] = {
 
 #include "../field/field_effect/move.c"
 
-#undef gGondowanCliffs_PassActorPlacements
 // The Gondowan Cliffs' events and set-up, and the geysers Scoop digs up out of
 // the yellow sand: each rises and falls on its timer, carrying the leader up
 // its column of water (Geysers_Update, Geysers_Draw).
@@ -820,4 +819,3 @@ LATE_DATA s32 gGondowanCliffs_MapRects[] = {
     0x2000200, 0x3600400, 0x600, 0x1601000, -1, -1,
 };
 // clang-format on
-#undef GondowanCliffs_PushPillarIntoWater

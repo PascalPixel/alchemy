@@ -563,7 +563,6 @@ struct CellTargetEntry;
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
 #undef OBJECT_BYTE
-#undef Actor_StartScript
 #include "shared/cracked_tile_drop_in.h"
 
 extern struct CellTarget gCrackedTiles;

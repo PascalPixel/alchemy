@@ -2604,8 +2604,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef FIELD_AT
 #undef ACTOR_SET_MODE_AND_WAIT
 #undef SET_MODE_AND_WAIT
-#undef Func_020000ec
-#undef Func_02000090
 #undef gData_02006088
 #undef gData_020061e0
 #undef gPaletteCyclePausesInEvents

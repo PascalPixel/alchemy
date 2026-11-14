@@ -1037,7 +1037,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef DEFINE_TELEPORT_FROM_MARK
 #undef DEFINE_BURST_PILLAR
 #undef FIELD_AT
-#undef gYampiDesertCave_MarkPaletteSlots
 
 void YampiDesertCave_MeetGuardianOfFire(void);
 
@@ -1263,5 +1262,3 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
      IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };
-#undef YampiDesertCave_StartMovingPillar
-#undef YampiDesertCave_FinishMovingPillar

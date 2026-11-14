@@ -1917,17 +1917,6 @@ L_0200ae24:
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#undef gKandoreanTemple_Placements
-#undef gKandoreanTemple_VentRoomPlacements
-#undef gKandoreanTemple_FogRoomPlacements
-#undef gKandoreanTemple_LiftRoomEvents
-#undef gKandoreanTemple_ChestbeaterRoomEvents
-#undef gKandoreanTemple_VentRoomEvents
-#undef gKandoreanTemple_Room5Events
-#undef gKandoreanTemple_Room6Events
-#undef gKandoreanTemple_FogRoomEvents
-#undef gKandoreanTemple_GateEvents
-#undef gKandoreanTemple_PoisHallEvents
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
 
@@ -3444,6 +3433,3 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_TABLE_END},
 };
 // clang-format on
-#undef KandoreanTemple_MeditateRestlessly
-#undef KandoreanTemple_LevitateStudentBob
-#undef KandoreanTemple_PlaceLevitatingStudent

@@ -1768,7 +1768,6 @@ void Func_02002618(s16 value) {
 
 #include "shared/beam_start.h"
 
-#undef MarsLighthouseRoomF_ContinueSlide
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
 
@@ -2427,13 +2426,11 @@ s32 Actor_Park(struct Actor *object) {
 #undef IWRAM
 #undef position
 #undef WORK
-#undef ABS
 #undef MapLayer
 #undef SceneWork
 #undef Camera_SetBounds
 #undef Ride_SetEntry
 #undef Unit_Get
-#undef MapLayer
 #include "field/event_inline.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -3654,5 +3651,4 @@ LATE_DATA s32 gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_MediumScript,
     (s32)gFieldEffect_LongScript,
 };
-#undef MarsLighthouseRoomF_ContinueSlide
 #undef Func_02001010

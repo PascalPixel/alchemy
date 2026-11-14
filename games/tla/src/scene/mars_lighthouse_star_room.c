@@ -1436,7 +1436,6 @@ void Func_02001d7c(void) {
   animation->flag11 = 1;
 }
 
-#undef MarsLighthouseRoomF_SlideOnIce
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(struct Actor *object);
@@ -1600,7 +1599,6 @@ struct BattleUnit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 #include "shared/actor_blink.h"
 
 #undef Unit_Get
-#undef MarsLighthouseRoomF_SlideOnIce
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
@@ -2042,7 +2040,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "../field/object/set_sprite_priority.c"
 
-#undef MarsLighthouseRoomF_SlideOnIce
 
 #include "../field/field_effect/move.c"
 
@@ -2060,9 +2057,7 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef KNOCK_BACK_CHECK_COLLISION
 #undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
-#undef ABS
 #undef Unit_Get
-#undef Position
 #undef Position
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 extern s32 gFieldEffect_DurationScripts[];
@@ -2685,4 +2680,3 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_MediumScript,
     (s32)gFieldEffect_LongScript,
 };
-#undef MarsLighthouseRoomF_SlideOnIce

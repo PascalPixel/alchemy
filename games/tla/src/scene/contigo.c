@@ -272,7 +272,6 @@ void Func_02000328(void) {
  * does not compile in tla-ja: games/tla/src/scene/contigo.c:2130: redefinition
  * of `struct ContigoEventWork'. */
 #define ContigoEventWork ContigoEventWork__contigo
-#undef Func_02003f54
 #include "text/msg_ids.h"
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -3047,7 +3046,5 @@ struct Trigger gContigo_Room3Triggers[] = {
 #undef MSG_FIRST_PRIZE
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
-#undef Func_02003e54
-#undef Palette_SetColors
 #undef ContigoEventWork
 #undef TalkActor

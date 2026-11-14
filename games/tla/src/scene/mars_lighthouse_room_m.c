@@ -1425,8 +1425,6 @@ void Beam_DrawTargets(void) {
 }
 #undef IWRAM
 
-#undef gData_020036c4
-#undef gData_02003704
 void Actor_Release(void *handle);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 

@@ -1984,11 +1984,9 @@ struct ThrowAnimations gData_02003634 = {{439, 440, 441}};
 
 #undef FIELD_AT
 #undef DEFINE_CHAMPA_CLIFF_CAVES_GROW
-#undef FIELD_AT
 #undef PALETTE
 #undef BYTE_AT
 #undef WORD_AT
-#undef FIELD_AT
 #undef gData_02003d10
 #undef gData_02003d18
 

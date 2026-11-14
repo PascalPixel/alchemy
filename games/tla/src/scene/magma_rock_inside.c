@@ -2246,22 +2246,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 #undef FIELD_AT
 #undef EVENT_WORK
 
-#undef gMagmaRockInside_Room4Statues
-#undef gMagmaRockInside_Placements
-#undef gMagmaRockInside_Room2Placements
-#undef gMagmaRockInside_Room3Placements
-#undef gMagmaRockInside_Room4Placements
-#undef gMagmaRockInside_Room5Placements
-#undef gMagmaRockInside_Room6Placements
-#undef gMagmaRockInside_Room7Placements
-#undef gMagmaRockInside_Room8Placements
-#undef gMagmaRockInside_Room2Triggers
-#undef gMagmaRockInside_Room3Triggers
-#undef gMagmaRockInside_Room4Triggers
-#undef gMagmaRockInside_Room5Triggers
-#undef gMagmaRockInside_Room6Triggers
-#undef gMagmaRockInside_Room7Triggers
-#undef gMagmaRockInside_Room8Triggers
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
 #undef gMagmaRockInside_BlazeWatcherReturnScript
@@ -2683,9 +2667,7 @@ test:
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-#undef MagmaRockInside_StartLavaPlatform
 
-#undef MagmaRockInside_StartLavaPlatform
 #undef CLOSED_BLEND
 // Magma Rock's inside: its falling rocks and rubble, and its tables.
 
@@ -3611,8 +3593,6 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-#undef MagmaRockInside_BurstCrackedPillar1
-#undef MagmaRockInside_BurstCrackedPillar2
 #undef gMagmaRockInside_BlazeWatcherReturnScript
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
@@ -3621,25 +3601,8 @@ struct Trigger gMagmaRockInside_Room8Triggers[] = {
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef FIELD_AT
-#undef gMagmaRockInside_Placements
-#undef gMagmaRockInside_Room2Placements
-#undef gMagmaRockInside_Room3Placements
-#undef gMagmaRockInside_Room4Placements
-#undef gMagmaRockInside_Room5Placements
-#undef gMagmaRockInside_Room6Placements
-#undef gMagmaRockInside_Room7Placements
-#undef gMagmaRockInside_Room8Placements
-#undef gMagmaRockInside_Room4Statues
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 #undef DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH
 #undef BYTE_AT
-#undef gMagmaRockInside_BlazeWatcherReturnScript
 #undef EVENT_WORK
 #undef DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM
-#undef gMagmaRockInside_Room2Triggers
-#undef gMagmaRockInside_Room3Triggers
-#undef gMagmaRockInside_Room4Triggers
-#undef gMagmaRockInside_Room5Triggers
-#undef gMagmaRockInside_Room6Triggers
-#undef gMagmaRockInside_Room7Triggers
-#undef gMagmaRockInside_Room8Triggers

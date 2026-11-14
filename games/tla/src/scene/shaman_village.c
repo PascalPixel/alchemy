@@ -1340,8 +1340,6 @@ void ShamanVillage_MeetMoapa(void) {
   Event_End();
 }
 
-#undef gShamanVillage_WalkToLeftStartScript
-#undef gShamanVillage_WalkToRightStartScript
 #undef gShamanVillage_Room2Placements
 #include "shared/drift_spawn.c"
 
@@ -3417,7 +3415,4 @@ u32 gDriftScene_SpawnScript[] = {
 #undef SHAMAN_VILLAGE_EMOTE
 #undef WORD_AT
 #undef OBJ14_BYTE
-#undef gShamanVillage_WalkToLeftStartScript
-#undef gShamanVillage_WalkToRightStartScript
-#undef Import_ActorSetMode
 #undef gShamanVillage_Room2Placements

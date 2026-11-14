@@ -1415,7 +1415,6 @@ const struct Trigger *Scene_GetEvents(void) {
 
 #undef MagmaRock_PlayBurst
 #undef MagmaRockEffectConfig
-#undef Blocks_MarkCells
 #undef Position
 
 #include "../field/field_effect/advance_motion.c"
@@ -1432,11 +1431,7 @@ const struct Trigger *Scene_GetEvents(void) {
 #undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef TLA_MAGMA_ROCK_H
-#undef BYTE_AT
 #undef HALF_AT
-#undef gMagmaRock_Room2LowerPlacements
-#undef gMagmaRock_Room2MiddlePlacements
-#undef gMagmaRock_Room2UpperPlacements
 #undef MagmaRock_PlayBurst
 #undef Position
 #undef MagmaRockEffectConfig
@@ -2775,9 +2770,3 @@ struct Trigger gMagmaRock_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 #undef BYTE_AT
-#undef Func_02003af4
-#undef FieldEffect_Spawn
-#undef MagmaRock_RaiseFlameTop
-#undef MagmaRock_RaiseFlamePart
-#undef MagmaRockInside_RaiseActorCells
-#undef Blocks_MarkCells

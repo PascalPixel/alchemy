@@ -1461,7 +1461,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef DEFINE_GABOMBA_STATUE_RAISE_ACTORS
 #undef MARK
 #undef REG_BLDALPHA
-#undef REG_BLDALPHA
 #undef OBJECT_BYTE
 /* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
  * before has its own. */
@@ -3563,7 +3562,6 @@ u32 gData_02005944[] = {
 };
 
 #undef FIELD_AT
-#undef FieldEffect_Spawn
 #undef gData_02006ec0
 #undef gData_02006f38
 #undef Wanderer

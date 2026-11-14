@@ -1322,7 +1322,6 @@ typedef struct IwramGlobals {
 #include "shared/beam_draw_targets.h"
 #undef IWRAM
 
-#undef Oam_AddSpriteAtDepthClamped
 #undef Func_02002c2c
 void Func_02002270(void) {
   struct MarsLighthouseEntranceRideHead *work =
@@ -1853,7 +1852,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
 #undef RIDE_WORK
 #undef DEFINE_FUNC_0200085C
-#undef Oam_AddSpriteAtDepthClamped
 #undef SET_SPRITE_WINDOW_LAYERS
 #undef IWRAM
 #undef KNOCK_BACK
@@ -1865,52 +1863,10 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef KNOCK_BACK_SPHERES_OVERLAP
 #undef WORK
 #undef ABS
-#undef gMarsLighthouseEntrance_Placements
-#undef gMarsLighthouseEntrance_Room1Placements
-#undef gMarsLighthouseEntrance_Room2Placements
-#undef gMarsLighthouseEntrance_Room3Placements
-#undef gMarsLighthouseEntrance_Room4Placements
-#undef gMarsLighthouseEntrance_Room5Placements
-#undef gMarsLighthouseEntrance_Room6Placements
-#undef gMarsLighthouseEntrance_Room7Placements
-#undef FieldEffect_Spawn
-#undef gMarsLighthouseEntrance_Triggers
-#undef gMarsLighthouseEntrance_Room1Triggers
-#undef gMarsLighthouseEntrance_Room2Triggers
-#undef gMarsLighthouseEntrance_Room3Triggers
-#undef gMarsLighthouseEntrance_Room4Triggers
-#undef gMarsLighthouseEntrance_Room5Triggers
-#undef gMarsLighthouseEntrance_Room6Triggers
-#undef gMarsLighthouseEntrance_Room7Triggers
 #undef Func_02002c2c
-#undef gMarsLighthouseEntrance_Triggers
-#undef gMarsLighthouseEntrance_Room1Triggers
-#undef gMarsLighthouseEntrance_Room2Triggers
-#undef gMarsLighthouseEntrance_Room3Triggers
-#undef gMarsLighthouseEntrance_Room4Triggers
-#undef gMarsLighthouseEntrance_Room5Triggers
-#undef gMarsLighthouseEntrance_Room6Triggers
-#undef gMarsLighthouseEntrance_Room7Triggers
-#undef gMarsLighthouseEntrance_Triggers
-#undef gMarsLighthouseEntrance_Room1Triggers
-#undef gMarsLighthouseEntrance_Room2Triggers
-#undef gMarsLighthouseEntrance_Room3Triggers
-#undef gMarsLighthouseEntrance_Room4Triggers
-#undef gMarsLighthouseEntrance_Room5Triggers
-#undef gMarsLighthouseEntrance_Room6Triggers
-#undef gMarsLighthouseEntrance_Room7Triggers
 #undef Func_0200246c
 #undef Unit_Get
 #undef Actor_Blink
-#undef gMarsLighthouseEntrance_Triggers
-#undef gMarsLighthouseEntrance_Room1Triggers
-#undef gMarsLighthouseEntrance_Room2Triggers
-#undef gMarsLighthouseEntrance_Room3Triggers
-#undef gMarsLighthouseEntrance_Room4Triggers
-#undef gMarsLighthouseEntrance_Room5Triggers
-#undef gMarsLighthouseEntrance_Room6Triggers
-#undef gMarsLighthouseEntrance_Room7Triggers
-#undef Position
 #undef Position
 extern s32 gFieldEffect_DurationScripts[];
 
@@ -3251,5 +3207,3 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_LongScript,
 };
 #undef Func_02004160
-#undef MarsLighthouseEntrance_BurstIceSheet
-#undef MarsLighthouseEntrance_PushStatueIntoFlames

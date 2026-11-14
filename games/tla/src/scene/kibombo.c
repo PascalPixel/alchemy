@@ -1460,16 +1460,7 @@ void Func_02002eb0(void) {
 
 #undef DEFINE_KIBOMBO_WOBBLE
 #undef Actor_SetSpriteFlags
-#undef Actor_SetBlendMode
-#undef Actor_WaitForMove
-#undef FieldCamera_GetActor
 #undef EVENT_WORK
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpritePriority
-#undef Actor_SetMoveTarget
-#undef Import_ActorCreate
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion
 #include "flags.h"
 #include "shared/tables.h"
 #include "kibombo.h"
@@ -3901,14 +3892,5 @@ struct Trigger gKibombo_Room3Triggers[] = {
 };
 #undef PALETTE_WORD
 #undef DEFINE_KIBOMBO_SET_CROWD_MODE
-#undef Actor_WaitForMove
-#undef FieldCamera_GetActor
 #undef DEFINE_KIBOMBO_STEP_WHEN_HELD
 #undef Actor_SetSpriteFlags
-#undef Actor_SetBlendMode
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpritePriority
-#undef Actor_SetMoveTarget
-#undef Import_ActorCreate
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion

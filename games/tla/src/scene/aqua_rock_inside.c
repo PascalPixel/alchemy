@@ -707,7 +707,6 @@ void Func_02000ca8(void) {
   Event_End();
 }
 
-#undef gData_02003fb8
 /* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before
  * it has another declaration; tried as the definition's void
  * Func_02000ca8(void), which the object already declares, it does not compile
@@ -2576,8 +2575,6 @@ u32 gWaterDropScript[] = {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 #undef BYTE_AT
-#undef gData_02003fb8
-#undef Func_02003ab0
 
 void AquaRockInside_FightSteam(void);
 void Func_020005f8(void);

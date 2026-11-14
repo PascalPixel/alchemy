@@ -839,7 +839,6 @@ void Func_02000fac(void) {
 
 #undef FIELD_AT
 #undef gData_020051d8
-#undef gData_02005ee4
 #include "text/msg_ids.h"
 
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
@@ -4741,22 +4740,17 @@ s32 gData_020062d4[] = {
 #undef EFFECT_SPRITE_PRIORITY
 #undef FIELD_AT
 #undef BYTE_AT
-#undef FIELD_AT
-#undef FIELD_AT
-#undef FIELD_AT
 #undef Test
 #undef C1
 #undef C2
 #undef C3
 #undef C4
 #undef C6
-#undef FIELD_AT
 #undef GRID_WIDTH
 #undef gPath
 #undef AT
 #undef AT_ADDRESS
 #undef GAIA_ROCK_INSIDE_PATH
-#undef gData_02005ee4
 #undef gData_020051d8
 #undef gSceneState
 #undef Func_02000aac

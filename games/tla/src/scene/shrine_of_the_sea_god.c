@@ -247,7 +247,6 @@ void Func_02000280(void) {
 
 struct Actor;
 #include "field/field.h"
-#undef Actor_SetPositionAndResetMotion
 
 extern u32 gData_02003df4[];
 extern s16 gData_02003e14[];
@@ -922,29 +921,11 @@ void Func_020012b4(void) {
 
 #include "../field/field_effect/advance_motion.c"
 
-#undef Actor_SetPositionAndResetMotion
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#undef gShrineOfTheSeaGod_Placements
-#undef gShrineOfTheSeaGod_Room1Placements
-#undef gShrineOfTheSeaGod_Room2Placements
-#undef gShrineOfTheSeaGod_Room3Placements
-#undef gShrineOfTheSeaGod_Room4Placements
-#undef gShrineOfTheSeaGod_Room5Placements
-#undef gShrineOfTheSeaGod_Room6Placements
-#undef gShrineOfTheSeaGod_Room7Placements
-#undef gShrineOfTheSeaGod_Room1Triggers
-#undef gShrineOfTheSeaGod_Room2Triggers
-#undef gShrineOfTheSeaGod_Room3Triggers
-#undef gShrineOfTheSeaGod_Room4Triggers
-#undef gShrineOfTheSeaGod_Room5Triggers
-#undef gShrineOfTheSeaGod_Room6Triggers
-#undef gShrineOfTheSeaGod_Room7Triggers
-#undef gShrineOfTheSeaGod_Room8Triggers
-#undef gShrineOfTheSeaGod_Room9Triggers
 #include "text/msg_ids.h"
 
 extern u32 gData_02004a18[];

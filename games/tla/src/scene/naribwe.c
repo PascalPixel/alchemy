@@ -527,4 +527,3 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      CONDITION_ALWAYS, EVENT(Naribwe_HideStone)},
     {TRIGGER_TABLE_END},
 };
-#undef Naribwe_PraiseFortuneTellerOnReturn

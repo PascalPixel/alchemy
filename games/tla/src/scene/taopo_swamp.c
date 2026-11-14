@@ -1943,7 +1943,6 @@ void Vent_SetGust(s32 index, s32 value) {
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef VENT_AT
-#undef gTaopoSwamp_DripFromCeilingScript
 
 void TaopoSwamp_FightFlower(void);
 void TaopoSwamp_DigHole(void);

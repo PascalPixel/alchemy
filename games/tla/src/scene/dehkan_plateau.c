@@ -980,8 +980,6 @@ void DehkanPlateau_CannonCastsPound(void) {
 #undef EFFECT_SCRIPTS
 #undef gDehkanPlateau_PoundCube
 #undef HeldActor_RaiseCell
-#undef Pillars_LowerHeldCells
-#undef CrumblingPillars_StepWithStandIn
 void Actor_DisableById(s32 id);
 /* VIEW(s2698): routine gDehkanPlateau_PoundCube as this part declared it; the
  * joined file has another; tried as the definition's extern u32
@@ -1770,11 +1768,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #undef DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG
 #undef gDehkanPlateau_PoundCube
-#undef CrumblingPillars_Step
-#undef CrumblingPillars_StepWithStandIn
-#undef Pillars_Place
-#undef CrumblingPillars_PlaceWithStandIns
-#undef Pillars_Raise
 
 void DehkanPlateau_PlaceRoom3Pillar(void);
 void DehkanPlateau_MoveRoom3SecondPillar(void);

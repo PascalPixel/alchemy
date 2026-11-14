@@ -26,6 +26,13 @@
 #include "actor.h"
 #include "field/event_inline.h"
 #include "objcmd.h"
+#include "module/scene/actor_animation.h"
+
+/// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
+/// village redraws it on every visit.
+#define FLAG_MIKASALLA_LADDER_DUG_UP 0x85b
+/// Set once Parch has dried the tunnels for this visit.
+#define FLAG_MIKASALLA_TUNNELS_PARCHED FLAG_SCENE_TEMP_00
 
 extern s16 gMikasalla_TunnelRegions[];
 extern struct ActorPlacement gMikasalla_VillagePlacements[];
@@ -122,7 +129,7 @@ void Mikasalla_EnterDoor(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
 
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   if (index != 4) {
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -8);
     Event_Wait(10);
@@ -155,6 +162,7 @@ void Mikasalla_AskLookingForSomeone(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
+  // "Are you looking for someone?"
   Event_OpenMessage(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -168,19 +176,19 @@ void Mikasalla_AskLookingForSomeone(void) {
 }
 
 /// Scoop on the patch of ground by the sheep digs up the ladder down to the
-/// tunnels, and it stays dug (flag 0x85b), Scene_PrepareMap redrawing it on
+/// tunnels, and it stays dug, Scene_PrepareMap redrawing it on
 /// every visit.
 void Mikasalla_DigUpLadder(void) {
   MapGrid_CopyCellsTo(5, 49, 5, 41, 1, 1);
   MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
-  Event_SetFlag(0x85b);
+  Event_SetFlag(FLAG_MIKASALLA_LADDER_DUG_UP);
 }
 
 /// Parch on cell 60 in the tunnels redraws three stretches of the cave and its
-/// ground, once a visit (flag 0x200), as Scene_PrepareMap redraws them on a
+/// ground, once a visit, as Scene_PrepareMap redraws them on a
 /// return.
 void Mikasalla_CastParch(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_00) == 0) {
+  if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED) == 0) {
     Map_SetLayerEntryFlag(0);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
@@ -193,7 +201,7 @@ void Mikasalla_CastParch(void) {
     MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
     MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
     MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    Event_SetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED);
   }
 }
 
@@ -215,7 +223,7 @@ s32 Scene_PrepareMap(void) {
   object->priorityFlags = flags;
   Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
   if (party->scene == (s32)&SceneId_Mikasalla2) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
       Map_SetLayerEntryFlag(2);
@@ -229,7 +237,7 @@ s32 Scene_PrepareMap(void) {
       MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
       MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
     }
-  } else if (Event_GetFlag(0x85b)) {
+  } else if (Event_GetFlag(FLAG_MIKASALLA_LADDER_DUG_UP)) {
     Mikasalla_DigUpLadder();
   }
   return 0;
@@ -249,17 +257,17 @@ void Mikasalla_ClimbDownLadder(void) {
     exit = 3;
     drop = 9;
   }
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(4)->actionFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->actionFlags &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_SetDestinationOffset(4, 0, 4);
-  Actor_WaitForMoveById(4);
-  Actor_SetSpriteFlags(Actor_GetById(4), 0);
-  Actor_SetAnimation(4, 13);
-  Actor_SetDestinationOffset(4, 0, drop);
-  Actor_WaitForMoveById(4);
-  Actor_SetAnimation(4, 10);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
+  Actor_SetAnimation(ACTOR_FELIX, 13);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, drop);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetAnimation(ACTOR_FELIX, 10);
   Event_Wait(10);
   Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(exit);
@@ -269,16 +277,16 @@ void Mikasalla_ClimbDownLadder(void) {
 void Mikasalla_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, 0, -14);
-  Actor_WalkByAndWait(4, 16, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
+  Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Mikasalla_ClimbDownLadder();
 }
 
 void Mikasalla_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, -2, -6);
-  Actor_WalkByAndWait(4, -14, -8);
+  Actor_WalkByAndWait(ACTOR_FELIX, -2, -6);
+  Actor_WalkByAndWait(ACTOR_FELIX, -14, -8);
   Mikasalla_ClimbDownLadder();
 }
 
@@ -286,26 +294,26 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
 #include "shared/scene_turn_actor_and_run.h"
 
 void Mikasalla_StepOntoLadderFacingNorth(void) {
-  s32 x = ((s16 *)&Actor_GetById(4)->x)[1];
+  s32 x = ((s16 *)&Actor_GetById(ACTOR_FELIX)->x)[1];
 
   Event_Start();
   Event_ResolvePendingActions(0);
   if (x % 16 <= 7) {
-    Actor_WalkByAndWait(4, -4, -4);
-    Actor_WalkByAndWait(4, -4, -8);
+    Actor_WalkByAndWait(ACTOR_FELIX, -4, -4);
+    Actor_WalkByAndWait(ACTOR_FELIX, -4, -8);
   } else {
-    Actor_WalkByAndWait(4, 4, -4);
-    Actor_WalkByAndWait(4, 4, -8);
+    Actor_WalkByAndWait(ACTOR_FELIX, 4, -4);
+    Actor_WalkByAndWait(ACTOR_FELIX, 4, -8);
   }
-  Actor_WalkToAndWait(4, 424, 99);
+  Actor_WalkToAndWait(ACTOR_FELIX, 424, 99);
   Mikasalla_ClimbDownLadder();
 }
 
 void Mikasalla_StepOntoLadderAhead(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, 0, -4);
-  Actor_WalkToAndWait(4, 424, 99);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -4);
+  Actor_WalkToAndWait(ACTOR_FELIX, 424, 99);
   Mikasalla_ClimbDownLadder();
 }
 
@@ -562,7 +570,7 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 264, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 664, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 664, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 680, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 632, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 616, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -634,7 +642,7 @@ struct Trigger gMikasalla_TunnelTriggers[] = {
      EVENT(Mikasalla_StepOntoLadderFacingNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS,
      EVENT(Mikasalla_StepOntoLadderAhead)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, 0x200,
-     EVENT(Mikasalla_CastParch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60,
+     FLAG_MIKASALLA_TUNNELS_PARCHED, EVENT(Mikasalla_CastParch)},
     {TRIGGER_TABLE_END},
 };

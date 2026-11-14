@@ -104,9 +104,12 @@ void AttekaInlet_AskPiersToSetSail(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAreWeSetting);
+  // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
+  // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(18, 3);
+    // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
@@ -116,6 +119,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
     Import_EventSetExitRequest(4);
   } else {
     (gFieldWork->message)++;
+    // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
@@ -163,18 +167,24 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Actor_GetById(9)->velocityY = px(4);
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
+    // "Where do you think you're going?"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
     Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+    // "We worked really hard on that ship of yours!"
     Event_ShowMessageAndWait(10, 0);
     Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
+    // "I want to see our handiwork take flight. Don't you, buddy?"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
     Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
     Actor_SetModeById(10, 3);
+    // "I want to! Boy, do I want to!"
     Event_ShowMessageAndWait(10, 0);
     Actor_ArmCallback(10, FACING_EAST, 0);
     Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_ArmCallback(9, FACING_EAST, 20);
+    // "So hurry up! We want to see the boat fly!"
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 9, 0);
+    // "Thanks, buddy!"
     Event_ShowMessageAndWait(10, 0);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
@@ -197,8 +207,10 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
     Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 20);
     Event_SetMessageId((s32)MsgIVeBeenWaiting);
+    // "I've been waiting for you, Felix."
     Event_ShowMessageAndWait(23, 0);
     Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+    // "Take a look at your ship."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 23, 0);
     FieldCamera_GetActor()->motionFlags = 0;
     FieldCamera_SetSpeed(4.8);
@@ -214,27 +226,38 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Event_Wait(20);
     Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
+    // "Now that you have been given wings, all obstacles in your path will..."
     Event_ShowMessageAndWait(23, 0);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    // "However, it is not the wings alone that grant your ship the power of..."
     Event_ShowMessageAndWait(23, 0);
     Actor_SetModeById(23, 4);
+    // "Psynergy is the force that powers the Wings of Anemos."
     Event_ShowMessageAndWait(23, 0);
+    // "If the ship is to fly, you will need to focus the power of your..."
     Event_ShowMessageAndWait(23, 0);
     Actor_FaceDirectionAndWait(23, FACING_NORTH_NORTHWEST);
+    // "You have visited Shaman Village recently, have you not?"
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 23, 0);
     Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
+    // "Now is the time to make use of the powers you acquired there."
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
+    // "Now... Use the power of Hover to raise your ship!"
     Event_ShowMessageAndWait(23, 0);
     Actor_SetModeById(23, 4);
+    // "At first, you may not want to move your ship too high or too far..."
     Event_ShowMessageAndWait(23, 0);
     Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    // "It will be difficult at first, but that is to be expected... After..."
     Event_ShowMessageAndWait(23, 0);
     Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+    // "But your quest should not demand much more of you..."
     Event_ShowMessageAndWait(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
+    // "Now, be confident and set sail!"
     Event_ShowMessageAndWait(23, 0);
     Actor_SetSpeed(23, 0.8);
     Actor_GetById(23)->actionFlags &= ~1;
@@ -243,6 +266,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_GetById(23)->actionFlags |= 1;
     Actor_FaceDirectionById(23, FACING_SOUTH_SOUTHEAST);
     Motion_SetModeAndWaitAnimation(23, 3);
+    // "All of Contigo is watching... Show them your power, and make your..."
     Event_ShowMessageAndWait(23, 0);
     GameFlag_Set(FLAG_HAMMA_SHOWED_THE_WINGS);
     Event_End();
@@ -265,9 +289,12 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   Actor_WalkToAndWaitById(18, 532, 248);
   Actor_FaceDirectionById(18, FACING_SOUTH_SOUTHEAST);
   Event_SetMessageId(MsgAreWeSetting);
+  // "Felix, are we setting off now?" Yes: "Then, to sea we go!" No: "Please
+  // don't rush on my account. Let's enjoy..."
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetModeById(18, 3);
+    // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Event_GetFlag(FLAG_REUNITED_AT_CONTIGO)) {
@@ -277,6 +304,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     Import_EventSetExitRequest(4);
   } else {
     (gFieldWork->message)++;
+    // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
     Actor_SetModeById(18, 2);
@@ -356,10 +384,11 @@ void AttekaInlet_HammetsMessengerArrives(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  angle = 0xd000;
+  angle = FACING_NORTH_NORTHEAST;
   Actor_SetHorizontalPositionAndAngleWithTerrain(24, px(504), px(460), angle);
   wait(1);
   Event_SetMessageId((s32)MsgHeyWait2);
+  // "Hey, wait!"
   Event_ShowMessageAndWait(24, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
@@ -370,10 +399,13 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_WalkToAndWait(24, 520, 432);
   Actor_WalkToAndWait(24, 520, 388);
   Actor_FaceDirection(23, FACING_SOUTH_SOUTHEAST, 0);
+  // "Master Hammet requested that I deliver this to Isaac, and I totally..."
   Event_ShowMessageAndWait(24, 0);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  // "Well, you'd better hurry."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "I'm supposed to deliver this to Isaac... It's not too late, is it?"
   Event_ShowMessageAndWait(24, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_FaceDirectionById(24, angle);
@@ -396,13 +428,17 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_WalkToAndWait(24, 504, 460);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Actor_FaceDirectionById(23, angle);
+  // "On my way here, I stopped in Kalay briefly to speak with Master Hammet."
   Event_ShowMessageAndWait(23, 0);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "He was quite upset that you hadn't returned to visit him so that he..."
   Event_ShowMessageAndWait(23, 0);
   Actor_SetModeById(23, 3);
+  // "So he requested that I take this with me to Atteka."
   Event_ShowMessageAndWait(23, 0);
   Motion_SetModeAndWaitAnimation(23, 3);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  // "It is a gift of thanks from Master Hammet. Take it, please."
   Event_ShowMessageAndWait(23, 0);
   GameFlag_Set(FLAG_HAMMETS_GIFT_DELIVERED);
   Event_End();
@@ -469,7 +505,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
   Event_Wait(8);
@@ -637,8 +673,7 @@ struct ActorPlacement gAttekaInlet_HarbourActorPlacementsOnceWinged[] = {
     ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 408,
                     FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(59, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 516, 0, 360,
-                    FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH,
-                    0),
+                    FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},

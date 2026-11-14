@@ -233,7 +233,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     return;
   if (MapGrid_GetCellBehaviorAt(object->terrainId, object->x, object->z) != 77)
     return;
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
 #if TLA_PATCH_1
   FieldActor_SetMoveTargetFixed(object, (object->x & 0xfff00000) + 0x80000,
                                 object->y, (object->z & 0xfff00000) + 0x80000);
@@ -242,9 +242,9 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     s32 id = gMainRoutineWork.currentOwner;
 
     if (shift > 0)
-      Actor_ArmCallback(id, 0xc000, 0);
+      Actor_ArmCallback(id, FACING_NORTH, 0);
     else
-      Actor_ArmCallback(id, 0x4000, 0);
+      Actor_ArmCallback(id, FACING_SOUTH, 0);
   }
   wait(10);
   i = 0;

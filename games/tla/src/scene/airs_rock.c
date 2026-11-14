@@ -19,6 +19,21 @@
 #include "module/system/system.h"
 #include "module/tla.h"
 
+/// Set once Move has left the second room's first pillar on its ledge, cell
+/// (16, 43).
+#define FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST 0x85f
+/// As FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, the second, cell (45, 45).
+#define FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND 0x860
+/// As FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, the third, cell (21, 48).
+#define FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD 0x861
+/// As FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, the fourth, cell (39, 49).
+#define FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH 0x862
+/// As FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, the fifth, cell (49, 18).
+#define FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH 0x887
+/// Set once Move has pushed the first room's third pillar into place
+/// (AirsRock_MoveThirdPillar).
+#define FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED 0x879
+
 // Story flags: the eight barriers the Wind Stones' gusts blow away, in the
 // order of gAirsRock_GustTargets, then the mud blown from the wall, the fog
 // cleared and the way to the top opened.
@@ -207,6 +222,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void AirsRock_ExamineWindStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Beware the Wind Stones. The stones magnify the power of the wind...."
   Message_ShowCentered((s32)MsgFieldWindStoneWarning, 1);
   Event_End();
 }
@@ -282,7 +298,7 @@ void AirsRock_MoveThirdPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if ((object->x >> 19) == 0x17) {
-    Event_SetFlag(0x879);
+    Event_SetFlag(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED);
   }
   Event_End();
 }
@@ -834,7 +850,7 @@ void AirsRock_RideWhirlwind(void) {
     if (gInput.held & KEY_UP) {
       dx = 0;
       dz = 0xfff00000;
-      leader->facing = 0xc000;
+      leader->facing = FACING_NORTH;
       moved = 1;
     }
     if (gInput.held & KEY_RIGHT) {
@@ -845,7 +861,7 @@ void AirsRock_RideWhirlwind(void) {
     }
     if (gInput.held & KEY_LEFT) {
       dx = 0xfff00000;
-      leader->facing = 0x8000;
+      leader->facing = FACING_WEST;
       dz = 0;
       moved = 1;
     }
@@ -858,7 +874,7 @@ void AirsRock_RideWhirlwind(void) {
     if (++i != 60)
       goto waiting;
     dx = 0;
-    leader->facing = 0xc000;
+    leader->facing = FACING_NORTH;
     dz = 0xfff00000;
     if ((u32)(MapCell_GetAttributes(2, ride->x >> 20,
                                     (ride->z - ride->y + dz) >> 20)
@@ -876,7 +892,7 @@ void AirsRock_RideWhirlwind(void) {
         255)
       goto found;
     dx = 0xfff00000;
-    leader->facing = 0x8000;
+    leader->facing = FACING_WEST;
   found:
     height =
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
@@ -1097,15 +1113,15 @@ void AirsRock_PlacePillar(void) {
   x = object->x >> 20;
   z = object->z >> 20;
   if (x == 16 && z == 43)
-    Event_SetFlag(0x85f);
+    Event_SetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST);
   else if (x == 45 && z == 45)
-    Event_SetFlag(0x860);
+    Event_SetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND);
   else if (x == 21 && z == 48)
-    Event_SetFlag(0x861);
+    Event_SetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD);
   else if (x == 39 && z == 49)
-    Event_SetFlag(0x862);
+    Event_SetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH);
   else if (x == 49 && z == 18)
-    Event_SetFlag(0x887);
+    Event_SetFlag(FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH);
   Event_End();
 }
 
@@ -1685,13 +1701,13 @@ s32 Scene_Initialize(void) {
       SWAY(9, 180);
       SWAY(10, 0);
       SWAY(11, 60);
-      if (GameFlag_Get(0x85f))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST))
         Actor_SetPosition(12, 264, 696);
-      if (GameFlag_Get(0x860))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND))
         Actor_SetPosition(13, 728, 728);
-      if (GameFlag_Get(0x861))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD))
         Actor_SetPosition(15, 344, 776);
-      if (GameFlag_Get(0x862))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH))
         Actor_SetPosition(16, 632, 792);
       Actor_PlaceBlocks(gAirsRock_Room2Pillars);
       Blocks_MarkCells(gAirsRock_Room2Pillars);
@@ -1707,7 +1723,7 @@ s32 Scene_Initialize(void) {
         LEADER()->z += px(16);
       Leader_Lift(0xffc80000);
     case 12:
-      if (GameFlag_Get(0x887))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH))
         Actor_SetPosition(22, 792, 296);
       Actor_PlaceBlocks(gAirsRock_Room2Pillars);
       Blocks_MarkCells(gAirsRock_Room2Pillars);
@@ -1797,7 +1813,7 @@ s32 Scene_Initialize(void) {
       REG_BG3CNT |= 3;
       Actor_GetById(12)->priorityFlags |= 2;
       FieldEffect_StartBlankOverlay(0);
-      if (GameFlag_Get(0x879))
+      if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED))
         Actor_SetPosition(13, 184, 280);
       if (!GameFlag_Get(FLAG_AIRS_ROCK_FOG_CLEARED)) {
         gFieldWork->transition = 0x100;
@@ -2103,17 +2119,17 @@ struct Trigger gAirsRock_Room2Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 9},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRock_LiftPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRock_PlacePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, 0x85f, EVENT(AirsRock_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x85f, EVENT(AirsRock_PlacePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, 0x860, EVENT(AirsRock_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x860, EVENT(AirsRock_PlacePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, 0x861, EVENT(AirsRock_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x861, EVENT(AirsRock_PlacePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x862, EVENT(AirsRock_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x862, EVENT(AirsRock_PlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, EVENT(AirsRock_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, EVENT(AirsRock_PlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13, FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND, EVENT(AirsRock_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND, EVENT(AirsRock_PlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD, EVENT(AirsRock_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_AIRS_ROCK_PILLAR_PLACED_THIRD, EVENT(AirsRock_PlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, EVENT(AirsRock_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH, EVENT(AirsRock_PlacePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 14, FLAG_SCENE_TEMP_00, EVENT(AirsRock_FreezePuddle)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 22, 0x887, EVENT(AirsRock_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, 0x887, EVENT(AirsRock_PlacePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 22, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, EVENT(AirsRock_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 22, FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH, EVENT(AirsRock_PlacePillar)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(AirsRock_RideWhirlwind)},
     {TRIGGER_TABLE_END},
 };
@@ -2128,7 +2144,7 @@ struct Trigger gAirsRock_Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT(AirsRock_ClimbLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(AirsRock_MoveFirstPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT(AirsRock_MoveSecondPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x879, EVENT(AirsRock_MoveThirdPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED, EVENT(AirsRock_MoveThirdPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), 12, FLAG_AIRS_ROCK_FOG_CLEARED, EVENT(AirsRock_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), 12, FLAG_AIRS_ROCK_FOG_CLEARED, EVENT(AirsRock_TakeOverWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, FLAG_AIRS_ROCK_FOG_CLEARED, EVENT(AirsRock_WhirlwindClearsFog)},

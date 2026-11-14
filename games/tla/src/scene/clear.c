@@ -400,6 +400,7 @@ top:
     if (++i < limit)
       goto open;
   ask:
+    // "Transfer data from Golden Sun?"
     FieldMessage_Show((s32)MsgTransferDataFromGoldenSun, 13);
     result = YesNoMenu_Run(1, 0, 0, 0);
     Message_CloseFinishedWindows();
@@ -474,6 +475,7 @@ top:
           goto leave;
         }
       }
+      // "Play on HARD level? (Monsters are stronger)"
       FieldMessage_Show((s32)MsgPlayOnHardLevel, 13);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
@@ -482,6 +484,7 @@ top:
         gMainRoutineWork.unk284[3] = 2;
         goto leave;
       }
+      // "Play on Normal level? (Default difficulty)"
       FieldMessage_Show((s32)MsgPlayOnNormalLevel, 13);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();

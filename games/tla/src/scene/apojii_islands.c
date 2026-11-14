@@ -407,12 +407,16 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Actor_FaceDirection(16, FACING_NORTHEAST, 0);
   Actor_SetAnimationAndWait(16, 3);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  // "What... What just happened?"
   Event_ShowMessage(16, 0);
   FieldActor_Jump(16, 2, 25);
+  // "That rock couldn't have heard my wishes... That's impossible!"
   Event_ShowMessage(16, 0);
   Actor_RunRepeatedMotion(16, 1);
+  // "It's got to be."
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(16, 3);
+  // "Well, OK then... Maybe we should try putting some more of our wishes..."
   Event_ShowMessage(16, 0);
   Event_End();
   Event_ClearFlag(0x95e);
@@ -468,7 +472,7 @@ void ApojiiIslands_EnterDoor(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
   Event_PlaySound(SE_MAP_EXIT);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -6);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(work->stepTrigger);
@@ -487,6 +491,7 @@ s32 ApojiiIslands_TalkToSon(void) {
   if (facing) {
     Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
+    // "Why does my father keep staring at that rock every day?"
     Event_ShowMessage(9, 0);
     Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
   }
@@ -503,6 +508,7 @@ s32 ApojiiIslands_MindReadSon(void) {
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
     FieldEvent_SetMessageId((s32)&MsgICanTEver);
+    // "I can't ever tell what kind of mood Mom and Dad are in. At least..."
     Event_ShowMessage(9, 0);
   }
   Event_End();
@@ -534,6 +540,7 @@ void ApojiiIslands_TalkToInnkeeper(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgWowYouLook);
+  // "Wow! You look just like the guy who showed up in the fancy boat. He..."
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -545,6 +552,7 @@ void ApojiiIslands_AskAboutWarriors(s32 actor) {
   FieldEvent_ResolvePendingActions(0);
   msg = (s32)&MsgYouGuysAren;
   FieldEvent_SetMessageId(msg);
+  // "You guys aren't the warriors who came in that boat, are you?"
   Event_OpenMessage(actor, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
@@ -567,6 +575,7 @@ void ApojiiIslands_TalkToMerchant(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgItDBe);
+  // "It'd be nice if we could import some items that our visitors would like."
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -720,7 +729,7 @@ void ApojiiIslands_FlowWithStream(void) {
           if (result <= 0) {
             anchor->z += px(2);
             leader->z += px(2);
-            leader->facing = 0x4000;
+            leader->facing = FACING_SOUTH;
           }
         }
       }

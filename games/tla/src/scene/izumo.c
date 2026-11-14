@@ -35,6 +35,7 @@
 #include "version.h"
 #include "system/frame.h"
 #include "objcmd.h"
+#include "module/scene/actor_animation.h"
 
 // Set as the stone circle's guard finds the misaligned stone back in place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924
@@ -134,10 +135,12 @@ void Izumo_FinishMovingStone(void) {
       Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       FieldEvent_Wait(60);
       Event_SetMessageId(MsgTheMisalignedStone);
+      // "The misaligned stone! It's back in its original position! How did..."
       Event_ShowMessageAndWait(22, 0);
       FieldEvent_Wait(30);
       Actor_ShowEmoteById(22, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
       FieldEvent_Wait(30);
+      // "Hmmm... Either Susa or Kushinada must have moved it when I wasn't..."
       Event_ShowMessageAndWait(22, 0);
       Actor_ArmCallback(22, FACING_SOUTH, 0);
       Event_End();
@@ -283,6 +286,7 @@ void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_ResolvePendingActions(0);
   if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgCanYouImagine);
+    // "Can you imagine what it must be like to have the power to move..."
     Event_ShowMessageAndWait(actor, 0);
   } else {
     const u8 *message = MsgSeeThisRing;
@@ -306,6 +310,7 @@ void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_ResolvePendingActions(0);
   if (GameFlag_Test_(FLAG_GUARD_SAW_STONE_MOVED)) {
     Event_SetMessageId(MsgButItS);
+    // "But it's a festival! Why do I have to keep guarding the stone circle?"
     Event_ShowMessageAndWait(actor, 0);
   } else {
     const u8 *message = MsgSeeThisRingOf;
@@ -391,6 +396,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_SetMessageId(MsgWait2);
   Actor_WalkToById(gMainRoutineWork.currentOwner, 200, 264);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  // "Felix, wait!"
   Event_ShowMessageAndWait(32, 0);
   FieldEvent_Wait(15);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 256,
@@ -400,18 +406,22 @@ void Izumo_StopThePartyToThankThem(void) {
   Actor_WalkToById(32, 200, 248);
   Actor_WaitForMoveById(32);
   FieldEvent_Wait(30);
+  // "It troubled me to let you leave like this..."
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(gMainRoutineWork.currentOwner, 32, 0);
   FieldEvent_Wait(30);
   Actor_SetModeById(32, 4);
   FieldEvent_Wait(30);
+  // "I owe you much for your help, but I didn't have any way to thank you..."
   Event_ShowMessageAndWait(32, 0);
   Value3((s32 (*)())Actor_ShowEmoteById, gMainRoutineWork.currentOwner, 261,
          60);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  // "And then I thought of something."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);
+  // "You're a warrior, and warriors need weapons. Wouldn't you agree?"
   Value2((s32 (*)())FieldMessage_ShowAtActor, 32, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
     FieldEvent_Wait(90);
@@ -422,6 +432,7 @@ void Izumo_StopThePartyToThankThem(void) {
     FieldEvent_Wait(60);
     Call3((void (*)())Actor_ArmCallback, 32, FACING_SOUTH, 0);
     Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "Are you sure about that? I was only hoping to show you my appreciation."
     Event_ShowMessageAndWait(32, 0);
     Actor_SetSpritePriority(32, 3);
     Actor_GetById(32)->motionFlags |= 2;
@@ -435,30 +446,37 @@ void Izumo_StopThePartyToThankThem(void) {
 void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "This token isn't something I possess. It's a legend, one that might..."
   Event_ShowMessageAndWait(32, 0);
   Actor_ArmCallback(32, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
+  // "Long ago, the Great Serpent of Mikage would sleep with its body..."
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.currentOwner, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(30);
+  // "Where its tail fell, the Cloud Brand lay hidden. That's the legend..."
   Event_ShowMessageAndWait(32, 0);
   Actor_StartRepeatedMotion(32, 1);
   FieldEvent_Wait(30);
+  // "The serpent was once the sword's protector, but it lost the sword..."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 4);
   FieldEvent_Wait(30);
+  // "Anyway, maybe you want to go check out the dragon again... I left..."
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(15);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Well, I've said what I came to say. I'm going back to Kushinada."
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(15);
+  // "I hope you are successful in your quest."
   Event_ShowMessageAndWait(32, 0);
   Actor_SetModeById(32, 3);
   FieldEvent_Wait(15);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_SetSpeedParameters(32, 0x3333, 0x1999);
   Actor_GetById(32)->motionFlags = 0;
@@ -559,38 +577,38 @@ void Izumo_HideTheStoneCircle(void) {
 void Izumo_DescendIntoTheRuins(void) {
   s32 value = gFieldWork->stepTrigger;
 
-  Actor_ArmCallback(4, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  BYTE_AT(Actor_GetById(4), 90) &= ~1;
-  Actor_SetDestinationOffsetById(4, 0, 4);
-  Actor_WaitForMoveById(4);
-  Actor_SetSpriteFlags(Actor_GetById(4), 0);
+  BYTE_AT(Actor_GetById(ACTOR_FELIX), 90) &= ~1;
+  Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 4);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
 #if TLA_PATCH_1 /* From patch 1. */
   Sound_Play(SE_STAIRS_DOWN);
 #endif
-  Actor_SetDestinationOffsetById(4, 0, 16);
-  Actor_WaitForMoveById(4);
-  Actor_SetModeById(4, 13);
+  Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 16);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetModeById(ACTOR_FELIX, 13);
   FieldEvent_Wait(14);
   Izumo_SetExitRequest(value);
 }
 
 void Izumo_EnterTheRuinsFromTheLeft(void) {
   Call3((void (*)())Actor_WalkByAndWaitById, 4, 0, -14);
-  Actor_WalkByAndWaitById(4, 16, 0);
+  Actor_WalkByAndWaitById(ACTOR_FELIX, 16, 0);
   FieldEvent_Wait(10);
   Izumo_DescendIntoTheRuins();
 }
 
 void Izumo_EnterTheRuinsFromTheRight(void) {
   Call3((void (*)())Actor_WalkByAndWaitById, 4, 0, -14);
-  Actor_WalkByAndWaitById(4, -16, 0);
+  Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
   FieldEvent_Wait(10);
   Izumo_DescendIntoTheRuins();
 }
 
 void Izumo_EnterTheRuins(void) {
-  Actor_ArmCallback(4, FACING_NORTH, 0);
+  Actor_ArmCallback(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
   Izumo_DescendIntoTheRuins();
 }

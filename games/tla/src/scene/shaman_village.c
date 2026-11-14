@@ -5,6 +5,28 @@
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
 #include "../field/object/set_sprite_priority.c"
 
+/// Set once Sheba has cast Whirlwind on the purple rock for Moapa's first test
+/// and blown the sand away.
+#define FLAG_SHAMAN_VILLAGE_SAND_CLEARED 0x94c
+/// Set once Move has dropped the pillar onto cell (32, 11) as a bridge.
+#define FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED 0x94e
+/// Set as Moapa comes out of his cabin to meet the party
+/// (ShamanVillage_MeetMoapa).
+#define FLAG_SHAMAN_VILLAGE_MOAPA_MET 0x94f
+/// Set once Moapa has told the party the rules of the trial: the Shaman's Rod
+/// and eight pieces of equipment.
+#define FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD 0x9e0
+/// Set once the party has shown Moapa the Shaman's Rod.
+#define FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN 0x9e1
+/// Set once Moapa has asked the party's names after the battle; he remembers
+/// them from then on.
+#define FLAG_SHAMAN_VILLAGE_MOAPA_KNOWS_NAMES 0x9ed
+/// Set as the party comes back from beating Moapa on the Trial Road (entrance
+/// 30); the inn and the sanctum serve the party from then on.
+#define FLAG_MOAPA_BEATEN 0x9fe
+/// Set once the fortune-teller has read the party's fortune, for this visit.
+#define FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD FLAG_AREA_TEMP_01
+
 #include "../field/field_effect/move.c"
 
 #include "flags.h"
@@ -332,7 +354,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   if (scene == (s32)&SceneId_ShamanVillage3)
     return gShamanVillage_Room3Placements;
   if (scene == (s32)&SceneId_ShamanVillage2) {
-    if (Event_GetFlag(0x9fe))
+    if (Event_GetFlag(FLAG_MOAPA_BEATEN))
       gShamanVillage_Room2Placements.field16 = 1;
     return &gShamanVillage_Room2Placements;
   }
@@ -679,7 +701,7 @@ fade:
 
     MapGrid_CopyCellAttributes(1, 5, 9, 1, width, height);
   }
-  Event_SetFlag(2380);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_SAND_CLEARED);
 }
 #undef OBJ14_BYTE
 
@@ -714,6 +736,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void ShamanVillage_StopAtClosedEntrance(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "The entrance is closed. You probably shouldn't go in."
   FieldMessage_Show((s32)MsgShamanEntranceClosed, 1);
   Event_End();
 }
@@ -721,6 +744,7 @@ void ShamanVillage_StopAtClosedEntrance(void) {
 void ShamanVillage_ReadTrialRoadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Trial Road None may enter without permission from Moapa."
   FieldMessage_Show((s32)MsgShamanTrialRoadPermissionSign, 1);
   Event_End();
 }
@@ -730,6 +754,8 @@ void ShamanVillage_TalkToGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanGuardRepeatRulesBeforeTrial);
+  // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
+  // outsiders." No: "Then you must leave Shaman Village and forget..."
   Event_OpenMessage(17, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetAnimationAndWait(15, 3);
@@ -740,11 +766,13 @@ void ShamanVillage_TalkToGuard(void) {
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 204, 292);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+    // "Thick-witted outsiders."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
     gFieldWork->message++;
+    // "Then you must leave Shaman Village and forget about the Hover Jade."
     Event_ShowMessage(17, 0);
   }
   Event_End();
@@ -755,6 +783,8 @@ void ShamanVillage_TalkToOtherGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOtherGuardRepeatRulesBeforeTrial);
+  // "Do you need to hear Moapa's explanation again?" Yes: "Thick-witted
+  // outsiders." No: "As long as you remain in our village, my..."
   Event_OpenMessage(16, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetAnimationAndWait(15, 3);
@@ -763,11 +793,13 @@ void ShamanVillage_TalkToOtherGuard(void) {
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 182, 280);
     Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
+    // "Thick-witted outsiders."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Event_SetFlag(FLAG_SCENE_TEMP_00);
     ShamanVillage_ExplainTrialRules();
   } else {
     gFieldWork->message++;
+    // "As long as you remain in our village, my people are not free to do..."
     Event_ShowMessage(16, 0);
   }
   Event_End();
@@ -779,6 +811,7 @@ void ShamanVillage_TellOutsidersToLeave(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanOutsidersLeaveTown);
+  // "What's wrong? Nothing to say? Then what are you standing around for?..."
   Event_ShowMessage(15, 0);
   work->fieldMenu = 1;
   Event_End();
@@ -790,6 +823,7 @@ void ShamanVillage_WarnOfMoapasPower(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanFearMoapaPower);
+  // "If you anger Moapa, you'll be in for a little taste of his awesome..."
   Event_ShowMessage(17, 0);
   work->fieldMenu = 1;
   Event_End();
@@ -801,6 +835,7 @@ void ShamanVillage_SendToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanSpeakToMoapa);
+  // "If there's something you want to say, say it to Moapa, not to us. We..."
   Event_ShowMessage(16, 0);
   work->fieldMenu = 1;
   Event_End();
@@ -817,7 +852,7 @@ s32 ShamanVillage_IsFacingCounter(void) {
       0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
-    facing = 0;
+    facing = FACING_EAST;
   return facing;
 }
 
@@ -827,7 +862,7 @@ void Inn_PlaySleep(s32 roomPrice);
 /// Across the counter the inn's card asks for coins until Moapa is beaten, and
 /// the innkeeper serves after.
 void ShamanVillage_TalkToInnkeeper(void) {
-  if (Event_GetFlag(0x9fe)) {
+  if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     if (ShamanVillage_IsFacingCounter()) {
       Inn_CheckIn(11, 13);
     } else {
@@ -848,6 +883,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
       Event_SetMessageId((s32)MsgShamanInnPaymentPrompt);
       MessageArgument_Push(price, 5);
       MessageArgument_Push(price, 5);
+      // "The card reads "Put ... coins on the counter, and you can stay."..."
       Event_OpenMessage(12, 0);
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
           0) {
@@ -857,6 +893,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
           Actor_SetAnimation(13, 5);
           Event_Wait(30);
           Event_SetMessageId((s32)MsgShamanInnPaymentPrompt + 3);
+          // "There's something written on the card: "If you don't have any..."
           Event_ShowMessage(12, 0);
         } else {
           Inn_PlaySleep(price);
@@ -865,6 +902,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
       Actor_SetAnimation(13, 6);
     } else {
       Event_SetMessageId((s32)MsgShamanSilentVillager);
+      // "... ..."
       Event_ShowMessage(13, 0);
     }
     Event_End();
@@ -879,10 +917,11 @@ void ShamanVillage_TalkToPriest(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (Event_GetFlag(0x9fe))
+    if (Event_GetFlag(FLAG_MOAPA_BEATEN))
       Event_SetMessageId((s32)MsgShamanMoapaDefeatIncredible);
     else
       Event_SetMessageId((s32)MsgShamanTribeForbidsTalking);
+    // "Nothing personal, but nobody in town will talk to you. It may seem..."
     Event_ShowMessage(8, 0);
     Event_End();
   }
@@ -900,19 +939,23 @@ void ShamanVillage_AskAboutOtherSide(void) {
 void ShamanVillage_TalkToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(0x9ed)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPA_KNOWS_NAMES)) {
     Event_SetMessageId((s32)MsgShamanMoapaNeverForgetsVictor);
+    // "Felix, the hero of Contigo! I shall never forget you, the only one..."
     Event_ShowMessage(11, 0);
   } else {
     Event_SetMessageId((s32)MsgShamanMoapaAsksVictorsNames);
+    // "You have defeated me, and yet I still don't know your names... Would..."
     Event_OpenMessage(11, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         1) {
+      // "A warrior who does not share his name is a humble warrior indeed."
       Event_ShowMessage(11, 0);
     } else {
       gFieldWork->message++;
+      // "Felix, Jenna, Sheba, and Piers. I shall remember those names. We..."
       Event_ShowMessage(11, 0);
-      Event_SetFlag(0x9ed);
+      Event_SetFlag(FLAG_SHAMAN_VILLAGE_MOAPA_KNOWS_NAMES);
     }
   }
   Event_End();
@@ -926,6 +969,7 @@ void ShamanVillage_TalkToShopkeeper(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgShamanWelcomeContigoHero);
+    // "Everyone is depressed that Moapa lost his big fight. They should be..."
     Event_ShowMessage(12, 0);
     Event_End();
   }
@@ -940,15 +984,17 @@ void ShamanVillage_HopFortuneTeller(void) {
   Actor_RunScriptAndWait(16, gShamanVillage_HopFortuneTellerScript);
 }
 
-/// The fortune-teller, actor 17, reads the party's fortune once (flag 0x301).
+/// The fortune-teller, actor 17, reads the party's fortune once a visit to the
+/// area.
 void ShamanVillage_TellFortune(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD)) {
     if (Event_GetFlag(0xa21))
       Event_SetMessageId((s32)MsgShamanFortuneAvoidNortheast);
     else
       Event_SetMessageId((s32)MsgShamanFortuneAvoidSouth);
+    // "You should absolutely not go south. Do you hear me? I'm serious..."
     Event_ShowMessage(17, 0);
   } else {
     Event_PlaySound(MUS_000);
@@ -956,34 +1002,43 @@ void ShamanVillage_TellFortune(void) {
       Event_SetMessageId((s32)MsgShamanFortuneOfferAfterTrial);
     else
       Event_SetMessageId((s32)MsgShamanFortuneOfferBeforeTrial);
+    // "So, you'd like to hear your fortune, would you?"
     Event_OpenMessage(17, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         1) {
+      // "That's probably good. The things I see are not for everyone to hear."
       Event_ShowMessage(17, 0);
     } else {
       gFieldWork->message++;
+      // "Well, you caught me in a good mood... I'll do it!"
       Event_ShowMessage(17, 0);
       Event_PlaySound(MUS_011);
       Actor_SetAnimation(17, 5);
+      // "Hoolabaloo!"
       Event_ShowMessage(17, 0);
       ShamanVillage_HopFortuneTeller();
       Actor_SetAnimation(17, 6);
+      // "Ballabahoo!"
       Event_ShowMessage(17, 0);
       ShamanVillage_HopFortuneTeller();
       Actor_SetAnimation(17, 5);
+      // "Hoolabaloola!"
       Event_ShowMessage(17, 0);
       ShamanVillage_HopFortuneTeller();
       Event_Wait(20);
       Actor_SetAnimation(17, 1);
       Actor_SetAnimation(17, 3);
+      // "I can see it clearly... Your life is thick with danger..."
       Event_ShowMessage(17, 0);
       Actor_SetAttachedEffect(17,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Event_Wait(40);
+      // "Ooo... Wow, that was a strong one... Listen, don't go south. Bad..."
       Event_ShowMessage(17, 0);
       Actor_RunRepeatedMotion(17, 1);
+      // "Oh, it's terrible! Awful beyond words! No more, no more!"
       Event_ShowMessage(17, 0);
-      Event_SetFlag(FLAG_AREA_TEMP_01);
+      Event_SetFlag(FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD);
     }
     Scene_PlayMusic();
   }
@@ -1008,18 +1063,22 @@ void ShamanVillage_ExplainTrialRules(void) {
     Actor_FaceDirectionAndWait(17, FACING_WEST);
     Actor_SetAnimationAndWait(15, 3);
     Event_SetMessageId((s32)MsgShamanListenCarefully);
+    // "Listen carefully to me."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Actor_FaceDirectionAndWait(15, FACING_NORTH);
     FieldCamera_SetSpeed(3.2);
     FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 1);
     FieldCamera_WaitForArrival();
+    // "This cave provides you with an opportunity to practice your skills."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     Actor_SetAttachedEffect(15,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    // "Legends say that Yegelos and Hoabna once fought here. These columns..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
+    // "They raced one another to the summit..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     FieldCamera_MoveTo(178, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
@@ -1027,10 +1086,12 @@ void ShamanVillage_ExplainTrialRules(void) {
     FieldCamera_MoveTo(270, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(20);
+    // "And there, they fought with all their might on the peak of the..."
     Event_ShowMessage(15, 0);
     FieldCamera_MoveTo(226, CAMERA_KEEP, 280, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirectionAndWait(15, FACING_WEST);
+    // "In honor of their great battle, the leaders of Shaman created this..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   }
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
@@ -1056,7 +1117,7 @@ void ShamanVillage_ExplainTrialRules(void) {
   Actor_SetPosition(17, 0, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_SetFlag(0x9e0);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD);
   Event_SetFlag(0x11b);
   Import_EventSetExitRequest(10);
 }
@@ -1068,10 +1129,14 @@ void ShamanVillage_OfferToGiveUp(void) {
   FieldCamera_MoveTo(182, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanGiveUpTrialPrompt);
+  // "Have you decided to give up this foolishness once and for all?" Yes: "You
+  // have chosen wisely, and for your wisdom..." No: "Choose the road of your
+  // liking. It matters..."
   Event_OpenMessage(15, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    // "You have chosen wisely, and for your wisdom, you must leave Shaman..."
     Event_ShowMessage(15, 0);
     FieldCamera_SetSpeed(4.8);
     FieldCamera_MoveTo(168, CAMERA_KEEP, 368, 1);
@@ -1080,6 +1145,7 @@ void ShamanVillage_OfferToGiveUp(void) {
     Event_ClearFlag(FLAG_SCENE_TEMP_01);
   } else {
     gFieldWork->message++;
+    // "Choose the road of your liking. It matters not to us."
     Event_ShowMessage(15, 0);
     FieldCamera_SetSpeed(1.2);
     FieldCamera_MoveTo(168, CAMERA_KEEP, 280, 1);
@@ -1101,16 +1167,20 @@ void ShamanVillage_ChallengeMoapa(void) {
   Actor_FaceDirection(17, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(15, FACING_WEST);
   Event_SetMessageId((s32)MsgShamanChallengeTrialRoadPrompt);
+  // "Do you want to challenge me on Trial Road?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    // "You have chosen wisely, and for your wisdom, you must leave Shaman..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     gFieldWork->message++;
+    // "Do you need to hear Moapa's explanation again?"
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Event_PlaySound(MUS_076);
+      // "Thick-witted outsiders."
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
       Event_SetFlag(FLAG_SCENE_TEMP_00);
       ShamanVillage_ExplainTrialRules();
@@ -1150,6 +1220,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_SetPosition(16, 0, 0);
   Actor_SetAnimation(15, 3);
   Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
+  // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(15, 0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 15, 0);
   Actor_FaceDirection(17, FACING_SOUTHWEST, 0);
@@ -1162,6 +1233,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_WaitForMoveById(17);
   Actor_SetPosition(17, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
+  // "On the count of three, the challenge begins!"
   Event_ShowMessage(15, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
@@ -1181,7 +1253,7 @@ void ShamanVillage_TakeLeftPath(void) {
   Actor_SetSpeed(15, 1.6);
   Actor_WalkTo(gMainRoutineWork.currentOwner, 184, 128);
   Actor_WalkToAndWait(15, 264, 128);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   wait(1);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   Actor_SetPosition(15, 0, 0);
@@ -1216,6 +1288,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_SetPosition(17, 0, 0);
   Actor_SetAnimation(15, 3);
   Event_SetMessageId((s32)MsgShamanGuardsTakeOtherPath);
+  // "If you have chosen, then we shall take the other path."
   Event_ShowMessage(15, 0);
   Actor_FaceActor(gMainRoutineWork.currentOwner, 15, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST, 0);
@@ -1228,6 +1301,7 @@ void ShamanVillage_TakeRightPath(void) {
   Actor_WaitForMoveById(16);
   Actor_SetPosition(16, 0, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
+  // "On the count of three, the challenge begins!"
   Event_ShowMessage(15, 0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_SetSpeed(1.6);
@@ -1258,7 +1332,7 @@ void ShamanVillage_TakeRightPath(void) {
 }
 
 /// Move on the pillar, actor 14, to cell (32, 11): it drops into place as a
-/// bridge (flag 0x94e).
+/// bridge.
 void ShamanVillage_DropPillar(void) {
   struct Actor *object = ((struct Actor *)Actor_GetById(14));
 
@@ -1274,7 +1348,7 @@ void ShamanVillage_DropPillar(void) {
     object->motionFlags = 0;
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
     wait(1);
-    Event_SetFlag(0x94e);
+    Event_SetFlag(FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED);
     Event_End();
   }
 }
@@ -1312,6 +1386,7 @@ void ShamanVillage_MeetMoapa(void) {
   Actor_FaceDirection(17, FACING_SOUTH, 0);
   Actor_StartRepeatedMotion(15, 1);
   Event_SetMessageId((s32)MsgShamanMoapaGiveMeRoom);
+  // "This is my house. If you're looking for Moapa, here I am. Back up...."
   Event_ShowMessage(15, 0);
   FieldCamera_SetSpeed(0.8);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
@@ -1327,16 +1402,20 @@ void ShamanVillage_MeetMoapa(void) {
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->actionFlags |=
       1;
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20)
+  // "Who have we here? Strangers in Shaman Village? What is your purpose..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
   Actor_StartRepeatedMotion(17, 1);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
+  // "Shaman Village does not appreciate intruders."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
   Actor_StartRepeatedMotion(16, 1);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  // "You're not welcome here, outlander. Leave now, and never come back."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 16, 0);
   Actor_SetAnimationAndWait(15, 3);
+  // "If there's something you want to say, hurry up and say it. I'll..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 15, 0);
-  Event_SetFlag(0x94f);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_MOAPA_MET);
   Event_End();
 }
 
@@ -1383,7 +1462,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  angle = 0xc000;
+  angle = FACING_NORTH;
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing =
       angle;
   wait(1);
@@ -1399,38 +1478,44 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WalkToAndWait(15, 120, 242);
   Event_PlaySound(MUS_029);
   Event_SetMessageId((s32)MsgShamanRecognizeShamanRod);
+  // "That's the Shaman's Rod!"
   Event_ShowMessage(15, 0);
   Event_Wait(20);
   if (rod != NULL)
     Actor_Release(rod);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, angle);
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_SetSpeed(18, 1.6);
-  Actor_SetSpeed(7, 1.6);
-  Actor_SetSpeed(5, 1.6);
-  Actor_SetSpeed(6, 1.6);
+  Actor_SetSpeed(ACTOR_PIERS, 1.6);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.6);
   Actor_SetScript(18, gShamanVillage_KradenStandsByRodScript);
-  Actor_SetScript(7, gShamanVillage_PiersStandsByRodScript);
-  Actor_SetScript(5, gShamanVillage_JennaStandsByRodScript);
-  Actor_SetScript(6, gShamanVillage_ShebaStandsByRodScript);
+  Actor_SetScript(ACTOR_PIERS, gShamanVillage_PiersStandsByRodScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_JennaStandsByRodScript);
+  Actor_SetScript(ACTOR_SHEBA, gShamanVillage_ShebaStandsByRodScript);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
   Actor_SetSpeed(17, 1.2);
   Actor_WalkToAndWait(17, 136, 232);
+  // "We thought it was lost forever... It once belonged to the great Hoabna."
   Event_ShowMessage(17, 0);
   Actor_SetSpeed(16, 1.2);
   Actor_WalkToAndWait(16, 104, 232);
+  // "Hoabna's staff was a gift from his great friend in Contigo, Yegelos...."
   Event_ShowMessage(16, 0);
   Actor_SetAnimationAndWait(15, 3);
+  // "He vowed to care for the sacred treasure of Contigo, the Hover..."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20)
+  // "Have you outlanders come to claim the Hover Jade?"
   Event_ShowMessage(15, 0);
   Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "I suppose we have, yes."
   Event_ShowMessage(18, 0);
   Actor_SetSpeed(15, 0.8);
   Actor_WalkToAndWait(15, 120, 252);
@@ -1452,43 +1537,54 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WalkToAndWait(15, 120, 242);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimation(15, 4);
+  // "That's a shame. We'll never give the Hover Jade to you!"
   Event_ShowMessage(15, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_Jump(18, 4, 0);
+  // "But...we brought you the Shaman's Rod... What's stopping you from..."
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  // "Hoabna handed the Hover Jade down from generation to generation for..."
   Event_ShowMessage(15, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(15, FACING_SOUTH);
   Actor_SetAnimationAndWait(15, 4);
+  // "We are to return it to the descendants of Yegelos. And you are..."
   Event_ShowMessage(15, 0);
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_ShowMessage(6, 0);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  // "That's preposterous! We returned your rod! We've come so far already!"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(15, FACING_SOUTHWEST, 0);
   SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
-  Event_ShowMessage(5, 0);
+  // "What difference does it make if we're from Contigo or not!?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(15, 3);
   SHAMAN_VILLAGE_EMOTE(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
-  Event_ShowMessage(7, 0);
+  // "Make no mistake about it. We are the intended recipients of the..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(15, FACING_SOUTHEAST, 0);
   Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Is there some way we can get our hands on the Hover Jade?"
   Event_ShowMessage(18, 0);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "No. You ask the impossible."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20)
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
+  // "What about...the test? Would that be a bad idea, Moapa?"
   Event_ShowMessage(17, 0);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 20);
   Actor_SetAnimation(17, 3);
+  // "You know, Trial Road? Only Yegelos could walk that path."
   Event_ShowMessage(17, 0);
   {
     s32 y = 0x500000;
@@ -1517,9 +1613,9 @@ void ShamanVillage_ShowShamansRod(void) {
   object = ((struct Actor *)Actor_GetById(16));
   object->blockMarked = 0;
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
-  Actor_WatchAndSetScript(5, 15);
-  Actor_WatchAndSetScript(6, 15);
-  Actor_WatchAndSetScript(7, 15);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 15);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 15);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 15);
   Actor_WatchAndSetScript(18, 15);
   Actor_SetSpeed(15, 1.6);
   Actor_SetSpeed(16, 1.6);
@@ -1534,9 +1630,9 @@ void ShamanVillage_ShowShamansRod(void) {
   } while (object->blockMarked == 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
-  Actor_Stop(7);
-  Actor_Stop(5);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_PIERS);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_SHEBA);
   wait(1);
   Scene_PlayMusic();
   FieldCamera_SetSpeed(3.2);
@@ -1545,28 +1641,28 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetPosition(15, 0, 0);
   Actor_SetPosition(17, 0, 0);
   Actor_SetPosition(16, 0, 0);
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(5, FACING_WEST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Event_ShowMessage(18, 0);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  Actor_SetSpeed(6, 1);
-  Actor_SetSpeed(5, 1);
-  Actor_SetSpeed(7, 1);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_SHEBA, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
+  Actor_SetSpeed(ACTOR_PIERS, 1);
   Actor_SetSpeed(18, 1);
-  Actor_SetScript(6, gShamanVillage_RejoinLeaderAtHouseScript);
-  Actor_SetScript(5, gShamanVillage_RejoinLeaderAtHouseScript);
-  Actor_SetScript(7, gShamanVillage_RejoinLeaderAtHouseScript);
+  Actor_SetScript(ACTOR_SHEBA, gShamanVillage_RejoinLeaderAtHouseScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_RejoinLeaderAtHouseScript);
+  Actor_SetScript(ACTOR_PIERS, gShamanVillage_RejoinLeaderAtHouseScript);
   Actor_RunScriptAndWait(18, gShamanVillage_RejoinLeaderAtHouseScript);
   Event_Wait(20);
   Event_SetFlag(FLAG_SCENE_TEMP_02);
-  Event_SetFlag(0x9e1);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN);
   Event_End();
 }
 
@@ -1574,6 +1670,7 @@ void ShamanVillage_ShowItemToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowMeSomething);
+  // "If you're here offering charity, I won't have it... Or did you want..."
   Event_ShowMessage(15, 0);
   Event_End();
 }
@@ -1582,6 +1679,7 @@ void ShamanVillage_ShowItemToGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanCannotBuyGift);
+  // "Yes, yes. That's very nice. Did you want to sell it? Because I don't..."
   Event_ShowMessage(16, 0);
   Event_End();
 }
@@ -1590,17 +1688,19 @@ void ShamanVillage_ShowItemToOtherGuard(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanShowItToMoapa);
+  // "What makes you think I would be interested in this? Show it to Moapa..."
   Event_ShowMessage(17, 0);
   Event_End();
 }
 
 void ShamanVillage_GreetFortuneSeeker(void) {
-  if (Event_GetFlag(0x9fe)) {
+  if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     Event_PlaySound(MUS_000);
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgShamanFortuneGreeting);
     Actor_SetAnimation(17, 5);
+    // "Hoolabaloo!"
     Event_ShowMessage(17, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
     ShamanVillage_HopFortuneTeller();
@@ -1676,7 +1776,7 @@ void ShamanVillage_CheckTrialEntry(void) {
     Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(17, gMainRoutineWork.currentOwner);
     Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);
-    Event_SetFlag(0x9e0);
+    Event_SetFlag(FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD);
     Event_SetFlag(FLAG_SCENE_TEMP_01);
   }
 }
@@ -1989,7 +2089,7 @@ void ShamanVillage_CountDownToStart(void) {
 }
 
 /// Moapa's first test: Sheba steps up and casts Whirlwind on the purple rock,
-/// and the sand is gone (flag 0x94c).
+/// and the sand is gone.
 void ShamanVillage_ShebaClearsSand(void) {
   u8 *work = Ram_HeapSlots->effectWork;
   struct Actor *object = ((struct Actor *)Actor_GetById(16));
@@ -2010,32 +2110,34 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 168, 536);
   Actor_MoveToObject(18, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_SetSpeed(18, 1);
-  Actor_SetSpeed(7, 1);
-  Actor_SetSpeed(5, 1);
+  Actor_SetSpeed(ACTOR_PIERS, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1);
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_LeaderWatchesShebaScript);
-  Actor_SetScript(5, gShamanVillage_JennaWatchesShebaScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_JennaWatchesShebaScript);
   Actor_SetScript(18, gShamanVillage_KradenWatchesShebaScript);
-  Actor_RunScriptAndWait(7, gShamanVillage_PiersWatchesShebaScript);
-  Actor_FaceDirectionAndWait(5, FACING_EAST);
+  Actor_RunScriptAndWait(ACTOR_PIERS, gShamanVillage_PiersWatchesShebaScript);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_EAST);
   Event_SetMessageId((s32)MsgShamanCheerForCompanion);
-  Event_ShowMessage(5, 0);
-  Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Actor_SetAnimation(6, 3);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
-  Actor_FaceDirectionAndWait(6, FACING_NORTH);
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Actor_SetAnimationAndWait(6, 3);
-  Actor_SetSpeed(6, 0.4);
-  Actor_WalkToAndWait(6, 168, 524);
+  // "You can do it, Sheba!"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  // "Leave it to me, Jenna. This will be a breeze."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.4);
+  Actor_WalkToAndWait(ACTOR_SHEBA, 168, 524);
   Actor_FaceDirection(15, FACING_NORTH, 0);
   Actor_FaceDirection(17, FACING_NORTH, 0);
   Actor_FaceDirection(16, FACING_NORTH, 0);
@@ -2048,61 +2150,80 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_Wait(20);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "I don't believe it. They did it! The sand vanished!"
   Event_ShowMessage(15, 0);
   Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "The legends... They were all true!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
   Actor_SetAttachedEffect(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "She's the one! She must have come from Contigo!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 16, 0, 20);
   Actor_RunRepeatedMotion(15, 1);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
+  // "Her?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
+  // "She's the one that did it? But she's...just a girl!"
   Event_ShowMessage(15, 0);
-  Actor_Jump(6, 4, 0);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTH);
-  Actor_SetAnimation(6, 3);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTHWEST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+  Actor_Jump(ACTOR_SHEBA, 4, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  // "Well, you wanted the sand to vanish, so..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
+  // "Can we have the Hover Jade now?"
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_SetAnimation(15, 4);
+  // "Nope, you still can't have it."
   Event_ShowMessage(15, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
   SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20)
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
-  Event_ShowMessage(5, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
+  // "What? Why not?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHWEST);
+  // "This was just a test to see if you earned the right to take the test..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   SHAMAN_VILLAGE_EMOTE(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 40)
+  // "So, there's more that they have to do before you'll give them the stone?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 18, 0);
   Actor_SetAnimationAndWait(15, 3);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
+  // "You will have to reach the end of Trial Road."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(16, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
   Actor_StartRepeatedMotion(17, 1);
+  // "The girls, too? Surely you can't make them..."
   Event_ShowMessage(17, 0);
   Actor_StartRepeatedMotion(16, 1);
+  // "I thought that only the chosen hero could travel the road..."
   Event_ShowMessage(16, 0);
   SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 20);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTH);
-  Event_ShowMessage(6, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 20);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
+  // "What, are you saying I can't be the chosen hero?"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "The heroes have always been men, ever since the time of Hoabna. It..."
   Event_ShowMessage(15, 0);
   SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
-  Actor_Jump(6, 2, 10);
-  Actor_Jump(6, 4, 10);
-  Event_ShowMessage(6, 0);
+  Actor_Jump(ACTOR_SHEBA, 2, 10);
+  Actor_Jump(ACTOR_SHEBA, 4, 10);
+  // "I don't like your attitude, mister! I can be every bit as heroic as..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(17, FACING_NORTHWEST);
   Actor_SetAnimation(17, 4);
+  // "That may be true, but you must respect our customs."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 17, 0);
   Actor_FaceDirectionAndWait(16, FACING_NORTHEAST);
   Actor_SetAnimation(16, 4);
+  // "It's the same in Contigo, you know. If you don't like it, take it up..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | 16, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
@@ -2138,50 +2259,61 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_SetAnimation(17, 1);
   Actor_SetAnimation(16, 1);
   Actor_FaceDirectionAndWait(18, FACING_SOUTH_SOUTHEAST);
+  // "Hold it, hold it... Moapa, what were you just saying about Trial Road?"
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(15, FACING_NORTHWEST, 0);
   Actor_FaceDirection(17, FACING_NORTHWEST, 0);
   Actor_FaceDirection(16, FACING_NORTHWEST, 0);
   SHAMAN_VILLAGE_EMOTE(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  // "If we reach the end of Trial Road, won't our names join the ranks of..."
   Event_ShowMessage(18, 0);
   SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  // "Kraden's right... It shouldn't matter if a girl does it... All that..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(16, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
-  Actor_SetAnimationAndWait(7, 3);
-  Event_ShowMessage(7, 0);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  // "If you give us the chance, we will prove it to you."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(15, FACING_NORTHEAST, 0);
   SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20)
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  Event_ShowMessage(6, 0);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "Unless you're afraid that a girl like me might become your town's..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(15, FACING_NORTH, 20);
   Actor_SetAnimationAndWait(15, 4);
   Event_Wait(20);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHWEST);
+  // "Have they earned the right? Shall we let them onto Trial Road?"
   Event_ShowMessage(17, 0);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
+  // "I don't like the way these outsiders were talking to me."
   Event_ShowMessage(16, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(15, FACING_NORTHWEST, 20);
   Actor_FaceDirectionAndWait(17, FACING_WEST);
   Actor_Jump(17, 4, 10);
+  // "I think they need to learn exactly what it takes to be a hero around..."
   Event_ShowMessage(17, 0);
   Actor_FaceDirectionAndWait(16, FACING_EAST);
   Actor_SetAnimationAndWait(16, 3);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHEAST);
+  // "Yeah, if these guys are so stubborn, let's give them a shot! They'll..."
   Event_ShowMessage(16, 0);
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 40);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTH);
-  Event_ShowMessage(5, 0);
-  Actor_SetAnimation(6, 3);
-  Event_ShowMessage(6, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 40);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
+  // "You said it yourselves. We're too stubborn to quit."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  // "Yeah. If you want us "outlanders" to leave, you'd better give us a..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirection(15, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(15, FACING_NORTHEAST);
@@ -2194,13 +2326,15 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndWait(15, FACING_NORTH);
   FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "Trial Road is a difficult one... When you reach the top, a terrible..."
   Event_ShowMessage(15, 0);
   Actor_SetAnimation(15, 4);
+  // "It's difficult enough for me. I expect you will find it quite..."
   Event_OpenMessage(15, 0);
-  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   result = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   done = &object->blockMarked;
   owner = gMainRoutineWork.currentOwner;
@@ -2220,9 +2354,9 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 500, 1);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
   Actor_WatchAndSetScript(18, 15);
-  Actor_WatchAndSetScript(5, 15);
-  Actor_WatchAndSetScript(7, 15);
-  Actor_WatchAndSetScript(6, 15);
+  Actor_WatchAndSetScript(ACTOR_JENNA, 15);
+  Actor_WatchAndSetScript(ACTOR_PIERS, 15);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, 15);
   *done = 0;
   Actor_SetScript(15, gShamanVillage_HeadForTrialRoadScript);
   Event_Wait(20);
@@ -2234,58 +2368,60 @@ void ShamanVillage_ShebaClearsSand(void) {
   } while (*done == 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
-  Actor_Stop(5);
-  Actor_Stop(7);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_PIERS);
+  Actor_Stop(ACTOR_SHEBA);
   Scene_PlayMusic();
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
   Event_Wait(20);
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   Actor_SetPositionAndFacing(15, px(224), px(280), angle);
   Actor_SetPositionAndFacing(16, px(208), px(264), angle);
   Actor_SetPositionAndFacing(17, px(240), px(264), angle);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirection(18, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTHEAST);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTHEAST);
   Event_Wait(10);
   Actor_SetAnimation(18, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(7, 3);
-  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(18);
-  Actor_Stop(5);
-  Actor_Stop(7);
-  Actor_Stop(6);
+  Actor_Stop(ACTOR_JENNA);
+  Actor_Stop(ACTOR_PIERS);
+  Actor_Stop(ACTOR_SHEBA);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner))->update = NULL;
   ((struct Actor *)Actor_GetById(18))->update = NULL;
-  ((struct Actor *)Actor_GetById(5))->update = NULL;
-  ((struct Actor *)Actor_GetById(7))->update = NULL;
-  ((struct Actor *)Actor_GetById(6))->update = NULL;
+  ((struct Actor *)Actor_GetById(ACTOR_JENNA))->update = NULL;
+  ((struct Actor *)Actor_GetById(ACTOR_PIERS))->update = NULL;
+  ((struct Actor *)Actor_GetById(ACTOR_SHEBA))->update = NULL;
   wait(1);
-  Actor_SetSpeed(6, 1);
-  Actor_SetScript(7, gShamanVillage_RejoinLeaderAtSandScript);
-  Actor_SetScript(6, gShamanVillage_RejoinLeaderAtSandScript);
-  Actor_SetScript(5, gShamanVillage_RejoinLeaderAtSandScript);
+  Actor_SetSpeed(ACTOR_SHEBA, 1);
+  Actor_SetScript(ACTOR_PIERS, gShamanVillage_RejoinLeaderAtSandScript);
+  Actor_SetScript(ACTOR_SHEBA, gShamanVillage_RejoinLeaderAtSandScript);
+  Actor_SetScript(ACTOR_JENNA, gShamanVillage_RejoinLeaderAtSandScript);
   Actor_RunScriptAndWait(18, gShamanVillage_RejoinLeaderAtSandScript);
-  Event_SetFlag(0x94c);
+  Event_SetFlag(FLAG_SHAMAN_VILLAGE_SAND_CLEARED);
   Event_End();
 }
 
 void ShamanVillage_CastWhirlwindOnSand(void) {
-  Actor_SetSpritePriority(6, 1);
+  Actor_SetSpritePriority(ACTOR_SHEBA, 1);
   Event_PlaySound(SE_PSYNERGY_SPARKLE);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(6)), 2);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_SHEBA)),
+                                   2);
   Event_Wait(40);
-  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(6)), 0);
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_SHEBA)),
+                                   0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   ShamanVillage_BlowAwaySand();
-  Actor_SetSpritePriority(6, 2);
+  Actor_SetSpritePriority(ACTOR_SHEBA, 2);
 }
 
 void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
@@ -2308,7 +2444,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                         object->z);
     FieldActor_WaitForMove(object);
-    object->facing = 0xc000;
+    object->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gShamanVillage_EnterDoorScript);
@@ -2361,12 +2497,12 @@ void ShamanVillage_RestartTrial(void) {
   Event_ResolvePendingActions(0);
   Actor_SetPosition(16, 0, 0);
   Actor_SetPosition(17, 0, 0);
-  ((struct Actor *)Actor_GetById(15))->facing = 0xc000;
+  ((struct Actor *)Actor_GetById(15))->facing = FACING_NORTH;
   FieldCamera_MoveTo(224, CAMERA_KEEP, 182, 0);
   wait(1);
   Map_CenterOnFollowedPoint();
   wait(1);
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetPositionAndFacing(16, px(184), px(128), angle);
@@ -2388,15 +2524,19 @@ void ShamanVillage_RestartTrial(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgShamanMustFinishTrialRoad);
+  // "In order to reach the battle at the summit, you cannot fail on Trial..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   Actor_SetAnimation(15, 3);
+  // "Do you understand?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    // "Would you like me to explain it to you again?"
     Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Actor_SetAnimationAndWait(15, 3);
       Event_PlaySound(MUS_076);
+      // "Do all outlanders share your thickwittedness?"
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
       Event_SetFlag(FLAG_SCENE_TEMP_00);
       ShamanVillage_ExplainTrialRules();
@@ -2406,12 +2546,15 @@ void ShamanVillage_RestartTrial(void) {
   } else {
     EVENT_WORK->message += 2;
   }
+  // "Then you understand the treacherous path of Trial Road. Will you..."
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
+    // "You have chosen wisely, and for your wisdom, you must leave Shaman..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
     EVENT_WORK->message++;
+    // "You have heard the rules, and you wish to continue. You have been..."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
     ShamanVillage_CheckTrialEntry();
   }
@@ -2424,9 +2567,9 @@ void ShamanVillage_AdviseQuitting(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgShamanMoapaAdvisesLeaving);
-  ((struct Actor *)Actor_GetById(15))->facing = 0x8000;
-  ((struct Actor *)Actor_GetById(16))->facing = 0x8000;
-  ((struct Actor *)Actor_GetById(17))->facing = 0x8000;
+  ((struct Actor *)Actor_GetById(15))->facing = FACING_WEST;
+  ((struct Actor *)Actor_GetById(16))->facing = FACING_WEST;
+  ((struct Actor *)Actor_GetById(17))->facing = FACING_WEST;
   FieldCamera_MoveTo(224, CAMERA_KEEP, 280, 0);
   wait(1);
   Map_CenterOnFollowedPoint();
@@ -2434,6 +2577,7 @@ void ShamanVillage_AdviseQuitting(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
+  // "It would be wise of you to quit. Even if you reach the top, you..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 15, 0);
   ShamanVillage_StepBackFromTrial();
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
@@ -2459,12 +2603,12 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void ShamanVillage_SetUpVillage(void) {
-  if (Event_GetFlag(0x94c)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_SAND_CLEARED)) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
     MapGrid_CopyCellAttributes(1, 5, 9, 1, 6, 29);
     FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(14)), 6);
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 angle = 0x4000;
+    s32 angle = FACING_SOUTH;
 
     Actor_SetPositionAndFacing(15, px(168), px(568), angle);
     Actor_SetPositionAndFacing(17, px(216), px(536), angle);
@@ -2485,7 +2629,7 @@ void ShamanVillage_SetUpVillage(void) {
     else if (entrance == 9)
       ShamanVillage_AdviseQuitting();
   }
-  if (Event_GetFlag(0x9fe)) {
+  if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     Actor_SetPosition(15, 0, 0);
     Actor_SetPosition(17, 0, 0);
     Actor_SetPosition(16, 0, 0);
@@ -2505,14 +2649,14 @@ void ShamanVillage_SetUpRoom3(void) {
   Actor_SetAnimation(12, 2);
   Actor_SetAnimation(13, 2);
   ((struct Actor *)Actor_GetById(14))->motionFlags = 0;
-  if (Event_GetFlag(0x94e)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED)) {
     Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(14)),
                                     px(520), px(32), px(184));
     wait(1);
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
     wait(10);
   }
-  if (Event_GetFlag(0x9e1)) {
+  if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN)) {
     MapGrid_CopyCellsTo(64, 0, 76, 2, 3, 3);
     MapGrid_CopyCellAttributes(12, 5, 3, 1, 12, 6);
   }
@@ -2588,10 +2732,11 @@ struct IoReg16 {
 
 void ShamanVillage_SetUpRoom2(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    if (Event_GetFlag(0x9fe)) {
+    if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
       Actor_SetPosition(16, 104, 200);
       Actor_SetPosition(17, 136, 200);
-    } else if (Event_GetFlag(0x94f) && !Event_GetFlag(0x9e1)) {
+    } else if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPA_MET) &&
+               !Event_GetFlag(FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN)) {
       Actor_SetPosition(15, 120, 208);
       Actor_SetPosition(16, 104, 212);
       Actor_SetPosition(17, 136, 212);
@@ -2633,8 +2778,8 @@ void ShamanVillage_SetUpRoom4(void) {
 
   gFieldWork->transition = 521;
   ((struct Actor *)Actor_GetById(12))->collisionFlags = 8;
-  if (Event_GetFlag(0x9fe)) {
-    s32 angle = 0x3000;
+  if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
+    s32 angle = FACING_SOUTH_SOUTHEAST;
 
     Actor_SetPositionAndFacing(8, px(88), px(92), angle);
     Actor_SetPosition(11, 156, 72);
@@ -2678,14 +2823,14 @@ void ShamanVillage_SetUpRoom4(void) {
         goto next_turn;
     }
     Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
     Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 813, 120);
     Actor_SetSpriteFlags(
         ((struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner)), 1);
     Event_End();
     if (gMainRoutineWork.entrance == 30) {
-      Event_SetFlag(0x9fe);
+      Event_SetFlag(FLAG_MOAPA_BEATEN);
       Event_SetFlag(0x94d);
     }
   }
@@ -2697,7 +2842,7 @@ void ShamanVillage_SetUpRoom6(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->transition = 521;
-  if (Event_GetFlag(0x9fe)) {
+  if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     Task_Add(ShamanVillage_LayerSanctumActors, 0x480);
   } else {
     Actor_SetPosition(9, 0, 0);
@@ -3109,28 +3254,34 @@ struct Trigger gShamanVillage_Room1Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST),
-     526, 0x94c, EVENT(ShamanVillage_ShebaClearsSand)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 1038, 0x94c, 0},
-    {TRIGGER_STEP, 10, 0x9e0, EVENT(ShamanVillage_ExplainTrialRules)},
+     526, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
+     EVENT(ShamanVillage_ShebaClearsSand)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 1038,
+     FLAG_SHAMAN_VILLAGE_SAND_CLEARED, 0},
+    {TRIGGER_STEP, 10, FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD,
+     EVENT(ShamanVillage_ExplainTrialRules)},
     {TRIGGER_STEP, 10, 0x201, EVENT(ShamanVillage_ChallengeMoapa)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(ShamanVillage_OfferToGiveUp)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(ShamanVillage_TakeLeftPath)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(ShamanVillage_TakeRightPath)},
-    {TRIGGER_TALK, 15, 0x94c, MSGNO(MsgShamanYegelosSandChallenge)},
+    {TRIGGER_TALK, 15, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
+     MSGNO(MsgShamanYegelosSandChallenge)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgShamanChooseEitherRoad)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x94c,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
      MSGNO(MsgShamanRodWasStolen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgShamanMoapaCannotLose)},
-    {TRIGGER_TALK, 17, 0x94c, MSGNO(MsgShamanTrialRoadAncientBattle)},
+    {TRIGGER_TALK, 17, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
+     MSGNO(MsgShamanTrialRoadAncientBattle)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToGuard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x94c,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
      MSGNO(MsgShamanNeedContigoOrShamanPower)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      MSGNO(MsgShamanMoapaGreatestWarrior)},
-    {TRIGGER_TALK, 16, 0x94c, MSGNO(MsgShamanAncientHeroesVanishedSand)},
+    {TRIGGER_TALK, 16, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
+     MSGNO(MsgShamanAncientHeroesVanishedSand)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToOtherGuard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x94c,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
      MSGNO(MsgShamanSandChallengeWillFail)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgShamanJadeNeedsYegelosHeir)},
@@ -3147,7 +3298,8 @@ struct Trigger gShamanVillage_Room3Triggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(ShamanVillage_MeetAroma)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x94e,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14,
+     FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED,
      EVENT(ShamanVillage_DropPillar)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, 0x94d,
      EVENT(ShamanVillage_StopAtClosedEntrance)},
@@ -3160,9 +3312,9 @@ struct Trigger gShamanVillage_Room3Triggers[] = {
      MSGNO(MsgShamanCloudyFortuneBeforeTrial)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      MSGNO(MsgShamanCloudyFortuneAfterTrial)},
-    {TRIGGER_TALK, 15, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 15, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgShamanNewLegendaryBattle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanAncestorsDistrustOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgShamanContigoHeroVictorySurprise)},
@@ -3193,7 +3345,7 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterDoor12)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, 0x94f,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, FLAG_SHAMAN_VILLAGE_MOAPA_MET,
      EVENT(ShamanVillage_MeetMoapa)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterMoapasHouse)},
@@ -3205,50 +3357,50 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
      EVENT(Scene_ShowEntranceLocked)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, 0x94d,
      EVENT(ShamanVillage_StopAtClosedEntrance)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 21, 0x94f,
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 21, FLAG_SHAMAN_VILLAGE_MOAPA_MET,
      EVENT(ShamanVillage_MeetMoapa)},
-    {TRIGGER_TALK, 8, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 8, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS,
      MSGNO(MsgShamanMoapaImpressedByChallenge)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanWaitForOutsidersToLeave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgShamanMoapaPraisesOpponents)},
-    {TRIGGER_TALK, 9, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 9, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShamanRespectForeignWarriors)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanChiefForbidsTalkingToOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgShamanDoubtMoapaDefeat)},
-    {TRIGGER_TALK, 10, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 10, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShamanVictoryProvesSkill)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanWhoInvitedOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgShamanHopeForStrongerShamanChild)},
-    {TRIGGER_TALK, 11, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 11, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgShamanForeignersCanBeHeroes)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanRefuseToTalkToOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgShamanWorldShouldWelcomeStrangers)},
-    {TRIGGER_TALK, 12, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 12, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS,
      MSGNO(MsgShamanHoabnaPromiseFulfilled)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanTrustContigoFriends)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgShamanRemainFriendsWithContigo)},
-    {TRIGGER_TALK, 13, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 13, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS,
      EVENT(ShamanVillage_AskAboutOtherSide)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanDistrustFriendlyOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgShamanWishToBreakSandWalls)},
-    {TRIGGER_TALK, 14, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 14, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgShamanChosenFewHavePower)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanShutDoorsAgainstOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgShamanOutskirtsHaveDifferentPowers)},
@@ -3256,21 +3408,23 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
      EVENT(ShamanVillage_TellOutsidersToLeave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
      MSGNO(MsgShamanOutsidersAreNotContigo)},
-    {TRIGGER_TALK, 17, 0x9fe, EVENT(ShamanVillage_WarnOfMoapasPower)},
+    {TRIGGER_TALK, 17, FLAG_MOAPA_BEATEN,
+     EVENT(ShamanVillage_WarnOfMoapasPower)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS,
      MSGNO(MsgShamanGuardPromisesRematchVictory)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanContigoTempleTreasure)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      MSGNO(MsgShamanClimbingTrialRoadIsHard)},
-    {TRIGGER_TALK, 16, 0x9fe, EVENT(ShamanVillage_SendToMoapa)},
+    {TRIGGER_TALK, 16, FLAG_MOAPA_BEATEN, EVENT(ShamanVillage_SendToMoapa)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS,
      MSGNO(MsgShamanVillagersBlameGuardDefeat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanMoapaSparedOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgShamanGuardBlamesMountainClimb)},
-    {USE_ITEM_ON_ACTOR(ITEM_SHAMANS_ROD), 15, 0x9e1,
+    {USE_ITEM_ON_ACTOR(ITEM_SHAMANS_ROD), 15,
+     FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN,
      EVENT(ShamanVillage_ShowShamansRod)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_ANY), 15, CONDITION_ALWAYS,
      EVENT(ShamanVillage_ShowItemToMoapa)},
@@ -3296,38 +3450,39 @@ struct Trigger gShamanVillage_Room4Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {TRIGGER_TALK, 8, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 8, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgShamanMoapaWantsToKnowNames)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanMoapaLeftDoorOpen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgShamanShameNotKnowingVictors)},
-    {TRIGGER_TALK, 9, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 9, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgShamanFormalBattleNeedsNames)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanFatherNeverLoses)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgShamanFatherLostToRudeOutsiders)},
-    {TRIGGER_TALK, 10, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 10, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgShamanNamesDoNotMatter)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanFirstForeignVisitors)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgShamanNamesBeforeBattleOldFashioned)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToMoapa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9ed,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11,
+     FLAG_SHAMAN_VILLAGE_MOAPA_KNOWS_NAMES,
      MSGNO(MsgShamanVictorsDeserveRespect)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgShamanVictorsNamesOnTrialColumns)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToInnkeeper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanPayingStrangersMayStay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgShamanMoapaMiserableAfterDefeat)},
-    {TRIGGER_TALK, 14, 0x9fe, MSGNO(MsgShamanSilentVillager)},
+    {TRIGGER_TALK, 14, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      MSGNO(MsgShamanForgiveUnkindVillagers)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanMoapaAllowsStrangersToStay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
      MSGNO(MsgShamanVillagersWorryTooMuch)},
@@ -3393,7 +3548,7 @@ struct Trigger gShamanVillage_Room5Triggers[] = {
 struct Trigger gShamanVillage_Room6Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(ShamanVillage_TalkToPriest)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9fe,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_MOAPA_BEATEN,
      MSGNO(MsgShamanVisitorsMustFindMoapa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgShamanFearRenewedContigoWar)},

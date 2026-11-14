@@ -68,6 +68,7 @@ void LemuriaInteriors_TalkToPiersUncle(s32 arg0) {
   if (result0 == 0)
     goto notMourning;
   Event_SetMessageId((s32)MsgLemuriaInteriors11);
+  // "Go to Lunpa's tower. He will see you."
   Event_ShowMessage(arg0, 0);
   Actor_WatchAndSetScript(10, 4);
   goto done;
@@ -78,12 +79,14 @@ notMourning:
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors08);
+  // "I am so relieved that Piers has returned to me alive. He is the last..."
   Event_ShowMessage(arg0, 0);
-  Actor_FaceDirection(arg0, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(arg0, FACING_SOUTH_SOUTHEAST, 0);
   Event_End();
   goto done;
 notVisited:
   Event_SetMessageId((s32)MsgLemuriaInteriors05);
+  // "Are you the travelers that came here with Piers?"
   Event_OpenMessage(arg0, 0);
   result2 = FieldParty_GetLeaderActor();
   result3 = FieldEvent_AskYesNoWithActorAnimation(result2, 0);
@@ -102,12 +105,15 @@ done:
 void LemuriaInteriors_MindReadPiersUncle(s32 unused, s32 id) {
   if (Event_GetFlag(0x966)) {
     Event_SetMessageId((s32)MsgLemuriaInteriors12);
+    // "Lunpa has given the king tremendous aid on this matter. He will have..."
     Event_ShowMessage(id, 0);
   } else if (Event_GetFlag(0x965)) {
     Event_SetMessageId((s32)MsgLemuriaInteriors09);
+    // "Poor Piers... Being born in Lemuria and gifted with long life......"
     Event_ShowMessage(id, 0);
   } else {
     Event_SetMessageId((s32)MsgLemuriaInteriors06);
+    // "I was°what is the word?° surprised when I heard Piers had..."
     Event_ShowMessage(id, 0);
   }
 }
@@ -118,17 +124,18 @@ void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0) {
   s32 result1;
 
   Event_SetMessageId((s32)MsgLemuriaInteriors13);
+  // "Are you the warriors from beyond the Sea of Time who returned with..."
   Event_OpenMessage(arg0, 0);
   result0 = FieldParty_GetLeaderActor();
   result1 = FieldEvent_AskYesNoWithActorAnimation(result0, 0);
   if (result1 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors13 + 1));
+  Event_SetMessageId((s32)MsgLemuriaInteriors13 + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors13 + 2));
+  Event_SetMessageId((s32)MsgLemuriaInteriors13 + 2);
 answered:
   Event_ShowMessage(arg0, 0);
   return;
@@ -141,17 +148,18 @@ void LemuriaInteriors_AskAboutDraughts(s32 arg0) {
   s32 result1;
 
   Event_SetMessageId((s32)MsgLemuriaInteriors18);
+  // "Do you seek to know more about the draughts that provide us with..."
   Event_OpenMessage(arg0, 0);
   result0 = FieldParty_GetLeaderActor();
   result1 = FieldEvent_AskYesNoWithActorAnimation(result0, 0);
   if (result1 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors18 + 1));
+  Event_SetMessageId((s32)MsgLemuriaInteriors18 + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors18 + 2));
+  Event_SetMessageId((s32)MsgLemuriaInteriors18 + 2);
 answered:
   Event_ShowMessage(arg0, 0);
   return;
@@ -170,19 +178,20 @@ void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_ShowEmote(arg1, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceActor(arg1, 4, 20);
+  Actor_FaceActor(arg1, ACTOR_FELIX, 20);
   Event_SetMessageId((s32)MsgLemuriaInteriors19);
+  // "Was that some form of Psynergy?"
   Event_OpenMessage(arg1, 0);
   result2 = FieldParty_GetLeaderActor();
   result3 = FieldEvent_AskYesNoWithActorAnimation(result2, 0);
   if (result3 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors19 + 1));
+  Event_SetMessageId((s32)MsgLemuriaInteriors19 + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId(((s32)MsgLemuriaInteriors19 + 2));
+  Event_SetMessageId((s32)MsgLemuriaInteriors19 + 2);
 answered:
   Event_ShowMessage(arg1, 0);
   Actor_FaceDirection(arg1, value1, 0);
@@ -214,7 +223,7 @@ s32 Scene_Initialize(void) {
   object->y = 0;
   if (Event_GetFlag(0x966)) {
     Actor_WalkToAndWait(10, 100, 112);
-    Actor_GetById(10)->facing = FACING_SOUTHEAST + FACING_STEP;
+    Actor_GetById(10)->facing = FACING_SOUTH_SOUTHEAST;
     wait(1);
   }
   if (Event_GetFlag(0x969))
@@ -238,181 +247,204 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors07);
   Event_Wait(20);
-  Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_WalkToAndWait(4, 112, 128);
-  FieldActor_LaunchFromLeader(12, 16, 0, FACING_NORTHWEST + FACING_STEP);
-  FieldActor_LaunchFromLeader(7, 16, -16, FACING_WEST);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
-  Actor_WaitForMoveById(7);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 112, 128);
+  FieldActor_LaunchFromLeader(12, 16, 0, FACING_NORTH_NORTHWEST);
+  FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, -16, FACING_WEST);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
+  Actor_WaitForMoveById(ACTOR_PIERS);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(7, 3);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(10);
-  Event_ShowMessageThenWait(7, 0, 10);
+  // "I am sorry it has taken me so long to visit, Uncle."
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
   Actor_Jump(10, 6, 15);
   Actor_Jump(10, 6, 23);
+  // "Piers! You are alive!"
   Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimationAndWait(7, 3);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(10);
-  Event_ShowMessageThenWait(7, 0, 10);
+  // "Yes, I've managed to survive against a great many trials."
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 45);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(20);
+  // "What a fascinating coincidence! We've stumbled across Piers's..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Event_Wait(30);
   Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "I must thank you all for looking after my nephew."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_FaceDirection(12, FACING_WEST, 0);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(40);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimation(12, 3);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Event_Wait(45);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(7, 0, 10);
+  // "This is Felix and Kraden. They are my friends, and have aided me..."
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
+  // "If my sister could only hear how timid young Piers has become a..."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   Event_Wait(10);
-  Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 45);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 45);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Event_Wait(35);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Event_Wait(35);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Event_Wait(35);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Event_Wait(35);
-  Event_ShowMessageThenWait(7, 0, 10);
+  // "Where is my mother? We've been so busy since we arrived that I..."
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_RunRepeatedMotion(10, 2);
   Event_Wait(20);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_WalkByAndWait(7, 48, 0);
+  Actor_WalkByAndWait(ACTOR_PIERS, 48, 0);
   Event_Wait(10);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   Event_Wait(40);
-  Actor_WalkByAndWait(7, -24, 0);
+  Actor_WalkByAndWait(ACTOR_PIERS, -24, 0);
   Event_Wait(10);
-  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Event_Wait(40);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessageThenWait(7, 0, 10);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessageThenWait(7, 0, 10);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Now that I think about it, this place is a mess. What happened?..."
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "...No! She hasn't...fallen ill again, has she?"
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
+  // "There is still illness in Lemuria?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
-  Actor_RunRepeatedMotion(7, 2);
+  Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Event_Wait(20);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Event_Wait(20);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Event_ShowMessageThenWait(7, 0, 10);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "My mother was born with a weak heart..."
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
+  // "Piers... I'm sorry... Your return comes too late..."
   Event_ShowMessageThenWait(10, 0, 10);
   Actor_FaceDirection(12, FACING_WEST, 0);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(50);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(7, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_StartRepeatedMotion(7, 3);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_PIERS, 3);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
-  Actor_WalkByAndWait(7, -12, 0);
+  Actor_WalkByAndWait(ACTOR_PIERS, -12, 0);
   Event_Wait(10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "After the tidal wave washed you to sea, your mother suddenly fell ill..."
   Event_ShowMessageThenWait(10, 0, 10);
-  Actor_RunRepeatedMotion(7, 2);
+  Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Event_Wait(20);
   Actor_SetAnimationAndWait(10, 3);
   Event_Wait(10);
+  // "The shock of losing you was too great for her poor heart."
   Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimationAndWait(7, 4);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
+  // "She held out hope for your safe return until the very end."
   Event_ShowMessageThenWait(10, 0, 10);
-  Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
+  // "Perhaps your mother gave herself up to ensure your survival..."
   Event_ShowMessageThenWait(10, 0, 20);
   Actor_SetAnimationAndWait(10, 3);
   Event_Wait(10);
+  // "Does that not sound like your mother?"
   Event_ShowMessageThenWait(10, 0, 10);
   Event_Wait(10);
-  Actor_SetAnimation(7, 9);
+  Actor_SetAnimation(ACTOR_PIERS, 9);
   Event_Wait(40);
-  Actor_FaceDirection(4, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(7, 0, 10);
+  // "Where is she now?"
+  Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(10, FACING_EAST, 0);
   Event_Wait(20);
+  // "She rests in the cemetery now. Check the headstones... You will find..."
   Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimation(7, 1);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_STAND);
   Event_Wait(30);
-  Actor_SetSpeed(7, 0.3);
-  object0 = Actor_GetById(7);
+  Actor_SetSpeed(ACTOR_PIERS, 0.3);
+  object0 = Actor_GetById(ACTOR_PIERS);
   object0->actionFlags &= 254;
-  Actor_WalkByAndWait(7, 12, 0);
+  Actor_WalkByAndWait(ACTOR_PIERS, 12, 0);
   Event_Wait(1);
-  object1 = Actor_GetById(7);
+  object1 = Actor_GetById(ACTOR_PIERS);
   object1->actionFlags |= 1;
   Event_Wait(10);
-  Actor_StartRepeatedMotion(7, 3);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_PIERS, 3);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(55);
-  Actor_WatchAndSetScript(4, 7);
+  Actor_WatchAndSetScript(ACTOR_FELIX, 7);
   Actor_WatchAndSetScript(12, 7);
   Actor_WatchAndSetScript(10, 7);
-  Actor_SetSpeed(7, 2.2);
-  Actor_WalkByAndWait(7, -8, 88);
-  Actor_Stop(4);
+  Actor_SetSpeed(ACTOR_PIERS, 2.2);
+  Actor_WalkByAndWait(ACTOR_PIERS, -8, 88);
+  Actor_Stop(ACTOR_FELIX);
   Actor_Stop(12);
   Actor_Stop(10);
-  Actor_SetPosition(7, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_Wait(30);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Actor_FaceDirection(12, FACING_WEST, 0);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(20);
+  // "What should we do, Felix? Should we follow Piers?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 12, 0);
   result2 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result2 != 0)
@@ -428,7 +460,7 @@ answeredNo:
 answered:
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
   Actor_SetSpeed(12, 1.2);
   Actor_SetAnimation(12, 2);
@@ -475,41 +507,50 @@ visited:
   Event_SetMessageId((s32)MsgLemuriaInteriors10);
   Actor_SetSpeed(10, 0.8);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Wait..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-  Actor_WalkToAndWait(4, 136, 152);
-  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 136, 152);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(10, 4);
+  // "I ask that you leave Piers to his mourning for now..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Now he is struggling with the loss of his mother. He needs time."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(4, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_WalkByAndWait(4, 8, 16);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 8, 16);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(10, 2);
+  // "You came to Lemuria to learn more of Alchemy, did you not?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(4, FACING_NORTHWEST, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   FieldEvent_Wait(30);
-  Actor_WalkByAndWait(4, -8, -16);
+  Actor_WalkByAndWait(ACTOR_FELIX, -8, -16);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
+  // "I suspected as much. Piers was right to bring you here."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(10, 4);
+  // "Piers told me his secret... The mission he was given by His Highness..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
   Actor_SetAnimationAndWait(10, 3);
   FieldEvent_Wait(10);
+  // "Even had the tidal wave not carried Piers off, he would have left..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-  FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_WalkByAndWait(10, 12, 12);
   FieldEvent_Wait(10);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "You look confused... Piers told you about this, did he not?"
   Event_OpenMessage(10, 0);
   answer = Event_AskYesNoWithActorAnimation(4, 0);
   if (answer == 0) {
@@ -532,8 +573,9 @@ visited:
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 10, 0, 10);
-  FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_OpenMessage(10, 0);
@@ -586,7 +628,7 @@ visited:
   target[0] = 0x740000;
   target[1] = 0;
   target[2] = 0x6e0000;
-  angle = 0xb000;
+  angle = FACING_NORTH_NORTHWEST;
   for (i = 0; i <= 191; i++) {
     phase = i * 32768 / 192;
     radius = Trig_Sin(phase) * 32;
@@ -606,7 +648,7 @@ visited:
     }
     System_Wait(1);
   }
-  actor->facing = 0x8000;
+  actor->facing = FACING_WEST;
   FieldEvent_Wait(30);
   Actor_SetAnimation(11, 1);
   FieldEvent_Wait(20);
@@ -666,7 +708,7 @@ visited:
     System_Wait(1);
   }
   Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 0);
-  actor->facing = 0xd000;
+  actor->facing = FACING_NORTH_NORTHEAST;
   start[0] = actor->x;
   start[1] = actor->y;
   start[2] = actor->z;
@@ -737,42 +779,48 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriors26);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_SetSpeed(18, 1);
   Actor_WalkByAndWait(18, 32, 0);
   Actor_WalkByAndWait(18, 0, -32);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(10);
+  // "Honestly, I'm amazed that anyone can travel so far across the world..."
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_WalkToAndWait(4, 440, 352);
-  Actor_SetPosition(4, 440, 352);
-  FieldActor_LaunchFromLeader(12, 16, 0, FACING_SOUTH + FACING_STEP);
-  FieldActor_LaunchFromLeader(5, -16, 0, FACING_SOUTH);
-  FieldActor_LaunchFromLeader(6, -32, 0, FACING_SOUTH);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_WaitForMoveById(6);
+  Actor_WalkToAndWait(ACTOR_FELIX, 440, 352);
+  Actor_SetPosition(ACTOR_FELIX, 440, 352);
+  FieldActor_LaunchFromLeader(12, 16, 0, FACING_SOUTH_SOUTHWEST);
+  FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, 0, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_SHEBA, -32, 0, FACING_SOUTH);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_WaitForMoveById(ACTOR_SHEBA);
   Event_Wait(10);
   FieldCamera_MoveTo(432, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Say, Piers isn't with you! Er...why not?"
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessageThenWait(6, 0, 10);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "His mother passed away... He's gone to visit her grave."
+  Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
+  // "Of course... His mother... He loved her dearly. A terrible loss......"
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Event_Wait(10);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
+  // "Well, Piers may not be here, but we still have much to discuss."
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "If Piers brought you, you must be working to break the seal on..."
   Event_OpenMessage(18, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
@@ -788,69 +836,69 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(12, 3);
   Actor_StartRepeatedMotion(18, 3);
   Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(12, 3);
   Actor_RunRepeatedMotion(18, 2);
   Event_Wait(10);
   Event_Wait(15);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_FaceDirection(4, FACING_WEST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Event_Wait(40);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Event_Wait(25);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(15);
   Actor_SetAnimationAndWait(18, 4);
   Event_ShowMessageThenWait(18, 0, 20);
   Actor_WalkByAndWait(18, 12, 0);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_StartRepeatedMotion(12, 3);
   Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(4, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_RunRepeatedMotion(6, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(6, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_SetSpeed(18, 2);
   Actor_WalkByAndWait(18, -12, 0);
-  Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Event_Wait(30);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Actor_FaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_SetAnimationAndWait(18, 3);
@@ -862,11 +910,11 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 45);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(10);
   Actor_SetSpeed(18, 0.8);
   Actor_WalkByAndWait(18, 12, 0);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetAnimationAndWait(12, 4);
@@ -882,66 +930,66 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(18, 4);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_WalkByAndWait(18, -12, 0);
-  Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessageThenWait(5, 0, 10);
-  Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+  Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_EmitNotes(18);
   Event_PlaySound(SE_LIGHT_APPEAR);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(25);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_SetSpeed(18, 2);
   Actor_WalkByAndWait(18, 12, 0);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_WalkByAndWait(18, -12, 0);
-  Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
   Actor_Jump(18, 6, 15);
   Actor_Jump(18, 6, 23);
   Event_ShowMessageThenWait(18, 0, 10);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_SetAnimationAndWait(12, 4);
   Event_ShowMessageThenWait(12, 0, 10);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_RunRepeatedMotion(6, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(6, 0, 10);
-  Actor_FaceDirection(18, FACING_NORTHWEST + FACING_STEP, 0);
+  Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessageThenWait(18, 0, 10);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Event_Wait(20);
   Event_OpenMessage(5, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
     Event_Wait(20);
-    Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(18, 3);
     Event_Wait(10);
@@ -949,7 +997,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
     gFieldWork->message++;
   } else {
     Event_Wait(35);
-    Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(18, 4);
     gFieldWork->message++;
@@ -959,12 +1007,12 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_FaceDirection(12, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Event_Wait(25);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Event_OpenMessage(12, 0);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
   if (result == 0) {
     Event_Wait(20);
@@ -975,48 +1023,51 @@ void LemuriaInteriors_AskWherePiersIs(void) {
     gFieldWork->message++;
     Event_ShowMessageThenWait(12, 0, 10);
   }
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_FaceDirection(4, 0x7fff, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_FaceDirection(ACTOR_FELIX, 0x7fff, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_FaceDirection(5, 0x7fff, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, 0x7fff, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Event_Wait(40);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_SHEBA, 3);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Event_ShowMessageThenWait(6, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_FaceDirection(5, 0x7fff, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, 0x7fff, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Event_Wait(40);
-  Actor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_JENNA, 3);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_SHEBA, 3);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Event_Wait(30);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Event_ShowMessageThenWait(6, 0, 10);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(12, 3);
@@ -1026,61 +1077,61 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(20);
   Actor_SetSpeed(12, 0.6);
   Actor_WalkByAndWait(12, 12, 0);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(20);
   Actor_WalkByAndWait(12, 12, 0);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(12, 4);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_RunRepeatedMotion(12, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_FaceDirection(18, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(18, 3);
   Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(12, 0x8001, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessageThenWait(6, 0, 10);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(20);
   Actor_RunRepeatedMotion(18, 2);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_RunRepeatedMotion(18, 2);
   Event_Wait(20);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(10);
   Actor_SetSpeed(18, 1);
   Actor_WalkByAndWait(18, 12, 0);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 45);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_WalkByAndWait(12, -12, 0);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(15);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(20);
@@ -1091,49 +1142,49 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Event_Wait(40);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(20);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(25);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
   Actor_SetAnimationAndWait(18, 4);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirection(18, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_FaceDirection(4, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_FaceDirection(12, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimation(4, 4);
-  Actor_SetAnimation(5, 4);
-  Actor_SetAnimation(6, 4);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(12, 4);
   Actor_SetAnimationAndWait(18, 4);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
@@ -1157,7 +1208,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetSpeed(18, 1.6);
   Actor_WalkByAndWait(18, -8, 40);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_WalkByAndWait(18, 0, 20);
   MapGrid_SetShake(1, 1, 1);
   Actor_SetSpeed(18, 1.9);
@@ -1203,40 +1254,43 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(20);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_StartRepeatedMotion(5, 3);
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_StartRepeatedMotion(6, 3);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_JENNA, 3);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_SHEBA, 3);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(12, 3);
   Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(18, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(25);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_WalkByAndWait(18, 0, 48);
   Actor_SetPosition(18, 0, 0);
   Event_Wait(30);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessageThenWait(6, 0, 10);
-  Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessageThenWait(5, 0, 10);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_Jump(12, 6, 15);
   Actor_Jump(12, 6, 23);
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_FaceDirection(12, FACING_WEST, 0);
   Event_Wait(15);
   Event_ShowMessageThenWait(12, 0, 10);
-  Actor_FaceDirection(4, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(12, 3);
   Event_Wait(10);
@@ -1247,20 +1301,22 @@ void LemuriaInteriors_AskWherePiersIs(void) {
     Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
-  Actor_SetSpeed(5, 1.2);
-  Actor_SetAnimation(5, 2);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
-  Actor_WaitForMoveById(5);
-  Actor_SetPosition(5, 0, 0);
-  Actor_SetSpeed(6, 1.2);
-  Actor_SetAnimation(6, 2);
+    Actor_SetDestination(ACTOR_JENNA, ((s16 *)&leader->x)[1],
+                         ((s16 *)&leader->z)[1]);
+  Actor_WaitForMoveById(ACTOR_JENNA);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.2);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(6, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
-  Actor_WaitForMoveById(6);
-  Actor_SetPosition(6, 0, 0);
+    Actor_SetDestination(ACTOR_SHEBA, ((s16 *)&leader->x)[1],
+                         ((s16 *)&leader->z)[1]);
+  Actor_WaitForMoveById(ACTOR_SHEBA);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_End();
 }
 
@@ -1305,20 +1361,20 @@ u32 gSceneExits[] = {
 // clang-format off
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 480, 0, 144, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(156, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(156, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(160, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(219, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 64, 0, 88, FACING_EAST, TALK_FACING_PARTY, 0),
     {56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
     {5, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {6, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {7, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 328, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 588, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 552, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 328, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 552, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(43, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 416, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 792, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 328, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 588, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 552, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 40, 0, 328, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 80, 0, 552, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(43, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 416, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(35, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 96, 0, 792, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

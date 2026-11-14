@@ -93,6 +93,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /// "Felix and the others drank of the spring. Their HP and PP were fully
 /// replenished!"
 void LemuriaSpring_DrinkFromSpring(void) {
+  // "Felix and the others drank of the spring. Their HP and PP were fully..."
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
   Event_PlaySound(SE_RECOVERY);
   Party_RestoreHpPp(1);
@@ -243,6 +244,7 @@ prompt:
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   message = (s32)MsgWhatWillYou;
   Event_SetMessageId(message);
+  // "What will you throw?"
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgCoins2;
@@ -273,6 +275,7 @@ prompt:
 full:
   if (PartyInventory_CountFreeSlots() == 0) {
     Event_SetMessageId(message + 4);
+    // "You can't carry more items. Do you still want to play?"
     Event_OpenMessage(minusOne, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
       goto end;
@@ -311,6 +314,7 @@ toss:
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     message = (s32)MsgWhatWillYou;
     Event_SetMessageId(message);
+    // "What will you throw?"
     Event_OpenMessage(-1, 0);
     window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
     text = (s32)MsgCoins2;
@@ -328,6 +332,7 @@ toss:
     if (choice == 0) {
       if (coins == 0) {
         Event_SetMessageId(message + 1);
+        // "You don't have any coins!"
         Event_ShowMessage(-1, 0);
         wait(1);
         continue;
@@ -336,6 +341,7 @@ toss:
     } else if (choice == 1) {
       if (medals == 0) {
         Event_SetMessageId(message + 2);
+        // "You have no Lucky Medals!"
         Event_ShowMessage(-1, 0);
         wait(1);
         continue;
@@ -343,6 +349,7 @@ toss:
       PartyInventory_Remove(229);
       if (PartyInventory_CountFreeSlots() == 0) {
         Event_SetMessageId(message + 4);
+        // "You can't carry more items. Do you still want to play?"
         Event_OpenMessage(-1, 0);
         if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
           goto end;
@@ -386,6 +393,7 @@ toss:
         Event_PlaySound(MUS_091);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result], 5);
         Event_SetMessageId((s32)MsgYouWonCoin);
+        // "You won ... coin!"
         Event_ShowMessage((s32)minusOne, 0);
       } else {
         Event_PlaySound(SE_MENU_CANCEL);
@@ -431,7 +439,7 @@ void LemuriaSpring_GivePrize(s32 a0) {
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(100);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(82, 20, 70, 0, 3, 8);
   FieldEvent_Wait(3);

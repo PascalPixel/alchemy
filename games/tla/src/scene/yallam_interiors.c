@@ -118,6 +118,7 @@ s32 YallamInteriors_MindReadSunshine(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors33);
   }
+  // "If it's not raining, I can't get into Taopo Swamp. And if I can't..."
   Event_ShowMessage(14, 0);
   Event_End();
   return 0;
@@ -132,6 +133,7 @@ s32 YallamInteriors_MindReadSunshinesWife(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors34);
   }
+  // "Sunshine's a pretty stubborn guy. If he says he isn't going to work..."
   Event_ShowMessage(15, 0);
   Event_End();
   return 0;
@@ -146,6 +148,7 @@ s32 YallamInteriors_MindReadSunshinesChild(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors35);
   }
+  // "Everyone thinks Dad is stubborn, but he's not... He's a true artist..."
   Event_ShowMessage(16, 0);
   Event_End();
   return 0;
@@ -162,6 +165,7 @@ s32 YallamInteriors_TalkToSunshinesChild(void) {
   } else {
     Event_SetMessageId((s32)MsgYallamInteriors32);
   }
+  // "Dad's not doing any work right now, but I'm making some basic things..."
   Event_ShowMessage(16, 0);
   Event_End();
   return 0;
@@ -171,6 +175,7 @@ s32 YallamInteriors_MindReadWeaponMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors22);
+  // "If Sunshine set his mind to it, he could make a lot of money! What a..."
   Event_ShowMessage(10, 0);
   Event_End();
   return 0;
@@ -180,6 +185,7 @@ s32 YallamInteriors_MindReadArmorMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors24);
+  // "I shouldn't tell him how boring all this stuff is. I wish Sunshine..."
   Event_ShowMessage(11, 0);
   Event_End();
   return 0;
@@ -189,6 +195,7 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgYallamInteriors26);
+  // "What does Sunshine want in Taopo Swamp? There's nothing up there but..."
   Event_ShowMessage(12, 0);
   Event_End();
   return 0;
@@ -212,6 +219,7 @@ void YallamInteriors_AskLikeChildrensSongs(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgYallamInteriors10;
   Event_SetMessageId(msg);
+  // "Do you like children's songs?"
   Event_OpenMessage(9, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -231,12 +239,13 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(20, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors21);
+    // "If the blacksmith isn't willing to work, then how am I supposed to..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -249,12 +258,13 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(21, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors23);
+    // "If you want plain old, boring armor, have a look around. If you're..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -267,12 +277,13 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(22, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors25);
+    // "If you're looking for Taopo Swamp, head west around the northern..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -285,13 +296,14 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(7, actor);
     Event_ClearFlag(FLAG_AREA_TEMP_01);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgYallamInteriors27);
+    // "It's a bit strange trying to run an inn in a city that never gets..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -302,12 +314,13 @@ void YallamInteriors_TalkToHealer(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgMikasallaInteriors27);
+    // "Even out in these far-off shores, people need the services and hope..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -322,6 +335,7 @@ void YallamInteriors_OfferToForge(void) {
   Actor_StartRepeatedMotion(14, 2);
   msg = (s32)MsgYallamInteriors31;
   Event_SetMessageId(msg);
+  // "Ah, so you want me to make you a little something special?"
   Event_OpenMessage(14, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -368,6 +382,7 @@ void YallamInteriors_TalkToSunshine(void) {
   if (!Event_GetFlag(0x10f)) {
     message = (s32)MsgAhSoYou;
     Event_SetMessageId(message);
+    // "Ah, so you're looking for a really unique item, huh?"
     Event_OpenMessage(14, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
@@ -379,16 +394,20 @@ void YallamInteriors_TalkToSunshine(void) {
     Event_ShowMessage(14, 0);
   } else if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgICanTWait);
+    // "I can't wait to see what I'm going to wind up making with this......"
     Event_ShowMessage(14, 0);
   } else if (Forge_GetItem()) {
     Event_SetMessageId((s32)MsgMyWifeHas);
+    // "My wife has the item I made you. She can give it to you."
     Event_ShowMessage(14, 0);
   } else {
     message = (s32)MsgYouWantMe;
     Event_SetMessageId(message);
+    // "You want me to make you a little something special?"
     Event_OpenMessage(14, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(message + 1);
+      // "Well, look at that! You went to get some raw materials for me..."
       Event_ShowMessage(14, 0);
       Actor_FallOverById(14, 0xc000);
       Actor_SetSpriteFlags(((struct YallamInteriorsObject *)Actor_GetById(14)),
@@ -432,6 +451,7 @@ void YallamInteriors_TalkToSunshine(void) {
       }
     } else {
       Event_SetMessageId(message + 2);
+      // "Hm... Maybe I made a mistake. It's hard to tell... If you want..."
       Event_ShowMessage(14, 0);
     }
   }
@@ -445,9 +465,11 @@ u16 *Import_ItemGet(s32 item);
 void YallamInteriors_TalkToSunshinesWife(s32 actor) {
   if (!Event_GetFlag(0x10f)) {
     Event_SetMessageId((s32)MsgThisThisIs);
+    // "This? This is the blacksmith Sunshine's smithy, the best forge in..."
     Event_ShowMessage(actor, 0);
   } else if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
     Event_SetMessageId((s32)MsgItTakesOur);
+    // "It takes our Sunshine a long time to finish the items he works on...."
     Event_ShowMessage(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
@@ -458,18 +480,23 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
     MessageArgument_Push(price, 5);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
+    // "Here's the item you wanted. Now, about the payment... We only take..."
     Event_OpenMessage(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) != 0) {
       Event_SetMessageId(message + 1);
+      // "Hey, we're not a charity! If you can't pay for it, you don't get it!"
       Event_ShowMessage(actor, 0);
     } else if (PartyInventory_FindRoom(item) < 0) {
       Event_SetMessageId(message + 2);
+      // "Whoops! Looks like you've got a full load there! This'll have to..."
       Event_ShowMessage(actor, 0);
     } else if ((u32)gMainRoutineWork.coins < price) {
       Event_SetMessageId(message + 3);
+      // "You don't enough money! What are you trying to pull? I can't give..."
       Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId(message + 4);
+      // "OK, here you go!"
       Event_ShowMessage(actor, 0);
       ItemDisplay_ShowItem(item, 3);
       Party_GiveItem(item, 0);
@@ -478,6 +505,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
     }
   } else {
     Event_SetMessageId((s32)MsgManSunshineWould);
+    // "Man, Sunshine would be rich if he worked more. What a waste..."
     Event_ShowMessage(actor, 0);
   }
 }

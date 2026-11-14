@@ -1647,7 +1647,7 @@ s32 Fireball_CarryLeader(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->timer == 0) {
     s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z);

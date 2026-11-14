@@ -37,6 +37,24 @@
 #include "scene_ids.h"
 #include "version.h"
 
+/// The scene's placed actors. At ENTRANCE_OPENING Felix and Jenna are placed as
+/// the first two rows of gActorPlacementsEntrance99 and keep their own ids.
+/// Set once the statue Felix moved has sunk into the floor; the statue by it no
+/// longer throws the leader back.
+#define FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK FLAG_SCENE_TEMP_00
+/// Set while the leader stands on the floor switch, pressed down.
+#define FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED FLAG_SCENE_TEMP_01
+
+enum VenusLighthouseActorId {
+  ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  ACTOR_ALEX,
+  /// The statue Felix moves aside with Move; it sinks into the floor.
+  ACTOR_MOVED_STATUE,
+  /// The first of the nine statues that glow (gVenusLighthouse_StatueGlows),
+  /// tinted as the party walks in.
+  ACTOR_FIRST_GLOWING_STATUE = ACTOR_FIRST_PLACED + 9
+};
+
 #define Actor_SetSpriteFlags                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
 
@@ -313,37 +331,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 // leaving Jenna and Kraden, their talk of leaving, the floor switch, the
 // statue that repels the leader, the reliefs and the paths Reveal shows.
 
-struct VenusActor {
-  u8 unk00[6];
-  u16 facing;
-  s16 xLow;
-  s16 xPixel;
-  s32 y;
-  s16 zLow;
-  s16 zPixel;
-  s32 terrainHeight;
-  u8 unk18[0xa];
-  u8 terrainId;
-  u8 unk23;
-  s32 velocityX;
-  s32 speed;
-  s32 velocityZ;
-  s32 moveRateX;
-  s32 moveRateZ;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  u8 unk44[0x11];
-  u8 motionFlags;
-  u8 unk56[3];
-  u8 collisionFlags;
-  u8 selectFlags;
-  u8 unk5b[7];
-  u8 busy;
-  u8 unk63[9];
-  void *update;
-};
-
 enum { ENTRANCE_OPENING = 99 };
 
 struct SetupWork {
@@ -370,13 +357,6 @@ void Exit_PrepareActorAnimation(s32 actor, s32 value);
 
 extern s32 gVenusLighthouse_LeaderFlashes[];
 
-/* VIEW(floor): routine Actor_GetById as struct VenusActor *Actor_GetById(s32
- * id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the
- * definition's struct Actor *Actor_GetById(u32 objectId), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:407: structure has no member named
- * `selectFlags'. */
-extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
@@ -393,39 +373,39 @@ void Actor_WaitForMove(struct Actor *actor);
  * games/tla/src/scene/venus_lighthouse.c:388: conflicting types for
  * `Actor_ShowEmoteById'. */
 extern void
-Actor_ShowEmoteById__floor(s32 actor, s32 height,
+Actor_ShowEmoteById__floor(s32 actor, s32 emote,
                            s32 frames) __asm__("Actor_ShowEmoteById");
 
-// Until the statue has sunk (flag 0x200), stepping by it throws the leader
+// Until the statue has sunk, stepping by it throws the leader
 // back in a flash of sparks.
 void VenusLighthouse_RepelLeader(void) {
   s32 leader = Party_GetLeaderActor();
-  struct VenusActor *actor = Actor_GetById__floor(leader);
+  struct Actor *actor = Actor_GetById(leader);
   s32 z;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
   Actor_RefreshSelectorById(leader);
-  Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
-  actor->speed = 0x40000;
+  Actor_SetSpriteColor(Actor_GetById(leader), 6);
+  actor->velocityY = px(4);
   Actor_SetSpeed(leader, 4);
-  if (*(s32 *)&actor->zLow >> 20 <= 54) {
-    Actor_GetById__floor(leader)->selectFlags &= ~1;
+  if (actor->z >> 20 <= 54) {
+    Actor_GetById(leader)->actionFlags &= ~1;
     z = 210;
   } else {
-    Actor_GetById__floor(leader)->selectFlags &= ~1;
+    Actor_GetById(leader)->actionFlags &= ~1;
     z = 238;
   }
-  Actor_WalkToAndWaitById(leader, actor->xPixel, z * 4);
+  Actor_WalkToAndWaitById(leader, ((s16 *)&actor->x)[1], z * 4);
   Event_Wait(1);
-  Actor_GetById__floor(leader)->selectFlags |= 1;
+  Actor_GetById(leader)->actionFlags |= 1;
   Event_Wait(20);
   Actor_SetSpriteColor(actor, 0);
   actor->update = VenusLighthouse_EmitRisingParticles;
-  Actor_ShowEmoteById__floor(leader, 258, 60);
+  Actor_ShowEmoteById__floor(leader, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Motion_SetModeAndWaitAnimation(leader, 4);
-  Actor_SetSpriteColor(Actor_GetById__floor(leader), 0);
+  Actor_SetSpriteColor(Actor_GetById(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
 
   /* FAKEMATCH(dead): an empty once-only block. */
@@ -437,23 +417,23 @@ void VenusLighthouse_RepelLeader(void) {
 }
 
 void VenusLighthouse_StepOnFloorSwitch(void) {
-  struct VenusActor *leader = Actor_GetById__floor(Party_GetLeaderActor());
-  s32 z = leader->zPixel;
+  struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
+  s32 z = ((s16 *)&leader->z)[1];
 
-  if ((u32)(leader->xPixel - 676) > 7 || z < 788 || z >= 796) {
+  if ((u32)(((s16 *)&leader->x)[1] - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-    GameFlag_Clear(FLAG_SCENE_TEMP_01);
+    GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
     leader->motionFlags |= 1;
     leader->terrainHeight = 0;
     leader->y = 0;
-  } else if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
+  } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_Wait(5);
     MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
-    GameFlag_Set(FLAG_SCENE_TEMP_01);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
     Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -px(2);
@@ -464,7 +444,7 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
 
 #include "text/msg_ids.h"
 
-// The statue Felix moved sinks into the floor in column 42 (flag 0x200), and
+// The statue Felix moved sinks into the floor in column 42, and
 // the way past it opens.
 void VenusLighthouse_SinkStatue(void) {
   struct Actor *obj;
@@ -472,17 +452,17 @@ void VenusLighthouse_SinkStatue(void) {
   s32 a;
   s32 b;
 
-  obj = Actor_Get(10);
+  obj = Actor_Get(ACTOR_MOVED_STATUE);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (obj->x >> 20 == 42) {
     FieldEvent_Wait(30);
     Event_PlaySound(SE_THUMP);
     obj->motionFlags = 0;
-    val = 0xfffe0000;
+    val = -px(2);
     obj->terrainHeight = val;
     obj->y = val;
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK);
     a = 3;
     b = 5;
     MapGrid_CopyCellsTo(44, 117, 41, 117, a, b);
@@ -494,6 +474,7 @@ void VenusLighthouse_ReadRelief(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  // "There are words carved into the relief... If ye seek to climb Venus..."
   Message_ShowCentered((s32)MsgVenusLighthouseReliefWords, 1);
   Event_End();
 }
@@ -502,6 +483,7 @@ void VenusLighthouse_ReadTrueHeart(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(FieldParty_GetLeaderActor(), 1);
+  // "The true road can only be known by he who bears a true heart."
   Message_ShowCentered((s32)MsgVenusLighthouseTrueHeart, 1);
   Event_End();
 }
@@ -558,7 +540,7 @@ s32 VenusLighthouse_Idle(void) { return 0; }
 // Felix casts Move on the statue.
 void VenusLighthouse_FelixMovesStatue(void) {
   BattleEffect_LoadActionEffectResources(140, 1);
-  FieldPsynergy_SetupActorPair(4, 10);
+  FieldPsynergy_SetupActorPair(4, ACTOR_MOVED_STATUE);
   ((struct SetupWork *)Ram_HeapSlots->effectWork)->idle = VenusLighthouse_Idle;
   EventObject_Initialize();
   FieldEvent_Wait(10);
@@ -579,16 +561,16 @@ s32 VenusLighthouse_Start(void) {
     VenusLighthouse_DoubtLeaving();
     Event_End();
   } else {
-    FieldActor_SetSpriteColor(Actor_Get(10), 6);
-    FieldActor_SetSpriteColor(Actor_Get(17), 6);
-    FieldActor_SetSpriteColor(Actor_Get(18), 6);
-    FieldActor_SetSpriteColor(Actor_Get(19), 6);
-    FieldActor_SetSpriteColor(Actor_Get(20), 6);
-    FieldActor_SetSpriteColor(Actor_Get(21), 6);
-    FieldActor_SetSpriteColor(Actor_Get(22), 6);
-    FieldActor_SetSpriteColor(Actor_Get(23), 6);
-    FieldActor_SetSpriteColor(Actor_Get(24), 6);
-    FieldActor_SetSpriteColor(Actor_Get(25), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 1), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 2), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 3), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 4), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 5), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 6), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 7), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 8), 6);
   }
   return 0;
 }
@@ -613,16 +595,16 @@ s32 VenusLighthouse_Start(void) {
     VenusLighthouse_DoubtLeaving();
     Event_End();
   } else {
-    FieldActor_SetSpriteColor(Actor_Get(10), 6);
-    FieldActor_SetSpriteColor(Actor_Get(17), 6);
-    FieldActor_SetSpriteColor(Actor_Get(18), 6);
-    FieldActor_SetSpriteColor(Actor_Get(19), 6);
-    FieldActor_SetSpriteColor(Actor_Get(20), 6);
-    FieldActor_SetSpriteColor(Actor_Get(21), 6);
-    FieldActor_SetSpriteColor(Actor_Get(22), 6);
-    FieldActor_SetSpriteColor(Actor_Get(23), 6);
-    FieldActor_SetSpriteColor(Actor_Get(24), 6);
-    FieldActor_SetSpriteColor(Actor_Get(25), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 1), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 2), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 3), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 4), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 5), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 6), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 7), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 8), 6);
   }
   return 0;
 }
@@ -639,16 +621,16 @@ static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
 void VenusLighthouse_FelixLeaves(void) {
   struct FieldWork *work;
 
-  Actor_SetPosition(4, 712, 816);
-  Actor_SetPosition(5, 696, 840);
-  Actor_SetPosition(8, 728, 840);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_SetSpeed(4, 1);
-  Actor_SetSpeed(5, 1);
-  Actor_SetSpeed(8, 1);
-  Actor_SetSpeed(9, 1);
+  Actor_SetPosition(ACTOR_FELIX, 712, 816);
+  Actor_SetPosition(ACTOR_JENNA, 696, 840);
+  Actor_SetPosition(ACTOR_KRADEN, 728, 840);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
+  Actor_SetSpeed(ACTOR_FELIX, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
+  Actor_SetSpeed(ACTOR_ALEX, 1);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 824, 0);
   work = Ram_HeapSlots->fieldWork;
   work->transition = 256;
@@ -656,452 +638,522 @@ void VenusLighthouse_FelixLeaves(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_WalkToAndWait(4, 664, 824);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 664, 824);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_WalkToAndWait(8, 712, 824);
-  Actor_FaceDirection(5, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 712, 824);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   VenusLighthouse_FelixMovesStatue();
   VenusLighthouse_SinkStatue();
   FieldEvent_Wait(20);
-  Actor_WalkToAndWait(8, 728, 840);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_WalkToAndWait(4, 712, 816);
-  Actor_FaceDirection(4, FACING_SOUTH, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 728, 840);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 712, 816);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldActor_WatchAndSetScript(5, 4);
-  FieldActor_WatchAndSetScript(8, 4);
-  Actor_WalkToAndWait(4, 744, 816);
-  Actor_WalkToAndWait(4, 744, 780);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_FELIX);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_FELIX);
+  Actor_WalkToAndWait(ACTOR_FELIX, 744, 816);
+  Actor_WalkToAndWait(ACTOR_FELIX, 744, 780);
   Event_PlaySound(SE_STAIRS_DOWN);
   Exit_PrepareActorAnimation(4, -1);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_SetPosition(4, 0, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
+  Actor_SetPosition(ACTOR_FELIX, 0, 0);
 }
 
 void VenusLighthouse_DoubtLeaving(void) {
-  struct VenusActor *actor;
+  struct Actor *actor;
   struct FieldWork *work;
 
   FieldEvent_SetMessageId((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
-  EventCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(ACTOR_KRADEN, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
-  Actor_WalkToAndWait(5, 664, 840);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_WalkToAndWait(8, 696, 840);
+  Actor_WalkToAndWait(ACTOR_JENNA, 664, 840);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 696, 840);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_WalkTo(8, 696, 920);
+  Actor_WalkTo(ACTOR_KRADEN, 696, 920);
   FieldEvent_Wait(10);
-  Actor_WalkToAndWait(5, 664, 888);
-  FieldActor_WaitForMoveById(8);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(8, FACING_NORTHWEST, 0);
+  Actor_WalkToAndWait(ACTOR_JENNA, 664, 888);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_WalkToAndWait(8, 696, 888);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 696, 888);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(696, CAMERA_KEEP, 920, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "Are you sure we should be leaving like this?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  // "Once we go down those stairs, we can't get back into the lighthouse."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "Maybe I should have stopped my brother..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Jenna, is something troubling you?"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(5, 0);
+  // "I just..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What is it? What's wrong?"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "I have a bad feeling... Like something terrible is going to happen."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
-  Actor_SetPosition(9, 680, 920);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
-  Actor_VanishInSparks(9);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_SetPosition(ACTOR_ALEX, 680, 920);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
+  Actor_VanishInSparks(ACTOR_ALEX);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessage(9, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "How unlike you, Jenna."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_StartRepeatedMotion(5, 2);
-  Actor_RunRepeatedMotion(8, 2);
+  FieldActor_StartRepeatedMotion(ACTOR_JENNA, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(20);
-  Actor_FaceEachOther(5, 8, 40);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Event_ShowMessage(9, 0);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_KRADEN, 40);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Surprised to see me?"
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "A-Alex... Were you listening?"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(9, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(9, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(9, 0);
+  // "Where's Felix? Why isn't he here with you?"
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(5, 0.5);
-  FieldActor_WatchAndSetScript(8, 5);
-  Actor_WalkByAndWait(5, 0, -32);
+  Actor_SetSpeed(ACTOR_JENNA, 0.5);
+  FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_JENNA);
+  Actor_WalkByAndWait(ACTOR_JENNA, 0, -32);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "My brother? He left us."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Actor_WalkByAndWait(9, -8, -8);
-  Event_ShowMessage(9, 0);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  Actor_WalkByAndWait(ACTOR_ALEX, -8, -8);
+  // "What can Felix possibly be thinking?"
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  // "He was worried about Sheba. He went to check on her."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(9, 0);
+  // "He was supposed to be leading you out of here! I thought you would..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Event_ShowMessage(9, 0);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Why are you still here?"
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "We tried to stop Felix from going back up to the aerie."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(9, 0);
+  // "How like him. Once Felix gets an idea into his head, he rarely..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  // "Alex, what were you talking about just now?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(5, 0);
+  // "What did you mean when you said... "How unlike you"?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "I was merely surprised to hear you expressing such concern, Jenna."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessage(9, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "Nevertheless, I'm impressed Felix went back..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 4);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(5, 1);
-  Actor_WalkByAndWait(5, 0, 16);
-  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
+  Actor_WalkByAndWait(ACTOR_JENNA, 0, 16);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "Don't change the subject, Alex! What did you mean!?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Are you saying that I'm insensitive!?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "If that's what you heard, then I must have misspoken. Accept my..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(9, 7);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 7);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(8, FACING_WEST_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Well, Jenna, I think Alex has said his piece on the matter..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessage(5, 0);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "I'm not sure he has, Kraden."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Actor_WalkByAndWait(5, 0, 16);
-  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_WalkByAndWait(ACTOR_JENNA, 0, 16);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "Who do you think you are, talking to me like that!?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessage(9, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "I retract my statement, my dear. Forget all about it, Jenna."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  Actor_RunRepeatedMotion(9, 2);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "So tell me about this "feeling," Jenna..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "I'm just... I'm not sure we should be leaving Venus Lighthouse yet..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  // "What are you saying?"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "You can't really mean to remain here..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Alex is right. It's far too dangerous, Jenna. We would only hinder..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(5, 0);
+  // "The others? Did Isaac follow us to the lighthouse?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "It would seem so."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "He must be trying to stop Saturos and Menardi!"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "If my brother goes back and finds Isaac, they're going to end up..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessage(9, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "If the Venus Lighthouse has not yet been lit, yes. They will fight."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "Felix is a terribly rash young man, is he not?"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Why are boys such fools?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  // "He may be rash, but Felix is no fool. His good qualities outweigh..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "That's why I think Isaac would understand if we just talked to him."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_WalkByAndWait(5, 0, -16);
+  Actor_WalkByAndWait(ACTOR_JENNA, 0, -16);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Event_ShowMessage(5, 0);
+  // "Why didn't I think of this before now?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(8, FACING_WEST_NORTHWEST, 0);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(5, 0);
+  // "Please... Can't we go back up and talk to Isaac?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessage(9, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "I'm afraid that's not possible."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(5, 0);
+  // "Alex, why?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessage(9, 0);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "He is an enemy."
+  Event_ShowMessage(ACTOR_ALEX, 0);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(20);
-  Event_ShowMessage(5, 0);
+  // "Isaac? An enemy?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(25);
-  Event_ShowMessage(9, 0);
+  // "Our methods may differ, but you and I ultimately want the same thing..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  // "To light the elemental lighthouses..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "Isaac and his friends would prevent this from happening."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "So that makes them enemies?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "But fear not... They won't be able to defeat Saturos and Menardi."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_FaceEachOther(5, 8, 50);
-  Actor_FaceDirection(9, FACING_SOUTH, 0);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_KRADEN, 50);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessage(9, 0);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "So... Felix went back to the top of the lighthouse?"
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(9, 6);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 6);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  // "Why do you seem so pleased, Alex?"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(9, 0);
+  // "Why shouldn't I be? After all, the lighthouse will soon shine..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(5, 0);
+  // "Alex, why do you want to see the beacon lit so badly?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  FieldActor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(9, 0);
+  // "Oh, so it's my turn to answer questions, is it?"
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "Once, Alchemy was commonplace throughout this world..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_EAST_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "With its power, mankind worked wonders across the land..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  // "The lost age of man..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(9, 0);
+  // "I want to see that world restored once again, and..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
-  Event_ShowMessage(5, 0);
+  // "And what, Alex?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessage(9, 0);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "We've spoken long enough already. Let us continue this another time."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  Event_ShowMessage(9, 0);
+  // "We should leave the lighthouse now, before the beacon is fired..."
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 8, 0);
+  // "I concur... Let's meet at the location we agreed on and wait for Felix."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(5, FACING_EAST_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  Event_ShowMessage(5, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "All right, Kraden, let's go."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(9, 3);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimation(ACTOR_ALEX, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(8, 1.2);
-  Actor_SetAnimation(8, 2);
-  actor = (struct VenusActor *)Actor_Get(5);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  actor = (struct Actor *)Actor_Get(ACTOR_JENNA);
   if (actor != NULL)
-    Actor_SetDestination(8, actor->xPixel, actor->zPixel);
-  FieldActor_WaitForMoveById(8);
-  Actor_SetPosition(8, 0, 0);
-  Actor_SetSpeed(9, 1.2);
-  Actor_SetAnimation(9, 2);
-  actor = (struct VenusActor *)Actor_Get(5);
+    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&actor->x)[1],
+                         ((s16 *)&actor->z)[1]);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Actor_SetSpeed(ACTOR_ALEX, 1.2);
+  Actor_SetAnimation(ACTOR_ALEX, ANIM_WALK);
+  actor = (struct Actor *)Actor_Get(ACTOR_JENNA);
   if (actor != NULL)
-    Actor_SetDestination(9, actor->xPixel, actor->zPixel);
-  FieldActor_WaitForMoveById(9);
-  Actor_SetPosition(9, 0, 0);
+    Actor_SetDestination(ACTOR_ALEX, ((s16 *)&actor->x)[1],
+                         ((s16 *)&actor->z)[1]);
+  FieldActor_WaitForMoveById(ACTOR_ALEX);
+  Actor_SetPosition(ACTOR_ALEX, 0, 0);
   FieldEvent_Wait(10);
-  Actor_WalkByAndWait(5, 16, 0);
-  Actor_WalkToAndWait(5, 680, 944);
+  Actor_WalkByAndWait(ACTOR_JENNA, 16, 0);
+  Actor_WalkToAndWait(ACTOR_JENNA, 680, 944);
   FieldEvent_Wait(15);
-  Actor_FaceDirection(5, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(15);
-  Actor_WalkToAndWait(5, 728, 944);
-  Actor_WalkToAndWait(5, 728, 928);
-  Actor_SetPosition(5, 728, 912);
+  Actor_WalkToAndWait(ACTOR_JENNA, 728, 944);
+  Actor_WalkToAndWait(ACTOR_JENNA, 728, 928);
+  Actor_SetPosition(ACTOR_JENNA, 728, 912);
   Event_PlaySound(SE_STAIRS_DOWN);
   Venus_ObjEffectSet(5, -1);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-  Event_ClearFlag(FLAG_SCENE_TEMP_01);
-  Actor_SetPosition(10, 664, 792);
+  Event_ClearFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
+  Actor_SetPosition(ACTOR_MOVED_STATUE, 664, 792);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.currentOwner = 5;
   Party_RemoveMember(4);
@@ -1344,7 +1396,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, 30},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 31, CONDITION_ALWAYS, 31},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 32, CONDITION_ALWAYS, 32},
-    {TRIGGER_STEP, 45, 0x200, EVENT(VenusLighthouse_RepelLeader)},
+    {TRIGGER_STEP, 45, FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK,
+     EVENT(VenusLighthouse_RepelLeader)},
     {TRIGGER_STEP, 46, CONDITION_ALWAYS,
      EVENT(VenusLighthouse_StepOnFloorSwitch)},
     {TRIGGER_EXAMINE, 35, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},

@@ -206,7 +206,7 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   } while (i >= 0);
   Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
   leader->terrainId = 0;
   leader->motionFlags = 3;
   FieldTask_Remove(JupiterLighthouse_DrawGlow);
@@ -286,7 +286,7 @@ spin:
     goto spin;
   Actor_Release(effect);
   Actor_SetSpriteFlags(Actor_Get(owner), 1);
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
   leader->terrainId = 1;
   leader->motionFlags = 3;
   leader->y = px(144);

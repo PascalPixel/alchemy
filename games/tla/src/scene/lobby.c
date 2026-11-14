@@ -112,7 +112,7 @@ s32 LinkLobby_PollPeerReady(void) {
 
   work = Ram_HeapSlots->fieldWork;
   result = 1;
-  z = Actor_GetById(4)->z;
+  z = Actor_GetById(ACTOR_FELIX)->z;
 
   if (z > 0xe00000)
     Event_ClearFlag(FLAG_AREA_TEMP_04);
@@ -189,6 +189,7 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgIfYouWantToParticipate);
+  // "If you want to participate, please step into the circle!"
   Event_OpenMessage(8, 0);
   wait(5);
   Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -205,6 +206,7 @@ s32 LinkLobby_ReportDisconnection(void) {
   Event_ResolvePendingActions(0);
   work->raisedTrigger = 0;
   Event_SetMessageId((s32)MsgTheLinkWas);
+  // "The link was disconnected."
   Event_OpenMessage(8, 0);
   Event_ClearFlag(FLAG_SCENE_TEMP_05);
   Event_End();
@@ -638,26 +640,27 @@ s32 LinkLobby_EnterBattle(void) {
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgGoodLuck2);
+      // "Good luck!"
       Event_OpenMessage(8, 0);
       wait(45);
-      Actor_SetSpeed(4, 1);
-      Actor_WalkTo(4, 216, 184);
-      Actor_WaitForMoveById(4);
-      Actor_WalkTo(4, 216, 168);
-      Actor_WaitForMoveById(4);
+      Actor_SetSpeed(ACTOR_FELIX, 1);
+      Actor_WalkTo(ACTOR_FELIX, 216, 184);
+      Actor_WaitForMoveById(ACTOR_FELIX);
+      Actor_WalkTo(ACTOR_FELIX, 216, 168);
+      Actor_WaitForMoveById(ACTOR_FELIX);
     } else {
-      Actor_SetSpeed(4, 1);
-      Actor_WalkTo(4, 216, 200);
-      Actor_WaitForMoveById(4);
-      Actor_SetSpeed(4, 0.1);
-      Actor_WalkTo(4, 216, 168);
+      Actor_SetSpeed(ACTOR_FELIX, 1);
+      Actor_WalkTo(ACTOR_FELIX, 216, 200);
+      Actor_WaitForMoveById(ACTOR_FELIX);
+      Actor_SetSpeed(ACTOR_FELIX, 0.1);
+      Actor_WalkTo(ACTOR_FELIX, 216, 168);
       if (LinkLobby_ExchangePartyRecords() < 0) {
-        Actor_SetSpeed(4, 1);
-        Actor_WalkTo(4, 216, 200);
+        Actor_SetSpeed(ACTOR_FELIX, 1);
+        Actor_WalkTo(ACTOR_FELIX, 216, 200);
         Map_ClearLayerEntryFlag(5);
         wait(8);
         Map_SetLayerEntryFlag(5);
-        Actor_WaitForMoveById(4);
+        Actor_WaitForMoveById(ACTOR_FELIX);
         HeapSlot_Release(216);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
@@ -672,8 +675,8 @@ s32 LinkLobby_EnterBattle(void) {
         Event_End();
         return;
       }
-      Actor_SetSpeed(4, 0.5);
-      Actor_WaitForMoveById(4);
+      Actor_SetSpeed(ACTOR_FELIX, 0.5);
+      Actor_WaitForMoveById(ACTOR_FELIX);
     }
     /* FAKEMATCH(temporary): the flag test's result kept while the scene symbol
      * is loaded once for both branches. */
@@ -732,6 +735,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
     LinkLobby_InitializeSerial();
     if (!Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Event_SetMessageId(msg + 5);
+      // "You do not have an opponent. Would you like to battle a monster?"
       Event_OpenMessage(8, 0);
       answer = Event_AskYesNoWithActorAnimation(4, 0);
       if (answer == 0) {
@@ -757,6 +761,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       LinkLobby_WriteSlotValue(0);
       Event_SetMessageId((s32)MsgYourOpponentHas);
+      // "Your opponent has arrived!"
       Event_OpenMessage(8, 0);
       Event_ClearFlag(FLAG_SCENE_TEMP_02);
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
@@ -770,6 +775,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
     } else if (!Event_GetFlag(FLAG_SCENE_TEMP_01) &&
                !Event_GetFlag(FLAG_AREA_TEMP_00)) {
       Event_SetMessageId(msg);
+      // "Please speak to me when you want to fight in a battle."
       Event_OpenMessage(8, 0);
       Event_SetFlag(FLAG_AREA_TEMP_00);
     } else {
@@ -778,6 +784,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
         Event_SetMessageId(msg + 2);
       else
         Event_SetMessageId(msg + 1);
+      // "Would you like to apply?"
       Event_OpenMessage(8, 0);
       if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
         if (LinkLobby_PeerSlotMatches(0)) {
@@ -795,6 +802,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
         }
       } else {
         Event_SetMessageId(msg);
+        // "Please speak to me when you want to fight in a battle."
         Event_OpenMessage(8, 0);
       }
     }
@@ -807,7 +815,7 @@ void MessageArgument_Push(s32 value, s32 digits);
 
 // Tells the leader's win count, total or in a row by the way the lead faces.
 s32 LinkLobby_ReportWinTallies(s32 actor) {
-  u32 facing = Actor_GetById(4)->facing;
+  u32 facing = Actor_GetById(ACTOR_FELIX)->facing;
   u16 *count;
   s32 base;
 
@@ -821,9 +829,11 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
+      // "You've won ... Linked Battle. Keep up the good work!"
       Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId((s32)MsgIWillTell);
+      // "I will tell you your total wins when you finish the linked finals."
       Event_ShowMessage(actor, 0);
     }
   } else {
@@ -833,9 +843,11 @@ s32 LinkLobby_ReportWinTallies(s32 actor) {
       MessageArgument_ClearAll();
       MessageArgument_Push(*count, 5);
       Event_SetMessageId(base + 1);
+      // "You've won ... Linked Battle. Check the board on the wall for..."
       Event_ShowMessage(actor, 0);
     } else {
       Event_SetMessageId((s32)MsgIWillTellYou);
+      // "I will tell you your consecutive wins when you finish the finals."
       Event_ShowMessage(actor, 0);
     }
   }
@@ -855,6 +867,7 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actorId, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgChooseYourParameters);
+  // "Choose your parameters here."
   Event_ShowMessage(actorId, 0);
   window = Window_Create(0, 0, 6, 4, 2);
   choice = 0;
@@ -900,9 +913,11 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
       message = (s32)MsgThereSNoSuch;
     show:
       Event_SetMessageId(message);
+      // "There's no such parameter. Ask Mr. Sugimoto."
       Event_ShowMessage(9, 0);
     } else {
       Event_SetMessageId((s32)MsgTheSettingsAre);
+      // "The settings are made. The rest is up to you."
       Event_ShowMessage(9, 0);
     }
   }
@@ -970,6 +985,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   Event_ResolvePendingActions(0);
   Actor_FaceActor(actor, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgYouHaveA);
+  // "You have a song request?"
   Event_ShowMessage(actor, 0);
   song = 0;
   all = 0;
@@ -1022,6 +1038,7 @@ void LinkLobby_TakeSongRequest(s32 actor) {
   do {
     Event_SetMessageId((s32)MsgComeBackWhen);
   } while (0);
+  // "Come back when you're ready to rock!"
   Event_ShowMessage(actor, 0);
   wait(10);
   Event_End();
@@ -1078,7 +1095,7 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   Event_SetMessageId(base + actor);
   Event_ShowMessage(actor, 0);
   if (base == (s32)MsgILlFight && actor == 5) {
-    Actor_ShowEmoteById__talk(5, 263, 0);
+    Actor_ShowEmoteById__talk(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
     Event_Wait(10);
   }
   Event_End();
@@ -1133,6 +1150,7 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
     Event_SetFlag(FLAG_SCENE_TEMP_06);
   }
   Event_SetMessageId(message);
+  // "Sometimes, your class changes when you unleash a Djinni. You need to..."
   Event_OpenMessage(actor, 0);
   Event_Wait(1);
   if (message == (s32)MsgYouLookA) {
@@ -1165,6 +1183,7 @@ s32 LinkLobby_ExplainPartyOrder(s32 actor) {
     Event_ClearFlag(FLAG_SCENE_TEMP_04);
   }
   Event_SetMessageId(message);
+  // "You can change the order of your party in the status screen. But you..."
   Event_OpenMessage(actor, 0);
   Event_End();
 }
@@ -1182,6 +1201,7 @@ s32 LinkLobby_ReportMonsterRecord(s32 id) {
   } else {
     Event_SetMessageId((s32)MsgICanTWaitTo);
   }
+  // "I can't wait to see how many Monster Battles you win. I'll be..."
   Event_OpenMessage(id, 0);
   Event_End();
 }
@@ -1322,10 +1342,12 @@ s32 LinkLobby_Initialize(void) {
       if (gMainRoutineWork.linkTallies[2] < score) {
         gMainRoutineWork.linkTallies[2] = score;
         Event_SetMessageId((s32)MsgYouWonBattle);
+        // "You won ... battle. You broke the record!"
         Event_OpenMessage(8, 0);
         LinkLobby_SaveMonsterBattleResults();
       } else {
         Event_SetMessageId((s32)MsgYouWonBattlePlease);
+        // "You won ... battle. Please speak to me when you wish to battle..."
         Event_OpenMessage(8, 0);
       }
       LinkLobby_WriteSlotValue(0);
@@ -1346,10 +1368,12 @@ s32 LinkLobby_Initialize(void) {
     if (gMainRoutineWork.linkTallies[2] < score) {
       gMainRoutineWork.linkTallies[2] = score;
       Event_SetMessageId((s32)MsgYouWonBattle);
+      // "You won ... battle. You broke the record!"
       Event_OpenMessage(8, 0);
       LinkLobby_SaveMonsterBattleResults();
     } else {
       Event_SetMessageId((s32)MsgYouWonBattleI);
+      // "You won ... battle. I told you our monsters were tough! Please..."
       Event_OpenMessage(8, 0);
     }
     gMainRoutineWork.linkTallies[3] = 0;
@@ -1416,6 +1440,7 @@ s32 LinkLobby_Initialize(void) {
       Event_WaitTransitionFrames();
       Actor_FaceActor(8, gMainRoutineWork.currentOwner, 0);
       Event_SetMessageId((s32)MsgNoteYouCan);
+      // "Note: you can't use the sleep function in battle stages!"
       Event_ShowMessage(8, 0);
       Event_End();
     }

@@ -206,7 +206,7 @@ next2:
   MapGrid_AnimateCells(gLemurianShip_Doors[found].value,
                        gLemurianShip_Doors[found].x,
                        gLemurianShip_Doors[found].z + 60);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   {
     s32 owner = gMainRoutineWork.currentOwner;
@@ -259,7 +259,7 @@ next2:
   MapGrid_AnimateCells(gLemurianShip_LowerDoors[found].value,
                        gLemurianShip_LowerDoors[found].x,
                        gLemurianShip_LowerDoors[found].z + 60);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
   Event_Wait(4);
@@ -278,14 +278,14 @@ void LemurianShip_WalkIntoPassage(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    Actor_SetAnimation(party->currentOwner, 2);
+    Actor_SetAnimation(party->currentOwner, ANIM_WALK);
     Actor_SetSpeed(party->currentOwner, 0.5);
     x = leader->x;
     cell = x >> 16;
     Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y,
                         leader->z);
     FieldActor_WaitForMove(leader);
-    leader->facing = 0xc000;
+    leader->facing = FACING_NORTH;
     Actor_SetScript(party->currentOwner, gLemurianShip_IntoPassage);
     wait(12);
     Event_PlaySound(SE_MAP_EXIT);
@@ -374,6 +374,7 @@ void LemurianShip_ExamineLiftSwitch(void) {
       Event_SetFlag(FLAG_LIFT_LOWERED);
     }
   } else {
+    // "There's no reaction... It doesn't seem to be running."
     FieldMessage_Show((s32)MsgLemurianShip02, 1);
   }
   Event_End();
@@ -928,29 +929,32 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 808, 208);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 176, 1);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(6, gMainRoutineWork.currentOwner);
-  Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
   Actor_MoveToObject(8, gMainRoutineWork.currentOwner);
   wait(1);
-  Actor_SetSpeed(7, 0.8);
-  Actor_SetSpeed(6, 0.8);
-  Actor_SetSpeed(5, 0.8);
+  Actor_SetSpeed(ACTOR_PIERS, 0.8);
+  Actor_SetSpeed(ACTOR_SHEBA, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetSpeed(8, 0.8);
-  Actor_SetScript(6, gLemurianShip_ShebaStepsUp);
-  Actor_SetScript(5, gLemurianShip_JennaStepsUp);
+  Actor_SetScript(ACTOR_SHEBA, gLemurianShip_ShebaStepsUp);
+  Actor_SetScript(ACTOR_JENNA, gLemurianShip_JennaStepsUp);
   Actor_SetScript(8, gLemurianShip_KradenStepsUp);
-  Actor_RunScriptAndWait(7, gLemurianShip_PiersToPedestal);
+  Actor_RunScriptAndWait(ACTOR_PIERS, gLemurianShip_PiersToPedestal);
   Event_Wait(20);
-  Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTH);
-  Event_ShowMessage(7, 0);
-  Actor_SetAnimation(7, 3);
-  Event_ShowMessage(7, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  Actor_WalkToAndWait(7, 808, 148);
-  Actor_RunRepeatedMotion(7, 2);
-  Actor_SetSpritePriority(7, 1);
+  // "How did all these monsters get on board? I could swear I locked the..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
+  // "It doesn't matter. Once we get this ship moving, I'm sure they'll..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  // "OK, now, I must set the black orb in this pedestal."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_WalkToAndWait(ACTOR_PIERS, 808, 148);
+  Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
+  Actor_SetSpritePriority(ACTOR_PIERS, 1);
   Event_PlaySound(SE_SHIMMER);
   Task_Add(LemurianShip_DrawLightToOrb, 0x480);
   Event_Wait(60);
@@ -961,9 +965,9 @@ void LemurianShip_SetBlackCrystal(void) {
   Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 448, 0);
   Actor_SetPosition(gMainRoutineWork.currentOwner, 808, 480);
-  Actor_SetPosition(7, 808, 420);
-  Actor_SetPosition(6, 784, 468);
-  Actor_SetPosition(5, 832, 468);
+  Actor_SetPosition(ACTOR_PIERS, 808, 420);
+  Actor_SetPosition(ACTOR_SHEBA, 784, 468);
+  Actor_SetPosition(ACTOR_JENNA, 832, 468);
   Actor_SetPosition(8, 792, 488);
   Map_CenterOnFollowedPoint();
   Event_Wait(20);
@@ -1046,7 +1050,7 @@ void LemurianShip_JellyFlees(void) {
   Actor_SetSpeed(9, 1.6);
   Actor_SetSpritePriority(9, 3);
   Actor_MoveToAndWait(9, 824, 72);
-  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 40);
   Event_SetFlag(FLAG_JELLY_FLED);
 }
 
@@ -1626,7 +1630,7 @@ u32 gLemurianShip_JennaStepsUp[] =
 u32 gLemurianShip_KradenStepsUp[] = {                                                               
       SC_ARG(2),   SC_MOVE(px(792), 0, px(216)),                         
       SC_SYNC,     SC_ARG(1),                                                  
-      SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),              
+      SC_WAIT(10), SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),              
       SC_WAIT(10), SC_END,                                                     
   };
 

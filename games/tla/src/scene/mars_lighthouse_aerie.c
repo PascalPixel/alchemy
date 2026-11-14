@@ -285,7 +285,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(21, 8);
     Actor_SetAnimation(22, 7);
     Actor_SetPosition(19, 498, 320);
-    Actor_SetPosition(1, 538, 320);
+    Actor_SetPosition(ACTOR_GARET, 538, 320);
     Actor_SetPosition(gMainRoutineWork.currentOwner, 506, 280);
     System_Wait(1);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -449,13 +449,14 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetSpriteColor(t4, 15);
   Actor_SetPosition(18, 512, 276);
   System_Wait(1);
-  FieldActor_SetSpritePriority(6, 1);
-  FieldActor_SetSpritePriority(5, 1);
+  FieldActor_SetSpritePriority(ACTOR_SHEBA, 1);
+  FieldActor_SetSpritePriority(ACTOR_JENNA, 1);
   FieldActor_SetSpritePriority(19, 1);
-  FieldActor_SetSpritePriority(2, 1);
-  FieldActor_SetSpritePriority(3, 1);
+  FieldActor_SetSpritePriority(ACTOR_IVAN, 1);
+  FieldActor_SetSpritePriority(ACTOR_MIA, 1);
   Event_PlaySound(MUS_000);
   FieldEvent_SetMessageId((s32)MsgBetrayersYouHave);
+  // "Betrayers, you have arrived!"
   Event_ShowMessage(18, 0);
   t16 = gMainRoutineWork.currentOwner;
   Actor_ShowEmote(t16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -470,26 +471,28 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t25 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t25, FACING_NORTH, 0);
   t27 = gMainRoutineWork.currentOwner;
-  Actor_MoveToObject(0, t27);
+  Actor_MoveToObject(ACTOR_ISAAC, t27);
   System_Wait(1);
-  Actor_SetSpeed(0, 1.6);
-  Actor_WalkToAndWait(0, 520, 320);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_MoveToObject(1, 0);
+  Actor_SetSpeed(ACTOR_ISAAC, 1.6);
+  Actor_WalkToAndWait(ACTOR_ISAAC, 520, 320);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_MoveToObject(ACTOR_GARET, ACTOR_ISAAC);
   System_Wait(1);
-  Actor_SetSpeed(1, 1.6);
-  Actor_WalkToAndWait(1, 536, 320);
-  Actor_FaceDirection(1, FACING_NORTHWEST, 20);
-  Actor_FaceDirection(1, FACING_NORTHEAST, 20);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Event_ShowMessage(1, 0);
-  Actor_MoveToObject(3, 1);
+  Actor_SetSpeed(ACTOR_GARET, 1.6);
+  Actor_WalkToAndWait(ACTOR_GARET, 536, 320);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  // "Who said that!?"
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Actor_MoveToObject(ACTOR_MIA, ACTOR_GARET);
   System_Wait(1);
-  Actor_SetSpeed(3, 1.6);
-  Actor_WalkToAndWait(3, 544, 328);
-  Actor_FaceDirectionAndWait(3, FACING_NORTHWEST);
-  Actor_SetAnimation(3, 4);
-  Event_ShowMessage(3, 0);
+  Actor_SetSpeed(ACTOR_MIA, 1.6);
+  Actor_WalkToAndWait(ACTOR_MIA, 544, 328);
+  Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_NORTHWEST);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "The wind's too strong! I can't see anything!"
+  Event_ShowMessage(ACTOR_MIA, 0);
   t48 = gMainRoutineWork.currentOwner;
   FieldActor_Stop(t48);
   t50 = Random16();
@@ -498,26 +501,27 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   MarsLighthouseAerie_StartLookingAround(1);
   MarsLighthouseAerie_StartLookingAround(3);
   t53 = gMainRoutineWork.currentOwner;
-  Actor_MoveToObject(5, t53);
+  Actor_MoveToObject(ACTOR_JENNA, t53);
   t55 = gMainRoutineWork.currentOwner;
-  Actor_MoveToObject(6, t55);
+  Actor_MoveToObject(ACTOR_SHEBA, t55);
   t57 = gMainRoutineWork.currentOwner;
-  Actor_MoveToObject(7, t57);
+  Actor_MoveToObject(ACTOR_PIERS, t57);
   t59 = gMainRoutineWork.currentOwner;
-  Actor_MoveToObject(2, t59);
+  Actor_MoveToObject(ACTOR_IVAN, t59);
   t61 = gMainRoutineWork.currentOwner;
   Actor_MoveToObject(19, t61);
   System_Wait(1);
-  Actor_SetSpeed(5, 1.6);
-  Actor_SetSpeed(6, 1.6);
-  Actor_SetSpeed(7, 1.6);
-  Actor_SetSpeed(2, 1.6);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.6);
+  Actor_SetSpeed(ACTOR_PIERS, 1.6);
+  Actor_SetSpeed(ACTOR_IVAN, 1.6);
   Actor_SetSpeed(19, 1.6);
-  Actor_SetScript(5, (s32)gMarsLighthouseAerie_JennaApproachScript);
-  Actor_SetScript(6, (s32)gMarsLighthouseAerie_ShebaApproachScript);
-  Actor_SetScript(7, (s32)gMarsLighthouseAerie_PiersApproachScript);
+  Actor_SetScript(ACTOR_JENNA, (s32)gMarsLighthouseAerie_JennaApproachScript);
+  Actor_SetScript(ACTOR_SHEBA, (s32)gMarsLighthouseAerie_ShebaApproachScript);
+  Actor_SetScript(ACTOR_PIERS, (s32)gMarsLighthouseAerie_PiersApproachScript);
   Actor_SetScript(19, (s32)gMarsLighthouseAerie_KradenApproachScript);
-  Actor_RunScriptAndWait(2, (s32)gMarsLighthouseAerie_IvanApproachScript);
+  Actor_RunScriptAndWait(ACTOR_IVAN,
+                         (s32)gMarsLighthouseAerie_IvanApproachScript);
   FieldEvent_Wait(10);
   ObjectTable_DestroyById(16);
   ObjectTable_DestroyById(15);
@@ -532,19 +536,21 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   MarsLighthouseAerie_StartLookingAround(2);
   MarsLighthouseAerie_StartLookingAround(19);
   FieldEvent_Wait(80);
-  t88 = Actor_Get(6);
+  t88 = Actor_Get(ACTOR_SHEBA);
   FIELD_AT(t88, void *, 108) = 0;
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Event_ShowMessage(6, 0);
-  t91 = Actor_Get(5);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  // "I heard it too, but I don't see anyone else up here!"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  t91 = Actor_Get(ACTOR_JENNA);
   FIELD_AT(t91, void *, 108) = 0;
-  Actor_FaceDirectionAndWait(5, FACING_WEST);
-  FieldActor_SetAnimationAndWait(5, 3);
-  t94 = Actor_Get(7);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
+  FieldActor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  t94 = Actor_Get(ACTOR_PIERS);
   FIELD_AT(t94, void *, 108) = 0;
-  Actor_FaceDirectionAndWait(7, FACING_EAST);
-  FieldActor_Jump(7, 4, 10);
-  Event_ShowMessage(7, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
+  FieldActor_Jump(ACTOR_PIERS, 4, 10);
+  // "Felix! Quick! Cast the Mars Star in before anything has a chance to..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   t98 = gMainRoutineWork.currentOwner;
   t99 = Actor_Get(t98);
   FIELD_AT(t99, void *, 108) = 0;
@@ -594,32 +600,37 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FIELD_AT(t137, u8, 90) |= 1;
   *palette = 0x7fff;
   System_Wait(1);
+  // "So, you are still intent on lighting the beacon of Mars Lighthouse?"
   Event_ShowMessage(18, 0);
   t141 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t141, FACING_EAST, 0);
-  Actor_FaceDirection(0, FACING_WEST, 40);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 40);
   t144 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t144, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(0, FACING_NORTH);
-  Actor_WalkToAndWait(0, 520, 308);
-  Actor_FaceDirection(0, FACING_NORTHWEST, 20);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 20);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 20);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
+  Actor_WalkToAndWait(ACTOR_ISAAC, 520, 308);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 20);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  // "Who said that!?"
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0, 20);
+  // "Have you forgotten me so soon, Isaac? And you, Garet?"
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_FaceDirection(0, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(1, FACING_NORTHWEST, 40);
-  Event_ShowMessage(2, 0);
-  Actor_FaceDirection(0, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
-  Actor_SetAnimation(0, 4);
-  FieldActor_SetAnimationAndWait(1, 4);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 40);
+  // "It seems to know you, Isaac... Do you have any idea what it is?"
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+  FieldActor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_PlaySound(MUS_036);
+  // "Then search your heart, boy!"
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirectionAndWait(1, FACING_NORTH);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTH);
   t166 = gMainRoutineWork.currentOwner;
   MarsLighthouseAerie_StartLookingAround(t166);
   MarsLighthouseAerie_StartLookingAround(5);
@@ -635,6 +646,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldActor_Jump(19, 4, 10);
   FieldActor_Jump(19, 6, 10);
+  // "That voice..."
   Event_ShowMessage(19, 0);
   t182 = gMainRoutineWork.currentOwner;
   MarsLighthouseAerie_StopLookingAround(t182);
@@ -656,87 +668,117 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldCamera_MoveTo(512, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(40);
-  FieldEvent_ShowMessageThenWait(1, 0, 20);
+  // "It's...the Wise One!"
+  FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_SetAttachedEffect(0, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_ISAAC,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   t206 = gMainRoutineWork.currentOwner;
   Actor_SetAttachedEffect(t206,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(1, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_GARET,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "Isaac, since when are you on a first-name basis with the Wise One?"
   Event_ShowMessage(19, 0);
-  Actor_SetAnimation(0, 3);
-  Actor_SetAnimationAndWait(0, 3);
-  Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
-  Event_ShowMessage(5, 0);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessage(2, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 0, 0);
-  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Event_ShowMessage(3, 0);
-  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTHEAST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
-  Actor_FaceDirectionAndWait(7, FACING_EAST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHEAST);
+  // "It must have been... Isaac, what happened in Sol Sanctum after we..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "When Saturos and Menardi stole the Elemental Stars, they also..."
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "But...wait, Mt. Aleph did erupt! There was a huge explosion! We saw..."
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
+  // "But it would have erupted with us still inside... There was no way..."
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+  // "The Wise One held off the eruption until we could escape... He even..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC,
+                    0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  // "I can't believe it... Nobody has enough power to do that..."
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
+  // "I know it sounds weird, but I was there, and it happened, so you'll..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_GARET,
+                    0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
+  // "If it can do all that, this Wise One seems more like a god than an..."
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 296, 1);
   Actor_SetSpeed(18, 0.8);
   FieldActor_SetMoveTarget(actor, 512, 96, 276);
   FieldActor_WaitForMoveById(18);
   FieldEvent_Wait(10);
+  // "I did not just save you. I also tasked you with recovering the four..."
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_RunRepeatedMotion(0, 1);
-  Actor_WalkToAndWait(0, 520, 320);
-  Actor_FaceDirectionAndWait(0, FACING_NORTH);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_RunRepeatedMotion(ACTOR_ISAAC, 1);
+  Actor_WalkToAndWait(ACTOR_ISAAC, 520, 320);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
+  // "Why have you disobeyed my command? Why have you come to light the..."
   Event_ShowMessage(18, 0);
-  Event_ShowMessage(5, 0);
+  // "Because Prox will be destroyed if we don't! We can't let that happen..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(10);
+  // "Prox? They have brought this disaster upon themselves."
   Event_ShowMessage(18, 0);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Event_ShowMessage(6, 0);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Are you saying we should just abandon them to die? What did they do..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
+  // "The people of Prox have committed an unforgivable sin. They must pay..."
   Event_ShowMessage(18, 0);
-  Event_ShowMessage(0, 0);
-  Event_ShowMessage(3, 0);
-  Event_ShowMessage(7, 0);
-  FieldActor_Jump(6, 4, 10);
-  Event_ShowMessage(6, 0);
-  Actor_SetAnimation(5, 4);
-  Event_ShowMessage(5, 0);
+  // "For lighting the lighthouses? Is that their sin? Does that warrant..."
+  Event_ShowMessage(ACTOR_ISAAC, 0);
+  // "If we don't light the beacon, Gaia Falls will eventually erode away..."
+  Event_ShowMessage(ACTOR_MIA, 0);
+  // "We have fought for so long to save all the people of our world, and..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  FieldActor_Jump(ACTOR_SHEBA, 4, 10);
+  // "Gaia Falls is growing. It's consuming more and more with each..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "How can you just allow the world to crumble into nothingness?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldActor_SetAnimation(18, 11);
   FieldEvent_Wait(20);
-  Event_ShowMessage(6, 0);
+  // "The seal needs to be broken! The world will be destroyed if it's not!"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   FieldActor_SetAnimation(18, 12);
   Actor_WaitForAnimationChange(18);
   FieldEvent_Wait(20);
+  // "You have learned far too much."
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, FACING_EAST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_EAST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   t278 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t278, FACING_WEST, 20);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Wise One! You can't continue to protect the lighthouses! You know..."
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
@@ -746,26 +788,31 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(5);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
+  // "It is your duty to protect all of Weyard! If Weyard is destroyed..."
   Event_ShowMessage(19, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_FaceDirection(2, FACING_NORTH, 0);
-  Actor_FaceDirection(3, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   t298 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t298, FACING_NORTH, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
-  Actor_SetAnimation(5, 4);
-  Event_ShowMessage(5, 0);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "Why won't you answer us, Wise One?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
+  // "If Alchemy is unleashed, mankind may well destroy all of Weyard itself."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "But we can combine our strengths, ensure that Alchemy not be used..."
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
+  // "It is inevitable. In time, one man will seek to rule over all. It is..."
   Event_ShowMessage(18, 0);
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
@@ -778,19 +825,22 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(80);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(10);
+  // "And it shall come sooner than any of you think."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Why do you say that?"
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(20);
+  // "The Water Adept who climbs toward the peak of Mt. Aleph even as we..."
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, FACING_EAST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_EAST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   t334 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t334, FACING_WEST, 20);
   FieldActor_SetAnimation(18, 6);
@@ -805,122 +855,138 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(40);
   FieldActor_SetAnimation(18, 3);
   FieldEvent_Wait(20);
+  // "Alex is his name. Surely, you have not forgotten him?"
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_FaceDirection(2, FACING_NORTH, 0);
-  Actor_FaceDirection(3, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   t356 = gMainRoutineWork.currentOwner;
   Actor_FaceDirectionAndWait(t356, FACING_NORTH);
-  Event_ShowMessage(5, 0);
+  // "Alex!? What would he be doing on Mt. Aleph?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldActor_SetAnimation(18, 4);
   FieldEvent_Wait(20);
+  // "He understands far more than you do. He knows that when the four..."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "But what would he gain from being there?"
   Event_ShowMessage(19, 0);
   FieldEvent_Wait(20);
   FieldActor_SetAnimation(18, 13);
   FieldEvent_Wait(20);
+  // "When the final beam of light reaches the peak of Mt. Aleph, the..."
   FieldEvent_ShowMessageThenWait(18, 0, 20);
+  // "The Golden Sun!? What is that? And what would Alex want with it?"
   Event_ShowMessage(19, 0);
   FieldActor_SetAnimation(18, 8);
   FieldEvent_Wait(180);
+  // "When the four beams merge into one, they form a golden light..."
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Event_ShowMessage(2, 0);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  // "Is... Is that Alchemy? I mean, pure Alchemy made real, at the heart..."
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceDirection(19, FACING_EAST, 0);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(5);
   Actor_SetAnimation(18, 9);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "And it's that light that gives shape to the Stone of Sages?"
   Event_ShowMessage(19, 0);
   MarsLighthouseAerie_EndRisingRings(actor);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
+  // "This has been Alex's one true desire from the very start."
   Event_ShowMessage(18, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
-  FieldActor_Jump(7, 4, 10);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 7, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
+  FieldActor_Jump(ACTOR_PIERS, 4, 10);
+  // "Alex planned all of this? Then he must have been after this power..."
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
   FieldActor_SetAnimation(18, 10);
   FieldEvent_Wait(20);
   FieldActor_SetAnimation(18, 11);
   FieldEvent_Wait(5);
   FieldActor_SetAnimation(18, 1);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTHEAST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
-  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-  Actor_SetAnimation(3, 4);
-  Event_ShowMessage(3, 0);
-  Actor_SetAnimation(0, 4);
-  Event_ShowMessage(0, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
+  // "We've been duped! He used us all! Oh, you'd better believe he's not..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_GARET,
+                    0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  // "Alex... How could he do this? He's... He's one of my own people! I..."
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+  // "None of that matters right now. We still have to light the beacon...."
+  Event_ShowMessage(ACTOR_ISAAC, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   t406 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t406, FACING_EAST, 0);
   Actor_FaceDirection(19, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(3, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 20);
-  Actor_FaceDirectionAndWait(0, FACING_WEST);
-  Actor_SetAnimation(0, 4);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 20);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_WEST);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
+  // "If we don't do it now, Prox will be destroyed! Felix... We have to..."
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   t414 = gMainRoutineWork.currentOwner;
   if (!FieldEvent_AskYesNoWithActorAnimation(t414, 0)) {
-    Actor_SetAnimation(6, 3);
-    FieldActor_Jump(6, 4, 10);
-    Event_ShowMessage(6, 0);
+    Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+    FieldActor_Jump(ACTOR_SHEBA, 4, 10);
+    Event_ShowMessage(ACTOR_SHEBA, 0);
     t419 = (s32)Ram_HeapSlots->fieldWork;
     t420 = FIELD_AT(t419, u16, 452);
     FIELD_AT(t419, u16, 452) = (t420 + 1);
   } else {
-    Actor_SetAnimation(6, 4);
-    FieldActor_Jump(6, 4, 10);
+    Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+    FieldActor_Jump(ACTOR_SHEBA, 4, 10);
     t423 = (s32)Ram_HeapSlots->fieldWork;
     t424 = FIELD_AT(t423, u16, 452);
     FIELD_AT(t423, u16, 452) = (t424 + 1);
-    Event_ShowMessage(6, 0);
+    Event_ShowMessage(ACTOR_SHEBA, 0);
   }
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_FaceDirection(2, FACING_NORTH, 0);
-  Actor_FaceDirection(3, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   t433 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t433, FACING_NORTH, 0);
   FieldActor_SetAnimation(18, 11);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  Actor_FaceDirection(5, FACING_WEST, 40);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_FaceDirectionAndWait(5, FACING_NORTH);
-  Event_ShowMessage(5, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 40);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTH);
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimation(18, 8);
   Actor_FaceDirection(19, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_WEST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 0);
-  Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   t451 = gMainRoutineWork.currentOwner;
   Actor_FaceDirection(t451, FACING_SOUTH, 0);
   Actor_WaitForAnimationChange(18);
   Actor_SetAnimation(18, 1);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 2, 0);
-  Actor_FaceDirectionAndWait(1, FACING_WEST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
-  Actor_FaceDirectionAndWait(0, FACING_WEST);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_IVAN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_WEST);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 0, 0);
   t461 = gMainRoutineWork.currentOwner;
   if (!FieldEvent_AskYesNoWithActorAnimation(t461, 0)) {
@@ -930,8 +996,8 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
     t466 = FIELD_AT(t465, u16, 452);
     FIELD_AT(t465, u16, 452) = (t466 + 1);
   } else {
-    Actor_SetAnimation(1, 4);
-    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
+    Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+    Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
   work = &gMainRoutineWork;
   t469 = work->currentOwner;
@@ -940,13 +1006,13 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimationAndWait(t471, 3);
   t473 = work->currentOwner;
   Actor_FaceDirectionAndWait(t473, FACING_NORTH);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(19, FACING_NORTH, 0);
-  Actor_FaceDirection(2, FACING_NORTH, 0);
-  Actor_FaceDirection(3, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   t482 = work->currentOwner;
   Actor_SetSpeed(t482, 0.4);
   t484 = work->currentOwner;
@@ -973,9 +1039,10 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   t502 = work->currentOwner;
   t503 = Actor_Get(t502);
   FIELD_AT(t503, u8, 90) |= 1;
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(7, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
   FieldActor_SetAnimation(18, 14);
   FieldEvent_Wait(10);
   FieldActor_SetAnimation(18, 10);
@@ -984,16 +1051,16 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(18, 9);
   FieldEvent_Wait(20);
   Event_ShowMessage(18, 0);
-  Actor_FaceDirection(0, FACING_EAST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_EAST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 0);
-  Actor_FaceDirection(5, FACING_WEST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   t523 = work->currentOwner;
   Actor_FaceDirection(t523, FACING_WEST, 40);
-  Event_ShowMessage(7, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Event_PlaySound(SE_572);
   Actor_SetSpriteColorById(18, 0);
   t528 = Actor_Get(18);
@@ -1001,26 +1068,26 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldEvent_Wait(20);
   t531 = Actor_Get(18);
   FieldActor_SetSpriteColor(t531, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_FaceDirection(2, FACING_NORTH, 0);
-  Actor_FaceDirection(3, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   t540 = work->currentOwner;
   Actor_FaceDirection(t540, FACING_NORTH, 20);
   Event_ShowMessage(18, 0);
   Event_ShowMessage(19, 0);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   t545 = work->currentOwner;
   FieldActor_SetAnimation(t545, 3);
-  Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(1, 3);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(2, 3);
-  FieldActor_SetAnimationAndWait(3, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  FieldActor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FIELD_AT(actor, s32, 108) = (s32)MarsLighthouseAerie_FlickerWhite;
   Actor_SetScript(18, (s32)gMarsLighthouseAerie_VoiceFadeScript);
@@ -1030,16 +1097,16 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(40);
   System_Wait(40);
-  Actor_SetPosition(7, 0, 0);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   t562 = work->currentOwner;
   Actor_SetPosition(t562, 0, 0);
-  Actor_SetPosition(0, 0, 0);
-  Actor_SetPosition(1, 0, 0);
-  Actor_SetPosition(6, 0, 0);
-  Actor_SetPosition(5, 0, 0);
+  Actor_SetPosition(ACTOR_ISAAC, 0, 0);
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(19, 0, 0);
-  Actor_SetPosition(2, 0, 0);
-  Actor_SetPosition(3, 0, 0);
+  Actor_SetPosition(ACTOR_IVAN, 0, 0);
+  Actor_SetPosition(ACTOR_MIA, 0, 0);
   System_Wait(1);
   actor = Actor_Get(17);
   FIELD_AT(actor, s32, 24) = 0x1000;
@@ -1102,16 +1169,16 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_Interpolate(1);
   System_Wait(1);
   *dispcnt |= 0x600;
-  Actor_SetPosition(7, 488, 320);
+  Actor_SetPosition(ACTOR_PIERS, 488, 320);
   t628 = work->currentOwner;
   Actor_SetPosition(t628, 504, 320);
-  Actor_SetPosition(0, 520, 320);
-  Actor_SetPosition(1, 536, 320);
-  Actor_SetPosition(6, 480, 328);
-  Actor_SetPosition(5, 496, 328);
+  Actor_SetPosition(ACTOR_ISAAC, 520, 320);
+  Actor_SetPosition(ACTOR_GARET, 536, 320);
+  Actor_SetPosition(ACTOR_SHEBA, 480, 328);
+  Actor_SetPosition(ACTOR_JENNA, 496, 328);
   Actor_SetPosition(19, 512, 328);
-  Actor_SetPosition(2, 528, 328);
-  Actor_SetPosition(3, 544, 328);
+  Actor_SetPosition(ACTOR_IVAN, 528, 328);
+  Actor_SetPosition(ACTOR_MIA, 544, 328);
   System_Wait(1);
   PaletteFade_ApplyTarget(0x10003, 1);
   PaletteFade_ApplyTarget(0x10000, 2);
@@ -1137,41 +1204,42 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_StartRepeatedMotion(17, 1);
   Event_PlaySound(SE_BOSS_ROAR);
   FieldEvent_Wait(80);
-  Event_ShowMessage(6, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_ShowMessage(7, 0);
-  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Event_ShowMessage(1, 0);
-  Actor_SetAnimation(3, 3);
-  Event_ShowMessage(3, 0);
-  Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
-  Event_ShowMessage(2, 0);
-  Actor_SetSpeed(7, 1.6);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  Actor_SetSpeed(ACTOR_PIERS, 1.6);
   t670 = work->currentOwner;
   Actor_SetSpeed(t670, 1.6);
-  Actor_SetSpeed(0, 1.6);
-  Actor_SetSpeed(1, 1.6);
-  Actor_SetSpeed(6, 1.6);
-  Actor_SetSpeed(5, 1.6);
-  Actor_SetSpeed(2, 1.6);
-  Actor_SetSpeed(3, 1.6);
-  Actor_SetScript(7, (s32)gMarsLighthouseAerie_PiersReadyScript);
+  Actor_SetSpeed(ACTOR_ISAAC, 1.6);
+  Actor_SetSpeed(ACTOR_GARET, 1.6);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.6);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
+  Actor_SetSpeed(ACTOR_IVAN, 1.6);
+  Actor_SetSpeed(ACTOR_MIA, 1.6);
+  Actor_SetScript(ACTOR_PIERS, (s32)gMarsLighthouseAerie_PiersReadyScript);
   t679 = work->currentOwner;
   Actor_SetScript(t679, (s32)gMarsLighthouseAerie_LeaderReadyScript);
-  Actor_SetScript(0, (s32)gMarsLighthouseAerie_IsaacReadyScript);
-  Actor_SetScript(6, (s32)gMarsLighthouseAerie_ShebaReadyScript);
-  Actor_SetScript(5, (s32)gMarsLighthouseAerie_JennaReadyScript);
-  Actor_SetScript(2, (s32)gMarsLighthouseAerie_IvanReadyScript);
-  Actor_SetScript(3, (s32)gMarsLighthouseAerie_MiaReadyScript);
-  Actor_RunScriptAndWait(1, (s32)gMarsLighthouseAerie_GaretReadyScript);
+  Actor_SetScript(ACTOR_ISAAC, (s32)gMarsLighthouseAerie_IsaacReadyScript);
+  Actor_SetScript(ACTOR_SHEBA, (s32)gMarsLighthouseAerie_ShebaReadyScript);
+  Actor_SetScript(ACTOR_JENNA, (s32)gMarsLighthouseAerie_JennaReadyScript);
+  Actor_SetScript(ACTOR_IVAN, (s32)gMarsLighthouseAerie_IvanReadyScript);
+  Actor_SetScript(ACTOR_MIA, (s32)gMarsLighthouseAerie_MiaReadyScript);
+  Actor_RunScriptAndWait(ACTOR_GARET,
+                         (s32)gMarsLighthouseAerie_GaretReadyScript);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(19, 0);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_FaceDirectionAndWait(19, FACING_NORTHWEST);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
-  Actor_FaceDirectionAndWait(1, FACING_SOUTHWEST);
-  FieldActor_Jump(1, 6, 10);
-  Event_ShowMessage(1, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHWEST);
+  FieldActor_Jump(ACTOR_GARET, 6, 10);
+  Event_ShowMessage(ACTOR_GARET, 0);
   FieldActor_Jump(19, 2, 10);
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
@@ -1322,7 +1390,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   System_Wait(80);
   FieldEvent_SetMessageId((s32)MsgWhoAreThey);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
+  // "...Who are they?"
   Event_ShowMessage(26, 0);
+  // "That's what I was trying to warn you about!"
   Event_ShowMessage(19, 0);
   Actor_FaceDirection(22, FACING_SOUTHEAST, 0);
   Actor_FaceDirection((*(s32 *)owner), FACING_SOUTHEAST, 0);
@@ -1337,24 +1407,32 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldCamera_MoveTo(512, 80, 340, 1);
   FieldCamera_WaitForArrival();
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "It wasn't just the dragon you killed..."
   Event_ShowMessage(19, 0);
   Event_PlaySound(MUS_008);
   Actor_SetAttachedEffect(24, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "I remember you warning us, but it was too late for us to stop..."
   Event_ShowMessage(24, 0);
+  // "Kraden, what do you know? Why were you trying to stop us from..."
   Event_ShowMessage(25, 0);
   Actor_SetAnimationAndWait(19, 3);
+  // "It was the Wise One's final trap..."
   Event_ShowMessage(19, 0);
   Actor_SetAttachedEffect(26, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Trap? What do you mean?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 26, 0);
   Actor_SetAnimation(19, 4);
+  // "The Wise One knew he couldn't stop you, so he played a cruel..."
   Event_ShowMessage(19, 0);
   Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_SetSpeed(23, 1.6);
   Actor_WalkToAndWait(23, 512, 328);
   Actor_FaceDirectionAndWait(23, FACING_SOUTHEAST);
+  // "Kraden, I don't understand... What are you trying to tell us?"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 23, 0);
   Actor_FaceDirectionAndWait(20, FACING_WEST);
+  // "Sheba, let's see who those people are while they try to sort this out."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 20, 0);
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldActor_SetSpritePriority(21, 2);
@@ -1367,6 +1445,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_SetSpeed(19, 2.4);
   Actor_WalkToAndWait(19, 540, 340);
   FieldActor_Jump(19, 4, 10);
+  // "No, Jenna! Don't look! You mustn't look! It will only bring you pain..."
   Event_ShowMessage(19, 0);
   actor = Actor_Get(21);
 L_0200a47a:
@@ -1526,124 +1605,152 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   System_Wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldActor_SetSpritePriority(3, 1);
-  MarsLighthouseAerie_StartRisingRings((s32)Actor_Get(7),
+  FieldActor_SetSpritePriority(ACTOR_MIA, 1);
+  MarsLighthouseAerie_StartRisingRings((s32)Actor_Get(ACTOR_PIERS),
                                        (s32)gMarsLighthouseAerie_RisingRingsA);
-  MarsLighthouseAerie_StartRisingRings((s32)Actor_Get(3),
+  MarsLighthouseAerie_StartRisingRings((s32)Actor_Get(ACTOR_MIA),
                                        (s32)gMarsLighthouseAerie_RisingRingsB);
   FieldEvent_Wait(120);
-  MarsLighthouseAerie_EndRisingRings((s32)Actor_Get(7));
-  MarsLighthouseAerie_EndRisingRings((s32)Actor_Get(3));
+  MarsLighthouseAerie_EndRisingRings((s32)Actor_Get(ACTOR_PIERS));
+  MarsLighthouseAerie_EndRisingRings((s32)Actor_Get(ACTOR_MIA));
   FieldEvent_Wait(40);
-  Actor_SetAnimationAndWait(7, 4);
-  Actor_FaceDirectionAndWait(6, FACING_NORTH);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
   FieldEvent_SetMessageId(MsgWhatSTheMatter);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(2, FACING_NORTHWEST);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 2, 0);
-  Actor_FaceDirection(3, FACING_SOUTHEAST, 20);
-  FieldActor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 3, 0);
-  Actor_FaceDirectionAndWait(0, FACING_NORTHEAST);
-  Actor_SetAnimationAndWait(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  // "What's the matter, Piers? Why did you stop? Jenna's parents need you..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
+  // "Don't give up, Mia. You can't! You have to save them..."
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 20);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "It's no use, Ivan... I'm tapped..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_MIA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "I am, too... And even if I weren't, it's just too late..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  FieldActor_Jump(5, 2, 10);
-  FieldActor_Jump(5, 4, 10);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
-  Actor_FaceDirection(7, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(6, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(0, FACING_WEST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_WEST, 0);
-  Actor_FaceDirectionAndWait(3, FACING_WEST);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
-  Actor_SetAnimation(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 5, 0, 40);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 6, 0);
-  Actor_FaceDirectionAndWait(5, FACING_EAST);
-  Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
-  Actor_SetSpeed(5, 1.6);
-  Actor_SetAnimation(5, 5);
-  Actor_MoveToAndWait(5, 460, 288);
-  Actor_SetAnimation(5, 0x16);
-  Event_ShowMessage(5, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHEAST);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  FieldActor_Jump(ACTOR_JENNA, 2, 10);
+  FieldActor_Jump(ACTOR_JENNA, 4, 10);
+  // "What are you saying!?"
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_WEST);
+  // "They're not... They can't be..."
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "That's not what I'm saying, Jenna... I..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "I finally found them... I was going to be with them again... For the..."
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0, 40);
+  // "Jenna..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_EAST);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "Please... It can't be..."
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
+  Actor_SetSpeed(ACTOR_JENNA, 1.6);
+  Actor_SetAnimation(ACTOR_JENNA, 5);
+  Actor_MoveToAndWait(ACTOR_JENNA, 460, 288);
+  Actor_SetAnimation(ACTOR_JENNA, 0x16);
+  // "Mom... Wake up! It's me... It's Jenna! ...Don't leave me..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldActor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldCamera_SetSpeed(0.2);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
+  // "Jenna, you must prepare yourself for what comes next..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(1, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(2, FACING_SOUTHWEST, 0);
-  Actor_FaceDirectionAndWait(3, FACING_SOUTHWEST);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTHWEST);
   Actor_SetAnimationAndWait(19, 4);
+  // "Being transformed into a dragon, fighting in that form... This..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
-  Actor_SetAnimation(5, 1);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   FieldEvent_Wait(20);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
-  Event_ShowMessage(5, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
+  // "What are you saying, Kraden?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "In fighting you, your parents were forced to use every last ounce of..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 19, 0, 20);
-  Event_ShowMessage(5, 0);
+  // "They don't have the strength to..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(19, 3);
+  // "Even if they had won the battle, they would not have survived. You..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(0, FACING_EAST, 40);
-  Actor_SetSpeed(1, 0.8);
-  Actor_Get(1)->actionFlags &= 0xfe;
-  Actor_WalkToAndWait(1, 542, 328);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 40);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_Get(ACTOR_GARET)->actionFlags &= 0xfe;
+  Actor_WalkToAndWait(ACTOR_GARET, 542, 328);
   FieldEvent_Wait(1);
-  Actor_Get(1)->actionFlags |= 1;
+  Actor_Get(ACTOR_GARET)->actionFlags |= 1;
   FieldCamera_SetSpeed(0.8);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(540, 76, 340, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirectionAndWait(1, FACING_SOUTH);
-  Actor_WalkToAndWait(1, 542, 340);
-  FieldActor_Jump(1, 2, 10);
-  FieldActor_Jump(1, 4, 10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
-  Actor_FaceDirection(1, FACING_SOUTHWEST, 40);
-  Actor_FaceDirection(1, FACING_SOUTHEAST, 20);
-  FieldActor_Jump(1, 4, 10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 1, 0);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
+  Actor_WalkToAndWait(ACTOR_GARET, 542, 340);
+  FieldActor_Jump(ACTOR_GARET, 2, 10);
+  FieldActor_Jump(ACTOR_GARET, 4, 10);
+  // "You monster!!!"
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_GARET,
+                    0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 40);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 20);
+  FieldActor_Jump(ACTOR_GARET, 4, 10);
+  // "Why did you do this? Why did you make us fight Jenna's parents?"
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_GARET,
+                    0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(478, 96, 312, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(6, FACING_SOUTH, 40);
-  Actor_FaceDirectionAndWait(6, FACING_WEST);
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  FieldActor_Jump(6, 4, 10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 6, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 40);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTHWEST);
+  FieldActor_Jump(ACTOR_SHEBA, 4, 10);
+  // "You're no god! You're no protector! You're evil!"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA,
+                    0);
   FieldCamera_MoveTo(480, CAMERA_KEEP, 276, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(7, FACING_NORTHEAST, 20);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 20);
-  Actor_FaceDirectionAndWait(7, FACING_NORTH);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
-  Actor_SetAnimationAndWait(7, 4);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 7, 0);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 0, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 20);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 20);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
+  // "You don't understand the pain you have caused, Wise One."
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_PIERS, 0);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "You have no idea the damage done to a child who learns she has..."
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_PIERS, 0);
+  // "That's enough..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC,
+                    0);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
-  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(3, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(19, FACING_NORTH + FACING_STEP, 0);
-  Actor_FaceDirection(7, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 40);
-  Actor_FaceDirectionAndWait(0, FACING_NORTH);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 0, 0, 20);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(19, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 40);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
+  // "I knew what I was doing the moment I raised my sword."
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0, 20);
   {
     s32 third = 0x28;
     s32 second = 0x105;
@@ -1652,10 +1759,12 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
     actor = gMainRoutineWork.currentOwner;
     FieldActor_ShowEmote(actor, second, third);
   }
-  Actor_FaceDirectionAndWait(0, FACING_EAST);
-  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 0, 0);
-  Actor_FaceDirectionAndWait(0, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "We defied the Wise One in order to save the world. Our parents would..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
+                    0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
   {
     s32 flags = 0;
 
@@ -1663,40 +1772,40 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   }
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Actor_SetAnimationAndWait(5, 3);
-    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 5, 0);
+    Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
     gFieldWork->message += 1;
   } else {
-    Actor_SetAnimationAndWait(5, 3);
+    Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
     gFieldWork->message += 1;
-    Event_ShowMessage(5, 0);
+    Event_ShowMessage(ACTOR_JENNA, 0);
   }
-  Actor_SetSpeed(1, 0.8);
-  Actor_WalkToAndWait(1, 548, 320);
-  Actor_FaceDirectionAndWait(1, FACING_NORTHWEST);
-  Actor_SetAnimation(1, 3);
-  Event_ShowMessage(1, 0);
-  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
-  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirection(2, FACING_WEST, 0);
-  FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 2, 0);
-  Actor_SetAnimation(7, 3);
-  Event_ShowMessage(7, 0);
-  Actor_SetAnimation(3, 4);
-  Event_ShowMessage(3, 0);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_WalkToAndWait(ACTOR_GARET, 548, 320);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHWEST);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+  FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetSpeed(19, 0.8);
   Actor_WalkToAndWait(19, 498, 320);
   Actor_SetAnimation(19, 3);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Event_SetFlag(FLAG_MARS_BEACON_LIT);
   Event_PlaySound(MUS_028);
-  Actor_SetSpeed(0, 0.8);
-  Actor_WalkToAndWait(0, 540, 286);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTHEAST);
+  Actor_SetSpeed(ACTOR_ISAAC, 0.8);
+  Actor_WalkToAndWait(ACTOR_ISAAC, 540, 286);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
   MarsLighthouseAerie_StandAside(7);
   MarsLighthouseAerie_StandAside(5);
   MarsLighthouseAerie_StandAside(6);
@@ -1979,7 +2088,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_RunRepeatedMotion((OWNER), 2);
   FieldEvent_Wait(20);
   PartyInventory_Remove(ITEM_MYTHRIL_BAG_MARS_STAR);
-  anchor = (s32)Actor_Get(4);
+  anchor = (s32)Actor_Get(ACTOR_FELIX);
   y = A(anchor)->y;
   x = A(anchor)->x;
   y += 0x80000;
@@ -2041,14 +2150,14 @@ void MarsLighthouseAerie_LightBeacon(void) {
   A(beam2)->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(beam2, px(512), px(96), px(204));
   Task_AddFrame(Orbs_SpawnRising, 0x480);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(5, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(19, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(0, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(3, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(1, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(1, FACING_NORTHWEST, 80);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 80);
   Actor_SetScript(23, gMarsLighthouseAerie_BeamWidenScript);
   Actor_SetScript(24, gMarsLighthouseAerie_BeamWidenScript);
   Event_PlaySound(SE_CRASH);
@@ -2132,10 +2241,10 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldEvent_Wait(20);
   Actor_RunScriptAndWait(23, gMarsLighthouseAerie_BeamRiseScript);
   FieldTask_Remove(glowTask);
-  actor = (s32)Actor_Get(8);
+  actor = (s32)Actor_Get(ACTOR_BEACON_FIRE);
   A(actor)->motionFlags = zero;
   Actor_SetBlendMode(actor, 1);
-  FieldActor_SetSpriteColor(((s32)Actor_Get(8)), 7);
+  FieldActor_SetSpriteColor(((s32)Actor_Get(ACTOR_BEACON_FIRE)), 7);
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 2);
   *(s32 *)(s32)&gMarsLighthouseAerie_BeaconFireFrame = zero;
   *(s32 *)(s32)&gMarsLighthouseAerie_BeaconFireFrames = 240;
@@ -2146,44 +2255,50 @@ L_0200bcea:
     goto L_0200bcea;
   Event_PlaySound(MUS_072);
   FieldEvent_Wait(120);
-  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   FieldEvent_SetMessageId((s32)MsgTheBeaconIs);
-  Event_ShowMessage(3, 0);
-  FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Event_ShowMessage(2, 0);
-  Event_ShowMessage(6, 0);
-  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  Event_ShowMessage(7, 0);
-  FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-  Event_ShowMessage(1, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
+  // "The beacon is lit!"
+  Event_ShowMessage(ACTOR_MIA, 0);
+  FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "And to think, I joined this quest hoping to prevent exactly this..."
+  Event_ShowMessage(ACTOR_IVAN, 0);
+  // "And I began this quest as a prisoner, taken against my will."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  FieldActor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "And if that tidal wave hadn't sent me far off course, I wouldn't..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
+  // "How many lives have been taken and changed forever just to light..."
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection((OWNER), FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(19, FACING_EAST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 0);
-  Actor_FaceDirection(0, FACING_WEST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_WEST, 20);
-  Actor_SetAnimation(7, 3);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Actor_SetAnimation((OWNER), 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(19, 3);
-  Actor_SetAnimation(3, 3);
-  Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(1, 3);
-  Actor_SetAnimationAndWait(2, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection((OWNER), FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(19, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirection(3, FACING_SOUTH, 0);
-  Actor_FaceDirection(1, FACING_NORTHEAST, 0);
-  Actor_FaceDirectionAndWait(0, FACING_EAST);
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 5, 0, 10);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_EAST);
+  // "Mom... Dad... Weyard is safe now."
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0, 10);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   FieldPsynergy_StartMindReadWave(23, 24);
@@ -2203,9 +2318,9 @@ L_0200bcea:
   MarsLighthouseAerie_StartLookingAround(1);
   MarsLighthouseAerie_StartLookingAround(2);
   MarsLighthouseAerie_StartLookingAround(3);
-  Actor_FaceDirection(0, FACING_NORTH, 40);
-  Actor_FaceDirection(0, FACING_SOUTH, 40);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 40);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 40);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 0, 0, 10);
   FieldPsynergy_StartMindReadWave(23, 24);
@@ -2214,13 +2329,13 @@ L_0200bcea:
   FieldPsynergy_StopMindReadWave();
   MarsLighthouseAerie_StopLookingAround(3);
   Actor_FaceDirectionAndWait(24579, FACING_SOUTH);
-  A(((s32)Actor_Get(3)))->update = 0;
+  A(((s32)Actor_Get(ACTOR_MIA)))->update = 0;
   // Read as a word, so the store to the actor before it may alias.
   later =
       (struct AerieEventWork *)((struct HeapWords *)Ram_HeapSlots)->eventWord;
   later->stepRead = later->stepRead + 1;
-  FieldActor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  FieldEvent_ShowMessageThenWait(3, 0, 20);
+  FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  FieldEvent_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Event_PlaySound(SE_ASCEND);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(20);
@@ -2258,27 +2373,27 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   t2 = *(s32 *)owner;
   t3 = Actor_Get(t2);
   ((struct Actor *)t3)->facing = quarterTurn;
-  t4 = Actor_Get(7);
+  t4 = Actor_Get(ACTOR_PIERS);
   ((struct Actor *)t4)->facing = quarterTurn;
-  t5 = Actor_Get(5);
+  t5 = Actor_Get(ACTOR_JENNA);
   ((struct Actor *)t5)->facing = quarterTurn;
-  t6 = Actor_Get(6);
+  t6 = Actor_Get(ACTOR_SHEBA);
   ((struct Actor *)t6)->facing = quarterTurn;
   t7 = Actor_Get(19);
   threeSixteenthsTurn = 0x3000;
   ((struct Actor *)t7)->facing = threeSixteenthsTurn;
-  t8 = Actor_Get(0);
+  t8 = Actor_Get(ACTOR_ISAAC);
   ((struct Actor *)t8)->facing = quarterTurn;
-  t9 = Actor_Get(1);
+  t9 = Actor_Get(ACTOR_GARET);
   ((struct Actor *)t9)->facing = quarterTurn;
-  t10 = Actor_Get(2);
+  t10 = Actor_Get(ACTOR_IVAN);
   ((struct Actor *)t10)->facing = quarterTurn;
   System_Wait(1);
   Actor_SetAnimation(20, 8);
   Actor_SetAnimation(21, 8);
   Actor_SetAnimation(22, 7);
   Actor_SetPosition(19, 498, 320);
-  Actor_SetPosition(1, 538, 320);
+  Actor_SetPosition(ACTOR_GARET, 538, 320);
   t17 = *(s32 *)owner;
   Actor_SetPosition(t17, 506, 280);
   System_Wait(1);
@@ -2293,118 +2408,139 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
-  Actor_FaceDirection(7, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   t31 = *(s32 *)owner;
   Actor_FaceDirection(t31, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(19, FACING_EAST, 0);
-  Actor_FaceDirection(0, FACING_WEST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_WEST, 40);
-  Actor_FaceDirectionAndWait(6, FACING_NORTHEAST);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 40);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgWhatCouldHe);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirection(3, FACING_SOUTHWEST, 20);
-  Actor_SetAnimationAndWait(3, 4);
+  // "What could he be doing?"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 20);
+  Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   FieldActor_Jump(19, 4, 10);
+  // "Of course! I understand..."
   Event_ShowMessage(19, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(7, quarterTurn, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, quarterTurn, 0);
   t49 = *(s32 *)owner;
   Actor_FaceDirection(t49, quarterTurn, 0);
-  Actor_FaceDirection(0, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(2, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
   Actor_SetAnimation(19, 3);
+  // "The Wise One said that when all four lighthouses have been lit, the..."
   Event_ShowMessage(19, 0);
-  Actor_SetAnimation(7, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   t62 = *(s32 *)owner;
   Actor_SetAnimation(t62, 3);
-  Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(3, 3);
-  Actor_SetAnimation(2, 3);
-  Actor_SetAnimationAndWait(1, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "When that happens, Mt. Aleph and the lighthouses will probably..."
   Event_ShowMessage(19, 0);
-  Event_ShowMessage(7, 0);
+  // "So, the Wise One is warning people in dreams, telling them to seek..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHWEST);
   Actor_SetAnimationAndWait(19, 3);
-  Actor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
-  Event_ShowMessage(1, 0);
+  Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+  // "Why would he do that!? You saw what he did to us... He can't be up..."
+  Event_ShowMessage(ACTOR_GARET, 0);
   t76 = Actor_Get(28);
   FieldActor_SetSpriteColor(t76, 15);
   Actor_SetPosition(28, 512, 360);
   System_Wait(1);
   PaletteFade_ApplySource(0x10000, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "Have you not learned? One's actions do not always reveal one's true..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
-  Actor_FaceDirection(2, quarterTurn, 0);
-  FieldActor_Jump(2, 4, 10);
-  Event_ShowMessage(2, 0);
+  Actor_FaceDirection(ACTOR_IVAN, quarterTurn, 0);
+  FieldActor_Jump(ACTOR_IVAN, 4, 10);
+  // "Hamma... Sister..."
+  Event_ShowMessage(ACTOR_IVAN, 0);
   t87 = *(s32 *)owner;
   Actor_FaceDirection(t87, quarterTurn, 0);
-  Actor_FaceDirection(7, quarterTurn, 0);
-  Actor_FaceDirection(5, quarterTurn, 0);
-  Actor_FaceDirection(6, quarterTurn, 0);
+  Actor_FaceDirection(ACTOR_PIERS, quarterTurn, 0);
+  Actor_FaceDirection(ACTOR_JENNA, quarterTurn, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, quarterTurn, 0);
   Actor_FaceDirection(19, threeSixteenthsTurn, 0);
-  Actor_FaceDirection(1, quarterTurn, 0);
-  Actor_FaceDirection(3, quarterTurn, 0);
-  Actor_FaceDirectionAndWait(0, quarterTurn);
-  FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  Event_ShowMessage(0, 0);
+  Actor_FaceDirection(ACTOR_GARET, quarterTurn, 0);
+  Actor_FaceDirection(ACTOR_MIA, quarterTurn, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, quarterTurn);
+  FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Master Hamma! Did you receive a message, too?"
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "Yes. I was called to Jupiter Lighthouse in a dream."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   t101 = *(s32 *)owner;
   Actor_FaceDirection(t101, FACING_EAST, 0);
-  Actor_FaceDirection(0, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 20);
   t104 = *(s32 *)owner;
   Actor_SetAnimation(t104, 3);
-  Actor_SetAnimationAndWait(0, 3);
+  Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   t107 = *(s32 *)owner;
   Actor_FaceDirection(t107, quarterTurn, 0);
-  Actor_FaceDirectionAndWait(0, quarterTurn);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, quarterTurn);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "You have completed your quest, but I see it comes with great loss......"
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
-  actor = Actor_Get(5);
-  ((struct Actor *)actor)->facing = 0x6000;
-  Actor_SetAnimation(5, 22);
+  actor = Actor_Get(ACTOR_JENNA);
+  ((struct Actor *)actor)->facing = FACING_SOUTHWEST;
+  Actor_SetAnimation(ACTOR_JENNA, 22);
   FieldEvent_Wait(10);
-  FieldActor_StartRepeatedMotion(5, 2);
-  Event_ShowMessage(5, 0);
+  FieldActor_StartRepeatedMotion(ACTOR_JENNA, 2);
+  // "Master Hamma... My parents..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "I know, Jenna, and I am sorry. But do not give up hope for them just..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   ((struct Actor *)actor)->facing = quarterTurn;
-  Actor_SetAnimation(5, 1);
-  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(5, 0);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
+  FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "What do you mean, Master Hamma?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "Appearances can be an illusion... The Wise One has a caring heart."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
-  Event_ShowMessage(1, 0);
+  // "He forced us to fight Isaac's and Jenna's parents! What's so..."
+  Event_ShowMessage(ACTOR_GARET, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "If the Wise One were truly evil, he would not be warning me of..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
-  FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(1, 0);
+  FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Well, I... I guess not... But then, what's he up to?"
+  Event_ShowMessage(ACTOR_GARET, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "We do not have time to discuss it right now."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "She's right. If the Wise One said it's not safe to be near the..."
   Event_ShowMessage(19, 0);
   FieldPsynergy_StartMindReadWave(23, 24);
+  // "I am heading for safety, too. All of you must get away from the..."
   Event_ShowMessage(28, 0);
   FieldPsynergy_StopMindReadWave();
   FieldEvent_Wait(40);
@@ -2412,15 +2548,20 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(19, threeSixteenthsTurn, 40);
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
+  // "Hurry, everyone! Let's go!"
   Event_ShowMessage(19, 0);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 5, 0);
-  Actor_FaceDirectionAndWait(0, FACING_WEST);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 0, 0);
-  Actor_FaceDirectionAndWait(7, FACING_EAST);
-  Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(2, FACING_WEST);
-  Actor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
+  // "What about our parents?"
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_WEST);
+  // "We can't leave them behind..."
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
+  // "I understand how you feel, but we won't make it if we have to take..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_WEST);
+  Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "Make the decision, Felix! Should we take them with us?"
   Event_OpenMessage(2, 0);
   t156 = *(s32 *)owner;
   Actor_FaceDirectionAndWait(t156, FACING_EAST);
@@ -2473,14 +2614,14 @@ L_0200c66c:
     }
     t195 = *(s32 *)ownerInLoop;
     FieldActor_ShowEmote(t195, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(1, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(2, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     t205 = *(s32 *)ownerInLoop;
     MarsLighthouseAerie_StopLookingAround(t205);
     MarsLighthouseAerie_StopLookingAround(5);
@@ -2501,13 +2642,13 @@ L_0200c66c:
   Event_PlaySound(MUS_063);
   Actor_SetScript(23, (s32)gMarsLighthouseAerie_WatchGoldenSunRiseScript);
   FieldEvent_Wait(80);
-  FieldActor_Jump(1, 4, 10);
-  FieldActor_Jump(1, 6, 10);
-  Actor_FaceDirectionAndWait(1, FACING_WEST);
-  Event_ShowMessage(1, 0);
-  Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(6, FACING_NORTHWEST);
-  Event_ShowMessage(6, 0);
+  FieldActor_Jump(ACTOR_GARET, 4, 10);
+  FieldActor_Jump(ACTOR_GARET, 6, 10);
+  Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHWEST);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Event_ShowMessage(19, 0);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -2515,45 +2656,45 @@ L_0200c66c:
   }
   t228 = *(s32 *)ownerAfterLoop;
   Actor_FaceDirection(t228, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(19, FACING_EAST, 0);
-  Actor_FaceDirection(0, FACING_WEST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_WEST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 40);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 40);
   t238 = *(s32 *)ownerAfterLoop;
   Actor_FaceDirection(t238, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(7, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(19, FACING_NORTH, 0);
-  Actor_FaceDirection(0, FACING_NORTH, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 0);
-  Actor_FaceDirection(2, FACING_NORTH, 0);
-  Actor_FaceDirection(3, FACING_NORTH, 20);
-  Actor_FaceDirectionAndWait(3, FACING_WEST);
-  Event_ShowMessage(3, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
+  Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_WEST);
+  Event_ShowMessage(ACTOR_MIA, 0);
   t250 = *(s32 *)ownerAfterLoop;
   Actor_FaceDirection(t250, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_EAST, 0);
-  Actor_FaceDirection(7, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirection(19, FACING_EAST, 0);
-  Actor_FaceDirection(0, FACING_WEST, 0);
-  Actor_FaceDirection(1, FACING_WEST, 0);
-  Actor_FaceDirection(2, FACING_WEST, 0);
-  Actor_FaceDirection(3, FACING_WEST, 20);
-  Actor_SetAnimation(7, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   t263 = *(s32 *)ownerAfterLoop;
   Actor_SetAnimation(t263, 3);
-  Actor_SetAnimation(0, 3);
-  Actor_SetAnimation(3, 3);
-  Actor_SetAnimation(2, 3);
-  Actor_SetAnimationAndWait(1, 3);
+  Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 312, 1);
   Actor_SetPosition(8, 0, 0);
   t271 = Actor_Get(9);
@@ -2565,46 +2706,47 @@ L_0200c66c:
   MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(0x203210, 0);
   PaletteFade_Interpolate(40);
-  Actor_FaceDirection(7, FACING_SOUTH, 0);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(6, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(19, FACING_NORTH_NORTHWEST, 0);
   t284 = *(s32 *)ownerAfterLoop;
   Actor_FaceDirection(t284, FACING_SOUTH, 0);
-  Actor_FaceDirection(3, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_WEST, 0);
-  Actor_FaceDirection(0, FACING_EAST, 0);
-  Actor_FaceDirection(1, FACING_NORTH, 80);
-  FieldActor_Jump(1, 4, 0);
-  Actor_SetSpeed(1, 3.2);
-  t292 = Actor_Get(1);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 80);
+  FieldActor_Jump(ACTOR_GARET, 4, 0);
+  Actor_SetSpeed(ACTOR_GARET, 3.2);
+  t292 = Actor_Get(ACTOR_GARET);
   FIELD_AT(t292, u8, 90) &= 254;
-  Actor_WalkToAndWait(1, 542, 328);
+  Actor_WalkToAndWait(ACTOR_GARET, 542, 328);
   FieldEvent_Wait(1);
-  t296 = Actor_Get(1);
+  t296 = Actor_Get(ACTOR_GARET);
   FIELD_AT(t296, u8, 90) |= 1;
-  Event_ShowMessage(1, 0);
-  Actor_FaceDirection(0, FACING_SOUTH, 0);
-  Actor_FaceDirection(3, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(2, FACING_SOUTH, 40);
-  Actor_FaceDirection(3, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(2, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(0, FACING_NORTHEAST, 20);
-  Actor_ShowEmote(0, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_FaceDirectionAndWait(0, FACING_SOUTH);
-  FieldActor_Jump(0, 4, 10);
-  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 0, 0);
-  Actor_SetAnimation(1, 4);
-  Event_ShowMessage(1, 0);
-  Actor_FaceDirection(3, FACING_SOUTH, 0);
-  Actor_ShowEmote(3, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(3, 0);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 40);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 20);
+  Actor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
+  FieldActor_Jump(ACTOR_ISAAC, 4, 10);
+  Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
+  Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(ACTOR_GARET, 0);
+  Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessage(ACTOR_MIA, 0);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(7, 0);
-  FieldActor_Jump(5, 4, 10);
-  Event_ShowMessage(5, 0);
-  Event_ShowMessage(SPEAKER_WINDOW_BELOW | 2, 0);
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  FieldActor_Jump(ACTOR_JENNA, 4, 10);
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0);
   Actor_FaceDirectionAndWait(19, FACING_NORTH_NORTHEAST);
   FieldActor_Jump(19, 2, 10);
   FieldActor_Jump(19, 4, 10);
@@ -2627,24 +2769,26 @@ L_0200c66c:
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId(MsgDoNotLet);
+  // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 480, 348);
-  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
   Event_End();
 }
 
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
   FieldEvent_SetMessageId(MsgDoNotLet);
+  // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 544, 348);
-  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_NORTH_NORTHWEST);
   Event_End();
 }
 
@@ -2654,6 +2798,7 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Actor_SetPosition(ACTOR_VOICE, 512, 232);
   System_Wait(1);
   FieldEvent_SetMessageId(MsgWillYouCast);
+  // "Will you cast in the Mars Star?"
   Event_OpenMessage(ACTOR_VOICE, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
@@ -2721,14 +2866,15 @@ void MarsLighthouseAerie_TalkToConsoler(void) {
 #if TLA_PATCH_1
   MarsLighthouseAerie_BeginTalkWhileHalted(2);
 #endif
-  Actor_FaceActor(2, gMainRoutineWork.currentOwner, 0);
+  Actor_FaceActor(ACTOR_IVAN, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId(MsgIUnderstandYour);
-  Event_ShowMessage(2, 0);
+  // "Felix, I understand your loss... But remember, you and Jenna still..."
+  Event_ShowMessage(ACTOR_IVAN, 0);
 #if TLA_PATCH_1
-  Actor_FaceDirectionAndWait(2, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_WEST);
   MarsLighthouseAerie_EndTalkWhileHalted(2);
 #else
-  Actor_FaceDirectionAndWait(2, FACING_WEST);
+  Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_WEST);
 #endif
   Event_End();
 }
@@ -2740,6 +2886,7 @@ void MarsLighthouseAerie_TalkToBlindedParent(void) {
   MarsLighthouseAerie_BeginTalkWhileHalted(20);
 #endif
   FieldEvent_SetMessageId(MsgUhhhhnnnICan);
+  // "Uhhhhnnn... Felix... I...can't see you, but I sense that you're..."
   Event_ShowMessage(20, 0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_EndTalkWhileHalted(20);
@@ -2754,6 +2901,7 @@ void MarsLighthouseAerie_TalkToCoughingParent(void) {
   MarsLighthouseAerie_BeginTalkWhileHalted(22);
 #endif
   FieldEvent_SetMessageId(MsgKoffKoffYou);
+  // "*Koff! Koff!* Felix... You made it back...alive... Please, I must..."
   Event_ShowMessage(22, 0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_EndTalkWhileHalted(22);
@@ -2768,6 +2916,7 @@ void MarsLighthouseAerie_TalkToGladParent(void) {
   MarsLighthouseAerie_BeginTalkWhileHalted(21);
 #endif
   FieldEvent_SetMessageId(MsgUnnnnIAm);
+  // "Unnnn... Felix? ...Jenna? I am so happy...to have one last chance to..."
   Event_ShowMessage(21, 0);
 #if TLA_PATCH_1
   MarsLighthouseAerie_EndTalkWhileHalted(21);
@@ -3403,7 +3552,7 @@ struct ActorPlacement gMarsLighthouseAerie_AfterBattlePlacements[] = {
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(182, CONDITION_ALWAYS, 7, 512, 0, 236, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(311, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 354, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 354, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(48, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 496, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(49, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(50, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),

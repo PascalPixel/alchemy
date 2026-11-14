@@ -246,7 +246,7 @@ void Yallam_EnterDoor(void) {
   index--;
   MapGrid_AnimateCells(gYallam_Doors[index].steps, gYallam_Doors[index].x,
                        gYallam_Doors[index].y);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   {
     s32 owner = gMainRoutineWork.currentOwner;
@@ -340,6 +340,7 @@ void Yallam_OfferYeppSong(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgDoYouWant);
+  // "Do you want to hear one of the songs Yepp wrote?"
   Event_OpenMessage(8, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(0, 0) == 0)
     Yallam_ShowSongGame();
@@ -364,6 +365,7 @@ void Yallam_TalkAboutSongCircles(void) {
   } else {
     FieldEvent_SetMessageId(MsgThereSALot);
   }
+  // "There's a lot of stuff to remember for each song. It's tough to play..."
   Event_ShowMessage(9, 0);
   if (work->psynergy == 0)
     object->angle = angle;
@@ -387,6 +389,7 @@ void Yallam_TalkAboutSongGame(void) {
   } else {
     FieldEvent_SetMessageId(MsgIOnceHeard);
   }
+  // "I once heard that children's songs and stories have hidden meanings...."
   Event_ShowMessage(10, 0);
   if (work->psynergy == 0)
     object->angle = angle;
@@ -1393,6 +1396,7 @@ void Yallam_ShowSongGame(void) {
   struct Actor *actor = Actor_Get(8);
   struct Actor *leader;
   FieldEvent_SetMessageId(MsgHereLetMe);
+  // "Here, let me show you!"
   Event_ShowMessage(8, 0);
   FieldActor_Stop(9);
   FieldActor_Stop(10);
@@ -1421,27 +1425,29 @@ void Yallam_ShowSongGame(void) {
   Actor_SetScript(9, gYallam_SongGameForm9);
   Actor_SetScript(10, gYallam_SongGameForm10);
   Actor_RunScriptAndWait(11, gYallam_SongGameForm11);
-  Actor_SetPosition(5, 296, 872);
+  Actor_SetPosition(ACTOR_JENNA, 296, 872);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
-  Actor_SetSpeed(5, 1.2);
-  Actor_WalkToAndWait(5, 312, 854);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(5, 3);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-  Actor_SetAnimation(5, 2);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
+  Actor_WalkToAndWait(ACTOR_JENNA, 312, 854);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0) {
-    Actor_SetDestination(5, ((s16 *)(&leader->x))[1], ((s16 *)(&leader->z))[1]);
+    Actor_SetDestination(ACTOR_JENNA, ((s16 *)(&leader->x))[1],
+                         ((s16 *)(&leader->z))[1]);
   }
-  FieldActor_WaitForMoveById(5);
-  Actor_SetPosition(5, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_JENNA);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 1.6);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 316, 896);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 344, 912);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_NORTH);
   Event_PlaySound(MUS_017);
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
+  // "If you want to go to the stars, if you want to go to the stars."
   Event_ShowMessage(8, 0);
   EventCamera_FollowActor(8, 1);
   Actor_SetScript(8, gYallam_SongGameStart8);
@@ -1458,6 +1464,7 @@ void Yallam_ShowSongGame(void) {
     s32 priority = 0x480;
     Task_AddFrame(Yallam_UpdateSongGame, priority);
   }
+  // "Go north past the twins, passing two swirls, run deasil twice 'round..."
   Event_ShowMessage(8, 0);
   actor->unk66 = 1;
 wait1:
@@ -1538,6 +1545,7 @@ void Yallam_SingMoonSong(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWant);
   v5 = object;
+  // "If you want to go to the moon, if you want to go to the moon."
   Event_ShowMessage(8, 0);
   v5 = (v5 + 102);
   Yallam_ResumeSongGame();
@@ -1618,6 +1626,7 @@ void Yallam_SingSunSong(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_SOUTHWEST);
   FieldEvent_SetMessageId((s32)&MsgIfYouWantTo);
   v5 = v6;
+  // "If you want to go to the sun, if you want to go to the sun."
   Event_ShowMessage(8, 0);
   v5 = (v5 + 102);
   Yallam_ResumeSongGame();

@@ -349,7 +349,7 @@ loop:
   actor->gravity = px(1);
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   gFieldWork->transition = 0x204;
   return Event_EndWithResult();
 }
@@ -783,6 +783,7 @@ void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgGaiaRockInside05);
+  // "Move out of the way there."
   Event_ShowMessage(10, 0);
   Event_End();
 }
@@ -877,24 +878,29 @@ void GaiaRockInside_MeetSusa(void) {
   Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(30);
+  // "Who are you? How did you get here?"
   Event_ShowMessage(10, 0);
   Actor_WalkTo(10, 496, 456);
   FieldActor_WaitForMoveById(10);
-  Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(10, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(10);
+  // "Only Uzume, Kushinada, and I possess the ability to come here."
   Event_ShowMessage(10, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldEvent_Wait(45);
+  // "Never mind. I don't have time to talk. I have my hands full getting..."
   Event_ShowMessage(10, 0);
-  Actor_FaceDirection(10, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(10, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
+  // "Once it's groggy, that's when I'll strike..."
   Event_ShowMessage(10, 0);
   EventCamera_FollowActor(10, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(10, FACING_EAST_SOUTHEAST, 0);
   FieldEvent_Wait(10);
+  // "If you understand, then get out of my way. Stand over there."
   Event_ShowMessage(10, 0);
   Actor_SetAnimationAndWait(10, 3);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -924,6 +930,7 @@ void GaiaRockInside_TalkToSusa(void) {
       FieldEvent_SetMessageId((s32)MsgGaiaRockInside10);
     else
       FieldEvent_SetMessageId((s32)MsgGaiaRockInside06);
+    // "The serpent is still too strong. If only there were a way to weaken..."
     Event_ShowMessage(10, 0);
   } else {
     if (Actor_Get(9)->script == gGaiaRockInside_SerpentSettleScript)
@@ -932,6 +939,7 @@ void GaiaRockInside_TalkToSusa(void) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside03);
     Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(10);
+    // "If you understand, then get out of my way. Stand over there."
     Event_ShowMessage(10, 0);
     Actor_SetAnimationAndWait(10, 3);
     FieldEvent_Wait(10);
@@ -956,6 +964,7 @@ void GaiaRockInside_ReadSusasMind(void) {
   t2 = FieldPartyInventory_FindMember(451);
   if (t2 != -1) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
+    // "Who do they think they are? I'm the only one who can save Kushinada."
     Event_ShowMessage(10, 0);
   } else {
     object = Actor_Get(9);
@@ -964,6 +973,7 @@ void GaiaRockInside_ReadSusasMind(void) {
     }
     GaiaRockInside_SaveSusa();
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside04);
+    // "How many casks does it take to weaken this stupid serpent?"
     Event_ShowMessage(10, 0);
     GaiaRockInside_RestoreSusa();
   }
@@ -1242,11 +1252,12 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_FaceDirection(11, FACING_EAST, 0);
   FieldEvent_SetMessageId(message + 1);
+  // "Wielder of Earth's might... That'd be you, Felix. Touch it. Go on..."
   Event_ShowMessage(11, 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(11, 3);
   FieldEvent_Wait(10);
@@ -1411,6 +1422,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
   s32 count;
 
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
+    // "The serpent, with its eyes closed, looks almost alive."
     Message_ShowCentered((s32)MsgGaiaRockInside08, 1);
   } else {
     s32 a = Event_GetFlag(0x9bc);
@@ -1503,6 +1515,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   object = Actor_Get(13);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
   Event_PlaySound(SE_193);
   Actor_SetSpritePriorityDirect(object, 1);
@@ -1607,6 +1620,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   partner = Actor_GetById(12);
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
@@ -1695,6 +1709,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   partner = Actor_GetById(12);
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);
@@ -1783,6 +1798,7 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
   partner = Actor_GetById(14);
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "Felix placed a doll on the altar."
   FieldMessage_Show((s32)MsgGaiaRockInside01, 1);
   Sound_Play(SE_193);
   Actor_SetSpritePriorityDirect(partner, 1);

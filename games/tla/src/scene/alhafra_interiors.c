@@ -103,27 +103,33 @@ void AlhafraInteriors_MeetAlex(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
   FieldCamera_MoveToActorById(31, 1);
-  Actor_WalkToAndWait(4, 452, 335);
-  Actor_FaceDirection(4, FACING_WEST, 0);
+  Actor_WalkToAndWait(ACTOR_FELIX, 452, 335);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(31, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
+  // "So, you've finally come."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
-  FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
+  // "I had suspected we might run into each other again, since we both..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(31, 4);
+  // "Unfortunately, the only boat this town possesses has already been sold."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_RunRepeatedMotion(31, 2);
   FieldEvent_Wait(10);
+  // "I will be resting here in Alhafra a bit longer. I have traveled long..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_SetAnimationAndWait(31, 3);
   FieldEvent_Wait(10);
+  // "Perhaps we can get along at least until we both depart."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
   Actor_FaceDirection(31, FACING_NORTH, 0);
   FieldEvent_Wait(20);
@@ -136,10 +142,11 @@ void AlhafraInteriors_MeetAlex(void) {
 void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(9, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors14);
+    // "Don't mention the tidal wave to the other merchants... It did a lot..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -148,10 +155,11 @@ void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
 void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(2, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors16);
+    // "Maybe you've noticed, but a lot of folk here lost their homes in the..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -160,10 +168,11 @@ void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
 void AlhafraInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors49);
+    // "In the middle of Osenia, there's a terrible village where they..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -172,6 +181,7 @@ void AlhafraInteriors_TalkToHealer(s32 actor) {
 void AlhafraInteriors_TalkToHostess(s32 a0) {
   Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors06);
+  // "Augh! With all these demanding houseguests, I feel like I've lost..."
   Event_ShowMessage(a0, 0);
 }
 
@@ -186,21 +196,25 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors07);
   Actor_FaceDirection(14, FACING_EAST, 0);
   FieldEvent_Wait(20);
+  // "Aren't you thirsty, my dear?"
   FieldEvent_ShowMessageThenWait(14, 0, 10);
   Actor_FaceDirection(15, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(15, 3);
   FieldEvent_Wait(10);
+  // "Oh, you're right, dear. I am!"
   FieldEvent_ShowMessageThenWait(15, 0, 10);
   Actor_SetSpeed(14, 0.5);
   Actor_WalkByAndWait(14, -32, 0);
   FieldEvent_Wait(10);
+  // "Sorry to bother you, but we'd like some tea."
   FieldEvent_ShowMessageThenWait(14, 0, 10);
   Actor_RunRepeatedMotion(13, 2);
   FieldEvent_Wait(10);
   Actor_FaceDirection(13, FACING_EAST, 0);
   FieldEvent_Wait(20);
   Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Are you talking to me?!"
   FieldEvent_ShowMessageThenWait(13, 0, 10);
   FieldActor_StartRepeatedMotion(14, 3);
   Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -211,6 +225,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   FieldEvent_Wait(20);
   Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(10);
+  // "If you want tea, you can go right ahead and fix it yourself!"
   FieldEvent_ShowMessageThenWait(13, 0, 10);
   FieldEvent_Wait(10);
   Actor_WalkToAndWait(14, 152, 312);
@@ -227,6 +242,7 @@ void AlhafraInteriors_GuestsAskForTea(void) {
 void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
   Actor_FaceEachOther(a0, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
+  // "Well! I say! It seems the lady of the house is no lady at all!"
   Event_ShowMessage(a0, 0);
   Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
 }
@@ -235,6 +251,7 @@ void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
 void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
   Actor_FaceEachOther(a1, gMainRoutineWork.currentOwner, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
+  // "Really, I do wish you would quit using your Mind Read on me... Trust..."
   Event_ShowMessage(a1, 0);
   Actor_FaceDirection(a1, FACING_NORTHEAST, 0);
 }
@@ -244,9 +261,11 @@ void AlhafraInteriors_ReadAlexsMind(s32 a0, s32 a1) {
 void AlhafraInteriors_HostTellsOfRepairs(s32 a0) {
   Event_SetFlag(FLAG_HOST_TOLD_OF_REPAIRS);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors55);
+  // "We've all started working together to repair the houses!"
   Event_ShowMessage(a0, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(a0, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Oooh... Not much longer, and then I can kick these folks out of my..."
   Event_ShowMessage(a0, 0);
 }
 
@@ -397,42 +416,54 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldEvent_SetMessageId((s32)MsgAlhafraInteriors120);
-      Actor_WalkToAndWait(4, 504, 328);
-      Actor_FaceDirectionAndWait(4, FACING_WEST);
+      Actor_WalkToAndWait(ACTOR_FELIX, 504, 328);
+      Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
       FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(10);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);
+      // "Legends said that Crossbone Isle could be found in the middle of..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+      // "Ah... Crossbone Isle... Wait, did you say "could"? Is it not there..."
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_ShowEmote(31, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "Well, it's still there, but there's no point in going. Someone..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+      // "What, he took all the treasure?"
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
+      // "Yeah. And apparently, he even defeated the ancient ghost pirate..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       FieldActor_Jump(32, 6, 15);
       FieldActor_Jump(32, 6, 23);
+      // "What about the stories that if you beat the ghost pirate, you..."
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_SetAnimationAndWait(31, 3);
       FieldEvent_Wait(10);
+      // "Well, you see, that means that Isaac is our leader now."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "Wow... just like that? I'll bet he's pretty tough."
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_RunRepeatedMotion(31, 2);
       FieldEvent_Wait(5);
+      // "No doubt. But you know, he must be a reliable guy, too..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
+      // "You think?"
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_FaceDirectionAndWait(31, FACING_NORTH_NORTHEAST);
       FieldEvent_Wait(15);
+      // "You'd have to be to beat that ghost. That's why we're looking for..."
       FieldEvent_ShowMessageThenWait(31, 0, 5);
       Actor_SetAnimationAndWait(32, 3);
       FieldEvent_Wait(10);
+      // "If he's looking for a pirate crew, he can count me in!"
       FieldEvent_ShowMessageThenWait(32, 0, 5);
       Actor_FaceDirectionAndWait(31, FACING_SOUTH_SOUTHEAST);
       FieldEvent_Wait(15);
@@ -462,19 +493,19 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldActor_WaitForMoveById(31);
       Actor_SetAnimation(31, 1);
       Actor_FaceDirectionAndWait(31, FACING_EAST);
-      Actor_WalkByAndWait(4, 0, -16);
-      Actor_FaceDirectionAndWait(4, FACING_SOUTH);
+      Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
+      Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
       FieldEvent_Wait(10);
       Actor_SetScript(32, (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
       Actor_SetScript(31, (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
-      FieldActor_WatchAndSetScript(4, 32);
+      FieldActor_WatchAndSetScript(ACTOR_FELIX, 32);
       FieldEvent_Wait(60);
       FieldActor_SetSpritePriority(31, 3);
       FieldActor_SetSpritePriority(32, 3);
       FieldActor_RefreshSelectorById(32);
-      FieldActor_Stop(4);
+      FieldActor_Stop(ACTOR_FELIX);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(32, 0, 0);
       Event_PlaySound(SE_MAP_EXIT);
@@ -521,7 +552,7 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 184, 0, 104, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 344, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTHWEST + FACING_STEP, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 312, FACING_NORTH_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 312, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 176, 0, 312, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(199, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 84, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -537,7 +568,7 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 536, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(191, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 552, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(186, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 544, 0, 544, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 344, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 360, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 312, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},

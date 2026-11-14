@@ -338,6 +338,7 @@ void WorldMap_SetUpFlyingShip(void) {
   if (Event_GetFlag(0x147)) {
     WorldMap_Freeze();
     MessageArgument_Push(153, 4);
+    // "..."
     Message_ShowCentered((s32)MsgBlank2, 4);
   }
   if (Actor_Get(FieldParty_GetLeaderActor()) != NULL)
@@ -569,15 +570,16 @@ void WorldMap_RefuseToRunAway(void) {
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(0x9b3)) {
       FieldEffect_ScheduleRatioTransition(0x16666, 6);
-      Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
       System_Wait(1);
-      Actor_WalkToAndWait(5, (x << 4) + 24, (z << 4) - 12);
-      Actor_FaceDirection(5, southwest, 0);
+      Actor_WalkToAndWait(ACTOR_JENNA, (x << 4) + 24, (z << 4) - 12);
+      Actor_FaceDirection(ACTOR_JENNA, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
                                  FACING_NORTHEAST);
       WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgWeShouldnT);
-      Event_ShowMessage(5, 0);
+      // "We shouldn't run from Isaac anymore, Felix."
+      Event_ShowMessage(ACTOR_JENNA, 0);
       WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
       System_Wait(1);
@@ -587,30 +589,34 @@ void WorldMap_RefuseToRunAway(void) {
       s32 besideZ;
 
       FieldEffect_ScheduleRatioTransition(0x16666, 6);
-      Actor_MoveToObject(5, gMainRoutineWork.currentOwner);
+      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.currentOwner);
       System_Wait(1);
       x <<= 4;
       besideZ = (z << 4) - 12;
-      Actor_WalkToAndWait(5, x + 24, besideZ);
-      Actor_FaceDirection(5, southwest, 0);
+      Actor_WalkToAndWait(ACTOR_JENNA, x + 24, besideZ);
+      Actor_FaceDirection(ACTOR_JENNA, southwest, 0);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner,
                                  FACING_NORTHEAST);
       WorldMap_Freeze();
       FieldEvent_SetMessageId((s32)MsgYouReNot);
-      Event_ShowMessage(5, 0);
+      // "You're not planning on running away from Isaac again, are you?"
+      Event_ShowMessage(ACTOR_JENNA, 0);
       WorldMap_ReloadPendingAreaGraphics();
-      Actor_FaceDirection(5, west, 0);
+      Actor_FaceDirection(ACTOR_JENNA, west, 0);
       Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, x + 12, besideZ);
       Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
-      Actor_SetAnimation(5, 4);
+      Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
       WorldMap_Freeze();
-      Event_ShowMessage(5, 0);
-      Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-      Event_ShowMessage(5, 0);
-      Actor_SetAnimation(5, 3);
-      Event_ShowMessage(5, 0);
+      // "We can't run anymore, Felix. I promised him that we wouldn't."
+      Event_ShowMessage(ACTOR_JENNA, 0);
+      Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+      // "Besides, they want to talk, not fight..."
+      Event_ShowMessage(ACTOR_JENNA, 0);
+      Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+      // "They're waiting for us. Let's go to Contigo."
+      Event_ShowMessage(ACTOR_JENNA, 0);
       WorldMap_ReloadPendingAreaGraphics();
       Actor_JoinLeader(5);
       System_Wait(1);
@@ -635,6 +641,7 @@ void WorldMap_GazeIntoPond(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
+  // "Felix gazed into the pond..."
   Message_ShowCentered((s32)MsgGazedIntoThe, 1);
   if (roll == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -647,6 +654,7 @@ void WorldMap_GazeIntoPond(void) {
     /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount. */
     register struct Actor *object asm("r6");
 
+    // "There are some coins in the shallows!"
     Message_ShowCentered((s32)MsgThereAreSome, 1);
     position[0] = leader->x;
     position[1] = leader->y;
@@ -674,6 +682,7 @@ void WorldMap_GazeIntoPond(void) {
     MapGrid_SetShake(3, 5, 1);
     MapGrid_SetShakeFixed((s32)(-1), (s32)(-1), (s32)(0xe666));
     FieldEvent_Wait(30);
+    // "The boat's rocking! This thing's dangerous! I almost fell out!"
     Message_ShowCentered((s32)MsgTheBoatS, 1);
   } else {
     Message_ShowCentered((s32)MsgTheBoatS + (roll >> 1), 1);
@@ -795,13 +804,15 @@ s32 Scene_Initialize(void) {
     break;
   case 72:
     Func_02003d44(2);
-    FieldActor_SetSpriteColor(Actor_GetById(7), 15);
-    Actor_SetPosition(7, 7277, 7300);
+    FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), 15);
+    Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
     wait(1);
     FieldEvent_SetMessageId((s32)MsgIVeHeard);
-    Event_ShowMessage(7, 0);
+    // "I've heard tales of this..."
+    Event_ShowMessage(ACTOR_PIERS, 0);
     FieldEvent_Wait(20);
-    Event_ShowMessage(7, 0);
+    // "But I had no idea it would be so spectacular."
+    Event_ShowMessage(ACTOR_PIERS, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Event_SetDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 9);
@@ -885,14 +896,15 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
     Event_SetMessageId((s32)MsgHeyWaitA);
+    // "Hey! Wait a minute!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
-    Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    Actor_WalkByAndWait(4, 0, 32);
-    Actor_FaceDirection(4, west, 0);
+    Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    Actor_WalkByAndWait(ACTOR_FELIX, 0, 32);
+    Actor_FaceDirection(ACTOR_FELIX, west, 0);
     Event_WaitForZoomTransition();
-    Actor_WaitForMoveById(4);
+    Actor_WaitForMoveById(ACTOR_FELIX);
     WorldMap_Freeze();
     {
       /* FAKEMATCH(barrier): the native copies the angle before the other
@@ -920,11 +932,13 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_WaitForMoveById(21);
     Actor_WaitForMoveById(22);
     WorldMap_Freeze();
+    // "Who are you?"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
+    // "You were talking about Isaac, weren't you?"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_TurnToFaceEachOther(4, 23, 0);
+    Actor_TurnToFaceEachOther(ACTOR_FELIX, 23, 0);
     Event_Wait(30);
     Event_Wait(10);
     Actor_RunRepeatedMotion(21, 2);
@@ -939,28 +953,37 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       Actor_ArmCallback(23, a1, a2);
     }
     Event_Wait(5);
+    // "Don't play dumb... We all heard you."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "Yes, we know Isaac. What about him?"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Well, why don't you tell us where we can find him?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "Why should we tell you anything?"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Isaac took good care of us when we were in Vault, and we'd like to..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "Ah, yes... Well... I'm afraid we don't know where you can find Isaac..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
+    // "Oh, is that so? Well, I guess we'll just have to give you the reward..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_TurnToFaceEachOther(4, 23, 0);
+    Actor_TurnToFaceEachOther(ACTOR_FELIX, 23, 0);
     Event_Wait(30);
+    // "You've got a grudge against Isaac, and you're going to take it out..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     ARM_WEST(4);
     ARM_WEST(23);
+    // "Oh yeah, you could call it a grudge... A serious grudge."
     FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_WalkBy(4, 8, -8);
+    Actor_WalkBy(ACTOR_FELIX, 8, -8);
     Actor_WalkBy(23, -8, 8);
-    Actor_WaitForMoveById(4);
+    Actor_WaitForMoveById(ACTOR_FELIX);
     Actor_WaitForMoveById(23);
     ARM_WEST(4);
     ARM_WEST(23);
@@ -974,10 +997,11 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       /* FAKEMATCH(barrier): the asm on the 30, the same call's second. */
       asm volatile("" : "+l"(a2));
       a1 <<= 1;
-      Actor_ShowEmote(4, a1, a2);
+      Actor_ShowEmote(ACTOR_FELIX, a1, a2);
     }
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
+    // "But don't worry... We're just going to give you a little sample of..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
     /* FAKEMATCH(dead): the native loads the scene's id after this store. */
@@ -1003,26 +1027,30 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 
       Actor_SetPositionAndFacing(23, px(10152), px(9664), a3);
     }
-    Actor_SetPositionAndFacing(4, px(10168), px(9648), FACING_NORTHWEST);
-    EventCamera_FollowActor(4, 0);
+    Actor_SetPositionAndFacing(ACTOR_FELIX, px(10168), px(9648),
+                               FACING_NORTHWEST);
+    EventCamera_FollowActor(ACTOR_FELIX, 0);
     FieldEffect_ScheduleRatioTransition(0x18ccc, 1);
-    Actor_SetAnimation(4, 19);
-    Actor_SetSpriteFlags(Actor_Get(4), 0);
+    Actor_SetAnimation(ACTOR_FELIX, 19);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX), 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
     Event_SetMessageId((s32)MsgItLooksLike);
-    Actor_RunRepeatedMotion(4, 2);
+    Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
     Event_Wait(5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "It looks like Isaac runs with a pretty feeble crowd..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(21, east74);
     Event_Wait(10);
+    // "Well, we have been working out. Maybe Isaac won't be so tough this..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_FaceDirectionAndWait(22, east74);
     Event_Wait(10);
     Actor_RunRepeatedMotion(22, 2);
     Event_Wait(5);
+    // "So you think we just got a lot stronger?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_SetAnimationAndWait(21, 3);
     Event_Wait(10);
@@ -1030,14 +1058,18 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
+    // "You let Isaac know we're looking for him!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
+    // "The band of thieves he busted in Vault are coming to repay the favor!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_SetAnimationAndWait(21, 3);
     Event_Wait(10);
+    // "And we're not messing around!"
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "Be sure you tell him! And send him this way!"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
@@ -1054,8 +1086,8 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_SetPositionAndFacing(21, px(10152), px(9632), eastB);
     Actor_SetPositionAndFacing(22, px(10184), px(9632), eastB);
     Actor_SetPositionAndFacing(23, px(10160), px(9680), westB);
-    Actor_SetPositionAndFacing(4, px(10176), px(9680), westB);
-    EventCamera_FollowActor(4, 0);
+    Actor_SetPositionAndFacing(ACTOR_FELIX, px(10176), px(9680), westB);
+    EventCamera_FollowActor(ACTOR_FELIX, 0);
     FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
@@ -1064,36 +1096,45 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "We lost again..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "So, boss... You, uh... You think maybe it was a mistake going after..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    // "This means we're going to jail again, doesn't it?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Event_Wait(5);
+    // "Aw... Why do we have to go back to jail. I hate it there..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(21, FACING_EAST);
     Event_Wait(10);
     Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "It's not like we really hurt anyone... After all, we lost!"
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_FaceDirectionAndWait(20, FACING_WEST);
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(10);
+    // "Yeah... And it's not like we stole anything...this time..."
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_FaceDirectionAndWait(22, FACING_WEST);
     Event_Wait(10);
     Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    // "We're not gonna have to go to jail, are we?"
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     Actor_FaceDirection(20, eastB, 0);
     Actor_FaceDirection(21, eastB, 0);
     Actor_FaceDirection(22, eastB, 0);
+    // "You're thieves!"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_SetAnimation(20, 3);
     Actor_SetAnimation(21, 3);
     Actor_SetAnimationAndWait(22, 3);
     Event_Wait(10);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "If we asked around, we could probably find a dozen reasons to have..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1105,33 +1146,40 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_FaceDirectionAndWait(20, eastB);
     Event_Wait(20);
+    // "Are you guys, like, wandering sheriffs or something?"
     Event_OpenMessage(20, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "Because we could be really useful to you if you are. We know all..."
       FieldEvent_ShowMessageThenWait(20, 0, 5);
       (gFieldWork->message)++;
     } else {
       Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       (gFieldWork->message)++;
+      // "And even if you're not, we could be really useful to you......"
       FieldEvent_ShowMessageThenWait(20, 0, 5);
     }
-    Actor_TurnToFaceEachOther(4, 23, 0);
+    Actor_TurnToFaceEachOther(ACTOR_FELIX, 23, 0);
     Event_Wait(40);
-    Actor_FaceDirection(4, FACING_NORTH, 0);
+    Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
     Actor_FaceDirection(23, FACING_NORTH, 0);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "You can't honestly believe we would let you join us!"
     FieldEvent_ShowMessageThenWait(23, 0, 5);
     Actor_RunRepeatedMotion(21, 2);
     Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
     Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
     Event_Wait(5);
+    // "Hey, come on! We haven't done anything wrong, really! Not yet..."
     FieldEvent_ShowMessageThenWait(21, 0, 5);
     Actor_SetAnimationAndWait(22, 4);
+    // "Yeah! We didn't have enough time to do anything bad before we ran..."
     FieldEvent_ShowMessageThenWait(22, 0, 5);
     Actor_RunRepeatedMotion(20, 2);
     Func_02000d4c();
     Event_Wait(5);
     Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    // "Yeah, so give us a break!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_TurnToFaceEachOther(20, 21, 0);
     Event_Wait(40);
@@ -1148,6 +1196,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirection(22, FACING_SOUTH, 0);
     Actor_FaceDirectionAndWait(20, FACING_SOUTH);
     Event_Wait(5);
+    // "So, uh... Bye! See you later!"
     FieldEvent_ShowMessageThenWait(20, 0, 5);
     Actor_WalkBy(20, -32, 0);
     Actor_WalkBy(21, -32, 0);
@@ -1162,17 +1211,18 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Actor_FaceDirectionAndWait(20, FACING_SOUTH);
     Event_Wait(10);
     Actor_FaceDirectionAndWait(23, FACING_EAST);
-    Actor_FaceDirectionAndWait(4, FACING_WEST);
+    Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
     Actor_SetAnimationAndWait(23, 3);
     Event_Wait(10);
+    // "Will you promise to stop following Isaac and trying to get revenge..."
     FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_SetAnimation(4, 3);
+    Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
     Actor_SetAnimationAndWait(23, 3);
     Event_Wait(10);
     Actor_SetSpeed(23, 1.2);
     Actor_SetAnimation(23, 2);
     {
-      struct Actor *object = Actor_Get(4);
+      struct Actor *object = Actor_Get(ACTOR_FELIX);
 
       if (object != NULL)
         Actor_SetDestination(23, *(s16 *)((u8 *)object + 10),
@@ -1200,7 +1250,7 @@ void WorldMap_DeliverLohoCannon(void) {
   Actor_Get(18)->motionFlags = 2;
   /* FAKEMATCH(temporary): the facing angle held in a local is built once and
    * shared by the three placements. */
-  angle = 0xe000;
+  angle = FACING_NORTHEAST;
   Actor_SetPositionAndFacing(16, px(8913), px(5853), angle);
   Actor_SetPositionAndFacing(17, px(8929), px(5869), angle);
   Actor_SetPositionAndFacing(18, px(8929), px(5885), angle);
@@ -1221,14 +1271,16 @@ void WorldMap_DeliverLohoCannon(void) {
   FieldEvent_SetMessageId((s32)MsgYouDonT);
   Actor_FaceDirection(17, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
+  // "You don't have anything to worry about. We got the cannon onto your..."
   Event_ShowMessage(16, 0);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(30);
+  // "Now, we're going to start excavating the ground north of the wall..."
   Event_ShowMessage(16, 0);
   Actor_SetAnimation(16, 3);
-  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(60);
-  FieldActor_WatchAndSetScript(4, 18);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, 18);
   Actor_SetSpeed(16, 0.4);
   Actor_SetSpeed(17, 0.4);
   Actor_SetSpeed(18, 0.4);
@@ -1557,10 +1609,12 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
 void WorldMap_WatchVenusLighthouseCollapse(void) {
   Func_02003d44(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
+  // "They've done it, Jenna! They've lit the beacon!"
   Event_ShowMessage(8, 0);
   MapGrid_SetShake(4, 4, 1);
   FieldEvent_Wait(30);
-  Event_ShowMessage(5, 0);
+  // "What's happening, Kraden!? Why won't the ground stop shaking?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
   PaletteFade_ApplySource(0x7fff, 0);
@@ -1573,6 +1627,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldEvent_Wait(30);
   WorldMap_Freeze();
   MapGrid_SetShake(3, 3, 1);
+  // "Strange... I think it might actually be getting worse!"
   Event_ShowMessage(9, 0);
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(7, 7, 1);
@@ -1581,12 +1636,14 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   WorldMap_Freeze();
-  Event_ShowMessage(5, 0);
+  // "I think the lighthouse is collapsing! Look! The ground around it is..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "Mercury Lighthouse didn't react this way... What makes Venus different?"
   Event_ShowMessage(8, 0);
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
   Func_02002640(0, 128, 0, 0);
-  Actor_SetAnimation(5, 19);
+  Actor_SetAnimation(ACTOR_JENNA, 19);
   Actor_SetAnimation(8, 5);
   Actor_SetAnimation(9, 7);
   System_Wait(4);
@@ -1599,8 +1656,10 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldCamera_WaitForArrival();
   WorldMap_Freeze();
   MapGrid_SetShake(3, 3, 1);
+  // "That last tremor tore a rift in the Suhalla Range!"
   Event_ShowMessage(9, 0);
-  Event_ShowMessage(5, 0);
+  // "How are we going to get back to Gondowan now!?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(3, 3, 1);
   Func_02002640(96, 128, 32, 0);
@@ -1611,8 +1670,10 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldCamera_MoveTo(2148, CAMERA_KEEP, 7553, 1);
   FieldCamera_WaitForArrival();
   WorldMap_Freeze();
+  // "Idejima... It's drifting away from the mainland!"
   Event_ShowMessage(8, 0);
-  Event_ShowMessage(5, 0);
+  // "But...what will happen to us?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
@@ -1719,18 +1780,28 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_WaitTransitionFrames();
   WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeReSaved);
-  Event_ShowMessage(5, 0);
+  // "We're saved!"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "So it would seem..."
   Event_ShowMessage(8, 0);
   FieldActor_SetMoveTargetFixed(boat, px(10255), boat->y, px(7868));
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(5, 0);
-  Event_ShowMessage(6, 0);
+  // "Wait..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "What is it?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "We're going to pass north of the continent..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "She's right!"
   Event_ShowMessage(8, 0);
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(5, 0);
+  // "I don't think we're going to make it!"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "Oh, Kraden... Felix... What are we going to do?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_PlaySound(SE_162);
+  // "???"
   Event_ShowMessage(gMainRoutineWork.currentOwner, 0);
+  // "Oh... This can't be good."
   Event_ShowMessage(8, 0);
   Event_PlaySound(MUS_061);
   WorldMap_ReloadPendingAreaGraphics();
@@ -1744,10 +1815,15 @@ void WorldMap_DriftNorthOfContinent(void) {
   }
   WorldMap_Freeze();
   Event_SetFlag(FLAG_SCENE_TEMP_00);
-  Event_ShowMessage(5, 0);
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(5, 0);
-  Event_ShowMessage(6, 0);
+  // "What...is it?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "It's...a tidal wave."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "A tidal wave?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "The earthquake must have caused it!"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "Oh... Oh my... It's coming right at us!"
   Event_ShowMessage(8, 0);
   MapGrid_SetShake(1, 2, 1);
   WorldMap_ReloadPendingAreaGraphics();
@@ -1759,23 +1835,28 @@ void WorldMap_DriftNorthOfContinent(void) {
   WorldMap_UpdateCurrentTileBlock();
   Actor_SetPosition(8, 3690, 7616);
   Actor_SetPosition(9, 3646, 7679);
-  Actor_SetPosition(4, 3669, 7664);
-  Actor_SetPosition(5, 3657, 7621);
-  Actor_SetPosition(6, 3703, 7651);
+  Actor_SetPosition(ACTOR_FELIX, 3669, 7664);
+  Actor_SetPosition(ACTOR_JENNA, 3657, 7621);
+  Actor_SetPosition(ACTOR_SHEBA, 3703, 7651);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
   WorldMap_Freeze();
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(5, 0);
+  // "Alex... How can you stay so calm at a time like this?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(9, 4);
+  // "At times like this, where would be the good in panicking?"
   Event_ShowMessage(9, 0);
-  FieldActor_Jump(6, 6, 15);
-  FieldActor_Jump(6, 6, 23);
-  Actor_FaceActor(6, 4, 0);
-  Event_ShowMessage(6, 0);
+  FieldActor_Jump(ACTOR_SHEBA, 6, 15);
+  FieldActor_Jump(ACTOR_SHEBA, 6, 23);
+  Actor_FaceActor(ACTOR_SHEBA, ACTOR_FELIX, 0);
+  // "We'll be washed away!"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  // "Help!!!"
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 1);
   Actor_WalkTo(8, 3608, 7695);
@@ -1814,58 +1895,84 @@ void WorldMap_TakeTheTiller(void) {
     WorldMap_Freeze();
     FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
     Event_Wait(40);
-    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    // "Take the tiller, Felix!"
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    FieldEvent_ShowMessageThenWait(4, 0, 10);
-    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    // "?!?"
+    FieldEvent_ShowMessageThenWait(ACTOR_FELIX, 0, 10);
+    // "If you hope to reach Lemuria, you'll have to learn a few things..."
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    // "Kraden, shouldn't we be heading straight for Lemuria?"
+    FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
+    // "Well, I suppose if we have to learn to sail, it's better to do it..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-    FieldEvent_ShowMessageThenWait(5, 0, 10);
-    FieldMessage_ShowAtActor(7, 0);
+    // "Then I want to go to Lalivero! And Tolbi! Oh! And Vale! Can we go to..."
+    FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+    // "I'd love to see your hometown, Jenna! Shall we? Let's do it! To Vale..."
+    FieldMessage_ShowAtActor(ACTOR_PIERS, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      // "I don't think that's a good idea."
       FieldEvent_ShowMessageThenWait(9, 0, 10);
       gFieldWork->message++;
     } else {
       Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       gFieldWork->message++;
+      // "I'm with Felix. I don't think that would be a wise course of action."
       FieldEvent_ShowMessageThenWait(9, 0, 10);
     }
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    // "Come, now! Why not?"
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+    // "Think about the roads we have traveled to get where we are..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    // "I can't... I was never any good at geography."
+    FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
+    // "Then allow me to explain... The coastline of Angara, the continent..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    // "Oh... You don't think Piers's boat could land there?"
+    FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+    // "And as for Gondowan, I would guess the people from Lalivero..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    FieldEvent_ShowMessageThenWait(6, 0, 10);
+    // "He's right. Saturos and Menardi went a little wild in Lalivero, and..."
+    FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    // "Oh... But Sheba can explain the situation for us. Faran and the..."
+    FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    FieldEvent_ShowMessageThenWait(6, 0, 10);
-    FieldEvent_ShowMessageThenWait(5, 0, 10);
+    // "And then they'd make me stay in Lalivero! Would you just leave me..."
+    FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
+    // "Oh yeah... Maybe that wouldn't be such a good idea after all..."
+    FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+    // "Then it's decided!"
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    // "What's decided?"
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    // "The sea is vast... We can go wherever we please! So, let's explore a..."
     FieldEvent_ShowMessageThenWait(9, 0, 10);
-    FieldEvent_ShowMessageThenWait(6, 0, 10);
-    FieldEvent_ShowMessageThenWait(5, 0, 10);
-    FieldEvent_ShowMessageThenWait(7, 0, 10);
+    // "That's a great idea! We've already met werewolves and discovered new..."
+    FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
+    // "Wow! This is going to be great!"
+    FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+    // "Hmm... The seas can be quite dangerous. It won't be my fault if..."
+    FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
+    // "To the open sea, Felix!"
     FieldEvent_ShowMessageThenWait(9, 0, 10);
     Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
     gMainRoutineWork.renderMode = 7;
     gMainRoutineWork.ownerOverride = 1;
     WorldMap_ReloadPendingAreaGraphics();
     Event_SetFlag(0x8de);
-    Actor_SetPosition(7, 0, 0);
-    Actor_SetPosition(6, 0, 0);
+    Actor_SetPosition(ACTOR_PIERS, 0, 0);
+    Actor_SetPosition(ACTOR_SHEBA, 0, 0);
     Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(5, 0, 0);
+    Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_GetById(gMainRoutineWork.currentOwner)->scaleX = scale;
     Event_End();
   }
@@ -1915,60 +2022,96 @@ void WorldMap_TakeOff(void) {
   WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeDidIt);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  Event_ShowMessage(2, 0);
+  // "We did it! The ship took off without a hitch!"
+  Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Event_ShowMessage(1, 0);
-  Event_ShowMessage(3, 0);
-  Event_ShowMessage(0, 0);
+  // "Yeah, but...shouldn't it be flying a little higher than this?"
+  Event_ShowMessage(ACTOR_GARET, 0);
+  // "Hamma told us that we wouldn't be able to fly very high until we..."
+  Event_ShowMessage(ACTOR_MIA, 0);
+  // "Let's see how far we can take this thing!"
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(5, 0);
-  Event_ShowMessage(6, 0);
+  // "Sheba, what's wrong? You don't look happy..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "Do you remember on Idejima, when I told you I had my own reasons for..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "You were so secretive! Are you going to tell us now?"
   Event_ShowMessage(23, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(50);
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(5, 0);
+  // "... ..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "You've gone quiet again... It's OK... You don't have to tell us if..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(MUS_038);
-  Event_ShowMessage(6, 0);
+  // "I thought that if I went to Jupiter Lighthouse, I would learn who I..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(0, 0);
+  // "I remember the people of Lalivero talking about how Sheba fell from..."
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(7, 0);
+  // "All my life, I've been looking for the answer... Where was I born..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "You knew Felix was going to Jupiter Lighthouse eventually, and so..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(3, 0);
+  // "But you didn't find any answers, did you, Sheba?"
+  Event_ShowMessage(ACTOR_MIA, 0);
   FieldEvent_Wait(30);
-  Event_ShowMessage(2, 0);
+  // "I'm sorry, Sheba... I was so excited to find Contigo that I didn't..."
+  Event_ShowMessage(ACTOR_IVAN, 0);
   FieldEvent_Wait(20);
-  Event_ShowMessage(1, 0);
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(1, 0);
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(1, 0);
-  Event_ShowMessage(5, 0);
-  Event_ShowMessage(3, 0);
-  Event_ShowMessage(1, 0);
+  // "What? Why is everyone so down all of a sudden?"
+  Event_ShowMessage(ACTOR_GARET, 0);
+  // "... ..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "Faran raised Sheba like his own daughter. He's cared for her ever..."
+  Event_ShowMessage(ACTOR_GARET, 0);
+  // "Yes, that's true, but..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "But you can never be his real daughter, is that it?"
+  Event_ShowMessage(ACTOR_GARET, 0);
+  // "Garet! You don't have to be so blunt about it!"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "No, he's right... I'd want to know my real parents, no matter how..."
+  Event_ShowMessage(ACTOR_MIA, 0);
+  // "You think so? If it were me, I doubt it'd bother me at all..."
+  Event_ShowMessage(ACTOR_GARET, 0);
   FieldEvent_Wait(40);
+  // "Sheba, you may not know this, but you and I are very similar..."
   Event_ShowMessage(23, 0);
-  Event_ShowMessage(6, 0);
+  // "What do you mean?"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "Well, it's not exactly the same situation, but..."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(20);
+  // "I was born in a poor village. My memories are hazy, but I still..."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(20);
+  // "I was only four when Babi took me under his wing."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(20);
+  // "You see, even though I was young, I was quite intelligent. Babi had..."
   Event_ShowMessage(23, 0);
-  Event_ShowMessage(0, 0);
+  // "And Babi took you to Tolbi to further your education, to raise you..."
+  Event_ShowMessage(ACTOR_ISAAC, 0);
   FieldEvent_Wait(20);
+  // "I was separated from my parents so early in life... I've never known..."
   Event_ShowMessage(23, 0);
-  Event_ShowMessage(6, 0);
+  // "Faran has always been like a father to me... I must have been very..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "I should say so."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(60);
-  Event_ShowMessage(6, 0);
+  // "Thank you, Kraden... I feel better now..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
+  // "I'm glad I could help."
   Event_ShowMessage(23, 0);
   FieldEvent_Wait(40);
+  // "Well, we should be going... Let's hurry on, Felix!"
   Event_ShowMessage(23, 0);
   Scene_PlayMusic();
   WorldMap_ReloadPendingAreaGraphics();

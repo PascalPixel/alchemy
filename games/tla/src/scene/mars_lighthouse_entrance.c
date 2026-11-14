@@ -362,7 +362,9 @@ step:
 }
 
 void MarsLighthouseEntrance_CheckIce(void) {
+  // "Felix checked the ice."
   FieldMessage_Show((s32)MsgCheckedTheIce, 1);
+  // "A shaft of ice is poking up through the floor."
   FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);
   gFieldWork->fieldMenu = 1;
 }
@@ -1582,7 +1584,7 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(FLAG_MENU_OPEN);
   leader->update = Actor_Blink;
-  leader->facing = 0x4000;
+  leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, 49);
   while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x, leader->z) != 7) {
@@ -2052,7 +2054,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
   {
     u32 zero = 0;
 
-    object->facing = 0x4000;
+    object->facing = FACING_SOUTH;
     object->motionFlags = zero;
   }
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
@@ -2143,7 +2145,7 @@ next:
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Event_End();
 }
 

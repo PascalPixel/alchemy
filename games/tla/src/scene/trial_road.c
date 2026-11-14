@@ -516,6 +516,7 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   Event_ResolvePendingActions(0);
   MessageArgument_Push(owner, 1);
   MessageArgument_Push(item, 2);
+  // "Felix put ...'s ... in the chest."
   FieldMessage_Show((s32)&MsgTrialRoadStoredItem, 1);
   Event_PlaySound(SE_CHEST_CLOSE);
   Actor_SetAnimationAndWait(kind, 5);
@@ -543,9 +544,11 @@ void TrialRoad_ExamineChest(s32 id) {
   if (!Event_GetFlag(flag)) {
     Event_Start();
     Event_ResolvePendingActions(0);
+    // "The chest won't open. There's something keeping it shut tight."
     FieldMessage_Show((s32)MsgTrialRoadChestBlocked, 1);
     Event_End();
   } else {
+    // "Place this item in the chest?"
     FieldMessage_Show((s32)MsgTrialRoadPlaceItemPrompt, 13);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 1) == 0)
       gFieldWork->fieldMenu = 1;
@@ -1040,12 +1043,12 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SetMoveTarget(object, (toX << 20) + 0x80000, 0,
                       z = (toZ << 20) + 0x80000);
   Event_Wait(6);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.currentOwner, 0.3, 0.2);
   Actor_SetDestinationOffsetById(gMainRoutineWork.currentOwner, dx << 3,
                                  dz << 3);
   Event_Wait(24);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_WaitForMove(object);
   if (toX <= 17) {
     Actor_SelectAnimation(object, 1);
@@ -1874,7 +1877,7 @@ void TrialRoad_UpdateRival(void) {
       break;
     case 653:
     case 708:
-      Actor_GetById(8)->facing = 0xc000;
+      Actor_GetById(8)->facing = FACING_NORTH;
       break;
     case 50:
     case 710:
@@ -2229,25 +2232,25 @@ void TrialRoad_ReachPeakFirst(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 264, 1);
-  Actor_MoveToObject(5, 4);
-  Actor_MoveToObject(6, 4);
-  Actor_MoveToObject(7, 4);
-  Actor_SetSpeed(4, 1);
-  Actor_SetSpeed(5, 1);
-  Actor_SetSpeed(6, 1);
-  Actor_SetSpeed(7, 1);
-  Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
-  Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
-  Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
-  Actor_WalkTo(6, TrialRoad_MirrorCellX(27), 280);
-  Actor_WaitForMoveById(4);
-  Actor_FaceDirection(4, TrialRoad_MirrorAngle(0), 0);
-  Actor_WaitForMoveById(7);
-  Actor_FaceDirection(7, TrialRoad_MirrorAngle(0), 0);
-  Actor_WaitForMoveById(5);
-  Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
-  Actor_WaitForMoveById(6);
-  Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
+  Actor_MoveToObject(ACTOR_JENNA, ACTOR_FELIX);
+  Actor_MoveToObject(ACTOR_SHEBA, ACTOR_FELIX);
+  Actor_MoveToObject(ACTOR_PIERS, ACTOR_FELIX);
+  Actor_SetSpeed(ACTOR_FELIX, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
+  Actor_SetSpeed(ACTOR_SHEBA, 1);
+  Actor_SetSpeed(ACTOR_PIERS, 1);
+  Actor_WalkTo(ACTOR_FELIX, TrialRoad_MirrorCellX(28), 272);
+  Actor_WalkTo(ACTOR_PIERS, TrialRoad_MirrorCellX(28), 256);
+  Actor_WalkTo(ACTOR_JENNA, TrialRoad_MirrorCellX(27), 248);
+  Actor_WalkTo(ACTOR_SHEBA, TrialRoad_MirrorCellX(27), 280);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_FELIX, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(ACTOR_PIERS);
+  Actor_FaceDirection(ACTOR_PIERS, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(ACTOR_JENNA);
+  Actor_FaceDirection(ACTOR_JENNA, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(ACTOR_SHEBA);
+  Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(0), 0);
   FieldCamera_WaitForArrival();
   wait(20);
   Event_PlaySound(SE_ITEM_BREAK);
@@ -2299,33 +2302,36 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  // "You were quite swift! You may prove a challenge yet!"
   Event_ShowMessage(8, 0);
   Actor_SetAnimationAndWait(8, 3);
+  // "However, just because you're fast doesn't mean you're strong...."
   Event_ShowMessage(8, 0);
   Actor_RunRepeatedMotion(8, 2);
+  // "Let the battle begin!"
   Event_ShowMessage(8, 0);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(15);
-  Actor_SetSpeed(4, 2);
-  Actor_SetSpeed(5, 1.9);
-  Actor_SetSpeed(6, 1.7);
-  Actor_SetSpeed(7, 1.8);
+  Actor_SetSpeed(ACTOR_FELIX, 2);
+  Actor_SetSpeed(ACTOR_JENNA, 1.9);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.7);
+  Actor_SetSpeed(ACTOR_PIERS, 1.8);
   Actor_SetSpeed(8, 2);
   Actor_SetSpeed(13, 1.9);
   Actor_SetSpeed(14, 1.7);
-  Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_FELIX, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(5, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_JENNA, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(7, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_PIERS, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(6, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_SHEBA, TrialRoad_MirrorOffset(3), 0);
   wait(1);
   Event_Wait(6);
 }
@@ -2335,55 +2341,58 @@ void TrialRoad_ReachPeakSecond(void) {
   Event_ResolvePendingActions(0);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 264, 1);
-  Actor_MoveToObject(5, 4);
-  Actor_MoveToObject(6, 4);
-  Actor_MoveToObject(7, 4);
-  Actor_SetSpeed(4, 1);
-  Actor_SetSpeed(5, 1);
-  Actor_SetSpeed(6, 1);
-  Actor_SetSpeed(7, 1);
-  Actor_WalkTo(4, TrialRoad_MirrorCellX(28), 272);
-  Actor_WalkTo(7, TrialRoad_MirrorCellX(28), 256);
-  Actor_WalkTo(5, TrialRoad_MirrorCellX(27), 248);
-  Actor_WalkTo(6, TrialRoad_MirrorCellX(27), 280);
-  Actor_WaitForMoveById(4);
-  Actor_FaceDirection(4, TrialRoad_MirrorAngle(0), 0);
-  Actor_WaitForMoveById(7);
-  Actor_FaceDirection(7, TrialRoad_MirrorAngle(0), 0);
-  Actor_WaitForMoveById(5);
-  Actor_FaceDirection(5, TrialRoad_MirrorAngle(0), 0);
-  Actor_WaitForMoveById(6);
-  Actor_FaceDirection(6, TrialRoad_MirrorAngle(0), 0);
+  Actor_MoveToObject(ACTOR_JENNA, ACTOR_FELIX);
+  Actor_MoveToObject(ACTOR_SHEBA, ACTOR_FELIX);
+  Actor_MoveToObject(ACTOR_PIERS, ACTOR_FELIX);
+  Actor_SetSpeed(ACTOR_FELIX, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
+  Actor_SetSpeed(ACTOR_SHEBA, 1);
+  Actor_SetSpeed(ACTOR_PIERS, 1);
+  Actor_WalkTo(ACTOR_FELIX, TrialRoad_MirrorCellX(28), 272);
+  Actor_WalkTo(ACTOR_PIERS, TrialRoad_MirrorCellX(28), 256);
+  Actor_WalkTo(ACTOR_JENNA, TrialRoad_MirrorCellX(27), 248);
+  Actor_WalkTo(ACTOR_SHEBA, TrialRoad_MirrorCellX(27), 280);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_FaceDirection(ACTOR_FELIX, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(ACTOR_PIERS);
+  Actor_FaceDirection(ACTOR_PIERS, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(ACTOR_JENNA);
+  Actor_FaceDirection(ACTOR_JENNA, TrialRoad_MirrorAngle(0), 0);
+  Actor_WaitForMoveById(ACTOR_SHEBA);
+  Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(0), 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  // "You may have been slow, but you made it through Trial Road to the..."
   Event_ShowMessage(8, 0);
   Actor_SetAnimationAndWait(8, 3);
+  // "Well, then... The time is nigh for us to decide who is stronger!"
   Event_ShowMessage(8, 0);
   Actor_RunRepeatedMotion(8, 2);
+  // "Let the battle begin!"
   Event_ShowMessage(8, 0);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(15);
-  Actor_SetSpeed(4, 2);
-  Actor_SetSpeed(5, 1.9);
-  Actor_SetSpeed(6, 1.7);
-  Actor_SetSpeed(7, 1.8);
+  Actor_SetSpeed(ACTOR_FELIX, 2);
+  Actor_SetSpeed(ACTOR_JENNA, 1.9);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.7);
+  Actor_SetSpeed(ACTOR_PIERS, 1.8);
   Actor_SetSpeed(8, 2);
   Actor_SetSpeed(13, 1.9);
   Actor_SetSpeed(14, 1.7);
-  Actor_WalkBy(4, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_FELIX, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(5, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_JENNA, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(7, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_PIERS, TrialRoad_MirrorOffset(3), 0);
   Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
-  Actor_WalkBy(6, TrialRoad_MirrorOffset(3), 0);
+  Actor_WalkBy(ACTOR_SHEBA, TrialRoad_MirrorOffset(3), 0);
   wait(1);
   Event_Wait(6);
 }
@@ -2414,6 +2423,7 @@ void TrialRoad_BeatMoapa(void) {
   Actor_StartRepeatedMotion(14, 2);
   wait(10);
   Actor_RunRepeatedMotion(8, 2);
+  // "All right, all right. You've proven your strength, and you are..."
   Event_ShowMessage(8, 0);
   Actor_SetAnimation(8, 7);
   Event_Wait(15);
@@ -2432,20 +2442,21 @@ void TrialRoad_BeatMoapa(void) {
   Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(8, 3);
+  // "As we promised, you will receive the Hover Jade, and we will take..."
   Event_ShowMessage(8, 0);
   Actor_SetSpeed(8, 1);
   Actor_WalkTo(8, TrialRoad_MirrorCellX(32), 264);
-  Actor_FaceEachOther(9, 7, 0);
-  Actor_FaceEachOther(5, 6, 0);
+  Actor_FaceEachOther(9, ACTOR_PIERS, 0);
+  Actor_FaceEachOther(ACTOR_JENNA, ACTOR_SHEBA, 0);
   Actor_WaitForMoveById(8);
-  Actor_FaceActor(9, 4, 0);
-  Actor_FaceActor(7, 4, 0);
-  Actor_FaceActor(6, 4, 0);
-  Actor_FaceActor(5, 4, 0);
+  Actor_FaceActor(9, ACTOR_FELIX, 0);
+  Actor_FaceActor(ACTOR_PIERS, ACTOR_FELIX, 0);
+  Actor_FaceActor(ACTOR_SHEBA, ACTOR_FELIX, 0);
+  Actor_FaceActor(ACTOR_JENNA, ACTOR_FELIX, 0);
   Event_Wait(20);
   PartyInventory_Discard(65);
   Party_GiveItem(ITEM_HOVER_JADE, 0);
-  Actor_FaceActor(4, 8, 0);
+  Actor_FaceActor(ACTOR_FELIX, 8, 0);
   OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
   Actor_WalkToAndWait(8, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
@@ -2453,26 +2464,29 @@ void TrialRoad_BeatMoapa(void) {
   ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
   Event_Wait(20);
   FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
+  // "After many years, the vow that Hoabna made to Yegelos has at last..."
   Event_ShowMessage(8, 0);
   Actor_FaceDirectionAndWait(8, TrialRoad_MirrorAngle(0));
   Actor_FaceActor(13, 8, 0);
   Actor_FaceActor(14, 8, 0);
   Actor_SetAnimationAndWait(8, 3);
+  // "I'm tired now. I'll be back in the Shaman Village resting."
   Event_ShowMessage(8, 0);
   Actor_SetAnimation(13, 3);
   wait(3);
   Actor_SetAnimationAndWait(14, 3);
-  Actor_FaceActor(4, 9, 0);
-  Actor_FaceActor(7, 9, 0);
-  Actor_FaceActor(5, 9, 0);
-  Actor_FaceActor(6, 9, 0);
+  Actor_FaceActor(ACTOR_FELIX, 9, 0);
+  Actor_FaceActor(ACTOR_PIERS, 9, 0);
+  Actor_FaceActor(ACTOR_JENNA, 9, 0);
+  Actor_FaceActor(ACTOR_SHEBA, 9, 0);
+  // "I'm sure you must be exhausted as well. Let's go back to the village..."
   Event_ShowMessage(9, 0);
-  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   wait(2);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   wait(1);
-  Actor_SetAnimation(5, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   wait(30);
 }
 
@@ -2487,27 +2501,28 @@ void TrialRoad_LoseToMoapa(void) {
   TrialRoad_PlaceActor(7, 216, 254, 0);
   TrialRoad_PlaceActor(5, 232, 244, 0);
   TrialRoad_PlaceActor(6, 224, 296, 0);
-  Actor_SetAnimation(4, 38);
-  Actor_SetAnimation(5, 19);
-  Actor_SetAnimation(6, 19);
-  Actor_SetAnimation(7, 19);
-  FieldActor_SetSpriteRotationById(7, 0x4000);
-  Actor_SetSpriteFlags(Actor_GetById(4), 0);
-  Actor_SetSpriteFlags(Actor_GetById(5), 0);
-  Actor_SetSpriteFlags(Actor_GetById(6), 0);
-  Actor_SetSpriteFlags(Actor_GetById(7), 0);
+  Actor_SetAnimation(ACTOR_FELIX, 38);
+  Actor_SetAnimation(ACTOR_JENNA, 19);
+  Actor_SetAnimation(ACTOR_SHEBA, 19);
+  Actor_SetAnimation(ACTOR_PIERS, 19);
+  FieldActor_SetSpriteRotationById(ACTOR_PIERS, 0x4000);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_JENNA), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHEBA), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_PIERS), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Event_SetMessageId((s32)MsgTrialRoadLeaveVillage);
   Actor_SetAnimationAndWait(8, 3);
+  // "You've lost. Now leave Shaman village."
   Event_ShowMessage(8, 0);
-  Actor_StartRepeatedMotion(4, 2);
+  Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
   wait(1);
-  Actor_StartRepeatedMotion(6, 2);
+  Actor_StartRepeatedMotion(ACTOR_SHEBA, 2);
   wait(2);
-  Actor_StartRepeatedMotion(5, 2);
-  Actor_StartRepeatedMotion(7, 2);
+  Actor_StartRepeatedMotion(ACTOR_JENNA, 2);
+  Actor_StartRepeatedMotion(ACTOR_PIERS, 2);
   Event_Wait(15);
 }
 
@@ -2542,12 +2557,15 @@ void TrialRoad_ShowTraps(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(120, CAMERA_KEEP, 120, 1);
   Event_SetMessageId((s32)MsgTrialRoadTrapInstructions);
+  // "The room is filled with traps and snares. Use the power of Contigo..."
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(216, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
+  // "This road has four doors. To open them, you will need to place items..."
   Event_ShowMessageAndWait(8, 0);
-  Event_ShowMessageAndWait(4, 0);
+  // "Why?"
+  Event_ShowMessageAndWait(ACTOR_FELIX, 0);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightToChestScript);
   Actor_RefreshSelectorById(13);
   Actor_SetModeById(13, 1);
@@ -2574,6 +2592,7 @@ void TrialRoad_ShowTraps(void) {
   Actor_ArmCallback(13, FACING_SOUTH, 0);
   Event_Wait(20);
   Motion_SetModeAndWaitAnimation(13, 4);
+  // "The door is triggered only when the treasure chests are filled to..."
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(13, FACING_NORTHWEST, 0);
   Motion_SetModeAndWaitAnimation(13, 3);
@@ -2584,6 +2603,7 @@ void TrialRoad_ShowTraps(void) {
   Sound_Play(SE_CHEST_OPEN);
   Actor_SetModeById(9, 6);
   Event_Wait(30);
+  // "Try putting heavier items, like weapons and tools, into the chests..."
   Event_ShowMessageAndWait(8, 0);
   Actor_WalkToAndWaitById(13, 200, 168);
   Actor_FaceDirection(13, FACING_NORTH, 0);
@@ -2598,18 +2618,21 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightLeavesScript);
   Actor_RefreshSelectorById(13);
   Sound_Play(SE_MAP_EXIT);
+  // "If you reach the door after your opponents do, you will be at a..."
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
   FieldCamera_MoveTo(328, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
+  // "You see, it will take twice the weight to open the doors."
   Event_ShowMessageAndWait(8, 0);
+  // "Stand on the switch, and the number of chests you need to fill will..."
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(14, FACING_NORTHEAST, 0);
   Motion_SetModeAndWaitAnimation(14, 3);
   Event_Wait(10);
   Actor_SetSpeed(14, 1);
   Actor_WalkByAndWait(14, 16, -16);
-  Actor_ArmCallback(14, 0, 0);
+  Actor_ArmCallback(14, FACING_EAST, 0);
   Sound_Play(SE_CHEST_OPEN);
   Actor_SetModeById(11, 6);
   Actor_SetModeById(12, 6);
@@ -2633,12 +2656,15 @@ void TrialRoad_ShowTraps(void) {
   Actor_ArmCallback(14, FACING_NORTHWEST, 0);
   Event_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
+  // "If you are last to each of the four doors, you will lose eight items..."
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
   FieldCamera_WaitForArrival();
+  // "If Trial Road proves too much for you, press this button."
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightLeavesScript);
   Actor_RefreshSelectorById(14);
+  // "This ends the battle, though. A true hero would not surrender so easily."
   Event_ShowMessageAndWait(8, 0);
   Import_EventSetExitRequest(10);
 }

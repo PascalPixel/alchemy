@@ -128,6 +128,7 @@ void Loho_AskWantCannon(s32 actor) {
 
 /// "It looks like it's empty."
 void Loho_ExamineCannon(void) {
+  // "It looks like it's empty."
   FieldMessage_Show((s32)MsgLoho27, 1);
   gFieldWork->fieldMenu = 1;
 }
@@ -159,7 +160,7 @@ void Loho_FireCannon(void) {
   s32 t190, t193, t194;
   u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
-  t0 = Actor_GetById(4);
+  t0 = Actor_GetById(ACTOR_FELIX);
   Event_Start();
   Event_ResolvePendingActions(0);
   p = (struct LohoSpark *)t0;
@@ -169,16 +170,16 @@ approach:
     goto turned;
   if (i == 0)
     goto fromEast;
-  Actor_WalkToAndWait(4, 471, 346);
+  Actor_WalkToAndWait(ACTOR_FELIX, 471, 346);
   goto turned;
 fromEast:
-  Actor_WalkToAndWait(4, 506, 346);
+  Actor_WalkToAndWait(ACTOR_FELIX, 506, 346);
 turned:
   if (i == 0)
     goto fromNorth;
   goto fromSouth;
 fromNorth:
-  Actor_WalkToAndWait(4, 506, 373);
+  Actor_WalkToAndWait(ACTOR_FELIX, 506, 373);
   goto inPlace;
 start:
   i = 0;
@@ -203,21 +204,22 @@ placed:
 inPlace:
   FieldCamera_MoveTo(488, CAMERA_KEEP, 372, 1);
   Event_SetFlag(0xa5f);
-  Actor_MoveToAndWait(4, 487, 377);
-  Actor_FaceDirectionAndWait(4, FACING_NORTH);
+  Actor_MoveToAndWait(ACTOR_FELIX, 487, 377);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   Event_Wait(30);
   Event_PlaySound(SE_SPIN);
   FieldActor_StartRepeatedMotion(16, 2);
   FieldActor_StartRepeatedMotion(18, 2);
   Actor_RunRepeatedMotion(17, 2);
-  Actor_FaceActor(16, 4, 0);
-  Actor_FaceActor(17, 4, 0);
+  Actor_FaceActor(16, ACTOR_FELIX, 0);
+  Actor_FaceActor(17, ACTOR_FELIX, 0);
   Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
-  FieldActor_StartRepeatedMotion(4, 3);
-  Actor_SetAttachedEffect(4, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_WalkByAndWait(4, 24, 12);
-  Actor_FaceDirectionAndWait(4, FACING_NORTH);
+  FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
+  Actor_SetAttachedEffect(ACTOR_FELIX,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_WalkByAndWait(ACTOR_FELIX, 24, 12);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   Event_Wait(30);
   Event_PlaySound(SE_CLATTER);
   FieldActor_ShowItemIconById(21, ITEM_MAGMA_BALL);
@@ -311,21 +313,25 @@ nextSpark:
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
+  // "Is everyone all right?"
   Event_ShowMessage(18, 0);
   Actor_FaceDirection(17, FACING_SOUTHEAST, 0);
   Actor_SetAnimation(17, 3);
   Actor_SetAnimation(16, 3);
   Event_Wait(30);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  // "Did you hear that? That sound was incredible!"
   Event_ShowMessage(17, 0);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SCOWL, 35);
   Actor_WalkByAndWait(16, -12, 24);
   Actor_RunRepeatedMotion(16, 2);
+  // "What do you think you're doing, making all that noise?"
   Event_ShowMessage(16, 0);
-  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_FaceDirectionAndWait(18, FACING_NORTH_NORTHWEST);
   Event_Wait(30);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 35);
+  // "Hey, look at that!"
   Event_ShowMessage(18, 0);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
@@ -336,6 +342,7 @@ nextSpark:
   Event_Wait(60);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  // "What are you looking at? It wasn't me! It was the wall! Look at the..."
   Event_ShowMessage(18, 0);
   Actor_FaceEachOther(16, 17, 0);
   Event_Wait(40);
@@ -347,41 +354,50 @@ nextSpark:
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  // "The wall... It's gone!"
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
+  // "Well, it's mostly gone, yeah... You can get through to the other..."
   Event_ShowMessage(16, 0);
-  Actor_FaceActor(18, 4, 0);
+  Actor_FaceActor(18, ACTOR_FELIX, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 35);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 366, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(18, FACING_SOUTH_SOUTHWEST, 0);
+  // "How did you manage to break down the wall?"
   Event_ShowMessage(18, 0);
   Actor_SetSpeed(17, 0.8);
   Actor_WalkBy(17, 0, 16);
   Actor_WaitForMoveById(17);
   Actor_FaceDirectionAndWait(17, FACING_SOUTHEAST);
   Actor_SetAnimation(17, 4);
+  // "Ah, never mind... What's important here is that we can dig on the..."
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
+  // "Yeah, who cares how it happened? We can dig again!"
   Event_ShowMessage(16, 0);
   Actor_SetAnimation(18, 3);
   Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
+  // "Well, you did what we asked, so the cannon's all yours!"
   Event_ShowMessage(17, 0);
-  FieldActor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
+  FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   Event_Wait(60);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, FACING_SOUTH);
   Event_Wait(20);
   Actor_RunRepeatedMotion(16, 2);
+  // "Hmmm... It's gonna be tough carrying that thing around..."
   Event_ShowMessage(16, 0);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
+  // "Those guys are new in town, aren't they? Do you think they came from..."
   Event_ShowMessage(18, 0);
   Actor_SetAnimation(17, 3);
   Event_Wait(40);
   FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
+  // "I don't know, but I can tell you they came by boat..."
   Event_ShowMessage(17, 0);
   Actor_SetAnimation(16, 3);
   Event_Wait(30);
@@ -413,6 +429,7 @@ nextSpark:
   Event_Wait(40);
   Actor_SetAnimation(16, 3);
   Event_Wait(60);
+  // "Yeah, I saw one anchored off the beach!"
   Event_ShowMessage(16, 0);
   Actor_RefreshSelectorById(17);
   Actor_RefreshSelectorById(18);
@@ -423,12 +440,13 @@ askCannon:
   Actor_SetAnimation(18, 3);
   Actor_SetAnimation(17, 3);
   Event_Wait(30);
-  Actor_FaceActor(17, 4, 0);
+  Actor_FaceActor(17, ACTOR_FELIX, 0);
   Actor_SetSpeed(16, 1);
   Actor_SetScript(16, (s32)gLoho_FirstMinerWalksBack);
   FieldCamera_SetSpeed(1.8);
   FieldCamera_MoveTo(542, CAMERA_KEEP, 350, 1);
   FieldCamera_WaitForArrival();
+  // "That boat's yours, isn't it?"
   Event_OpenMessage(17, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0))
     goto answeredNo;
@@ -439,7 +457,7 @@ askCannon:
   FIELD_AT(t189, u16, 452) = (t190 + 1);
   goto crewLeaves;
 fromSouth:
-  Actor_WalkToAndWait(4, 471, 373);
+  Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
   goto inPlace;
 answeredNo:
   Actor_SetAnimation(18, 4);
@@ -465,7 +483,7 @@ crewLeaves:
   Actor_SetAnimation(17, 3);
   Actor_SetAnimation(16, 3);
   Event_Wait(60);
-  FieldActor_WatchAndSetScript(4, 16);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, 16);
   Actor_WalkTo(18, 504, 370);
   Actor_WalkTo(17, 504, 352);
   Actor_SetScript(16, (s32)gLoho_FirstMinerReturns);
@@ -511,6 +529,7 @@ void Loho_TalkAboutBreachedWall(void) {
     Event_SetMessageId((s32)MsgLoho32);
   else
     Event_SetMessageId((s32)MsgLoho55);
+  // "I saw some of the village men carrying the cannon out of town..."
   Event_ShowMessage(11, 0);
 }
 
@@ -519,6 +538,7 @@ void Loho_MindReadMiner(void) {
     Event_SetMessageId((s32)MsgLoho36);
   else
     Event_SetMessageId((s32)MsgLoho56);
+  // "I don't know where they were taking it, but I'm glad the cannon's..."
   Event_ShowMessage(11, 0);
 }
 
@@ -553,9 +573,10 @@ const struct Trigger *Scene_GetEvents(void) {
 void Loho_ReadInnSign(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
-  if (facing == 0xc000)
+  if (facing == FACING_NORTH)
+    // "Felix checked the sign It reads "People staying at the inn can..."
     FieldMessage_Show((s32)MsgLoho57, 1);
 }
 
@@ -577,6 +598,7 @@ void Loho_TalkAboutCommerce(void) {
       Event_SetMessageId((s32)MsgLoho51);
     else
       Event_SetMessageId((s32)MsgLoho17);
+    // "Commerce really took off when we started this mining colony in Loho...."
     Event_ShowMessage(8, 0);
   }
 }
@@ -585,15 +607,16 @@ void Loho_TalkAboutCommerce(void) {
 void Loho_TalkAboutCannon(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
-  if (facing == 0xc000) {
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     if (Event_GetFlag(0xa5f))
       Event_SetMessageId((s32)MsgLoho53);
     else
       Event_SetMessageId((s32)MsgLoho19);
+    // "If you're only here for the cannon, you can forget about it."
     Event_ShowMessage(actor, 0);
   }
 }
@@ -637,7 +660,7 @@ loop:
   work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   Event_PlaySound(SE_MAP_EXIT);
@@ -655,7 +678,7 @@ void Loho_EnterDoor(void) {
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
-  Actor_SetAnimation(party->currentOwner, 2);
+  Actor_SetAnimation(party->currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
@@ -669,17 +692,17 @@ void Loho_ClimbDownLadder(void) {
     Actor_SetPosition(8, 144, 224);
   else
     Actor_SetPosition(8, 224, 224);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(4)->actionFlags &= 0xfe;
+  Actor_GetById(ACTOR_FELIX)->actionFlags &= 0xfe;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
-  Actor_SetDestinationOffset(4, 0, 4);
-  Actor_WaitForMoveById(4);
-  Actor_SetSpriteFlags(Actor_GetById(4), 0);
-  Actor_SetAnimation(4, 13);
-  Actor_SetDestinationOffset(4, 0, 16);
-  Actor_WaitForMoveById(4);
-  Actor_SetAnimation(4, 10);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
+  Actor_SetAnimation(ACTOR_FELIX, 13);
+  Actor_SetDestinationOffset(ACTOR_FELIX, 0, 16);
+  Actor_WaitForMoveById(ACTOR_FELIX);
+  Actor_SetAnimation(ACTOR_FELIX, 10);
   Event_Wait(14);
   Event_PlaySound(SE_MAP_EXIT);
   Import_EventSetExitRequest(value);
@@ -689,8 +712,8 @@ void Loho_ClimbDownLadder(void) {
 void Loho_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, 0, -14);
-  Actor_WalkByAndWait(4, 16, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
+  Actor_WalkByAndWait(ACTOR_FELIX, 16, 0);
   Event_Wait(10);
   Loho_ClimbDownLadder();
 }
@@ -698,8 +721,8 @@ void Loho_StepOntoLadderFacingEast(void) {
 void Loho_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_WalkByAndWait(4, 0, -14);
-  Actor_WalkByAndWait(4, -16, 0);
+  Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
+  Actor_WalkByAndWait(ACTOR_FELIX, -16, 0);
   Event_Wait(10);
   Loho_ClimbDownLadder();
 }
@@ -707,7 +730,7 @@ void Loho_StepOntoLadderFacingWest(void) {
 void Loho_TurnAndClimbDownLadder(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_FaceDirection(4, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   Loho_ClimbDownLadder();
 }

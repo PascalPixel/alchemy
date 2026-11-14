@@ -381,6 +381,7 @@ void ShrineOfTheSeaGod_ExamineStatue(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
+  // "This statue looks a lot like the one in Daila's Sanctum."
   FieldMessage_Show((s32)MsgFieldStatueLikeDailaShrine, 1);
   work->fieldMenu = 1;
   Event_End();
@@ -393,9 +394,12 @@ void ShrineOfTheSeaGod_StartleCompanion(void) {
   ShrineOfTheSeaGod_Jump(11, 256, 20);
   Actor_FaceActorById(11, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)MsgFieldStartledCompanion);
+  // "Wah! You scared me!"
   Event_ShowMessageAndWait(11, 0);
+  // "I thought you were one of the grown-ups from Daila... So, who are you?"
   Event_ShowMessageAndWait(11, 0);
   Actor_SetModeById(11, 4);
+  // "Look, I'm kinda busy trying to help my pal Tavi right now, OK?"
   Event_ShowMessageThenWait(11, 0, 20);
   Actor_SetMovementTypeById(11, gShrineOfTheSeaGod_RikiLooksAround);
   Event_End();
@@ -1210,6 +1214,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgFieldRopeThrownAgain);
+  // "All right! I'm gonna throw the rope again!"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 12, 0);
   ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
   ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
@@ -1218,7 +1223,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Actor_SetHorizontalPositionWithTerrain(14, 272 << 16, 336 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 256, 336);
-  Actor_ArmCallback(14, 0, 0);
+  Actor_ArmCallback(14, FACING_EAST, 0);
   ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_WEST, 40);
   ShrineOfTheSeaGod_ObjTurn(14, 0xd000, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
@@ -1239,7 +1244,7 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   ShrineOfTheSeaGod_Jump(13, 265, 20);
   ShrineOfTheSeaGod_MessagePut(0x800d, 0);
   ShrineOfTheSeaGod_MessagePut(0x400c, 0);
-  Actor_ArmCallback(13, 0, 0);
+  Actor_ArmCallback(13, FACING_EAST, 0);
   FieldEffect_SetAttached(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 13, 0);
@@ -1261,8 +1266,8 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   FieldCamera_MoveWithinMapBounds(264 << 16, -1, 320 << 16, 1);
   FieldCamera_WaitForArrival();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  Actor_ArmCallback(14, 0, 20);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Actor_ArmCallback(14, FACING_EAST, 20);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, ANIM_NOD);
   Motion_SetModeAndWaitAnimation(14, 3);
   Actor_SetModeById(14, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1312,7 +1317,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   ShrineOfTheSeaGod_ObjAngle(14, 0xb000);
   Event_SetMessageId((s32)MsgFieldPraiseRopeWork);
   ShrineOfTheSeaGod_MessagePut(14, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   ShrineOfTheSeaGod_MessagePut(13, 0);
   ShrineOfTheSeaGod_ObjPlace(13, 184 << 16, 168 << 16);
   ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0x8000, 0);
@@ -1398,7 +1403,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   ShrineOfTheSeaGod_ObjTurn(12, 0xb000, 0);
   Actor_Stop(13);
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  Actor_ArmCallback(12, 0xd000, 0);
+  Actor_ArmCallback(12, FACING_NORTH_NORTHEAST, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
   ShrineOfTheSeaGod_ObjAngle(12, 0xb000);
   Actor_Jump(12, 4, 20);
@@ -1509,7 +1514,8 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_ShowEmoteById(gMainRoutineWork.currentOwner, 0x100, 0);
+  Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
   FieldCamera_WaitForArrival();
@@ -1524,7 +1530,7 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
   Actor_WalkToAndWaitById(14, 280, 432);
   Actor_Stop(gMainRoutineWork.currentOwner);
   wait(1);
-  angle = 0x4000;
+  angle = FACING_SOUTH;
   ShrineOfTheSeaGod_ObjPlaceTurn(14, 280 << 16, 328 << 16, angle);
   Actor_SetSpritePriority(14, 2);
   Actor_GetById(14)->priorityFlags |= 1;

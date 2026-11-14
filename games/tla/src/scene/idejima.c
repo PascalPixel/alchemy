@@ -169,43 +169,51 @@ void Idejima_WakeKraden(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
   message = (s32)MsgIdejimaGroan;
   FieldEvent_SetMessageId(message);
+  // "Oooog..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
+  // "Oh... Felix..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   MapGrid_CopyCellAttributes(38, 31, 2, 1, 25, 42);
   actor = Actor_Get(ACTOR_KRADEN);
-  Actor_SetAnimation(ACTOR_KRADEN, 1);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 1);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 1);
   actor->velocityY = px(4);
   actor->motionFlags = 3;
   System_Wait(40);
+  // "Ouch..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceActor(ACTOR_KRADEN, gMainRoutineWork.currentOwner, 0);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "That was quite a blow..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "What happened when that wave hit?"
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 416, 680);
+  // "Felix, look!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 20);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "That wave carried us to the continent!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceActor(ACTOR_KRADEN, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(20);
   Actor_FaceActor(gMainRoutineWork.currentOwner, ACTOR_KRADEN, 0);
+  // "We've hit solid land! Let's go, Felix!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&leader->x)[1],
@@ -230,12 +238,14 @@ void Idejima_WakeJenna(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId(MsgIdejimaAwakeningExclamation);
+  // "What..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "What am I doing down here?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   MapGrid_CopyCellAttributes(38, 31, 2, 1, 17, 46);
   actor = Actor_Get(ACTOR_JENNA);
-  Actor_SetAnimation(ACTOR_JENNA, 1);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
@@ -243,31 +253,37 @@ void Idejima_WakeJenna(void) {
   actor->motionFlags = 3;
   System_Wait(40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Oh... I must have blacked out when the wave hit..."
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 40);
   FieldActor_Jump(ACTOR_JENNA, 4, 20);
+  // "Hey! We've hit land!"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceActor(ACTOR_JENNA, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(20);
   Actor_FaceActor(gMainRoutineWork.currentOwner, ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  // "That wave must have carried us here! What luck!"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   FieldEvent_Wait(40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "Have you checked everyone else? Are they all right?"
   Event_OpenMessage(ACTOR_JENNA, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Actor_SetAnimation(ACTOR_JENNA, 3);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+    // "Great! Then let's go!"
     Event_ShowMessage(ACTOR_JENNA, 0);
   } else {
     gFieldWork->message += 2;
+    // "Then let's go find them and get off this island!"
     Event_ShowMessage(ACTOR_JENNA, 0);
   }
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
-  Actor_SetAnimation(ACTOR_JENNA, 2);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestination(ACTOR_JENNA, ((s16 *)&leader->x)[1],
@@ -288,37 +304,46 @@ void Idejima_WakeSheba(void) {
   Event_ResolvePendingActions(0);
   Motion_SetVarCbAndRefresh(ACTOR_SHEBA, 2);
   Event_SetMessageId(MsgIdejimaSecondGroan);
+  // "Ohhh..."
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 40);
+  // "Nnng."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_SetModeById(ACTOR_SHEBA, 18);
+  // "The wave!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   MapGrid_CopyCellAttributes(38, 31, 2, 1, 14, 40);
   Actor_GetById(ACTOR_SHEBA)->motionFlags = 3;
   Actor_Jump(ACTOR_SHEBA, 4, 0);
-  Actor_SetModeById(ACTOR_SHEBA, 1);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHEBA), 1);
   Event_Wait(20);
   Actor_TurnToFaceEachOther(ACTOR_SHEBA, gMainRoutineWork.currentOwner, 0);
+  // "What happened to the tidal wave?"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "I thought we were done for, but we're all fine..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "And we've run aground!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceActorById(ACTOR_SHEBA, gMainRoutineWork.currentOwner, 0);
   Event_Wait(20);
-  Actor_SetModeById(ACTOR_SHEBA, 3);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  // "That tidal wave turned out to be a stroke of luck!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+  // "I wonder where we are..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);
   Actor_WalkToAndWait(ACTOR_SHEBA, 212, 680);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
+  // "We should take a look around!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_SetModeById(ACTOR_SHEBA, 2);
+  Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_SHEBA, ((s16 *)&leader->x)[1],
@@ -360,6 +385,7 @@ void Idejima_CatchUpWithFelix(void) {
     FieldEvent_ResolvePendingActions(0);
     Idejima_WalkLeaderBack();
     FieldEvent_SetMessageId((s32)MsgIdejimaHeyFelix);
+    // "Hey, Felix!"
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
@@ -373,33 +399,41 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_SetSpeed(ACTOR_KRADEN, 1.6);
     Actor_WalkToAndWait(ACTOR_KRADEN, 212, 680);
     Actor_WalkToAndWait(ACTOR_KRADEN, 192, 712);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
     FieldActor_RefreshSelectorById(ACTOR_KRADEN);
     Actor_RunScriptAndWait(ACTOR_KRADEN, gIdejima_StretchScript);
     FieldActor_Jump(ACTOR_KRADEN, 4, 20);
+    // "You weren't planning on leaving me, were you?"
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    // "Hm?"
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+    // "Well! It's land!"
     Event_ShowMessage(ACTOR_KRADEN, 0);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
+    // "The wave carried us back ashore!"
     Event_ShowMessage(ACTOR_KRADEN, 0);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
+    // "I assume you merely...forgot about me in your excitement?"
     Event_ShowMessage(ACTOR_KRADEN, 0);
-    Actor_SetAnimation(ACTOR_KRADEN, 4);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "Understandable, but you should have waited for me, Felix."
     Event_ShowMessage(ACTOR_KRADEN, 0);
     Actor_WalkToAndWait(ACTOR_KRADEN, 172, 756);
     Actor_FaceEachOther(ACTOR_KRADEN, gMainRoutineWork.currentOwner, 0);
-    Actor_SetAnimation(ACTOR_KRADEN, 3);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+    // "Nevertheless, let us be on our way!"
     Event_ShowMessage(
         SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-    Actor_SetAnimation(ACTOR_KRADEN, 2);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     if (leader != 0)
       Actor_SetDestinationById(ACTOR_KRADEN, ((s16 *)&leader->x)[1],
                                ((s16 *)&leader->z)[1]);
     FieldActor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+    // "Kraden has joined your party."
     Message_ShowCentered((s32)MsgIdejimaHeyFelix + 8, 1);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
     Event_SetFlag(FLAG_IDEJIMA_KRADEN_JOINED);
@@ -412,6 +446,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_SetHorizontalPositionWithTerrain(ACTOR_JENNA, px(312), px(666));
     System_Wait(1);
     FieldEvent_SetMessageId((s32)MsgIdejimaCantBelieveYouTwo);
+    // "I can't believe you two!"
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
     FieldCamera_SetSpeed(0.6);
@@ -428,32 +463,39 @@ void Idejima_CatchUpWithFelix(void) {
     FieldActor_RefreshSelectorById(ACTOR_JENNA);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     FieldActor_Jump(ACTOR_JENNA, 4, 20);
+    // "How could you!?"
     Event_ShowMessage(ACTOR_JENNA, 0);
+    // "Leaving me on that island while you go off exploring on your own!"
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAttachedEffect(ACTOR_KRADEN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    // "And here I was, looking everywhere for you!"
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
+    // "I'm sorry, my dear... Can you ever forgive us?"
     FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+    // "Oh... All right. Just don't leave me alone like that again..."
     Event_ShowMessage(ACTOR_JENNA, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 40);
+    // "Anyway, look! That wave must have carried us to a new continent!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 20);
-    Actor_SetAnimation(ACTOR_KRADEN, 3);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_WalkToAndWait(ACTOR_JENNA, 178, 728);
     Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
+    // "Let's go exploring!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0);
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 20);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_SetScript(ACTOR_KRADEN, gIdejima_JoinTheLeaderScript);
     Actor_RunScriptAndWait(ACTOR_JENNA, gIdejima_JoinTheLeaderScript);
     Event_PrepareActorAndApplyValue(ACTOR_JENNA, 1);
@@ -468,6 +510,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, px(312), px(666));
     System_Wait(1);
     Event_SetMessageId((s32)MsgIdejimaWaitForMe);
+    // "Wa-Wait!"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     FieldCamera_SetSpeed(0.6);
     FieldCamera_MoveTo(168, CAMERA_KEEP, 721, 1);
@@ -477,7 +520,7 @@ void Idejima_CatchUpWithFelix(void) {
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 14, 40);
     Actor_GetById(ACTOR_SHEBA)->motionFlags = 3;
     Actor_Jump(ACTOR_SHEBA, 4, 0);
-    Actor_SetModeById(ACTOR_SHEBA, 1);
+    Actor_SetModeById(ACTOR_SHEBA, ANIM_STAND);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHEBA), 1);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_SHEBA, 1.6);
@@ -485,35 +528,47 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_WalkToAndWait(ACTOR_SHEBA, 192, 712);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
     FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+    // "Aren't you worried about me in the slightest?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    // "Did you rescue me from the lighthouse just to leave me for dead on..."
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
+    // "Now, I'm sure he meant to do no such thing..."
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
+    // "I wonder..."
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
                         EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+    // "Oh, don't give me that sad face... You know I can't stay mad at you..."
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetModeById(ACTOR_SHEBA, 4);
+    Actor_SetModeById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+    // "After all, you did save me, Felix. I won't soon forget that..."
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, 3);
+    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
+    // "But don't leave me behind like that again, OK?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetModeById(ACTOR_KRADEN, 3);
-    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+    Actor_SetModeById(ACTOR_KRADEN, ANIM_NOD);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 40);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 40);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
+    // "So that big wave pushed us aground? Way to go, Nature!"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    // "What's out here, anyway?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 4);
-    Motion_SetModeAndWaitAnimation(ACTOR_KRADEN, 4);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner,
+                                   ANIM_SHAKE_HEAD);
+    Motion_SetModeAndWaitAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "That's what we were about to find out!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, 3);
+    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
+    // "Let's get started, then!"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetModeById(ACTOR_KRADEN, 3);
-    Motion_SetModeAndWaitAnimation(ACTOR_KRADEN, 3);
+    Actor_SetModeById(ACTOR_KRADEN, ANIM_NOD);
+    Motion_SetModeAndWaitAnimation(ACTOR_KRADEN, ANIM_NOD);
     Actor_SetScript(ACTOR_KRADEN, (s32)gIdejima_JoinTheLeaderScript);
     Actor_RunScriptAndWait(ACTOR_SHEBA, (s32)gIdejima_JoinTheLeaderScript);
     Event_PrepareObjectAndApplyValue(ACTOR_SHEBA, 1);
@@ -541,18 +596,20 @@ void Idejima_RunAlexDeparture(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   FieldEvent_SetMessageId((s32)MsgIdejimaWhereHasAlexGone);
+  // "By the way... Where has Alex gone?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 104, 728);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 20);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 20);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  // "He doesn't seem to be anywhere on the island."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Event_AskYesNo(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -565,25 +622,25 @@ void Idejima_RunAlexDeparture(void) {
   Actor_WalkToAndWait(ACTOR_SHEBA, 86, 728);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
-  Actor_SetAnimation(ACTOR_JENNA, 1);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 4);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 1;
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -591,25 +648,25 @@ void Idejima_RunAlexDeparture(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 4);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 20);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Event_OpenMessage(ACTOR_JENNA, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_KRADEN, 0) == 0) {
-    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
     gFieldWork->message += 1;
   } else {
@@ -622,14 +679,14 @@ void Idejima_RunAlexDeparture(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 40);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
@@ -647,7 +704,7 @@ void Idejima_RunAlexDeparture(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -662,36 +719,36 @@ void Idejima_RunAlexDeparture(void) {
   FieldActor_Stop(gMainRoutineWork.currentOwner);
   FieldActor_Stop(ACTOR_KRADEN);
   FieldActor_Stop(ACTOR_JENNA);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(40);
-  Actor_SetAnimation(ACTOR_JENNA, 4);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(ACTOR_SHEBA);
-  Actor_SetAnimation(ACTOR_SHEBA, 4);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
-  Actor_SetAnimation(ACTOR_JENNA, 3);
-  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Event_AskYesNo(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 40);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
-  Actor_SetAnimation(ACTOR_SHEBA, 4);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -703,25 +760,25 @@ void Idejima_RunAlexDeparture(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Event_OpenMessage(ACTOR_JENNA, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Actor_SetAnimation(ACTOR_JENNA, 3);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
     Event_ShowMessage(ACTOR_JENNA, 0);
     gFieldWork->message += 1;
   } else {
     gFieldWork->message += 1;
-    Actor_SetAnimation(ACTOR_JENNA, 4);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     Event_ShowMessage(ACTOR_JENNA, 0);
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 4);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_KRADEN, 4, 20);
@@ -835,28 +892,33 @@ void Idejima_BreakAwayFromGondowan(void) {
   System_Wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 186, 216);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 60);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   FieldEvent_SetMessageId(MsgIdejimaIsThisThePlace);
+  // "This is the place, isn't it?"
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   FieldEvent_AskYesNoWithActorAnimation(ACTOR_JENNA, 0);
   Actor_WaitForAnimationChange(ACTOR_JENNA);
+  // "The peninsula at the end of the road to the west... That's what he..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 80);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 80);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
+  // "This must be Idejima!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 40);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  // "Hm... Menardi said a ship would be here..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldActor_Jump(ACTOR_KRADEN, 4, 0);
+  // "We ought to see if we can find it."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetScript(ACTOR_KRADEN, gIdejima_KradenToTheShipScript);
@@ -868,20 +930,23 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_WalkToAndWait(ACTOR_KRADEN, 258, 172);
+  // "Jenna, it's over here!"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_JENNA, 0.4);
   Actor_WalkToAndWait(ACTOR_JENNA, 242, 172);
   Actor_WalkToAndWait(ACTOR_KRADEN, 248, 156);
   Actor_WalkToAndWait(ACTOR_KRADEN, 226, 164);
   Actor_WalkToAndWait(ACTOR_KRADEN, 228, 180);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 40);
+  // "At first glance, it seems like a normal ship, but..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_WalkToAndWait(ACTOR_KRADEN, 226, 164);
   Actor_WalkToAndWait(ACTOR_KRADEN, 248, 156);
   Actor_WalkToAndWait(ACTOR_KRADEN, 258, 172);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "There's something odd about it..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   FieldActor_Jump(ACTOR_KRADEN, 6, 0);
@@ -889,6 +954,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_JENNA, south, 20);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "Kraden, wait! Oh, I swear! You're like a kid with a new toy!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0, 20);
   Actor_WalkToAndWait(ACTOR_JENNA, 224, 182);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 40);
@@ -899,6 +965,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
   FieldActor_Jump(ACTOR_JENNA, 2, 10);
   FieldActor_Jump(ACTOR_JENNA, 4, 20);
+  // "Hurry up in there!"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0, 40);
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(262, CAMERA_KEEP, 180, 1);
@@ -910,35 +977,46 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 258, 172);
   FieldEvent_Wait(40);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  // "What's wrong?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "It's missing..."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "Hm? What are you talking about?"
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_JENNA, 0, 20);
+  // "The thingie... that makes it go."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   DriftScene_SpawnObject(0xee0000, 0x300000, 0xac0000, 0xe000);
   FieldEvent_Wait(10);
   DriftScene_SpawnObject(0xf60000, 0x300000, 0xac0000, 0x2000);
   FieldEvent_Wait(30);
+  // "What do you mean? What's so important about this...thingie?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
+  // "The boat can't move without it..."
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 20);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_WalkToAndWait(ACTOR_JENNA, 248, 148);
+  // "That Menardi! She tricked us!"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Tricked us?"
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, south, 0);
+  // "Yeah, by passing this dud boat off on us!"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "There's no trick. If this boat is a dud, how did it get here in the..."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Oh, right."
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 244, 170);
@@ -958,18 +1036,24 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 258, 170);
   FieldEvent_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  // "It must have been the orb..."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "What orb?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 20);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "Don't you remember that crystal Saturos was carrying?"
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  Actor_SetAnimation(ACTOR_JENNA, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  // "That big, black pearl thing?"
   Event_ShowMessage(ACTOR_JENNA, 0);
+  // "I'm certain he said he could move the ship with it."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
+  // "Jenna, Kraden!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX,
                     0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
@@ -978,31 +1062,39 @@ void Idejima_BreakAwayFromGondowan(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_ALEX), 0);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 40);
-  Actor_SetAnimation(ACTOR_ALEX, 3);
+  Actor_SetAnimation(ACTOR_ALEX, ANIM_NOD);
+  // "There you are."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX,
                     0);
   Actor_SetSpeed(ACTOR_ALEX, 0.8);
   Actor_WalkToAndWait(ACTOR_ALEX, 216, 164);
   Actor_WalkToAndWait(ACTOR_ALEX, 234, 160);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 20);
+  // "I see you've found the boat."
   Event_ShowMessage(ACTOR_ALEX, 0);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHEAST, 0);
+  // "We set sail as soon as the beacon has been fired, correct?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH + FACING_STEP, 20);
-  Actor_SetAnimationAndWait(ACTOR_JENNA, 3);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 20);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  // "Strange..."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
+  // "What is it?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0);
+  // "The beacon... It hasn't been lit yet."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHEAST, 40);
+  // "You're right... Why is it taking so long?"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
+  // "And why hasn't my brother returned?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 80);
   Event_FinishScreenTransition();
@@ -1043,47 +1135,62 @@ void Idejima_FindFelixAndSheba(void) {
   Event_WaitTransitionFrames();
   FieldEvent_Wait(120);
   FieldEvent_SetMessageId((s32)MsgIdejimaHowLongWillWeDrift);
+  // "Oh, Kraden... How long will this island continue to drift?"
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 40);
+  // "I don't know... I wish you could tell me."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  // "Sheesh... You're no help in times like this."
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
+  // "Hey, I'm hungry..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
+  // "How can you even think about food?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 80);
+  // "I wonder what happened to my brother..."
   Event_ShowMessage(ACTOR_JENNA, 0);
+  // "I can't be certain, but it looks like they lit the Venus beacon."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  // "Yeah, I know. You don't have to tell me that. That's how we wound up..."
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
+  // "My, aren't you cranky today, Jenna!"
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  // "Well, I suppose you're just worried about Felix."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Isaac and the others must have been at the lighthouse, too."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 20);
+  // "I suspect you're right..."
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "I miss them... Isaac... Felix..."
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetSpeed(ACTOR_ALEX, 0.8);
   Actor_WalkToAndWait(ACTOR_ALEX, 304, 172);
   Actor_WalkToAndWait(ACTOR_ALEX, 224, 172);
   Actor_WalkToAndWait(ACTOR_ALEX, 208, 192);
+  // "Come with me."
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
+  // "There is something I wish to show you."
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_SetScript(ACTOR_ALEX, gIdejima_AlexLeadsTheWayScript);
   FieldEvent_Wait(40);
-  Actor_SetAnimation(ACTOR_KRADEN, 1);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 1);
   FieldActor_Jump(ACTOR_KRADEN, 4, 20);
-  Actor_SetAnimation(ACTOR_JENNA, 1);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
   FieldActor_Jump(ACTOR_JENNA, 4, 20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 40);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
@@ -1103,7 +1210,7 @@ void Idejima_FindFelixAndSheba(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 7, 13, 2, 12, 8, 9, 2, 4, 1,
                                     0);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetScript(ACTOR_KRADEN, gIdejima_KradenRunsToFelixScript);
@@ -1113,7 +1220,7 @@ void Idejima_FindFelixAndSheba(void) {
                     0);
   FieldActor_Jump(ACTOR_JENNA, 4, 10);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0, 40);
   gFieldWork->transitionFrames = 120;
   Event_FinishScreenTransition();
@@ -1131,16 +1238,16 @@ void Idejima_RideTheTidalWave(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   DriftScene_Prepare();
-  a3000 = 0x3000;
+  a3000 = FACING_SOUTH_SOUTHEAST;
   Actor_SetPositionAndFacing(ACTOR_KRADEN, px(314), px(200), a3000);
-  aD000 = 0xd000;
+  aD000 = FACING_NORTH_NORTHEAST;
   Actor_SetPositionAndFacing(ACTOR_ALEX, px(328), px(240), aD000);
-  a4000 = 0x4000;
+  a4000 = FACING_SOUTH;
   Actor_SetPositionAndFacing(ACTOR_JENNA, px(340), px(200), a4000);
   Actor_SetPositionAndFacing(ACTOR_SHEBA, px(342), px(230), FACING_EAST);
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
-  a8000 = 0x8000;
+  a8000 = FACING_WEST;
   Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, px(312), px(230),
                              a8000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
@@ -1150,16 +1257,19 @@ void Idejima_RideTheTidalWave(void) {
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId(MsgIdejimaThoughtTheyWereInsideLighthouse);
+  // "I thought Felix and Sheba were still inside the lighthouse."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
+  // "It's miraculous..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
-  Actor_SetAnimation(ACTOR_JENNA, 4);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "Miracle or no, I'm just happy my brother's alive."
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Actor_FaceDirection(ACTOR_ALEX, aD000, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_KRADEN, 9, 1, 7, 6, 10, 12, 16, 18,
                                     11, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -1177,13 +1287,13 @@ void Idejima_RideTheTidalWave(void) {
   Actor_SetAnimation(ACTOR_SHEBA, 18);
   FieldEvent_Wait(40);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 40);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 40);
   Actor_Get(ACTOR_SHEBA)->actionFlags &= 254;
   Actor_WalkTo(ACTOR_SHEBA, 340, 226);
   FieldActor_Jump(ACTOR_SHEBA, 4, 0);
-  Actor_SetAnimation(ACTOR_SHEBA, 1);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 1);
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_JENNA,
@@ -1193,7 +1303,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_Get(ACTOR_SHEBA)->actionFlags |= 1;
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldActor_RefreshSelectorById(ACTOR_SHEBA);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(40);
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_SHEBA);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_SHEBA);
@@ -1211,12 +1321,12 @@ void Idejima_RideTheTidalWave(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 4);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_Jump(ACTOR_JENNA, 4, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, a8000, 20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);
   Actor_WalkToAndWait(ACTOR_SHEBA, 348, 222);
@@ -1232,7 +1342,7 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 4);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
@@ -1243,15 +1353,15 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   FieldActor_RefreshSelectorById(ACTOR_SHEBA);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   FieldActor_RefreshSelectorById(ACTOR_SHEBA);
-  Actor_SetAnimation(ACTOR_SHEBA, 4);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 20);
   Actor_RunRepeatedMotion(gMainRoutineWork.currentOwner, 2);
   FieldEvent_Wait(20);
@@ -1261,7 +1371,7 @@ void Idejima_RideTheTidalWave(void) {
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   FieldActor_RefreshSelectorById(ACTOR_SHEBA);
-  Actor_SetAnimation(ACTOR_SHEBA, 3);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -1271,11 +1381,11 @@ void Idejima_RideTheTidalWave(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
   FieldActor_StartRepeatedMotion(gMainRoutineWork.currentOwner, 3);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 20);
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 42);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, a8000, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
@@ -1284,7 +1394,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 254;
   Actor_WalkTo(gMainRoutineWork.currentOwner, 314, 226);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   leader->scaleX = Q16_ONE;
   FieldEvent_Wait(20);
@@ -1299,13 +1409,13 @@ void Idejima_RideTheTidalWave(void) {
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 20);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, a3000, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_ShowMessage(ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, a8000, 40);
@@ -1320,10 +1430,10 @@ void Idejima_RideTheTidalWave(void) {
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, a8000, 20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
-  Actor_SetAnimation(ACTOR_KRADEN, 3);
-  Actor_SetAnimation(ACTOR_JENNA, 3);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
-  Actor_SetAnimationAndWait(ACTOR_SHEBA, 3);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_ALEX, 1.6);
   Actor_WalkToAndWait(ACTOR_ALEX, 368, 256);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
@@ -1420,11 +1530,12 @@ void Idejima_FelixWakes(void) {
   FelixWake_EndStep();
   FelixWake_WaitForButton();
   FelixWake_StartStep();
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.currentOwner), 1);
   System_Wait(1);
   FieldActor_Jump(gMainRoutineWork.currentOwner, 4, 20);
   FieldEvent_SetMessageId((s32)MsgIdejimaCheckForInjuries);
+  // "Do you want to check yourself for injuries?"
   Event_OpenMessage(ACTOR_NARRATOR, 0);
   System_Wait(1);
   answer =
@@ -1444,7 +1555,7 @@ void Idejima_FelixWakes(void) {
     FelixWake_StartStep();
     Event_ShowMessage(ACTOR_NARRATOR, 0);
     System_Wait(1);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
     FelixWake_EndStep();
     FieldEvent_Wait(20);
     FelixWake_StartStep();
@@ -1460,7 +1571,7 @@ void Idejima_FelixWakes(void) {
     FelixWake_StartStep();
     Event_ShowMessage(ACTOR_NARRATOR, 0);
     System_Wait(1);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   } else {
     Actor_WaitForAnimationChange(leader);
     gFieldWork->message += 2;
@@ -1470,7 +1581,7 @@ void Idejima_FelixWakes(void) {
     FieldEvent_Wait(20);
     FelixWake_StartStep();
     Event_ShowMessage(ACTOR_NARRATOR, 0);
-    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, 3);
+    Actor_SetAnimationAndWait(gMainRoutineWork.currentOwner, ANIM_NOD);
   }
   Actor_SetPosition(ACTOR_NARRATOR, 0, 0);
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
@@ -1720,13 +1831,18 @@ u32 gIdejima_GoAfterAlexScript[] = {
 };
 
 struct SceneEntrance gIdejimaEntrances[] = {
-    {0, -1, 172, 0, 149, 0x4000, 0, -1, -1, -1, -1, 0},
-    {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
 };
 
 u32 gIdejimaExits[] = {
-    9, 0x303009, 0x401002, 0xb40002, 0xc03000, 0xd41002,
-    511,
+    SCENE_EXITS(Idejima),
+    SCENE_EXIT(3, Idejima, 3),
+    SCENE_EXIT(4, WorldMap, 1),
+    SCENE_EXIT(11, WorldMap, 64),
+    SCENE_EXIT(12, Title, 3),
+    SCENE_EXIT(13, WorldMap, 65),
+    SCENE_EXITS_END,
 };
 
 struct ActorPlacement gIdejimaPlacements[] = {

@@ -179,7 +179,7 @@ loop:
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   gFieldWork->transition = 0x204;
   Event_End();
 }
@@ -593,7 +593,7 @@ void AnkohlRuins_PushedOffLedge(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STILL);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   object->motionFlags = 0;
@@ -821,7 +821,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   s32 row;
   s16 n;
 
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STILL);
   m = work->level >> 19;
   leader->motionFlags = 0;
   MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
@@ -903,7 +903,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   s16 m;
   s16 n;
 
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STILL);
   level = work->level >> 19;
   leader->motionFlags = 0;
   MapGrid_SetShakeFixed(0x50000, 0x50000, 0x10000);

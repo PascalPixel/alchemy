@@ -24,6 +24,14 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
+/// Set once Galahad has met the party and warned it of Isaac's enemies.
+#define FLAG_MIKASALLA_GALAHAD_MET 0xa39
+/// Set if the party told Galahad it knows Isaac.
+#define FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC FLAG_AREA_TEMP_40
+/// Set as Galahad meets the party, for this visit: he stays in the inn until
+/// the party leaves the area.
+#define FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT FLAG_AREA_TEMP_41
+
 extern struct ActorPlacement gMikasallaInteriors_InnPlacements[];
 extern struct ActorPlacement gMikasallaInteriors_SanctumPlacements[];
 extern struct Trigger gMikasallaInteriors_InnTriggers[];
@@ -56,6 +64,7 @@ s32 MikasallaInteriors_MindReadWerewolfWonder(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors18);
+  // "I wonder if there are werewolves beyond those in Garoh... I also..."
   Event_ShowMessage(8, 0);
   Event_End();
   return 0;
@@ -67,6 +76,7 @@ s32 MikasallaInteriors_MindReadIslanderComplaints(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors32);
+  // "Whenever visitors come out, the islanders start to complain about..."
   Event_ShowMessage(9, 0);
   Event_End();
   return 0;
@@ -85,6 +95,7 @@ void MikasallaInteriors_AskAreYouExplorer(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors03);
+  // "Hey, mister! Are you an explorer?"
   Event_OpenMessage(10, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
@@ -108,6 +119,7 @@ void MikasallaInteriors_TalkToMerchant(s32 actor) {
     Shop_Run(13, actor);
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors11);
+    // "We only have a small shop here. I used to specialize in items... But..."
     Event_ShowMessage(actor, 0);
   }
 }
@@ -125,6 +137,7 @@ void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors14);
+    // "You've come a long way, friends. Stay a while, and rest your feet."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -143,6 +156,7 @@ void MikasallaInteriors_AskBeenToGaroh(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors17);
+    // "Have you been to Garoh?"
     Event_OpenMessage(actor, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
@@ -169,6 +183,7 @@ void MikasallaInteriors_TalkAboutIslandLife(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors29);
+    // "This little island must seem quite boring to you sophisticated..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -186,6 +201,7 @@ void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors27);
+    // "Even out in these far-off shores, people need the services and hope..."
     Event_ShowMessage(actor, 0);
     Event_End();
   }
@@ -198,7 +214,8 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
-             (Event_GetFlag(0xa39) && !Event_GetFlag(FLAG_AREA_TEMP_41)) ||
+             (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&
+              !Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT)) ||
              Event_GetFlag(34))
       Actor_SetPosition(18, 0, 0);
     else
@@ -233,8 +250,8 @@ void MikasallaInteriors_MeetGalahad(void);
 /// Galahad, in the inn in a linked game, tells of Isaac's enemies once he has
 /// met the party.
 void MikasallaInteriors_TalkToGalahad(void) {
-  if (Event_GetFlag(0xa39)) {
-    FieldEvent_SetMessageId(Event_GetFlag(FLAG_AREA_TEMP_40)
+  if (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
+    FieldEvent_SetMessageId(Event_GetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC)
                                 ? (s32)MsgMikasallaInteriors20
                                 : (s32)MsgMikasallaInteriors21);
     Event_ShowMessage(18, 0);
@@ -244,41 +261,46 @@ void MikasallaInteriors_TalkToGalahad(void) {
 }
 
 void MikasallaInteriors_MindReadGalahad(void) {
-  if (!Event_GetFlag(0xa39)) {
+  if (!Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
     MikasallaInteriors_MeetGalahad();
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriors22);
+    // "I fear what might happen if the three find Isaac before I can warn..."
     Event_ShowMessage(18, 0);
   }
 }
 
 /// Galahad introduces himself, asks whether the party knows Isaac, and warns
-/// that the three gladiators Isaac beat are seeking revenge (flags 0xa39 and
-/// 0x341; 0x340 if the party says it knows him).
+/// that the three gladiators Isaac beat are seeking revenge.
 void MikasallaInteriors_MeetGalahad(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriors19);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(18, gMainRoutineWork.currentOwner, 0);
+  // "Forgive my manners..."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_SetAnimation(18, 4);
   FieldEvent_Wait(15);
+  // "No, please... Do not fear me."
   Event_ShowMessage(18, 0);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  // "I am the warrior Galahad. I am looking for someone, and I need your..."
   Event_OpenMessage(18, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
+    // "You do? I must warn Sir Isaac that he is in danger most grievous......"
     Event_ShowMessage(18, 0);
-    Event_SetFlag(FLAG_AREA_TEMP_40);
+    Event_SetFlag(FLAG_MIKASALLA_TOLD_GALAHAD_OF_ISAAC);
   } else {
     gFieldWork->message += 1;
+    // "A pity... The one I seek won a battle at Colosso, in Tolbi. He..."
     Event_ShowMessage(18, 0);
   }
-  Event_SetFlag(0xa39);
-  Event_SetFlag(FLAG_AREA_TEMP_41);
+  Event_SetFlag(FLAG_MIKASALLA_GALAHAD_MET);
+  Event_SetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT);
   Event_End();
 }
 

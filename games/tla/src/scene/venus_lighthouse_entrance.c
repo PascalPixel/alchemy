@@ -1,8 +1,17 @@
 /// @file
-/// Outside the Venus Lighthouse, at the start of the prologue: Jenna and Kraden
-/// come out of the lighthouse, Tolbi's soldiers and the Ruffians close in,
-/// and Psynergy hurls two of them skyward on columns of rising earth before the
-/// party heads west for the meeting spot.
+/// Outside the Venus Lighthouse, where the prologue hands the story to Jenna.
+/// Felix has left the group, and Jenna and Kraden come out of the lighthouse
+/// alone:
+///
+/// - Two birds land below the door (VenusLighthouseEntrance_BirdsLand) and fly
+///   off as the party walks past (VenusLighthouseEntrance_BirdsFlyOff).
+/// - Tolbi's soldiers and the workmen of Lalivero close in. Alex arrives, sends
+///   Jenna and Kraden west to Idejima, hurls two soldiers skyward with Psynergy
+///   and drives the rest off (VenusLighthouseEntrance_SoldiersAmbushParty).
+/// - On the road west a Ruffian left to wait for backup fights the two
+///   (VenusLighthouseEntrance_RuffianWaitsForBackup). A lost battle in the
+///   prologue wakes them by the door, with Alex come back for them
+///   (VenusLighthouseEntrance_WakeUp).
 
 #include "battle/battle.h"
 #include "debug.h"
@@ -31,6 +40,59 @@
 #include "call.h"
 #include "system/iwram_call.h"
 #include "system/heap_release.h"
+#include "field_sprite.h"
+#include "text/msg_ids.h"
+
+/// Set as Tolbi's soldiers ambush the party; the soldiers and workmen are gone
+/// from then on.
+#define FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN 0x890
+/// Set as the birds land the first time the party comes out of the lighthouse.
+#define FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED 0x891
+/// Set as the birds fly off; they are gone from then on.
+#define FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN 0x892
+/// Set as the party comes back from beating the Ruffian who waited for backup;
+/// he then lies beaten by the road.
+#define FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN 0x893
+
+/// The ways into the scene that its set-up answers.
+enum VenusLighthouseEntranceEntrance {
+  /// Out of the lighthouse's door; the birds land the first time.
+  ENTRANCE_FROM_LIGHTHOUSE = 9,
+  /// Where the prologue hands the party to Jenna: Felix, Sheba and Piers leave
+  /// it.
+  ENTRANCE_JENNA_TAKES_OVER = 90,
+  /// After a lost battle in the prologue: Jenna wakes by the door.
+  ENTRANCE_DEFEAT = 98,
+  /// Back from the Ruffian's battle.
+  ENTRANCE_AFTER_BATTLE = 99
+};
+
+/// The scene's placed actors, in the rows of gActorPlacements.
+enum VenusLighthouseEntranceActorId {
+  ACTOR_KRADEN = ACTOR_FIRST_PLACED,
+  ACTOR_ALEX,
+  /// The two birds by the door.
+  // XXX: birds, read from their flight and landing; a render of entrance 9
+  // would settle it.
+  ACTOR_WEST_BIRD,
+  ACTOR_EAST_BIRD,
+  /// Tolbi's soldiers: the two Alex hurls skyward, the two who flee before
+  /// him and the one sent to Lalivero for backup.
+  ACTOR_SHOUTING_SOLDIER,
+  ACTOR_SURPRISED_SOLDIER,
+  ACTOR_DOUBTING_SOLDIER,
+  ACTOR_SOLDIER_CAPTAIN,
+  ACTOR_SOLDIER_SENT_FOR_BACKUP,
+  /// The workmen of Lalivero who come looking for Sheba: four who run from
+  /// Alex, and the one their boss sends to the caves.
+  ACTOR_SCOLDING_WORKMAN,
+  ACTOR_INDIGNANT_WORKMAN,
+  ACTOR_EAGER_WORKMAN,
+  ACTOR_WORKMAN_BOSS,
+  ACTOR_WORKMAN_SENT_TO_CAVES,
+  /// The Ruffian left on the road west to wait for backup.
+  ACTOR_WAITING_RUFFIAN
+};
 
 struct Actor;
 struct GlowSprite;
@@ -50,13 +112,11 @@ void VenusLighthouseEntrance_UpdateDust(void);
 
 void VenusLighthouseEntrance_BirdsFlyOff(void);
 
-void VenusLighthouseEntrance_ThievesAttack(void);
+void VenusLighthouseEntrance_SoldiersAmbushParty(void);
 
-void VenusLighthouseEntrance_ThiefWaitsForBackup(void);
+void VenusLighthouseEntrance_RuffianWaitsForBackup(void);
 
 void VenusLighthouseEntrance_PointToMeetingSpot(void);
-
-#include "text/msg_ids.h"
 
 /// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play.
 struct DustPuffState {
@@ -98,10 +158,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
   Field_StartColorTransition(8, 0x4084);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(Actor_Get(5), 2);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), 2);
   FieldEvent_Wait(20);
   VenusLighthouseEntrance_BlastActorSkyward(object);
-  BattleEffect_SetObjectUpdateMode(Actor_Get(5), 0);
+  BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_JENNA), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(8);
@@ -144,79 +204,72 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void VenusLighthouseEntrance_BirdsLand(void);
 void VenusLighthouseEntrance_WakeUp(void);
 
 s32 Scene_Initialize(void) {
-  s32 t37;
-  s32 t0;
+  struct Actor *ruffian;
+  struct Actor *leader;
 
-  gFieldWork->transition = 0x100;
-  t0 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
-  FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
-  Actor_SetAnimation(10, 5);
-  FieldActor_SetSpritePriority(10, 1);
-  Actor_SetAnimation(11, 5);
-  FieldActor_SetSpritePriority(11, 1);
-  FieldActor_SetSpritePriority(14, 2);
-  FieldActor_SetSpritePriority(19, 2);
-  if (Event_GetFlag(0x892)) {
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(11, 0, 0);
+  gFieldWork->transition = 256;
+  leader = Actor_Get(gMainRoutineWork.currentOwner);
+  leader->priorityFlags |= 0x20;
+  Actor_SetAnimation(ACTOR_WEST_BIRD, 5);
+  FieldActor_SetSpritePriority(ACTOR_WEST_BIRD, 1);
+  Actor_SetAnimation(ACTOR_EAST_BIRD, 5);
+  FieldActor_SetSpritePriority(ACTOR_EAST_BIRD, 1);
+  FieldActor_SetSpritePriority(ACTOR_DOUBTING_SOLDIER, 2);
+  FieldActor_SetSpritePriority(ACTOR_EAGER_WORKMAN, 2);
+  if (Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN)) {
+    Actor_SetPosition(ACTOR_WEST_BIRD, 0, 0);
+    Actor_SetPosition(ACTOR_EAST_BIRD, 0, 0);
   }
-  if (Event_GetFlag(0x890)) {
-    Actor_SetPosition(12, 0, 0);
-    Actor_SetPosition(13, 0, 0);
-    Actor_SetPosition(14, 0, 0);
-    Actor_SetPosition(15, 0, 0);
-    Actor_SetPosition(16, 0, 0);
-    Actor_SetPosition(17, 0, 0);
-    Actor_SetPosition(18, 0, 0);
-    Actor_SetPosition(19, 0, 0);
-    Actor_SetPosition(20, 0, 0);
-    Actor_SetPosition(21, 0, 0);
+  if (Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN)) {
+    Actor_SetPosition(ACTOR_SHOUTING_SOLDIER, 0, 0);
+    Actor_SetPosition(ACTOR_SURPRISED_SOLDIER, 0, 0);
+    Actor_SetPosition(ACTOR_DOUBTING_SOLDIER, 0, 0);
+    Actor_SetPosition(ACTOR_SOLDIER_CAPTAIN, 0, 0);
+    Actor_SetPosition(ACTOR_SOLDIER_SENT_FOR_BACKUP, 0, 0);
+    Actor_SetPosition(ACTOR_SCOLDING_WORKMAN, 0, 0);
+    Actor_SetPosition(ACTOR_INDIGNANT_WORKMAN, 0, 0);
+    Actor_SetPosition(ACTOR_EAGER_WORKMAN, 0, 0);
+    Actor_SetPosition(ACTOR_WORKMAN_BOSS, 0, 0);
+    Actor_SetPosition(ACTOR_WORKMAN_SENT_TO_CAVES, 0, 0);
   }
-  if (gMainRoutineWork.entrance == 9) {
-    if (!Event_GetFlag(0x891)) {
+  if (gMainRoutineWork.entrance == ENTRANCE_FROM_LIGHTHOUSE) {
+    if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       VenusLighthouseEntrance_BirdsLand();
       Event_End();
     }
   }
-  if (gMainRoutineWork.entrance == 0x62) {
+  if (gMainRoutineWork.entrance == ENTRANCE_DEFEAT) {
     gMainRoutineWork.secondary = 1;
     gMainRoutineWork.entrance = 1;
     Party_RestoreHpPp(1);
     VenusLighthouseEntrance_WakeUp();
   }
-  if (gMainRoutineWork.entrance == 0x63) {
-    Event_SetFlag(0x893);
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+    Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN);
   }
-  if (gMainRoutineWork.entrance == 0x5a) {
-    gMainRoutineWork.currentOwner = 5;
-    Party_RemoveMember(4);
-    Party_RemoveMember(6);
-    Party_RemoveMember(7);
+  if (gMainRoutineWork.entrance == ENTRANCE_JENNA_TAKES_OVER) {
+    gMainRoutineWork.currentOwner = ACTOR_JENNA;
+    Party_RemoveMember(ACTOR_FELIX);
+    Party_RemoveMember(ACTOR_SHEBA);
+    Party_RemoveMember(ACTOR_PIERS);
     Event_SetDestination((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
-  if (!Event_GetFlag(0x893)) {
-    Actor_SetAnimation(22, 5);
-    FieldActor_SetSpritePriority(22, 1);
+  if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN)) {
+    Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, 5);
+    FieldActor_SetSpritePriority(ACTOR_WAITING_RUFFIAN, 1);
   } else {
-    Actor_SetPosition(22, 40, 248);
-    t37 = ((s32)Actor_Get(22));
-    FIELD_AT(t37, u16, 6) = 0x4000;
-    Actor_FallOverWithAnimationById(22, 0x4000, 0);
-    FieldActor_SetSpritePriority(22, 3);
-    Actor_SetActionCallback(Actor_Get(22), 8);
+    Actor_SetPosition(ACTOR_WAITING_RUFFIAN, 40, 248);
+    ruffian = Actor_Get(ACTOR_WAITING_RUFFIAN);
+    ruffian->facing = FACING_SOUTH;
+    Actor_FallOverWithAnimationById(ACTOR_WAITING_RUFFIAN, FACING_SOUTH, 0);
+    FieldActor_SetSpritePriority(ACTOR_WAITING_RUFFIAN, 3);
+    Actor_SetActionCallback(Actor_Get(ACTOR_WAITING_RUFFIAN), 8);
   }
   return 0;
 }
@@ -226,541 +279,588 @@ s32 Scene_PrepareMap(void) { return 0; }
 s32 Actor_StartScript();
 void FieldCamera_WaitForArrival(void);
 
-/// Two birds (actors 10 and 11) fly down and land as the party comes out of the
-/// lighthouse, the first time (flag 0x891).
-// XXX: birds, read from their flight and landing; a render of entrance 9
-// would settle it.
+/// The two birds fly down and land below the door as the party first comes out
+/// of the lighthouse.
 void VenusLighthouseEntrance_BirdsLand(void) {
-  s32 t1;
-  s32 t3;
-  s32 t9;
-  s32 t16;
+  struct Actor *westBird;
+  struct Actor *eastBird;
 
-  Event_SetFlag(0x891);
-  t1 = ((s32)Actor_Get(10));
-  FIELD_AT((t1 + 0x55), u8, 0) = 0;
-  FIELD_AT(t1, s32, 72) = 0x28f;
-  FIELD_AT(t1, s32, 48) = 0x18000;
-  FIELD_AT(t1, s32, 52) = 0x8000;
-  FieldActor_SetPositionAndResetMotion(t1, px(216), px(96), px(176));
-  t3 = ((s32)Actor_Get(11));
-  FIELD_AT((t3 + 0x55), u8, 0) = 0;
-  FIELD_AT(t3, s32, 72) = 0x7ae;
-  FIELD_AT(t3, s32, 48) = 0x18000;
-  FIELD_AT(t3, s32, 52) = 0x8000;
-  FieldActor_SetPositionAndResetMotion(t3, px(616), px(96), px(152));
+  Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED);
+  westBird = Actor_Get(ACTOR_WEST_BIRD);
+  westBird->motionFlags = 0;
+  westBird->gravity = px(1) / 100;
+  westBird->speedLimit = px(3) / 2;
+  westBird->acceleration = px(1) / 2;
+  FieldActor_SetPositionAndResetMotion(westBird, px(216), px(96), px(176));
+  eastBird = Actor_Get(ACTOR_EAST_BIRD);
+  eastBird->motionFlags = 0;
+  eastBird->gravity = px(3) / 100;
+  eastBird->speedLimit = px(3) / 2;
+  eastBird->acceleration = px(1) / 2;
+  FieldActor_SetPositionAndResetMotion(eastBird, px(616), px(96), px(152));
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 248, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  t9 = ((s32)Actor_Get(10));
-  Actor_SetAnimation(10, 4);
+  westBird = Actor_Get(ACTOR_WEST_BIRD);
+  Actor_SetAnimation(ACTOR_WEST_BIRD, 4);
   Event_PlaySound(SE_165);
-  FieldActor_SetMoveTarget(t9, 352, 8, 176);
-  Actor_StartScript(t9, (s32)gVenusLighthouseEntrance_BirdLands);
+  FieldActor_SetMoveTarget(westBird, 352, 8, 176);
+  Actor_StartScript(westBird, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(25);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 104, 1);
-  t16 = ((s32)Actor_Get(11));
-  Actor_SetAnimation(11, 4);
-  FieldActor_SetMoveTarget(t16, 416, 8, 152);
-  Actor_StartScript(t16, (s32)gVenusLighthouseEntrance_BirdLands);
+  eastBird = Actor_Get(ACTOR_EAST_BIRD);
+  Actor_SetAnimation(ACTOR_EAST_BIRD, 4);
+  FieldActor_SetMoveTarget(eastBird, 416, 8, 152);
+  Actor_StartScript(eastBird, (s32)gVenusLighthouseEntrance_BirdLands);
   FieldEvent_Wait(60);
   Event_PlaySound(SE_165);
-  FieldActor_WaitForMoveById(10);
-  FieldActor_WaitForMoveById(11);
+  FieldActor_WaitForMoveById(ACTOR_WEST_BIRD);
+  FieldActor_WaitForMoveById(ACTOR_EAST_BIRD);
   FieldCamera_WaitForArrival();
 }
 
 extern u32 gVenusLighthouseEntrance_BirdFlies[];
 
-/// The birds take off as the party walks past them (flag 0x892).
+/// The birds take off as the party walks past them.
 void VenusLighthouseEntrance_BirdsFlyOff(void) {
-  s32 t7;
-  s32 t11;
+  struct Actor *westBird;
+  struct Actor *eastBird;
 
-  Event_SetFlag(0x892);
+  Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_165);
-  Actor_SetAnimation(10, 3);
-  FieldActor_SetAnimation(11, 3);
+  Actor_SetAnimation(ACTOR_WEST_BIRD, 3);
+  FieldActor_SetAnimation(ACTOR_EAST_BIRD, 3);
   FieldEvent_Wait(21);
-  t7 = Actor_Get(10);
-  FIELD_AT((t7 + 0x55), u8, 0) = 0;
-  FIELD_AT(t7, s32, 48) = 0x20000;
-  FIELD_AT(t7, s32, 52) = 0x8000;
-  Actor_SetAnimation(10, 4);
-  FieldActor_SetMoveTarget(t7, 616, 96, 176);
-  Actor_StartScript(t7, (s32)gVenusLighthouseEntrance_BirdFlies);
-  t11 = Actor_Get(11);
-  FIELD_AT((t11 + 0x55), u8, 0) = 0;
-  FIELD_AT(t11, s32, 48) = 0x20000;
-  FIELD_AT(t11, s32, 52) = 0x8000;
-  Actor_SetAnimation(11, 4);
-  FieldActor_SetMoveTarget(t11, 120, 96, 176);
-  Call2(Actor_StartScript, t11, (s32)gVenusLighthouseEntrance_BirdFlies);
+  westBird = Actor_Get(ACTOR_WEST_BIRD);
+  westBird->motionFlags = 0;
+  westBird->speedLimit = px(2);
+  westBird->acceleration = px(1) / 2;
+  Actor_SetAnimation(ACTOR_WEST_BIRD, 4);
+  FieldActor_SetMoveTarget(westBird, 616, 96, 176);
+  Actor_StartScript(westBird, (s32)gVenusLighthouseEntrance_BirdFlies);
+  eastBird = Actor_Get(ACTOR_EAST_BIRD);
+  eastBird->motionFlags = 0;
+  eastBird->speedLimit = px(2);
+  eastBird->acceleration = px(1) / 2;
+  Actor_SetAnimation(ACTOR_EAST_BIRD, 4);
+  FieldActor_SetMoveTarget(eastBird, 120, 96, 176);
+  Call2(Actor_StartScript, (s32)eastBird,
+        (s32)gVenusLighthouseEntrance_BirdFlies);
   Event_End();
 }
 
-/// "There they are! Get 'em!"
-void VenusLighthouseEntrance_ThievesAttack(void) {
-  u32 i;
-  s32 p10;
-  s32 p8;
-  s32 rec;
-  u8 *record;
-  s32 v5;
-  s32 callback;
+/// Tolbi's soldiers and the workmen of Lalivero ambush Jenna and Kraden. Alex
+/// arrives, tells them to meet him at Idejima, hurls two soldiers skyward and
+/// sends the workmen running, then follows the last soldiers to Lalivero.
+void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
+  struct Actor *workman;
+  struct Actor *actor;
+  s32 zero;
+  void (*trailDust)(struct Actor *);
 
-  Event_SetFlag(0x890);
+  Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgThereTheyAre);
-  Actor_SetSpeed(12, 1);
-  Actor_SetSpeed(13, 1);
-  FieldEvent_ShowMessageThenWait(12, 0, 0);
-  Actor_WalkToAndWait(5, 376, 280);
+  Actor_SetSpeed(ACTOR_SHOUTING_SOLDIER, 1);
+  Actor_SetSpeed(ACTOR_SURPRISED_SOLDIER, 1);
+  // "There they are! Get 'em!"
+  FieldEvent_ShowMessageThenWait(ACTOR_SHOUTING_SOLDIER, 0, 0);
+  Actor_WalkToAndWait(ACTOR_JENNA, 376, 280);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(20);
-  Actor_WalkTo(5, 376, 360);
+  Actor_WalkTo(ACTOR_JENNA, 376, 360);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
-  FieldActor_WaitForMoveById(5);
+  FieldActor_WaitForMoveById(ACTOR_JENNA);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_RunRepeatedMotion(13, 2);
+  Actor_ShowEmote(ACTOR_SHOUTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Iodem sent us to stand guard here, but..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SHOUTING_SOLDIER, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_SURPRISED_SOLDIER, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(13, 0, 10);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
-  FieldActor_Jump(18, 6, 15);
-  FieldActor_Jump(18, 6, 25);
-  FieldEvent_ShowMessageThenWait(18, 0, 10);
-  Actor_FaceDirection(14, FACING_WEST, 0);
+  // "I never thought we'd actually run into them!"
+  FieldEvent_ShowMessageThenWait(ACTOR_SURPRISED_SOLDIER, 0, 10);
+  Actor_ShowEmote(ACTOR_SCOLDING_WORKMAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Scoundrels! What have you done with Sheba?"
+  FieldEvent_ShowMessageThenWait(ACTOR_SCOLDING_WORKMAN, 0, 10);
+  FieldActor_Jump(ACTOR_INDIGNANT_WORKMAN, 6, 15);
+  FieldActor_Jump(ACTOR_INDIGNANT_WORKMAN, 6, 25);
+  // "Return her now, or you're really going to regret it!"
+  FieldEvent_ShowMessageThenWait(ACTOR_INDIGNANT_WORKMAN, 0, 10);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(14, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_NORTHWEST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(14, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(14, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(14, 0, 10);
-  Actor_RunRepeatedMotion(15, 2);
+  // "Um... Aren't there supposed to be more of them?"
+  FieldEvent_ShowMessageThenWait(ACTOR_DOUBTING_SOLDIER, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_SOLDIER_CAPTAIN, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
+  // "Huh... Maybe they're just the first ones to come out..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SOLDIER_CAPTAIN, 0, 10);
+  Actor_FaceDirection(ACTOR_EAGER_WORKMAN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(19, 0, 10);
-  Actor_SetAnimationAndWait(20, 3);
+  // "Great! That means we've got 'em outnumbered!"
+  FieldEvent_ShowMessageThenWait(ACTOR_EAGER_WORKMAN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_WORKMAN_BOSS, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(20, 0, 10);
-  Actor_SetAnimationAndWait(19, 3);
+  // "We can probably take 'em, you think?"
+  FieldEvent_ShowMessageThenWait(ACTOR_WORKMAN_BOSS, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_EAGER_WORKMAN, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(15, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SOLDIER_CAPTAIN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(16, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SOLDIER_SENT_FOR_BACKUP, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
-  Actor_SetAnimationAndWait(16, 3);
+  // "Go fetch the other Tolbi soldiers still stationed in Lalivero..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SOLDIER_CAPTAIN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_SOLDIER_SENT_FOR_BACKUP, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(16, 0, 10);
-  Actor_WalkByAndWait(16, 64, 0);
-  Actor_SetPosition(16, 0, 0);
+  // "Yes, sir!"
+  FieldEvent_ShowMessageThenWait(ACTOR_SOLDIER_SENT_FOR_BACKUP, 0, 10);
+  Actor_WalkByAndWait(ACTOR_SOLDIER_SENT_FOR_BACKUP, 64, 0);
+  Actor_SetPosition(ACTOR_SOLDIER_SENT_FOR_BACKUP, 0, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(20, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WORKMAN_BOSS, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(21, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WORKMAN_SENT_TO_CAVES, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(20, 0, 10);
-  Actor_SetAnimationAndWait(21, 3);
+  // "And we'll go tell the guys in the caves!"
+  FieldEvent_ShowMessageThenWait(ACTOR_WORKMAN_BOSS, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_WORKMAN_SENT_TO_CAVES, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(21, 0, 10);
-  Actor_WalkByAndWait(21, -64, 64);
-  Actor_SetPosition(21, 0, 0);
+  // "Got it, Boss!"
+  FieldEvent_ShowMessageThenWait(ACTOR_WORKMAN_SENT_TO_CAVES, 0, 10);
+  Actor_WalkByAndWait(ACTOR_WORKMAN_SENT_TO_CAVES, -64, 64);
+  Actor_SetPosition(ACTOR_WORKMAN_SENT_TO_CAVES, 0, 0);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(14, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(15, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(19, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(20, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SOLDIER_CAPTAIN, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_EAGER_WORKMAN, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WORKMAN_BOSS, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 360, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  FieldActor_LaunchFromLeader(8, -16, -16, 0x4000);
-  FieldActor_LaunchFromLeader(9, 16, -16, 0x4000);
-  FieldActor_WaitForMoveById(8);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN, -16, -16, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_ALEX, 16, -16, FACING_SOUTH);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(9, 1);
-  Actor_SetSpeed(8, 1);
+  Actor_SetSpeed(ACTOR_ALEX, 1);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   FieldEvent_Wait(20);
-  Actor_WalkByAndWait(8, 0, 16);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, 16);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(8, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirection(5, FACING_WEST, 0);
+  // "How unfortunate... It looks like an ambush. What should we do, Jenna?"
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(9, 0, 0);
-  Actor_WalkByAndWait(9, 0, 16);
+  // "What do you mean? Look around... We'll have to fight them!"
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "Are you serious?"
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 0);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  // "Jenna, are you really prepared to fight these men?"
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  // "We don't have any other choice. We have to..."
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(9, 0.5);
+  // "Well, then. Allow me to shoulder some of your burden."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_SetSpeed(ACTOR_ALEX, 0.5);
   FieldEvent_Wait(10);
-  Actor_WalkByAndWait(9, 0, 16);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirection(9, FACING_NORTHWEST, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "...Burden?"
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  ((void (*)())FieldMessage_ShowAtActor)(9, 0);
+  // "We regroup along the road leading away from Lalivero. Do you
+  // understand?" Yes: "You don't need to remind us, Alex." No: "It's quite
+  // simple, Jenna."
+  ((void (*)())FieldMessage_ShowAtActor)(ACTOR_ALEX, 0);
   FieldEvent_Wait(10);
-  if (FieldEvent_AskYesNoWithActorAnimation(5, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_JENNA, 0) == 0) {
     FieldEvent_Wait(20);
-    Actor_FaceDirection(5, FACING_WEST, 0);
-    Actor_FaceDirection(8, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
     FieldEvent_Wait(20);
-    Actor_SetAnimationAndWait(8, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     FieldEvent_Wait(20);
-    Actor_SetAnimationAndWait(5, 3);
+    Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
     FieldEvent_Wait(30);
-    Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-    Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
     FieldEvent_Wait(20);
-    FieldEvent_ShowMessageThenWait(8, 0, 10);
+    // "You don't need to remind us, Alex. We know the place."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     gFieldWork->message += 1;
   } else {
     FieldEvent_Wait(30);
-    Actor_FaceDirection(8, FACING_EAST, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
     FieldEvent_Wait(10);
-    Actor_SetAnimationAndWait(8, 4);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     gFieldWork->message += 1;
-    FieldEvent_ShowMessageThenWait(8, 0, 10);
-    Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
+    // "It's quite simple, Jenna. The meeting place is in the direction..."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   }
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  // "Follow this road west, and take the path down through the canyon..."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(8, 3);
+  // "On the other side of that cave, you will find a small peninsula..."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   FieldCamera_MoveTo(312, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirection(17, FACING_WEST, 0);
-  Actor_FaceDirection(18, FACING_EAST, 0);
+  // "Thankfully, only those workmen block your route."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  // "And fortunately..."
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+  // "They don't look too tough..."
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_SCOLDING_WORKMAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_INDIGNANT_WORKMAN, FACING_EAST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(17, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(18, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SCOLDING_WORKMAN, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_INDIGNANT_WORKMAN, FACING_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  FieldEvent_ShowMessageThenWait(18, 0, 10);
+  // "Hello! We can hear you!!!"
+  FieldEvent_ShowMessageThenWait(ACTOR_SCOLDING_WORKMAN, 0, 10);
+  Actor_ShowEmote(ACTOR_INDIGNANT_WORKMAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "That's just plain rude!"
+  FieldEvent_ShowMessageThenWait(ACTOR_INDIGNANT_WORKMAN, 0, 10);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(25);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
+  // "Why don't the two of you escape and leave the Tolbi soldiers to me?"
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
+  // "The two of us? Alone?"
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 360, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(5, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  // "You can use Psynergy, can't you, Jenna?"
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Um... Yes."
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(8, 3);
+  // "Then you'll be fine."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
+  // "We shall reconvene at the peninsula."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 408, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(9, 0.5);
-  Actor_WalkByAndWait(9, 0, 16);
-  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(17, FACING_EAST_NORTHEAST, 0);
-  Actor_FaceDirection(18, FACING_EAST_NORTHEAST, 0);
-  Actor_FaceDirection(19, FACING_EAST_NORTHEAST, 0);
-  Actor_FaceDirection(20, FACING_EAST_NORTHEAST, 0);
+  Actor_SetSpeed(ACTOR_ALEX, 0.5);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SCOLDING_WORKMAN, FACING_EAST_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_INDIGNANT_WORKMAN, FACING_EAST_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_EAGER_WORKMAN, FACING_EAST_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WORKMAN_BOSS, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(12, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHOUTING_SOLDIER, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(12, 0, 10);
-  Actor_SetAnimationAndWait(9, 4);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  Actor_RunRepeatedMotion(13, 2);
+  // "You think you can take on Tolbi's finest on your own, little man?"
+  FieldEvent_ShowMessageThenWait(ACTOR_SHOUTING_SOLDIER, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "I do not wish to inflict unnecessary bloodshed."
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_SURPRISED_SOLDIER, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(13, 0, 10);
-  Actor_FaceDirection(9, FACING_WEST_NORTHWEST, 0);
+  // "Don't wish to... What's that supposed to mean?"
+  FieldEvent_ShowMessageThenWait(ACTOR_SURPRISED_SOLDIER, 0, 10);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_WEST_NORTHWEST, 0);
   FieldEvent_Wait(25);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  // "If you lay a hand on these two, I assure you that you will be made..."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(12, FACING_EAST, 0);
-  Actor_FaceDirection(13, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SHOUTING_SOLDIER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SURPRISED_SOLDIER, FACING_WEST, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(12, 3);
-  Actor_SetAnimationAndWait(13, 3);
+  Actor_SetAnimationAndWait(ACTOR_SHOUTING_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SURPRISED_SOLDIER, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(12, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(13, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SHOUTING_SOLDIER, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SURPRISED_SOLDIER, FACING_NORTHWEST, 0);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(12, 1.2);
-  Actor_SetSpeed(13, 1.2);
-  Actor_WalkByAndWait(12, -26, 8);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
-  Actor_WalkByAndWait(13, -16, -12);
-  Actor_FaceDirection(13, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_SHOUTING_SOLDIER, 1.2);
+  Actor_SetSpeed(ACTOR_SURPRISED_SOLDIER, 1.2);
+  Actor_WalkByAndWait(ACTOR_SHOUTING_SOLDIER, -26, 8);
+  Actor_FaceDirection(ACTOR_SHOUTING_SOLDIER, FACING_NORTH_NORTHWEST, 0);
+  Actor_WalkByAndWait(ACTOR_SURPRISED_SOLDIER, -16, -12);
+  Actor_FaceDirection(ACTOR_SURPRISED_SOLDIER, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
+  // "By advancing, I assume you mean to fight. Permit me to strike the..."
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(9, 8);
+  Actor_SetAnimation(ACTOR_ALEX, 8);
   FieldEvent_Wait(50);
   BattleEffect_StartArcEffect();
-  record = ((u8 *)Actor_GetById(9));
-  BattleEffect_SetObjectUpdateMode((s32)record, 2);
+  actor = Actor_GetById(ACTOR_ALEX);
+  BattleEffect_SetObjectUpdateMode(actor, 2);
   Event_PlaySound(SE_178);
   FieldEvent_Wait(20);
   Field_StartColorTransition(8, 0x4084);
   FieldEvent_Wait(60);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  FieldActor_SetSpritePriority(12, 0);
-  VenusLighthouseEntrance_BlastActorSkyward(12);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  FieldActor_SetSpritePriority(13, 1);
-  VenusLighthouseEntrance_BlastActorSkyward(13);
+  FieldActor_SetSpritePriority(ACTOR_SHOUTING_SOLDIER, 0);
+  VenusLighthouseEntrance_BlastActorSkyward(ACTOR_SHOUTING_SOLDIER);
+  Actor_ShowEmote(ACTOR_SCOLDING_WORKMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_INDIGNANT_WORKMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_EAGER_WORKMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_WORKMAN_BOSS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SURPRISED_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_DOUBTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  0);
+  Actor_ShowEmote(ACTOR_SOLDIER_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  50);
+  FieldActor_SetSpritePriority(ACTOR_SURPRISED_SOLDIER, 1);
+  VenusLighthouseEntrance_BlastActorSkyward(ACTOR_SURPRISED_SOLDIER);
   FieldEvent_Wait(30);
-  record = ((u8 *)Actor_GetById(9));
-  BattleEffect_SetObjectUpdateMode((s32)record, 0);
+  actor = Actor_GetById(ACTOR_ALEX);
+  BattleEffect_SetObjectUpdateMode(actor, 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   Field_StartPaletteTransition(16);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(9, 9);
+  Actor_SetAnimation(ACTOR_ALEX, 9);
   FieldEvent_Wait(30);
-  Actor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(14, 0, 10);
-  Actor_RunRepeatedMotion(15, 2);
+  Actor_ShowEmote(ACTOR_DOUBTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "What was that!?"
+  FieldEvent_ShowMessageThenWait(ACTOR_DOUBTING_SOLDIER, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_SOLDIER_CAPTAIN, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
-  FieldActor_StartRepeatedMotion(14, 3);
-  Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(15, 3);
-  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "I don't know, but whatever he did, it's out of our league!"
+  FieldEvent_ShowMessageThenWait(ACTOR_SOLDIER_CAPTAIN, 0, 10);
+  FieldActor_StartRepeatedMotion(ACTOR_DOUBTING_SOLDIER, 3);
+  Actor_SetAttachedEffect(ACTOR_DOUBTING_SOLDIER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_SOLDIER_CAPTAIN, 3);
+  Actor_SetAttachedEffect(ACTOR_SOLDIER_CAPTAIN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_FaceDirection(14, FACING_WEST, 0);
-  Actor_FaceDirection(15, FACING_WEST, 0);
-  FieldActor_Jump(14, 6, 15);
-  FieldActor_Jump(14, 6, 25);
-  FieldEvent_ShowMessageThenWait(14, 0, 10);
-  Actor_FaceDirection(5, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SOLDIER_CAPTAIN, FACING_WEST, 0);
+  FieldActor_Jump(ACTOR_DOUBTING_SOLDIER, 6, 15);
+  FieldActor_Jump(ACTOR_DOUBTING_SOLDIER, 6, 25);
+  // "You guys deal with him until backup arrives!"
+  FieldEvent_ShowMessageThenWait(ACTOR_DOUBTING_SOLDIER, 0, 10);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(9, 0.8);
-  Actor_WalkByAndWait(9, -16, 16);
-  Actor_FaceDirection(9, FACING_SOUTHWEST, 0);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Oh, so you're next?"
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_SetSpeed(ACTOR_ALEX, 0.8);
+  Actor_WalkByAndWait(ACTOR_ALEX, -16, 16);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHWEST, 0);
   FieldCamera_MoveTo(360, CAMERA_KEEP, 408, 1);
   FieldCamera_WaitForArrival();
-  FieldActor_StartRepeatedMotion(17, 3);
-  Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(18, 3);
-  Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(19, 3);
-  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(20, 3);
-  Actor_SetAttachedEffect(20, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(21, 3);
-  Actor_SetAttachedEffect(21, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_SCOLDING_WORKMAN, 3);
+  Actor_SetAttachedEffect(ACTOR_SCOLDING_WORKMAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_INDIGNANT_WORKMAN, 3);
+  Actor_SetAttachedEffect(ACTOR_INDIGNANT_WORKMAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_EAGER_WORKMAN, 3);
+  Actor_SetAttachedEffect(ACTOR_EAGER_WORKMAN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_WORKMAN_BOSS, 3);
+  Actor_SetAttachedEffect(ACTOR_WORKMAN_BOSS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_WORKMAN_SENT_TO_CAVES, 3);
+  Actor_SetAttachedEffect(ACTOR_WORKMAN_SENT_TO_CAVES,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_SetAnimationAndWait(17, 4);
-  FieldEvent_ShowMessageThenWait(17, 0, 10);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(18, 0, 10);
-  Actor_SetAnimationAndWait(19, 4);
-  FieldEvent_ShowMessageThenWait(19, 0, 10);
-  FieldActor_StartRepeatedMotion(20, 3);
-  Actor_SetAttachedEffect(20, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAnimationAndWait(ACTOR_SCOLDING_WORKMAN, ANIM_SHAKE_HEAD);
+  // "Hey, no need to worry about us!"
+  FieldEvent_ShowMessageThenWait(ACTOR_SCOLDING_WORKMAN, 0, 10);
+  Actor_ShowEmote(ACTOR_INDIGNANT_WORKMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "We're not soldiers... We're not anybody!"
+  FieldEvent_ShowMessageThenWait(ACTOR_INDIGNANT_WORKMAN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_EAGER_WORKMAN, ANIM_SHAKE_HEAD);
+  // "Seriously, there's no way we're gonna face off against you."
+  FieldEvent_ShowMessageThenWait(ACTOR_EAGER_WORKMAN, 0, 10);
+  FieldActor_StartRepeatedMotion(ACTOR_WORKMAN_BOSS, 3);
+  Actor_SetAttachedEffect(ACTOR_WORKMAN_BOSS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(55);
-  Actor_FaceDirection(17, FACING_WEST, 0);
-  Actor_FaceDirection(18, FACING_EAST, 0);
-  Actor_FaceDirection(19, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(20, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SCOLDING_WORKMAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_INDIGNANT_WORKMAN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_EAGER_WORKMAN, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WORKMAN_BOSS, FACING_NORTHEAST, 0);
   FieldEvent_Wait(30);
-  Actor_RunRepeatedMotion(20, 2);
+  Actor_RunRepeatedMotion(ACTOR_WORKMAN_BOSS, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(20, 0, 10);
-  FieldActor_Jump(18, 6, 0);
-  FieldActor_Jump(19, 6, 0);
-  FieldActor_Jump(20, 6, 25);
+  // "Let's get outta here!"
+  FieldEvent_ShowMessageThenWait(ACTOR_WORKMAN_BOSS, 0, 10);
+  FieldActor_Jump(ACTOR_INDIGNANT_WORKMAN, 6, 0);
+  FieldActor_Jump(ACTOR_EAGER_WORKMAN, 6, 0);
+  FieldActor_Jump(ACTOR_WORKMAN_BOSS, 6, 25);
   VenusLighthouseEntrance_StartDust();
-  Actor_SetSpeed(20, 1.8);
-  Actor_SetSpeed(19, 1.8);
-  Actor_SetSpeed(18, 1.8);
-  Actor_SetSpeed(17, 1.8);
-  v5 = 0;
-  rec = ((u8 *)Actor_GetById(20));
-  callback = (s32)VenusLighthouseEntrance_TrailDust;
-  ((struct SparkRecord *)rec)->delay = v5;
+  Actor_SetSpeed(ACTOR_WORKMAN_BOSS, 1.8);
+  Actor_SetSpeed(ACTOR_EAGER_WORKMAN, 1.8);
+  Actor_SetSpeed(ACTOR_INDIGNANT_WORKMAN, 1.8);
+  Actor_SetSpeed(ACTOR_SCOLDING_WORKMAN, 1.8);
+  zero = 0;
+  workman = Actor_GetById(ACTOR_WORKMAN_BOSS);
+  trailDust = VenusLighthouseEntrance_TrailDust;
+  workman->timer = zero;
   {
-    s32 next = 19;
+    s32 next = ACTOR_EAGER_WORKMAN;
 
-    ((struct SparkRecord *)rec)->update = callback;
-    rec = (s32)((u8 *)Actor_GetById(next));
+    workman->update = trailDust;
+    workman = Actor_GetById(next);
   }
-  ((struct SparkRecord *)rec)->delay = v5;
+  workman->timer = zero;
   {
-    s32 next = 18;
+    s32 next = ACTOR_INDIGNANT_WORKMAN;
 
-    ((struct SparkRecord *)rec)->update = callback;
-    rec = (s32)((u8 *)Actor_GetById(next));
+    workman->update = trailDust;
+    workman = Actor_GetById(next);
   }
-  ((struct SparkRecord *)rec)->delay = v5;
+  workman->timer = zero;
   {
-    s32 next = 20;
+    s32 next = ACTOR_WORKMAN_BOSS;
 
-    ((struct SparkRecord *)rec)->update = callback;
+    workman->update = trailDust;
     Actor_SetAnimation(next, 10);
   }
-  Actor_SetAnimation(19, 10);
-  Actor_SetAnimation(18, 10);
-  Actor_SetDestinationOffset(20, -24, 24);
-  Actor_SetDestinationOffset(19, -24, 24);
-  Actor_SetDestinationOffset(18, -24, 24);
-  FieldActor_WaitForMoveById(18);
-  Actor_SetDestination(20, 224, 480);
-  Actor_SetDestination(19, 224, 480);
-  Actor_MoveToAndWait(18, 224, 480);
-  rec = (s32)((u8 *)Actor_GetById(20));
-  ((struct SparkRecord *)rec)->update = v5;
-  rec = (s32)((u8 *)Actor_GetById(19));
-  ((struct SparkRecord *)rec)->update = v5;
-  rec = (s32)((u8 *)Actor_GetById(18));
-  ((struct SparkRecord *)rec)->update = v5;
+  Actor_SetAnimation(ACTOR_EAGER_WORKMAN, 10);
+  Actor_SetAnimation(ACTOR_INDIGNANT_WORKMAN, 10);
+  Actor_SetDestinationOffset(ACTOR_WORKMAN_BOSS, -24, 24);
+  Actor_SetDestinationOffset(ACTOR_EAGER_WORKMAN, -24, 24);
+  Actor_SetDestinationOffset(ACTOR_INDIGNANT_WORKMAN, -24, 24);
+  FieldActor_WaitForMoveById(ACTOR_INDIGNANT_WORKMAN);
+  Actor_SetDestination(ACTOR_WORKMAN_BOSS, 224, 480);
+  Actor_SetDestination(ACTOR_EAGER_WORKMAN, 224, 480);
+  Actor_MoveToAndWait(ACTOR_INDIGNANT_WORKMAN, 224, 480);
+  workman = Actor_GetById(ACTOR_WORKMAN_BOSS);
+  workman->update = zero;
+  workman = Actor_GetById(ACTOR_EAGER_WORKMAN);
+  workman->update = zero;
+  workman = Actor_GetById(ACTOR_INDIGNANT_WORKMAN);
+  workman->update = zero;
   FieldEvent_Wait(1);
-  FieldActor_Jump(17, 6, 15);
-  FieldActor_Jump(17, 6, 25);
-  rec = ((u8 *)Actor_GetById(17));
-  p10 = rec + 100;
-  ((struct SparkRecord *)rec)->delay = v5;
+  FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 6, 15);
+  FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 6, 25);
+  workman = Actor_GetById(ACTOR_SCOLDING_WORKMAN);
+  workman->timer = zero;
   {
-    s32 next = 17;
+    s32 next = ACTOR_SCOLDING_WORKMAN;
 
-    ((struct SparkRecord *)rec)->update = callback;
+    workman->update = trailDust;
     Actor_SetAnimation(next, 10);
   }
-  Actor_SetDestinationOffset(17, -20, 20);
-  FieldActor_WaitForMoveById(17);
-  FieldActor_Jump(17, 4, 0);
-  Actor_SetDestinationOffset(17, -20, 20);
-  FieldActor_WaitForMoveById(17);
-  Actor_SetAnimation(17, 1);
+  Actor_SetDestinationOffset(ACTOR_SCOLDING_WORKMAN, -20, 20);
+  FieldActor_WaitForMoveById(ACTOR_SCOLDING_WORKMAN);
+  FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 4, 0);
+  Actor_SetDestinationOffset(ACTOR_SCOLDING_WORKMAN, -20, 20);
+  FieldActor_WaitForMoveById(ACTOR_SCOLDING_WORKMAN);
+  Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, ANIM_STAND);
   Event_PlaySound(SE_IMPACT);
-  *(s32 *)(rec + 8) += 0x80000;
-  ((struct SparkRecord *)rec)->update = v5;
-  *(s32 *)(rec + 16) += -0x80000;
+  workman->x += px(8);
+  workman->update = zero;
+  workman->z += -px(8);
   {
-    s32 shown = 0xc000;
+    s32 shown = FACING_NORTH;
 
-    ((struct {
-      u8 pad[6];
-      u16 v;
-    } *)rec)
-        ->v = shown;
+    workman->facing = shown;
   }
   {
-    s32 target = *(s32 *)(rec + 80);
-    s32 shown = 0xa000;
+    struct FieldSprite *sprite = workman->sprite;
+    s32 shown = TRIG_TURN * 5 / 8;
 
-    *(u16 *)(target + 18) = shown;
+    sprite->rotation = shown;
   }
   FieldEvent_Wait(55);
-  *(s32 *)(rec + 8) += -0x40000;
-  *(s32 *)(rec + 16) += 0x40000;
+  workman->x += -px(4);
+  workman->z += px(4);
   {
-    s32 shown = 0x4000;
-    s32 target = *(s32 *)(rec + 80);
+    s32 shown = FACING_SOUTH;
+    struct FieldSprite *sprite = workman->sprite;
 
-    ((struct {
-      u8 pad[18];
-      u16 v;
-    } *)target)
-        ->v = v5;
-    ((struct {
-      u8 pad[6];
-      u16 v;
-    } *)rec)
-        ->v = shown;
+    sprite->rotation = zero;
+    workman->facing = shown;
   }
-  FieldActor_Jump(17, 6, 40);
-  Actor_SetAnimation(17, 11);
+  FieldActor_Jump(ACTOR_SCOLDING_WORKMAN, 6, 40);
+  Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, 11);
   Event_PlaySound(SE_CLICK);
   FieldEvent_Wait(14);
   Event_PlaySound(SE_CLICK);
@@ -770,245 +870,272 @@ void VenusLighthouseEntrance_ThievesAttack(void) {
   Event_PlaySound(SE_CLICK);
   FieldEvent_Wait(14);
   FieldEvent_Wait(20);
-  ((struct SparkRecord *)rec)->delay = v5;
+  workman->timer = zero;
   {
-    s32 next = 17;
+    s32 next = ACTOR_SCOLDING_WORKMAN;
 
-    ((struct SparkRecord *)rec)->update = callback;
+    workman->update = trailDust;
     Actor_SetAnimation(next, 10);
   }
-  Actor_MoveToAndWait(17, 224, 472);
+  Actor_MoveToAndWait(ACTOR_SCOLDING_WORKMAN, 224, 472);
   FieldEvent_Wait(30);
-  ((struct SparkRecord *)rec)->update = v5;
-  Actor_SetPosition(20, 0, 0);
-  Actor_SetPosition(19, 0, 0);
-  Actor_SetPosition(18, 0, 0);
-  Actor_SetPosition(17, 0, 0);
+  workman->update = zero;
+  Actor_SetPosition(ACTOR_WORKMAN_BOSS, 0, 0);
+  Actor_SetPosition(ACTOR_EAGER_WORKMAN, 0, 0);
+  Actor_SetPosition(ACTOR_INDIGNANT_WORKMAN, 0, 0);
+  Actor_SetPosition(ACTOR_SCOLDING_WORKMAN, 0, 0);
   VenusLighthouseEntrance_StopDust();
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
+  // "How undignified... and how shameful."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 408, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   {
-    s32 a0 = 5;
+    s32 a0 = ACTOR_JENNA;
 
     /* FAKEMATCH(dead): an empty once-only block before the angle's load. */
     do {
     } while (0);
     Actor_FaceDirection(a0, FACING_SOUTH, 0);
   }
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(15);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_FaceDirection(14, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(15, FACING_NORTHWEST, 0);
+  // "Jenna, now is your chance. Go to Idejima and wait for me."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SOLDIER_CAPTAIN, FACING_NORTHWEST, 0);
   FieldEvent_Wait(40);
-  Actor_FaceDirection(14, FACING_WEST, 0);
-  Actor_FaceDirection(15, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SOLDIER_CAPTAIN, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(14, 1.5);
-  Actor_WalkByAndWait(14, -32, 0);
-  record = ((u8 *)Actor_GetById(9));
+  Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 1.5);
+  Actor_WalkByAndWait(ACTOR_DOUBTING_SOLDIER, -32, 0);
+  actor = Actor_GetById(ACTOR_ALEX);
   {
-    s32 shown = 0x2000;
+    s32 shown = FACING_SOUTHEAST;
 
-    *(u16 *)((s32)record + 6) = shown;
+    actor->facing = shown;
   }
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  Actor_SetSpeed(9, 1.5);
-  Actor_WalkByAndWait(9, 0, 16);
-  Actor_FaceDirection(9, FACING_EAST, 0);
+  // "I'm not finished with you yet."
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
+  Actor_SetSpeed(ACTOR_ALEX, 1.5);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   FieldEvent_Wait(10);
-  Actor_RunRepeatedMotion(14, 2);
+  Actor_RunRepeatedMotion(ACTOR_DOUBTING_SOLDIER, 2);
   FieldEvent_Wait(10);
-  FieldActor_SetSpritePriority(14, 3);
-  Actor_SetSpeed(14, 2);
-  *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
-  Actor_WalkToAndWait(14, 456, 424);
+  FieldActor_SetSpritePriority(ACTOR_DOUBTING_SOLDIER, 3);
+  Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 2);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
   FieldEvent_Wait(1);
   /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
   do {
   } while (0);
-  *(u8 *)(((u8 *)Actor_GetById(14)) + 90) |= 1;
-  Actor_FaceDirection(14, FACING_SOUTHWEST, 0);
-  Actor_SetSpeed(14, 1);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
+  Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHWEST, 0);
+  Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 1);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  Actor_SetSpeed(9, 0.7);
-  Actor_WalkByAndWait(9, 48, 0);
-  Actor_FaceDirection(9, FACING_EAST_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(8, FACING_SOUTHEAST, 0);
-  Actor_SetSpeed(15, 1);
-  *(u8 *)(((u8 *)Actor_GetById(15)) + 90) &= 254;
-  Actor_WalkToAndWait(15, 456, 440);
+  // "You mentioned backup from Lalivero?"
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
+  Actor_SetSpeed(ACTOR_ALEX, 0.7);
+  Actor_WalkByAndWait(ACTOR_ALEX, 48, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
+  Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 1);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 456, 440);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(15)) + 90) |= 1;
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) |= 1;
   FieldEvent_Wait(10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  Actor_RunRepeatedMotion(14, 2);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "Let's go meet them together, shall we?"
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_DOUBTING_SOLDIER, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(14, 0, 10);
-  Actor_WalkByAndWait(9, 16, 0);
+  // "Hey, pal! When they get here, you'll really be in for it!"
+  FieldEvent_ShowMessageThenWait(ACTOR_DOUBTING_SOLDIER, 0, 10);
+  Actor_WalkByAndWait(ACTOR_ALEX, 16, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  FieldActor_StartRepeatedMotion(14, 2);
-  Actor_RunRepeatedMotion(15, 2);
+  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Do you honestly believe that even a hundred of you could stop me?"
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
+  FieldActor_StartRepeatedMotion(ACTOR_DOUBTING_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_SOLDIER_CAPTAIN, 2);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(14, 0.5);
-  Actor_SetSpeed(15, 0.5);
-  *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
-  Actor_WalkToAndWait(14, 488, 424);
+  Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 0.5);
+  Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 0.5);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 488, 424);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(14)) + 90) |= 1;
-  *(u8 *)(((u8 *)Actor_GetById(15)) + 90) &= 254;
-  Actor_WalkToAndWait(15, 488, 440);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 488, 440);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(15)) + 90) |= 1;
-  Actor_WalkToAndWait(9, 456, 432);
-  Actor_FaceDirection(9, FACING_EAST, 0);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) |= 1;
+  Actor_WalkToAndWait(ACTOR_ALEX, 456, 432);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  FieldActor_StartRepeatedMotion(14, 3);
-  Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(15, 3);
-  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "How amusing... This I must see."
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0, 10);
+  FieldActor_StartRepeatedMotion(ACTOR_DOUBTING_SOLDIER, 3);
+  Actor_SetAttachedEffect(ACTOR_DOUBTING_SOLDIER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_SOLDIER_CAPTAIN, 3);
+  Actor_SetAttachedEffect(ACTOR_SOLDIER_CAPTAIN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  *(u8 *)(((u8 *)Actor_GetById(14)) + 90) &= 254;
-  Actor_WalkToAndWait(14, 504, 424);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 504, 424);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(14)) + 90) |= 1;
-  Actor_SetPosition(14, 0, 0);
-  *(u8 *)(((u8 *)Actor_GetById(15)) + 90) &= 254;
-  Actor_WalkToAndWait(15, 504, 440);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
+  Actor_SetPosition(ACTOR_DOUBTING_SOLDIER, 0, 0);
+  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 504, 440);
   FieldEvent_Wait(1);
   {
-    u8 *flags = ((u8 *)Actor_GetById(15)) + 90;
+    u8 *flags = ((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90;
     u8 v = *flags | 1;
 
     *flags = v;
   }
-  Actor_SetPosition(15, 0, 0);
+  Actor_SetPosition(ACTOR_SOLDIER_CAPTAIN, 0, 0);
   FieldEvent_Wait(10);
-  Actor_SetSpeed(9, 0.8);
-  Actor_WalkByAndWait(9, 64, 0);
-  Actor_SetPosition(9, 0, 0);
+  Actor_SetSpeed(ACTOR_ALEX, 0.8);
+  Actor_WalkByAndWait(ACTOR_ALEX, 64, 0);
+  Actor_SetPosition(ACTOR_ALEX, 0, 0);
   FieldEvent_Wait(30);
-  FieldCamera_MoveToActorById(5, 1);
+  FieldCamera_MoveToActorById(ACTOR_JENNA, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "They're gone..."
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
+  // "Come on, Jenna... Let's be going."
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   FieldEvent_Wait(10);
-  FieldActor_Jump(8, 4, 0);
-  Actor_FaceDirection(8, FACING_EAST, 0);
+  FieldActor_Jump(ACTOR_KRADEN, 4, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  Actor_FaceDirection(5, FACING_WEST, 0);
+  // "There's nothing standing in our way now!"
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 5, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 80);
+  // "But Felix's party can't carry any more, so they left it behind."
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What is it now?"
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 80);
   FieldEvent_Wait(10);
   {
-    s32 a1 = 0x106;
+    s32 a1 = EMOTE_IN_FRONT | EMOTE_LIGHT_BULB;
     s32 a2 = 40;
-    s32 a0 = 8;
+    s32 a0 = ACTOR_KRADEN;
 
     Actor_ShowEmote(a0, a1, a2);
   }
-  Event_OpenMessage(8, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(5, 0) == 0) {
+  // "Ah... You're worried about hurting any innocents?" Yes: "Well, just try
+  // to hold back when you're fighting." No: "Oh. You must be concerned
+  // about Felix."
+  Event_OpenMessage(ACTOR_KRADEN, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_JENNA, 0) == 0) {
     FieldEvent_Wait(20);
-    FieldEvent_ShowMessageThenWait(8, 0, 10);
+    // "Well, just try to hold back when you're fighting."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     gFieldWork->message += 1;
   } else {
     FieldEvent_Wait(40);
     gFieldWork->message += 1;
-    FieldEvent_ShowMessageThenWait(8, 0, 10);
+    // "Oh. You must be concerned about Felix. We can't do anything to..."
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   }
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirection(8, FACING_EAST, 0);
+  // "Let's get going! To the peninsula!"
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(8, 1.2);
-  Actor_SetAnimation(8, 2);
-  record = (s32)Actor_Get(5);
-  if ((s32)record != 0) {
-    Actor_SetDestination(8, *(s16 *)((s32)record + 10),
-                         *(s16 *)((s32)record + 18));
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  actor = Actor_Get(ACTOR_JENNA);
+  if (actor != NULL) {
+    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&actor->x)[1],
+                         ((s16 *)&actor->z)[1]);
   }
-  FieldActor_WaitForMoveById(8);
-  Actor_SetPosition(8, 0, 0);
-  EventCamera_FollowActor(5, 1);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  EventCamera_FollowActor(ACTOR_JENNA, 1);
   Event_End();
 }
 
-/// "Why do I gotta be the one to wait for backup!?"
-void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
+/// The Ruffian left to wait for backup sees that Alex is not with the two, and
+/// fights them.
+void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgWhyDoI);
-  Actor_WalkToAndWait(5, 72, 266);
-  Actor_FaceDirection(5, FACING_WEST, 0);
+  Actor_WalkToAndWait(ACTOR_JENNA, 72, 266);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(22, 0, 10);
-  FieldActor_SetAnimation(22, 1);
+  // "Why do I gotta be the one to wait for backup!?"
+  FieldEvent_ShowMessageThenWait(ACTOR_WAITING_RUFFIAN, 0, 10);
+  FieldActor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_ShowEmote(ACTOR_WAITING_RUFFIAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(22, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_WAITING_RUFFIAN, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldActor_Jump(22, 6, 15);
-  FieldActor_Jump(22, 6, 35);
-  Actor_FaceDirection(22, FACING_NORTH_NORTHWEST, 0);
+  FieldActor_Jump(ACTOR_WAITING_RUFFIAN, 6, 15);
+  FieldActor_Jump(ACTOR_WAITING_RUFFIAN, 6, 35);
+  Actor_FaceDirection(ACTOR_WAITING_RUFFIAN, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(22, 0xc);
-  FieldEvent_ShowMessageThenWait(22, 0, 0);
-  Actor_SetAnimation(22, 1);
-  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Actor_FaceDirection(22, FACING_EAST, 0);
+  Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, 0xc);
+  // "Yaaah! P-P-Please! Just let me go, and... Hey!"
+  FieldEvent_ShowMessageThenWait(ACTOR_WAITING_RUFFIAN, 0, 0);
+  Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
+  Actor_ShowEmote(ACTOR_WAITING_RUFFIAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                  50);
+  Actor_FaceDirection(ACTOR_WAITING_RUFFIAN, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(22, 0, 10);
-  FieldActor_SetAnimationAndWait(22, 3);
+  // "That scary guy with the blue hair's not with you..."
+  FieldEvent_ShowMessageThenWait(ACTOR_WAITING_RUFFIAN, 0, 10);
+  FieldActor_SetAnimationAndWait(ACTOR_WAITING_RUFFIAN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(22, 1);
-  Actor_WalkByAndWait(22, 16, 0);
+  Actor_SetSpeed(ACTOR_WAITING_RUFFIAN, 1);
+  Actor_WalkByAndWait(ACTOR_WAITING_RUFFIAN, 16, 0);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(22, 0, 10);
-  Actor_SetSpeed(22, 2);
-  FieldActor_Jump(22, 6, 15);
-  FieldActor_Jump(22, 6, 25);
-  FieldActor_Jump(22, 6, 0);
-  Actor_WalkBy(22, 26, 0);
+  // "Great! Now, you'll see what I'm really made of!"
+  FieldEvent_ShowMessageThenWait(ACTOR_WAITING_RUFFIAN, 0, 10);
+  Actor_SetSpeed(ACTOR_WAITING_RUFFIAN, 2);
+  FieldActor_Jump(ACTOR_WAITING_RUFFIAN, 6, 15);
+  FieldActor_Jump(ACTOR_WAITING_RUFFIAN, 6, 25);
+  FieldActor_Jump(ACTOR_WAITING_RUFFIAN, 6, 0);
+  Actor_WalkBy(ACTOR_WAITING_RUFFIAN, 26, 0);
   FieldEvent_Wait(8);
-  Actor_SetAnimation(22, 1);
+  Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance,
                                        99);
   Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 98);
@@ -1017,134 +1144,147 @@ void VenusLighthouseEntrance_ThiefWaitsForBackup(void) {
   Event_End();
 }
 
-/// "Not that way, Jenna! The meeting spot is west of here."
+/// Kraden jumps out from behind Jenna to send her west, and she steps back.
 void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgNotThatWayThe);
-  FieldActor_LaunchFromLeader(8, 16, 0, 0x8000);
-  FieldActor_WaitForMoveById(8);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 8, 0, 10);
-  Actor_SetAnimation(8, 2);
-  object = Actor_Get(5);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN, 16, 0, FACING_WEST);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
+  // "Not that way, Jenna! The meeting spot is west of here. We must go..."
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  object = Actor_Get(ACTOR_JENNA);
   if (object != 0) {
-    Actor_SetDestination(8, FIELD_AT((u8 *)object, s16, 10),
-                         FIELD_AT((u8 *)object, s16, 18));
+    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
+                         ((s16 *)&object->z)[1]);
   }
-  FieldActor_WaitForMoveById(8);
-  Actor_SetPosition(8, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   FieldEvent_Wait(10);
-  Actor_WalkByAndWait(5, -16, 0);
+  Actor_WalkByAndWait(ACTOR_JENNA, -16, 0);
   Event_End();
 }
 
+/// After a lost battle in the prologue, Jenna wakes by the door with Kraden and
+/// Alex beside her; Alex leaves again for Lalivero.
 void VenusLighthouseEntrance_WakeUp(void) {
   struct Actor *object;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetPosition(5, 364, 156);
-  Actor_SetPosition(8, 362, 142);
-  Actor_SetPosition(9, 390, 144);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(9, FACING_SOUTH, 0);
-  FieldActor_SetSpritePriority(8, 2);
-  Actor_SetSpriteRotationById(5, 0x4000);
-  Actor_SetSpriteFlags(((s32)Actor_Get(5)), 0);
-  FieldCamera_MoveToActorById(5, 0);
-  gFieldWork->transitionFrames = 0x3c;
+  Actor_SetPosition(ACTOR_JENNA, 364, 156);
+  Actor_SetPosition(ACTOR_KRADEN, 362, 142);
+  Actor_SetPosition(ACTOR_ALEX, 390, 144);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH, 0);
+  FieldActor_SetSpritePriority(ACTOR_KRADEN, 2);
+  Actor_SetSpriteRotationById(ACTOR_JENNA, TRIG_TURN / 4);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
+  FieldCamera_MoveToActorById(ACTOR_JENNA, 0);
+  gFieldWork->transitionFrames = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
   FieldEvent_SetMessageId((s32)MsgAreAreYou);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Jenna... Are... Are you all right?"
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(30);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  // "Ah, Jenna... You're awake."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_RunRepeatedMotion(5, 2);
+  // "Can you stand?"
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(30);
-  Actor_SetPosition(5, 376, 164);
-  Actor_SetSpriteRotationById(5, 0);
-  Actor_SetSpriteFlags(((s32)Actor_Get(5)), 1);
-  FieldActor_Jump(5, 6, 50);
-  Actor_SetAnimationAndWait(5, 4);
+  Actor_SetPosition(ACTOR_JENNA, 376, 164);
+  Actor_SetSpriteRotationById(ACTOR_JENNA, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
+  FieldActor_Jump(ACTOR_JENNA, 6, 50);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(20);
-  Actor_WalkByAndWait(5, -14, -2);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_WalkByAndWait(ACTOR_JENNA, -14, -2);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
+  // "It's a good thing I came back for you two..."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(8, FACING_EAST, 0);
-  Actor_FaceDirection(5, FACING_EAST_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST_NORTHEAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_SetAnimationAndWait(9, 4);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(9, 0.8);
-  Actor_WalkByAndWait(9, 0, 16);
-  Actor_FaceDirection(9, FACING_WEST, 0);
+  // "Perhaps you ought to come with us this time..."
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  // "No. Someone has to keep Tolbi's soldiers at bay."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_SetSpeed(ACTOR_ALEX, 0.8);
+  Actor_WalkByAndWait(ACTOR_ALEX, 0, 16);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  // "I'll have to go to Lalivero and confront them there."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(9, 3);
+  // "We'll meet at Idejima."
+  FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  FieldActor_WatchAndSetScript(5, 9);
-  Actor_SetSpeed(9, 0.8);
-  Actor_WalkBy(9, 0, 120);
+  FieldActor_WatchAndSetScript(ACTOR_JENNA, ACTOR_ALEX);
+  Actor_SetSpeed(ACTOR_ALEX, 0.8);
+  Actor_WalkBy(ACTOR_ALEX, 0, 120);
   FieldEvent_Wait(40);
-  Actor_SetSpeed(8, 0.8);
-  Actor_WalkByAndWait(8, 24, 0);
-  Actor_WalkByAndWait(8, 0, 20);
-  Actor_FaceDirection(5, FACING_SOUTH_SOUTHEAST, 0);
-  FieldActor_WaitForMoveById(9);
-  Actor_SetPosition(9, 0, 0);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 24, 0);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH_SOUTHEAST, 0);
+  FieldActor_WaitForMoveById(ACTOR_ALEX);
+  Actor_SetPosition(ACTOR_ALEX, 0, 0);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+  // "He's gone again."
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(30);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   FieldEvent_Wait(20);
-  FieldActor_Jump(8, 4, 0);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  FieldActor_Jump(ACTOR_KRADEN, 4, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  FieldEvent_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirection(5, FACING_EAST, 0);
+  // "And we'd best be going as well..."
+  FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(5, 3);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetSpeed(8, 1.2);
-  Actor_SetAnimation(8, 2);
-  object = Actor_Get(5);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
+  object = Actor_Get(ACTOR_JENNA);
   if (object != 0) {
-    Actor_SetDestination(8, FIELD_AT((u8 *)object, s16, 10),
-                         FIELD_AT((u8 *)object, s16, 18));
+    Actor_SetDestination(ACTOR_KRADEN, ((s16 *)&object->x)[1],
+                         ((s16 *)&object->z)[1]);
   }
-  FieldActor_WaitForMoveById(8);
-  Actor_SetPosition(8, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   gFieldWork->transitionFrames = 8;
   Event_End();
 }
@@ -1300,7 +1440,6 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   }
   work->timer++;
 }
-#undef FIELD_AT
 
 // object the overlay links.
 
@@ -1518,17 +1657,19 @@ void VenusLighthouseEntrance_StopDust(void) {
   HeapSlot_Release(220);
 }
 
-#include "text/msg_ids.h"
-
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {9, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_FROM_LIGHTHOUSE, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 376, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 384, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 112, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {90, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {98, CONDITION_ALWAYS, 384, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 72, 0, 264, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_JENNA_TAKES_OVER, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0,
+     -1, -1, -1, -1, 0},
+    {ENTRANCE_DEFEAT, CONDITION_ALWAYS, 384, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
+    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 72, 0, 264, FACING_WEST, 0, -1,
+     -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1576,16 +1717,19 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 9, 0x892, EVENT(VenusLighthouseEntrance_BirdsFlyOff)},
-    {TRIGGER_STEP, 10, 0x890, EVENT(VenusLighthouseEntrance_ThievesAttack)},
-    {TRIGGER_STEP, 11, 0x893,
-     EVENT(VenusLighthouseEntrance_ThiefWaitsForBackup)},
+    {TRIGGER_STEP, 9, FLAG_VENUS_LIGHTHOUSE_BIRDS_FLOWN,
+     EVENT(VenusLighthouseEntrance_BirdsFlyOff)},
+    {TRIGGER_STEP, 10, FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN,
+     EVENT(VenusLighthouseEntrance_SoldiersAmbushParty)},
+    {TRIGGER_STEP, 11, FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN,
+     EVENT(VenusLighthouseEntrance_RuffianWaitsForBackup)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
      EVENT(VenusLighthouseEntrance_PointToMeetingSpot)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WAITING_RUFFIAN, CONDITION_ALWAYS,
+     MSGNO(MsgUggghICan)},
+    {TRIGGER_TALK, ACTOR_DOUBTING_SOLDIER, CONDITION_ALWAYS,
      EVENT(VenusLighthouseEntrance_BlastActorWithPsynergy)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SOLDIER_CAPTAIN, CONDITION_ALWAYS,
      EVENT(VenusLighthouseEntrance_RunWithDustTrail)},
     {TRIGGER_TABLE_END},
 };

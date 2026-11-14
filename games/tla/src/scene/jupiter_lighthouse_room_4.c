@@ -256,7 +256,7 @@ s32 Scene_Initialize(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
     leader->y = leader->terrainHeight = -px(120);
@@ -268,11 +268,11 @@ s32 Scene_Initialize(void) {
       System_Wait(2);
     }
     leader->terrainHeight = leader->y = 0;
-    leader->facing = 0x4000;
+    leader->facing = FACING_SOUTH;
     leader->motionFlags = 3;
     leader->velocityY = px(3);
     leader->gravity = px(1) / 2;
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
     FieldEvent_Wait(40);
     leader->gravity = px(1);
     leader->priorityFlags |= 64;

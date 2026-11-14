@@ -640,9 +640,9 @@ s32 Scene_Initialize(void) {
   t1 = ((s32)Actor_Get(gMainRoutineWork.currentOwner));
   FIELD_AT(t1, u8, 35) = (32 | FIELD_AT(t1, u8, 35));
 L_02008e6e:
-  t2 = ((s32)Actor_Get(8));
+  t2 = ((s32)Actor_Get(ACTOR_ARCHER_STATUE));
   FIELD_AT(t2, s32, 24) = 0xc000;
-  t3 = ((s32)Actor_Get(8));
+  t3 = ((s32)Actor_Get(ACTOR_ARCHER_STATUE));
   FIELD_AT(t3, s32, 28) = 0xc000;
   Actors_SetCellsOpen((s32)&gJupiterLighthouse_Room7PoundTargets);
   t5 = Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED);

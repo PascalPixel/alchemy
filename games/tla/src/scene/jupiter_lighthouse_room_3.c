@@ -218,7 +218,7 @@ s32 Scene_PrepareMap(void) {
   Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= 32;
   Actor_Get(11)->priorityFlags |= 32;
   FieldActor_SetSpritePriority(8, 3);
-  FieldActor_SetSpritePriority(10, 3);
+  FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
   FieldActor_SetSpritePriority(9, 3);
   FieldActor_SetSpritePriority(11, 3);
   Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= 2;

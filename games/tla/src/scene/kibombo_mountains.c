@@ -453,6 +453,7 @@ void KibomboMountains_GuardsReport(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgIsTheWay);
   Actor_SetPosition(27, 312, 304);
+  // "Is the way clear?"
   Event_ShowMessage(27, 0);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
@@ -461,26 +462,36 @@ void KibomboMountains_GuardsReport(void) {
   Actor_WalkToAndWait(27, 264, 312);
   Actor_WalkToAndWait(27, 256, 400);
   Actor_SetAnimationAndWait(11, 3);
+  // "This area is clear! The strange one has not been seen!"
   Event_ShowMessage(11, 0);
   Actor_RunRepeatedMotion(11, 1);
+  // "And there?"
   Event_ShowMessage(11, 0);
   Actor_SetAnimationAndWait(27, 4);
+  // "We have not seen the stranger near the village."
   Event_ShowMessage(27, 0);
+  // "Do you believe he was truly headed toward Kibombo?"
   Event_ShowMessage(27, 0);
   Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "The guards here were only recently knocked unconscious."
   Event_ShowMessage(11, 0);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Correct. We were under orders to maintain a strict watch over the..."
   Event_ShowMessage(27, 0);
   Actor_SetAnimationAndWait(11, 3);
+  // "No one must be permitted into Kibombo until Akafubu has completed..."
   Event_ShowMessage(11, 0);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Then we had better hurry to find the one who attacked our guards."
   Event_ShowMessage(27, 0);
   Actor_WalkToAndWait(27, 264, 312);
   Actor_WalkTo(27, 360, 312);
   Actor_SetAnimationAndWait(11, 3);
+  // "Keep a good watch. Do not permit anyone to pass."
   Event_ShowMessage(11, 0);
   FieldActor_WatchAndSetScript(11, gMainRoutineWork.currentOwner);
   System_Wait(30);
+  // "If anyone interrupts Akafubu's ceremony, he will hold you responsible..."
   Event_ShowMessage(11, 0);
   Actor_RunRepeatedMotion(11, 2);
   FieldEvent_Wait(60);
@@ -522,6 +533,7 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetMessageId(MsgHereTheIntruder);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "Here! The intruder is here!"
   Event_ShowMessage(27, 0);
   Actor_FaceActor(27, 25, 0);
   FieldEvent_Wait(10);
@@ -529,11 +541,14 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   Actor_FaceActor(27, owner, 0);
   FieldEvent_Wait(10);
   Actor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Kibombo does not permit visitors!"
   Event_ShowMessage(27, 0);
   Actor_SetAnimationAndWait(27, 3);
+  // "You just follow this road right back to where you came from!"
   Event_ShowMessage(27, 0);
   Actor_FaceActor(25, 23, 0);
   Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Guard! Get him out of here!"
   Event_ShowMessage(25, 0);
   Actor_WalkTo(23, 248, 536);
   FieldEvent_Wait(1);
@@ -595,11 +610,13 @@ void KibomboMountains_GuardSpotsParty(s32 id) {
   Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, owner, 20);
   FieldEvent_SetMessageId(MsgGuardsAnIntruder);
+  // "Guards! An intruder!"
   Event_ShowMessage(id, 0);
   Actor_SetAttachedEffect(owner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(id, 4);
   FieldEvent_Wait(30);
+  // "Someone is trying to pass! To arms, Kibombo warriors! To arms!"
   Event_ShowMessage(id, 0);
   Actor_SetAttachedEffect(owner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
@@ -617,11 +634,13 @@ void KibomboMountains_DogSpotsParty(s32 id) {
   Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, owner, 20);
   FieldEvent_SetMessageId(MsgGrrrrrRrrruffRrufff);
+  // "Grrrrr! Rrrruff! Rrufff!"
   Event_ShowMessage(id, 0);
   Actor_SetAttachedEffect(owner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(id, 4);
   FieldEvent_Wait(30);
+  // "An intruder! Repel the intruder immediately!"
   Event_ShowMessage(8, 0);
   Actor_SetAttachedEffect(owner,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
@@ -761,7 +780,7 @@ u32 gKibomboMountains_PatrolScript[] = {
     SC_SET(SW_COLLISION, 129),
     SC_ARG(1),
     SC_WAIT(30),
-    SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),
+    SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_ARG(4),
     SC_WAIT(90),
     SC_ARG(1),
@@ -781,7 +800,7 @@ u32 gKibomboMountains_LowerGuardPatrolScript[] = {
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_WAIT(3),                                                              
-      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),                       
       SC_WAIT(30),                                                             
       SC_ARG(4),                                                               
       SC_WAIT(90),                                                             
@@ -875,7 +894,7 @@ u32 gKibomboMountains_FirstLookoutScript[] = {
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_WAIT(3),                                                              
-      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),                       
       SC_WAIT(30),                                                             
       SC_ARG(4),                                                               
       SC_WAIT(90),                                                             
@@ -900,7 +919,7 @@ u32 gKibomboMountains_SecondLookoutScript[] = {
       SC_SYNC,                                                                 
       SC_ARG(1),                                                               
       SC_WAIT(3),                                                              
-      SC_SET(SW_FACING, FACING_SOUTHEAST + FACING_STEP),                       
+      SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),                       
       SC_WAIT(30),                                                             
       SC_ARG(4),                                                               
       SC_WAIT(90),                                                             

@@ -81,7 +81,7 @@ void LemurianShipDeck_EnterCabin(void) {
       Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
-    Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
     Actor_CenterAndWalk(gMainRoutineWork.currentOwner, 2, -4);
     FieldEvent_Wait(8);
@@ -261,8 +261,8 @@ void LemurianShipDeck_TakeTheTiller(void) {
   LemurianShipDeck_PlaceFacing(5, px(546), px(440), 0x4000);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
-  Actor_SetScript(5, gLemurianShipDeck_FirstCrewLooksAround);
-  Actor_SetScript(6, gLemurianShipDeck_SecondCrewLooksAround);
+  Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_FirstCrewLooksAround);
+  Actor_SetScript(ACTOR_SHEBA, gLemurianShipDeck_SecondCrewLooksAround);
   Actor_SetScript(9, gLemurianShipDeck_ThirdCrewLooksAround);
   Event_StartScreenTransition();
   gLemurianShipDeck_WaveScroll = 0;
@@ -273,74 +273,100 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldCamera_MoveTo(542, 44, 396, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(80);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
   FieldEvent_SetMessageId((s32)MsgTakeTheTiller);
-  Event_ShowMessage(7, 0);
+  // "Take the tiller, Felix!"
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(gMainRoutineWork.currentOwner,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   gFieldWork->message++;
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 20);
-  Event_ShowMessage(7, 0);
-  FieldActor_Stop(5);
+  // "If you hope to reach Lemuria, you'll have to learn a few things..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  FieldActor_Stop(ACTOR_JENNA);
   FieldActor_Stop(9);
-  FieldActor_Stop(6);
+  FieldActor_Stop(ACTOR_SHEBA);
   System_Wait(1);
-  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessage(6, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Kraden, shouldn't we be heading straight for Lemuria?"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(9, turn);
+  // "Well, I suppose if we have to learn to sail, it's better to do it..."
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-  Event_ShowMessage(5, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "Then I want to go to Lalivero! And Tolbi! Oh! And Vale! Can we go to..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "I'd love to see your hometown, Jenna! Shall we? Let's do it! To Vale..."
   Event_OpenMessage(7, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    // "I don't think that's a good idea."
     Event_ShowMessage(9, 0);
     gFieldWork->message++;
   } else {
-    Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
+    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     gFieldWork->message++;
+    // "I'm with Felix. I don't think that would be a wise course of action."
     Event_ShowMessage(9, 0);
   }
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Event_ShowMessage(7, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  // "Come, now! Why not?"
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  // "Think about the roads we have traveled to get where we are..."
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(9, FACING_SOUTHEAST + FACING_STEP);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "I can't... I was never any good at geography."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
+  // "Then allow me to explain... The coastline of Angara, the continent..."
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Event_ShowMessage(5, 0);
-  Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  // "Oh... You don't think Piers's boat could land there?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
+  // "And as for Gondowan, I would guess the people from Lalivero..."
   Event_ShowMessage(9, 0);
-  Event_ShowMessage(6, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
-  Event_ShowMessage(5, 0);
-  Actor_SetAttachedEffect(6, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 6, 0);
-  Event_ShowMessage(5, 0);
+  // "He's right. Saturos and Menardi went a little wild in Lalivero, and..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHEAST);
+  // "Oh... But Sheba can explain the situation for us. Faran and the..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_SetAttachedEffect(ACTOR_SHEBA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTHWEST);
+  // "And then they'd make me stay in Lalivero! Would you just leave me..."
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_SHEBA, 0);
+  // "Oh yeah... Maybe that wouldn't be such a good idea after all..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "Then it's decided!"
   Event_ShowMessage(9, 0);
-  Actor_FaceDirection(6, FACING_NORTH, 0);
-  Actor_FaceDirection(5, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessage(7, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "What's decided?"
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "The sea is vast... We can go wherever we please! So, let's explore a..."
   Event_ShowMessage(9, 0);
-  FieldActor_Jump(6, 4, 10);
-  Event_ShowMessage(6, 0);
-  FieldActor_Jump(5, 2, 10);
-  FieldActor_Jump(5, 4, 10);
-  Event_ShowMessage(5, 0);
-  Event_ShowMessage(7, 0);
+  FieldActor_Jump(ACTOR_SHEBA, 4, 10);
+  // "That's a great idea! We've already met werewolves and discovered new..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  FieldActor_Jump(ACTOR_JENNA, 2, 10);
+  FieldActor_Jump(ACTOR_JENNA, 4, 10);
+  // "Wow! This is going to be great!"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  // "Hmm... The seas can be quite dangerous. It won't be my fault if..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimation(9, 3);
+  // "To the open sea, Felix!"
   Event_ShowMessage(9, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -356,7 +382,7 @@ static inline void RunToActor4(s32 id) {
 
   Actor_SetSpeed(id, 1.2);
   Actor_SetAnimation(id, 2);
-  target = Actor_GetById(4);
+  target = Actor_GetById(ACTOR_FELIX);
   if (target != NULL)
     Actor_SetDestination(id, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
   Actor_WaitForMoveById(id);
@@ -380,11 +406,11 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(458, 48, 408, 0);
   FieldEvent_SetMessageId(MsgHoldOnTo);
-  Actor_SetPositionAndFacing(4, px(470), px(392), FACING_EAST);
-  FieldActor_LaunchFromLeader(6, 0, -24, FACING_SOUTH);
-  FieldActor_LaunchFromLeader(5, -16, -16, FACING_SOUTHEAST);
-  FieldActor_LaunchFromLeader(9, -24, 8, FACING_NORTHEAST + FACING_STEP);
-  FieldActor_LaunchFromLeader(7, -4, 24, FACING_NORTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, px(470), px(392), FACING_EAST);
+  FieldActor_LaunchFromLeader(ACTOR_SHEBA, 0, -24, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, -16, FACING_SOUTHEAST);
+  FieldActor_LaunchFromLeader(9, -24, 8, FACING_EAST_NORTHEAST);
+  FieldActor_LaunchFromLeader(ACTOR_PIERS, -4, 24, FACING_NORTHEAST);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
@@ -394,81 +420,98 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   Task_AddFrame(LemurianShipDeck_ScrollWaves, 0x480);
   gLemurianShipDeck_BobPhase = 0;
   Task_AddFrame(LemurianShipDeck_BobDeck, 0x480);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTH);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(6, 0, 5);
-  Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
+  // "Hold on to that tiller! Do you want us to get swallowed by the waves!?"
+  FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHEAST);
   FieldEvent_Wait(10);
-  Actor_SetAnimationAndWait(5, 4);
-  FieldEvent_ShowMessageThenWait(5, 0, 5);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Actor_FaceDirectionAndWait(4, FACING_SOUTH);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "I know you're worried, Sheba, but he's doing the best he can..."
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(7, FACING_NORTH);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 5);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  // "That was an incredibly strong whirlpool, but I doubt it could sink..."
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
   FieldEvent_Wait(30);
-  Actor_FaceDirectionAndWait(5, FACING_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_NORTHEAST);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(5, 0, 5);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  Actor_SetAnimationAndWait(6, 3);
+  // "See, Sheba? There's nothing to worry about. Even if we hit a..."
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTH);
-  FieldEvent_ShowMessageThenWait(6, 0, 5);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Actor_FaceDirectionAndWait(7, FACING_NORTH);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
+  // "But still... Piers, can't you show Felix how to get past the..."
+  FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 5);
+  // "Er, yes, well..."
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_SOUTHEAST);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "What's wrong, Piers? Lemuria's just beyond these whirlpools, isn't it?"
   FieldEvent_ShowMessageThenWait(9, 0, 5);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  FieldEvent_ShowMessageThenWait(7, 0, 5);
-  Actor_FaceEachOther(6, 5, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Yeah, I...think so..."
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
+  Actor_FaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
   FieldEvent_Wait(30);
-  Actor_FaceDirection(6, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(5, FACING_SOUTHEAST);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
+  Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(6, 0, 5);
-  Actor_RunRepeatedMotion(5, 2);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "You..."think so"!?"
+  FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 5);
+  Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   FieldEvent_Wait(5);
-  FieldEvent_ShowMessageThenWait(5, 0, 5);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Actor_SetAnimationAndWait(7, 3);
+  // "Aren't you...from Lemuria? Shouldn't you know exactly where it is?"
+  FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 5);
+  // "Yes, I'm from Lemuria... I've never had to get back into it before!..."
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
+  // "Oh, I see. So that must mean... You don't actually know which..."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
-  Actor_SetAnimationAndWait(7, 3);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(10);
-  FieldEvent_ShowMessageThenWait(7, 0, 5);
+  // "Don't be silly! I mean... I just need to get my bearings."
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 5);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Hm... That doesn't sound good."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_NORTH);
   FieldEvent_Wait(10);
+  // "If Lemuria really is beyond those currents, then we'll need to find..."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
-  Actor_FaceDirection(4, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHEAST);
   FieldEvent_Wait(10);
+  // "And until we do..."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
   Actor_FaceDirectionAndWait(9, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(9, 4);
+  // "We won't be getting into Lemuria."
   FieldEvent_ShowMessageThenWait(9, 0, 5);
-  Actor_SetAnimationAndWait(4, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(10);
-  Actor_FaceEachOther(9, 7, 0);
-  Actor_FaceEachOther(6, 5, 0);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(5, 3);
+  Actor_FaceEachOther(9, ACTOR_PIERS, 0);
+  Actor_FaceEachOther(ACTOR_SHEBA, ACTOR_JENNA, 0);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(9, 3);
-  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
   FieldEvent_Wait(40);
   RunToActor4(7);
   RunToActor4(5);
@@ -542,20 +585,21 @@ void LemurianShipDeck_SightMenardisShip(void) {
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(4, 0.8);
-  Actor_WalkToAndWait(4, 264, 136);
+  Actor_SetSpeed(ACTOR_FELIX, 0.8);
+  Actor_WalkToAndWait(ACTOR_FELIX, 264, 136);
   FieldEvent_SetMessageId(MsgLookItS);
-  FieldActor_LaunchFromLeader(5, 16, -16, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_JENNA, 16, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(9, 32, -16, FACING_SOUTH);
-  FieldActor_LaunchFromLeader(6, -16, -16, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_SHEBA, -16, -16, FACING_SOUTH);
   FieldEvent_Wait(80);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Actor_SetSpeed(9, 1.6);
   Actor_WalkToAndWait(9, 300, 152);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 20);
-  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 20);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  // "Look... It's Menardi's ship!"
   Event_ShowMessage(9, 0);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(200, CAMERA_KEEP, 344, 1);
@@ -568,15 +612,18 @@ void LemurianShipDeck_SightMenardisShip(void) {
   FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(264, CAMERA_KEEP, 128, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimationAndWait(5, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Actor_SetAnimation(6, 4);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirectionAndWait(9, FACING_NORTHWEST + FACING_STEP);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  // "It doesn't look like they sailed here, though..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  // "Of course not... They were killed at the lighthouse, weren't they?"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirectionAndWait(9, FACING_NORTH_NORTHWEST);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  // "Do you think it could have drifted here?"
   Event_OpenMessage(9, 0);
-  Actor_FaceDirection(6, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   answer =
       FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
@@ -589,13 +636,14 @@ void LemurianShipDeck_SightMenardisShip(void) {
   } else {
     Actor_WaitForAnimationChange(owner);
     FieldEvent_SetMessageId(MsgLookItS + 5); // the fifth message after it
+    // "How else could it have come to be here, Felix?"
     Event_ShowMessage(9, 0);
   }
-  Actor_SetAnimation(5, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 5, 0);
-  Actor_FaceDirectionAndWait(6, FACING_EAST);
-  Actor_SetAnimation(6, 4);
-  Event_ShowMessage(6, 0);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_SetAnimation(9, 4);
   Event_ShowMessage(9, 0);
   Actor_SetSpeed(9, 0.8);
@@ -604,32 +652,34 @@ void LemurianShipDeck_SightMenardisShip(void) {
   FieldEvent_Wait(1);
   Actor_Get(9)->actionFlags |= 1;
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 9, 0);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(4, 3);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimationAndWait(9, 3);
   Actor_SetSpeed(9, 1.2);
-  Actor_SetSpeed(6, 1.2);
-  Actor_SetSpeed(5, 1.2);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.2);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
   {
     struct Actor *target;
 
     Actor_SetAnimation(9, 2);
-    target = Actor_Get(4);
+    target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
       Actor_SetDestination(9, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
-    Actor_SetAnimation(5, 2);
-    target = Actor_Get(4);
+    Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
+    target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(5, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
-    Actor_SetAnimation(6, 2);
-    target = Actor_Get(4);
+      Actor_SetDestination(ACTOR_JENNA, ((s16 *)&target->x)[1],
+                           ((s16 *)&target->z)[1]);
+    Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
+    target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(6, ((s16 *)&target->x)[1], ((s16 *)&target->z)[1]);
+      Actor_SetDestination(ACTOR_SHEBA, ((s16 *)&target->x)[1],
+                           ((s16 *)&target->z)[1]);
   }
-  FieldActor_WaitForMoveById(6);
-  Actor_SetPosition(6, 0, 0);
-  Actor_SetPosition(5, 0, 0);
+  FieldActor_WaitForMoveById(ACTOR_SHEBA);
+  Actor_SetPosition(ACTOR_SHEBA, 0, 0);
+  Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetPosition(9, 0, 0);
   Event_End();
   Event_SetFlag(0x980);
@@ -660,6 +710,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_WalkToAndWait(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
     FieldEvent_SetMessageId(MsgWellThereS);
+    // "Well, there's no point in hanging around here all day. Let's go see..."
     Event_ShowMessage(9, 0);
     Actor_SetAnimation(9, 2);
     object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -743,27 +794,30 @@ void LemurianShipDeck_ReturnToShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_MoveToObject(7, gMainRoutineWork.currentOwner);
+  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.currentOwner);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_SetSpeed(7, 1.6);
-  Actor_WalkToAndWait(7, 412, 424);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
+  Actor_SetSpeed(ACTOR_PIERS, 1.6);
+  Actor_WalkToAndWait(ACTOR_PIERS, 412, 424);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
   FieldEvent_SetMessageId((s32)MsgAtLastI);
-  FieldActor_Jump(7, 4, 10);
-  Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
-  Event_ShowMessage(7, 0);
-  Actor_WalkToAndWait(7, 386, 424);
-  Actor_FaceActor(7, gMainRoutineWork.currentOwner, 0);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
-  Event_ShowMessage(7, 0);
+  FieldActor_Jump(ACTOR_PIERS, 4, 10);
+  // "At last, I'm back on my ship."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
+  // "Finally, I can return to my beloved Lemuria."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_WalkToAndWait(ACTOR_PIERS, 386, 424);
+  Actor_FaceActor(ACTOR_PIERS, gMainRoutineWork.currentOwner, 0);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_NOD);
+  // "Wait there a moment."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
   Actor_SetScript(gMainRoutineWork.currentOwner,
                   gLemurianShipDeck_ReturnToShipScript);
-  Actor_SetSpeed(7, 0.8);
-  Actor_WalkToAndWait(7, 360, 424);
-  Actor_FaceDirectionAndWait(7, FACING_NORTH);
+  Actor_SetSpeed(ACTOR_PIERS, 0.8);
+  Actor_WalkToAndWait(ACTOR_PIERS, 360, 424);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
   Event_PlaySound(SE_GEM_SET);
   handle = LemurianShipDeck_CreateBlackCrystal();
   FieldEvent_Wait(20);
@@ -788,16 +842,19 @@ void LemurianShipDeck_ReturnToShip(void) {
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
-  Actor_FaceDirectionAndWait(7, FACING_SOUTH);
-  Event_ShowMessage(7, 0);
-  Actor_SetAnimation(7, 3);
-  Event_ShowMessage(7, 0);
-  Actor_SetAnimation(7, 2);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
+  // "To set sail, we must go down to the power chamber belowdecks."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  // "Let's head down."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != 0)
-    Actor_SetDestination(7, ((s16 *)&object->x)[1], ((s16 *)&object->z)[1]);
-  FieldActor_WaitForMoveById(7);
-  Actor_SetPosition(7, 0, 0);
+    Actor_SetDestination(ACTOR_PIERS, ((s16 *)&object->x)[1],
+                         ((s16 *)&object->z)[1]);
+  FieldActor_WaitForMoveById(ACTOR_PIERS);
+  Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_SetFlag(0x985);
   Event_End();
 }
@@ -813,212 +870,263 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(MsgMyShipAt);
-  Actor_WalkTo(4, 264, 176);
-  FieldActor_WaitForMoveById(4);
-  FieldActor_LaunchFromLeader(7, 16, 8, FACING_SOUTH);
+  Actor_WalkTo(ACTOR_FELIX, 264, 176);
+  FieldActor_WaitForMoveById(ACTOR_FELIX);
+  FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 8, FACING_SOUTH);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(288, CAMERA_KEEP, 208, 1);
   FieldActor_LaunchFromLeader(9, 32, 0, FACING_SOUTH);
-  FieldActor_LaunchFromLeader(6, 48, -8, FACING_SOUTH);
-  FieldActor_LaunchFromLeader(5, -16, -8, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_SHEBA, 48, -8, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, -8, FACING_SOUTH);
   FieldEvent_Wait(40);
-  Actor_SetSpeed(7, 2.4);
-  Actor_WalkToAndWait(7, 280, 224);
+  Actor_SetSpeed(ACTOR_PIERS, 2.4);
+  Actor_WalkToAndWait(ACTOR_PIERS, 280, 224);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  FieldActor_Jump(7, 4, 10);
-  FieldActor_Jump(7, 4, 20);
-  Event_ShowMessage(7, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  FieldActor_Jump(ACTOR_PIERS, 4, 10);
+  FieldActor_Jump(ACTOR_PIERS, 4, 20);
+  // "My ship! At long last... I have returned to my ship."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Well, Piers?"
   Event_ShowMessage(9, 0);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(288, CAMERA_KEEP, 184, 1);
-  Actor_SetSpeed(7, 0.8);
-  Actor_WalkByAndWait(7, 0, -16);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
-  Actor_SetAnimationAndWait(7, 3);
-  Event_ShowMessage(7, 0);
+  Actor_SetSpeed(ACTOR_PIERS, 0.8);
+  Actor_WalkByAndWait(ACTOR_PIERS, 0, -16);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  // "I'm thrilled... I'm just happy to be back with my ship."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  Actor_SetAnimation(6, 4);
-  Event_ShowMessage(6, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Event_ShowMessage(5, 0);
-  Actor_FaceDirection(7, FACING_NORTHWEST, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Actor_SetAnimation(6, 4);
-  Event_ShowMessage(6, 0);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
-  Actor_SetAnimationAndWait(5, 3);
-  Event_ShowMessage(5, 0);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTHWEST);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  // "Uh, that's not what Kraden's asking..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "You forgot, didn't you, Piers? When we talked in Kibombo? Remember..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  // "He wanted you to take us to your home... To Lemuria."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  // "Remember how we said we'd talk about it later? Well, it's later now..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
+  Actor_SetAttachedEffect(ACTOR_PIERS,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimationAndWait(6, 3);
+  // "Oh... Is it? I suppose we have to talk about it sooner or later. You..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimation(9, 4);
+  // "Piers...if you do not wish to take us, you do not have to. Just tell..."
   Event_ShowMessage(9, 0);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
+  // "And if not, well, we'll just have to get ourselves a boat and find..."
   Event_ShowMessage(9, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
+  // "Right, Felix?" Yes: "What's with the guilt trip? Piers hasn't..." No:
+  // "Sheba is right! You guys just let Piers give..."
   Event_OpenMessage(9, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-    Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
-    Event_ShowMessage(5, 0);
-    Event_ShowMessage(6, 0);
+    Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+    // "What's with the guilt trip? Piers hasn't even given us his answer yet!"
+    Event_ShowMessage(ACTOR_JENNA, 0);
+    // "Kraden! Felix! Stop trying to pressure Piers!"
+    Event_ShowMessage(ACTOR_SHEBA, 0);
     gFieldWork->message += 2;
   } else {
     gFieldWork->message += 2;
-    Actor_FaceDirection(7, FACING_NORTHWEST, 0);
-    Actor_SetAnimationAndWait(5, 3);
-    Event_ShowMessage(5, 0);
-    Actor_FaceDirection(7, FACING_NORTHEAST, 0);
-    Actor_SetAnimation(6, 3);
-    Event_ShowMessage(6, 0);
+    Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
+    Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+    // "Sheba is right! You guys just let Piers give us his answer!"
+    Event_ShowMessage(ACTOR_JENNA, 0);
+    Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
+    Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+    // "I agree with Felix. We shouldn't try to pressure Piers, Kraden."
+    Event_ShowMessage(ACTOR_SHEBA, 0);
   }
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndWait(9, FACING_NORTHEAST);
+  // "But that's not what I was°"
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_BELOW | 9, 0);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
-  Actor_SetAnimation(7, 4);
-  Event_ShowMessage(7, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "Don't worry, Sheba... I've actually been thinking about this quite a..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirectionAndWait(7, FACING_NORTH);
-  Event_ShowMessage(7, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
+  // "I just never got the opportunity to mention it before."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Well? Well!?"
   Event_ShowMessage(9, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirection(6, FACING_WEST, 40);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionAndWait(6, FACING_SOUTHWEST);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 40);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTHWEST);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
+  // "It's not nice to test the patience of an old man. Will you take us..."
   Event_ShowMessage(9, 0);
-  Actor_FaceDirection(7, FACING_NORTHEAST, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-  Event_ShowMessage(7, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "We will go to Lemuria, Kraden."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  // "I figured it was too much to..."
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(5, FACING_EAST, 20);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 20);
   Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, FACING_EAST);
   Actor_FaceDirection(9, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(9, FACING_SOUTH);
+  // "What did you just say!?"
   Event_ShowMessage(9, 0);
-  Actor_SetAnimationAndWait(7, 3);
-  Event_ShowMessage(7, 0);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  // "I will take you to Lemuria."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(9, 3);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
-  Actor_SetAttachedEffect(5, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_SetAttachedEffect(ACTOR_JENNA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
-  Event_ShowMessage(5, 0);
+  // "Kraden? Are you OK?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   FieldActor_StartRepeatedMotion(9, 2);
   Actor_SetAnimationAndWait(9, 3);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-  Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  // "Is he OK!?"
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   FieldActor_StartRepeatedMotion(9, 2);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   Actor_SetAnimationAndWait(9, 3);
+  // "Piers! Are you... Are you serious?"
   Event_ShowMessage(9, 0);
-  Actor_SetAnimation(7, 3);
-  Event_ShowMessage(7, 0);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  // "After what we've been through, it would be wrong to deny you. That's..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  Actor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessage(6, 0);
-  Event_ShowMessage(7, 0);
-  Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_FaceDirectionAndWait(7, FACING_NORTH);
-  Actor_SetAnimation(7, 3);
-  Event_ShowMessage(7, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  Event_ShowMessage(5, 0);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Actor_SetAnimation(7, 4);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
-  Actor_SetAnimationAndWait(5, 3);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
-  Event_ShowMessage(7, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
+  Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "What's what made up your mind?"
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  // "The fact that you are truly good people."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
+  // "You have gone to great trouble to help one whose problems needn't..."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
+  // "Witnessing that kindness... It made me want to help, too."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "Piers, you..."
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
+  Actor_SetAnimation(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "No, Jenna. Please, don't say a word. I've made up my mind."
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
+  // "I shall be leaving immediately, but I want you to come, Kraden."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_SetAnimationAndWait(9, 3);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHWEST);
-  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 7, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
+  // "Let us set sail, Felix! To my ship! And the Eastern Sea!"
+  Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0);
   Actor_FaceDirection(9, FACING_WEST, 0);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "So at long last, I will finally reach Lemuria..."
   Event_ShowMessage(9, 0);
-  Actor_FaceDirection(5, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(6, FACING_WEST);
-  Actor_SetAnimation(6, 3);
-  Event_ShowMessage(6, 0);
-  Actor_SetAnimation(5, 3);
-  Event_ShowMessage(5, 0);
-  Actor_WalkByAndWait(7, -16, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  // "I wonder what kind of advanced civilization we'll find in Lemuria..."
+  Event_ShowMessage(ACTOR_SHEBA, 0);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  // "I'm actually excited to find out!"
+  Event_ShowMessage(ACTOR_JENNA, 0);
+  Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
   FieldEvent_Wait(40);
-  Actor_WalkByAndWait(7, -16, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-  Actor_FaceDirection(5, FACING_SOUTH, 0);
-  Actor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_WalkByAndWait(5, 0, 16);
-  Event_ShowMessage(5, 0);
+  Actor_WalkByAndWait(ACTOR_PIERS, -16, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_WalkByAndWait(ACTOR_JENNA, 0, 16);
+  // "What's wrong, Piers?"
+  Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirection(6, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 0);
-  Actor_SetAnimationAndWait(7, 3);
-  FieldEvent_ShowMessageThenWait(7, 0, 20);
-  Event_ShowMessage(7, 0);
-  Actor_FaceDirectionAndWait(7, FACING_NORTHEAST);
-  Event_ShowMessage(7, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  // "It just occurred to me... The mayor of Madra and his wife must be..."
+  FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 20);
+  // "We should go tell them that I've retrieved my orb. Then they..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
+  Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHEAST);
+  // "Is that acceptable, Felix? Can we stop by Madra briefly before we..."
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   Actor_SetAnimation(9, 3);
+  // "What do you say, Felix? Shall we go see the mayor?"
   Event_OpenMessage(9, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 1) {
     Actor_SetAnimationAndWait(9, 4);
+    // "Don't worry about me. I've waited this long. I can wait a little..."
     Event_ShowMessage(9, 0);
     gFieldWork->message += 1;
   } else {
     Actor_SetAnimationAndWait(9, 3);
     gFieldWork->message += 1;
+    // "I have no objection, so why not? Let's go."
     Event_ShowMessage(9, 0);
   }
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Actor_FaceDirectionAndWait(9, FACING_SOUTH + FACING_STEP);
+  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "But we must depart as soon as we're done at the mayor's house, Piers."
   Event_ShowMessage(9, 0);
-  Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  Event_ShowMessage(7, 0);
+  Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  // "Oh, thank you!"
+  Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(9, FACING_WEST);
   Actor_SetAnimationAndWait(9, 3);
-  Actor_SetAnimation(5, 3);
-  Actor_SetAnimation(6, 3);
-  Actor_SetAnimation(4, 3);
-  Actor_SetAnimationAndWait(7, 3);
-  Actor_SetSpeed(5, 1.2);
+  Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetSpeed(9, 1.2);
-  Actor_SetSpeed(6, 1.2);
-  Actor_SetSpeed(7, 1.2);
-  Actor_SetScript(5, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_SetSpeed(ACTOR_SHEBA, 1.2);
+  Actor_SetSpeed(ACTOR_PIERS, 1.2);
+  Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_ReachPiersShipScript);
   Actor_SetScript(9, gLemurianShipDeck_ReachPiersShipScript);
-  Actor_SetScript(6, gLemurianShipDeck_ReachPiersShipScript);
-  Actor_RunScriptAndWait(7, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_SetScript(ACTOR_SHEBA, gLemurianShipDeck_ReachPiersShipScript);
+  Actor_RunScriptAndWait(ACTOR_PIERS, gLemurianShipDeck_ReachPiersShipScript);
   FieldEvent_Wait(20);
   Event_SetFlag(0x981);
   Event_End();
@@ -1032,30 +1140,31 @@ void LemurianShipDeck_SetOutForMadra(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_SetSpeed(4, 0.8);
-    Actor_Get(7)->update = (void (*)(void))Actor_EmitSmoke;
-    FieldActor_LaunchFromLeader(7, 16, 0, FACING_WEST);
-    Actor_SetSpriteFlags(Actor_Get(7), 0);
+    Actor_SetSpeed(ACTOR_FELIX, 0.8);
+    Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
+    FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 0, FACING_WEST);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 0);
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_EAST, 0);
     FieldEvent_SetMessageId(MsgThenLetS);
-    FieldActor_WaitForMoveById(7);
-    Actor_Get(7)->update = 0;
-    Event_ShowMessage(7, 0);
-    Actor_SetAnimationAndWait(4, 3);
+    FieldActor_WaitForMoveById(ACTOR_PIERS);
+    Actor_Get(ACTOR_PIERS)->update = 0;
+    // "Then let's waste no time! We should set out for Madra at once!"
+    Event_ShowMessage(ACTOR_PIERS, 0);
+    Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
     Actor_Get(gMainRoutineWork.currentOwner)->update =
         (void (*)(void))Actor_EmitSmoke;
-    Actor_WalkByAndWait(4, 0, 16);
+    Actor_WalkByAndWait(ACTOR_FELIX, 0, 16);
     Actor_Get(gMainRoutineWork.currentOwner)->update = 0;
-    Actor_Get(7)->update = (void (*)(void))Actor_EmitSmoke;
-    Actor_SetAnimation(7, 2);
-    object = Actor_Get(4);
+    Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
+    Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
+    object = Actor_Get(ACTOR_FELIX);
     if (object != 0)
-      Actor_SetDestination(7, *(s16 *)((u8 *)object + 10),
+      Actor_SetDestination(ACTOR_PIERS, *(s16 *)((u8 *)object + 10),
                            *(s16 *)((u8 *)object + 18));
-    FieldActor_WaitForMoveById(7);
-    Actor_SetPosition(7, 0, 0);
-    Actor_Get(7)->update = 0;
-    Actor_SetSpriteFlags(Actor_Get(7), 1);
+    FieldActor_WaitForMoveById(ACTOR_PIERS);
+    Actor_SetPosition(ACTOR_PIERS, 0, 0);
+    Actor_Get(ACTOR_PIERS)->update = 0;
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 1);
     Event_End();
   }
 }
@@ -1103,11 +1212,11 @@ u32 gLemurianShipDeck_SecondCrewLooksAround[] = {
 };
 
 u32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(70),
-    SC_SET(SW_FACING, FACING_NORTHWEST + FACING_STEP),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(50),
-    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(30),

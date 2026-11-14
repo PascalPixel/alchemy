@@ -1325,7 +1325,7 @@ loop:
                                    gAnemosInnerSanctum_Doors[index].x,
                                    gAnemosInnerSanctum_Doors[index].y);
   }
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 0, -4);
   FieldEvent_Wait(6);
@@ -1876,7 +1876,7 @@ loop:
   actor->gravity = px(1);
   actor->bounce = Q16_ONE / 4;
   FieldEvent_Wait(10);
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_STAND);
   Event_End();
 }
 

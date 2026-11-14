@@ -14,6 +14,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "shared/tables.h"
+#include "module/scene/actor_animation.h"
 
 extern u32 gSceneExits[];
 
@@ -86,6 +87,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
   if (Event_GetFlag(0x85d) == 0) {
     msg = (s32)MsgNaribwe02;
     Event_SetMessageId(msg);
+    // "The Kibombo went on an expedition to the east, but they've already..."
     Event_OpenMessage(14, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
@@ -96,6 +98,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
     Event_ShowMessage(14, 0);
   } else {
     Event_SetMessageId((s32)MsgNaribwe03);
+    // "The Kibombo never move in such large numbers without orders from..."
     Event_ShowMessage(14, 0);
   }
 }
@@ -107,6 +110,7 @@ void Naribwe_AskWhereFrom(void) {
   if (Event_GetFlag(0x85e) == 0) {
     msg = (s32)MsgNaribwe07;
     Event_SetMessageId(msg);
+    // "Can you tell me where you have come from?"
     Event_OpenMessage(18, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
@@ -117,6 +121,7 @@ void Naribwe_AskWhereFrom(void) {
     Event_ShowMessage(18, 0);
   } else {
     Event_SetMessageId((s32)MsgNaribwe08);
+    // "It's always hot here in Naribwe. It doesn't matter if it's summer..."
     Event_ShowMessage(14, 0);
   }
 }
@@ -148,6 +153,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe21);
+  // "No one can see the future. Absolutely no one. Except for our..."
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -161,6 +167,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe43);
+  // "Strangers to our town would do well to visit the fortune-teller's hut."
   Event_ShowMessage(actor, 0);
   Event_End();
 }
@@ -176,6 +183,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe23);
+  // "I am but a humble pilgrim, serving the greater good in the heart of..."
   Event_ShowMessage(26, 0);
   Event_End();
 }
@@ -189,6 +197,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgNaribwe45);
+  // "It's strange. As hot as it is here in Gondowan, if you head south..."
   Event_ShowMessage(26, 0);
   Event_End();
 }
@@ -220,7 +229,7 @@ void Naribwe_EnterDoor(void) {
                        gNaribwe_Doors[index].z);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, ANIM_WALK);
   Import_EventSetExitRequest(*(s16 *)work);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

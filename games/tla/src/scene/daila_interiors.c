@@ -124,12 +124,14 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
   if (!Daila_FlagCheck(FLAG_DAILA_PRACTICE_AT_DOOR)) {
     Event_SetMessageId((s32)MsgDailaInteriorsGah);
+    // "GAH!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 360, 72);
     Actor_ArmCallback(actor, FACING_SOUTH, 0);
     GameFlag_Set(FLAG_DAILA_PRACTICE_AT_DOOR);
   } else {
     Event_SetMessageId((s32)MsgDailaInteriorsYarg);
+    // "YARG!"
     Event_ShowMessageAndWait(actor, 0);
     Actor_WalkToAndWait(actor, 392, 104);
     Actor_ArmCallback(actor, FACING_WEST, 0);
@@ -140,13 +142,14 @@ UNUSED void DailaInteriors_PracticeShout(s32 unused, s32 actor) {
 
 /// Unused: the practising man turns to the leader, startled.
 UNUSED void DailaInteriors_StartleAtTheLeader(s32 unused, s32 actor) {
-  Actor_FaceActorById(actor, 4, 0);
+  Actor_FaceActorById(actor, ACTOR_FELIX, 0);
   FieldEvent_Wait(10);
   FieldActor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   Event_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  // "What are you doing???"
   Event_ShowMessageAndWait(actor, 0);
   FieldEvent_Wait(10);
 }
@@ -155,6 +158,7 @@ s32 DailaInteriors_TalkScamps(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsScamps);
+  // "If those two scamps knew there were travelers in town, they'd have a..."
   Event_ShowMessageAndWait(19, 0);
   Event_End();
   return 0;
@@ -164,6 +168,7 @@ s32 DailaInteriors_TalkMazeTreasure(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsMazeTreasure);
+  // "Maybe they hid treasure here because this town is so mazelike..."
   Event_ShowMessageAndWait(19, 0);
   Event_End();
   return 0;
@@ -198,12 +203,13 @@ s32 Inn_CheckIn(s32 mode, s32 objectId);
 void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(1, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsSouthRoadDanger);
+    // "You folks ain't thinkin' 'bout goin' south, are ya? The roads to the..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -212,12 +218,13 @@ void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
 void DailaInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(2, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsNewTravelers);
+    // "You guys look new 'round these parts! What brings you to here?..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -228,12 +235,13 @@ void DailaInteriors_TalkToArmorMerchant(s32 actor) {
 void DailaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(0, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsDinnerChoice);
+    // "What should I cook for our guests tonight? I just can't decide."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -243,12 +251,13 @@ void DailaInteriors_TalkToHealer(s32 actor) {
   s32 msg;
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
       Event_Start();
       Event_ResolvePendingActions(0);
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
       Event_SetMessageId(msg);
+      // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to..."
       FieldMessage_ShowAtActor(actor, 0);
       if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
         FieldEvent_Wait(10);
@@ -268,6 +277,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
     Event_ResolvePendingActions(0);
     msg = (s32)MsgDailaInteriorsTravelersFreeTime;
     Event_SetMessageId(msg);
+    // "Travelers! Well, I'll be! Do you have a lot of time and nowhere to go?"
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       FieldEvent_Wait(10);
@@ -285,12 +295,13 @@ void DailaInteriors_TalkToHealer(s32 actor) {
 void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsLeaveForMadra);
+    // "There is nothing left for you in Daila... Please be careful on your..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -299,12 +310,13 @@ void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
 void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(1, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsPirateTreasure);
+    // "Way back when, Daila used to be a hideout for a band of pirates......"
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -313,12 +325,13 @@ void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
 void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(2, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsSpaciousVillage);
+    // "We don't have a lot of people in Daila, but it's a very spacious..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -328,12 +341,13 @@ void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
 void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(0, actor);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgDailaInteriorsFishermenWaiting);
+    // "Our fishermen still can't head out to sea... When will they start..."
     Event_ShowMessageAndWait(actor, 0);
     Event_End();
   }
@@ -346,6 +360,7 @@ void DailaInteriors_AskGoingToMadra(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsGoingToMadra;
   Event_SetMessageId(msg);
+  // "Are you going to Madra?"
   FieldMessage_ShowAtActor(12, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
@@ -365,6 +380,7 @@ void DailaInteriors_TalkNoBoats(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaInteriorsLookingForBoat;
   Event_SetMessageId(msg);
+  // "Don't tell me you're all looking for a boat, too!"
   FieldMessage_ShowAtActor(14, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     FieldEvent_Wait(10);
@@ -381,10 +397,12 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsWatchingPractice);
+  // "Er... Aheh heh... You... weren't watching, were you?"
   Event_ShowMessageAndWait(26, 0);
   FieldEvent_Wait(30);
   Actor_SetModeById(26, 3);
   FieldEvent_Wait(30);
+  // "I was just practicing for the show we're putting on tonight."
   Event_ShowMessageAndWait(26, 0);
   Event_End();
 }
@@ -413,6 +431,7 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
     Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
+    // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 1);
     PartyInventory_Add(item);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SEA_GODS_TEAR, 0, 0);
@@ -465,24 +484,30 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
   owner = PartyInventory_Add(item);
   if (owner == -1) {
     MessageArgument_Push(item, 2);
+    // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 1);
+    // "But you can't carry any more items."
     FieldMessage_Show((s32)MsgItemCannotCarry, 1);
   retry:
+    // "What will you drop?"
     FieldMessage_Show((s32)MsgItemDropPrompt, 1);
     result = ItemPicker_RunToDrop(&member, &slot);
     if (result == -1) {
       if (Item_GetDirect(item)->flags & 8) {
         MessageArgument_Push(item, 2);
+        // "That ...'s valuable! You must get it!"
         FieldMessage_Show((s32)MsgItemDropPrompt + 4, 1);
         goto retry;
       }
       MessageArgument_Push(item, 2);
+      // "Drop the ...?"
       FieldMessage_Show((s32)MsgItemDropPrompt + 1, 5);
       result = FieldYesNo_Ask(1);
       Message_CloseFinishedWindows();
       if (result != 0)
         goto retry;
       MessageArgument_Push(item, 2);
+      // "Felix drops the ...."
       FieldMessage_Show((s32)MsgItemDropPrompt + 2, 1);
       work->message = saved;
       return owner;
@@ -492,6 +517,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       if (Inventory_CountItem(member, item) > 29) {
         MessageArgument_Push(member, 1);
         MessageArgument_Push(item, 2);
+        // "Empty"
         FieldMessage_Show((s32)MsgItemDropPrompt + 7, 1);
         goto retry;
       }
@@ -503,10 +529,12 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
       Sound_Play(MUS_083);
       if (owner == gMainRoutineWork.currentOwner) {
         MessageArgument_Push(item, 2);
+        // "Felix got ...."
         FieldMessage_Show((s32)MsgItemReceived, 3);
       } else {
         MessageArgument_Push(item, 2);
         MessageArgument_Push(owner, 1);
+        // "Felix gave ... to ...."
         FieldMessage_Show((s32)MsgItemGiven, 3);
       }
       work->message = saved;
@@ -515,10 +543,12 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
   } else {
     Sound_Play(MUS_083);
     MessageArgument_Push(item, 2);
+    // "Felix got ...."
     FieldMessage_Show((s32)MsgItemReceived, 3);
     if (owner != gMainRoutineWork.currentOwner) {
       MessageArgument_Push(item, 2);
       MessageArgument_Push(owner, 1);
+      // "Felix gave ... to ...."
       FieldMessage_Show((s32)MsgItemReceived + 1, 1);
     }
     work->message = saved;
@@ -548,7 +578,7 @@ s32 DailaInteriors_Start(void) {
         Actor_SetSpriteFlags(Actor_GetById(25), 0);
       }
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-      Actor_GetById(13)->priorityFlags |= 32;
+      Actor_GetById(ACTOR_TEAR_SPOT)->priorityFlags |= 32;
       Actor_GetById(19)->priorityFlags |= 32;
       Actor_SetSpritePriority(19, 2);
       Actor_GetById(19)->collisionFlags |= 4;
@@ -665,15 +695,33 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-s32 gDailaInteriorsExits[] = {                                                               
-      11, 0x1010100a, -1, 0x1020200a,         -1, 0x1030300a, -1, 0x1040400a, -1,  0x1050500a,                         
-      -1, 0x1060600a, -1, 0x10703085, -1, 12, 0x1010700a, -1, 511,                             
-  };
+s32 gDailaInteriorsExits[] = {
+    SCENE_EXITS(DailaInteriors1),
+    SCENE_EXIT_UNLESS(1, Daila1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Daila1, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Daila1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Daila1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Daila1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Daila1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Islets3, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(DailaInteriors2),
+    SCENE_EXIT_UNLESS(1, Daila1, 7, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
-s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {                                                               
-      11, 0x1010100d, -1, 0x1020200d,         -1, 0x1030300d, -1, 0x1040400d, -1,  0x1050500d,                         
-      -1, 0x1060600d, -1, 0x10703085, -1, 12, 0x1010700d, -1, 511,                             
-  };
+s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
+    SCENE_EXITS(DailaInteriors1),
+    SCENE_EXIT_UNLESS(1, Daila2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Daila2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Daila2, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Daila2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Daila2, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Daila2, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Islets3, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(DailaInteriors2),
+    SCENE_EXIT_UNLESS(1, Daila2, 7, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gDailaInteriors1Placements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 104, FACING_WEST, TALK_FACING_PARTY, 0),

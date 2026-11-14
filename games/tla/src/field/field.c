@@ -26,7 +26,6 @@
 #include "field/pad_movement.c"
 #include "field/move_by_keys.c"
 #include "field/map_grid.c"
-#include "field/map_layers.c"
 #include "field/world_map.c"
 
 #undef InitializeAnimationObjects

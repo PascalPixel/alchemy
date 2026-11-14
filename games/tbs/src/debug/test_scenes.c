@@ -10,10 +10,10 @@
 #include "field/scene_tables.h"
 #include "system/system.h"
 
-u8 *Scene_GetEntrances(void);
-u8 *Scene_GetExits(void);
-u8 *Scene_GetActorPlacements(void);
-u8 *Scene_GetTriggers(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gTest_Entrances[];
 extern u32 gTest_Exits[];
@@ -29,14 +29,16 @@ enum TestActorId {
   ACTOR_GUST
 };
 
-u8 *Scene_GetEntrances(void) { return (u8 *)gTest_Entrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) { return gTest_Entrances; }
 
 /// The scene has no exit regions: its regions entry returns none.
-s32 Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-u8 *Scene_GetExits(void) { return (u8 *)gTest_Exits; }
+const u32 *Scene_GetExits(void) { return gTest_Exits; }
 
-u8 *Scene_GetActorPlacements(void) { return (u8 *)gTest_ActorPlacements; }
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gTest_ActorPlacements;
+}
 
 /// Gives the first Djinni of an element, then clears its flag so it stays.
 static __inline__ void Test_GiveDjinniForTesting(s32 actorId, s32 element) {
@@ -60,7 +62,7 @@ static void Test_ReceiveGust(void) {
   Test_GiveDjinniForTesting(ACTOR_GUST, ELEMENT_JUPITER);
 }
 
-u8 *Scene_GetTriggers(void) { return (u8 *)gTest_Triggers; }
+const struct Trigger *Scene_GetTriggers(void) { return gTest_Triggers; }
 
 /// Nothing to set up.
 s32 Scene_Initialize(void) { return 0; }

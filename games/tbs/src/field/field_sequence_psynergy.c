@@ -145,6 +145,6 @@ s32 Scene_HasFieldPsynergyTrigger(s32 group) {
 u32 Scene_HasPsynergyTrigger(u16 item) {
   s32 eventAddress;
 
-  eventAddress = Field_FindItemTrigger(item);
+  eventAddress = (s32)Field_FindItemTrigger(item);
   return (u32)((0 - eventAddress) | eventAddress) >> 31;
 }

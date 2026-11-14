@@ -26,10 +26,10 @@
 #include "window/screens.h"
 #include "text/msg_ids.h"
 
-u8 *Scene_GetEntrances(void);
-u8 *Scene_GetExits(void);
-u8 *Scene_GetActorPlacements(void);
-s32 Scene_GetTriggers(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern u32 gTest_UnusedRows[];
 extern char gDebugItemPrompt[12];
@@ -98,14 +98,18 @@ static __inline__ void MenuTest_RecalculateParty(void) {
   Unit_Calculate(IVAN);
 }
 
-u8 *Scene_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gMenuTest_Entrances;
+}
 
 /// The scene has no exit regions: its regions entry returns none.
-s32 Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-u8 *Scene_GetExits(void) { return (u8 *)gMenuTest_Exits; }
+const u32 *Scene_GetExits(void) { return gMenuTest_Exits; }
 
-u8 *Scene_GetActorPlacements(void) { return (u8 *)gMenuTest_ActorPlacements; }
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gMenuTest_ActorPlacements;
+}
 
 #if TBS_PATCH_1
 /// Finishes pending UI work, displays a message, and waits one final frame.
@@ -239,7 +243,7 @@ UNUSED static void MenuTest_GiveItemToParty(void) {
 }
 #endif
 
-s32 Scene_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
+const struct Trigger *Scene_GetTriggers(void) { return gMenuTest_Triggers; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
 static void MenuTest_RaisePartyLevels(void) {

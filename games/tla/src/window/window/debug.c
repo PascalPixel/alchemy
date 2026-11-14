@@ -341,7 +341,7 @@ void DebugWarp_KaoruSpecial4(void) {
 
 void DebugWarp_KaoruSpecial3(void) {
   GameFlag_Set(0x824);
-  GameFlag_Set(0x17c);
+  GameFlag_Set(FLAG_CANNOT_SAVE_HERE);
   GameFlag_Set(0x9c5);
   GameFlag_Set(0xa3d);
   GameFlag_Set(0x9c0);

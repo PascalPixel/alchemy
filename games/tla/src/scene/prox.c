@@ -1433,7 +1433,7 @@ s32 Scene_Initialize(void) {
   s32 scene;
 
   if (Event_GetFlag(0xa3d)) {
-    Event_SetFlag(0x17c);
+    Event_SetFlag(FLAG_CANNOT_SAVE_HERE);
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   }
   scene = gMainRoutineWork.scene;

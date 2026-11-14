@@ -778,7 +778,7 @@ void Func_02002c2c__mars_lighthouse_entrance(void) __asm__("Func_02002c2c");
 
 void Func_02000fa4(void) {
   Event_PlaySound(SE_584);
-  Flag_Set(0x17d);
+  Flag_Set(FLAG_NO_PLACE_TO_SAVE);
   Actor_SetScript(11, gData_0200503c);
   Func_0200246c(0, 3);
   Flag_Set(FLAG_SCENE_TEMP_34);
@@ -1101,7 +1101,7 @@ s32 Scene_Initialize(void) {
         Actor_SetScript(11, gData_02005314);
         Func_0200246c(0, 3);
         Task_AddFrame(Func_02001254, 0x480);
-        Event_SetFlag(0x17d);
+        Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
       }
       Task_AddFrame(Func_02001378, 0x480);
       Actor_Get(11)->update = (void (*)(void))Func_020012bc;

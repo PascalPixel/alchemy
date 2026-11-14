@@ -4,6 +4,7 @@
 /// pictures, from "Finally, we've..." (MsgFinallyWeVe) to The End; then it
 /// waits for a button, or three minutes, and returns to the title.
 
+#include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -433,7 +434,7 @@ L_0200871e:
   Window_LoadGraphics();
   DebugText_Clear();
   gRenderOamEnabled = 1;
-  Event_ClearFlag(0x17c);
+  Event_ClearFlag(FLAG_CANNOT_SAVE_HERE);
   Event_SetDestination((s32)&SceneId_Clear, 2);
   return 0;
 }

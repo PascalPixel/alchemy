@@ -323,8 +323,8 @@ void Scene_Arrive(s32 unused, s32 keep) {
     GameFlag_Clear(0x123);
     GameFlag_Clear(0x11c);
     GameFlag_Clear(0x146);
-    GameFlag_Clear(0x17c);
-    GameFlag_Clear(0x17d);
+    GameFlag_Clear(FLAG_CANNOT_SAVE_HERE);
+    GameFlag_Clear(FLAG_NO_PLACE_TO_SAVE);
     GameFlag_Clear(0x17e);
     if (gMainRoutineWork.ownerOverride != 0)
       GameFlag_Set(0x176);

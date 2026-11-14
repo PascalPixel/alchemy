@@ -32,6 +32,12 @@
 /// and the music saved in gMainRoutineWork.returnMusic resumes if there is
 /// one. The scenes skip their arrival events while it is set.
 #define FLAG_KEEP_PARTY_POSITION 0x109
+/// While set, the save screen refuses to save with "Cannot save here".
+#define FLAG_CANNOT_SAVE_HERE 0x17c
+/// While set, the save screen refuses to save with "This is no place for
+/// that!": the scenes set it while the party rides a moving platform, lift or
+/// raft.
+#define FLAG_NO_PLACE_TO_SAVE 0x17d
 // Each lighthouse's scenes set its flag on every arrival, and Scene_Arrive
 // clears all four when the party enters another area, so a flag is set only
 // while the party is inside.

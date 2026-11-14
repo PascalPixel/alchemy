@@ -8,8 +8,8 @@
 #include "module/window/window.h"
 
 /// Runs the save screen's selection until a choice completes: saving (refused
-/// while flag 0x17c or 0x17d is set), sleep mode or the options. Returns -1
-/// when the screen is cancelled and 0 otherwise.
+/// while FLAG_CANNOT_SAVE_HERE or FLAG_NO_PLACE_TO_SAVE is set), sleep mode or
+/// the options. Returns -1 when the screen is cancelled and 0 otherwise.
 s32 PauseMenu_Run(void) {
   s32 selection = 0;
 
@@ -18,11 +18,11 @@ again:
   if (selection == -1)
     return -1;
   if (selection == 0) {
-    if (GameFlag_Get(0x17c)) {
+    if (GameFlag_Get(FLAG_CANNOT_SAVE_HERE)) {
       FieldMessage_Show((s32)MsgCannotSaveHere, 1);
       goto again;
     }
-    if (GameFlag_Get(0x17d)) {
+    if (GameFlag_Get(FLAG_NO_PLACE_TO_SAVE)) {
       FieldMessage_Show((s32)MsgNoPlaceForThat, 1);
       goto again;
     }

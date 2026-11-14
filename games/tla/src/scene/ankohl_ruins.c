@@ -859,7 +859,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   } else {
     MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, 5);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
-    Event_ClearFlag(0x17d);
+    Event_ClearFlag(FLAG_NO_PLACE_TO_SAVE);
   }
   MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
   MapGrid_CopyCells(18, 1, 3, 5, 7, 1);
@@ -941,7 +941,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   } else {
     MapGrid_CopyCellsLayered(69, 24, 1, 4, 68, 23);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
-    Event_ClearFlag(0x17d);
+    Event_ClearFlag(FLAG_NO_PLACE_TO_SAVE);
   }
   MapGrid_CopyCells(18, 66, 3, 1, 7, 84);
   MapGrid_CopyCells(18, 1, 3, 5, 7, 19);
@@ -1083,7 +1083,7 @@ void AnkohlRuins_RideRaftDown(void) {
     MapGrid_SetShakeFixed(-1, -1, 0xe666);
     MapGrid_CopyCellAttributes(41, 48, 3, 2, 13, 41);
     Event_SetFlag(FLAG_SCENE_TEMP_01);
-    Event_ClearFlag(0x17d);
+    Event_ClearFlag(FLAG_NO_PLACE_TO_SAVE);
     Event_ClearFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
     Event_PlaySound(SE_BANE_ESCAPE);
   }

@@ -1688,7 +1688,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_Get(30)->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(Actor_Get(30), px(540), px(96), px(300));
   System_Wait(1);
-  Event_SetFlag(0x17c);
+  Event_SetFlag(FLAG_CANNOT_SAVE_HERE);
   Event_SetFlag(FLAG_RETREAT_BLOCKED);
   Event_End();
 }

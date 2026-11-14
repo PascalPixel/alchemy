@@ -523,7 +523,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 finish:
   GameFlag_Clear(363);
   Camera_InitializeDefaultTransform();
-  Ram_HeapSlots->transitionWork->targetYaw = TRIG_TURN / 8;
+  Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
   return cnt;
 }
 

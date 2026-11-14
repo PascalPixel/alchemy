@@ -1142,7 +1142,7 @@ void Menu_ClearBattleHighlight(u8 *arg0) {
     count++;
   }
   data[count] = 0xff;
-  BattleHighlight_SetModesFar(data, 0);
+  BattleHighlight_SetModesFar(data, HIGHLIGHT_OFF);
 }
 
 /// Scrolls the row one entry: forward brings an icon in from the right as the

@@ -334,7 +334,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = 255;
-      BattleHighlight_SetModesFar(spreadActorIds, 1);
+      BattleHighlight_SetModesFar(spreadActorIds, HIGHLIGHT_SELECTED);
       // The (u32) compares the stored id unsigned, as the bytes do.
       if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
         if (spread != 255 && kind != 0) {
@@ -689,7 +689,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (conditionWindow != NULL)
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
-  BattleHighlight_SetModesFar(candidateIds, 0);
+  BattleHighlight_SetModesFar(candidateIds, HIGHLIGHT_OFF);
   NAVIGATION->targetViewOffset = 0;
   wait(1);
   return targetIndex;

@@ -127,7 +127,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
     data[0] = 255;
     PartyStatus_HighlightMembers(data);
-    BattleHighlight_SetModesFar(data, 1);
+    BattleHighlight_SetModesFar(data, HIGHLIGHT_SELECTED);
   }
 
   target = 256;
@@ -358,7 +358,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       signatureHeader[0] = actorId;
       signatureHeader[1] = 255;
-      BattleHighlight_SetModesFar(signatureHeader, 1);
+      BattleHighlight_SetModesFar(signatureHeader, HIGHLIGHT_SELECTED);
       PartyStatus_HighlightMembers(signatureHeader);
       wait(1);
       mode = BattleCommandRow_Run(1, 0);
@@ -374,7 +374,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Heap_Release(block);
         continue;
       }
-      BattleHighlight_SetModesFar(signatureHeader, 0);
+      BattleHighlight_SetModesFar(signatureHeader, HIGHLIGHT_OFF);
       if (mode == -1) {
         if (commandIndex == 0)
           break;

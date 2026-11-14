@@ -224,7 +224,8 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   {
     struct BattlePresentationTransition *transition =
         Ram_HeapSlots->transitionWork;
-    transition->targetYaw = action->unitId > 4 ? 0x5000 : TRIG_TURN / 8;
+    transition->targetYaw =
+        action->unitId > 4 ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
     transition->frames = 60;
   }
   wait(10);
@@ -245,7 +246,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   }
 
   wait(30);
-  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {
@@ -284,7 +285,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 
   wait(10);
   BattleObject_Put();
-  REG_BLDCNT = BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, 1);
   for (index = 0; index != 16; index++) {
@@ -303,11 +304,11 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
 s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
-  if (Ram_HeapSlots->transitionWork->targetYaw == TRIG_TURN / 8) {
-    Ram_HeapSlots->transitionWork->targetYaw = TRIG_TURN / 8;
+  if (Ram_HeapSlots->transitionWork->targetYaw == YAW_PARTY_ACTION) {
+    Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
     wait(10);
   } else {
-    Ram_HeapSlots->transitionWork->targetYaw = TRIG_TURN / 8;
+    Ram_HeapSlots->transitionWork->targetYaw = YAW_PARTY_ACTION;
     wait(30);
   }
 

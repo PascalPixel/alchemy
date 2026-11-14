@@ -356,7 +356,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     wait(1);
   }
 
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   BattleStaging_BuildTargetList(plan, &work);
   if (work.kind == 135)
     PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
@@ -501,13 +501,13 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   s32 targetYaw;
 
   if (plan->actorId > 4)
-    targetYaw = -TRIG_TURN / 8;
+    targetYaw = YAW_ENEMY_ACTION;
   else
-    targetYaw = TRIG_TURN / 8;
+    targetYaw = YAW_PARTY_ACTION;
   if (transition->targetYaw != targetYaw)
     transition->targetYaw = targetYaw;
   BattleStaging_BuildTargetList(plan, &work);
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   {
     struct BattleObj *slot = BattleObject_Get(work.actor);
     struct BattleWork *battle;
@@ -668,9 +668,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 
   if (plan->presentationFlags & 0x40000) {
     if (plan->actorId <= 7)
-      transition->targetYaw = -TRIG_TURN / 8;
+      transition->targetYaw = YAW_ENEMY_ACTION;
     else
-      transition->targetYaw = 0x5000;
+      transition->targetYaw = YAW_BEHIND_ENEMIES;
     transition->frames = 60;
   } else {
     struct MotionObject *actor = BattleObject_Get(plan->actorId)->object;
@@ -684,8 +684,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     else
       targetYaw = angle + 0x1800;
     targetYaw = (s16)targetYaw;
-    targetYaw +=
-        ((actorId <= 7 ? TRIG_TURN / 8 : -TRIG_TURN / 8) - targetYaw) * 3 / 4;
+    targetYaw += ((actorId <= ALLY_MAX ? YAW_PARTY_ACTION : YAW_ENEMY_ACTION) -
+                  targetYaw) *
+                 3 / 4;
     if (!((actorId <= 7) ^ (target <= 7)))
       targetYaw = actorId <= 7 ? 0x2400 : -0x2400;
     if (transition->targetYaw != targetYaw)
@@ -693,9 +694,9 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->presentationFlags & 0x80000) {
     if (plan->actorId <= 7)
-      transition->targetYaw = -TRIG_TURN / 8;
+      transition->targetYaw = YAW_ENEMY_ACTION;
     else
-      transition->targetYaw = TRIG_TURN / 8;
+      transition->targetYaw = YAW_PARTY_ACTION;
     transition->frames = 60;
   }
 
@@ -703,7 +704,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   isDjinni = mode & 1;
   if (isDjinni)
     work.flags = 1;
-  BattleHighlight_SetModes(0, 0);
+  BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   heap = Ram_HeapSlots;
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = BattleMotion_CallBeast(plan, &work);

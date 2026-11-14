@@ -8,6 +8,7 @@
 /// own still resolves. It places no bytes.
 
 #include "types.h"
+#include "ability_ids.h"
 #include "owner_state.h"
 #include "system/input.h"
 #include "system/main_routine_work.h"
@@ -288,6 +289,110 @@ struct BattleLinkedActionState {
   s32 seed;
   u8 unk0c[28];
 };
+
+/// With debug mode on, R defeats every enemy as an action starts, and R with
+/// Select the whole party (BattleActionRun_Build); The Broken Seal's flag.
+#define FLAG_DEBUG_BATTLE_KEYS 0x16d
+
+/// The camera's yaw while a party member acts, and while an enemy does, in
+/// 1/65536 turns: an eighth of a turn either side of 0.
+#define YAW_PARTY_ACTION (TRIG_TURN / 8)
+#define YAW_ENEMY_ACTION (-(TRIG_TURN / 8))
+
+/// The camera's yaw from behind the enemies, which an enemy's staged effect
+/// and cast take in place of YAW_ENEMY_ACTION.
+#define YAW_BEHIND_ENEMIES (TRIG_TURN * 5 / 16)
+
+/// REG_BLDCNT: blend the semi-transparent sprites over every layer, to fade
+/// them.
+#define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
+
+/// The keys that take the player on past a message: A, B, L and R.
+#define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
+
+/// Inventory_GetEquippedItemFar's slot for the weapon.
+#define EQUIP_WEAPON 1
+
+// What BattleActionRun_Build returns besides 0, which stages the action.
+#define ACTION_REPORTED -1 ///< the action failed and its message is shown
+#define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show
+
+// COMMAND_DJINN's parameter: the Djinni's element in bits 11..8, its index in
+// bits 7..0.
+#define DJINN_ELEMENT(v) (((v) >> 8) & 15)
+#define DJINN_INDEX(v) ((v) & 255)
+
+/// BattlePlan.targetCritical: the critical hit rolled for each target.
+enum BattleCritical {
+  CRITICAL_NONE,
+  CRITICAL_HIT,   ///< an attack's: a quarter more damage
+  CRITICAL_STRONG ///< an ability's (effects 36 to 40): half as much again
+};
+
+/// BattlePlan.targetHit while the hit is still to be rolled, as the ability
+/// lands; BattleActionRun_Build rolls it ahead only for Annihilation and Whorl.
+#define HIT_NOT_ROLLED -1
+
+/// BattlePlan.failure: why a cast plays no effect, which the staging shows.
+enum BattleActionFailure {
+  ACTION_FAILURE_NONE,
+  ACTION_FAILURE_SEALED, ///< "blocked": the user's Psynergy is sealed
+  ACTION_FAILURE_NO_PP   ///< the user has too little PP
+};
+
+/// BattlePlan.outcome, The Broken Seal's BattleActionRun.staging: how
+/// BattleStaging_DispatchAction shows the action, set by BattleActionRun_Build
+/// from the ability (Data_08128972 where it gives one). The Lost Age adds the
+/// stagings from STAGING_TEAM_STRIKE on.
+enum BattleStaging {
+  STAGING_MESSAGES = 1, ///< no effect: each target's messages only
+  STAGING_ATTACK = 2,   ///< the acting unit runs up and strikes
+  STAGING_CAST = 3,     ///< Psynergy, and Venus, Mercury, Mars, Jupiter
+  STAGING_ITEM = 4,
+  STAGING_SUMMON = 5, ///< the larger summons, the acting unit hidden
+  STAGING_DJINNI = 6, ///< a Djinni with no attack (Granite, Quartz...)
+  STAGING_FLEE = 7,   ///< a unit runs
+  /// The action plays as a cast, the caster showing its element's streaks in
+  /// place of the gathering star field: an enemy's ability that is not
+  /// Psynergy and has a battle effect, Slice, and weapon unleashes such as
+  /// Blizzard and Titan Blade.
+  STAGING_ENEMY_CAST = 8,
+  STAGING_FULL_SCREEN = 9, ///< Gaia, Rockfall, Procne and their kin
+  /// Meld ("Launch a powerful team strike.") and Mold: a second unit
+  /// (BattlePlan.actorId2) strikes as the Djinni is unleashed.
+  STAGING_TEAM_STRIKE = 10,
+  STAGING_DJINN_RECOVERY = 11, ///< Eddy: "Speed up Djinn recovery time."
+  STAGING_MEGAERA = 12,        ///< the summon, then High Impact on its side
+  STAGING_IRIS = 13,           ///< the summon, then the Aurora Field
+  /// The summoned beasts that strike: Wild Wolf, Roc, Orc, Grand Golem, Dinox
+  /// and Call Zombie (BattleMotion_CallBeast).
+  STAGING_BEAST_ATTACK = 15,
+  /// The summoned beasts that cast, Emu to Call Dullahan.
+  STAGING_BEAST_CAST = 16
+};
+
+/// BattleStaging_HideField's mode bit that hides the acting unit too, as the
+/// summons do.
+#define STAGING_HIDE_ACTOR 1
+
+/// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.actorId2 runs in
+/// beside the attacker.
+#define ATTACK_WITH_PARTNER 32
+
+/// How BattleStaging_RunPsynergyCast shows the caster.
+enum BattleCastKind {
+  CAST_PSYNERGY = 0, ///< the star field gathers on the caster
+  CAST_DJINNI = 1,   ///< no glow; the effect plays its prelude
+  CAST_ENEMY = 2     ///< the element's streaks
+};
+
+// BattlePlan.presentationFlags, The Broken Seal's battleEffect: the effect kind
+// in the low twelve bits and its strength (a double or triple blow) above them;
+// then how the effect is staged.
+#define EFFECT_VARIANT_SHIFT 12
+#define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
+#define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
+#define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
 
 extern struct Snapshot Data_0200ff58;
 

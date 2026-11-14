@@ -34,7 +34,7 @@ void BattleParty_SwapInReserves(void) {
   reserveCount = BattleParty_PrepareReserveOwners(reserves);
   if (count > reserveCount)
     count = reserveCount;
-  BattleHighlight_SetModes(actors, 4);
+  BattleHighlight_SetModes(actors, HIGHLIGHT_FADE_OUT);
   wait(32);
   for (i = 0; i < count; i++) {
     s32 unit = work->partyUnits[i];
@@ -55,7 +55,7 @@ void BattleParty_SwapInReserves(void) {
     gMainRoutineWork.activeOwners[actorCount + i] = actors[i];
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
   BattleObject_Put();
-  BattleHighlight_SetModes(reserves, 6);
+  BattleHighlight_SetModes(reserves, HIGHLIGHT_FADE_IN);
   wait(32);
 }
 
@@ -206,7 +206,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   result = 0;
   Iwram_ClearWordsEntry(Ram_HeapSlots->unkd0[2], 0x7c8);
   Task_ResetAll();
-  transition->targetYaw = TRIG_TURN / 8;
+  transition->targetYaw = YAW_PARTY_ACTION;
   transition->frames = 0;
   transition->flag = 1;
   transition->unk18 = 0;
@@ -375,7 +375,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       if (battle->pendingUnit != -1 &&
           Battle_FindUnitPlace(battle->pendingTag) != -1) {
         battle->actions[i].unitId = battle->pendingUnit;
-        battle->actions[i].command = 9;
+        battle->actions[i].command = COMMAND_DJINN_COUNTER;
         battle->actions[i].parameter = 0;
         battle->actions[i].target = Battle_FindUnitPlace(battle->pendingTag);
         battle->actions[i].range = 1;
@@ -390,7 +390,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
         queue &= 1;
         battle->extraCount--;
         battle->actions[i].unitId = queue << 7;
-        battle->actions[i].command = 10;
+        battle->actions[i].command = COMMAND_DAEDALUS;
         battle->actions[i].parameter = 0;
         battle->actions[i].target = queue != 0 ? 0 : 0x80;
         battle->actions[i].range = 255;

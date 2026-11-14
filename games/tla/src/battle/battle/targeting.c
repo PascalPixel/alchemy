@@ -458,9 +458,8 @@ void BattleMessage_WaitForAdvance(void) {
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
-    if ((gInput.held & KEY_B) ||
-        (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
-        (frame > 15 && (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
+    if ((gInput.held & KEY_B) || (gInput.pressed & KEY_ADVANCE) ||
+        (frame > 15 && (gInput.held & KEY_ADVANCE)))
       break;
     wait(1);
   }
@@ -495,7 +494,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
     Oam_AddSpriteAtDepth(prompt, 240);
-    if (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS))
+    if (gInput.pressed & KEY_ADVANCE)
       break;
     wait(1);
   }
@@ -1259,7 +1258,8 @@ power_end:
           bonus = 0;
         ap = action->power;
         if (abilityId == 683 || abilityId == 673 || abilityId == 724 ||
-            plan->command == 6 || plan->command == 10) {
+            plan->command == COMMAND_SUMMON ||
+            plan->command == COMMAND_DAEDALUS) {
           s32 rate;
 
           rate = 0;

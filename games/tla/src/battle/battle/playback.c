@@ -256,8 +256,7 @@ void BattlePlayback_Run(void) {
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
-      if ((gInput.held & KEY_B) ||
-          (gInput.pendingPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
+      if ((gInput.held & KEY_B) || (gInput.pendingPressed & KEY_ADVANCE) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (gInput.held & 0x303))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;

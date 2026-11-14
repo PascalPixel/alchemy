@@ -191,7 +191,8 @@ CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) $(INCLUDES) \
 SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/driver.c \
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/sound/player_work_copy.c \
            games/tla/src/sound/driver.c
-FLASH_C := $(addprefix games/tbs/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
+FLASH_C := $(addprefix games/tbs/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c \
+                         flashtab.c flashsst.c flashmx.c flashat.c) \
            $(addprefix games/tla/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm.c games/tbs/src/field/world_map_lines.c \
            games/tla/src/window/cell_picture.c games/tla/src/window/glyph_arm.c games/tla/src/field/grid_outline.c \

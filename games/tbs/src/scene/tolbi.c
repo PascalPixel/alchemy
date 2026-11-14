@@ -82,7 +82,6 @@
 
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(s32 unused);
-extern s32 gTolbiMirroredActor[];
 extern s32 gTolbiOlderBrotherRun[];
 extern s32 gTolbiYoungerSisterRun[];
 extern struct SceneEntrance gTolbiEntrances[];
@@ -91,7 +90,6 @@ extern struct ActorPlacement gTolbiActorPlacements[];
 extern struct Trigger gTolbiTriggersFestival[];
 extern struct Trigger gTolbiTriggersFinalsDay[];
 extern struct Trigger gTolbiTriggersAfterColosso[];
-extern u16 gTolbiDoorOpening[];
 extern struct MapGridCellAnimation gTolbiDoors[];
 
 /// Growth has raised the sprout into a vine the leader can climb.

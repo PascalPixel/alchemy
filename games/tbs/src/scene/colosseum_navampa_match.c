@@ -98,10 +98,8 @@ extern const s32 gColosseumNavampaMatch_SidewalkLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];
 extern const s16 gColosso_LetteringDigit[];
 extern const s16 gColosso_LetteringLose[];
-extern char gHexDigits[20];
 extern s32 gColosso_PrizeSparkleScript[];
 extern s32 gColosso_PrizeScript[];
-extern u32 gPushedActor_DirectionSteps[];
 extern struct SceneEntrance gColosseumNavampaMatchEntrances[];
 extern u32 gColosseumNavampaMatchExits[];
 extern struct ActorPlacement gColosseumNavampaMatchActorPlacements[];
@@ -114,14 +112,16 @@ extern s32 gColosseumNavampaMatch_LeaderActionB[];
 extern s32 gColosseumNavampaMatch_LeaderActionC[];
 extern s32 gColosseumNavampaMatch_LeaderScaleScript[];
 extern s32 gColossoParticleKinds[];
-extern s16 gColosso_LetteringSlot;
 extern s16 gColosso_LetteringTitle[];
 extern s16 gColosso_LetteringGo[];
 extern s16 gColosso_LetteringWin[];
-extern s16 gColosso_MarkerSlot;
 extern s32 gColosso_OpponentFinishScript[];
 extern s32 gColosso_LeaderFinishScript[];
 extern s32 gColossoParticleCount;
+extern char gHexDigits[20];
+extern u32 gPushedActor_DirectionSteps[];
+extern s16 gColosso_LetteringSlot;
+extern s16 gColosso_MarkerSlot;
 
 // UB: this calls a void function through an s32 function type, the call the
 // bytes show; UBFIX calls it as declared.

@@ -89,9 +89,7 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 s32 Scene_Initialize(void);
-extern s32 gMogallForest_RockScript[];
 extern s32 gMogallForest_ActorScript[];
-extern s32 gMogallForest_HidingPlaceScript[];
 extern struct SceneEntrance gMogallForestSign_Entrances[];
 extern struct SceneEntrance gMogallForestQuartz_Entrances[];
 extern struct SceneEntrance gMogallForestKillerApe_Entrances[];

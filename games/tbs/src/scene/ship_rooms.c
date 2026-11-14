@@ -142,7 +142,6 @@ extern s32 gShipRooms_MonsterBob[];
 extern s32 gShipRooms_LeaveByStairs[];
 extern s32 gShipRooms_StepIntoAisle[];
 extern s32 gShipRooms_LookAroundScript[];
-extern s32 gShipRooms_LieFlatScript[];
 extern struct Actor *gShipRooms_AnchorObject;
 extern struct SceneEntrance gShipRooms_EntrancesOther[];
 extern struct SceneEntrance gShipRooms_Entrances[];

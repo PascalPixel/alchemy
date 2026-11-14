@@ -71,7 +71,6 @@
 
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
-extern s32 gStuccoRoomsBSquashStretch[];
 extern struct SceneEntrance gStuccoRoomsBEntrances[];
 extern u32 gStuccoRoomsBExits[];
 extern struct ActorPlacement gStuccoRoomsBActorPlacements[];
@@ -79,7 +78,6 @@ extern struct ActorPlacement gStuccoRoomsBActorPlacementsAfterColosso[];
 extern struct Trigger gStuccoRoomsBTriggersFestival[];
 extern struct Trigger gStuccoRoomsBTriggersFinalsDay[];
 extern struct Trigger gStuccoRoomsBTriggersAfterColosso[];
-extern u16 gStuccoRoomsBDoorOpening[];
 extern struct MapGridCellAnimation gStuccoRoomsBDoors[];
 
 /// The placed actors, numbering the rows of the actor placement

@@ -73,7 +73,6 @@ extern struct ActorPlacement gGateActorPlacements[];
 extern struct Trigger gLunpaSealedTriggers[];
 extern struct Trigger gLunpaReopenedTriggers[];
 extern struct Trigger gGateTriggers[];
-extern u32 gLunpaUnusedWord;
 
 // Lunpa's and the gates' entrances and exits are in scene_exits.h.
 

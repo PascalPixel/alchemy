@@ -88,8 +88,6 @@
 #include "system/system_call.h"
 #include "text/msg_ids.h"
 
-extern s32 gSuhallaDesertStormScript[];
-extern s32 gSuhallaDesertFourthStormScript[];
 extern struct SceneEntrance gSuhallaDesertEntrancesOther[];
 extern struct SceneEntrance gSuhallaDesertNorthEntrances[];
 extern struct SceneEntrance gSuhallaDesertSouthEntrances[];

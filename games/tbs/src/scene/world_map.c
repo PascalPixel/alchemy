@@ -125,7 +125,6 @@
 
 s32 Scene_Initialize(void);
 extern s32 gWorldMapIodem;
-extern u16 gWorldMapBlend;
 extern s32 gCaravanFirstWagonArrives[];
 extern s32 gCaravanFirstWagonDeparts[];
 extern s32 gCaravanFirstWagonReturns[];
@@ -148,13 +147,8 @@ extern s32 gQuakeDustScript[];
 extern s32 gCrossingShipSailsWest[];
 extern s32 gCrossingShipVeersNorth[];
 extern s32 gIslandDriftsEast[];
-extern s32 gWorldMapFlintScript[];
 extern struct SceneEntrance gWorldSceneEntrances[];
 extern u32 gWorldMapExits[];
-extern s32 gWorldMapKolimaBridgeScript[];
-extern s32 gWorldMapAlignToMapScript[];
-extern s32 gWorldMapIodemScript[];
-extern s32 gWorldMapStormScript[];
 extern struct ActorPlacement gWorldMapActorPlacements[];
 extern struct ActorPlacement gWorldMapActorPlacementsHammetsCaravan[];
 extern struct ActorPlacement gWorldMapActorPlacementsFromWestLunpaCave[];

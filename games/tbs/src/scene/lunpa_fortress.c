@@ -102,11 +102,6 @@
 #include "text/msg_ids.h"
 
 extern s32 gLunpaFortressRandomPick;
-extern s32 gSecondPatrolRoute[];
-extern s32 gFirstPatrolRoute[];
-extern s32 gDonpaSleeps[];
-extern s32 gGroundFloorPatrolRoute[];
-extern s32 gHallPatrolRoute[];
 extern struct SceneEntrance gLunpaFortressGroundFloorEntrances[];
 extern struct SceneEntrance gLunpaFortressUpperFloorEntrances[];
 extern struct SceneEntrance gLunpaFortressCaveEntrances[];
@@ -120,7 +115,6 @@ extern struct ActorPlacement gLunpaFortressGroundFloorActorPlacements[];
 extern struct ActorPlacement gLunpaFortressUpperFloorActorPlacements[];
 extern struct ActorPlacement gLunpaFortressCaveActorPlacements[];
 extern struct ActorPlacement gLunpaFortressToadonpaActorPlacements[];
-extern struct Trigger gLunpaFortressNoTriggers[];
 extern struct Trigger gLunpaFortressGroundFloorTriggers[];
 extern struct Trigger gLunpaFortressUpperFloorTriggers[];
 extern struct Trigger gLunpaFortressCaveTriggers[];

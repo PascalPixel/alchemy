@@ -36,8 +36,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-extern const u16 gFileScreen_ButtonCode[];
-extern const u16 gFileScreen_ExtraButtonCode[];
 s32 Scene_Initialize(void);
 extern struct SceneEntrance gFileScreen_Entrances[];
 extern u32 gFileScreen_Exits[];

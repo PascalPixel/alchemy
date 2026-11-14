@@ -91,7 +91,6 @@ extern struct SceneEntrance gCrossboneIsleFloodgateEntrances[];
 extern struct SceneEntrance gCrossboneIsleStackedPillarsEntrances[];
 extern struct SceneEntrance gCrossboneIsleDragonStatueEntrances[];
 extern u32 gCrossboneIsleSteppingStonesExits[];
-extern struct ActorPlacement gCrossboneIsleSteppingStonesNoActorPlacements[];
 extern struct ActorPlacement gCrossboneIsleSteppingStonesActorPlacements[];
 extern struct ActorPlacement gCrossboneIsleIcePillarsActorPlacements[];
 extern struct ActorPlacement gCrossboneIsleFloodgateActorPlacements[];

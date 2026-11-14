@@ -81,13 +81,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gTolbiShipMast_DriftY;
-extern s32 gTolbiShipMast_DriftX;
-extern s32 gTolbiShipMast_SwayY;
-extern s32 gTolbiShipMast_SwayUnused;
-extern s32 gTolbiShipMast_CameraCenter[2];
-extern s32 gTolbiShipMast_CameraOrigin[2];
-extern s32 gTolbiShipMast_SwayX;
 extern s32 gTolbiShipMast_FollowCameraActions[];
 extern s32 gTolbiShipMast_LookoutActions[];
 extern s32 gTolbiShipMast_DriftActions[];

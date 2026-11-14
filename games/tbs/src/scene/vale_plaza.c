@@ -130,7 +130,6 @@
 const struct ActorPlacement *Scene_GetActorPlacements(void);
 const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
-extern u8 gValePlaza_UnusedPaletteSteps[];
 extern s32 gValePlaza_ChargedUpStrongmanActions[];
 extern s32 gValePlaza_SecondTravelerLeapActions[];
 extern s32 gValePlaza_FirstTravelerLeapActions[];

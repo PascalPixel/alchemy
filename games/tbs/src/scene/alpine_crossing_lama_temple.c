@@ -93,7 +93,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gAlpineCrossing_WorkerActorPlacementScript[];
 extern s32 gAlpineCrossing_FeizhiPath[];
 extern s32 gAlpineCrossing_LeaderPath[];
 extern s32 gAlpineCrossing_HsuStruggle[];

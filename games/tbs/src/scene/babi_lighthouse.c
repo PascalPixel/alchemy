@@ -85,14 +85,12 @@
 #include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
-extern s32 gBabiLighthouse_TrembleScript[];
 extern struct SceneEntrance gBabiLighthouse_EntryEntrances[];
 extern struct SceneEntrance gBabiLighthouse_LuffEntrances[];
 extern struct SceneEntrance gBabiLighthouse_StoneDoorEntrances[];
 extern struct SceneEntrance gBabiLighthouse_RoadEntrances[];
 extern struct SceneExitRegion gBabiLighthouse_EntryRegions[];
 extern u32 gBabiLighthouse_Exits[];
-extern struct ActorPlacement gBabiLighthouse_NoActorPlacements[];
 extern struct ActorPlacement gBabiLighthouse_EntryActorPlacements[];
 extern struct ActorPlacement gBabiLighthouse_LuffActorPlacements[];
 extern struct ActorPlacement gBabiLighthouse_StoneDoorActorPlacements[];

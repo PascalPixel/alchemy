@@ -57,7 +57,6 @@ extern struct Trigger gStuccoRoomsA_NoTriggers[];
 extern struct Trigger gStuccoRoomsA_HouseTriggers[];
 extern struct Trigger gStuccoRoomsA_InnTriggers[];
 extern struct Trigger gStuccoRoomsA_SanctumTriggers[];
-extern u16 gStuccoRoomsA_DoorCellSteps[];
 extern struct MapGridCellAnimation gStuccoRoomsA_DoorCells[];
 
 /// Each table numbers its own rows from ACTOR_FIRST_PLACED.

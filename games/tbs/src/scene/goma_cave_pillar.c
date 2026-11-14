@@ -74,7 +74,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gGomaCavePillar_WitnessFrames;
 extern struct EffectDurationScripts gGomaCavePillar_FragmentScripts;
 extern s32 gGomaCavePillar_FragmentScriptShort[];
 extern s32 gGomaCavePillar_FragmentScriptMedium[];

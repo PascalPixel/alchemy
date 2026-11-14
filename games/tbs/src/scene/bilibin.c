@@ -145,13 +145,6 @@ extern struct Trigger gBilibinTriggersOther[];
 extern struct Trigger gBilibinTriggers[];
 extern struct Trigger gBilibinBarricadeTriggers[];
 extern struct Trigger gBilibinTreasuryTriggers[];
-extern u16 gBilibin_SanctumDoorSteps[];
-extern u16 gBilibin_ItemShopDoorSteps[];
-extern u16 gBilibin_WeaponAndArmorShopDoorSteps[];
-extern u16 gBilibin_HouseEastDoorSteps[];
-extern u16 gBilibin_InnDoorSteps[];
-extern u16 gBilibin_HouseWestDoorSteps[];
-extern u16 gBilibin_HouseNorthDoorSteps[];
 extern u16 *gBilibin_DoorSteps[];
 /// Each door's cell, as column and row.
 extern s16 gBilibin_DoorCells[][2];

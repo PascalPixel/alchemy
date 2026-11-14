@@ -97,7 +97,6 @@
 #include "system/system_call.h"
 
 s32 Scene_Initialize(void);
-extern s32 gBilibinCave_ClearSpriteScript[];
 extern struct SceneEntrance gBilibinCaveEntrancesOther[];
 extern struct SceneEntrance gBilibinCaveEntranceEntrances[];
 extern struct SceneEntrance gBilibinCaveRapierEntrances[];

@@ -109,23 +109,23 @@ extern const u8 gColosseumSatrageMatch_RollLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];
 extern const s16 gColosso_LetteringDigit[];
 extern const s16 gColosso_LetteringLose[];
-extern char gHexDigits[20];
 extern s32 gColosso_PrizeSparkleScript[];
 extern s32 gColosso_PrizeScript[];
-extern u32 gPushedActor_DirectionSteps[];
 extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
 extern u32 gColosseumSatrageMatchExits[];
 extern struct ActorPlacement gColosseumSatrageMatchActorPlacements[];
 extern s32 gColosseumSatrageMatch_LiftPhase;
 extern s32 gColosseumSatrageMatch_LiftTimer;
 extern struct Trigger gColosseumSatrageMatchTriggers[];
-extern s16 gColosso_LetteringSlot;
 extern s16 gColosso_LetteringTitle[];
 extern s16 gColosso_LetteringGo[];
 extern s16 gColosso_LetteringWin[];
-extern s16 gColosso_MarkerSlot;
 extern s32 gColosso_OpponentFinishScript[];
 extern s32 gColosso_LeaderFinishScript[];
+extern char gHexDigits[20];
+extern u32 gPushedActor_DirectionSteps[];
+extern s16 gColosso_LetteringSlot;
+extern s16 gColosso_MarkerSlot;
 
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES 120
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME 75

@@ -76,7 +76,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-extern s32 gVault_WomanWantingTheRoofFixedRoute[];
 extern s32 gVault_BoyRoundTheWellRoute[];
 extern s32 gVault_GirlRoundTheWellRoute[];
 extern struct SceneEntrance gVault_Entrances[];

@@ -86,7 +86,6 @@
 #include "text/msg_ids.h"
 
 extern s32 gFuchinTemple_JumpingStudentScript[];
-extern s32 gFuchinTemple_HiddenSpriteScript[];
 extern u16 gFuchinTemple_TempleDoorOpens[];
 extern u16 gFuchinTemple_FehsDoorOpens[];
 extern u16 gFuchinTemple_FehsDoorCloses[];

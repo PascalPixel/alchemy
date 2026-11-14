@@ -68,10 +68,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gSuhallaGateWoundedNoCollision[];
-extern s32 gSuhallaGateWounded[];
-extern s32 gSuhallaGateWoundedFlippedNoCollision[];
-extern s32 gSuhallaGateWoundedFlipped[];
 extern struct SceneEntrance gSuhallaGateEntrancesOther[];
 extern struct SceneEntrance gSuhallaGateDewEntrances[];
 extern struct SceneEntrance gGatewayCaveEntrances[];

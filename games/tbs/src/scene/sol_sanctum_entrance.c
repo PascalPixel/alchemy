@@ -128,8 +128,6 @@ enum {
   ACTOR_ROW_STATUE_6
 };
 
-extern s32 gSolSanctumEntrance_RumbleTimer;
-
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.

@@ -115,7 +115,6 @@
 
 extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
-extern s32 gImil_FreezingYoungManScript[];
 extern s32 gImil_ShiverScript[];
 extern s32 gImil_OldWomanHurryScript[];
 extern s32 gImil_LeaderStepAsideScript[];
@@ -133,12 +132,6 @@ extern struct ActorPlacement gImil_TownActorPlacementsCured[];
 extern struct ActorPlacement gImil_RoomActorPlacements[];
 extern struct Trigger gImil_TownTriggers[];
 extern struct Trigger gImil_RoomTriggers[];
-extern u16 gImil_SanctumDoorSteps[];
-extern u16 gImil_RoomsEastDoorSteps[];
-extern u16 gImil_InnDoorSteps[];
-extern u16 gImil_HouseSouthwestDoorSteps[];
-extern u16 gImil_HouseWestDoorSteps[];
-extern u16 gImil_HouseNortheastDoorSteps[];
 extern u16 *gImil_DoorCellSteps[];
 extern s16 gImil_DoorCellPoints[][2];
 extern u16 gImil_CellStepsA[];

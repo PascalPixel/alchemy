@@ -67,13 +67,11 @@
 #include "text/msg_ids.h"
 
 s32 Scene_Initialize(void);
-extern s32 gEruption_ArcOriginsHead[];
 extern s32 gEruption_ArcOrigins[];
 extern struct SceneEntrance gSolSanctumEruption_Entrances[];
 extern u32 gSolSanctumEruption_Exits[];
 extern struct ActorPlacement gSolSanctumEruption_ActorPlacements[];
 extern struct Trigger gSolSanctumEruption_Triggers[];
-extern u16 gSolSanctumEruption_UnusedStarCells[];
 extern s32 gEruption_EmberScript[];
 extern u8 gSolSanctum_RingDrift[][3];
 extern u8 gSolSanctum_RingSwing[][3];

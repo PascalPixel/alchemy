@@ -70,7 +70,6 @@ extern const struct SceneEntrance gCaveEntrances[];
 extern const u32 gCaveExits[];
 extern const struct ActorPlacement gCaveNoActorPlacements[];
 extern const struct ActorPlacement gCaveActorPlacements[];
-extern const struct Trigger gCaveNoTriggers[];
 extern const struct Trigger gCaveTriggers[];
 
 /// The cell behaviors the cave's triggers answer.

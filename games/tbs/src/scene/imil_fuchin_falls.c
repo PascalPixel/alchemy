@@ -133,7 +133,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gImilFuchinFalls_TrackLeader;
 extern s16 gImilFuchinFalls_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];
 extern struct Actor *gImilFuchinFalls_DragonsEye;

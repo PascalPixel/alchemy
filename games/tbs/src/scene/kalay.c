@@ -177,7 +177,6 @@ extern struct Trigger gKalay_TunnelEntranceTriggers[];
 extern struct Trigger gKalay_TunnelCaveTriggers[];
 extern struct Trigger gKalay_TunnelPassageTriggers[];
 extern struct Trigger gKalay_TunnelTriggers[];
-extern u16 gKalay_DoorCellSteps[];
 extern struct MapGridCellAnimation gKalay_DoorCells[];
 extern s32 gKalay_TunnelParticleScript[];
 

@@ -65,7 +65,6 @@ extern struct SceneEntrance gTretTreeBranch_Entrances[];
 extern u32 gTretTreeBranch_Exits[];
 extern struct ActorPlacement gTretTreeBranch_ActorPlacements[];
 extern struct Trigger gTretTreeBranch_Triggers[];
-extern u16 gTretTreeBranch_UnusedCellSteps[];
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), is the only placed actor. Its
 /// actor placement is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE)) is set.

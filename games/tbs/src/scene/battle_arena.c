@@ -26,8 +26,6 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-extern const s32 gBattleArena_SlotValues[];
-extern u32 gBattleArenaCallFrames;
 s32 Scene_Initialize(void);
 extern u8 gBattleArena_SlotColumns[];
 extern struct SceneEntrance gBattleArenaEntrances[];

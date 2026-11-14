@@ -62,7 +62,6 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gGomaCaveEntranceTallIvyScript[];
 extern struct SceneEntrance gGomaCaveEntranceEntrances[];
 extern u32 gGomaCaveEntranceExits[];
 extern struct ActorPlacement gGomaCaveEntranceActorPlacements[];

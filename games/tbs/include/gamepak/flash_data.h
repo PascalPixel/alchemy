@@ -25,7 +25,13 @@ struct FlashType {
   struct FlashSector sector;
   u16 wait[2]; ///< Low two bits of REG_WAITCNT.
   /// The maker and device id ReadFlashId returns; 0 in gFlash_ChipDefault.
-  u16 id;
+  union {
+    struct {
+      u8 maker;
+      u8 device;
+    } separate;
+    u16 joined;
+  } id;
 };
 
 /// Settings for each flash chip model (44 bytes), in flash_setup's field order

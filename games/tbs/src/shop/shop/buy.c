@@ -4,11 +4,6 @@
 
 #include "../shop_internal.h"
 
-// Shop_DrawCarriedItem reads the unit and writes its icons as bytes; these are
-// the offsets of the unit's inventory and the icon's depth.
-#define SHOP_INVENTORY_OFFSET ((s32)offsetof(struct Unit, inventory))
-#define SHOP_ICON_DEPTH_OFFSET ((s32)offsetof(struct WindowSprite, sentinel))
-
 #define SHOP_STACK_LIMIT 30 ///< maximum quantity accepted by Inventory_AddItem
 
 /// Runs the Buy and Artifacts counters: the player browses the stock seven
@@ -299,7 +294,6 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
 }
 
 /// Draws the party's coins in the coins window, in the edition's layout.
-/// Called when a counter opens and after each purchase, sale or repair.
 void Shop_DrawMoney(void) {
   struct ShopWork *shop;
   struct Window *window;
@@ -472,43 +466,33 @@ void Shop_DrawEquipComparison(struct Window *window, s32 unitId, s32 itemId) {
 }
 /// Shows the quantity already carried and the party member's inventory icons.
 void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
-  // A typed WindowSprite icon store kept the English text extent but changed 76
-  // text bytes; retain the existing byte view of the sprite.
-
-  u8 *unitBytes;
+  struct Unit *unit;
   s32 x;
   s32 y;
   s32 itemIndex;
   s32 slot;
-  s32 quantityOffset;
-  s32 firstOffset = SHOP_INVENTORY_OFFSET;
-  s32 itemOffset;
-  s32 nextOffset;
   u8 *icon;
 
-  unitBytes = (u8 *)Unit_GetFar(unitId);
+  unit = Unit_GetFar(unitId);
   x = 8;
   y = 8;
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
-      quantityOffset = slot * 2 + SHOP_INVENTORY_OFFSET;
       MessageArgument_PushFar(
-          (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
-              1,
+          (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1,
           MESSAGE_ARGUMENT_NUMBER);
       Text_DrawMessageAsTilesFar(MsgYouHave, window, 0, 0);
     } else {
       Text_DrawMessageAsTilesFar(MsgShopNoneInStock, window, 0, 0);
     }
     itemIndex = 0;
-    if (*(u16 *)(unitBytes + firstOffset) != 0) {
+    if (unit->inventory[itemIndex] != 0) {
       for (;;) {
-        itemOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;
-        icon = (u8 *)WindowSprite_CreateLoadedFar(
-            *(u16 *)(unitBytes + itemOffset), 27, window, x, y);
-        icon[SHOP_ICON_DEPTH_OFFSET] = 252;
+        icon = (u8 *)WindowSprite_CreateLoadedFar(unit->inventory[itemIndex],
+                                                  27, window, x, y);
+        icon[offsetof(struct WindowSprite, sentinel)] = 252;
         x += 16;
         if (itemIndex == 4) {
           x = 8;
@@ -521,8 +505,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
         itemIndex++;
         if (itemIndex >= INVENTORY_SLOTS)
           break;
-        nextOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;
-        if (*(u16 *)(unitBytes + nextOffset) == 0)
+        if (unit->inventory[itemIndex] == 0)
           break;
       }
     }
@@ -593,10 +576,8 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 #define SHOP_QUANTITY_COIN_LABEL_X 136
 #endif
 
-/// Chooses how many items to buy or sell, returning the quantity above
-/// `minimum` or -1 when cancelled. The bar's fixed prefix is `minimum` (items
-/// already carried when buying); `maximum` must exceed it so at least one can
-/// be chosen. Holds HEAP_SLOT_TILE_SCRATCH for the bar's tiles.
+/// Chooses how many items to buy or sell, above minimum, the items already
+/// carried; returns -1 when cancelled.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   void *tileBuffer;
   struct Window *window;
@@ -686,10 +667,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   return selectedQuantity;
 }
 
-/// Adds each item bought to the party member, charging its price and adding it
-/// to the shop credit one at a time, then offers to equip it and, if equipped,
-/// to sell what it replaced. The artifact counters are not touched here:
-/// Shop_SelectBuy takes them down after.
+/// Gives the party member each item bought and takes its price, then offers to
+/// equip it and to sell what it replaced.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
   s32 remainingQuantity;
@@ -718,10 +697,8 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   }
 }
 
-/// Offers to equip the item just bought, unless it is equipped already, the
-/// party member cannot equip it, or what it would replace is cursed on. Equips
-/// it on Yes, redraws the grid and warns of a curse. Returns 1 when it was
-/// equipped.
+/// Offers to equip the item just bought, and warns of a curse. Returns 1 when
+/// it was equipped.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = gMenuWork;
   struct Unit *unit = Unit_GetFar(unitId);

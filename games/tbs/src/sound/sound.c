@@ -18,12 +18,7 @@ enum {
   BGM_UNITY_SCALE = 256,
   /// A ramp's step a VBlank: a full fade in or out takes 64 VBlanks.
   BGM_DEFAULT_RAMP_STEP = 4,
-  /// The track mask of every music command here. It selects tracks 0 to 7
-  /// only, though the music player has 10 (sound/music_player_table.s) and
-  /// MUS_KALAY, MUS_ELEMENTAL_STARS, MUS_DUNGEON, MUS_CONFRONTATION,
-  /// MUS_UNUSED, MUS_TOLBI_BOUND_SHIP, MUS_WORLD_MAP, MUS_VENUS_LIGHTHOUSE and
-  /// MUS_FILE_SCREEN use 9 or more: their tracks 8 and 9 keep their volume and
-  /// pitch through the ramps and under a jingle.
+  /// The track mask of every music command here.
   TRACKS_ALL = 0xff,
   MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSound' entries, one a player.
   /// VBlanks after a jingle starts before the music waits for it to end.
@@ -35,10 +30,7 @@ enum {
 
 /// Plays a sound number, the game's one way of playing a sound: a fade control,
 /// a sound effect, a jingle or music, as the README's "What a sound number
-/// means" describes. The low 12 bits are the sound, SOUND_FLAG_FADE_IN the only
-/// flag read. Reached through the sound far-call table as Sound_PlayFar
-/// from the whole game; it keeps the music's ramps and sound state
-/// (gCurrentBgm, gBgmRestoreDelay) up to date.
+/// means" describes.
 void Sound_Play(s32 id) {
   s32 flags;
   s32 player;
@@ -47,9 +39,8 @@ void Sound_Play(s32 id) {
   id &= SOUND_NUM_MASK;
 
   if (id == SOUND_FADE_OUT_BGM) {
-    // Fade the music out, once until the next music starts: 16 steps 7
-    // VBlanks apart, 112 VBlanks. MUS_SILENCE is a sound with no tracks,
-    // so a later request for the faded music starts it again.
+    // Fade the music out, once until the next music starts: 16 steps 7 VBlanks
+    // apart, 112 VBlanks.
     if (gBgmFadeRequested != 0)
       return;
     m4aMPlayFadeOut(&gMPlayInfo_BGM, 7);
@@ -58,19 +49,15 @@ void Sound_Play(s32 id) {
   } else if (id == SOUND_FADE_OUT_ACTION_SE) {
     // The control is also the number of the song table's row 289, so it fades
     // MUSIC_PLAYER_ACTION_SE out over 48 VBlanks (16 steps of 3) and that row
-    // never plays. Only sound effects record their number in
-    // gMusicPlayerLastSound; MUSIC_PLAYER_ACTION_SE's is 0 after this fade.
+    // never plays.
     gMusicPlayerLastSound[MUSIC_PLAYER_ACTION_SE] = 0;
     m4aMPlayFadeOut(&gMPlayInfo_ActionSE, 3);
   } else if (id >= SOUND_SE_FIRST) {
-    // A sound on MUSIC_PLAYER_SE_LAST borrows a free effect player,
-    // searching back to MUSIC_PLAYER_SE_FIRST.
-    // A player is busy while the low byte of its status, the active bits of
-    // its first eight tracks, is nonzero; with all four busy,
-    // MUSIC_PLAYER_SE_LAST's sound is cut off.
+    // A sound on MUSIC_PLAYER_SE_LAST borrows a free effect player, searching
+    // back to MUSIC_PLAYER_SE_FIRST.
     player = gSongTable[id].ms;
     if (player == MUSIC_PLAYER_SE_LAST) {
-      while (((u8 *)&gMPlayTable[player].info->status)[0] != 0) {
+      while ((u8)gMPlayTable[player].info->status != 0) {
         player--;
         if (player < MUSIC_PLAYER_SE_FIRST) {
           player = MUSIC_PLAYER_SE_LAST;
@@ -90,10 +77,9 @@ void Sound_Play(s32 id) {
     m4aSongNumStart(id);
     gBgmRestoreDelay = BGM_RESTORE_DELAY_VBLANKS;
   } else {
-    // Music: the keep control, or the music last chosen (gCurrentBgm),
-    // changes nothing, so a scene may name its music on every entry; music
-    // that has ended is not started again. The three pieces below take the long
-    // reverb code, the rest the normal one (enum SoundReverbCode).
+    // Music: the keep control, or the music last chosen (gCurrentBgm), changes
+    // nothing, so a scene may name its music on every entry; music that has
+    // ended is not started again.
     if (id == SOUND_KEEP_BGM)
       return;
     if (id == gCurrentBgm)
@@ -116,12 +102,7 @@ void Sound_Play(s32 id) {
 }
 
 /// Restores BGM after a jingle and steps its volume and combined tempo/pitch
-/// ramps once per VBlank, clamping each ramp when it crosses its target. After
-/// a jingle starts it counts gBgmRestoreDelay down, waits until the jingle's
-/// player has no track playing, and sets the music's target volume back to
-/// BGM_UNITY_SCALE, so the code that played the jingle does nothing more.
-/// Called by System_VBlankHandler through the sound far-call table; it also
-/// runs the PCM buffer's DMA restart count (m4aSoundVSync).
+/// ramps once per VBlank, clamping each ramp when it crosses its target.
 void Sound_UpdateBgmRamps(void) {
   s32 delta;
 
@@ -175,10 +156,6 @@ void Sound_UpdateBgmRamps(void) {
 }
 
 /// Runs the sound test's three sound selectors and five reverb codes forever.
-/// Up and Down choose a row, Right and Left change its sound by 1, R and L by
-/// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
-/// and Select both steps the reverb code (SOUND_REVERB_NORMAL at first) and
-/// fades MUSIC_PLAYER_ACTION_SE. Never returns.
 void SoundTest_Run(void) {
   // One row each for music, jingles and sound effects.
   s32 cues[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
@@ -262,10 +239,7 @@ void Sound_Initialize(void) {
 }
 
 /// Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
-/// tempo. The scale lasts until the next music starts (MPlayStart sets
-/// BGM_UNITY_SCALE) or the tempo and pitch ramp moves. Called only by the
-/// Lemurian ship event, which plays MUS_ENDING at 240 (0.94 of its tempo) as
-/// the ship sails off.
+/// tempo.
 void Sound_SetBgmTempo(u16 tempoScale) {
   m4aMPlayTempoControl(&gMPlayInfo_BGM, tempoScale);
 }
@@ -298,11 +272,7 @@ void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
 }
 
 /// Returns nonzero while a jingle holds the music: from its start until its
-/// player falls silent and the music begins to fade back in. Polled by the
-/// Colosso scenes, the Djinni-joined messages (window/screens/joined.c),
-/// the message windows' pause skip (window/window/messages.c) and
-/// Sound_WaitForJingle (shop/shop/run.c), which the inn, the
-/// sanctum, the Lemurian ship and Tolbi's spring use.
+/// player falls silent and the music begins to fade back in.
 s32 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
 /// Stops every sound player while preserving its state for a later resume.
@@ -323,11 +293,8 @@ void Sound_UpdateCommandMask(u32 command) {
     gSoundCommandMask = command;
 }
 
-/// Returns the music Sound_Play last chose: 0xff before any,
-/// MUS_SILENCE after a fade, else the last music. FieldSequence_Run saves it
-/// as gMainRoutineWork.returnMusic before the Pause menu, so the music can
-/// be started again when the party is put back where it was
-/// (MainRoutine_Run, system/main_routine.c).
+/// Returns the music Sound_Play last chose: 0xff before any, MUS_SILENCE after
+/// a fade, else the last music.
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 /// Waits a frame at a time for jingle restoration, giving up after 300 frames.

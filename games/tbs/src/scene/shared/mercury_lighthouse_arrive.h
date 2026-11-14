@@ -1,11 +1,6 @@
 /// @file
 /// Mercury Lighthouse and its entrance: arriving on a floor through one of its
 /// sparkling passages.
-#include "types.h"
-#include "actor.h"
-#include "event.h"
-#include "flags.h"
-#include "sounds.h"
 
 /// Unless the party returns to where it was, the leader appears 16 pixels north
 /// of the entrance, hidden, as the screen opens, then comes south with the
@@ -19,8 +14,8 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     Event_Start();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     actor->motionFlags = 0;
-    Import_ActorSetPosition(0, px(actor->x.part.pixel),
-                            px(actor->z.part.pixel) + -px(16));
+    Actor_SetPositionFixed(0, px(actor->x.part.pixel),
+                           px(actor->z.part.pixel) + -px(16));
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Event_StartScreenTransition();

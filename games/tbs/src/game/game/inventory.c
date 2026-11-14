@@ -4,16 +4,12 @@
 
 #include "../game_internal.h"
 
-/// Returns item `item`'s definition; an inventory entry may be passed, its
-/// equipped and quantity bits are ignored. Every bank that shows or uses an
-/// item calls it, through GAME.S as Item_GetDirectFar.
+/// Returns an item's definition; an inventory entry's other bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
   return &gItem_DefinitionTable[item & INVENTORY_ITEM_ID_MASK];
 }
 
-/// Returns whether the character can equip `itemId`: bit classId of the item's
-/// equipMask. Units past the eight characters cannot. Inventory_Equip checks
-/// it first.
+/// Returns whether the character can equip the item.
 s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirect(itemId);
@@ -25,8 +21,7 @@ s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
 }
 
 /// Returns 1 for an item that is not a weapon or armor, and for those whether
-/// the character can equip it. The shop's buy screen calls it to grey out the
-/// party members who could not use an item.
+/// the character can equip it.
 s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == EQUIPMENT_GROUP_NONE)
     return 1;
@@ -55,8 +50,7 @@ s32 Item_GetEquipmentGroup(s32 itemId) {
 }
 
 /// Returns how many of the item in `slot` the unit carries (0 for an empty
-/// slot). The entry stores one less than the count. Reached through GAME.S as
-/// Shop_GetSelectionState; nothing in this image calls it by name.
+/// slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
   u32 entry = Unit_Get(unitId)->inventory[slot];
 
@@ -112,8 +106,7 @@ s32 PartyInventory_CountFreeSlots(void) {
 
 /// Gives a unit one item, joining its first matching stack (up to 30) or taking
 /// the first free slot. A full matching stack fails immediately, even if
-/// another slot is free. Writes the inventory slot; returns it, or -1 when
-/// there was no room.
+/// another slot is free.
 s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirect(itemId);
@@ -153,9 +146,8 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   return -1;
 }
 
-/// Gives the item to the first party member with room. Returns who took it,
-/// or -1. Called for a battle's spoils, a chest or search in the field, and
-/// the events that give items.
+/// Gives the item to the first party member with room. Returns who took it, or
+/// -1.
 s32 PartyInventory_Add(s32 itemId) {
   s16 unitIds[10];
   s32 unitCount = Party_ListMembers(unitIds);
@@ -296,12 +288,9 @@ s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
   return 0;
 }
 
-/// Takes one item out of `slot`: a stack shrinks by one (INVENTORY_REMOVE_ONE),
-/// a last item empties the slot and the inventory closes up
-/// (INVENTORY_REMOVE_LAST). Returns INVENTORY_REMOVE_EMPTY_SLOT for an empty
-/// slot. The unit's stats are recomputed either way; its Psynergy list is not
-/// rebuilt here (Unit_RefreshPsynergy), so a removed item's Psynergy stays
-/// listed until something rebuilds it.
+/// Takes one item out of slot, closing up the inventory when it was the last.
+/// The Psynergy list is not rebuilt, so a removed item's Psynergy stays listed
+/// until something rebuilds it.
 s32 Inventory_Remove(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   u16 item = unit->inventory[slot];
@@ -375,8 +364,7 @@ s32 PartyInventory_Discard(s32 itemId) {
   return 0;
 }
 
-/// Marks the item in `slot` broken; returns -1 for an empty slot. Called when
-/// a used item breaks, in battle or from the item menu.
+/// Marks the item in `slot` broken; returns -1 for an empty slot.
 s32 Inventory_Break(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
 
@@ -427,10 +415,8 @@ s32 RareItemStock_Adjust(s32 index, s32 delta) {
   return index;
 }
 
-/// Adds `delta` to the counter of a rare item; ordinary items have none.
-/// Returns the new count, or 0. The counters are how many of each rare item
-/// the shops may sell: buying one takes one, discarding or selling puts one
-/// back.
+/// Adds delta to how many of a rare item the shops may sell, and returns the
+/// new count; ordinary items have none.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   // The table holds a rare item's counter number plus one, and 0 for an
   // ordinary item.

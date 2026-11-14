@@ -4,17 +4,7 @@
 
 #include "../battle_internal.h"
 
-// The window work's byte that marks a message window busy; it moved when the
-// international editions grew the work.
-#if LANGUAGE != LANGUAGE_JAPANESE
-#define WINDOW_WORK_MESSAGE_BUSY 0x12f8
-#else
-#define WINDOW_WORK_MESSAGE_BUSY 0x1188
-#endif
-
-// The first message of the viewer's second range: in Japanese, an earlier
-// copy of the first range's opening lines; the localizations moved it
-// elsewhere.
+// The first message of the viewer's second range.
 #if (LANGUAGE == LANGUAGE_ENGLISH)
 #define DEBUG_SECOND_FORM MsgBecameCursed
 #elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
@@ -27,12 +17,9 @@
 /// set past it.
 #define DEBUG_PARAMETER_SET_LAST_ROW 332
 
-/// Debug: replaces the party with the party members of parameter set number
-/// set. Each party member is raised to the row's level, given the row's Djinn
-/// (Set, in order of their numbers across the party), the row's abilities, and
-/// an emptied inventory holding the row's items, each equipped. Changes the
-/// active party and each party member's level, Djinn, abilities and inventory.
-/// Returns 1 when the table ends before that parameter set, 0 otherwise.
+/// Debug: replaces the party with parameter set number set, each member at its
+/// level with its Djinn, abilities and equipped items. Returns 1 when the table
+/// ends before that set.
 s32 DebugParameterSet_Load(s32 set) {
   // The next Djinni number of each element to hand out.
   s32 nextDjinn[ELEMENT_COUNT];
@@ -123,16 +110,9 @@ s32 DebugParameterSet_Load(s32 set) {
   (MsgLaliveroHowDidSearchForSheba -                                           \
    MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely + 5)
 
-/// Debug: a message viewer that never returns. Names the first party member "Ha
-/// hi fu he ho" (MsgDebugSampleName), fills the message arguments with sample
-/// values and shows one message at a time, counted from the Babi Lighthouse
-/// dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or, in the
-/// second range, from DEBUG_SECOND_FORM. Right steps the index on by one and
-/// Left back by two, R and L step it by ten, Up and Down pick the range, and B
-/// alternates between the ranges, moving on one message each time it leaves the
-/// first. A closes the window and shows the message again. Renames party member
-/// 0, sets REG_DISPCNT and gMainRoutineWork.messageSpeed, and clears the window
-/// work's message busy byte after each window.
+/// Debug: a message viewer that never returns, showing one message at a time
+/// with sample arguments. Left and Right step it, L and R by ten, Up, Down and
+/// B pick the range, and A shows it again.
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
@@ -215,9 +195,9 @@ void DebugBattle_ViewMessages(void) {
         wait(1);
       }
       Window_CloseAllFar(1);
-      // Close the window and free the message system for the next one.
+      // Close the window and clear its page arrow.
       Window_CloseFar(messageWindow, 1);
-      (*(u8 **)&gWindowWork)[WINDOW_WORK_MESSAGE_BUSY] = 0;
+      ((struct WindowWork *)gWindowWork[0])->pageArrowShown = 0;
     }
   }
 }
@@ -227,16 +207,9 @@ void DebugBattle_ViewMessages(void) {
 #define DEBUG_FIRST_ENCOUNTER 257
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
-/// Debug: the battle test menu, which never returns. Without Down held it
-/// fights DEBUG_FIRST_ENCOUNTER again and again with auto battle on. Holding
-/// Down at the start opens the chooser: Right and Left step the encounter, Up
-/// and Down by ten, R and L pick the parameter set, Start opens the message
-/// viewer and A fights; B marks every later battle BATTLE_TYPE_DEBUG.
-/// Holding Down when A is pressed makes it a link battle. Exported as
-/// DebugBattle_RunMenuFar; nothing in the source calls it. Sets
-/// FLAG_DEBUG_BATTLE and, as chosen, FLAG_AUTO_BATTLE, FLAG_LINK_BATTLE and
-/// FLAG_DJINN_LESSON, and resets the task table, heap and VRAM cache
-/// before each battle.
+/// Debug: the battle test menu, which never returns. It fights the first
+/// encounter again and again with auto battle on, unless Down is held at the
+/// start to open the chooser of encounter and parameter set.
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 encounter;
@@ -289,9 +262,7 @@ restart:
         }
         wait(1);
       }
-      // A fights: Down still held makes it a link battle. The battle's
-      // background comes from gMainRoutineWork.battleBackground
-      // (BattleBackground_GetSelectedFar in Battle_Run).
+      // A fights; Down still held makes it a link battle.
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(ISAAC);

@@ -4,9 +4,8 @@
 
 #include "../battle_internal.h"
 
-/// Returns an item's rank among the spoils, higher for a better item and 0 for
-/// none: an indispensable item first, then a rare item, then the higher item
-/// id. The rank's bits: 10 ITEM_INDISPENSABLE | 9 ITEM_RARE | 8..0 the item id.
+/// Returns an item's rank among the spoils: an indispensable item first, then a
+/// rare one, then the higher item id; 0 for none.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
   u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
@@ -61,9 +60,8 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
   return bonus + base;
 }
 
-/// Returns an enemy's experience with the Djinn bonus: its own, plus a
-/// four-sided die for every ten levels and one more, at least 30 percent of
-/// its own.
+/// Returns an enemy's experience with the Djinn bonus: its own plus a die for
+/// every ten levels, at least 30 percent more.
 static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
                                                             u16 *reward) {
   s32 rollIndex;
@@ -80,17 +78,9 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
   return bonus + base;
 }
 
-/// Counts a fallen enemy and adds its coins, experience and perhaps its item
-/// to the spoils.
-/// Returns -1 for a party unit and -2 for a party member fought as an enemy,
-/// else 0. It notes the class for the victory message (firstDefeated,
-/// defeatState). In a monster battle it adds nothing more; otherwise it sets
-/// the class's ENEMY_DEFEATED_FLAG, adds the rewards (with the Djinn bonus,
-/// djinnBonus nonzero, the rolls above) and rolls the item: 1 in
-/// 2^(itemChance - 1), two powers likelier with the bonus. An item not yet
-/// among the four kept replaces the lowest ranked, if it ranks higher.
-/// Called as each enemy falls by BattlePlayback_RunAll and
-/// BattlePlayback_Run.
+/// Counts a fallen enemy and adds its coins, experience and perhaps its item to
+/// the spoils, more with the Djinn bonus. Returns -1 for a party unit, -2 for a
+/// party member fought as an enemy, else 0.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
   struct EnemyDefinition *enemy;
@@ -120,12 +110,9 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   if (i != ENEMY_BATTLE_SIZE)
     classSlot = i;
-  // The earliest listed class to fall names the victory message, and a
-  // second defeat makes it DEFEAT_SEVERAL.
-  // No defeat state is 2, so this test never fails.
-  // XXX (no evidence): whether DEFEAT_BY_PARTY_MEMBER was meant; the code
-  // behaves the same for every state the game sets, so only the author's
-  // intent would say.
+  // The first class to fall names the victory message.
+  // XXX (no evidence): whether DEFEAT_BY_PARTY_MEMBER was meant; no state is 2,
+  // so the test never fails.
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
       battle->firstDefeated = classSlot;
@@ -181,12 +168,9 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   return 0;
 }
 
-/// Hands out the spoils after a victory: the experience to each party member
-/// still standing, with every level gained and what it brings, then the coins,
-/// then the items best first. Each level up shows its message, every Psynergy
-/// newly learned and each stat that rose. An item the inventory cannot take
-/// goes to gOverflowItem and ends the handing out. Changes the party members'
-/// experience, levels and stats, the party's coins and inventory.
+/// Hands out the spoils after a victory: experience to each party member still
+/// standing, with every level gained, then the coins, then the items best
+/// first.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;

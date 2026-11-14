@@ -36,15 +36,8 @@ struct SpritePlacement;
 struct SpriteScale;
 struct WorldPosition;
 
-// Entries have their target's parameters. Seven keep empty parameter lists
-// (no prototype): their callers pass different arguments than the target
-// takes, which C89 accepts with no prototype in scope. They are the
-// blank-display runners (the entrance in r0), Unit_LearnPsynergyFar
-// (called with none), Party_ShowJoinedMessageFar (two),
-// AreaNameWindow_ShowFar, PauseMenu_RunFar and
-// BuildStamp_GetTimeFar (one each). The near call Text_ResetStyle
-// is declared the same way in module/window/window.h (Window_Create passes it
-// one).
+// Entries have their target's parameters, except seven declared with empty
+// lists, whose callers pass other arguments than the target takes.
 #include "gamepak/far_call/system.h"
 #include "gamepak/far_call/field.h"
 #include "gamepak/far_call/window.h"

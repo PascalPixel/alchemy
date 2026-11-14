@@ -2,14 +2,9 @@
 /// Vault's rooms, before and after the thieves are caught: the Bone left
 /// on the floor of the house where the dog's owner offers bones. They are
 /// "leftover bones from dinner".
-#include "types.h"
-#include "actor.h"
-#include "event.h"
 
 /// Searching CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL beside the girl at the inn
-/// takes a Bone after the thieves are jailed. The floor Bone remains, so the
-/// party can take more. With no room for it, ACTOR_GIRL_AT_THE_INN (as both
-/// scenes name her) shakes their head: "Aren't you a greedy lad!"
+/// takes a Bone after the thieves are jailed.
 static void Vault_FindBone(void) {
   Event_Start();
   if (PartyInventory_HasSpace() == 0) {

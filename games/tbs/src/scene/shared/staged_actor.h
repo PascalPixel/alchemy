@@ -1,26 +1,8 @@
-#include "module/field/field.h"
-#include "battle.h"
 #include "system_call.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
 #include "actor_step.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_slots.h"
-#include "pushed_actor.h"
 #include "fixed_point_position.h"
 #include "iwram_call.h"
-#include "scene.h"
-#include "map_grid.h"
 #include "map_grid_scroll.h"
-#include "event.h"
-#include "sounds.h"
 
 // Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
@@ -85,19 +67,19 @@ UNUSED static void PushedActor_AdvancePair(void) {
   dir = lead->facing >> 12;
   Actor_StepFrom(&dst, lead, gPushedActor_DirectionSteps[dir]);
   next = PushedActor_FindAtTile(&dst, lead);
-  if (next == 0)
+  if (next == NULL)
     return;
 
   Actor_StepFrom(&dst, next, gPushedActor_DirectionSteps[dir]);
   blocker = PushedActor_FindAtTile(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != NULL && (blocker->collisionFlags & 1) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + px(16);
   dst.z = next->z.fixed;
   blocker = PushedActor_FindAtTile(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != NULL && (blocker->collisionFlags & 1) != 0)
     return;
 
   next->layer = 2;
@@ -146,7 +128,7 @@ static UNREAD_RESULT PushedActor_StopBlockedMotion(struct Actor *actor) {
   dir = actor->facing >> 12;
   Actor_StepFrom(&probe, actor, gPushedActor_DirectionSteps[dir]);
   target = PushedActor_FindAtTile(&probe, actor);
-  if (target != 0) {
+  if (target != NULL) {
     u32 i = 0;
     s32 kind = target->sprite->entries[0]->animationId;
     s32 *kinds = gPushedActor_FootprintKinds;
@@ -253,7 +235,7 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
   probe->callback = 0;
   actor = Scene_FindActorRegion(&direction, &probe->actorSlot,
                                 &probe->footprintIndex);
-  if (actor == 0) {
+  if (actor == NULL) {
     return 0;
   }
   mode = &actor->layer;
@@ -388,7 +370,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
                                          horizontalExtent, verticalExtent,
                                          CELL_BEHAVIOR_NORMAL);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
 
   {
@@ -409,7 +391,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Actor_GetById(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))PushedActor_StopBlockedMotion;
   Event_Wait(4);
-  if ((u32)(direction - 6) <= 7)
+  if (direction >= 6 && direction <= 13)
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -418,7 +400,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   FieldActor_SetMoveTargetFixed(actor, probe.position.x, probe.position.y,
                                 probe.position.z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.1);
 
   {
@@ -430,7 +412,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     probe.callback();
 
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-  Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_GetById(ACTOR_PARTY_LEADER)->update = NULL;
   Actor_WaitForMove(actor);
   Sound_Play(SE_STOP_ACTION_SE);

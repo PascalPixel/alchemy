@@ -16,8 +16,7 @@ struct Actor;
 struct MapGridCell;
 
 /// The actor ids FieldWork.actors maps (enum ActorId): the party's eight
-/// characters, then the actors a scene places. An actor id indexes this table,
-/// not the 64 slots of gActors.
+/// characters, then the actors a scene places.
 #define ACTOR_ID_COUNT 66
 
 /// A treasure spot placed as an actor: a chest or a Psynergy Stone.
@@ -49,8 +48,7 @@ enum FieldRaisedTrigger {
 /// A field scene's work: FieldSequence_Run allocates it in heap slot
 /// HEAP_SLOT_FIELD, zeroes it and frees it on the way out, and the field
 /// sequence, the event commands and the scene overlays all reach it through
-/// gFieldWork. The twelve requests from stepTrigger to raisedTrigger are
-/// handled by the field sequence.
+/// gFieldWork.
 struct FieldWork {
   /// The actor placement tables placed so far, recorded by
   /// Event_SpawnActorPlacements.

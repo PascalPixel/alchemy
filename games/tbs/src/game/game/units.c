@@ -17,9 +17,7 @@ struct MapLocalStateSnapshotView {
   u8 firstSnapshotSlot;
 };
 
-/// The running totals Unit_Calculate builds a unit's stats in. Each call takes
-/// a block from EWRAM first (Heap_AllocEwram) and frees it
-/// with Heap_Release before returning; only Unit_Calculate reads it.
+/// The running totals Unit_Calculate builds a unit's stats in.
 struct StatWork {
   s32 hp;          ///< maximum HP
   s32 pp;          ///< maximum PP
@@ -46,16 +44,14 @@ struct StatWork {
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 /// Starts a new game: clears the main routine's work and restarts at the
-/// opening. Only GAME.S's bare veneer reaches it; nothing calls it by name.
+/// opening.
 void Game_RestartQuest(void) {
   MainRoutineWork_InitializeDefaults();
   MainRoutine_RunFar(0);
 }
 
-/// Returns the party's Djinn recovery bank (the standby Djinn and their turns
-/// to recover), or for the enemy side battle unit FIRST_ENEMY_UNIT + 3 itself,
-/// read as a bank. The bank also holds the summon flags Summon_ListLearned
-/// reads.
+/// Returns the party's Djinn recovery bank, the standby Djinn and their turns
+/// to recover, or for the enemy side a battle unit read as one.
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0)
     return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
@@ -77,10 +73,8 @@ u32 Party_GetAverageLevel(void) {
   return totalLevels;
 }
 
-/// Returns the unit of `unitId`: ISAAC to PIERS are the playable
-/// characters in the main routine's work; the six from FIRST_ENEMY_UNIT are the
-/// enemies of the current battle. Anything else, or an enemy outside a battle,
-/// is NULL. Nearly every bank calls it, through GAME.S as Unit_GetFar.
+/// Returns the unit of unitId: ISAAC to PIERS the characters, the six from
+/// FIRST_ENEMY_UNIT the enemies of the current battle; NULL for anything else.
 struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;
@@ -108,11 +102,8 @@ struct Unit *Unit_Get(u32 unitId) {
   return NULL;
 }
 
-/// Returns the definition of enemy `selector`, in row `selector -
-/// ENEMY_ID_FIRST`; an id past the first 250 gives the first. Enemy ids start
-/// past the eight characters' so that one id names any unit: Unit.id holds
-/// either, and gBattleSprites, indexed by it, keeps the characters' rows (their
-/// attack effect and hop) before the enemies'.
+/// Returns the definition of enemy selector; enemy ids start past the eight
+/// characters', so that one id names any unit.
 const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex = selector - ENEMY_ID_FIRST;
 
@@ -143,16 +134,11 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
   }
 }
 
-/// Recomputes a unit's stats from its base stats, equipment, set Djinn, class
-/// and battle stat levels, clamps each to its range and writes them to the
-/// unit. A change of maximum HP or PP keeps the unit's current HP and PP at
-/// the same fraction of it. Also sets the unit's curse bits and
-/// equipment bonuses. Called after anything that changes those inputs:
-/// equipping, setting Djinn, levelling up, a class change, battle stat
-/// changes.
 /// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
 #define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
 
+/// Works out a unit's stats from its base stats, equipment, set Djinn, class
+/// and battle stat levels; its HP and PP keep their share of a new maximum.
 void Unit_Calculate(s32 unitId) {
   struct StatWork *stats;
   struct Unit *unit;
@@ -181,11 +167,8 @@ void Unit_Calculate(s32 unitId) {
     stats->element[index].resistance = unit->baseElement[index].resistance;
   }
 
-  // A gauge is HP or PP as a fraction of its maximum, UNIT_GAUGE_FULL full.
-  // When either no longer gives its stat to within 1 (the stat was written
-  // without Unit_RecalculateGauges), both gauges are reset to full and the
-  // unit's HP and PP refilled, before the fractions carry over to the new
-  // maxima.
+  // HP and PP keep their share of the maximum; gauges that no longer match are
+  // reset to full first.
   if (UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / UNIT_GAUGE_FULL, unit->hp) >
           1 ||
       UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) >
@@ -453,10 +436,8 @@ void Unit_Calculate(s32 unitId) {
   Heap_Release(stats);
 }
 
-/// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
-/// with EQUIP_EFFECT_LURE) equipped, and clears it otherwise. Called on
-/// entering a scene (Scene_Arrive, FieldSequence_Run) and at the end of
-/// an event, so the encounter rate follows the cap.
+/// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item with
+/// EQUIP_EFFECT_LURE) equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 member;
@@ -482,11 +463,8 @@ void GameFlag_RefreshLureCap(void) {
   }
 }
 
-/// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
-/// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// MainRoutineWork_InitializeDefaults stores it as a new game's start stamp,
-/// and the file list (FileList_SelectFile, Save_BuildFileSummary) and the main
-/// menu compare saves with it.
+/// Encodes the build stamp's time, which a new game takes as its start stamp
+/// and the file list compares saves with.
 u32 BuildStamp_GetTime(void) {
   // The stamp is six ASCII digits, hhmmss.
   const u8 *digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
@@ -511,19 +489,13 @@ u32 BuildStamp_GetTime(void) {
   return (u16)stamp;
 }
 
-/// Clears the game-state header, the scene state with the Colosso's inventory
-/// snapshot and the actor snapshot after it, the flags and most of the save
-/// stamp; sets a new game's defaults: Isaac alone in the party, the standard
-/// button layout, the message speed, the play time clock and the Lucky Wheels
-/// prize odds.
+/// Clears the game's state and sets a new game's defaults: Isaac alone in the
+/// party, the standard buttons, the message speed and the Lucky Wheels odds.
 void MainRoutineWork_InitializeDefaults(void) {
   volatile s32 zero;
 
-  // Clear the state header, scene state, flags and save metadata in DMA order:
-  // 176 words are gMainRoutineWork up to the characters (units, which
-  // Party_InitializeCharacters sets up); 993 words run from gSceneLocalState
-  // through gInventorySnapshot and gActorSnapshot; 128 words are all
-  // 4096 flags.
+  // Clear the state up to the characters, the scene state with its snapshots,
+  // and the flags.
   zero = 0;
   START_DMA(&zero, &gMainRoutineWork,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 176);
@@ -596,10 +568,9 @@ void Party_StartChildhood(void) {
   Unit_Calculate(JENNA);
 }
 
-/// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
-/// Garet healed with the Machete in their inventories replaced by the Short
-/// Sword and equipped, Move and Retreat taught to Isaac, Move to Garet, Mind
-/// Read to Ivan, and 300 coins.
+/// The party after the prologue: Isaac and Garet healed and given the Short
+/// Sword, Move and Retreat for Isaac, Move for Garet, Mind Read for Ivan, and
+/// 300 coins.
 void Party_EndChildhood(void) {
   s32 unitId;
 
@@ -702,9 +673,7 @@ void Party_RestorePpOfLitElements(void) {
 UNUSED void Unit_GaugeNoOp(void) {}
 
 /// Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
-/// that Unit_Calculate keeps the same fractions. Called after anything that
-/// writes HP or PP directly: Unit_AddHp, the inn, the sanctum, item use,
-/// battle.
+/// that Unit_Calculate keeps the same fractions.
 void Unit_RecalculateGauges(s32 unitId) {
   struct Unit *unit;
 

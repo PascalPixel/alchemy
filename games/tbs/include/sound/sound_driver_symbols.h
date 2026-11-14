@@ -15,16 +15,12 @@ enum AudioCommandMask {
   SOUND_COMMAND_MASK_BITS = 0x7f
 };
 
-/// The sound driver's mode at start (m4aSoundInit, m4aSoundMode):
-/// 8 PCM notes (bits 11..8), volume 15 (15..12), rate 7 (19..16),
-/// 352 samples a VBlank or 21024 a second, and sound bias resolution 1 (from
-/// bits 23..20). Its reverb field, 0, leaves the reverb as it is.
+/// The sound driver's mode at start (m4aSoundInit, m4aSoundMode): 8 PCM notes
+/// (bits 11..8), volume 15 (15..12), rate 7 (19..16), 352 samples a VBlank or
+/// 21024 a second, and sound bias resolution 1 (from bits 23..20).
 #define AUDIO_INITIAL_MODE 0x0097F800
 
-/// A sound for Sound_Play: bits 11..0 the sound number, 15..12 flags. The
-/// sound README's "What a sound number means" gives the ranges; the controls
-/// SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM and SOUND_FADE_OUT_ACTION_SE are rows of
-/// the song table, in sounds.h.
+/// A sound for Sound_Play: bits 11..0 the sound number, 15..12 flags.
 enum SoundControl {
   SOUND_NUM_MASK = 0xfff,
   SOUND_FLAGS_MASK = 0xf000,
@@ -51,12 +47,9 @@ enum MusicPlayerId {
   MUSIC_PLAYER_SE_LAST = 7
 };
 
-/// The five versions of the IWRAM mixer's last step Sound_LoadReverbCode
-/// copies into place, each carrying a different share of a VBlank's sound into
-/// the next: the song's reverb, as MusicPlayer2000 calls it. Each is the last
-/// step of IwramSoundRenderVBlank's loop, which reads back what the two
-/// hardware buffers held the time before, and works out what the mix buffer
-/// starts the next VBlank with.
+/// The five versions of the IWRAM mixer's last step Sound_LoadReverbCode copies
+/// into place, each carrying a different share of a VBlank's sound into the
+/// next: the song's reverb, as MusicPlayer2000 calls it.
 enum SoundReverbCode {
   /// One value for both channels, from the two buffers together; only the
   /// sound test loads it.

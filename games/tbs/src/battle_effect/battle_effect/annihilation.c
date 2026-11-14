@@ -9,22 +9,7 @@
 /// The user closes on the first target and fire bursts from it in a shower of
 /// shards.
 ///
-/// Abilities: Annihilation (BATTLE_EFFECT_ANNIHILATION).
-///
-/// Its frames play out like this:
-///
-///   4 on       64 shards scatter from the target and fall
-///   6 to 11    a fire streak flares in front of the user
-///   8          the target is struck; the canvas is filled
-///   16 to 47   a fire burst grows over the target in three steps
-///
-/// work->particles 0 to 63 hold the shards and Ram_MapGridCellBuffer the
-/// burst's pictures. Each drawing builds the blitters it needs and frees them
-/// the same frame; the effect ends with the transfer task removed and
-/// the canvas layer closed.
-///
-/// args: the user and the target; a nonzero variant gives the burst its
-/// second picture and a sound.
+/// Abilities: Annihilation.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -60,8 +45,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
   for (i = 0; i != 64; i++) {
-    // 64 shards start at the target, flying across towards the middle of
-    // the field; each group of four lives two frames longer than the last.
+    // Shards burst from the target.
     struct Particle *seed = &work->particles[i];
 
     SET_POSITION(seed, targetActor->x.fixed, targetActor->y.fixed,
@@ -84,9 +68,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     if (work->args->variant != EFFECT_VARIANT_BASIC && frame == 8)
       Sound_PlayFar(SE_POWER_UP);
     Projection_ScaledUnit(work->args->user, &position);
-    // The fire streak, one picture a frame in front of the user, drawn
-    // additively and mirrored for EFFECT_SIDE_PARTY with a blitter made for
-    // this one drawing.
+    // The fire streak in front of the user.
     if (frame >= 6 && frame <= 11) {
       if (work->args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -104,9 +86,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                     position.x / 2, position.y - 24, 48, 72);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
-    // The fire burst over the target grows a step every two frames up to
-    // the third (frame 20) and holds it to frame 47; a nonzero variant takes
-    // the second strip of pictures.
+    // The fire burst over the target grows.
     if (frame >= 16 && frame <= 47) {
       s32 step = (frame - 16) / 2;
       s32 strip;
@@ -116,31 +96,25 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       if (step > 2)
         step = 2;
-      // Each strip holds three 40x80 pictures.
       if (work->args->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
         strip = 3 * (40 * 80);
       blitters[0](canvas, Ram_MapGridCellBuffer + strip + step * (40 * 80),
                   origin.x / 2 - 20, origin.y - 48, 40, 80);
-      // A busy delay before the blitter is freed (BattleEffect_CallDoNothing).
-      // Nothing here depends on the time it takes.
+      // A busy delay before the blitter is freed.
       // XXX (no evidence): why it waits; the delay changes nothing the game
       // draws or computes, so only the author's intent would say.
       BattleEffect_CallDoNothing(10000);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
-    // The strike fills the canvas at its brightest, a flash that the transfer
-    // then fades.
+    // The strike flashes the canvas.
     if (frame == 8) {
       Dma_Fill32(CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
                  CANVAS_BYTES);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // Shards shrink as their lives run down, from mote size 7 to 2, and fall
-    // at 1/64 pixel a frame per frame. Pairs of shards alternate between the
-    // brightest-wins and the additive blitter, both mirrored on
-    // EFFECT_SIDE_PARTY.
+    // Shards shrink and fall.
     if (frame > 3) {
       BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
       for (i = 0; i != 64; i++) {
@@ -161,13 +135,11 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       }
       EFFECT_RELEASE_BLITTERS();
     }
-    // The strike throws the target back with KNOCKBACK_HURL and shakes the
-    // screen 4 frames.
+    // The strike throws the target back.
     if (frame == 8) {
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
       work->shakeFrames = 4;
     }
-    // The target glows red on frames 6 and 14.
     if (frame == 6)
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
                                TINT_KEEP, TINT_KEEP, 0);

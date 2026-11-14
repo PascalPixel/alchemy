@@ -37,7 +37,6 @@
 #include "main_routine_work.h"
 #include "djinn_ids.h"
 #include "module/scene/lalivero.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -45,22 +44,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "event_inline.h"
 #include "field_effect.h"
 #include "item_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "sounds.h"
 #include "flags.h"
-#include "heap.h"
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 
@@ -195,7 +186,6 @@ static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
 /// told to let you in if you showed up...") lets the party through and steps
 /// aside (sets FLAG_LALIVERO_WHARF_OPEN).
 static void Lalivero_WharfGuardLetsPartyThrough(void) {
-
   GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
   Event_SetMessageId(MsgLaliveroWasToldLetInIf);
   // "I was told to let you in if you showed up... The door is open."
@@ -206,9 +196,7 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
   Event_Wait(10);
 }
 
-/// The leader walks through one of Lalivero's doors. As the leader walks into a
-/// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
-/// and the exit of the touched step trigger is taken.
+/// The leader walks through one of Lalivero's doors.
 static void Lalivero_EnterDoor(void) {
   s32 door = gFieldWork->stepTrigger;
   s32 x = gLaliveroDoorCells[door][0];
@@ -241,13 +229,6 @@ static void Lalivero_EnterDoorway(void) {
 
 /// In Lalivero, on the first visit, arriving from the World Map, the party and
 /// Iodem find more of Tolbi's soldiers beaten in the street.
-///
-/// Iodem asks whether they fought a group of six. There were seven, the same
-/// group the soldiers had been following, and one of them was Sheba, with the
-/// scholar Kraden protecting her. They headed for the ruins beneath Babi
-/// Lighthouse, and Faran, the master of Lalivero, followed them in.
-///
-/// The soldiers send the party on, and Iodem sets off for Babi Lighthouse.
 static void Lalivero_WatchWoundedSoldiers(void) {
   struct Actor *leader;
 
@@ -454,7 +435,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_SetSpeed(ACTOR_IODEM, 1.2);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -465,14 +446,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
 }
 
 /// In Lalivero, at step trigger 50 after Venus Lighthouse, Garet stops the
-/// leader, for Iodem asked them to wait. This plays until Iodem has spoken
-/// (FLAG_IODEM_FAREWELL_SEEN).
-///
-/// Iodem comes out of Faran's house and tells the party that the misty island
-/// they saw from the lighthouse may be Lemuria, which could save Babi's life.
-/// The party promised Babi to find it, though it means first to find Jenna,
-/// whom it is searching for. Iodem gives it the Black Orb that sails Babi's
-/// ship. Garet is glad to see the ocean at last.
+/// leader, for Iodem asked them to wait.
 static void Lalivero_IodemGivesBlackOrb(void) {
   struct Actor *leader;
 
@@ -775,7 +749,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -783,14 +757,14 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -902,7 +876,7 @@ s32 Lalivero_Initialize(void) {
 
   // The Black Orb Iodem hands over is drawn from its item icon, floating
   // 10 pixels up.
-  actor = (struct Actor *)Actor_Get(ACTOR_BLACK_ORB);
+  actor = Actor_Get(ACTOR_BLACK_ORB);
   actor->retainSpriteCache = 1;
   actor->motionFlags = 0;
   sprite = actor->sprite;
@@ -931,12 +905,12 @@ s32 Lalivero_Initialize(void) {
     // party with their own collision off, and the two cells each covers
     // become wall instead. The third cell copied, at x 78, lies outside the
     // town's 32 columns, where the camera never goes, and changes nothing.
-    actor = (struct Actor *)Actor_Get(ACTOR_WEST_SOLDIER);
+    actor = Actor_Get(ACTOR_WEST_SOLDIER);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->sprite->flags = 0;
     actor->sprite->rotation = FACING_NORTH;
-    actor = (struct Actor *)Actor_Get(ACTOR_EAST_SOLDIER);
+    actor = Actor_Get(ACTOR_EAST_SOLDIER);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->sprite->flags = 0;
@@ -952,14 +926,14 @@ s32 Lalivero_Initialize(void) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
       // the event.
-      actor = (struct Actor *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      actor = Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       actor->paused = 1;
-      actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      actor = Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       actor->paused = 1;
       Lalivero_WatchWoundedSoldiers();
-      actor = (struct Actor *)Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
+      actor = Actor_Get(ACTOR_WOMAN_OUR_ONLY_HOPE);
       actor->paused = 0;
-      actor = (struct Actor *)Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
+      actor = Actor_Get(ACTOR_GIRL_SHEBAS_POWERS);
       actor->paused = 0;
     }
   }

@@ -1,6 +1,3 @@
-#include "script_operands.h"
-#include "types.h"
-#include "actor.h"
 
 // Tolbi's ship deck and Vale's storm.
 
@@ -14,7 +11,7 @@ static s32 Scene_SquashAndStretch(struct Actor *state) {
     break;
   case 4:
     state->scaleX += Q16_ONE / 8;
-    state->scaleY += -Q16_ONE / 16;
+    state->scaleY -= Q16_ONE / 16;
     break;
   case 2:
     state->scaleX += Q16_ONE / 16;
@@ -23,7 +20,7 @@ static s32 Scene_SquashAndStretch(struct Actor *state) {
   case 0:
     state->scaleX = Q16_ONE;
     state->scaleY = Q16_ONE;
-    state->timer = (Math_RemainderUnsigned(Import_RandomNext(), 90) + 60);
+    state->timer = (Math_RemainderUnsigned(Random_Next(), 90) + 60);
     break;
   }
   state->timer--;

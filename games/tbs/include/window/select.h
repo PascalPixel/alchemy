@@ -95,8 +95,7 @@ struct SelectionMenuWork {
   u16 pathTop[5];    ///< top, kept for each icon chosen on the path
   u16 pathCursor[5]; ///< cursorIndex, kept for each icon chosen on the path
   /// 999 from setup and once a yes or no window opens, 1 from
-  /// Menu_RunSelectionForValue. While 0, an ICON_KIND_YES_NO row and its window
-  /// sit at the top of the screen instead of the bottom.
+  /// Menu_RunSelectionForValue.
   u16 locked;
   u8 unused[42];
 };

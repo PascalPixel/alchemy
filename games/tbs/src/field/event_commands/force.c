@@ -15,12 +15,6 @@ static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
 
 /// A shot appears in front of the caster, grows and flies forward with three
 /// afterimages; what it hits (effectWork->child) is pushed 16 pixels.
-///
-/// Abilities: Force (FIELD_PSYNERGY_FORCE).
-///
-/// The shot is sprite 215, the hand of Move and Carry, flying at 4 pixels a
-/// frame; where it lands it makes a heavy impact
-/// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect).
 void FieldPsynergy_Force(void) {
   struct Actor *target;
   s32 eventTarget;
@@ -112,10 +106,6 @@ void FieldPsynergy_Force(void) {
 
   // Destination: 56 pixels in front of the caster with effectWork->enabled set
   // (no trigger named the target), otherwise the Psynergy's position.
-  // The shot's script waits to arrive and makes the impact
-  // (gFieldEffect_BurstParticleActorScript + 4 is
-  // gFieldEffect_HeavyImpactScript); each afterimage follows 3 frames apart and
-  // is released on arrival.
   if (effectWork->enabled != 0) {
     caster = effectWork->mainActor;
     pos.x = caster->x.fixed;
@@ -142,10 +132,9 @@ void FieldPsynergy_Force(void) {
   for (i = 0; i <= 59 && (projectile)->script != NULL; i++)
     wait(1);
 
-  // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
-  // way: the ground there must be within a step (MapGrid_CheckCollision 0) and
-  // free of actors. It hops (8 pixels a frame) with childOption; an
-  // event's childMode leaves it be.
+  // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the way:
+  // the ground there must be within a step (MapGrid_CheckCollision 0) and free
+  // of actors.
   if (target != NULL && effectWork->childMode == 0) {
     if (effectWork->childOption != 0)
       target->velocityY = px(8);

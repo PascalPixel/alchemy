@@ -47,10 +47,6 @@ FieldEffect_CheckRaisedTargetCollision(struct Actor *target,
 /// When Carry is cast on a target, two hands lift it to 24 pixels above the
 /// ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
 /// where it is.
-///
-/// Abilities: Carry (FIELD_PSYNERGY_CARRY).
-///
-/// Where the way is blocked a buzzer sounds.
 void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct FieldEffectWork *effectWork;
   struct Actor *src;
@@ -262,14 +258,11 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 /// When Carry is cast with no target, two hands appear 16 pixels above the spot
 /// in front of the caster and 32 pixels to either side, close in 24 pixels and
 /// scatter into shards.
-///
-/// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnCarryHand)
 
 /// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound and grows it,
 /// spinning 1/8 turn a frame, from a quarter to full size over 24 frames; angle
-/// is the way it faces once grown. Returns the hand, or NULL when it cannot be
-/// spawned (Actor_Spawn); Carry and its no-target cast release it.
+/// is the way it faces once grown.
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;

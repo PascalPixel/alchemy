@@ -1,23 +1,3 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "task.h"
-#include "colosso_gauge.h"
-#include "battle_sprite_id.h"
-#include "heap_release.h"
-#include "event.h"
-#include "dma.h"
-#include "vram_cache.h"
-#include "io_reg.h"
-#include "flags.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 // the opponent who races Isaac by running a recorded path, and the race gauge
@@ -38,14 +18,7 @@ struct ColossoRaceWork {
 
 STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 
-/// The opponent's task. PATH_RECORDER_PLAY plays the path back: each
-/// frame the opponent steps to the next point (mirrored across the finish when
-/// asked), turning by at most a sixteenth of a turn, and stands once still for
-/// three frames. At the path's end the opponent walks to the finish, beside the
-/// first finisher's item actor or the second's, and sets
-/// FLAG_SCENE_TEMP_11 (a racer has finished). PATH_RECORDER_RECORD records the
-/// actor's own path instead, up to COLOSSO_PATH_HALFWORDS - 2 halfwords, then
-/// plays it back with the opponent.
+/// The opponent's task.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneLocalState;
@@ -221,7 +194,7 @@ static void Colosso_DrawGauge(void) {
   if ((gFrameCount & 15) > 4) {
     shape = OBJ_SIZE_16X16;
     actor = Actor_Lookup(gauge->opponentActorId);
-    if (actor != 0) {
+    if (actor != NULL) {
       x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
       y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
       y &= 255;
@@ -233,7 +206,7 @@ static void Colosso_DrawGauge(void) {
       Oam_AddSpriteAtDepth(entry++, 255);
     }
     actor = Actor_Lookup(gauge->playerActorId);
-    if (actor != 0) {
+    if (actor != NULL) {
       x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
       y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
       y &= 255;

@@ -74,40 +74,24 @@
 #include "main_routine_work.h"
 #include "module/field/field.h"
 #include "system_call.h"
-#include "scene_ids.h"
-#include "module/import.h"
 #include "module/scene/vault_cave.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
-#include "types.h"
 #include "text/msg_ids.h"
 #include "event.h"
-#include "scene_tables.h"
-#include "task.h"
-#include "actor.h"
 #include "ability_ids.h"
 #include "flags.h"
-#include "sounds.h"
 #include "actor_script.h"
 #include "map_grid_scroll.h"
-#include "scene.h"
-#include "macros.h"
 #include "item_ids.h"
 
-// Forward declarations.
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
@@ -312,7 +296,7 @@ static void VaultCave_PushPillarAhead(void) {
       4;
   row = (pillar->z.part.pixel + (s16)gVaultCave_DirectionSteps[direction]) >> 4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
-  if (beyond != 0 && (beyond->collisionFlags & 1)) {
+  if (beyond != NULL && (beyond->collisionFlags & 1)) {
     return;
   }
   pillar->layer = 2;
@@ -344,9 +328,7 @@ static void VaultCave_PushPillarAhead(void) {
   Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
-/// Whirlwind blows the ivy away. It is cast on ACTOR_IVY in the puddle room
-/// of SceneId_VaultCaveVambrace. The ivy stays gone for as long as the party
-/// stays in the cave, because FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is an area flag.
+/// Whirlwind blows the ivy away.
 static void VaultCave_UseWhirlwind(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
@@ -374,23 +356,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gVaultCave_FallbackTriggers;
 }
 
-/// Tests the southern pillar's cell, rounding fixed coordinates toward zero.
+/// Whether the southern pillar stands on its switch.
 static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SOUTHERN_PILLAR);
-  s32 fixedZ = pillar->z.fixed;
-  s32 fixedX;
-  s32 row;
-  s32 column;
+  s32 row = pillar->z.fixed / px(16);
+  s32 column = pillar->x.fixed / px(16);
 
-  if (fixedZ < 0) {
-    fixedZ += px(16) - 1;
-  }
-  fixedX = pillar->x.fixed;
-  row = fixedZ >> 20;
-  if (fixedX < 0) {
-    fixedX += px(16) - 1;
-  }
-  column = fixedX >> 20;
   if (column == 15 && row == 54) {
     return 1;
   }
@@ -407,8 +378,6 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
 }
 
 /// In VaultCaveVambrace's southern room, the party pushes the southern pillar.
-/// Once it rests on its switch, the puzzle chime plays and the switch opens
-/// the way.
 static void VaultCave_PushSouthernPillar(void) {
   if (Event_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_PushPillarAhead();
@@ -440,23 +409,12 @@ static void VaultCave_ApplyNorthernSwitchCells(void) {
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
 
-/// Tests the northern pillar's cell with the same signed-coordinate rounding.
+/// Whether the northern pillar stands on its switch.
 static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_NORTHERN_PILLAR);
-  s32 fixedZ = pillar->z.fixed;
-  s32 fixedX;
-  s32 row;
-  s32 column;
+  s32 row = pillar->z.fixed / px(16);
+  s32 column = pillar->x.fixed / px(16);
 
-  if (fixedZ < 0) {
-    fixedZ += px(16) - 1;
-  }
-  fixedX = pillar->x.fixed;
-  row = fixedZ >> 20;
-  if (fixedX < 0) {
-    fixedX += px(16) - 1;
-  }
-  column = fixedX >> 20;
   if (column == 16 && row == 12) {
     return 1;
   }
@@ -494,15 +452,12 @@ static void VaultCave_MoveNorthernPillar(void) {
 }
 
 /// Frost freezes the upper western puddle.
-/// The puddle is in VaultCaveVambrace's puddle room. Freezing it changes its
-/// map cell, and arriving again re-freezes every puddle whose flag is set.
 static void VaultCave_FreezeWestUpperPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_WEST_UPPER_PUDDLE);
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 32);
 
-  if (target != 0) {
-
+  if (target != NULL) {
     Actor_Get(ACTOR_WEST_UPPER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -517,8 +472,7 @@ static void VaultCave_FreezeWestLowerPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 23, 34);
 
-  if (target != 0) {
-
+  if (target != NULL) {
     Actor_Get(ACTOR_WEST_LOWER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -532,8 +486,7 @@ static void VaultCave_FreezeInnerWestLowerPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 24, 34);
 
-  if (target != 0) {
-
+  if (target != NULL) {
     Actor_Get(ACTOR_INNER_WEST_LOWER_PUDDLE)->motionFlags = 0;
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
@@ -547,7 +500,7 @@ static void VaultCave_FreezeEastUpperPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 32);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_SetSpriteFlags(target, 0);
 
     Actor_Get(ACTOR_EAST_UPPER_PUDDLE)->motionFlags = 0;
@@ -563,7 +516,7 @@ static void VaultCave_FreezeEastLowerPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 26, 34);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_SetSpriteFlags(target, 0);
 
     Actor_Get(ACTOR_EAST_LOWER_PUDDLE)->motionFlags = 0;
@@ -579,7 +532,7 @@ static void VaultCave_FreezeFarEastPuddle(void) {
 
   MapGrid_CopyCellAttributes(26, 30, 1, 1, 28, 33);
 
-  if (target != 0) {
+  if (target != NULL) {
     Actor_SetSpriteFlags(target, 0);
 
     Actor_Get(ACTOR_FAR_EAST_PUDDLE)->motionFlags = 0;
@@ -645,14 +598,12 @@ static void VaultCave_RunRumble(void) {
   MapGrid_SetShake(3, 3, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Sound_Play(SE_RUSH);
-  // Scroll and shake for 480 frames before the final fade.
   for (frame = 0; frame < 480; frame++) {
     u32 scrollDrift = Random_Below(2048);
 
     layer->phaseY = (double)layer->phaseY - (4718.592 - (double)scrollDrift);
     Event_Wait(1);
   }
-  // Fade the blend out over 70 frames, a step every 20.
   fadeLevel = 6;
   lowFadeLevel = 6;
   frame = 0;
@@ -667,7 +618,6 @@ static void VaultCave_RunRumble(void) {
     }
     frame++;
   } while (frame <= 69);
-  // Replace the mechanism's map cells after the fade completes.
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
   Sound_Play(SE_STOP_ACTION_SE);
   MapGrid_CenterOnFollowedPoint();
@@ -677,18 +627,12 @@ static void VaultCave_RunRumble(void) {
 
 /// In VaultCavePassage's pool room, searching the switch flips it.
 /// "Isaac flipped the switch."
-///
-/// The first time since the party came in from Vault, the switch turns, the
-/// cave rumbles and shakes for eight seconds and the map changes as it fades.
-/// FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the change until the party comes
-/// down the ladder from Vault again.
 static void VaultCave_FlipSwitch(void) {
   s32 destinationColumn;
 
   if (Event_GetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
     FieldMessage_Show(MSGNO(MsgFieldFlippedSwitch), 1);
     GameFlag_Set(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
-    // Animate the switch face before the adjacent mechanism starts.
     destinationColumn = 92;
     Sound_Play(SE_SWITCH);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, 27);
@@ -756,7 +700,6 @@ static void VaultCave_UpdateTimedFallingActors(void) {
         gVaultCave_ScheduleIndex = 0;
       }
     }
-    // Reset actors that have reached the floor and spawn their landing puffs.
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
@@ -797,7 +740,6 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
 
   fallingActor = Actor_Get(ACTOR_FIRST_WATER_DROP);
   if (fallingActor->paused == 0) {
-    // Preserve one random selection per 64 frames.
     if ((++gVaultCave_DropFrames & 63) == 0) {
       selectedIndex = &gVaultCave_SelectedDrop;
       stateValue = Random_Next();
@@ -858,7 +800,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
   for (puffIndex = 0; puffIndex < 4; puffIndex++) {
     puff = FieldActor_Create(SPRITE_DROPLET, source->x.fixed, source->y.fixed,
                              source->z.fixed);
-    if (puff == 0)
+    if (puff == NULL)
       break;
     puff->scaleY = 11 * Q16_ONE / 20;
     puff->scaleX = 11 * Q16_ONE / 20;

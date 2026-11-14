@@ -60,18 +60,11 @@
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 
 #include "main_routine_work.h"
-#include "version.h"
 #include "heap_slots.h"
-#include "heap.h"
 #include "module/import.h"
 #include "module/scene/altmiller_cave.h"
 #include "shared/walk_into_leader.h"
-#include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "module/shop/shop.h"
-#include "module/system/system.h"
 #include "io_write.h"
 
 #include "battle.h"
@@ -80,32 +73,20 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "pushed_actor.h"
 #include "actor_builtin_scripts.h"
-#include "scene_ids.h"
 #include "dma.h"
-#include "io_reg.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "display_transition.h"
-#include "field_particle.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "frame.h"
-#include "fixed_math.h"
-#include "scene.h"
 #include "field_psynergy_work.h"
 #include "flags.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
@@ -331,9 +312,6 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
 }
 
 /// Crossing the first darkness boundary sets the cave's lightest level.
-///
-/// AltmillerCaveEntrance's boundaries are step triggers 60 to 65. Crossing one
-/// sets its level, 0 to 5, each a step darker than the last.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
@@ -447,7 +425,7 @@ static void AltmillerCave_StartRetreat(void) {
   Event_Wait(20);
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
                                   original->z.fixed);
-  if (replacement != 0) {
+  if (replacement != NULL) {
     Dma_Set(original, replacement,
             (DMA_ENABLE | DMA_32BIT) << 16 | sizeof(struct Actor) / 4,
             REG_DMA3);
@@ -457,9 +435,7 @@ static void AltmillerCave_StartRetreat(void) {
   }
 }
 
-/// Runs after Move on AltmillerCaveSquall's pillar. In its cell at (30, 20) the
-/// pillar settles and opens the way beside it (remembered in TBS_PATCH_1 and
-/// later).
+/// Runs after Move on AltmillerCaveSquall's pillar.
 static void AltmillerCave_UpdateMovedObstacle(void) {
   struct Actor *actor = Actor_Get(ACTOR_SQUALL_ROOM_PILLAR);
 
@@ -508,7 +484,7 @@ static void AltmillerCave_FreezePuddle(void) {
   blocked = effectWork->childMode;
   if (blocked == 0) {
     MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
-    if (puddle != 0) {
+    if (puddle != NULL) {
       s32 motionFlags = 2;
       puddle->motionFlags = motionFlags;
       puddle->priorityFlags = blocked;
@@ -610,9 +586,6 @@ static void AltmillerCave_PlaceLights(s32 angle) {
 }
 
 /// Task that spins the ring of lights.
-///
-/// It speeds up, coasts, slows and stops with the chosen light at the top,
-/// which then pulses. A click (SE_CLICK) sounds for each fifth of a turn.
 static void AltmillerCave_SpinLights(void) {
   struct LightWheel *wheel = gAltmillerCave_LightWheel;
   s32 moving = 1;
@@ -637,8 +610,6 @@ static void AltmillerCave_SpinLights(void) {
     s32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
     s32 chosenAngle = Math_Divide(chosenLight * Q16_ONE, 5);
 
-    // Stop once the chosen light is within 767 of the top, the angles
-    // compared as turns in a word's upper half.
     if ((u32)(((wheel->angle - chosenAngle) << 16) +
               ((767 - TRIG_TURN / 4) << 16)) <= (2 * 767) << 16) {
       wheel->angle = chosenAngle + TRIG_TURN / 4;
@@ -664,14 +635,6 @@ static void AltmillerCave_SpinLights(void) {
 
 /// Talking to one of AltmillerCaveDraught's rocks rotates it. "Isaac rotated
 /// the rock."
-///
-/// - Turning the leftmost rock, then the rightmost, brings out the ring of
-///   lights.
-/// - Then each time the rock matching the light at the top is turned, the ring
-///   spins to another light.
-/// - A wrong rock puts the lights away and starts over.
-/// - After three lights matched the ring shrinks away, the wall bursts and the
-///   way to Babi's draught opens.
 static void AltmillerCave_TurnRock(s32 rock) {
   u8 *puzzle;
   struct LightWheel *wheel;
@@ -822,7 +785,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
 }
 
 /// The party turns north, toward Babi.
-static __inline__ void AltmillerCave_FacePartyNorth(void) {
+static inline void AltmillerCave_FacePartyNorth(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -830,15 +793,6 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
 }
 
 /// Babi drinks the Mystic Draught and appears, startling the party.
-///
-/// It plays in AltmillerCaveBabi on talking to Babi or reading his mind once
-/// the Mystic Draught is found.
-///
-/// - Ivan reads his mind and finds him to be Babi, the ruler of Tolbi, who
-///   sought Lemurians to escape growing old.
-/// - Two soldiers from Tolbi find him and take him back.
-/// - He invites the party to Colosso's finals.
-/// - Garet asks whether they should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct ScreenTransitionState *state;
   struct Actor *actor;
@@ -847,7 +801,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   s32 eva;
   s32 evb;
 
-  // Give Babi the draught and bring the party beside him.
   GameFlag_Set(FLAG_BABI_SAVED);
   PartyInventory_Discard(ITEM_MYSTIC_DRAUGHT);
   Event_Start();
@@ -891,7 +844,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   actor->sprite->rotation = 0;
   Actor_Jump(ACTOR_INVISIBLE_BABI, 10, 70);
-  // Flicker between sprite priorities before replacing invisible Babi.
   for (i = 0; i < 30; i++) {
     actor->sprite->image.priority = 0;
     Event_Wait(2);
@@ -969,7 +921,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     // "You must be well traveled indeed if that didn't shock you."
     Event_ShowMessage(ACTOR_BABI, 0);
   }
-  // Ask how Babi became invisible and hear about his Alchemy.
   Event_SetMessageId(MsgAltmillerHowDidBecomeParalyzedWhile);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
@@ -1519,7 +1470,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     // "You don't want to either, do you?"
     Event_ShowMessage(ACTOR_GARET, 0);
   }
-  // Let Isaac answer the invitation and reunite the party.
   Event_SetMessageId(MsgAltmillerEitherWayWereStuckHere);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
@@ -1607,15 +1557,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
 
 /// The invisible Babi asks the party to bring his draught from deep in the
 /// cave.
-///
-/// It plays in AltmillerCaveBabi on talking to the invisible Babi or reading
-/// his mind the first time. He can be heard but not seen, and cannot move. He
-/// tells the order of the five rocks.
 static void AltmillerCave_MeetInvisibleBabi(void) {
   struct Actor *leader;
   s32 line;
 
-  // Gather the party around the invisible voice.
   GameFlag_Set(FLAG_MET_INVISIBLE_BABI);
   Sound_Play(MUS_CAVE);
   Event_Start();
@@ -1801,7 +1746,6 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
-  // Explain the hidden draught and the order of the five rocks.
   line += 7;
   Event_SetMessageId(line);
   Event_Wait(30);
@@ -1903,7 +1847,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -1911,7 +1855,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
                          leader->z.part.pixel);
   }
@@ -1919,7 +1863,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
@@ -1930,9 +1874,6 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
 
 /// Babi asks whether the party forgot the order of the rock colors, and tells
 /// it again.
-///
-/// It plays in AltmillerCaveBabi on talking to Babi again before the draught is
-/// found.
 static void AltmillerCave_RepeatRockOrder(void) {
   s32 question;
 
@@ -1957,9 +1898,6 @@ static void AltmillerCave_RepeatRockOrder(void) {
 
 /// Babi calls the party back and says where the draught is. "Wait... The
 /// draught is... on a table behind the door."
-///
-/// It plays in AltmillerCaveBabi on walking away from Babi (step trigger 19)
-/// the first time after meeting him.
 static void AltmillerCave_BabiCallsPartyBack(void) {
   if (GameFlag_Get(FLAG_MET_INVISIBLE_BABI) == 0)
     return;
@@ -2015,19 +1953,13 @@ static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
 }
 
 /// Redraws the three obstacles' cells where they stand.
-static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
+static inline void AltmillerCave_RedrawObstacleFootprints(void) {
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE);
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 1);
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 2);
 }
 
 /// Sets up the room being entered. Returns 0.
-///
-/// - An entry from outside the cave takes the room's first entrance.
-/// - AltmillerCaveEntrance picks its darkness from the entrance.
-/// - AltmillerCaveBabi's Babi is invisible until rescued.
-/// - AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
-///   obstacles, lights and rocks are restored.
 s32 AltmillerCave_Initialize(void) {
   struct Actor *actor;
   s32 i;
@@ -2081,7 +2013,6 @@ s32 AltmillerCave_Initialize(void) {
       actor->sprite->rotation = TRIG_TURN / 4;
     }
   }
-  // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveSquall) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
@@ -2101,7 +2032,6 @@ s32 AltmillerCave_Initialize(void) {
     }
 #endif
   }
-  // Rebuild the final rock puzzle from its saved phase and chosen light.
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveDraught) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
@@ -2170,9 +2100,7 @@ s32 AltmillerCave_Initialize(void) {
   return 0;
 }
 
-/// Update routine of a piece of the burst wall. It flies off to a random point
-/// 120 pixels away, with a crash every fourth frame as they start, and each
-/// time it lands picks another.
+/// Update routine of a piece of the burst wall.
 static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   s32 position[3];
 
@@ -2184,7 +2112,7 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
     position[2] = startZ;
     fragment->x = startX;
     position[0] = startX;
-    Vector_AddPolarOffset(px(120), Import_RandomNext(), position);
+    Vector_AddPolarOffset(px(120), Random_Next(), position);
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
     fragment->acceleration = px(5);
@@ -2226,9 +2154,8 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     FieldParticle_Initialize(fragment, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     FieldParticle_SetActorMode(fragment, 7);
-    Sprite_SetAnimationColorModes(fragment->actor,
-                                  (u32)(Import_RandomNext() * 7) >> 16);
-    scale = Math_DivideUnsigned(Import_RandomNext(), 3) + 3 * Q16_ONE / 2;
+    Sprite_SetAnimationColorModes(fragment->actor, Random_Below(7));
+    scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;
     wait(1);

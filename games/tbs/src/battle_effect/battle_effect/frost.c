@@ -11,25 +11,10 @@ enum {
   FROST_FRAME   ///< the frame the motes burst
 };
 
-/// Motes of ice spiral down and inwards while mounds of ice spring up one
-/// every 3 frames from frame 36; at the burst frame the motes spread and rise,
-/// chips fly up and sparkles rise over the heights they span.
+/// Motes of ice spiral down and in while mounds of ice spring up; at the burst
+/// the motes spread and rise, chips fly up and sparkles rise.
 ///
-/// Abilities: Frost, Tundra, Glacier (BATTLE_EFFECT_FROST).
-///
-/// The targets take a blue tint 4 frames apart from frame 40, the battle shows
-/// the damage 11 frames after the burst, and the effect ends 75 frames after
-/// it.
-///
-/// work->particles holds the 64 motes (angle, height and radius in x, y and z);
-/// after the burst the first 32 also hold the sparkles, in their velocity and
-/// variant fields, while motes 0 to 15 keep moving in theirs. PARTICLES holds
-/// the 32 chips.
-///
-/// args: the targets; variant picks the number of motes and mounds and
-///         the burst frame (gFrost_Timings): 32 motes, 8 mounds and frame
-///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
-///         Glacier.
+/// Abilities: Frost, Tundra, Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -51,8 +36,6 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkleSheet, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, pair);
 
-  // Motes: x holds the angle, z the radius (56 to 119), y the vertical
-  // offset (-64 to -33 pixels, positive downwards on the canvas).
   for (i = 0; i != 64; i++) {
     struct Particle *seed = &work->particles[i];
 
@@ -62,7 +45,6 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  // On EFFECT_SIDE_PARTY the canvas moves 112 pixels right, over the party.
   if (work->args->side == EFFECT_SIDE_PARTY)
     REG_BG2X = -(112 << 8);
 
@@ -73,22 +55,15 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     s32 lowest;
     s32 highest;
 
-    // The range of heights the sparkles will rise over, in 16.16 pixels,
-    // gathered from the motes and chips below.
     lowest = px(120);
     highest = 0;
     if (frame == gFrost_Timings[work->args->variant][FROST_FRAME] + 11)
       EFFECT_SHOW_DAMAGE(SE_WATER);
-    // The motes turn about (0, 0, 512), not about a target. That point is
-    // behind the eye, so they are never projected (see the motes below).
     SET_VECTOR(point, 0, 0, px(512));
     Transform_Reset();
     Transform_ApplyPosition(point);
-    // A chime every 4 frames while the mounds spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       Sound_PlayFar(SE_ICE);
-    // Frame 85 is Frost's burst; Tundra and Glacier play this sound 12 and 24
-    // frames before theirs.
     if (frame == 85)
       Sound_PlayFar(SE_WHOOSH);
     EFFECT_FOR_EACH_TARGET(i, work->args) {
@@ -97,18 +72,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, TINT_KEEP, 0);
     }
 
-    // Motes: mote i appears at frame i and, from 16 frames later, turns a
-    // 128th of a circle a frame, closing in 2 pixels a frame and sinking 5
-    // until y reaches 48. After the burst only the first 16 remain,
-    // spreading out 8 pixels a frame and rising 2 to 6, and the range of
-    // their heights is kept; none is drawn from 35 frames after it. A mote
-    // is drawn only while y is between -48 and 48 - i / 2, so they go out at
-    // staggered rows as they sink. The point lies behind the eye
-    // (Transform_ProjectPoint looks down -z), so the projection is skipped and
-    // position keeps the translated point in 16.16, with no perspective: y
-    // grows down the canvas, and x is halved (>> 17) as on the wide canvas,
-    // though this canvas is shown at its own width, so the spiral's
-    // half-width is half its radius. It is centred on canvas (64, 60).
+    // Motes spiral in and sink.
     if (frame < gFrost_Timings[work->args->variant][FROST_FRAME])
       count = gFrost_Timings[work->args->variant][FROST_MOTES];
     else
@@ -161,15 +125,10 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         }
       }
     }
-    // Mote heights are relative to their centre: 64 rows down the canvas
-    // puts them beside the chips' canvas rows.
     lowest += px(64);
     highest += px(64);
 
-    // Ice mounds (32 wide), at gFrost_MoundSpots: one more every 3 frames
-    // from frame 36; over the last 7 frames before the burst they are
-    // drawn additively (the pair's second blitter), a flash before they
-    // break.
+    // Ice mounds spring up.
     if (frame < gFrost_Timings[work->args->variant][FROST_FRAME]) {
       for (i = 0; i != gFrost_Timings[work->args->variant][FROST_MOUNDS]; i++) {
         if (i < (frame - 36) / 3) {
@@ -209,8 +168,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       }
     }
 
-    // Chips: at the burst, 32 fly up from canvas rows 80 to 95 at 1/8 to 2
-    // pixels a frame, for 16 to 31 frames each (24 of them are drawn).
+    // Chips fly up at the burst.
     // BUG: velocityX is never set, so a chip drifts sideways by whatever word
     // its PARTICLES slot last held. Nothing in a battle clears that buffer,
     // the map grid's cells, so the word is the field's cells or an earlier
@@ -230,8 +188,6 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       }
     }
     if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME]) {
-      // The first 24 chips, drawn while they last; every one, live or not,
-      // widens the range of heights the sparkles rise over.
       for (i = 0; i != 24; i++) {
         struct Particle *chip = &PARTICLES[i];
 
@@ -256,10 +212,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     if (highest <= lowest)
       highest = lowest + 1;
 
-    // Sparkles: they appear over the heights of the motes and chips and rise
-    // half a pixel a frame. A sparkle keeps its x and y in velocityX and
-    // velocityY, since x, y and z still hold the first 16 motes, and waits
-    // 3 to 18 frames before its first picture (variant 20 to 35).
+    // Sparkles rise over the motes and chips.
     if (frame == gFrost_Timings[work->args->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct Particle *sparkle = &work->particles[i];
@@ -273,10 +226,6 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       }
     }
     if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME]) {
-      // Each sparkle plays nine pictures, 2 frames each, and until 35 frames
-      // after the burst starts again at a random spot when it goes out. The
-      // spot chosen at the burst is replaced too, as the wait counts down to
-      // 17, so every run of pictures starts at a fresh spot.
       s32 rise = (frame - gFrost_Timings[work->args->variant][FROST_FRAME]) / 2;
 
       for (i = 0; i != 32; i++) {

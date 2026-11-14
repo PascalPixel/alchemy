@@ -15,10 +15,7 @@
 #include "macros.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
-/// song MUS_DJINN_LESSON and plays until the player quits. Returns 0. Reached
-/// through LuckyDice_StartFar from MainRoutine_RunDice
-/// (system/main_routine.c), which saves background palettes 14
-/// and 15 around it and passes an entrance this function does not take.
+/// song MUS_DJINN_LESSON and plays until the player quits. Returns 0.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   Sound_PlayFar(MUS_DJINN_LESSON);
@@ -27,8 +24,7 @@ s32 LuckyDice_Start(void) {
 }
 
 /// Puts the 3D camera back at its starting view: at the origin, unturned,
-/// pitched to 152 and 510 units away, following nothing. Recomputes the eye and
-/// sets the projection's focal length (250), near plane and far plane.
+/// pitched to 152 and 510 units away, following nothing.
 void Camera_ResetViewDefaults(void) {
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 offset[3];
@@ -194,7 +190,6 @@ enum LuckyDiceState {
 
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
-/// Returns 0.
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
@@ -229,13 +224,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 }
 
 /// Runs the Lucky Dice minigame until the player quits or cannot afford a
-/// throw. Each throw costs ten coins per level of the party's average. Two
-/// dice are thrown onto a board of six rows; each die's face and the row it
-/// stops in give four numbers. Four of a kind pays 5 times the bet (15 or 25
-/// times when it matches one of the two lucky numbers shown at the top), three
-/// of a kind 3 times, two pairs twice and one pair the bet back. Takes the bet
-/// from and pays the winnings into gMainRoutineWork.coins, resets the task
-/// table, and frees the five heap slots it allocates before it returns.
+/// throw. Each throw costs ten coins per level of the party's average.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows
@@ -798,9 +787,8 @@ void LuckyDice_Run(void) {
             rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
           }
         }
-        // Gravity; on the board a die bounces, loses speed, sometimes kicks
-        // off in a random direction, and spins less. Once it barely bounces
-        // it stops, turned to the nearest face.
+        // Gravity; on the board a die bounces, loses speed, sometimes kicks off
+        // in a random direction, and spins less.
         rollingDie->velocityY += -px(1) / 2;
         if (rollingDie->y <= 0) {
           rollingDie->y = 0;
@@ -927,9 +915,8 @@ void LuckyDice_Run(void) {
       }
     }
 
-    // Hide the unused sprites, write the four affine matrices (one per die
-    // and shadow, scaled by depth) and copy the sprites to OAM.
-    // An unused sprite is parked at x 240, just past the right edge.
+    // Hide the unused sprites, write the four affine matrices (one per die and
+    // shadow, scaled by depth) and copy the sprites to OAM.
     for (; spriteCount != 128; spriteCount++) {
       sprites->oam[spriteCount].attr01 =
           (240 << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;

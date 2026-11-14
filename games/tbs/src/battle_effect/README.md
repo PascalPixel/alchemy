@@ -56,6 +56,24 @@ copy, and which thing is the effect's choice:
 That is how Fire's fireballs have tails nobody draws. The tail is last
 frame's fireball, a little dimmer.
 
+## Around the canvas
+
+An effect also changes the screen around its drawing. Two windows frame the
+battle view, and the effect chooses which layers each shows. While the canvas
+is open the battle background darkens a step a frame, so the light stands out
+against it, and it brightens again when the canvas closes.
+
+Some effects reach down to the single line. The Game Boy Advance can copy a
+value into a display register at the end of every line, and an effect that
+fills a table with one value a line gets a picture no tile could give it:
+Ice's shards fall inside a band of the screen that slants with each line,
+Heartrender's hearts ripple sideways, and Meteor's sky glows blue from the
+bottom of the screen up.
+
+Those line copies, the scrolling and the shake run as tasks the handler adds,
+and they read the handler's work. So a handler removes its tasks before it
+frees anything they read, and every handler ends with that tidying.
+
 ## Blitters
 
 A handler draws by copying small pictures onto the canvas, and the routine

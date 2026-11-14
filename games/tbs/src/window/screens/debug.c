@@ -13,9 +13,7 @@ UNUSED void DebugSceneSelect_Schedule(void) {
 }
 
 /// Draws the debug scene and entrance numbers with their scene code and area
-/// name. The first line has the scene's code (MsgDebugSceneCode + scene)
-/// and, beside it, the area its entrance leads to (MsgDebugAreaName + area);
-/// the numbers, three digits each, go under them.
+/// name.
 void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
                               const s16 *entrance) {
   s16 mapIndex = sceneId;
@@ -30,11 +28,7 @@ void DebugSceneSelect_DrawRow(struct Window *window, s32 sceneId,
 }
 
 // The debug scene selector: a scene and an entrance number, starting from the
-// scene being run (DebugSceneSelect_HandleRowInput has the keys). An exits
-// there (Event_SetDestinationFar), B closes it. The field opens it in debug
-// mode when the Start button's menu (Save your quest, Sleep, Change settings)
-// is opened with B held (field/field_sequence/run.c). The task runner and the
-// debug menu's far call ignore this selection result.
+// scene being run (DebugSceneSelect_HandleRowInput has the keys).
 #ifdef UBFIX
 void DebugSceneSelect_Run(void) {
 #else
@@ -82,14 +76,8 @@ s16 DebugSceneSelect_Run(void) {
   }
 }
 
-/// Edits the debug scene or entrance, returning -1 to exit and -2 to
-/// cancel. Shoulder buttons step by ten; it keeps the original 99-step
-/// entrance wrap. Otherwise it returns the scene after this frame's keys. Up
-/// and Down switch the field (`selectedField`: 0 scene, 1 entrance), Left
-/// and Right step by one, wrapping scenes 0 to 200 and entrances 0 to 99.
-/// R and L step a scene by ten, setting the entrance to 0, and past
-/// either end go to the other (195 + 10 gives 0); they step an entrance
-/// by ten, wrapping by 99 (95 + 10 gives 6).
+/// Edits the debug scene or entrance, returning -1 to exit and -2 to cancel.
+/// Shoulder buttons step by ten; it keeps the original 99-step entrance wrap.
 s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
                                     s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
@@ -150,11 +138,8 @@ s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
   return sceneId;
 }
 
-/// Shows a 16x16 flag grid per page and processes input until closed.
-/// Starts on page 8 and always returns 0. A page is 256 game flags, page 8
-/// flags 0x800 to 0x8ff (DebugFlagEditor_HandleInput has the keys). The field
-/// opens it in debug mode when the File Screen (Psynergy, Djinn, Item, Status)
-/// is opened with B and Select held (field/field_sequence/run.c).
+/// Shows a 16x16 flag grid per page and processes input until closed. Starts on
+/// page 8 and always returns 0.
 s32 DebugFlagEditor_Run(void) {
   struct MenuSprite cursorSprite; // Cursor sprite
   s32 cursor[2];                  // Cursor column and row
@@ -209,8 +194,6 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
 }
 
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
-/// Each row: its first flag's number in three hex digits, then its 16 flags
-/// as 0 or 1, lowest first, under a heading of hex digits.
 void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
   s32 row;
   s32 y;
@@ -246,9 +229,6 @@ void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
 
 /// Moves within the flag grid, changes pages, or toggles the selected flag.
 /// Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
-/// A toggles flag page * 256 + row * 16 + column; B or Select closes. L and
-/// R turn a page, wrapping 0 to 15; with Start held they jump ten, to the
-/// other end when that passes it (5 - 10 gives 15).
 s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
@@ -302,7 +282,6 @@ void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified party
 /// member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.
-/// Nothing calls it.
 void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
   GameFlag_SetFar((element * DJINN_PER_ELEMENT) + index + FLAG_DJINN_FIRST);
   Djinn_GiveFar(member, element, index);
@@ -336,10 +315,6 @@ s32 PauseMenu_Run(void) {
 
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// field's actor system while the browser owns its window and cache entries.
-/// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
-/// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
-/// every page, whatever the heading says), A or B closes it. Returns 0. The
-/// debug menus open it (debug/test.c, debug/level.c).
 s32 DebugBrowser_Icons(void) {
   s32 redraw;
   s32 tile;
@@ -434,9 +409,6 @@ s32 DebugBrowser_Icons(void) {
 
 /// Browses the character and sprite portrait maps as one circular list. Shows
 /// each entry's glyph and label, then releases both windows on A or B.
-/// Left and Right step one entry, L and R ten; a sprite map entry's portrait
-/// is its value + 128, shown in the second portrait slot's VRAM. Returns 0.
-/// The debug level menu opens it (debug/level.c).
 s32 DebugBrowser_Portraits(void) {
   struct WindowWork *work;
   struct Window *portrait;

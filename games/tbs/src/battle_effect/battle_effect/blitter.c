@@ -1,30 +1,16 @@
 /// @file
 /// The blitter builder, BattleEffect_BuildBlitter.
-/// The builder walks gBlitterTemplate, a template of ARM words, and splices
-/// in the pixel fragments of the mode asked for from blitter_fragments.s
-/// and blitter_color_fragments.s. Some words are copied, some chosen by
-/// the flags, and some have the canvas width, height or a branch distance
-/// added. The routine has five blocks: the prologue (with BattleEffect_Mask for
-/// COMPOSITE_ADDITIVE), the vertical clip, the column set-up (a width mask,
-/// or clip words taking the width as an ARM immediate from
-/// gBattleEffect_BitOperands, blitter_operands.c), the row loop of eight
-/// pixels a pass between a leading and a trailing run, and the exit. Forward
-/// branches are patched when the walk reaches their target. The walk runs
-/// twice, once counting words and once into a block of that size. The
-/// fragments' registers and modes are described at the top of
-/// blitter_fragments.s.
+/// The builder walks gBlitterTemplate, a template of ARM words, and splices in
+/// the pixel fragments of the mode asked for, patching the widths and branches
+/// as it goes.
 
 #include "../battle_effect_internal.h"
 
-/// The 24-bit displacement field of an ARM branch at `site` to `target`: in
-/// words, counted from the branch plus 8 bytes, as the processor reads two
-/// words ahead.
+/// The displacement field of an ARM branch at `site` to `target`.
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
-/// The words of a partial run, one pixel at a time: the mode's one-pixel
-/// fragment, read forwards or, mirrored across, backwards. Each walk writes a
-/// leading and a trailing run.
+/// The words of a partial run, one pixel at a time, forwards or mirrored.
 #define BLITTER_PARTIAL_RUN(mode, flags)                                       \
   switch (mode) {                                                              \
   default:                                                                     \
@@ -58,12 +44,8 @@
     break;                                                                     \
   }
 
-/// The template walk itself, written once. BattleEffect_BuildBlitter expands it
-/// twice under two definitions of PUT, COPY, COPY_FROM, COPY_TWICE,
-/// PUT_BRANCH, MARK and PATCH: first to count the words, then to write them.
-/// It uses the caller's templateWords, flags, mode, widthShift, heightShift,
-/// and the branch sites emptyRowsBranch, emptyColumnsBranch, rowLoop,
-/// skipBranch, partialRun and fullCellLoop.
+/// The template walk, written once and expanded twice: first to count the
+/// words, then to write them.
 #define BLITTER_WALK()                                                         \
   /* Block 1, the prologue (the file's opening comment). */                    \
   COPY(3);                                                                     \
@@ -274,26 +256,6 @@
 
 /// Writes a drawing routine for the canvas into heap slot `slot`, built from
 /// the template gBlitterTemplate for one clip, mirroring and blend mode.
-///
-/// Called through EFFECT_LOAD_BLITTER by nearly every canvas effect and by
-/// BattleEffect_FetchRectangleBlitters, directly by the particle streams for a
-/// canvas 256 pixels wide, and from other banks through its far stub,
-/// BattleEffect_BuildBlitterFar (the star field in battle/element_glow.c and
-/// field/lucky_wheels.c).
-///
-/// It allocates the slot's block (from IWRAM when it fits) at exactly the
-/// routine's size. A slot that already holds a block keeps it, whatever its
-/// size, and the routine is written over it: callers release the slot first
-/// when the new routine may be longer. The caller calls the slot's block as a
-/// DrawRectangle.
-///
-/// widthShift, heightShift: the canvas's width and height as powers of two.
-/// flags: the COMPOSITE_CLIP_ and COMPOSITE_FLIP_ bits.
-/// mode: how source pixels combine with the canvas (COMPOSITE_COPY,
-/// COMPOSITE_TRANSPARENT, COMPOSITE_LIGHTEN or COMPOSITE_ADDITIVE).
-///
-/// Returns nonzero when the walk ended exactly at gBattleEffect_MotePictures,
-/// the end of the template; no caller reads it.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode) {
   const u32 *templateWords;
@@ -323,10 +285,6 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 #define MARK(site)
 #define PATCH(site)
 
-  // First walk: count the words selected by clipping, mirroring and blend
-  // mode. Branch sites are only marked in the second walk, so this one needs
-  // no buffer.
-  // It moves templateWords as the second walk does, though it reads no word.
   wordCount = 0;
   templateWords = gBlitterTemplate;
 
@@ -370,24 +328,17 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     *(site) |= BRANCH_FIELD(site, codeWords);                                  \
   } while (0)
 
-  // Second walk: allocate, copy the selected fragments with DMA 3 and patch
-  // their branches. A forward branch is written with its template word, its
-  // site marked, and its displacement ORed in when the walk reaches its
-  // target; a backward branch is written whole at once.
   codeWords = (u32 *)HeapSlot_Alloc(slot, wordCount << 2);
   templateWords = gBlitterTemplate;
 
   BLITTER_WALK();
 
-  // The template is the last thing in blitter_fragments.s, which the
-  // linker script places straight before battle_effect_table.c, whose first
-  // table is gBattleEffect_MotePictures: a complete walk ends at that table's
-  // address.
+  // The template ends where battle_effect_table.c's first table begins, so a
+  // complete walk ends at that table.
   codeEnd = (const u32 *)gBattleEffect_MotePictures;
   return templateWords == codeEnd;
 }
 
-// These macros describe the two walks above; they are not an effect API.
 #undef PUT
 #undef COPY
 #undef COPY_FROM

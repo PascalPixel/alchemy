@@ -60,8 +60,6 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/tolbi_ship_mast.h"
-#include "module/field/field_sequence.h"
-#include "module/field/field.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -69,28 +67,18 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "sounds.h"
-#include "types.h"
-#include "event.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "actor_script.h"
-#include "fixed_math.h"
 #include "map_grid_scroll.h"
-#include "heap.h"
 #include "macros.h"
 
-// Events and the mast's per-frame updates.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
 static void TolbiShipMast_AnnounceClearCourse(void);
@@ -320,10 +308,6 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 /// The mast's setup sways the view while the ship is under way, puts the
 /// lookout to his spot once the charm is back, and plays what the entrance
 /// calls for.
-///
-/// That is the climb up from the deck (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) or
-/// an event (the entrances from
-/// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on).
 s32 TolbiShipMast_Initialize(void) {
   struct Actor *leader;
 
@@ -419,9 +403,6 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR, the
 /// lookout scans both sides and announces a clear course.
-///
-/// He leaves by TOLBI_SHIP_MAST_TO_SHIP_ROOMS_CAST_OFF, to the cast-off below
-/// decks.
 static void TolbiShipMast_AnnounceClearCourse(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -468,7 +449,6 @@ static void TolbiShipMast_RunAvastEvent(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  // Save the camera origin before the sparkle begins to turn.
   Event_Wait(20);
   gTolbiShipMast_CameraOrigin[0] = *cameraOrigin++;
   gTolbiShipMast_CameraOrigin[1] = *cameraOrigin;
@@ -498,7 +478,6 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER, SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 1, SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 2, SPRITE_COLOR_BGR);
-  // Grow the three monsters from half size as they close in on the lookout.
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER);
   actor->scaleY = Q16_ONE / 2;
   actor->scaleX = Q16_ONE / 2;
@@ -761,8 +740,6 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Event_Wait(20);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_WaveActions);
   Event_Wait(80);
-  // Let the monster bounce, then move it and its landing spot out of the
-  // shot.
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
   actor->bounce = Q16_ONE / 10;

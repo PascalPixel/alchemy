@@ -6,8 +6,7 @@
 
 /// Returns the direction of the d-pad (TRIG_TURN a full turn): right
 /// FACING_EAST, down FACING_SOUTH, left FACING_WEST, up FACING_NORTH;
-/// DPAD_ANGLE_NONE when none or a diagonal is held. Opposite directions cancel,
-/// so a third held direction still counts.
+/// DPAD_ANGLE_NONE when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
   return gFieldEffect_CyclePatternWords[(gKeysHeld >> 4) & 15];
@@ -56,12 +55,6 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
 /// When Move is cast on a target, the pushing hand appears beside it and pushes
 /// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
 /// B, L or R end it.
-///
-/// Abilities: Move (FIELD_PSYNERGY_MOVE).
-///
-/// Where the target cannot go, an error sound plays every 16 frames. When the
-/// push would run into the caster, the caster blocks it or, when the cell
-/// beyond is free, is pushed along too.
 void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   struct Vector3 position;
   struct Vector3 beyond;
@@ -104,9 +97,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   Vector_AddPolarOffset(px(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
-  // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
-  // target cycles its colours, keeps its facing while it moves, and reads
-  // its ground from the overhead layer.
+  // The hand floats (motion flag bit 2) at up to 4 pixels a frame.
   pusher->speedLimit = px(4);
   pusher->acceleration = px(1) / 2;
   pusher->motionFlags = ACTOR_FLOATS;
@@ -195,10 +186,9 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       }
     }
 
-    // Push: the hand's animation comes from the turn between angle and the
-    // push (in quarter turns): 2 pushing away from its side, 3 drawing toward
-    // it, 1 sideways. Target and hand then move 16 pixels at 0.2 pixels a
-    // frame, and a caster in the way is carried along with them.
+    // Push: the hand's animation comes from the turn between angle and the push
+    // (in quarter turns): 2 pushing away from its side, 3 drawing toward it, 1
+    // sideways.
     Sound_PlayFar(SE_NOTE_HIGH);
     x = position.x;
     z = position.z;
@@ -242,9 +232,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 }
 
 /// Field effect sprite callback of a particle that flies 30 pixels out from
-/// where it started, comes back and is freed. It goes out straight at up to 4
-/// pixels a frame and comes back turning at most 1/64 turn a frame, so it
-/// curves home.
+/// where it started, comes back and is freed.
 void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect) {
   struct Vector3 position;
   s8 *statePtr = &effect->state;
@@ -321,9 +309,7 @@ void FieldPsynergy_Move(void) {
 
 /// Spawns Move's hand (SPRITE_MOVE_HAND) 16 pixels above the caster, at quarter
 /// size, and moves it 16 pixels the way the caster faces (to the nearest
-/// quarter turn), with 8 particles round it. Returns the hand, or 0 when it
-/// cannot be spawned (Actor_Spawn); the caller releases it
-/// (UpdateRisingParticleBurst).
+/// quarter turn), with 8 particles round it.
 struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
   struct Actor *parent;
   struct Actor *child;
@@ -395,8 +381,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 }
 
 /// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks by
-/// 1/32 of full size a frame, then bursts into 8 particles and is released. Not
-/// a per-frame update: it waits the frames itself.
+/// 1/32 of full size a frame, then bursts into 8 particles and is released.
 void UpdateRisingParticleBurst(struct Actor *hand) {
   struct Actor *child;
   s32 i;

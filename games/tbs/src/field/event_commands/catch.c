@@ -9,16 +9,7 @@ void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
 /// Carries the hand (sprite 215) from 16 pixels above the caster to the goal in
 /// 10 steps, growing from a quarter to full size, presses down 20 pixels moving
-/// child to
-/// (-9, -9), rises 19.5 pixels and shrinks back.
-///
-/// Abilities: Catch (FIELD_PSYNERGY_CATCH).
-///
-/// Sprite 215 is the hand of Move and Carry. The goal is 32 pixels in front of
-/// the caster with effectWork->enabled (no trigger named the target),
-/// otherwise the Psynergy's position, 32 pixels up in both cases. Moves the
-/// Psynergy's child to (-9, -9) when there is one, and releases the hand at
-/// the end.
+/// child to (-9, -9), rises 19.5 pixels and shrinks back.
 void FieldPsynergy_Catch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;
@@ -85,9 +76,7 @@ void FieldPsynergy_Catch(void) {
   Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_FIST);
   Sound_PlayFar(SE_WATER);
   // As the hand presses down, the caught actor vanishes: (-9, -9) pixels is
-  // just off the map's corner, where no view reaches. The scene's after event
-  // then puts it away for good, as Vale_CatchNut moves the Nut
-  // to (0, 0) and sets FLAG_VALE_NUT_CAUGHT so that it is not placed again.
+  // just off the map's corner, where no view reaches.
   if (child != 0)
     Actor_SetPositionAndResetMotionFar(child, -px(9), child->y.fixed, -px(9));
   wait(20);

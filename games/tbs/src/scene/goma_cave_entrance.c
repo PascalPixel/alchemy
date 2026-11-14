@@ -38,30 +38,19 @@
 /// (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
 /// World Map.
 #include "module/scene/goma_cave_entrance.h"
-#include "version.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "battle.h"
 #include "field.h"
 #include "menu.h"
 #include "system.h"
-#include "actor.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "create_configured_actor.h"
 #include "debug.h"
 #include "game.h"
 #include "graphics.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
-#include "battle_unit.h"
-#include "item.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "actor_script.h"
@@ -69,11 +58,8 @@
 #include "ability_ids.h"
 #include "macros.h"
 #include "flags.h"
-#include "sounds.h"
 #include "item_ids.h"
-#include "vector3.h"
 #include "field_psynergy_work.h"
-#include "fixed_math.h"
 
 /// The room's actors.
 ///
@@ -100,7 +86,6 @@ enum GomaCaveEntranceActorId {
   ACTOR_IVY
 };
 
-// Private event routines used by the reunion event.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
@@ -128,8 +113,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Move on the west pillar at Goma Cave Entrance, and after each push: the
 /// pillar stands on one of three columns.
-///
-/// The map grid cells and flags follow it.
 static void GomaCaveEntrance_MoveWestPillar(void) {
   struct Actor *pillar;
   s32 column;
@@ -211,9 +194,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Sets up Goma Cave Entrance.
-///
-/// Retreat is blocked, and the stump and pillars stand where the party left
-/// them. The stump's ivy is gone once Ivan has blown it off.
 s32 Scene_Initialize(void) {
   struct Actor *movedActor;
 
@@ -273,12 +253,6 @@ s32 Scene_Initialize(void) {
 
 /// Move on the stump at Goma Cave Entrance while the ivy holds it: Garet says
 /// their Psynergy is not strong enough.
-///
-/// Once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED), Ivan
-/// turns up and blows the ivy away with Whirlwind. He says he could not get
-/// into Lunpa and asks to join the party.
-///
-/// He rejoins with the Shaman's Rod equipped (FLAG_GOMA_CAVE_IVAN_JOINED).
 static void GomaCaveEntrance_IvanRejoins(void) {
   struct Actor *leader;
 
@@ -292,7 +266,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 264, 168);
@@ -308,7 +282,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     // Garet falls back into line.
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
                            leader->z.part.pixel);
     }
@@ -513,9 +487,6 @@ static void GomaCaveEntrance_MoveStump(void) {
 }
 
 /// Ivan casts Whirlwind on the stump's ivy, and the event waits for it.
-///
-/// The announcement is lowered to a fixed place (FIELD_MESSAGE_LOWER).
-/// Otherwise it would be placed by where the leader, not Ivan, stands.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   struct FieldEffectWork *effectWork;
   u8 flags;
@@ -542,10 +513,6 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
 #include "shared/actor_wait_below_height.h"
 
 /// The stump leaps out of the way and sinks in the pool.
-///
-/// It spins in place, leaps and lands with a shake and a ring of dust. Then
-/// it hops on into the pool under the waterfall with a splash and sinks
-/// (STUMP_ANIMATION_SPLASH).
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
   struct EffectOptions params;
@@ -607,9 +574,6 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
 #include "shared/item_equip.h"
 
 /// Gives Ivan the Shaman's Rod and equips it.
-///
-/// With his items full, he drops another to make room. Later patches skip
-/// items marked only indispensable.
 static void GomaCaveEntrance_GiveShamansRod(void) {
   struct Unit *member;
   struct ItemDefinition *item;

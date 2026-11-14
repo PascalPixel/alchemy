@@ -7,7 +7,6 @@
 /// Loads each menu icon resource whose cache slot was acquired: the Djinn
 /// menu's up and down arrows (djinn_arrow_up and djinn_arrow_down) into the
 /// work's resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
-/// DjinnMenu_Run calls it and IconMenu_ReleaseArrows frees them.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -42,8 +41,7 @@ void IconMenu_ReleaseArrows(void) {
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
 /// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 1544
-/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again. Returns the
-/// slot's first sprite tile (VramCache_Reload).
+/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 decodedResource;
   s32 selectedSlot;
@@ -79,9 +77,7 @@ s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
 
 /// Creates a stat-change arrow from one of the two loaded resources: the up
 /// arrow (variant 0, STAT_ARROW_UP) or the down arrow at (x, y) of window, for
-/// the equipment preview (Text_DrawStatComparison). The sprite belongs to
-/// the window. Returns 1, or -1 when no window sprite is free, in which case
-/// WindowSprite_Create has also released the arrow's shared VRAM slot.
+/// the equipment preview (Text_DrawStatComparison).
 s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
@@ -107,11 +103,9 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
   return 1;
 }
 
-/// Creates an arrow with the vertical adjustment for its resource variant:
-/// as Icon_CreateStatChangeArrow, raised 3 pixels for the up arrow (variant
-/// 0) and 4 for the down arrow. The Djinn preview draws one beside each stat
-/// that would change. Returns 1, or -1 when no window sprite is free (and the
-/// arrow's VRAM slot released, as there).
+/// Creates an arrow with the vertical adjustment for its resource variant: as
+/// Icon_CreateStatChangeArrow, raised 3 pixels for the up arrow (variant 0) and
+/// 4 for the down arrow.
 s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;

@@ -7,22 +7,10 @@
 /// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
 #define FIRE_EMBERS 64
 
-/// Embers burst from the top of the user two a frame and home in on the
-/// targets, turning towards them 48 frames after they appear, and each one that
-/// hits the ground shows an impact flare for 12 frames as its target flinches.
+/// Embers burst from the top of the user and home in on the targets, and each
+/// that lands shows an impact flare as its target flinches.
 ///
-/// Abilities: Fire, Fireball, Inferno (BATTLE_EFFECT_FIRE).
-///
-/// The camera swings round over frames 17 to 79, and the battle shows the
-/// damage 24 frames before the end.
-///
-/// Adds BattleCamera_ApplyPhasedDelta as a task for the swing and drives it
-/// through work->cameraDelta and work->cameraPhase; sets work->shakeFrames on
-/// each hit and writes REG_BLDALPHA. Ends with both tasks removed, the
-/// blitters freed and the canvas layer closed.
-///
-/// args: the targets; variant picks the number of embers
-///         (gFire_Counts): 16 for Fire, 32 for Fireball, 64 for Inferno.
+/// Abilities: Fire, Fireball, Inferno.
 void BattleEffect_RunFire(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -38,7 +26,6 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
-  // The motes are in the battle sheet's slot; work->sheet holds the flares.
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   if (args->side == EFFECT_SIDE_PARTY)
@@ -56,9 +43,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // The embers leave the top of the user's body in a random direction,
-  // outwards at 2 to 4 pixels a frame and rising at -1/4 to 1.73 pixels a
-  // frame.
+  // The embers leave the top of the user in a random direction.
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   bodyTop = user->y.fixed + BattleUnit_GetEffectHeightFar(work->args->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
@@ -72,34 +57,27 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
                  (s32)(((Random16() & 127) - 16) << 16) >> 6,
                  (Trig_Cos(angle) * speed) >> 6);
     SET_POSITION(ember, user->x.fixed, bodyTop, user->z.fixed);
-    // -1 in flight, then the frames of the impact flare.
     ember->variant = -1;
   }
 
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
-  // Each transfer keeps three quarters of every level, for long trails.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // The last ember launches on frame count / 2; the effect runs 132 frames
-  // past that.
   for (frame = 0; frame != (gFire_Counts[work->args->variant] >> 1) + 132;
        frame++) {
-    // The camera turns 1/256 of a turn of yaw a frame over frames 17 to 79,
-    // about a quarter turn in all, while each frame takes one VBlank
-    // (BattleCamera_ApplyPhasedDelta).
+    // The camera turns while the embers fly.
     if (frame > 16 && frame < 80)
       work->cameraDelta = TRIG_TURN / 256;
     else
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[work->args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    // Re-centre the camera's focus at full zoom, then project from it.
     BattleCamera_SetViewFar(0, 0, 0, 100);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    // The embers in flight: two launch each frame, ember i after frame i / 2.
+    // The embers in flight.
     for (i = 0; i != gFire_Counts[work->args->variant]; i++) {
       struct Particle *ember = &PARTICLES[i];
       s32 launchFrame;
@@ -108,8 +86,6 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       if (frame > launchFrame && ember->variant == -1) {
         s32 size;
 
-        // Size 10 to 1 over depths 160 to 799; maximum blend for the first 48
-        // frames, additive after.
         Projection_Point(ember, &screen);
         screen.x >>= 1;
         CLAMP(screen.depth, 160, 799);
@@ -121,9 +97,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         ember->z += ember->velocityZ;
       }
 
-      // Accelerate towards the target by 1/512 of the distance, damping the
-      // speed to 60/64 until 85 frames after the ember appeared. Embers are
-      // dealt to the targets in turn (i % count).
+      // An ember homes in on its target.
       if (frame > launchFrame + 48 && ember->variant == -1) {
         struct Actor *target;
         s32 vx;
@@ -140,9 +114,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
           SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
         }
 
-        // Below the ground it hits: keep its screen position (from this
-        // frame's drawing above) for the impact flare, tint the target red in
-        // its damage pose for 4 frames, and shake the screen for 2 frames.
+        // Below the ground it hits.
         if (ember->y < 0) {
           ember->variant = 0;
           ember->x = screen.x;
@@ -157,8 +129,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       }
     }
 
-    // The impact flares: six pictures, 2 frames each, drawn 56 pixels
-    // higher than where the ember hit.
+    // The impact flares.
     for (i = 0; i != gFire_Counts[work->args->variant]; i++) {
       struct Particle *ember = &PARTICLES[i];
 
@@ -184,7 +155,6 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       }
     }
 
-    // Tell BattleCamera_ApplyPhasedDelta a frame has passed.
     if (work->cameraPhase == CAMERA_PHASE_IDLE)
       work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     BattleCamera_Shake(8, 8);

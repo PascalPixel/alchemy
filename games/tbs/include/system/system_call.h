@@ -28,12 +28,8 @@ struct Actor;
 struct FieldPosition;
 struct MenuSprite;
 
-/// Adds `func` as a task of priority `priority` (TASK_PASS_FRAME
-/// runs it once a frame), or gives the task already running it that
-/// priority. Returns the slot it wrote, which the sort in the same call may
-/// already have moved, or -1 when all 20 task slots are taken. Task_Add under
-/// the name overlays import it by; event.h's Task_AddOrUpdateFrame
-/// calls it too.
+/// Adds `func` as a task of priority `priority` (TASK_PASS_FRAME runs it once a
+/// frame), or gives the task already running it that priority.
 static inline s32 Task_AddFrame(TaskFunc func, s32 priority) {
   return Task_Add(func, priority);
 }
@@ -83,9 +79,7 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 }
 
 /// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
-/// `destination`. Scenes, the Title and the File Screen reach the decoder
-/// through it; main-image code calls Decompress_TaggedLz without it, except
-/// LuckyDice_Run, whose use is a tagged wrapper.
+/// `destination`.
 static inline s32 FieldDecompress_TaggedLz(const void *source,
                                            void *destination) {
   return Decompress_TaggedLz(source, destination);

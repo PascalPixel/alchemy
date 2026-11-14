@@ -51,42 +51,26 @@
 /// ENTRANCE_STUMP_FALL, which no exit names and only the debug scene selector
 /// reaches, plays the stump being pushed to the edge and falling.
 #include "script_operands.h"
-#include "version.h"
 #include "heap_slots.h"
 #include "module/import.h"
 #include "module/scene/goma_cave_pillar.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "sprite.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "pushed_actor.h"
-#include "tbs_edition.h"
-#include "actor.h"
-#include "main_routine_work.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "fixed_point_position.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
-#include "fixed_math.h"
 
 #include "flags.h"
-#include "sounds.h"
 
 // Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
@@ -195,7 +179,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   table = gGomaCavePillar_FragmentScripts;
   fragment = FieldActor_Create(SPRITE_DUST_PUFF, x, y, z);
-  if (fragment == 0)
+  if (fragment == NULL)
     return;
   sprite = fragment->sprite;
   Actor_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);
@@ -275,7 +259,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
   framePhase = gFrameCount & 7;
   if (framePhase == 0) {
     firstXSource = Actor_Get(ACTOR_STUMP);
-    firstRandomX = Import_RandomNext();
+    firstRandomX = Random_Next();
     fixedX = firstXSource->x.fixed;
     fixedX +=
         ((((u32)(((firstRandomX << 1) + firstRandomX) << 2)) >> 16) << 16);
@@ -283,7 +267,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstZSource = Actor_Get(ACTOR_STUMP);
     fixedZ = firstZSource->z.fixed;
     fixedZ += px(6);
-    firstRandomSpeed = Import_RandomNext();
+    firstRandomSpeed = Random_Next();
     firstSpeedBand = ((u32)((firstRandomSpeed << 2) + firstRandomSpeed) >> 16);
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
     firstBandScaled =
@@ -299,7 +283,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     framePhase = gFrameCount & 15;
     if (framePhase == 0) {
       secondXSource = Actor_Get(ACTOR_STUMP);
-      secondRandomX = Import_RandomNext();
+      secondRandomX = Random_Next();
       fixedX = secondXSource->x.fixed;
       fixedX +=
           ((((u32)(((secondRandomX << 1) + secondRandomX) << 2)) >> 16) << 16);
@@ -307,10 +291,9 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondZSource = Actor_Get(ACTOR_STUMP);
       fixedZ = secondZSource->z.fixed;
       fixedZ += px(6);
-      secondRandomSpeed = Import_RandomNext();
+      secondRandomSpeed = Random_Next();
       secondSpeedBand =
           ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
-      // Keep the same five falling speeds for the second fragment.
       secondBandScaled =
           (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
       secondFallingSpeed = secondBandScaled << 6;
@@ -328,9 +311,6 @@ static void GomaCavePillar_SpawnStumpDust(void) {
 s32 gGomaCavePillar_WitnessFrames;
 
 /// Move on the stump in Goma Cave, until it falls (FLAG_GOMA_CAVE_STUMP_FELL).
-///
-/// Once it is pushed to the edge (column 25), it teeters shedding dust, tips
-/// over and falls into the room below with a crash that shakes the screen.
 static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
   void (*fragmentFunc)(void);
@@ -385,14 +365,14 @@ static void GomaCavePillar_PushStumpOver(void) {
     Event_Wait(12);
     Sound_Play(SE_STONE_GRIND);
     xSource = Actor_Get(ACTOR_STUMP);
-    randomX = Import_RandomNext();
+    randomX = Random_Next();
     fixedX = xSource->x.fixed;
     fixedX += ((((u32)(((randomX << 1) + randomX) << 2)) >> 16) << 16);
     heightSource = Actor_Get(ACTOR_STUMP);
     zSource = Actor_Get(ACTOR_STUMP);
     fixedZ = zSource->z.fixed;
     fixedZ += px(6);
-    randomSpeed = Import_RandomNext();
+    randomSpeed = Random_Next();
     speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
     // A last piece of dust, with the same tenth-pixel speed bands.
     bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
@@ -478,8 +458,6 @@ static void GomaCavePillar_PushEastPillar(void) {
 
 /// Walking west into the gap in Goma Cave (cell behavior 20): the leader
 /// jumps across it.
-///
-/// Later patches use the shared forward jump.
 static void GomaCavePillar_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
@@ -530,8 +508,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Back from a won battle with Forge, the man reacts on a timer while the
 /// Djinni joins the party.
-///
-/// Once the Djinni's event is over, it raises RAISED_FORGE_JOINED.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct FieldWork *work;
   s32 frame;
@@ -560,9 +536,6 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 
 /// Raised in Goma Cave once Forge has joined the party: the man who fought it
 /// is amazed.
-///
-/// He says `You got it? Wow, that's pretty impressive!`, then walks off for
-/// good.
 static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Task_Remove(GomaCavePillar_FidgetWhileForgeFights);
   Event_Start();
@@ -587,9 +560,6 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
 
 /// Sets up the room as the party enters: the pillars and the stump where the
 /// party left them.
-///
-/// ENTRANCE_STUMP_FALL plays the stump's fall. After a won battle with Forge,
-/// the man's reaction starts.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 

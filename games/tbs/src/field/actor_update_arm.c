@@ -29,14 +29,7 @@ s32 ArcTan2FarArm(s32 z, s32 x);
 s32 Iwram_SqrtFarArm(s32 value);
 s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
 
-/// Advances the eight script-driven actors by one frame. For each live one:
-/// run its update routine, then its script (unless it waits or is paused);
-/// steer it towards its target, or brake it when it has none; apply gravity and
-/// bounce off the ground; detect arrival at the target; and turn it to face
-/// the way it moves. Copied to RAM and run from there. Writes each actor's
-/// position, velocity and facing, and unsets its target on arrival. Only
-/// Actor_RunUpdateAllFromHeap copies and runs it, and nothing calls that;
-/// the field runs Actor_UpdateAllThumb instead.
+/// Advances the eight script-driven actors by one frame.
 void Actor_UpdateAll(void) {
   struct ActorArmView *actor;
   s32 y;
@@ -70,8 +63,6 @@ void Actor_UpdateAll(void) {
       continue;
 
     // Count down a wait, or run commands until one waits for this frame.
-    // Words above 63 are labels (SC_LABEL), which the cursor steps over; a
-    // command moves the cursor past its own operands.
     if (actor->wait != 0) {
       actor->wait--;
     } else {
@@ -104,10 +95,7 @@ void Actor_UpdateAll(void) {
     if (actor->frozen == 0) {
       arrived = 0;
       if (actor->targetX != TARGET_UNSET) {
-        // Accelerate towards the target. The first distance is in whole
-        // pixels, to stay in range; under 256 pixels it is measured again in
-        // 16.16, where the root of a 16.16 square is 8.8 and << 8 makes it
-        // 16.16 again.
+        // Accelerate towards the target.
         deltaX = (actor->targetX - x) / 65536;
         deltaZ = (actor->targetZ - z) / 65536;
         distance = px(IwramSqrt(deltaX * deltaX + deltaZ * deltaZ));
@@ -121,14 +109,7 @@ void Actor_UpdateAll(void) {
           x = actor->targetX;
           z = actor->targetZ;
         } else {
-          // speedRatio is acceleration / distance in 16.16. Under 256 pixels
-          // deltaX and deltaZ are 16.16 too, so each axis gains its share of
-          // the acceleration; further away they are whole pixels, and MulQ16
-          // makes the gain 65536 times smaller, which rounds to almost
-          // nothing. Actor_UpdateAllThumb's free flight multiplies its
-          // whole-pixel offsets by the ratio without MulQ16, so the two
-          // updates would steer towards a far target differently; nothing
-          // runs this one, so the player never sees it.
+          // speedRatio is acceleration / distance in 16.16.
           speedRatio = IwramRatioMulQ14(distance, actor->acceleration);
           velocityX = actor->velocityX + MulQ16(deltaX, speedRatio);
           actor->velocityX = velocityX;

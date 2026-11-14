@@ -4,11 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-/// The pictures Gaia rebuilds in work->sheet from the earth wall sheet, each
-/// starting where the one before ends: the rising wall's nine rows
-/// (gGaia_RowPictures), each one line of gGaia_RowWidths stretched to 32 lines;
-/// the standing wall's top and foot; then the three flames of
-/// gGaia_FlamePictures.
+/// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
+/// rows, the standing wall's top and foot, then the flames.
 enum EarthWallSheetPicture {
   /// 48x96, stretched from 48x32
   GAIA_WALL_TOP = 32 * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
@@ -20,16 +17,7 @@ enum EarthWallSheetPicture {
 /// which widens into a glowing wall and stands while rocks tumble up through it
 /// and the targets are battered, then narrows away again.
 ///
-/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
-/// (BATTLE_EFFECT_GAIA).
-///
-/// The wall is symmetric: its left half is drawn, then mirrored for the right.
-/// Its centre is at canvas x 64 + wallX. The rocks are 11 sprites,
-/// moved by particles[10] to particles[20].
-///
-/// args: the targets; the variant widens the wall: narrowest for Gaia and
-///         Rockfall, wider for Mother Gaia and Rockslide, widest for Grand
-///         Gaia and Avalanche.
+/// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche.
 void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   struct BattleEffectWork *work;
@@ -54,8 +42,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
-  // or 1.5 times, or twice as BattleEffect_StartCanvasLayer left it.
+  // The higher the variant, the wider the wall.
   if (work->args->variant == EFFECT_VARIANT_BASIC)
     REG_BG2PA = Q_8_8(0.8);
   else if (work->args->variant == EFFECT_VARIANT_STRONGER)
@@ -74,8 +61,6 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   REG_BG2X = gGaia_Bg2Shifts[work->args->side][work->args->variant] << 8;
 
-  // Decode the EarthWall sheet into Ram_MapGridCellBuffer, and load the orange
-  // palette with background colours 1 to 63 each 8 steps darker a channel.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
                              Ram_MapGridCellBuffer, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -100,8 +85,6 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     *color++ = RGB(red, green, blue);
   }
 
-  // Rebuild the earth wall sheet's pictures (enum EarthWallSheetPicture); the
-  // frame loop draws only the first eight wall rows.
   src = Ram_MapGridCellBuffer;
   sheetIndex = 0;
   for (j = 0; j != 9; j++) {
@@ -126,8 +109,6 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // The rock sprites, of SPRITE_BATTLE_ROCKS: sprites 0 to 3 play animation
-  // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != 11; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
@@ -147,14 +128,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  // Trails: each transfer keeps 3/4 of every canvas level.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Rocks: x is the column, y counts down from 128 by z pixels a frame (2
-  // to 17, and 8 to 15 for a rock restarted from frame 88), velocityX
-  // cycles through 1 to 12 but nothing else reads it, and variant is the
-  // wait before the rock appears (44 frames for the first, 4 fewer for each
-  // after).
+  // Rocks wait their turn and tumble up through the wall.
   for (i = 0; i != 11; i++) {
     struct Particle *rock = &work->particles[10 + i];
 
@@ -162,15 +138,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     SET_VELOCITY(rock, i, 1, 32768);
     rock->variant = 44 - i * 4;
   }
-  // Then particles[16] to particles[21] take the fixed columns of
-  // gGaia_LateRockColumns: the five rocks that join on frame 72, and
-  // particles[21], which no rock uses.
   for (i = 0; i != 6; i++)
     work->particles[16 + i].x = gGaia_LateRockColumns[i];
 
-  // Dust rises from the foot of the wall, across its middle 64 pixels, at 4
-  // to 12 pixels a frame, each mote after a random wait of up to 31 frames
-  // (its variant). 256 are placed; the frame loop draws 64.
+  // Dust rises from the foot of the wall.
   for (i = 0; i != 256; i++) {
     struct Particle *dust = &PARTICLES[i];
 
@@ -181,8 +152,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  // The screen shakes throughout: 250 frames outlast the effect, and the
-  // ranges given to BattleCamera_Shake below set how hard.
+  // The screen shakes throughout.
   work->shakeFrames = 250;
   for (frame = 0; frame != 192; frame++) {
     if (frame == 0)
@@ -194,8 +164,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     if (frame == 120)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-    // The flames at the wall's foot (frames 0 to 81): from frame 12 they
-    // flicker between their second and third pictures.
+    // The flames flicker at the wall's foot.
     if (frame <= 81) {
       s32 picture = frame / 4;
 
@@ -210,8 +179,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
               gGaia_FlameHeights[picture]);
     }
 
-    // The rising wall (frames 12 to 87): its narrowest row until frame 66,
-    // then a row wider every 3 frames, the widest from frame 85.
+    // The rising wall widens a row at a time.
     if (frame >= 12 && frame <= 87) {
       s32 row = (frame - 64) / 3;
 
@@ -225,7 +193,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       }
     }
 
-    // The sinking wall (frames 160 to 183).
+    // The wall sinks away.
     if (frame >= 160 && frame <= 183) {
       s32 row = 7 - (frame - 160) / 3;
 
@@ -239,7 +207,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       }
     }
 
-    // The standing wall (frames 88 to 159).
+    // The standing wall.
     if (frame >= 88 && frame <= 159) {
       s32 width = 48;
 
@@ -249,8 +217,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       draw[1](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 64, 96, width, 21);
     }
 
-    // Dust (from frame 88): until frame 159, dust that leaves the top
-    // returns to the foot.
+    // Dust keeps rising up the wall.
     if (frame > 87) {
       for (i = 0; i != 64; i++) {
         struct Particle *dust = &PARTICLES[i];
@@ -269,10 +236,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       }
     }
 
-    // Rocks (from frame 5): six at half size, then from frame 72 all 11, each
-    // larger than the last and larger with the variant. The sprites take
-    // turns showing the rocks, moving on every 2 frames; four sprites play
-    // each of animations 0 and 1, three animation 2.
+    // Rocks tumble up through the wall, larger with the variant.
     if (frame > 4) {
       s32 rocks = 6;
 
@@ -308,8 +272,6 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           if (rock->velocityX > 12)
             rock->velocityX -= 12;
           if (rock->y < 0) {
-            // Below 0 the rock starts again at 128 (from frame 88 in a new
-            // column, at a new speed).
             if (frame > 159) {
               rock->variant = -1;
             } else {
@@ -332,8 +294,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       }
     }
 
-    // The targets (frames 86 to 158): a flash every 12 frames and a recoil
-    // every 4.
+    // The targets flash and recoil.
     if (frame <= 158) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         if (frame > 85) {

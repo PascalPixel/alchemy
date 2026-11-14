@@ -17,8 +17,7 @@ struct Sprite;
 struct Window;
 
 /// The item menu's work, in the HEAP_SLOT_MENU heap slot: its windows, the
-/// party figures, the items listed and the two choices a command makes. The
-/// menu takes the slot as it opens and frees it as it closes.
+/// party figures, the items listed and the two choices a command makes.
 struct ItemMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen
@@ -73,8 +72,7 @@ struct ItemMenuWork {
   /// The row of four figures the Djinn and status screens show
   /// (djinn_figures.c): each one's sprite and place in screen pixels, and its
   /// scale in 16.16, which closes a third of its gap to Q16_ONE each frame, or
-  /// holds -scale while negative. A negative y marks a recovering Djinni,
-  /// which faces west.
+  /// holds -scale while negative.
   ///@{
   struct Sprite *figures[4];
   s16 figureX[4];

@@ -5,10 +5,7 @@
 #include "../window_internal.h"
 
 /// Takes the first window sprite from the free list, or returns NULL when every
-/// sprite is in use. The sprite belongs to the caller until it is appended to a
-/// window's list, which then frees it when the window is cleared or closed
-/// (WindowSprite_ClearList). Glyph sprites, icons and portraits all come from
-/// here.
+/// sprite is in use.
 struct WindowSprite *WindowSprite_AcquireFree(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct WindowSprite *out = work->freeSprites.head;
@@ -63,12 +60,8 @@ void WindowSprite_InitializeFreeList(void) {
 
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
-/// every window sprite and starts the two per-frame tasks, the tilemap
-/// upload and the window update. Reached from FieldSequence_Run
-/// (field/field_sequence/run.c), the debug message viewer
-/// (DebugBattle_ViewMessages), Lucky Dice and Lucky Wheels (LuckyWheels_Run).
-/// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next
-/// allocated; nothing here frees it.
+/// every window sprite and starts the two per-frame tasks, the tilemap upload
+/// and the window update.
 void WindowSystem_InitField(void) {
   struct WindowWork *work;
 #if TBS_PATCH_1
@@ -95,21 +88,15 @@ void WindowSystem_InitField(void) {
   Iwram_FillWords(work, sizeof(work->tilemap),
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
-  // Make the sprite and palette pools available, then start the updates. The
-  // upload's order is TASK_PASS_VBLANK: it runs in vertical blank.
+  // Make the sprite and palette pools available, then start the updates.
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
   WindowSystem_StartFieldUpdate();
 }
 
-/// Sets up the window system for battle, as
-/// WindowSystem_InitField does for the field, and marks the work
-/// block as in battle (WINDOW_BATTLE). Battle_Run's setup
-/// (battle/battle/run.c) passes loadGlyphTiles set only while
-/// FLAG_DJINN_LESSON is set: it reserves the glyph sprites' tiles, which
-/// only windows other than text canvases need. Unlike the field setup it does
-/// not mark the portrait slots free (999): they stay 0 from the clear.
+/// Sets up the window system for battle, as WindowSystem_InitField does for the
+/// field, and marks the work block as in battle (WINDOW_BATTLE).
 void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   struct WindowWork *work;
 #if TBS_PATCH_1
@@ -118,8 +105,7 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   s32 tileIndex;
 
   // Copies pixel rows 4 to 6 of UI tile src to rows 0 to 2 of tile dst and
-  // clears the rest of dst. A 4bpp row is 4 bytes: the copy takes rows 4 to 7
-  // (16 bytes from byte 16), and the clear then blanks rows 3 to 7.
+  // clears the rest of dst.
   s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
     sourceTile &= TILE_NUMBER_MASK;
     destinationTile &= TILE_NUMBER_MASK;
@@ -158,9 +144,7 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT, 128);
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM, 129);
   WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT, 130);
-  // Tiles 128 to 130 are also the first three text tiles. Attribute 4 is
-  // neither allocated nor shown, but nonzero, so the text tile search skips
-  // them and no clear of the shown bits ever frees them.
+  // Tiles 128 to 130 are also the first three text tiles.
   {
     u8 mode = 4;
 
@@ -170,9 +154,7 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
 }
 
 /// The tilemap upload, a VBlank-pass task: copies each 256-byte band of the
-/// tilemap (four tile rows) marked in the dirty bits to VRAM. Bit 0 marks the
-/// whole tilemap, bits 1 to 5 one band each. Nothing is copied while
-/// holdTilemapUpload holds the upload off.
+/// tilemap (four tile rows) marked in the dirty bits to VRAM.
 void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = WINDOW_WORK;
   u32 bands;
@@ -200,12 +182,8 @@ void WindowSystem_UploadTilemap(void) {
   }
 }
 
-/// Erases a window's rectangle of the tilemap (x, y, width and height in
-/// tiles) and frees the text tiles it showed. The height is cut at the
-/// screen's 20th row, and width and height are clamped to 2 to 30 tiles. In
-/// battle the rows below row 16 take WINDOW_TILE_COMMAND_PANEL, the tile the
-/// battle command row fills its empty panels with
-/// (screens/battle_command_row.c), instead of the blank tile.
+/// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
+/// and frees the text tiles it showed.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
@@ -291,8 +269,7 @@ void Window_DrawOpened(struct Window *window) {
 
 /// Opens a window at tile (x, y) of width by height tiles in the first free
 /// window slot, and returns it, or NULL when all slots are in use. attrs takes
-/// the WINDOW_FLAG_ flags. Unless it is WINDOW_FLAG_INSTANT the window zooms
-/// open over eight frames, and this waits until it is fully open.
+/// the WINDOW_FLAG_ flags.
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   struct Window *slot;
   struct Window *found;
@@ -318,8 +295,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->sprites.tailLink = &slot->sprites.head;
     found->opened = 1;
     found->flags = WINDOW_FLAG_OPEN;
-    // Every new window starts the shared text style afresh. The function
-    // takes no arguments: x is passed and ignored.
+    // Every new window starts the shared text style afresh.
     Text_ResetStyle(x);
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;
@@ -362,12 +338,6 @@ void Window_WaitZoom(struct Window *window) {
 }
 
 /// Closes a window: clears its contents and remembers its last rectangle.
-/// With instant set the window is erased and its slot freed at once; otherwise
-/// it zooms closed over four frames first, and its slot stays taken until
-/// Window_UpdateZooms frees it (Window_IsClosed says when). It returns
-/// without waiting. Unless the window is a text canvas, its window sprites go
-/// back to the pool at once; a message typing into it lets go of it
-/// once it has closed (Message_UpdateAll). Does nothing for NULL.
 void Window_Close(struct Window *window, s32 instant) {
   if (window == 0)
     return;
@@ -511,8 +481,6 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
 
 /// Frees a window sprite: returns it to the free list, releases its VRAM cache
 /// entry unless it is a glyph, and for a portrait frees its palette slot too.
-/// Its one caller, WindowSprite_ClearList, has detached the list first: the
-/// free list reuses the sprite's link.
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
   if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
@@ -525,13 +493,11 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   entry->motion = 0;
 }
 
-/// Starts a free message typing the decoded text that begins at entry
-/// into window, with the pen at pixel (x, y). spacing gives each of four lines
-/// an extra gap between characters, in 1/256 pixels (or none for NULL), and is
+/// Starts a free message typing the decoded text that begins at entry into
+/// window, with the pen at pixel (x, y). spacing gives each of four lines an
+/// extra gap between characters, in 1/256 pixels (or none for NULL), and is
 /// copied, so the caller's array need not outlive the call; flags is kept with
-/// the message (nonzero keeps the window's size from page to page). Returns
-/// the message, or NULL when all three are busy. The message stays taken
-/// until its window closes.
+/// the message (nonzero keeps the window's size from page to page).
 struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
                               u16 *spacing, s32 flags) {
   struct Message *message = WINDOW_WORK->messages;
@@ -569,11 +535,8 @@ struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
   return found;
 }
 
-/// Starts a message typing the decoded text at entry into the battle
-/// message window. A message that already serves a finished window
-/// continues below its last line (scrolling up once both lines are used) unless
-/// keepPosition is set; BattleMessage_Open passes the battle message window's
-/// marked flag there. Returns the message, or NULL when all three are busy.
+/// Starts a message typing the decoded text at entry into the battle message
+/// window.
 struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
                                        s32 keepPosition) {
   struct Message *message;
@@ -639,10 +602,8 @@ s32 Text_FillCanvasBackground(void) {
                          TEXT_CANVAS_BACKGROUND_WORD);
 }
 
-/// Resets the pen and text style of the first idle message, clearing
-/// the canvas when the message still has a window. The auto battle
-/// (battle/battle/auto_battle.c) calls it after playing each action, so the
-/// next battle message starts on a clear canvas at its first line.
+/// Resets the pen and text style of the first idle message, clearing the canvas
+/// when the message still has a window.
 void Message_ResetIdle(void) {
   struct Message *message = WINDOW_WORK->messages;
   struct Message *selection = 0;

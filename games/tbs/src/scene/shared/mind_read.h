@@ -1,8 +1,5 @@
 /// @file
 /// Kolima and Log Rooms A: Mind Read cast in an event.
-#include "types.h"
-#include "event.h"
-#include "ability_ids.h"
 
 /// The caster begins Mind Read on the target.
 static void Scene_StartMindRead(s32 casterId, s32 targetId) {

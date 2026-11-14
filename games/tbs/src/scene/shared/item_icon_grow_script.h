@@ -2,9 +2,6 @@
 /// The Sanctum and Sol Sanctum's Elemental Star room: how an Elemental Star's
 /// icon appears.
 
-#include "types.h"
-#include "actor_script.h"
-
 /// An item icon's entrance: drawn at half size, it grows to full size over 8
 /// frames, holds for 16, then swells to one and a half times its size and back
 /// twice.

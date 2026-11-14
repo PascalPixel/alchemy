@@ -4,19 +4,12 @@
 
 #include "../battle_effect_internal.h"
 
-/// The blast sheet's seven spark pictures, after the lime column's 14x80
-/// picture.
 #define UNDEAD_SWORD_SPARK_SHEET (14 * 80)
 
 /// Two mirrored columns of light rise at the first target's feet and sink
-/// again, scattering 16 sparks that drift upward; the target is struck on frame
-/// 10.
+/// again, scattering sparks that drift upward.
 ///
-/// Abilities: Undead Sword (BATTLE_EFFECT_UNDEAD_SWORD).
-///
-/// The effect runs 54 frames. BG2 is moved so that the canvas's centre line
-/// stands on the target. The sparks are work->particles 0 to 15, variant their
-/// age in frames.
+/// Abilities: Undead Sword.
 void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   void **slots;
   void **slot;
@@ -54,13 +47,10 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Shift BG2 so that canvas x 64 lines up with the target.
   Projection_Unit(work->args->targets[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
-  // Scatter sparks in all directions from (64, 112), at 1/2 to 2.5 pixels a
-  // frame across and half that up or down, then drift upward; each starts 0
-  // to 7 frames old, so they die at different times.
+  // Sparks scatter and drift upward.
   for (i = 0, spark = work->particles; i != 16; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & TRIG_ANGLE_MASK;
@@ -73,7 +63,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   }
   work->shakeFrames = 8;
   for (frame = 0; frame != 54; frame++) {
-    // Frame 10: the strike, with a second 8-frame shake.
+    // The strike, with a second 8-frame shake.
     if (frame == 10) {
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
@@ -82,12 +72,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
                                POSE_DAMAGE, 0, 8);
     }
 
-    // The columns grow 12 pixels a frame from frame 8 and shrink 6 a frame
-    // after frame 31, held at 80 pixels between. Held, they are drawn
-    // brightest-wins, otherwise additive. The two 14-pixel halves stand on
-    // line 112 at x 50 and 64, the second mirrored, so the light is one
-    // 28-pixel column about x 64; each half builds its own blitter and
-    // releases it at once.
+    // The columns grow and shrink.
     if (frame > 7) {
       if (frame <= 31)
         height = frame * 12 - 96;
@@ -114,11 +99,6 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
       }
     }
 
-    // Two more sparks start each frame from frame 8; each advances to the
-    // next of seven pictures every three frames and drifts upward, pulled by
-    // 1/8 pixel a frame each frame and slowed to 62/64, until it is 29 frames
-    // old. The blitters are fetched and released each frame, as the columns
-    // took the slot.
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {

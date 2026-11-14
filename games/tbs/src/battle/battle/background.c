@@ -5,9 +5,7 @@
 
 #include "../battle_internal.h"
 
-// The value Select picks in the debug value editor
-// (Battle_AdjustDebugValue), which the international editions
-// changed.
+// The value Select picks in the debug value editor.
 #if TBS_PATCH_1
 #define DEBUG_SELECT_VALUE 399
 #else
@@ -33,11 +31,7 @@
 /// The plane's top lines, left off except while commands are chosen.
 #define BACKGROUND_PLANE_HIDDEN_LINES 16
 
-/// Copies the background's saved palette to BG palettes 6 to 13, darkened by
-/// level (0 for none).
-/// Called by BattleBackground_RestorePalette with 0, and by battle effects
-/// that dim the background (beams.c, canvas.c). Sets BattleWork.brightness when
-/// it darkens. Interrupts are off while it writes.
+/// Darkens the background by level, 0 for its own colours.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
@@ -71,18 +65,8 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   }
 }
 
-/// Switches the background's display mode, optionally sets its palette, and
-/// rebuilds both its maps.
-/// fade BATTLE_BACKGROUND_FADE_RESTORE restores the saved palette, another
-/// nonzero fade takes that much from each colour channel, and 0 leaves the
-/// palette alone; BATTLE_BACKGROUND_FIXED queues BATTLE_BG1CNT for BG1. Called
-/// with BATTLE_BACKGROUND_FIXED by ElementGlow_Play and the battle effects'
-/// canvas layers (canvas.c), and with BATTLE_BACKGROUND_ZOOMED by
-/// BattleStaging_DispatchAction and Battle_ProcessTurnEnd. Sets
-/// BattleBackgroundWork.mode (enum BattleBackgroundMode), adds
-/// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE,
-/// and copies the first sprite palette to BG palette 5. unusedResource is not
-/// read.
+/// Switches the background's display mode, optionally fades its palette by
+/// fade, and rebuilds both its maps.
 void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   struct BattleBackgroundWork *transition = gBattleBackgroundWork;
 
@@ -95,12 +79,8 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, IO_WRITE_16);
   }
 
-  // BASIC_COLORS_PALETTE is the battle windows' second text palette
-  // (WindowWork.textPalette): the party status window's HP and PP, the
-  // Psynergy list's names and costs and the element icons are drawn in the
-  // first sprite palette's colours through it. Text in a palette other than
-  // the UI's is drawn over TEXT_BACKGROUND_COLOR (Text_DrawStringAsTiles), so
-  // it takes WINDOW_BACKGROUND_COLOR.
+  // The battle windows' second text palette takes the first sprite palette's
+  // colours, over the window's background colour.
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
@@ -142,9 +122,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
 }
 
-/// Allocates the zoomed background's scanline work (HEAP_SLOT_BATTLE_SCANLINES)
-/// cleared, and sets the background's mode to BATTLE_BACKGROUND_NONE, so the
-/// next load adds its scanline task.
+/// Allocates the zoomed background's scanline work.
 void BattleBackground_Init(void) {
   struct BattleAffineHdma *work;
   struct BattleBackgroundWork *state;
@@ -154,8 +132,7 @@ void BattleBackground_Init(void) {
   state->mode = BATTLE_BACKGROUND_NONE;
 }
 
-/// Frees the zoomed background's scanline work; called by
-/// Battle_Run as the battle ends.
+/// Frees the zoomed background's scanline work.
 void BattleBackground_Free(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
 }
@@ -163,16 +140,8 @@ void BattleBackground_Free(void) {
 /// The bit decoder BattleBackground_Load copies to RAM and runs.
 typedef void (*BitDecoder)(const u8 *source, void *destination);
 
-/// Loads a battle background: its picture into character blocks 2 and 3, its
-/// palette into BattleWork.palette and, darkened by level, BG palettes 6 to
-/// 13, and both its maps.
-/// A negative level leaves the BG palettes alone. The resource is 256 bytes
-/// of palette and then the packed picture, which the RAM copy of
-/// BitDecoder_DecodeImage (HEAP_SLOT_RAM_CODE_TEMP) unpacks. Called with
-/// BATTLE_BACKGROUND_FIXED by
-/// Battle_Run as the battle opens, and by the Atalanta and Boreas
-/// effects for their violet sky. Sets BattleBackgroundWork.mode, and adds
-/// BattleBackground_ShowZoomedPage when it was BATTLE_BACKGROUND_NONE.
+/// Loads a battle background, its picture, its palette darkened by level (none
+/// when negative) and both its maps.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -211,8 +180,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
-  // Clears BG1's last row, 64 bytes from the end of its screen block, which
-  // BuildTilemap leaves.
+  // BG1's last row is left clear.
   Iwram_ClearWords((BG_SCREEN_BLOCK(31) + BG_SCREEN_SIZE - 64), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
@@ -222,18 +190,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 }
 
 /// Builds the zoomed background's next page for a zoom of scale about centerX
-/// and centerY (all 16.16), shifted by offsetX and offsetY (8.8 pixels), and
-/// shows it.
-/// The page holds the affine parameters and each line's BG2CNT: which half of
-/// the picture a line shows, or none. At a zoom of 1 or more the plane wraps
-/// and turns sideways with the camera's yaw. While the background is
-/// BATTLE_BACKGROUND_FIXED (or secondMode is) and not busy, it also sets BG1's
-/// horizontal scroll. Called by BattleCamera_SetView, by
-/// BattleCamera_Update and the shoulder-key camera
-/// (DEFINE_ADJUST_CAMERA) while BattleBackgroundWork.flag is 0, by
-/// Battle_Run and by BattleCamera_SetCommandView. Does nothing before
-/// HEAP_SLOT_BATTLE_SCANLINES is allocated, and builds no page unless the
-/// mode is BATTLE_BACKGROUND_ZOOMED.
+/// and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
+/// the plane lies flat, from 1 it wraps and turns with the camera.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale) {
   struct BattleBackgroundWork *view =
@@ -285,11 +243,9 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
   affine->y = y;
 
-  // The picture's lower half starts at map row 8, 64 pixels down the plane
-  // in 8.8 (64 << 8): the first screen line that reaches it at this zoom.
+  // The first line that reaches the picture's lower half at this zoom.
   lowerHalfLine = (Iwram_RatioMulQ14((s16)step, (64 << 8) - y) >> 16) + 1;
 
-  // Each line's BG2CNT.
   scanline = 0;
   if (!GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < BACKGROUND_PLANE_HIDDEN_LINES; scanline++)
@@ -306,17 +262,15 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   scanlines->page ^= 1;
 }
 
-/// Sets the camera's eye at its stored distance without taking a zoom;
-/// nothing in the source calls it.
-/// The original zoom is an uninitialized local; UBFIX makes it an explicit
-/// percentage argument, as in BattleCamera_SetView.
+/// Unused: sets the camera's eye at its stored distance without taking a zoom.
 #ifdef UBFIX
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   s32 span = BATTLE_CAMERA_DISTANCE;
-  // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
+  // UB: zoom is never set, so the scale is whatever its register held; UBFIX
+  // takes it as a parameter.
 #ifndef UBFIX
   s32 zoom;
 #endif
@@ -362,11 +316,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 }
 
 /// Points the battle camera at (x, depth, y) with a zoom in percent, and lines
-/// the zoomed background up with it. The camera's eye is set 510 pixels from
-/// the focus along its yaw and pitch; where the battlefield's origin then
-/// projects decides the plane's offset (BattleCamera_SetRange), and the
-/// projection's focal length and depth range are then scaled by the zoom.
-/// Writes the camera's pos and eye, gProjection, and the plane's next page.
+/// the zoomed background up with it.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
@@ -386,8 +336,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
-  // The unzoomed projection, focal length 510 pixels, and the eye 510
-  // pixels back from the focus along the camera's yaw and pitch.
+  // The eye 510 pixels back from the focus.
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
   Transform_Reset();
@@ -398,8 +347,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   renderBounds[1] = 0;
   renderBounds[2] = span;
   Iwram_TransformVector(renderBounds, (s32 *)camera);
-  // Where the battlefield's origin falls about the screen point (120, 120)
-  // shifts the plane by as much, in 8.8 pixels.
+  // Where the battlefield's origin falls on the screen moves the plane as much.
   gProjection.centerX = 120;
   gProjection.centerY = 120;
   Transform_Reset();
@@ -408,16 +356,15 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 
   BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
-  // The zoom then scales the focal length (510 pixels at 100 percent) and
-  // the far depth, twice it.
+  // The zoom scales the focal length and the far depth.
   half = scale * 255;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
   Projection_Set(width, result, half * 4);
 }
 
-/// Points the battle camera, through BattleCamera_SetView, at the ground
-/// between two units' battle objects, with a zoom in percent.
+/// Points the battle camera at the ground between two units, with a zoom in
+/// percent.
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
   struct Actor *firstActor = BattleObject_Get(firstUnitId)->actor;
@@ -432,32 +379,22 @@ void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
   BattleCamera_SetView(x, 0, z, zoom);
 }
 
-/// Fades BG2 out over the backdrop in eight frames, its blend weight falling
-/// by 2 a frame from 15, while the backdrop's stays 16.
-/// Reached only through its entry in FarCall_BattleTable, which no code in
-/// TBS names. Leaves REG_BLDCNT blending BG2 over the backdrop.
+/// Fades BG2 out over the backdrop in eight frames.
 void BattleBackground_FadeAlphaOut(void) {
   s32 alphaStep;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
   for (alphaStep = 1; alphaStep <= 16; alphaStep += 2) {
-    // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
-    // code.
     REG_BLDALPHA = BLEND_ALPHA(16, 16) - alphaStep;
     wait(1);
   }
 }
 
-/// Fades BG2 in over the backdrop in eight frames, its blend weight rising by
-/// 2 a frame from 1, while the backdrop's stays 16.
-/// Reached only through its entry in FarCall_BattleTable, which no code in
-/// TBS names. Leaves REG_BLDCNT blending BG2 over the backdrop.
+/// Fades BG2 in over the backdrop in eight frames.
 void BattleBackground_FadeAlphaIn(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
-  // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
-  // code.
   for (step = 1; step <= 16; step += 2) {
     REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
     wait(1);
@@ -472,16 +409,15 @@ struct BattleTransitionEntry {
   u32 rest[2]; ///< never read
 };
 
-/// Sets REG_BLDCNT to lighten every layer by REG_BLDY; nothing calls it.
+/// Unused: lightens every layer by REG_BLDY.
 void BattleBackground_SetBlendControl(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
-// XXX (no evidence): what the sum is for; The Lost Age keeps the same
-// function, and nothing in either game calls it or holds its address.
-/// Sets entries to the identity transform, then stores the first word's old
-/// value plus its new one in the second; nothing calls it.
+/// Unused: sets entries to the identity transform, then stores the first word's
+/// old value plus its new one in the second.
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
+  // XXX (no evidence): what the sum is for; nothing calls this in either game.
   u32 previous = entries[0].value;
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
@@ -489,13 +425,11 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   entries[0].sum = previous + entries[0].value;
 }
 
-/// Nothing calls it.
+/// Unused.
 s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
-/// A debug aid: while Start is held, edits BattleWork.debugValue with the
-/// d-pad (1 left and right, 100 up and down) until A takes it as the result;
-/// with Select held, returns DEBUG_SELECT_VALUE instead.
-/// Nothing in TBS calls it; it returns selectedValue unchanged otherwise.
+/// Unused debug aid: while Start is held, edits a value with the d-pad until A
+/// takes it; with Select held, returns DEBUG_SELECT_VALUE.
 s32 Battle_AdjustDebugValue(s32 selectedValue) {
   struct BattleWork *battle;
 
@@ -524,9 +458,7 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
   return selectedValue;
 }
 
-/// Sets the OBJ mode (enum BattleSpriteMode) of every sprite of a unit's battle
-/// object, the picture and its shadow. Does nothing for a unit with no battle
-/// object or actor.
+/// Sets the sprite mode of a unit's picture and its shadow.
 void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(unitId);
   struct Actor *actor;
@@ -561,8 +493,7 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
   }
 }
 
-/// Makes every unit's sprites semi-transparent but selectedUnitId's, which are
-/// left as they are; nothing calls it.
+/// Unused: makes every unit's sprites semi-transparent but selectedUnitId's.
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
@@ -575,8 +506,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   }
 }
 
-/// Returns every unit's sprites to SPRITE_OPAQUE; called by
-/// BattleHighlight_SetModes when the highlight stops.
+/// Returns every unit's sprites to SPRITE_OPAQUE.
 void BattleHighlight_ClearAllSpriteModes(void) {
   s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
@@ -586,13 +516,8 @@ void BattleHighlight_ClearAllSpriteModes(void) {
     BattleHighlight_SetSpriteMode(unitIds[unitIndex], SPRITE_OPAQUE);
 }
 
-/// Lightens the opaque sprites, the highlighted units, by the next step of
-/// gBattleHighlight_BlendRamp.
-/// The ramp's first sixteen steps play once, then its second sixteen over
-/// and over. Runs each VBlank as a task in the VBlank pass
-/// (priority TASK_PASS_VBLANK), added by BattleHighlight_SetModes while
-/// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
-/// REG_BLDY and BattleWork.highlightStep.
+/// Lightens the highlighted units by the next step of the blend ramp: the first
+/// sixteen steps once, then the second sixteen over and over.
 void BattleBackground_StepHighlightBlend(void) {
   struct BattleWork *battle = gBattleWork;
   s8 *blendRamp;
@@ -613,15 +538,8 @@ void BattleBackground_StepHighlightBlend(void) {
   }
 }
 
-/// Highlights the units in selectedUnits, a list ended by
-/// BATTLE_UNIT_LIST_END, or with HIGHLIGHT_OFF stops the highlight.
-/// With HIGHLIGHT_SELECTED (any odd mode) every other unit's sprites turn
-/// semi-transparent and the selected units' stay opaque, so only they take the
-/// pulsing lightening of BattleBackground_StepHighlightBlend. Called with the
-/// acting unit by BattleStaging_DispatchAction, with the targets being chosen
-/// by the command menu (battle_party_commands.c, battle_targets.c,
-/// selection.c), and with 0 when either is done. Sets BattleWork.highlightMode
-/// and highlightStep, and adds or removes the task.
+/// Highlights the units in selectedUnits, the others turning semi-transparent,
+/// or with HIGHLIGHT_OFF stops the highlight.
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
   s16 unitIds[UNIT_MAX];
   struct BattleWork *battle = gBattleWork;

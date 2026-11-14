@@ -17,50 +17,30 @@ enum DragonFireMode {
 /// Fireballs rain on the targets and a blast of fire sweeps across them, in
 /// the LightningBolt colours.
 ///
-/// Abilities: Dragon Driver (BATTLE_EFFECT_DRAGON_DRIVER), the Fusion Dragon's.
+/// Abilities: Dragon Driver, the Fusion Dragon's.
 void BattleEffect_RunDragonDriver(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_DRAGON_DRIVER);
 }
 /// Tiamat lands while fireballs rain on the targets, breathes fire across
 /// them, and bursts away.
 ///
-/// Abilities: Tiamat (SUMMON_EFFECT_TIAMAT).
+/// Abilities: Tiamat.
 void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 #define DRAGON_FIRE_FRAMES 208
-/// Falling fireballs, work->particles 24 to 39.
-#define DRAGON_FIRE_FIREBALLS 16
-/// The first fireball in work->particles.
-#define DRAGON_FIRE_FIRST_FIREBALL 24
-#define DRAGON_FIRE_FIRST_SPARK 40 ///< the first spark in work->particles
-#define DRAGON_FIRE_EMBERS 512     ///< embers in PARTICLES
-#define DRAGON_FIRE_BREATH 24      ///< puffs of breath, work->particles 0 to 23
-#define DRAGON_FIRE_SPARKS 24      ///< sparks, work->particles 40 to 63
+#define DRAGON_FIRE_FIREBALLS 16      ///< falling fireballs
+#define DRAGON_FIRE_FIRST_FIREBALL 24 ///< the first in work->particles
+#define DRAGON_FIRE_FIRST_SPARK 40    ///< the first spark in work->particles
+#define DRAGON_FIRE_EMBERS 512        ///< embers in PARTICLES
+#define DRAGON_FIRE_BREATH 24 ///< puffs of breath, work->particles 0 to 23
+#define DRAGON_FIRE_SPARKS 24 ///< sparks, work->particles 40 to 63
 /// The flames a fireball burns with where it lands, in the sheet.
 #define DRAGON_FIRE_FLAME_PICTURES 12288
 
 /// Fireballs rain on the targets and burn where they land while embers rise
-/// from the ground; pressing A or B during frames 49 to 159 skips to frame 160.
-/// A blast of fire sweeps across the targets from frame 129, they reel on
-/// frame 138, the screen flares white over frames 160 to 175 and fades out
-/// after, and the battle shows the damage on frame 178.
-///
-/// Four kinds of particle, in canvas coordinates with y growing downwards,
-/// 16.16 except the fireballs, which are whole pixels:
-///   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame
-///                      over frames 33 to 103, eight a frame over 104 to 175
-///   particles[40..63]  sparks: one on each odd frame from 41 to 127,
-///                      thrown up at a slant
-///   particles[0..23]   breath: one puff a frame over 129 to 175, thrown
-///                      across the targets
-///   particles[24..39]  fireballs: fall at a slant from the top and, below
-///                      y 55, burn with their flames over and over
-/// An idle particle's variant is -1; a live one's counts its age up until it
-/// goes out. A fireball is never idle: its variant starts at minus its wait (0
-/// to 31 frames) and counts up to 0, when it starts to fall.
-///
-/// mode: Tiamat's or Dragon Driver's (enum DragonFireMode).
+/// from the ground; then a blast of fire sweeps across them and the screen
+/// flares white.
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
   void *canvas;
@@ -90,8 +70,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                       COMPOSITE_ADDITIVE);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
-  // The breath from FlashBurst, the fireballs' flames from EmberStreak (at
-  // sheet + 12288).
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -105,19 +83,14 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
-  // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Dragon Driver is drawn mirrored when its targets are the party
-  // (EFFECT_SIDE_PARTY), as when the Fusion Dragon casts it.
   if (mode == DRAGON_FIRE_TIAMAT)
     dir = 1;
   else if (work->args->side == EFFECT_SIDE_PARTY)
     dir = -1;
   else
     dir = 1;
-  // Dragon Driver's sparks and breath start at a fixed point just in front of
-  // the targets, wherever the user stands.
   if (mode == DRAGON_FIRE_DRAGON_DRIVER) {
     Projection_ScaledUnit(work->args->user, &origin);
     // DEAD: the halved x is replaced below; the ROM keeps the halving and its
@@ -130,8 +103,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       origin.x = 44;
   }
 
-  // Tiamat's corner starts at (212, -60) and comes to rest at (148, 68)
-  // after she swoops down over frames 40 to 47.
   focus.x = px(212);
   focus.y = -px(60);
   EFFECT_FREE_PARTICLES(i, work->particles, 64);
@@ -139,14 +110,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     struct Particle *fireball =
         &work->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
 
-    // Off the canvas at the top, x 128 to 255 (mirrored, -128 to -1), 65
-    // to 72 lines above it.
     if (dir == 1)
       fireball->x = (Random16() & 127) + 128;
     else
       fireball->x = (Random16() & 127) - 128;
     fireball->y = (Random16() & 7) - 72;
-    // Frames to wait before falling.
     fireball->variant = -(Random16() & 31);
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DRAGON_FIRE_EMBERS);
@@ -159,9 +127,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
     // A or B skips to frame 160.
     if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
-      // Tiamat's open mouth of frame 128 and the targets' reel of frame 138;
-      // when the skip comes before frame 128, that frame's sound, shake and
-      // shorter trails are skipped with it.
+      // Tiamat's open mouth of frame 128 and the targets' reel of frame 138.
       if (mode == DRAGON_FIRE_TIAMAT) {
         Sprite_StartAnimationFar(work->sprites[0], 8);
         Sprite_StartAnimationFar(work->sprites[1], 9);
@@ -179,10 +145,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     if (frame == 178)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-    // From frame 128 the trails keep only half; over frames 160 to 175 the
-    // canvas is filled each frame, with level 16 and on the last two frames at
-    // its brightest, while the palette brightens; from 176 the pixels fade 2
-    // levels a frame.
     if (frame == 128)
       work->transferValue = CANVAS_FADE_HALF;
     if (frame == 176) {
@@ -196,12 +158,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       Palette_BrightenBgEntries(2, 2, 2);
     }
 
-    // Start new particles.
-
-    // Embers: from y 112 at x -32 to 223, moving up; a random 0 to 127 plus
-    // a base from gTiamat_EmberSpeeds by index gives the speed, in 128ths of
-    // a pixel a frame across and 32nds up, so they climb four times as fast
-    // as they drift.
+    // Embers rise from the ground.
     if (frame >= 33 && frame <= 175) {
       s32 spawned = 0;
       s32 limit = 1;
@@ -225,10 +182,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         }
       }
     }
-    // Sparks: one on each odd frame, from Tiamat's head (or in front of
-    // Dragon Driver's targets), thrown up and to the right (mirrored by dir),
-    // 110 to 155 degrees round from straight down, at 1/4 to 3/4 pixel a
-    // frame.
+    // Sparks fly up from Tiamat's head.
     if (frame >= 41 && frame <= 127) {
       s32 spawned = 0;
 
@@ -262,10 +216,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       Sound_PlayFar(SE_RUMBLE);
     if (frame == 128)
       Sound_PlayFar(SE_CRASH);
-    // Breath: one puff a frame, from Tiamat's mouth (or in front of Dragon
-    // Driver's targets), thrown to the left across the targets (mirrored by
-    // dir), 65 to 110 degrees round from straight down, at 2 to 6 pixels a
-    // frame.
+    // Breath: puffs of fire thrown across the targets.
     if (frame >= 129 && frame <= 175) {
       s32 spawned = 0;
 
@@ -293,9 +244,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // Draw and move the particles.
-
-    // Breath: a new image every 4 frames; gone after 24 frames.
     if (frame <= 175) {
       for (i = 0; i != DRAGON_FIRE_BREATH; i++) {
         struct Particle *puff = &work->particles[i];
@@ -313,7 +261,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // Sparks: 1x2 dots that speed upwards; gone after 48 frames.
     for (i = 0; i != DRAGON_FIRE_SPARKS; i++) {
       struct Particle *spark = &work->particles[DRAGON_FIRE_FIRST_SPARK + i];
       /* LEFTOVER(template): the dot's size held in a local, 1; Camelot's
@@ -334,10 +281,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // Embers: speed upwards by 1/64 pixel a frame each frame until frame 128,
-    // then keep their climb and curve away to the left (to the right when
-    // dir is -1), the odd ones by 1/2 pixel a frame each frame and the even
-    // by 1/8; gone after 256 frames.
+    // Embers rise, then curve away.
     if (frame <= 175) {
       for (i = 0; i != DRAGON_FIRE_EMBERS; i++) {
         struct Particle *ember = &PARTICLES[i];
@@ -365,16 +309,12 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The shake, and Tiamat.
     if (frame == 128)
       work->shakeFrames = 48;
     if (mode == DRAGON_FIRE_TIAMAT && frame == 48)
       work->shakeFrames = 8;
 
-    // Over frames 40 to 47 Tiamat swoops 8 pixels left and 16 down a frame.
-    // From 128 to 175 her head, neck, lower jaw and chest (sprites 0, 1, 3
-    // and 4) show the open-mouthed pictures 8 to 11 of SPRITE_TIAMAT, then
-    // their own again.
+    // Tiamat swoops down.
     if (frame >= 40 && frame <= 47) {
       focus.x += -px(8);
       focus.y += px(16);
@@ -403,9 +343,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // Fireballs: after their wait, fall 6 pixels across and 6 down a frame,
-    // a glowing ball whose fading trail streaks behind it; below y 55 they
-    // burn with six flames, two frames each, over and over.
     if (frame <= 175) {
       for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
         struct Particle *fireball =
@@ -449,7 +386,6 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     EFFECT_END_FRAME(work);
   }
 
-  // The impact burst builds its own blitters and transfer.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   if (mode == DRAGON_FIRE_TIAMAT) {

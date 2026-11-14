@@ -30,12 +30,10 @@
 ///   TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC_ONCE).
 
 #include "script_operands.h"
-#include "version.h"
 #include "main_routine_work.h"
 #include "vram_cache.h"
 #include "module/scene/lemurian_ship.h"
 #include "module/scene/shared/scroll_initialize_hblank_dma.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "module/shop/shop.h"
@@ -47,34 +45,21 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "heap_slots.h"
 #include "event.h"
 #include "dma.h"
-#include "io_reg.h"
 #include "iwram_call.h"
 #include "fixed_point_position.h"
-#include "tbs_edition.h"
-#include "scene_ids.h"
-#include "actor.h"
 #include "io_write.h"
 #include "map_grid_scroll.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
-#include "task.h"
-#include "heap_release.h"
 #include "line_scroll.h"
-#include "battle_sprite_id.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "actor_script.h"
 #include "item_ids.h"
-#include "sounds.h"
-#include "heap.h"
 #include "sound_driver_symbols.h"
 #include "flags.h"
 
@@ -119,18 +104,12 @@ const struct ActorPlacement *LemurianShip_GetActorPlacements(void) {
 
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
 /// colour.
-///
-/// Reached by stepping on cell behavior 1 (gLemurianShipTriggers). It takes
-/// LEMURIAN_SHIP_TO_TIMBER_ROOMS_C.
 static void LemurianShip_LeaveTheShip(void) {
   Import_EventSetExitRequest(gFieldWork->stepTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
 /// Lemurian ship: stops the water's ripple while Reveal shows the map.
-///
-/// Reached by Reveal anywhere in the map. As Reveal's light fades,
-/// Ripple_Start starts the ripple again.
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
@@ -147,11 +126,6 @@ const struct Trigger *LemurianShip_GetTriggers(void) {
 }
 
 /// Makes the ship's glow ripple.
-///
-/// It slides a window of six colours along gShipGlowPalettes into palette 7's
-/// colours 4 to 9, one step every 6 frames.
-///
-/// Run each frame once LemurianShip_RaiseTheShip has brought the ship up.
 static void ShipGlow_CyclePalette(void) {
   u16 *frame;
   s32 paletteIndex;
@@ -172,16 +146,13 @@ enum { ANIM_DROP_BURST = 1 };
 
 /// A drop of spray rises and wobbles for its timer, then bursts into a ring
 /// of spray and is released 20 frames later by gSprayFallScript.
-///
-/// This is the update routine Ship_UpdateSwell gives each drop it creates.
 static void LemurianShip_SprayUpdate(struct Actor *drop) {
-
   if (drop->timer != 0) {
     s32 drift;
 
     drop->timer--;
-    drift = Import_RandomNext();
-    drift -= Import_RandomNext();
+    drift = Random_Next();
+    drift -= Random_Next();
     drop->x.fixed += drift;
     drop->y.fixed += px(4) / 5;
   } else if ((s16)drop->userValue != 0) {
@@ -193,9 +164,6 @@ static void LemurianShip_SprayUpdate(struct Actor *drop) {
 }
 
 /// Every 40 frames, the Black Orb's glow fades a step, down to 4.
-///
-/// Run each frame while the ship rises. LemurianShip_RaiseTheShip adds and
-/// removes it.
 static void OrbGlow_Fade(void) {
   s32 frame = gOrbGlowFadeFrames + 1;
 
@@ -209,16 +177,6 @@ static void OrbGlow_Fade(void) {
 }
 
 /// Keeps the raised ship alive with a glow, a swell and spray.
-///
-/// - The Black Orb's glow pulses in the blend.
-/// - The ship (the hull on BG2, the deck on BG1) and everyone on deck bob
-///   with the swell.
-/// - Spray rises from the water in a screen-sized box (240 by 160) at the
-///   view.
-///
-/// Run each frame from LemurianShip_RaiseTheShip to the end of the game. Each
-/// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
-/// set.
 static void Ship_UpdateSwell(void) {
   /* FAKEMATCH(volatile): the blend passes through a halfword on the stack;
    * as a plain u16, 5 of 225 instructions differ in tbs-en. */
@@ -267,8 +225,8 @@ static void Ship_UpdateSwell(void) {
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
-    x = grid->view[0] & -0x10000;
-    z = grid->view[1] & -0x10000;
+    x = grid->view[0] & FIELD_PIXEL_MASK;
+    z = grid->view[1] & FIELD_PIXEL_MASK;
     x += Random_Next() * 240;
     sprayPosition.x = x;
     sprayPosition.y = 0;
@@ -277,7 +235,7 @@ static void Ship_UpdateSwell(void) {
     sprayPosition.z = z;
     actor = FieldActor_Create(SPRITE_WATER_DROP, sprayPosition.x,
                               sprayPosition.y, sprayPosition.z);
-    if (actor != 0) {
+    if (actor != NULL) {
       actor->update = LemurianShip_SprayUpdate;
       actor->timer = 60;
       actor->userValue = 1;
@@ -292,9 +250,6 @@ static void Ship_UpdateSwell(void) {
 
 /// Remembers the leader's height on deck, so that from then on he bobs with
 /// the ship.
-///
-/// Called by gLeaderBoardsShip as he steps on deck. The other party members'
-/// boarding scripts call their own copies below.
 static s32 LemurianShip_LeaderStepOnDeck(struct Actor *interpreter) {
   gLeaderDeckY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   return 0;
@@ -320,16 +275,6 @@ static s32 LemurianShip_IvanStepOnDeck(struct Actor *interpreter) {
 
 /// Lemurian ship, the departure: the party talks the journey over, boards
 /// and sails away.
-///
-/// - The others step out and talk over the journey, while three questions
-///   shape their replies.
-/// - Everyone boards.
-/// - The ship sails east as the curtains close.
-/// - The game goes to the clear screen.
-///
-/// Called by LemurianShip_RaiseTheShip once the ship has risen. Sets
-/// FLAG_KEEP_MUSIC_ONCE and sends the party to the clear screen (SceneId_Title,
-/// TITLE_FROM_LEMURIAN_SHIP).
 static void LemurianShip_SetSail(void) {
   struct MapGridScrollWork *grid;
   struct Actor *ship;
@@ -576,7 +521,6 @@ static void LemurianShip_SetSail(void) {
   FieldCamera_SetSpeedAndAcceleration(2.2, 0.01);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
-  // Fade out to the clear screen.
   work = FIELD_WORK_FROM(gMapGridWork, HEAP_SLOT_MAP_GRID);
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
@@ -606,8 +550,7 @@ struct RippleScrollWork {
 };
 
 /// One line's ripple offset.
-static __inline__ s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude,
-                                              u16 base) {
+static inline s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude, u16 base) {
   return (u16)(Iwram_MulQ16(gRippleSine[(angle >> 16) & 0xff], amplitude) /
                256) +
          base;
@@ -615,13 +558,6 @@ static __inline__ s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude,
 
 /// Lemurian ship: the Black Orb raises the sunken ship, and the party sets
 /// sail.
-///
-/// The Black Orb glows, the water lights up, spray rises and the ship comes
-/// up out of the sea 90 pixels.
-///
-/// Reached by using the Black Orb at the water's edge (cell behavior 10).
-/// Adds the swell and glow tasks, which run to the end of the game, and
-/// calls LemurianShip_SetSail.
 static void LemurianShip_RaiseTheShip(void) {
   struct MapGridScrollWork *grid;
   s32 i;
@@ -715,12 +651,6 @@ static void LemurianShip_RaiseTheShip(void) {
 }
 
 /// Sets the Lemurian ship's map up.
-///
-/// The ship is sunk 90 pixels. The gangway and the party sit at sprite
-/// priority 1 over the layers' new priorities, and the ripple is running.
-///
-/// Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB first gives the leader the Black
-/// Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
   /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
@@ -781,9 +711,9 @@ s32 LemurianShip_SetupMap(void) {
   {
     struct MapGridLayerScroll *layer = grid->layers + 1;
 
-    layer->offsetY += -px(90);
+    layer->offsetY -= px(90);
     layer = grid->layers + 2;
-    layer->offsetY += -px(90);
+    layer->offsetY -= px(90);
   }
   MapGrid_CenterOnFollowedPoint();
   Ripple_Start();
@@ -792,12 +722,6 @@ s32 LemurianShip_SetupMap(void) {
 
 /// Arms DMA 0 to copy the shown ripple page into background 3's scroll
 /// registers.
-///
-/// The copy moves a line each HBlank, and this routine writes the first line
-/// itself.
-///
-/// Runs each VBlank, in the VBlank pass. LineScroll_InitWave adds it and
-/// Ripple_Stop removes it.
 void LineScroll_ArmDma(void) {
   struct RippleScrollWork *work;
   u32 *source;
@@ -819,9 +743,6 @@ void LineScroll_ArmDma(void) {
 }
 
 /// Builds the other ripple page and swaps it in.
-///
-/// Runs each VBlank, in the VBlank pass. LineScroll_InitWave adds it and
-/// Ripple_Stop removes it.
 void LineScroll_BuildPage(void) {
   struct RippleScrollWork *work;
   u16 *line;
@@ -931,8 +852,6 @@ static void Curtain_Close(void) {
 
 /// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels
 /// open.
-///
-/// Called by LemurianShip_SetSail as the ship leaves. Adds Curtain_Close.
 static void Curtain_Start(void) {
   u8 *tiles;
 

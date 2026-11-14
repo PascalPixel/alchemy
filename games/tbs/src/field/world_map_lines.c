@@ -14,8 +14,7 @@
 #define VISIBLE_SCANLINES 160
 
 /// An eight-byte entry of the System bank's far-call table holds the ldr/bx
-/// instructions and a target word. Entries this routine does not call keep
-/// their target word opaque.
+/// instructions and a target word.
 struct FarCallVeneer {
   u32 stub;
   u32 target;
@@ -35,9 +34,7 @@ struct FarCallTrigVeneer {
   s32 (*target)(s32 angle);
 };
 
-/// The start of the System bank's far-call table, as far as Trig_Cos. This
-/// routine runs from a RAM copy, so it calls through the target words rather
-/// than the veneers.
+/// The start of the System bank's far-call table, as far as Trig_Cos.
 struct FarCallSystemTable {
   struct FarCallVeneer preceding[8];
   struct FarCallAtan2Veneer atan2;
@@ -55,9 +52,7 @@ STATIC_ASSERT(offsetof(struct FarCallSystemTable, cos) == 96);
 
 extern const struct FarCallSystemTable FarCall_RuntimeTable;
 
-/// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
-/// fills x (the line's width scale) and z (its depth); the rest caches the
-/// rotation terms this routine computes from them for the current angle.
+/// One scanline of the world map's ground plane.
 struct ScanVertex {
   s32 x;  ///< the line's width scale
   s32 z;  ///< the line's depth
@@ -78,13 +73,10 @@ struct BgAffine {
 };
 
 /// Builds the world map's per-scanline affine table for one frame: the ground
-/// plane seen from eye towards target. line points at the 160 scanlines'
-/// ground terms, whose rotation terms stay cached while the yaw
-/// (gScanlineAngle) is unchanged; affine receives each line's parameters
-/// twice, for BG2 and then BG3, as the HBlank DMA writes both. Copied to RAM
-/// (heap slot 46) by WorldMap_InitializePerspective, which runs it once, and
-/// run from there each frame by WorldMap_UpdateView into the affine page of
-/// the frame's parity. Writes gScanlineAngle when the yaw changes.
+/// plane seen from eye towards target. line points at the 160 scanlines' ground
+/// terms, whose rotation terms stay cached while the yaw (gScanlineAngle) is
+/// unchanged; affine receives each line's parameters twice, for BG2 and then
+/// BG3, as the HBlank DMA writes both.
 void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
                               struct ScanVertex *line,
                               struct BgAffine *affine) {
@@ -145,9 +137,8 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       horizontalOffset = (horizontalOffset << 8) * centerX;
       depthOffset = ((s16)affinePc << 8) * -centerX;
 #endif
-      // The line's start: back from its centre by centerX pixels of the
-      // line's step, then along the view by its depth. BG2X and BG2Y take
-      // 8 fractional bits, so the 16.16 sums are >> 8.
+      // The line's start: back from its centre by centerX pixels of the line's
+      // step, then along the view by its depth.
       line->dx = -(horizontalOffset + MulQ16(negativeSinYaw, depth));
       line->dz = depthOffset + MulQ16(cosYaw, depth);
       affine->x = (originX + line->dx) >> 8;

@@ -4,16 +4,10 @@
 
 #include "../system_internal.h"
 
-// The sprite VRAM cache. Sprite tile memory (from 0x06010000) is split into
-// 512 blocks of 64 bytes, and gVramCacheBlockOwners records which of the 96
-// cache entries owns each block. An entry whose offset is
-// VRAM_CACHE_OFFSET_FREE is free; one whose size is 16 or less holds no VRAM.
+// The sprite VRAM cache.
 
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
-/// entry `id`, writing `id` into gVramCacheBlockOwners for each block. Returns
-/// its byte offset in sprite VRAM, or -1 when no run is long enough. The run
-/// is `size` / 64 blocks, rounded down, so a size that is not a multiple of 64
-/// gets less than it asked for.
+/// entry `id`, writing `id` into gVramCacheBlockOwners for each block.
 s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   u32 blocks;
   s32 ret;
@@ -46,8 +40,7 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
       break;
     }
   occupied:
-    // Skip an owned block by its owner's whole size. This assumes the owner's
-    // run starts here, which holds while runs are only ever taken whole.
+    // Skip an owned block by its owner's whole size.
     pos +=
         gVramCacheEntries[gVramCacheBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
   }
@@ -98,8 +91,7 @@ s32 VramCache_FreeBlocks(s32 id) {
 }
 
 /// Frees cache entry `no`: its blocks go back and the entry is marked free
-/// (offset VRAM_CACHE_OFFSET_FREE). Called throughout the game when a sprite's
-/// picture is no longer shown.
+/// (offset VRAM_CACHE_OFFSET_FREE).
 s32 VramCache_FreeEntry(u32 no) {
   struct VramCacheEntry *entry = &gVramCacheEntries[no];
 
@@ -129,13 +121,7 @@ s32 VramCache_ReleaseVram(u32 no) {
 }
 
 /// Gives cache entry `no` `size` bytes of sprite VRAM and copies `src` there.
-/// An entry that already holds VRAM of the same size keeps it. A null `src`
-/// copies nothing and (void *)-1 clears the memory. Writes the entry's offset
-/// and size into gVramCacheEntries. Called throughout the game to load sprite
-/// pictures. Returns the first sprite tile number (32-byte units), or 0 when
-/// there was no room; a run at offset 0 also returns 0, so a caller cannot
-/// tell the two apart from the result. The entry keeps its VRAM until
-/// VramCache_FreeEntry, VramCache_ReleaseVram or VramCache_Reset.
+/// An entry that already holds VRAM of the same size keeps it.
 s32 VramCache_Load(u32 no, u32 size, const void *src) {
   struct VramCacheEntry *entry;
   s32 offset;
@@ -147,8 +133,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   // 8 KB, 128 blocks, is a quarter of sprite VRAM and the most one entry holds
   if (size > 8192)
     return 0;
-  // A same-size upload keeps its existing VRAM run. Sizes of 16 or less mark
-  // an entry that holds no VRAM (VramCache_ReleaseVram leaves 1).
+  // A same-size upload keeps its existing VRAM run.
   if (entry->size > 16) {
     if (entry->size != size) {
       VramCache_FreeEntry(no);
@@ -202,8 +187,7 @@ void VramCache_Reset(void) {
 }
 
 /// Returns the number of the first free cache entry, or VRAM_CACHE_ENTRY_COUNT
-/// when all are taken. Called before VramCache_Load by code that keeps the
-/// entry number.
+/// when all are taken.
 s32 VramCache_FindFreeEntry(void) {
   s32 ret = VRAM_CACHE_ENTRY_COUNT;
   s32 no;
@@ -219,8 +203,7 @@ s32 VramCache_FindFreeEntry(void) {
 }
 
 /// Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
-/// its number. When every entry is taken it returns VRAM_CACHE_ENTRY_COUNT, and
-/// when no run of blocks is long enough the entry it returns stays free.
+/// its number.
 s32 VramCache_AllocEntry(s32 size) {
   s32 no;
 

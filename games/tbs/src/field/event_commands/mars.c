@@ -6,10 +6,7 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and plays
-/// ANIM_LEADER_ARMS_RAISED, the sparks swarm the leader, who pulses for 100
-/// frames, and the sparks vanish. Uses all 24 field effect sprites, tints the
-/// field palette red and fades it back at the end.
+/// (FieldEffect_UpdateMarsSpark).
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Vector3 position;
   s32 scale;
@@ -109,10 +106,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 /// from full size.
 DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, -1024)
 
-/// Per-frame update of a Venus Djinni's falling motes: each circles the
-/// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
-/// pixel a frame, and is released 20 pixels above the leader's feet. Set by
-/// Djinn_RunVenusJoinEffect in venus.c.
+/// Per-frame update of a Venus Djinni's falling motes: each circles the leader
+/// on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a pixel a
+/// frame, and is released 20 pixels above the leader's feet.
 void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   struct Vector3 position;
   struct Actor *leader;
@@ -139,10 +135,7 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
 /// Field effect sprite callback of a Venus Djinni's particles: each starts on
 /// screen at a random point 10 to 20 pixels round the leader and flies 120
 /// pixels up the screen, over and over, until it is set to
-/// VENUS_PARTICLE_LAST_RISE and freed once it arrives. Set by
-/// Djinn_RunVenusJoinEffect in venus.c; a particle that starts on an
-/// odd frame plays SE_CLATTER. It speeds up by 1 pixel a frame to at most 5,
-/// straight at its target.
+/// VENUS_PARTICLE_LAST_RISE and freed once it arrives.
 void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   struct Vector3 position;
   struct Actor *source;

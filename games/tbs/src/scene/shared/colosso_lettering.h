@@ -3,8 +3,6 @@
 /// the large lettering a visit opens with, `Lend a Hand!` for the friends'
 /// turns, and for the race `The 1st Match` (or 2nd or 3rd), 3, 2, 1 and `GO`;
 /// and `WIN` or `LOSE` once the match's battle is over.
-#include "types.h"
-#include "task.h"
 
 /// Starts the lettering task on the picture last loaded, laid out in shape
 /// (enum ColossoLetteringShape) and moved by that shape's script;
@@ -104,9 +102,6 @@ static void Colosso_ShowOpeningLettering(s32 match) {
 /// Shows how a match ended, back in the arena after its battle: `WIN`, or
 /// `LOSE` in blue, swells over the arena with its jingle, the loser shows an
 /// ellipsis, and the screen closes.
-///
-/// result is the match's number, negative for a loss; the lettering stands
-/// for that many seconds.
 static void Colosso_ShowMatchResult(s32 result) {
   s32 loser;
 

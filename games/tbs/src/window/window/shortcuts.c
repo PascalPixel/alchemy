@@ -23,9 +23,6 @@ struct TimedNoticeWork {
 
 /// Shows the area's name in a window near the top of the screen for 90 frames.
 /// The field work owns the window and countdown until a task closes it.
-/// The window is centred across the screen and in its top 10 rows, and opens
-/// at once; AreaNameWindow_Update counts it down each frame in the frame
-/// pass.
 void AreaNameWindow_Show(void) {
   struct TimedNoticeWork *notice;
   s32 height;
@@ -85,9 +82,7 @@ s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
 /// Returns 1.
 s32 Item_ReturnTrue(void) { return 1; }
 
-/// Steps the window hue one step: back when keys contains LEFT, on
-/// otherwise. The hue wraps in a byte (0 back is 255), not at the option
-/// screen's 24 hues.
+/// Steps the window hue one step: back when keys contains LEFT, on otherwise.
 UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
   u8 hue = gMainRoutineWork.windowHue;
   if (keys & KEY_LEFT)
@@ -98,8 +93,7 @@ UNUSED void SettingsMenu_StepWindowHue(s32 keys) {
 }
 
 /// A Psynergy the debug shortcut picker lists: its party member and the
-/// Psynergy. The picker's list is a Heap_Alloc block of SHORTCUT_LIST_ENTRIES
-/// of them.
+/// Psynergy.
 struct AbilityListEntry {
   u16 member;  ///< the party member's unit id
   u16 ability; ///< the action id (SHORTCUT_ABILITY_MASK in a shortcut)
@@ -107,9 +101,8 @@ struct AbilityListEntry {
 
 /// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 /// showing each one's cost and description, and stores them in
-/// gMainRoutineWork.firstShortcut and secondShortcut
-/// (member << SHORTCUT_MEMBER_SHIFT | Psynergy). This debug path seeds extra
-/// Psynergy before enumerating the party's shortcuts.
+/// gMainRoutineWork.firstShortcut and secondShortcut (member <<
+/// SHORTCUT_MEMBER_SHIFT | Psynergy).
 void Debug_SelectShortcuts(void) {
   struct AbilityListEntry *list;
   struct Window *win;
@@ -130,8 +123,6 @@ void Debug_SelectShortcuts(void) {
   cursor = NULL;
   redraw = 1;
   // Build the debug shortcut candidates before creating their three windows.
-  // The block holds SHORTCUT_LIST_ENTRIES entries, as many as
-  // Menu_FindShortcutEntries searches.
   list = Heap_Alloc(SHORTCUT_LIST_ENTRIES * sizeof(struct AbilityListEntry));
   Unit_LearnPsynergyFar(ISAAC, ABILITY_MOVE);
   Unit_LearnPsynergyFar(GARET, ABILITY_MOVE);
@@ -164,8 +155,7 @@ void Debug_SelectShortcuts(void) {
       if (redraw != 0) {
         redraw = 0;
         // Wrap both picks and the row; a step below 0 wraps through the
-        // unsigned sum. The cursor points at the row's line, 16 pixels a row
-        // and 28 below the window's top.
+        // unsigned sum.
         first = (first + count) % count;
         second = (second + count) % count;
         row = (row + 2) % 2;
@@ -238,8 +228,7 @@ void Debug_SelectShortcuts(void) {
       break;
     }
     // Persist both member/ability pairs before releasing the picker resources.
-    // A, B and START all keep the picks. The cursor's window sprite and VRAM
-    // entry go with its window.
+    // A, B and START all keep the picks.
     gMainRoutineWork.firstShortcut =
         (list[first].member << SHORTCUT_MEMBER_SHIFT) | list[first].ability;
     gMainRoutineWork.secondShortcut =
@@ -253,9 +242,8 @@ void Debug_SelectShortcuts(void) {
 }
 
 /// Lists every Psynergy of the active party members as (party member, Psynergy)
-/// pairs in output and returns how many.
-/// output must hold every party member's nonzero action slots; there is no
-/// capacity argument. Each party member's list stops at its first empty slot.
+/// pairs in output and returns how many. output must hold every party member's
+/// nonzero action slots; there is no capacity argument.
 s32 Party_ListPsynergy(struct AbilityListEntry *output) {
   u16 memberIds[14];
   s32 outputCount = 0;
@@ -288,9 +276,6 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
 
 /// Finds the two Psynergy shortcuts in a list from Party_ListPsynergy, and
 /// returns their indexes (0 for one not found).
-/// A shortcut absent from the list falls back to entry 0.
-/// The search runs over all SHORTCUT_LIST_ENTRIES places
-/// of the list's block, past its last entry too.
 void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries) {
   s32 entryIndex;

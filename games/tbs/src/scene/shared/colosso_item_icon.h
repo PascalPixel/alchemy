@@ -3,24 +3,6 @@
 /// rooms (CrossboneIsleKeys, CrossboneIsleStatues and CrossboneIsleBane): an
 /// actor drawn as an item's menu icon, such as the two prizes at a
 /// finals match's arena or the keys in CrossboneIsleKeys.
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "battle_sprite_id.h"
-#include "actor.h"
-#include "event.h"
-#include "sprite.h"
-#include "heap_release.h"
-#include "dma.h"
-#include "io_reg.h"
 
 /// Replaces the picture of actor id, when it has a sprite of its own,
 /// with the icon of item: the icon's tiles, decoded into heap block 17, are
@@ -36,7 +18,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
   s32 zero;
 
   actor = Actor_GetById(id);
-  if (actor != 0 && actor->spriteStorageKind == 1) {
+  if (actor != NULL && actor->spriteStorageKind == 1) {
     sprite = actor->sprite;
     icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     zero = 0;

@@ -14,17 +14,9 @@
 #define ENEMY_SUFFIX_LAST 25   ///< the last suffix shown, 'Z'
 #endif
 
-/// Fills battle unit `unitId` (FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 5) with
-/// enemy `enemyId`: stats, name with its suffix letter, the items it carries,
-/// rewards and elements. The Djinn the party fights (ENEMY_VENUS_DJINNI_QUARTZ
-/// to ENEMY_JUPITER_DJINNI_LUFF) are put on the party's side, so that a beaten
-/// Djinni is not felled as an enemy is: the battle gives the downed pose, greys
-/// out and releases only BATTLE_SIDE_ENEMY units (BattleMotion_ShowDowned,
-/// BattlePlayback_Run, BattleObject_DestroyTemporaryObject), so the Djinni
-/// takes a party member's held pose instead, a knock-out says `<unit> goes
-/// down!` as for a party member, and the formation's suffix letters pass it by.
-/// Returns 0 for an id out of range, 1 otherwise; enemy ids 173 to 250, past
-/// the table's 165 rows but within the check, are filled from row 0.
+/// Fills a battle unit with an enemy: its stats, its name with its letter, its
+/// items, rewards and elements. A Djinni fought is put on the party's side
+/// (README.md, "The unit"). Returns 0 for an id out of range.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
@@ -127,9 +119,8 @@ s32 Party_CountMembers(void) {
   return count;
 }
 
-/// Adds character `unitId` to the end of the party: sets its game flag and
-/// appends it to gMainRoutineWork.party unless it is already listed. Returns
-/// the party size.
+/// Adds a character to the end of the party unless it is there already, and
+/// returns the party size.
 s32 Party_AddMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 partyIndex;
@@ -160,9 +151,7 @@ s32 Party_RemoveMember(s32 unitId) {
   return Party_CountMembers();
 }
 
-/// Writes the party members to `unitIds`, ending with BATTLE_UNIT_LIST_END, and
-/// returns how many there are. Every screen that lists the party starts here:
-/// the menus, the shops, the inn and the party inventory searches.
+/// Writes the party members to unitIds and returns how many there are.
 s32 Party_ListMembers(s16 *unitIds) {
   s32 count = 0;
 
@@ -197,10 +186,8 @@ s32 Party_AdjustCoins(s32 amount) {
   return value;
 }
 
-/// Each adds `amount` to a counter in the main routine's work, kept between
-/// 0 and `max`, and returns the new value. The shops call the two: each
-/// purchase adds its price to the credit, and each Game Ticket given spends
-/// credit and counts one more gift.
+/// Each adds amount to a counter, kept between 0 and max, and returns the new
+/// value: the shop credit and the Game Tickets given.
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
@@ -219,11 +206,8 @@ s32 Party_AdjustCoins(s32 amount) {
 PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, 999999)
 PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
-/// Writes the summons whose bit is set in the first word of the party's Djinn
-/// table to `output`, in menu order, ending with SUMMON_END. Returns how many.
-/// The bits are those BattleSummon_UpdateAvailability sets at the battle's
-/// start and each turn. `output` needs room for 17 bytes: up to 16 summons and
-/// SUMMON_END.
+/// Writes the summons the party can call to output, in menu order, ending with
+/// SUMMON_END, and returns how many.
 s32 Summon_ListLearned(u8 *output) {
   const u8 *summon = gSummon_OrderList;
   const u8 *last = &gSummon_OrderList[15];
@@ -242,8 +226,7 @@ s32 Summon_ListLearned(u8 *output) {
   return count;
 }
 
-/// Returns summon `summonId`'s definition, or NULL past the sixteenth. Reached
-/// only through GAME.S, as SummonDefinition_Get.
+/// Returns summon `summonId`'s definition, or NULL past the sixteenth.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   if (summonId > 15)
     return NULL;

@@ -44,6 +44,12 @@ join. An enemy's is filled in from its row of the enemy table when a
 battle starts. Both sides being the same thing is what lets one set of
 rules serve the party and the monsters alike.
 
+The Djinn the party fights are the exception that proves it. Their units
+are put on the party's side, because the battle only greys out, dissolves
+and releases units of the enemy side. So a beaten Djinni takes a party
+member's held pose instead of falling, its knock-out says "goes down!" as a
+party member's does, and the enemies' name letters pass it by.
+
 A unit carries 15 items, and each slot is a single number that packs the
 item, whether it is worn, whether it is broken, and how many there are. So
 handing an item to someone else moves one number, and its state goes with

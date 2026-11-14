@@ -25,10 +25,7 @@ static __inline__ void System_SoftReset(void) {
   }
 
 /// Installs `handler` for interrupt `irq` and enables that interrupt, or with a
-/// null handler disables it and installs the do-nothing handler. The three
-/// display interrupts are also switched in DISPSTAT; for VCount, `vcount` is
-/// the line it fires on. Writes REG_IE, REG_DISPSTAT and gIrqHandlers with
-/// interrupts disabled.
+/// null handler disables it and installs the do-nothing handler.
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= IRQ_GAMEPAK) {
     u32 ime;
@@ -77,23 +74,7 @@ enum {
 /// Frames the debug CPU-load display holds a peak.
 enum { CPU_LOAD_PEAK_FRAMES = 30 };
 
-/// The game's frame loop: runs `frames` frames and returns. Each frame runs the
-/// TASK_PASS_FRAME tasks, builds the OAM list, measures CPU load for the
-/// debug display, counts idle time for sleep, steps the debug pause, waits for
-/// the next VBlank and then reads the keys; a frame whose work overruns
-/// spans two VBlanks or more, the game's slowdown. Holding L and R for
-/// three seconds, or three idle minutes with idle sleep on, puts the system
-/// into Stop until L and R are pressed again. A soft reset requested by the
-/// keypad interrupt happens here. Called everywhere the game waits: every
-/// scene, menu and battle that lets time pass goes through it. Events wait with
-/// Event_Wait instead, which debug fast-forward can skip.
-///
-/// Code may call wait() deep inside its own call chains, so a caller
-/// whose stack has grown below the frame-wait stack top has its stack copied
-/// aside into gSavedStack first, and the loop runs at that top; the copy is
-/// put back on return. Each frame it allocates and releases the frame scratch
-/// heap slot, sets gFrameRenderPending, and counts up gFrameCount and
-/// gPlayTimeFrames.
+/// The game's frame loop: runs `frames` frames and returns.
 void wait(s32 frames) {
   u8 *sp;
   u32 frameIndex;
@@ -259,7 +240,7 @@ void wait(s32 frames) {
           "restore the hardware stack pointer after the proven stack copy")
       __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
       /* FAKEMATCH(dead): size dropped and the copy's size taken under
-       * complementary tests; through size, 4 of 403 instructions differ in
+       * complementary tests; as through size, 4 of 403 instructions differ in
        * tbs-en. */
       size = NULL;
       {
@@ -285,12 +266,7 @@ void wait(s32 frames) {
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-/// Runs once a frame after VBlank, called by wait(). When the repeat timer
-/// has run out, the held keys repeat into gKeysRepeat. gKeysRepeatDirected is
-/// the same keys with at most one D-pad direction: of several held directions
-/// it keeps the one added last (gKeysDirection remembers it), and with all
-/// four it keeps none. Last, the keys newly held since the previous frame go
-/// to gKeysPressed, and gKeysHeldLast takes gKeysHeld.
+/// Runs once a frame after VBlank, called by wait().
 void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay = gKeyRepeatTimer;
   u32 keys;
@@ -361,22 +337,14 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 #define SOUND_REVERB_CODE_COUNT 5  ///< reverb codes in IwramSoundReverbCodes
 #define SOUND_REVERB_CODE_SIZE 152 ///< bytes in each reverb code
 
-/// The VBlank interrupt handler, installed by System_Initialize. It trades the
-/// link cable payloads, steps the music fades and the screen fade, and when
-/// the frame loop has finished a frame copies its OAM list and BG scroll
-/// registers, flushes the queued register writes and clears
-/// gFrameRenderPending. Then it runs and clears the one-shot gVBlankCallback,
-/// runs the VBlank tasks, reads the keypad into gKeysHeld and gKeysPressed,
-/// sets gVBlankDone and finally mixes the next sound buffer.
+/// The VBlank interrupt handler, installed by System_Initialize.
 void System_VBlankHandler(void) {
   u32 keys;
   void (*hook)(void);
 
   // The display writes come first, while the blank lasts: OAM can be written
   // only in a blank, and a palette or scroll changed while lines are drawn
-  // shows half changed. The mixer comes last: it prepares the samples the
-  // hardware plays until the next VBlank, so it need only finish before then.
-  // Stop any HBlank DMA effect left running since the last VBlank
+  // shows half changed.
   {
     volatile u16 *dma0 = REG_DMA0;
 
@@ -407,8 +375,7 @@ void System_VBlankHandler(void) {
   }
   Task_RunPass(TASK_PASS_VBLANK);
 
-  // Read the keypad (its bits are 0 while pressed). A newly held key restarts
-  // the repeat at once; letting go of all keys restarts the full delay.
+  // Read the keypad (its bits are 0 while pressed).
   keys = REG_KEYINPUT ^ KEYS_MASK;
   {
     u32 pressed = keys & ~gKeysHeld;
@@ -434,8 +401,7 @@ void System_VBlankHandler(void) {
 }
 
 /// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
-/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode. Always
-/// returns 0.
+/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode.
 s32 Sound_LoadReverbCode(s32 code) {
   s32 index;
 
@@ -455,7 +421,6 @@ UNUSED void Sound_ReservedNoOpB(void) {}
 
 /// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,
 /// so it sets gResetRequested for the frame loop and disarms the interrupt.
-/// During sleep the same interrupt only wakes the CPU.
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {
     Io_Write16(KEYCNT_DISARMED, &REG_KEYCNT);

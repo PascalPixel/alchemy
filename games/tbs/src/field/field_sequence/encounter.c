@@ -7,17 +7,9 @@
 /// encounter_zones.c defines the zones; the code reads them through struct
 /// EncounterZone or as halfwords (gEncounterZones in battle.h).
 
-/// Chooses the current scene's encounter zones, one for each kind of ground
-/// the party can stand on (gFieldWork->encounterZones, read by
-/// Encounter_RollMapStep), from the first rule matching the scene
-/// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive
-/// zones from the rule's first one. With useRules 0, or no matching rule, no
-/// ground has encounters. Also resets the random bias and the battle threshold
-/// (the count itself, gMainRoutineWork.encounterSteps, is reset only when a
-/// random battle starts or a new area is entered) and chooses the battle
-/// background. Called by FieldSequence_Run on scene load, with useRules 0 on
-/// the World Map and 1 in a scene; writes work->encounterZones, encounterBias
-/// and encounterThreshold, and gMainRoutineWork.battleBackground.
+/// Chooses the current scene's encounter zones, one for each kind of ground the
+/// party can stand on (gFieldWork->encounterZones, read by
+/// Encounter_RollMapStep), from the first rule matching the scene and entrance.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
   s32 sceneId;
@@ -92,13 +84,6 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the formation to fight
 /// (a row of formations.c), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
-/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_AREA and gMainRoutineWork.cloaked
-/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_AREA is set by Venus
-/// Lighthouse while its Reveal path is shown (the international editions), by
-/// Mercury Lighthouse while the leader carries the pillar's lights and by the
-/// World Map's debug entrance 99, and cleared by every entry that does not keep
-/// the party's position. Flag 351 (0x15f), which no Broken Seal C code sets,
-/// skips the checks and the counting and draws a formation at once.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -128,12 +113,8 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     rate = entry->rate;
     if (rate == 0)
       return 0;
-    // With Jenna in the party, there are no encounters while she has more
-    // than 130 experience points. She is in the party only from Vale
-    // (Vale_RoofMended, scene/vale.c) to the Sol Sanctum's eruption,
-    // starting at level 1 with none, so the rule acts only in the Sol
-    // Sanctum, where it ends random battles once she nears level 4 (158):
-    // the party cannot train there before the journey begins.
+    // With Jenna in the party, there are no encounters while she has more than
+    // 130 experience points.
     if (GameFlag_GetFar(FLAG_IN_PARTY(JENNA)) != 0) {
       level = Unit_GetFar(JENNA)->experience;
       if (level > 130)
@@ -150,7 +131,6 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 
     // A random bias varies the distance between battles: two differences of
     // random numbers, halved, so from -65535 to 65535 and most often near 0.
-    // It is drawn again after each battle.
     bias = work->encounterBias;
     if (bias == 0) {
       s32 a = Random16();
@@ -161,8 +141,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       work->encounterBias = bias;
     }
     // The rate and the bias divide the step, so a higher rate (a party above
-    // the zone's level) means smaller steps and fewer battles. The counter is
-    // not cleared here: FieldSequence_Run clears it when it starts the battle.
+    // the zone's level) means smaller steps and fewer battles.
     step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 1 << 20);
     total = gMainRoutineWork.encounterSteps += Iwram_MulQ16(step, steps);
     if (total < work->encounterThreshold)
@@ -198,7 +177,6 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 /// terrain: the ground, an index into work->encounterZones: 0 for ordinary
 /// ground, 1 and 2 for CELL_BEHAVIOR_ENCOUNTER_GROUND_1 and _2 cells. steps:
 /// the step weight, passed on to Encounter_CountStepsAndSelectFormation.
-/// Returns the formation to fight, or 0 for no battle.
 s32 Encounter_RollMapStep(u32 terrain, s32 steps) {
   u8 *zone;
 
@@ -267,8 +245,7 @@ void Scene_ChooseMusic(void) {
 }
 
 /// Returns the area name of sceneId and entrance, from the first rule matching
-/// the scene or its area; 0, the Title's name, when none does. No reader treats
-/// 0 apart. The save stores it as its area (save.h).
+/// the scene or its area; 0, the Title's name, when none does.
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
   const struct AreaNameRule *rule = gArea_NameRules;
   s32 name = 0;
@@ -299,7 +276,6 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 /// (gMainRoutineWork.restartScene and restartEntrance), from the first rule of
 /// gScene_RestartRules that matches the current scene and entrance: {scene,
 /// entrance (-1 for any), return scene, return entrance}, ended by scene -1.
-/// Without a match the restart point stays as it was.
 void Scene_SetRestartPoint(void) {
   s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
@@ -315,9 +291,7 @@ void Scene_SetRestartPoint(void) {
   }
 }
 
-/// Returns the battle background chosen for the current scene. The battle setup
-/// (battle/run.c) reads it through BattleBackground_GetSelectedFar as the
-/// battle's background.
+/// Returns the battle background chosen for the current scene.
 s16 BattleBackground_GetSelected(void) {
   return gMainRoutineWork.battleBackground;
 }
@@ -330,8 +304,7 @@ void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.next;
   s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
-  // The first scene_rules.s word names a battle background. It cannot match the
-  // halfword scene id, so the loop sets this before testing any scene.
+  // The first scene_rules.s word names a battle background.
   s32 backdrop;
 
   if (entry != 0 && entry != target) {
@@ -378,12 +351,6 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 }
 
 /// Chooses the battle music for slot of zone (gMainRoutineWork.battleMusic).
-/// A battle takes the song marked last before its key in
-/// gEncounter_BattleMusic, or the last song there when its key is not listed.
-/// Link battles always use SOUND_KEEP_BGM. Called by
-/// Encounter_CountStepsAndSelectFormation for a random battle, by the battle
-/// requests (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle
-/// with zone 0) and by the trigger runner (triggers.c).
 void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   u16 key = ENCOUNTER_KEY(zone, slot);
   const u16 *table = gEncounter_BattleMusic;

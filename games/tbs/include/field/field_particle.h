@@ -17,8 +17,7 @@ struct FieldParticle;
 typedef void (*EffectCallback)(struct FieldParticle *);
 
 /// A particle a field Psynergy moves and draws: its sprite, its position and
-/// target, its speed, scale and heading, and its per-frame routine. The 24 are
-/// FieldEffectWork.sprites, in the HEAP_SLOT_FIELD_EFFECT heap slot.
+/// target, its speed, scale and heading, and its per-frame routine.
 struct FieldParticle {
   void *actor;  ///< the actor it draws, released with it
   s32 x;        ///< 16.16 fixed-point pixels
@@ -61,8 +60,7 @@ STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
 
 /// Gives every particle in use in `work->member` the state `newState`:
 /// `cursor`, a byte pointer, walks their state bytes and `count` counts them
-/// down, both the caller's. Five routines that end a field effect use it,
-/// Mars's twice.
+/// down, both the caller's.
 #define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, work, member,          \
                                          newState)                             \
   {                                                                            \

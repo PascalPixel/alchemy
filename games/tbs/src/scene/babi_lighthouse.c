@@ -58,22 +58,14 @@
 /// Ruins (BABI_LIGHTHOUSE_STONE_DOOR_TO_TUNNEL_RUINS_GREAT_STATUE).
 
 #include "main_routine_work.h"
-#include "version.h"
 #include "heap_slots.h"
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/babi_lighthouse.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
-#include "macros.h"
 
 #define FIELD_STAGED_ACTOR_IMPORTS
-#include "edition.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"
 #include "pushed_actor.h"
@@ -83,17 +75,13 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "field_psynergy_work.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "actor.h"
 #include "flags.h"
-#include "sounds.h"
 #include "item_ids.h"
 
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,
@@ -198,7 +186,6 @@ static void BabiLighthouse_LandWithParticles(void) {
   struct EffectOptions options;
   s32 velocity[3];
 
-  // Start above the room with movement disabled until the fall begins.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -215,7 +202,6 @@ static void BabiLighthouse_LandWithParticles(void) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
@@ -248,7 +234,6 @@ static void BabiLighthouse_LandWithParticles(void) {
 static void BabiLighthouse_FallToExit(s32 exit) {
   struct Actor *leader;
 
-  // Start above the room with movement disabled until the fall begins.
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -318,8 +303,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// After Move on one of the pillars at the Babi Lighthouse Entry, or a push, a
-/// leader left standing on a pillar's ledge cell jumps off it. The pillars'
-/// cells are redrawn.
+/// leader left standing on a pillar's ledge cell jumps off it.
 static void BabiLighthouse_JumpFromLedge(void) {
   struct Actor *leader;
 
@@ -363,8 +347,7 @@ static void BabiLighthouse_PushLedgePillar(void) {
 }
 
 /// Walking south off the ledge at the Babi Lighthouse Entry pushes the pillar
-/// below on the leader's side, if it stands at the ledge's foot. Otherwise the
-/// leader climbs down.
+/// below on the leader's side, if it stands at the ledge's foot.
 static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
   struct Actor *pillar = Actor_Get(ACTOR_RIGHT_PILLAR);
 
@@ -417,8 +400,7 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
 }
 
 /// Walking south into the southwest pit of BabiLighthouseLuff's west room
-/// places the pit mask and a capped pillar by it. The leader jumps in and drops
-/// into the east room.
+/// places the pit mask and a capped pillar by it.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
   Event_Start();
   Actor_Prepare(143, 0, 290, PIT_MASK);
@@ -454,7 +436,7 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
 
   Actor_SetAnimation(actorId, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(actorId);
@@ -463,17 +445,7 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
 
 /// Faran asks the party to prove it can follow the kidnappers by opening the
 /// stone door.
-///
-/// It plays on walking up to the stone door in BabiLighthouseStoneDoor the
-/// first time.
-///
-/// - Faran asks whether the kidnappers really went through it.
-/// - The onlookers argue.
-/// - Iodem, arriving with the party, tells who they are.
-/// - Faran, doubting them, asks them to prove they can follow by opening the
-///   door.
 static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
-  // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED);
   Event_Start();
@@ -767,11 +739,6 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
 
 /// The stone door of BabiLighthouseStoneDoor opens before Iodem and Faran the
 /// first time.
-///
-/// - Everyone marvels.
-/// - The door shuts again in front of Iodem.
-/// - The party reasons that it keeps out those without Psynergy.
-/// - Iodem and Faran leave Sheba's rescue to the party.
 static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
@@ -937,7 +904,6 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Event_Wait(20);
-  // Explain the restriction and ask the onlookers to leave the pursuit to us.
   Event_OpenMessage(ACTOR_FARAN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
@@ -1112,16 +1078,12 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 
 /// Searching the door's switch under Reveal's light flips it and opens the
 /// door.
-///
-/// Otherwise it reads an inscription. "The truth of this door is open to those
-/// seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   struct FieldWork *work = gFieldWork;
 
   Event_Start();
   if (work->revealActive != 0) {
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
-
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Sound_Play(SE_SWITCH);
       MapGrid_CopyCellsLayered(35, 78, 1, 2, 17, 78);
@@ -1160,9 +1122,6 @@ static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
 
 /// Before Carry is cast on the Road to Babi Lighthouse's pillar, sets the
 /// effect's childOption.
-///
-/// Once Carry lets go, the effect then waits for the pillar to bounce up and
-/// land, and rings it with dust (carry.c).
 static void BabiLighthouse_LandCarriedPillarInDust(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
@@ -1196,7 +1155,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 heightDifference;
 
-  if (ahead == 0) {
+  if (ahead == NULL) {
     return;
   }
 
@@ -1212,17 +1171,13 @@ static void BabiLighthouse_PushRoadPillar(void) {
 
 /// Walking into the climbable cells by the Road to Babi Lighthouse's pillar
 /// makes the leader climb or push.
-///
-/// He climbs up or down where he faces north or south, already climbing or with
-/// no pillar ahead. When he does not climb he pushes the pillar
-/// (BabiLighthouse_PushRoadPillar).
 static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 climbDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
   s32 climbResult = -1;
 
-  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == 0) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == NULL) {
     if (climbDirection == FACING_NORTH) {
       climbResult = Field_ClimbUp();
     }
@@ -1255,7 +1210,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Growth on the sprout at the Babi Lighthouse Entry grows it into a vine the
 /// party can climb.
 static void BabiLighthouse_OpenGrowthPassage(void) {
-
   MapGrid_CopyCellAttributes(82, 7, 1, 2, 18, 7);
   wait(1);
   GameFlag_Set(FLAG_GROWTH_PASSAGE_OPEN);
@@ -1287,8 +1241,7 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
 
 #if TBS_PATCH_2
 /// Update routine of the pillars at the Babi Lighthouse Entry (TBS_PATCH_2 and
-/// later). Each is drawn in front of the leader when nearer the screen, and on
-/// its layer otherwise.
+/// later).
 static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
   struct Sprite *sprite;
   struct Actor *actor;
@@ -1319,10 +1272,6 @@ static void BabiLighthouse_MatchLeaderPriority(struct Actor *updated) {
 #endif
 
 /// Sets up the scene being entered. Returns 0.
-///
-/// Retreat leads back to the Entry. The road's pillar, the Entry's pillars,
-/// vine and the four lying on the ground, BabiLighthouseLuff's arrivals by
-/// falling, and BabiLighthouseStoneDoor's door and onlookers are restored.
 s32 BabiLighthouse_SetupMap(void) {
   struct Actor *placedActor;
   s32 sceneId;
@@ -1352,8 +1301,6 @@ s32 BabiLighthouse_SetupMap(void) {
       }
     }
   } else if (mapCopy == (s32)&SceneId_BabiLighthouseEntry) {
-    // Set up the movable ledge pillars and the staggered actor
-    // animations.
     Actor_SetSpriteColorById(ACTOR_LEFT_PILLAR, SPRITE_COLOR_GREY);
     Actor_SetSpriteColorById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if TBS_PATCH_2
@@ -1451,8 +1398,6 @@ s32 BabiLighthouse_SetupMap(void) {
       break;
     }
   } else if (sceneId == (s32)&SceneId_BabiLighthouseStoneDoor) {
-    // Restore the truth door and the onlookers' positions after each
-    // discussion.
     Actor_Get(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_Get(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);

@@ -51,10 +51,8 @@
 /// before it plain ground.
 
 #include "main_routine_work.h"
-#include "module/field/field.h"
 #include "module/import.h"
 #include "module/scene/sol_sanctum_entrance.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -62,23 +60,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "event_inline.h"
 #include "sol_sanctum_entrance.h"
-#include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor.h"
-#include "fixed_math.h"
-#include "macros.h"
-#include "sounds.h"
 #include "item_ids.h"
 #include "shared/walk_into_leader.h"
 
@@ -181,12 +168,6 @@ const u32 *SolSanctumEntrance_GetExits(void) {
 }
 
 /// Selects the actors for the scene and, in Sol Sanctum, the room.
-///
-/// - The first relief room's entrances place Kraden and that room's eleven
-///   statues.
-/// - The second relief room's place Kraden and the row of six.
-/// - The rest of Sol Sanctum places Kraden and one statue (ACTOR_STATUE).
-/// - Sol Entrance places the man who warns everyone away (ACTOR_WARNING_MAN).
 const struct ActorPlacement *SolSanctumEntrance_GetActorPlacements(void) {
   struct ActorPlacement *table;
   s32 firstStatueRoomEntrance =
@@ -242,9 +223,6 @@ const struct Trigger *SolSanctumEntrance_GetTriggers(void) {
 
 /// Sol Entrance: walking north into the sanctum's door slides it open, and the
 /// leader walks in.
-///
-/// Takes SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, into Sol Sanctum at
-/// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
 static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   Event_Start();
   // The door opens over three frames.
@@ -269,12 +247,6 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
 
 /// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
 /// both once the Small Jewel is set.
-///
-/// "The right eye is sparkling, but there's a hole where the left eye should
-/// be."
-///
-/// Once the first Small Jewel is found, and until it is set, the File Screen
-/// opens as the search ends, so that the jewel can be used.
 static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
   Event_Start();
 
@@ -309,13 +281,6 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
 
 /// Sol Sanctum: using the Small Jewel on the first relief sets it in, and a
 /// passage opens.
-///
-/// `<leader> set the small gem into the empty socket.`, "You hear the sound of
-/// shifting stone."
-///
-/// Does nothing until the first Small Jewel is found, or once it is set. Sets
-/// FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET and FLAG_ITEM_USED_UP, which takes
-/// the jewel.
 static void SolSanctumEntrance_SetFirstSmallJewel(void) {
   s32 message;
 
@@ -347,9 +312,6 @@ static void SolSanctumEntrance_SetFirstSmallJewel(void) {
 
 /// Sol Sanctum, the second relief room: searching the second minotaur relief,
 /// as the first.
-///
-/// Once the second Small Jewel is found, and until it is set, it opens the File
-/// Screen.
 static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
   struct FieldWork *work;
 
@@ -370,9 +332,6 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
 
 /// Sol Sanctum, the second relief room: using the Small Jewel on the second
 /// relief, as the first, and a doorway opens.
-///
-/// Only once the second Small Jewel is found and until it is set. Sets
-/// FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET and FLAG_ITEM_USED_UP.
 static void SolSanctumEntrance_SetSecondSmallJewel(void) {
   s32 message;
 
@@ -417,9 +376,6 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
 /// Sol Sanctum, the first relief room: Move on the west statue
 /// (ACTOR_WEST_STATUE) while FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is clear,
 /// and called by SolSanctumEntrance_PushStatue there.
-///
-/// The column it stops in is saved. Sets FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST
-/// or _AT_WEST, or clears both when it stands in neither column.
 static void SolSanctumEntrance_WestStatueMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_WEST_STATUE);
   s32 column;
@@ -434,8 +390,6 @@ static void SolSanctumEntrance_WestStatueMoved(void) {
 
 /// Sol Sanctum, the first relief room: Move on the east statue
 /// (ACTOR_EAST_STATUE), as the west one.
-///
-/// Sets FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST or _AT_WEST, or clears both.
 static void SolSanctumEntrance_EastStatueMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_EAST_STATUE);
   s32 column;
@@ -455,9 +409,6 @@ static void SolSanctumEntrance_EastStatueMoved(void) {
 
 /// Sol Sanctum, the second relief room: Move on the first statue of the row
 /// (ACTOR_ROW_STATUE_1), and called by SolSanctumEntrance_PushStatue there.
-///
-/// The column it stops in is saved and the cells under all six are set again.
-/// Sets FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST or _AT_WEST, or clears both.
 static void SolSanctumEntrance_RowStatue1Moved(void) {
   struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_1);
   s32 column;
@@ -553,15 +504,12 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
 
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell pushes it
 /// one cell, the leader behind it, if nothing is in the way.
-///
-/// Its column is saved through the room's Moved events.
 static void SolSanctumEntrance_PushStatue(void) {
   struct Actor *leader;
   struct Actor *statue;
   u32 direction;
   struct FieldPosition target;
 
-  // Find the statue one map cell ahead in the leader's facing direction.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
   statue = Actor_FindAtCell(
@@ -587,7 +535,6 @@ static void SolSanctumEntrance_PushStatue(void) {
       statue->velocityX = 0;
       statue->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);
-      // Save the moved statue in the flag set belonging to this room.
       switch (gMainRoutineWork.entrance) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
@@ -611,8 +558,6 @@ static void SolSanctumEntrance_PushStatue(void) {
 }
 
 /// Sets up Sol Entrance or Sol Sanctum.
-///
-/// Called by FieldSequence_Run once the actors exist.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
@@ -625,17 +570,6 @@ s32 SolSanctumEntrance_Initialize(void) {
 }
 
 /// Sets up Sol Entrance (SceneId_SolEntrance).
-///
-/// Retreat is blocked (FLAG_RETREAT_BLOCKED), and after the eruption
-/// SolSanctumEntrance_UpdateEruptionRumbles shakes the ground now and then.
-///
-/// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH),
-/// the door is locked. Its row becomes CELL_BEHAVIOR_SOL_ENTRANCE_LOCKED_DOOR
-/// and the cells before it plain ground.
-///
-/// Once the party has left Vale (FLAG_VALE_PARTY_LEFT), the man who warns
-/// everyone away, placed off the map until then, stands in the path and the
-/// three cells across it change.
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -659,23 +593,6 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 }
 
 /// Sets up Sol Sanctum (SceneId_SolSanctumReliefs).
-///
-/// After the eruption its rooms rumble and shake. The rest depends on the
-/// entrance:
-///
-/// - SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST and
-///   SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
-///   relief's passage once it is open.
-/// - SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, the way in, makes itself the
-///   Retreat point and plays Kraden's welcome until FLAG_SOL_SANCTUM_ENTERED is
-///   set.
-/// - In the first relief room Kraden's talk of the hidden passage plays until
-///   FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and the two statues go back to
-///   their saved columns.
-/// - In the second relief room Kraden sees the row of statues until
-///   FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is set, and the six go back to their
-///   columns. FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM is set, and the second
-///   relief's doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gFieldWork->transition =
@@ -715,7 +632,6 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
-    // Put back this room's statues after its introduction has played.
     Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_STATUE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_EAST_STATUE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_FIXED_STATUE), 0);
@@ -742,7 +658,6 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
   case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
-    // Restore the row of statues and the second gem's doorway.
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_1), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_2), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_3), 0);
@@ -765,16 +680,6 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 
 /// Sol Sanctum, the first time the party comes in through the door: Kraden
 /// welcomes it.
-///
-/// Kraden, Garet and Jenna step out of the leader, and Kraden asks whether this
-/// is the party's first time here.
-///
-/// "This is the entrance to Sol Sanctum." Yes: "Take a good look at it." No: "I
-/// doubt that..."
-///
-/// Called by SolSanctumEntrance_RestoreInteriorState at
-/// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE until FLAG_SOL_SANCTUM_ENTERED is set,
-/// which it sets. Clears FLAG_SHOW_AREA_NAME.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct Actor *leader;
 
@@ -784,7 +689,6 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Event_Wait(4);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(1224, CAMERA_KEEP, 136, 1);
   Scene_PlaceAtLeader(ACTOR_KRADEN);
@@ -845,15 +749,6 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
 
 /// Sol Sanctum, the first time the party enters the first relief room: Kraden
 /// suspects a hidden passage.
-///
-/// Kraden looks round and recalls that Saturos and Menardi spoke of a hidden
-/// passage leading deeper into the sanctum. A sanctum built in honour of the
-/// sun ought to show it somewhere. Garet asks whether to help him, and either
-/// way the four stay together.
-///
-/// Called by SolSanctumEntrance_RestoreInteriorState there until
-/// FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, which it sets. Clears
-/// FLAG_SHOW_AREA_NAME.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   struct Actor *leader;
 
@@ -861,7 +756,6 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
 
-  // Spread the party out while Kraden examines the room.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
     Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
@@ -1033,7 +927,6 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
   }
 
-  // Bring Kraden back and return the followers to the party.
   Actor_SetSpeed(ACTOR_KRADEN, 0.6);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 0, 48);
@@ -1080,13 +973,6 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
 /// Sol Sanctum, the first time the party enters the second relief room: Kraden
 /// sees a row of statues out of reach.
-///
-/// The camera pans along the row of statues, and Kraden says: "More statues...
-/// It doesn't look like we can reach them from here." He asks Isaac to try his
-/// Psynergy.
-///
-/// Called by SolSanctumEntrance_RestoreInteriorState there until
-/// FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is set, which it sets.
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_Start();
   gFieldWork->transition =
@@ -1104,7 +990,6 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   FieldCamera_SetSpeed(2.4);
-  // Pan across the statues, then return to the party's position.
   FieldCamera_MoveTo(1672, CAMERA_KEEP, 524, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -1134,12 +1019,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
 
 /// Sol Sanctum, the second relief room: sets the cells the six statues start
 /// on.
-///
-/// A cell takes one cell behavior while a statue stands there and another once
-/// it has been pushed to either side. When placeActors is nonzero (on entry),
-/// it also moves the statues to their saved columns.
 static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
-  // Clear all six destinations before restoring occupied cells.
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 100, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 104, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 108, 32);
@@ -1235,9 +1115,6 @@ static void SolSanctumEntrance_DoorTightlyLocked(void) {
 
 /// Sol Entrance after the eruption: the ground rumbles now and then, and each
 /// shake fades.
-///
-/// Run each frame as a task that SolSanctumEntrance_ApplyEntryState adds once
-/// FLAG_SOL_SANCTUM_ERUPTED is set.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   s32 randomValue;
   s32 *timer;

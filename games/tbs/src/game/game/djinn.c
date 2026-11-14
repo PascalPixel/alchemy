@@ -15,9 +15,8 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 }
 
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who
-/// has room in that element, puts it on standby and sets its found flag.
-/// Returns who got it, -1 if it was found before or -2 when nobody has room. Of
-/// party members holding equally few, the earliest in the party order gets it.
+/// has room, on standby. Returns who got it, -1 if found before, -2 when nobody
+/// has room.
 s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
   s32 leastLoadedMember = 0;
@@ -54,9 +53,8 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   return leastLoadedMember;
 }
 
-/// Gives Djinni `djinnIndex` of `element` to a unit: sets its bit in djinnHeld
-/// and counts it. Returns -1 when the unit holds ten of the element or has it
-/// already.
+/// Gives a Djinni to a unit. Returns -1 when the unit holds ten of the element
+/// or has it already.
 s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
   struct Unit *unit = Unit_Get(unitId);
 
@@ -69,9 +67,8 @@ s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
   return 0;
 }
 
-/// Returns 1 when the unit holds the Djinni and it can be set: it is not set
-/// already, not recovering and not held by a summon. A count of set Djinn above
-/// 9 is clamped to 10 on the way.
+/// Returns 1 when the unit holds the Djinni and it can be set: not set, not
+/// recovering and not held by a summon.
 s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
   struct Unit *unit = Unit_Get(unitId);
   struct DjinnRecoveryList *list;
@@ -95,9 +92,7 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
         djinnIndex == list->entries[entryIndex].index)
       break;
   }
-  // Ready when not listed, on standby (DJINN_RECOVERY_AFTER_BATTLE) or
-  // recovered (0); not while recovering or held by a summon
-  // (DJINN_RECOVERY_SUMMONED).
+  // Ready when not listed, on standby or recovered.
   if (entryIndex == list->count ||
       ((recoveryTurns = list->entries[entryIndex].turns) <= 0 &&
        recoveryTurns != DJINN_RECOVERY_SUMMONED))
@@ -143,9 +138,8 @@ u32 Djinn_PutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
   return wasActive;
 }
 
-/// Takes the Djinni off its side's standby and recovery list, closing the
-/// gap. Returns 1 when it was there. Called when a Djinni is set again, by the
-/// Djinn menu and by battle's recovery.
+/// Takes the Djinni off its side's standby and recovery list, closing the gap.
+/// Returns 1 when it was there.
 s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
   struct DjinnRecoveryList *list;
   s32 removed = 0;
@@ -166,11 +160,8 @@ s32 DjinnRecovery_Remove(s32 unitId, s32 element, s32 djinnIndex) {
   return removed;
 }
 
-/// Puts unit unitId's Djinni at the end of its side's list on standby
-/// (DJINN_RECOVERY_AFTER_BATTLE), moving it there if it was already listed.
-/// Returns a pointer to the list's count. Nothing checks the list's 64-entry
-/// capacity. Called when a Djinni joins, by the Djinn menu's standby command,
-/// by battle and by the event where Flint joins.
+/// Puts a unit's Djinni at the end of its side's list on standby. Nothing
+/// checks the list's capacity.
 u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *list;
   s32 count;
@@ -186,10 +177,8 @@ u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
   return (u32 *)&list->count;
 }
 
-/// Moves a Djinni from one unit to another, keeping it set or on standby.
-/// Returns 0 when it moved, and -1 when the source lacks it or the target has
-/// no room or holds it already. Both units' classes are worked out again when
-/// it was set.
+/// Moves a Djinni from one unit to another, set or on standby as it was.
+/// Returns -1 when it cannot.
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
   struct Unit *sourceUnit = Unit_Get(source);
   u32 wasActive;
@@ -213,9 +202,8 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
   return -1;
 }
 
-/// Counts the party's Djinn on standby, by element into `counts` when it is
-/// given. Returns the total. Only GAME.S's bare veneer reaches it; nothing
-/// calls it by name.
+/// Counts the party's Djinn on standby, by element into counts when it is
+/// given.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 standbyCount = 0;
   struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);

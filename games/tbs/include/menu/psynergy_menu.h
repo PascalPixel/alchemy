@@ -14,9 +14,7 @@
 struct Sprite;
 
 /// The Psynergy menu: its windows, icons and cursors, the party members' tabs
-/// and the Psynergy listed for the chosen party member. It is the
-/// HEAP_SLOT_MENU block as this menu reads it, from the menu's opening to its
-/// closing.
+/// and the Psynergy listed for the chosen party member.
 struct PsynergyMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen

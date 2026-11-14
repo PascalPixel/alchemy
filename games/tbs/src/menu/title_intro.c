@@ -177,9 +177,7 @@ void Title_UpdateIntroSprites(void) {
 }
 
 /// Loads the title intro's two scrolling backgrounds and its sprite tiles,
-/// builds their tilemaps and sets the blending and windows. The pictures are
-/// decoded through Ram_MapGridCellBuffer, the map grid's cell buffer, which is
-/// free while no map is loaded.
+/// builds their tilemaps and sets the blending and windows.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;
   u8 *resourceData;
@@ -295,11 +293,8 @@ void Title_LoadIntroBackgrounds(void) {
 #endif
 
 /// Plays the title intro: the backgrounds scroll down and the sprites rise
-/// until frame 278 (A or Start skips ahead), then the screen flashes white
-/// into the title picture. With `prompt` set the "Press Start" prompt pulses
-/// for up to a minute, otherwise the picture stays five seconds. Reached
-/// through the palette far-call table from the Title. Returns 1 when A
-/// or Start was pressed on the title picture.
+/// until frame 278 (A or Start skips ahead), then the screen flashes white into
+/// the title picture.
 s32 Title_ShowIntro(s32 prompt) {
   struct IntroWork *work;
   s32 result;
@@ -325,8 +320,7 @@ s32 Title_ShowIntro(s32 prompt) {
   Title_LoadIntroBackgrounds();
   TitlePaletteFade_Initialize();
   TitlePaletteFade_SetCurrent(RGB(2, 0, 0), PALETTES_ALL);
-  // This screen supplies its own OAM list in VBlank. Keep the normal OAM
-  // copy disabled until its sprite task is removed at the white flash.
+  // This screen supplies its own OAM list in VBlank.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -517,10 +511,7 @@ s32 Title_ShowIntro(s32 prompt) {
 /// Unused: palette entry retained in the far-call table.
 UNUSED void Title_NoOpPalette(void) {}
 
-/// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
-/// holds two seconds; otherwise it waits a second, fades in, holds three
-/// seconds and fades out, faster once skipped. Returns -1 when A or Start
-/// skipped it.
+/// Shows the Nintendo logo with its jingle.
 s32 Title_ShowNintendoLogo(s32 mode) {
   s32 result;
   u8 *resourceData;
@@ -609,9 +600,8 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   return result;
 }
 
-/// Shows the Camelot logo for two seconds, cycling its four frames of tiles.
-/// A or Start ends it early. Reached through the palette far-call table from
-/// the intro. Returns 0.
+/// Shows the Camelot logo for two seconds, cycling its four frames of tiles. A
+/// or Start ends it early.
 s32 Title_ShowCamelotLogo(void) {
   u32 workIndex;
   u8 *resourceData;
@@ -717,8 +707,7 @@ void TitlePaletteFade_Update(void) {
             DMA_COPY_WORDS(sizeof(work->current) / 4), REG_DMA3);
     work->duration = 0;
   }
-  // The queued DMA keeps a pointer until VBlank. Build into the spare page
-  // so packing this frame cannot overwrite the last frame's pending colours.
+  // The queued DMA keeps a pointer until VBlank.
   packedColors = work->packed[work->page ^ 1];
   {
     s32 blueMask = 0x7c00;
@@ -1054,9 +1043,7 @@ UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
 /// Starts fading the shown colours to the target over the requested frames:
 /// each of the 1,536 components (three for each of the 512 colours) steps by
 /// its distance divided by the frames, the remainder kept in the ten bits below
-/// it, so every colour arrives together. Called by Title_ShowIntro for its
-/// 60-frame fade from RGB(2, 0, 0), a dark red, to the picture's colours, the
-/// fade's only use in this game.
+/// it, so every colour arrives together.
 void TitlePaletteFade_Start(s32 frames) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 

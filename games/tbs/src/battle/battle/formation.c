@@ -15,10 +15,8 @@
 #define ENEMY_NAME_SUFFIX_COUNT 26
 #endif
 
-/// Returns a formation's average enemy level, for the monster battles to choose
-/// by. Returns -1 for a formation with no required member, -2 when it holds an
-/// enemy above level 3 the party has not defeated (ENEMY_DEFEATED_FLAG, unless
-/// FLAG_MONSTER_BATTLE_ANY_ENEMY is set), and -3 when it has no member.
+/// Returns a formation's average enemy level for the monster battles, or a
+/// negative reason it may not be chosen.
 s32 BattleFormation_AverageLevel(s32 recordId) {
   const struct Formation *record;
   struct EnemyDefinition *enemy;
@@ -61,10 +59,8 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   return levelTotal / enemyCount;
 }
 
-/// A formation that may be chosen for the party's level: its row and its
-/// enemies' average level. BattleFormation_SelectLevelMatchedCandidate keeps
-/// a pool of FORMATION_POOL_SIZE in an EWRAM pool block, freed before it
-/// returns.
+/// A formation that may be chosen for the party's level, with its enemies'
+/// average level.
 struct FormationCandidate {
   s16 recordId; ///< the formation's row
   s16 score;    ///< its average level (BattleFormation_AverageLevel); -1 empty
@@ -80,10 +76,7 @@ struct FormationCandidate {
 /// How far above the party's level a monster battle's formation may be.
 #define FORMATION_LEVEL_MARGIN 3
 
-/// A copy of a unit's base stats, from baseHp to its element stats, kept
-/// while its level is adjusted: BattleEnemy_AdjustLevel takes it from the
-/// EWRAM pool, reads only the stats it changes, for their 70 percent
-/// floors, and frees it before returning.
+/// A unit's base stats as they were before its level changed.
 struct BattleBaseStats {
   s16 baseHp;
   s16 basePp;
@@ -100,16 +93,9 @@ struct BattleBaseStats {
   struct BattleElementStats element[ELEMENT_COUNT]; ///< the base power is read
 };
 
-/// Chooses a monster battle's formation for the party's level, and returns it
-/// with the levels its enemies must gain in outMargin.
-/// The target is the active party members' average level plus the monster
-/// battles won in a row (FLAG_MONSTER_BATTLE_WINS), between 1 and 99; a
-/// formation qualifies when its average level is at most 3 above it, and one of
-/// up to 32 qualifying is chosen at random. With none, it returns formation 1
-/// and a margin of 0. Called by BattleFormation_BuildEnemyList under
-/// FLAG_MONSTER_BATTLE; clears the defeated flags of the classes in
-/// gBattleFormation_LevelMatchedEnemies, which excludes those above level 3
-/// unless FLAG_MONSTER_BATTLE_ANY_ENEMY bypasses the defeated-enemy check.
+/// Chooses a monster battle's formation for the party's level plus its winning
+/// streak, at random among those at most 3 above it, and returns it with the
+/// levels its enemies must gain in outMargin.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool =
@@ -142,9 +128,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   for (i = 0; i < FORMATION_POOL_SIZE; i++)
     pool[i].score = -1;
 
-  // Forget defeated classes that the monster battles normally exclude;
-  // FLAG_MONSTER_BATTLE_ANY_ENEMY would still admit them. The definition
-  // read is unused.
+  // Forget the defeated classes the monster battles exclude.
   for (i = 0; i < ARRAY_COUNT(gBattleFormation_LevelMatchedEnemies); i++) {
     Enemy_GetDefinitionFar(gBattleFormation_LevelMatchedEnemies[i]);
     GameFlag_ClearFar(
@@ -192,12 +176,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/// Raises an enemy by levels, or lowers it for a negative count: each base stat
-/// changes by a fixed amount a level, kept between 70 percent of what it was
-/// and its cap. A level is worth 9.7 HP, 1.5 PP, 12.3 Attack, 3.3 Defense, 5.1
-/// Agility and 15 power in each element; HP and PP are capped at UNIT_HP_MAX,
-/// the other stats at UNIT_STAT_MAX and power at UNIT_ELEMENT_MAX. Changes the
-/// unit's base stats and level and works out its stats again (Unit_Calculate).
+/// Raises an enemy by levels, or lowers it for a negative count, each stat by a
+/// fixed amount a level and no lower than 70 percent of what it was.
 UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
   struct BattleBaseStats *base = Heap_AllocEwram(sizeof *base);
   struct Unit *unit = Unit_GetFar(unitId);
@@ -238,16 +218,8 @@ UNREAD_RESULT BattleEnemy_AdjustLevel(s32 unitId, s32 levels) {
 }
 
 /// Gives an enemy of the class its name letter, which tells it from others of
-/// its kind, and returns the letter's number for BattleUnit_SetFar. The letters
-/// are digits from 1 abroad and the alphabet in Japanese. The class's first
-/// enemy gets ENEMY_NAME_SUFFIX_COUNT, which BattleUnit_SetFar takes as no
-/// letter. Its second gets letter 1 with ENEMY_LETTER_FIRST_TOO, telling the
-/// caller to give the first letter 0 (BattleEnemy_LetterFirstOfKind); later
-/// ones take the next free letter, wrapping. Returns -1 when five classes are
-/// already listed. Changes BattleWork's enemyKinds, the up to five classes
-/// listed, and their letters: lastNameLetter each class's last letter given (-1
-/// for none yet), nameLetterMasks its letters in use (bit n for letter n), and
-/// enemyKindCount how many classes are listed.
+/// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
+/// classes are already listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;
@@ -292,10 +264,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   return -1;
 }
 
-/// Frees a departing enemy's name letter for the next of its class, reading
-/// the letter back from the end of its name. Does nothing for a unit that is
-/// not an enemy, a class not listed or one with no letters given. Clears the
-/// letter's bit in BattleWork.nameLetterMasks.
+/// Frees a departing enemy's name letter for the next of its class.
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit;
@@ -331,7 +300,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
 }
 
 /// Gives the first enemy of the class on the field the first letter (0),
-/// appended to its name, once a second of its class arrives. Writes Unit.name.
+/// appended to its name, once a second of its class arrives.
 UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   struct Unit *unit;
   s32 enemyIndex;
@@ -370,9 +339,7 @@ UNREAD_RESULT BattleEnemy_LetterFirstOfKind(s32 classId) {
   }
 }
 
-/// Returns the class id of a random member of the formation, among those that
-/// may appear (maximum count above 0); formation 1 stands in for an id out of
-/// range.
+/// Returns the class of a random member of the formation that may appear.
 s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 choices[FORMATION_MEMBERS];
   const struct Formation *record;
@@ -389,17 +356,10 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   return choices[(Random16() * choiceCount) >> 16];
 }
 
-/// Builds the battle's enemies from formation recordId and returns how many
-/// there are. Each member comes its minimum number of times, plus a random
-/// number more up to its maximum while the six sprite slots hold them (a large
-/// enemy takes two). The formation's layout orders them: shuffled kinds, each
-/// kind together (FORMATION_LAYOUT_SHUFFLED), interleaved at random
-/// (FORMATION_LAYOUT_INTERLEAVED), or in the row's order. Under
-/// FLAG_MONSTER_BATTLE the formation is chosen for the party's level instead,
-/// and each enemy raised to it. An empty or out-of-range formation becomes
-/// formation 1. Fills the enemy units from FIRST_ENEMY_UNIT, with their name
-/// letters, and sets BattleWork's battleType, firstDefeated, defeatState and
-/// the name-letter lists.
+/// Builds the battle's enemies from a formation and returns how many there are:
+/// each member its fewest times and at random up to its most while the sprite
+/// slots hold them, laid out as the formation says. A monster battle chooses
+/// the formation for the party's level instead.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyKinds;
   struct BattleWork *battle;

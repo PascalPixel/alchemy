@@ -118,46 +118,29 @@
 #include "module/field/field.h"
 #include "system_call.h"
 #include "scene_ids.h"
-#include "module/import.h"
 #include "module/scene/kalay.h"
 #include "module/scene/shared/actor_orbit.h"
-#include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
-#include "module/field/event_commands.h"
-#include "module/window/window.h"
 #include "module/window/screens.h"
-#include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "task.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "script_operands.h"
-#include "macros.h"
 
-#include "actor.h"
 #include "ground_mask.h"
 #include "shared/orbit.h"
-#include "fixed_math.h"
-#include "scene.h"
-#include "heap.h"
 
 #include "flags.h"
 #include "djinn_ids.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 
 /// Kalay's actors (Kalay), numbering the rows of
@@ -291,7 +274,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z);
 static void Kalay_UpdateNutOrbit(void);
 
 /// Clears the flag a guide's script sets when it is done.
-static __inline__ void Kalay_ClearScriptDone(struct Actor *actor) {
+static inline void Kalay_ClearScriptDone(struct Actor *actor) {
   s32 completed = 0;
 
   actor->timer = completed;
@@ -470,9 +453,7 @@ static void Kalay_AskAboutCaveAccess(void) {
   }
 }
 
-/// A man asks whether Layana was too hard on the party. He's in the Kalay
-/// Tunnel (KalayTunnelTreasureRoom) once Hammet is home, and means the time she
-/// told the party to leave.
+/// A man asks whether Layana was too hard on the party.
 static void Kalay_TalkAboutLayana(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayLayanaWasVeryHardOn);
@@ -484,8 +465,7 @@ static void Kalay_TalkAboutLayana(void) {
 }
 
 /// Talking to the weapon merchant in Kalay across the counter, with the leader
-/// facing north, opens the weapon shop. From elsewhere the merchant grumbles
-/// that Hammet sells his best weapons away.
+/// facing north, opens the weapon shop.
 static void Kalay_TalkToWeaponMerchant(void) {
   struct Actor *leader;
 
@@ -504,8 +484,7 @@ static void Kalay_TalkToWeaponMerchant(void) {
 }
 
 /// Talking to the armor merchant in Kalay across the counter, with the leader
-/// facing west to north, opens the armor shop. From elsewhere the merchant asks
-/// whether the party found its weapons.
+/// facing west to north, opens the armor shop.
 static void Kalay_TalkToArmorMerchant(void) {
   struct Actor *leader;
 
@@ -526,8 +505,7 @@ static void Kalay_TalkToArmorMerchant(void) {
 }
 
 /// Talking to the item merchant in Kalay across the counter, with the leader
-/// facing east, opens the item shop. From elsewhere the merchant praises Lady
-/// Layana.
+/// facing east, opens the item shop.
 static void Kalay_TalkToItemMerchant(void) {
   struct Actor *leader;
 
@@ -546,8 +524,7 @@ static void Kalay_TalkToItemMerchant(void) {
 }
 
 /// Walking north into one of Kalay's eight doors (step triggers 1 to 8) leads
-/// into the houses, the inn or the Sanctum. Everyone stops, the door opens and
-/// the leader walks in.
+/// into the houses, the inn or the Sanctum.
 static void Kalay_OpenDoorAndExit(void) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -584,7 +561,7 @@ static void Kalay_OpenDoorAndExit(void) {
 }
 
 /// The palace door opens in two frames.
-static __inline__ void Kalay_AnimatePalaceDoor(void) {
+static inline void Kalay_AnimatePalaceDoor(void) {
   Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(36, 23, 43, 12, 2, 2);
   wait(5);
@@ -609,15 +586,7 @@ static void Kalay_EnterPalace(void) {
 }
 
 /// Leaving Kalay (step triggers 9 and 10) after hearing of the Colosso tour at
-/// the inn, the party watches the tour group stop. This plays until the tour
-/// has left.
-///
-/// - The guides count everyone.
-/// - They pace back and forth while the tourists grumble.
-/// - They give up on the missing man and lead the group off.
-/// - The late tourist then runs after it.
-///
-/// Otherwise the party leaves.
+/// the inn, the party watches the tour group stop.
 static void Kalay_WatchTourGroupDeparture(void) {
   s32 message;
   struct Actor *headWait;
@@ -1030,7 +999,6 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_Stop(ACTOR_HEAD_GUIDE);
     Actor_Stop(ACTOR_SECOND_GUIDE);
     wait(1);
-    // Send the group onward, then bring in the missing tourist.
     Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_TourGroupLeaveScript);
     Actor_SetScript(ACTOR_FIRST_TOURIST, gKalay_TourGroupLeaveScript);
     Actor_SetScript(ACTOR_FIRST_TOURIST + 1, gKalay_TourGroupLeaveScript);
@@ -1178,16 +1146,6 @@ s32 Kalay_Initialize(void) {
 }
 
 /// Sets up Kalay.
-///
-/// Having heard in Lunpa that Hammet is held there sets area temp flag
-/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA. Once Hammet is free
-/// (FLAG_DODONPA_LOCKED_UP) the palace's FLAG_IVAN_REPORTED_TO_LAYANA,
-/// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
-/// set too, so its earlier events count as seen and the passage is open.
-///
-/// Coming up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM)
-/// finds its statue moved aside, and until it is caught the Nut circles in the
-/// air.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
   u8 *heap;
@@ -1233,9 +1191,7 @@ static void Kalay_PrepareTown(void) {
   }
 }
 
-/// Sets up Hammet Palace's front (HammetPalaceGrounds). It sets the palace
-/// flags as in the town. The first time the party comes, before Ivan has
-/// reported to Layana, it starts the guards event.
+/// Sets up Hammet Palace's front (HammetPalaceGrounds).
 static void Kalay_PrepareHammetPalace(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
@@ -1253,10 +1209,7 @@ static void Kalay_PrepareHammetPalace(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance). The Nut floats
-/// until caught, and the guard turns east once FLAG_KALAY_TUNNEL_OPEN opens the
-/// passage. Arriving by KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH brings
-/// Hammet home in Bunza's wagon.
+/// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance).
 static void Kalay_PrepareTunnelEntrance(void) {
   struct Actor *guard;
 
@@ -1272,16 +1225,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel's passage (KalayTunnelPassage). It opens with a
-/// window transition, and its way through is drawn open once
-/// FLAG_KALAY_TUNNEL_OPEN is set.
-///
-/// Arriving from the treasure room
-/// (KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST and
-/// KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST) or by the stairs
-/// from the north-east room
-/// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts
-/// SE_AMBIENT_WATER.
+/// Sets up the Kalay Tunnel's passage (KalayTunnelPassage).
 static void Kalay_PrepareTunnelPassage(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1298,11 +1242,7 @@ static void Kalay_PrepareTunnelPassage(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom). The fade
-/// overlay follows the leader unless he came down from the town
-/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY). The pushed statues, the frozen
-/// puddle and the opened passages are restored. Once FLAG_KALAY_TUNNEL_OPEN is
-/// set the man waits here and some of the cells are redrawn.
+/// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom).
 static void Kalay_PrepareTunnelTreasureRoom(void) {
 #if TBS_PATCH_1
 #endif
@@ -1473,7 +1413,7 @@ static void Kalay_StartTouristFidgeting(s32 actorId) {
 
   actor = Actor_Get(actorId);
   actor->timer = actorId;
-  random = Import_RandomNext();
+  random = Random_Next();
   actor->userValue = (random * 5) >> 12;
   Actor_StartScript(actor, gKalay_TouristFidgetScript);
 }
@@ -1525,11 +1465,6 @@ static void Kalay_AlternateGuidesPacing(void) {
 
 /// The guards before the door of Hammet Palace (HammetPalaceGrounds) meet the
 /// party the first time it comes.
-///
-/// They turn the party away until they recognize Ivan, tanned and grown, and
-/// learn that he does not know Hammet is a prisoner in Lunpa. Ivan insists his
-/// friends hear everything. The guards open the door and take the party in to
-/// Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM).
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct Actor *actor;
 
@@ -1713,7 +1648,6 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Kalay_AnimatePalaceDoor();
   Actor_WalkToAndWait(ACTOR_IVAN, 192, 222);
-  // Lead the party and guards through the opened palace door.
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 222);
@@ -1740,10 +1674,6 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
 /// arriving at the Kalay Tunnel Entrance by
 /// KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH after the party has freed him
 /// from Lunpa.
-///
-/// Hammet explains the underground passage to the palace. He asks Bunza to take
-/// the party round through the town, so the passage stays secret. The guard
-/// opens it, Hammet goes in and the party rides off.
 static void Kalay_HammetReturnsToPalace(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -1804,15 +1734,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Event_ShowMessageThenWait(ACTOR_BUNZA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 0.8);
@@ -2080,9 +2010,7 @@ static void Kalay_PushTunnelStatue(void) {
   }
 }
 
-/// Each statue's passage opens once the statue is pushed far enough west. In
-/// the Kalay Tunnel (KalayTunnelTreasureRoom) the passage opens step by step,
-/// and the first one raises the puddle for Frost.
+/// Each statue's passage opens once the statue is pushed far enough west.
 static void Kalay_UpdateTunnelPassages(void) {
   struct Actor *firstStatue;
   struct Actor *secondStatue;
@@ -2200,8 +2128,8 @@ static void Kalay_UpdateTunnelPassages(void) {
   }
 }
 
-// UB: the void routine's epilogue returns through r0, leaving the nonzero
-// return address as SC_CALL's status. Repeat once per frame until the actor is
+// UB: the routine returns nothing, so SC_CALL takes whatever value is left as
+// its status, which is not 0. Repeat once per frame until the actor is
 // released, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX
@@ -2273,13 +2201,13 @@ static void Kalay_UpdateTunnelEmitters(void) {
 /// is a puff of dust (SPRITE_DUST_PUFF) with its blue raised to full.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   struct Actor *particle;
-  s32 random = Import_RandomNext();
+  s32 random = Random_Next();
 
   // It starts up to 7 pixels above 16 over the height.
   particle =
       FieldActor_Create(SPRITE_DUST_PUFF, x - px(8),
                         px((u32)(random * 8) >> 16) + height + px(16), z);
-  if (particle != 0) {
+  if (particle != NULL) {
     particle->motionFlags = 0;
     particle->sprite->image.priority = 2;
     Actor_SetSpriteColor(particle, SPRITE_COLOR_BLUE_TINT);
@@ -2307,20 +2235,18 @@ static void Kalay_UpdateNutOrbit(void) {
   effect->x = effect->orbitCenterX + Trig_Cos(effect->orbitAngle) * 2;
   effect->y = effect->orbitCenterY + offset;
   sprite->rotation = Trig_Cos(effect->orbitAngle + TRIG_TURN / 2) >> 3;
-  first = Import_RandomNext();
+  first = Random_Next();
   effect->orbitAngle +=
       ((u32)(first << 9) >> 16) + (Random_Below(512)) + TRIG_TURN / 64;
 }
 
-/// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle
-/// is in KalayTunnelTreasureRoom. Sinking it clears its cells, and it stays
-/// sunk until the scene is entered again.
+/// Frost on the puddle in the Kalay Tunnel sinks it into the floor.
 static void Kalay_FreezePuddle(void) {
   struct Actor *effect = Actor_Get(ACTOR_PUDDLE);
 
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 14);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 45);
-  if (effect != 0) {
+  if (effect != NULL) {
     Actor_SetSpriteFlags(effect, 0);
     effect->y.fixed -= px(32);
     effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

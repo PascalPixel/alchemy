@@ -28,7 +28,6 @@
 
 #include "main_routine_work.h"
 #include "module/scene/stone_rooms.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -36,18 +35,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "ability_ids.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "sounds.h"
 #include "text/msg_ids.h"
 
 /// The cell behaviors the jail's triggers answer.
@@ -94,17 +87,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 /// Returns the exits to Vault, to Vault's revisit scene and to Lunpa.
-///
-/// Each leads to the entrance that scene names for the jail. They are
-/// VAULT_FROM_STONE_ROOMS, VAULT_REVISIT_FROM_STONE_ROOMS and
-/// LUNPA_FROM_STONE_ROOMS.
 const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 
 /// Places the three jailed thieves, or the lone prisoner.
-///
-/// Each thief is placed only once FLAG_VAULT_THIEVES_JAILED is set. The
-/// prisoner is placed when the party enters from Vault's revisit scene
-/// (STONE_ROOMS_FROM_VAULT_REVISIT), after the thieves have broken out.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerActorPlacements;
@@ -113,10 +98,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Returns the thieves' triggers, or the prisoner's.
-///
-/// The thieves' triggers also hold the Lunpa room's chests and exit. The
-/// prisoner's are returned when the party came in from Vault's revisit
-/// scene, matching Scene_GetActorPlacements.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerTriggers;
@@ -125,13 +106,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// In Vault's jail, the thieves' leader silences his men and vows revenge.
-///
-/// He glares at each of his men and snaps "Shut yer yaps!", so that both
-/// start. Then he turns to the party. They got us this time, he says, but
-/// next time they'll pay for this.
-///
-/// Reached by talking to the leader (ACTOR_THIEF_LEADER) while
-/// FLAG_VAULT_THIEVES_JAILED is set.
 static void StoneRooms_LeaderSilencesThieves(void) {
   Event_Start();
 
@@ -150,7 +124,6 @@ static void StoneRooms_LeaderSilencesThieves(void) {
   Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
   Event_Wait(20);
 
-  // Turn from the two thieves to the party for the remaining dialogue.
   Actor_TurnToFaceEachOther(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
 
@@ -165,9 +138,6 @@ static void StoneRooms_LeaderSilencesThieves(void) {
 
 /// In Vault's jail, the thief on the left wishes they had escaped to the cave
 /// northeast of Goma Range.
-///
-/// Reached by talking to him (ACTOR_LEFT_THIEF) while
-/// FLAG_VAULT_THIEVES_JAILED is set.
 static void StoneRooms_LeftThiefRegretsEscape(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -180,9 +150,6 @@ static void StoneRooms_LeftThiefRegretsEscape(void) {
 
 /// In Vault's jail, the thief on the right shakes his head and says he knew
 /// they should have skipped town sooner.
-///
-/// Reached by talking to him (ACTOR_RIGHT_THIEF) while
-/// FLAG_VAULT_THIEVES_JAILED is set.
 static void StoneRooms_RightThiefRegretsStaying(void) {
   Event_Start();
   Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
@@ -195,10 +162,6 @@ static void StoneRooms_RightThiefRegretsStaying(void) {
 
 /// Mind Read on the thieves' leader in Vault's jail shows him thinking he'll
 /// be out of this jail before you know it.
-///
-/// Reached by Mind Read on ACTOR_THIEF_LEADER while FLAG_VAULT_THIEVES_JAILED
-/// is set. The two below are reached the same way on ACTOR_LEFT_THIEF and
-/// ACTOR_RIGHT_THIEF.
 static void StoneRooms_ReadLeaderMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThiefLeaderThoughts);
@@ -228,13 +191,6 @@ static void StoneRooms_ReadRightThiefMind(void) {
 }
 
 /// The party steps out of Vault's jail into Vault, with the exit sound.
-///
-/// Reached by stepping on the door's cell (CELL_BEHAVIOR_VAULT_JAIL_DOOR) under
-/// the thieves' table, that is, entered from Vault or Lunpa. It takes
-/// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS.
-///
-/// The prisoner's table leaves by a plain exit instead,
-/// STONE_ROOMS_TO_VAULT_REVISIT.
 static void StoneRooms_LeaveForVault(void) {
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(STONE_ROOMS_TO_VAULT);
@@ -242,12 +198,6 @@ static void StoneRooms_LeaveForVault(void) {
 
 /// Opens the map through a window transition and lets the party reach the
 /// jail's occupants across the bars.
-///
-/// Called by the field once the actors are placed.
-///
-/// Coming in through Lunpa's hidden passage (STONE_ROOMS_FROM_LUNPA) clears
-/// FLAG_SHOW_AREA_NAME, so no area name is shown. Otherwise it adds
-/// JAIL_REACH_ACROSS_BARS to the prisoner or to the three thieves.
 s32 Scene_Initialize(void) {
   s16 entrance;
 

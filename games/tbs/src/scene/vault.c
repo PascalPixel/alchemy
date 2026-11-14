@@ -52,26 +52,20 @@
 #include "vault.h"
 #include "module/scene/shared/vault_range.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/battle/battle.h"
 #include "module/game/game.h"
 #include "module/system/system.h"
 #include "actor.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "tbs_edition.h"
 #include "battle_side.h"
 #include "text/msg_ids.h"
 #include "fixed_point_position.h"
@@ -80,12 +74,8 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "fixed_math.h"
 #include "flags.h"
 #include "djinn_ids.h"
-#include "character_ids.h"
-#include "sounds.h"
-#include "heap.h"
 #include "shared/walk_into_leader.h"
 
 enum { VAULT_DRIFT_RATE = px(1) / 10 };
@@ -135,9 +125,9 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
 #include "shared/vault_nearby.h"
 
-// The woman wanting the roof fixed walks about looking for the man who should
-// be fixing it and stops to face the leader when near, or while a conversation
-// holds the field.
+/// The woman wanting the roof fixed walks about looking for the man who should
+/// be fixing it and stops to face the leader when near, or while a conversation
+/// holds the field.
 static UNREAD_RESULT
 Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
@@ -181,11 +171,6 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 
 /// Leaving Vault by either gate, Ivan stays behind if he is helping search
 /// for the rod and the thieves are free.
-///
-/// The gates are CELL_BEHAVIOR_VAULT_SOUTH_GATE and _NORTH_GATE, before
-/// VAULT_TO_WORLD_MAP_SOUTH and VAULT_TO_WORLD_MAP_NORTH. Ivan walks out to
-/// the gate and says he is still worried about the rod and will wait in
-/// Vault. He leaves any Venus Djinni with Isaac and leaves the party.
 static void Vault_IvanStaysBehind(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -198,10 +183,9 @@ static void Vault_IvanStaysBehind(void) {
         (CELL_BEHAVIOR_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
-  // Bring Ivan out beside the party at the exit they are using.
   Event_Start();
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
@@ -220,7 +204,6 @@ static void Vault_IvanStaysBehind(void) {
   Event_ShowMessageThenWait(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     Event_SetMessageId(MsgVaultWaitDontWantTakeYour);
     // "Oh, wait, I don't want to take your Djinni. I'll just leave..."
@@ -261,9 +244,6 @@ static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
 
 /// In Vault while the rod is missing, a townsperson asks about the eruption.
 /// "Wasn't the eruption of Mt. Aleph incredible?"
-///
-/// - Yes: too terrified to sleep for days.
-/// - No: aren't you courageous!
 static void Vault_AskAboutEruption(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultWasntEruptionMtAlephIncredible);
@@ -279,9 +259,6 @@ static void Vault_AskAboutEruption(void) {
 
 /// In Vault while the rod is missing, a townsperson says travelers left town
 /// in a big hurry, and asks whether the party saw them.
-///
-/// - Yes: two women and four men, the girl and old man unhappy to be there.
-/// - No: maybe they left earlier.
 static void Vault_AskAboutFleeingTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThoseTravelersLeftInBig);
@@ -293,8 +270,7 @@ static void Vault_AskAboutFleeingTravelers(void) {
 }
 
 /// In Vault, one of the thieves loitering in town asks whether the party
-/// accuses them. Either answer gets a denial.
-/// "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
+/// accuses them.
 static void Vault_ThiefDeniesTheft(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
@@ -304,12 +280,6 @@ static void Vault_ThiefDeniesTheft(void) {
 }
 
 /// A stranded traveler asks whether the party is off on an adventure.
-/// The traveler was stranded by the eruption, and asks while the rod is
-/// missing.
-/// "Off on an adventure, are you?"
-///
-/// - Yes: impressive for youngsters.
-/// - No: see the Sanctum while you're here.
 static void Vault_AskAboutAdventure(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultOffOnAdventure);
@@ -383,8 +353,7 @@ static void Vault_TalkOfHammetsCaravan(void) {
 }
 
 /// In Vault, once the suspects' minds are read, the woman wanting the roof
-/// fixed speaks. The man who should be fixing it is probably in back slacking
-/// off.
+/// fixed speaks.
 static void Vault_LookForRoofer(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultFixingRoofCant);
@@ -428,8 +397,6 @@ static void Vault_PraiseThievesCapture(void) {
 }
 
 /// An old man talks about Ivan, Hammet's servant.
-/// After the thieves are jailed, he says Ivan went out to Lunpa, or, with Ivan
-/// in the party, that rescuing Hammet must have been impossible.
 static void Vault_TalkAboutIvan(void) {
   struct FieldWork *workspace;
   Event_Start();
@@ -443,8 +410,7 @@ static void Vault_TalkAboutIvan(void) {
 }
 
 /// In Vault after the thieves are jailed, a townsperson says the eruption
-/// devastated the roads. Once the southern bridge is repaired, you can head
-/// toward Kalay.
+/// devastated the roads.
 static void Vault_TalkOfDamagedRoads(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultEruptionDevastatedRoads);
@@ -453,8 +419,6 @@ static void Vault_TalkOfDamagedRoads(void) {
 }
 
 /// The boy round the well asks after Ivan.
-/// After the thieves are jailed, he hopes Ivan didn't go to Lunpa alone, or,
-/// with Ivan in the party, asks when he joined up with Isaac.
 static void Vault_AskWhetherIvanWentToLunpa(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
@@ -493,9 +457,6 @@ static void Vault_ThankForCapturingThieves(void) {
 
 /// In Vault after the thieves are jailed, the strongman on watch asks about the
 /// prisoners. "Those men you captured... They're in jail now?"
-///
-/// - Yes: the prison hadn't been used in a long time.
-/// - No: they're upset; maybe go see them.
 static void Vault_AskAboutPrisoners(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
@@ -506,8 +467,7 @@ static void Vault_AskAboutPrisoners(void) {
 }
 
 /// In Vault after the thieves are jailed, the traveler asks who captured the
-/// thieves. Either answer is praised.
-/// "Are you the ones who captured the thieves?"
+/// thieves.
 static void Vault_AskWhoCapturedThieves(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultOnesWhoCapturedThieves);
@@ -516,9 +476,7 @@ static void Vault_AskWhoCapturedThieves(void) {
   Event_End();
 }
 
-/// In Vault after the thieves are jailed, the dog barks. If the party carries
-/// a Bone and the dog has not yet shown the passage, the party can give it
-/// one.
+/// In Vault after the thieves are jailed, the dog barks.
 static void Vault_TalkToDogAfterCapture(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff2);
@@ -534,9 +492,6 @@ static void Vault_TalkToDogAfterCapture(void) {
 }
 
 /// The young man fixing the roof thanks the party before it leaves.
-/// The party freed him, and he says so after the thieves are jailed.
-/// "Thank you for the other day.
-/// Are you leaving town already?"
 static void Vault_ThankBeforeDeparture(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThankForOtherDayLeaving);
@@ -560,9 +515,7 @@ static void Vault_ReadMindOnTheft(void) {
   Event_End();
 }
 
-/// In Vault, Mind Read on a townsperson. The strange travelers headed for the
-/// northeast of the Goma Range, or the only way out is the cave in the Goma
-/// Range.
+/// In Vault, Mind Read on a townsperson.
 static void Vault_ReadMindOnTravelers(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -574,9 +527,7 @@ static void Vault_ReadMindOnTravelers(void) {
   Event_End();
 }
 
-/// In Vault, Mind Read on the boy round the well. The three creeps at the inn
-/// stole the rod, or where did Ivan go? With Ivan in the party, the second
-/// thought is when did they join him?
+/// In Vault, Mind Read on the boy round the well.
 static void Vault_ReadMindOnIvan(void) {
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= 2;
   Event_Start();
@@ -618,9 +569,7 @@ static void Vault_ReadMindOnSuspects(void) {
   Event_End();
 }
 
-/// In Vault, Mind Read on the dog. Humans value money over their lives. After
-/// the thieves are jailed, bring a bone for something useful. Once fed, a
-/// careful search will reveal a passage leading underground.
+/// In Vault, Mind Read on the dog.
 static void Vault_ReadDogMind(void) {
   struct Actor *actor = Actor_Get(ACTOR_VAULT_DOG);
   actor->paused = 1;
@@ -659,8 +608,6 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
 }
 
 /// The door of the gem owner's house opens and the party walks in.
-/// It's VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST, into the house where a man
-/// keeps a sparkling rock the volcano threw.
 static void Vault_EnterGemOwnersHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_GemOwnersHouseDoorCells, 56, 19);
@@ -668,8 +615,6 @@ static void Vault_EnterGemOwnersHouse(void) {
 }
 
 /// The door of a child's home opens and the party walks in.
-/// It's VAULT_TO_LOG_ROOMS_A_SOUTHEAST, into the house east of the town's
-/// centre.
 static void Vault_EnterChildsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_ChildsHouseDoorCells, 50, 18);
@@ -677,17 +622,14 @@ static void Vault_EnterChildsHouse(void) {
 }
 
 /// The inn's door opens and the party walks in.
-/// It's VAULT_TO_LOG_ROOMS_A_SOUTHWEST, into the inn where the three
-/// suspects stay.
 static void Vault_EnterInn(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_TO_LOG_ROOMS_A_SOUTHWEST);
 }
 
-/// In Vault, the door VAULT_TO_LOG_ROOMS_A_EAST opens into the item shop,
-/// an old couple's home too. The leader walks in behind the doorway's
-/// foreground tiles.
+/// In Vault, the door VAULT_TO_LOG_ROOMS_A_EAST opens into the item shop, an
+/// old couple's home too.
 static void Vault_EnterItemShop(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -767,13 +709,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   actor->gravity = px(1);
 }
 
-/// In Vault, Isaac rings the bell. The first time since the party came in by
-/// a gate, Sap, the Venus Djinni hiding in the tree east of the bell tower,
-/// jumps out onto the cliff top above the cave mouth
-/// (FLAG_VAULT_SAP_CALLED_BY_BELL).
-///
-/// No event here lets the party talk to it. It joins in the town's later
-/// scene (vault_revisit.c).
+/// In Vault, Isaac rings the bell.
 static void Vault_RingBell(void) {
   Event_Start();
   Sound_Play(SE_BELL);
@@ -795,8 +731,6 @@ static void Vault_RingBell(void) {
 }
 
 /// Given a Bone, the dog runs to the hidden passage and jumps there.
-/// It does so after the thieves are jailed, jumping three times
-/// (FLAG_VAULT_DOG_SHOWN_PASSAGE).
 static void Vault_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Event_Start();
@@ -820,10 +754,6 @@ static void Vault_GiveBoneToDog(void) {
 }
 
 /// Arriving in Vault, the setup puts everyone where the story has them.
-///
-/// It restores the dog's and Sap's places. It sets the two children and the
-/// woman wanting the roof fixed stopping near the leader. While Ivan waits in
-/// Vault for the party, it has him greet the two and rejoin.
 s32 Scene_Initialize(void) {
   s32 suspectsMindRead;
   struct Actor *actor;
@@ -833,8 +763,6 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Import_EventSetExitRequest(VAULT_TO_VAULT_REVISIT);
   }
-  // Keep the bridge deck after a battle, and restore the two children's
-  // proximity update routines.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE) != 0) {
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
@@ -867,7 +795,7 @@ s32 Scene_Initialize(void) {
         if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
           Event_Start();
           actor = Actor_Get(ACTOR_PARTY_LEADER);
-          if (actor != 0) {
+          if (actor != NULL) {
             Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
           if (gMainRoutineWork.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
@@ -943,8 +871,6 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay) {
 }
 
 /// Applies drift and gradually damps both rates toward zero.
-/// This custom update uses speed/acceleration as its two drift rates and
-/// mirrors the resulting position into the actor's target coordinates.
 static void Vault_UpdateDriftingEffect(struct Actor *effect) {
   s32 horizontalRate;
   s32 verticalRate;
@@ -980,7 +906,6 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   anchor = Actor_Get(ACTOR_VAULT_DOG);
   if (anchor == NULL)
     return;
-  // Pick a small offset around the anchor and create the drifting sprite there.
   x = Random_Next();
   z = Random_Next();
   x <<= 3;
@@ -1017,7 +942,6 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     break;
   }
   effect->motionFlags = 0;
-  // Choose either depth drift with a slow rise or vertical drift.
   if (flags & 2) {
     s32 driftMultiplier;
     s32 directionBias;
@@ -1044,7 +968,6 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
     effect->timer = 1;
   }
-  // Install the custom motion and share the anchor's drawing priority.
   {
     /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
      * sprite->flags, 2 of 141 instructions differ in tbs-en. */

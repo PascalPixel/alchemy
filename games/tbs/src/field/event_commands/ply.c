@@ -5,8 +5,7 @@
 #include "../event_commands_internal.h"
 
 /// Per-frame update: sways 4 pixels either side of anchorX, once every 128
-/// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
-/// writes the spark's x and advances its phase.
+/// frames.
 void FieldEffect_SwayParticle(struct Actor *actor) {
   s16 *phase;
 
@@ -18,8 +17,7 @@ void FieldEffect_SwayParticle(struct Actor *actor) {
 
 /// Per-frame update: spirals in on a point 10 pixels above the Psynergy's
 /// position, at a radius of as many pixels as frames are left; released when
-/// timer reaches 0. The update of FieldPsynergy_Ply's eight spiralling
-/// particles; each one's work holds its starting angle.
+/// timer reaches 0.
 void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Vector3 pos;
@@ -49,9 +47,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
 
 /// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
 /// above the Psynergy's position, and every 3 frames sheds a spark that sways
-/// as it slowly falls. With phase -1 it stays where it is. The update
-/// FieldPsynergy_Ply gives the centre particle; spawns SPRITE_SPARKLE for each
-/// spark.
+/// as it slowly falls.
 void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
   struct FieldEffectWork *effectWork;
   s16 *phase;
@@ -90,10 +86,6 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
 }
 
 /// Runs FieldPsynergy_Ply, then stops the caster's update routine.
-///
-/// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
-///
-/// This is Ply cast on a target, which FieldPsynergy_Dispatch calls.
 void FieldPsynergy_PlyOnTarget(s32 unused) {
   FieldPsynergy_Ply();
   FieldPsynergy_StopCasterUpdate();
@@ -101,8 +93,6 @@ void FieldPsynergy_PlyOnTarget(s32 unused) {
 
 /// Eight particles spiral into the centre, where one appears, sheds sparks and
 /// flies far away.
-///
-/// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
 void FieldPsynergy_Ply(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *target = effectWork->mainActor;
@@ -131,9 +121,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   // The particles share one sprite cache; keep its slot to free at the end.
-  // last is read with no check that any particle spawned. It would be 0 only
-  // with all 64 actors taken for eight frames, and a scene places at most 60:
-  // the World Map's 51 actor placements, the party's 8 and the camera.
+  // last is read with no check that any particle spawned.
   resourceSlot = last->slot;
   Sound_PlayFar(SE_PSYNERGY_START);
   // The last particle spawned 7 frames ago with 120 frames to live: wait
@@ -184,8 +172,7 @@ void FieldPsynergy_Ply(void) {
   }
 
   // Fly away: 192 pixels at angle TRIG_TURN * 29 / 32, and release it once it
-  // arrives. Its timer is the emitter's phase: -1 stops the sway that would
-  // hold it in place.
+  // arrives.
   if (target != 0) {
     target->timer = -1;
     target->speedLimit = px(5);

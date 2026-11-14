@@ -61,7 +61,6 @@
 #include "flags.h"
 #include "main_routine_work.h"
 #include "module/scene/sanctum.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/window/window.h"
@@ -75,31 +74,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "edition.h"
-#include "types.h"
-#include "event.h"
-#include "sprite.h"
 #include "field_effect.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "io_reg.h"
 #include "save.h"
 #include "event_inline.h"
-#include "window.h"
-#include "battle_sprite_id.h"
-#include "heap_release.h"
 #include "actor_builtin_scripts.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "frame.h"
-#include "fixed_math.h"
-#include "sounds.h"
-#include "heap.h"
 #include "item_ids.h"
 #include "sound_driver_symbols.h"
 
@@ -198,17 +180,6 @@ const struct SceneExitRegion *Sanctum_GetRegions(void) { return NULL; }
 const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
 /// Chooses the actors by entrance.
-///
-/// - Vale Sanctum's Great Healer and two other healers (SANCTUM_FROM_VALE and
-///   SANCTUM_VALE_UNUSED).
-/// - The quest's gathering (SANCTUM_FROM_VALE_ERUPTION and
-///   SANCTUM_FROM_QUEST_RESTART).
-/// - The healer and ACTOR_SANCTUM_MEMBER of Vault Sanctum and Bilibin Sanctum
-///   (SANCTUM_FROM_VAULT, SANCTUM_FROM_VAULT_REVISIT, SANCTUM_FROM_LOG_ROOMS_A
-///   and SANCTUM_FROM_BILIBIN).
-/// - The healer alone in Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and
-///   SANCTUM_FROM_XIAN).
-/// - Nobody otherwise.
 const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VALE:
@@ -236,13 +207,6 @@ const struct ActorPlacement *Sanctum_GetActorPlacements(void) {
 
 /// Chooses the triggers by entrance, and in Vale Sanctum before and after the
 /// quest by story flag.
-///
-/// Vale Sanctum takes gSanctum_ValeTriggers before the party has left Vale,
-/// gSanctum_ValeTriggersAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
-/// gSanctum_ValeTriggersAfterKalay once it has reached Kalay
-/// (FLAG_KALAY_REACHED). The quest's visits (SANCTUM_FROM_VALE_ERUPTION,
-/// SANCTUM_FROM_QUEST_RESTART and SANCTUM_QUEST_UNUSED) take
-/// gSanctum_QuestTriggers.
 const struct Trigger *Sanctum_GetTriggers(void) {
   switch (gMainRoutineWork.entrance) {
   case SANCTUM_FROM_VAULT:
@@ -274,10 +238,6 @@ const struct Trigger *Sanctum_GetTriggers(void) {
 }
 
 /// Vault Sanctum: talking to ACTOR_SANCTUM_MEMBER.
-///
-/// He talks about the stolen gold statue until the thieves are jailed
-/// (FLAG_VAULT_THIEVES_JAILED) and about fate afterwards. On the later visit
-/// (SANCTUM_FROM_VAULT_REVISIT), the statue is polished.
 static void Sanctum_TalkAboutGoldenStatue(void) {
   Event_Start();
 
@@ -299,9 +259,6 @@ static void Sanctum_TalkAboutGoldenStatue(void) {
 }
 
 /// Vault Sanctum: Mind Read on ACTOR_SANCTUM_MEMBER.
-///
-/// He thinks about the stolen statue or, once it is back, about Isaac awakening
-/// to the Sanctum's teachings. On the later visit, the statue is cleaned up.
 static void Sanctum_ReadMindAboutGoldenStatue(void) {
   Event_Start();
 
@@ -324,9 +281,6 @@ static void Sanctum_ReadMindAboutGoldenStatue(void) {
 }
 
 /// Vale Sanctum: talking to the Great Healer after Isaac has refused the quest.
-///
-/// "Are you sure?" Changing his mind, Isaac can accept after all, and the quest
-/// goes on as if he had accepted at once.
 static void Sanctum_ReconsiderQuest(void) {
   Event_Start();
   Event_SetMessageId(MsgSanctumAreYouSure);
@@ -391,10 +345,6 @@ static void Sanctum_ReconsiderQuest(void) {
 
 /// Vale Sanctum, once the party has reached Kalay: talking to
 /// ACTOR_WEST_HEALER, who asks about the party's new friends.
-///
-/// "Isaac, are your new friends Adepts by any chance?" Denied, a friend's
-/// silence says they must be. In every edition but the Japanese, that friend is
-/// Ivan, placed for it. In the Japanese, it is Garet.
 static void Sanctum_AskAboutNewAdepts(void) {
   Event_Start();
 #if TBS_PATCH_1
@@ -437,13 +387,6 @@ static void Sanctum_AskAboutPsynergyChanges(void) {
 }
 
 /// Sets up the place for its entrance and plays its opening event.
-///
-/// Vault Sanctum places ACTOR_GOLD_STATUE once the thieves are jailed.
-///
-/// Vale Sanctum's quest visits restore the floor and play the request, unless
-/// the party is returning after a battle. Those visits are
-/// SANCTUM_FROM_VALE_ERUPTION, and SANCTUM_FROM_QUEST_RESTART after a refusal,
-/// which sets FLAG_SANCTUM_QUEST_RESTARTED.
 s32 Sanctum_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -484,9 +427,6 @@ s32 Sanctum_Initialize(void) {
 
 /// Vale Sanctum: heading for the door after refusing the quest (cell behavior
 /// 2, until FLAG_SANCTUM_WARNED_BEFORE_LEAVING is set, which it sets).
-///
-/// The Great Healer warns that the choice is final: "Once you step outside the
-/// village, you cannot take back your decision."
 static void Sanctum_WarnBeforeLeaving(void) {
   Event_Start();
   FieldCamera_SetSpeed(1);
@@ -506,13 +446,6 @@ static void Sanctum_WarnBeforeLeaving(void) {
 
 /// Vale Sanctum: leaving after refusing the quest (cell behavior 1) ends the
 /// game.
-///
-/// The room turns sepia: `And so the world began drifting toward its fated
-/// destruction...`
-///
-/// Starting again from the Great Healer takes SANCTUM_TO_QUEST_RESTART, back to
-/// SANCTUM_FROM_QUEST_RESTART. The other choices take SANCTUM_TO_FILE_SCREEN,
-/// to SceneId_FileScreen.
 static void Sanctum_LeaveAfterRefusing(void) {
   struct PaletteFade *paletteWork;
 
@@ -595,14 +528,6 @@ static inline void Sanctum_ShowAllEmotes(void) {
 
 /// Vale Sanctum, SANCTUM_FROM_VALE_ERUPTION and SANCTUM_FROM_QUEST_RESTART: the
 /// Great Healer asks Isaac to take on the quest.
-///
-/// The gathering hears what happened in Sol Sanctum (skipped after a refusal).
-/// The Great Healer explains the Wise One's warning, and asks Isaac to accept
-/// responsibility for the fate of the land.
-///
-/// Accepting plays Sanctum_ReceiveWiseOnesMission, sets
-/// FLAG_SANCTUM_QUEST_ACCEPTED and takes SANCTUM_TO_VALE_PLAZA. Refusing leaves
-/// the room to gSanctum_QuestTriggers.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
@@ -853,7 +778,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(32);
     Actor_SetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
     Event_Wait(30);
-    // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
     Actor_SetAnimation(ACTOR_HEALER, ANIM_STAND);
     Actor_RunRepeatedMotion(ACTOR_HEALER, 2);
@@ -1133,7 +1057,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_ShowMessage(ACTOR_GARET, 0);
     Event_Wait(30);
   }
-  // Ask Isaac to commit, or leave the group waiting for his answer.
   Event_SetMessageId(MsgSanctumIsaacWillAcceptResponsibilityFor);
   Actor_RunRepeatedMotion(ACTOR_HEALER, 1);
   Event_Wait(20);
@@ -1165,10 +1088,6 @@ static void Sanctum_RequestQuestAcceptance(void) {
 
 /// Vale Sanctum, once Isaac accepts: the Wise One appears and accepts Isaac and
 /// Garet.
-///
-/// Garet and the Mayor react. The Wise One appears before the Great Healer and
-/// accepts the two, and the healer relays its guidance. They are to leave the
-/// next day.
 static void Sanctum_ReceiveWiseOnesMission(void) {
   u32 sparkIndex;
   struct Actor *wiseOne;
@@ -1278,7 +1197,6 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Sound_Play(SE_MATERIALIZE);
-  // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
@@ -1557,7 +1475,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
   struct Sprite *sprite;
 
   actor = Actor_Get(ACTOR_HEALER);
-  if (actor != 0) {
+  if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_HEALER_AFTERIMAGE, actor->x.fixed,
                            actor->z.fixed);
   }
@@ -1573,7 +1491,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
     for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
       struct SpriteAnimation *entry = sprite->entries[entryIndex];
 
-      if (entry != 0 && entry->script != 0) {
+      if (entry != NULL && entry->script != 0) {
         entry->colorMode = SPRITE_COLOR_RED_TINT;
       }
     }
@@ -1644,10 +1562,10 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
 
   orbitStep = angleStep;
   center = Actor_Get(actorId);
-  if (center != 0) {
+  if (center != NULL) {
     effect = FieldActor_Create(SPRITE_SPARKLE, center->x.fixed,
                                center->y.fixed + px(45), center->z.fixed);
-    if (effect != 0) {
+    if (effect != NULL) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
       effect->motionFlags = 0;
@@ -1891,7 +1809,6 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(10);
-  // Repeat the synchronized eight-point paths around the room.
   Actor_SetScript(ACTOR_PARTY_LEADER, gSanctum_LeaderCircleScript);
   Actor_SetScript(ACTOR_GARET, gSanctum_GaretCircleScript);
   Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
@@ -1958,7 +1875,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   {
     u8 cleared = 0;
 
-    if (icon != 0) {
+    if (icon != NULL) {
       Actor_StartScript(icon, gItemIcon_GrowScript);
       sprite = icon->sprite;
       sprite->flags = cleared;
@@ -2020,7 +1937,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   s32 randomOffset;
 
   actor = Actor_Get(id);
-  if (actor == 0)
+  if (actor == NULL)
     return;
   randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
   x = actor->x.fixed;
@@ -2029,7 +1946,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   spark = FieldActor_Create(
       SPRITE_GLINT, x, actor->y.fixed + ((Random_Next() & 15) << 16) - px(8),
       actor->z.fixed);
-  if (spark == 0)
+  if (spark == NULL)
     return;
   sprite = spark->sprite;
   spark->motionFlags = 0;
@@ -2061,11 +1978,6 @@ static s32 Sanctum_IsLeaderFacingHealer(void) {
 }
 
 /// Vale Sanctum: talking to the Great Healer outside the quest.
-///
-/// From the front the healer opens the Sanctum's services. Otherwise the words
-/// follow the story, from "Wielders of Psynergy are called Adepts" before the
-/// party has left Vale to the closed path to Sol Sanctum once it has reached
-/// Kalay.
 static void Sanctum_TalkToHealer(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);
@@ -2084,14 +1996,6 @@ static void Sanctum_TalkToHealer(void) {
 }
 
 /// Vault Sanctum: talking to the healer.
-///
-/// From the front the healer opens the Sanctum's services. Otherwise the healer
-/// speaks of the gold statue or, on the later visit, of the earthquakes.
-///
-/// Its case for the quest's entrances (SANCTUM_FROM_VALE_ERUPTION,
-/// SANCTUM_FROM_QUEST_RESTART and SANCTUM_QUEST_UNUSED) passes to
-/// Sanctum_ReconsiderQuest, though their triggers (gSanctum_QuestTriggers) call
-/// that directly.
 static void Sanctum_TalkToHealerOnVisit(void) {
   s32 entrance;
 
@@ -2131,8 +2035,6 @@ static void Sanctum_TalkToHealerOnVisit(void) {
 }
 
 /// Bilibin Sanctum: talking to the healer, about Kolima's curse, lifted or not.
-///
-/// From the front, the healer opens the Sanctum's services.
 static void Sanctum_TalkAboutCurse(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);
@@ -2150,8 +2052,6 @@ static void Sanctum_TalkAboutCurse(void) {
 
 /// Altin Sanctum: talking to the healer, about the beasts in the mine, or the
 /// party's saving Altin from them.
-///
-/// From the front, the healer opens the Sanctum's services.
 static void Sanctum_TalkAboutAltinMonsters(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);
@@ -2168,8 +2068,6 @@ static void Sanctum_TalkAboutAltinMonsters(void) {
 
 /// Xian Sanctum: talking to the healer, who came to Xian from very distant
 /// lands.
-///
-/// From the front, the healer opens the Sanctum's services.
 static void Sanctum_TalkAboutJourneyFromXian(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Sanctum_Run(ACTOR_HEALER);

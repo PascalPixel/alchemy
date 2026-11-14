@@ -4,25 +4,15 @@
 
 #include "../battle_effect_internal.h"
 
-// Astral Blast flies three five-pointed stars at the target, knocking it back;
-// Shining Star drops eight that bounce near the target. Each outline is
-// drawn from ten corner points, tips and notches, a tenth of a turn (0x199a)
-// apart, projected onto the canvas and stored in the velocity fields of
-// PARTICLES, ten for each star; each edge is sampled at evenly spaced points
-// and a mote is stamped at each.
+// Astral Blast flies three five-pointed stars at the target; Shining Star drops
+// eight that bounce near it. Each outline's ten corners are projected onto the
+// canvas and each edge stamped with motes.
 
-/// Three pink five-pointed stars of light fly from 40 pixels above the user at
-/// the first target, 12 frames apart, growing and spinning as they go, while
-/// the camera swings round; each knocks the target back on arrival, and the
-/// third lets the battle show the damage.
+/// Three pink stars of light fly from above the user at the first target,
+/// growing and spinning, while the camera swings round; each knocks the target
+/// back.
 ///
-/// Abilities: Astral Blast (BATTLE_EFFECT_ASTRAL_BLAST).
-///
-/// work->particles 0 to 2 are the stars, battle positions in 16.16. Loads the
-/// rune palette into the first 64 background colours, sets the user's
-/// effect (2, at speed 48, three times the usual, and does not set it
-/// back), turns the camera's yaw, sends the target back with its motion
-/// fields and sets work->shakeFrames.
+/// Abilities: Astral Blast.
 void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
 #ifndef UBFIX
@@ -69,7 +59,6 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_THREE_QUARTERS;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -77,8 +66,6 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // Each star reaches the target in 12 frames; the second and third aim
-  // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
     SET_POSITION(point, source->x.fixed, source->y.fixed + px(40),
                  source->z.fixed);
@@ -94,8 +81,6 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
   trails = PARTICLES;
   for (frame = 0; frame != 60; frame++) {
-    // Swing the camera round, slowing over frames 40 to 47: 128/65536 turn a
-    // frame, 5696/65536 in all, about a twelfth of a turn.
     if (frame <= 47) {
       struct BattleCamera *view = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
       s32 speed;
@@ -118,10 +103,6 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           size = 10;
         EFFECT_VIEW_FROM_CAMERA(camera);
         Transform_ApplyPosition(Particle_Coordinates(step));
-        // The star's ten corners, tips and notches in turn,
-        // projected onto the canvas; peak is the largest projection scale
-        // (16.16), that of the point nearest the camera. The star spins 1/64
-        // turn a frame and grows from 1/16 of its size to full by 15 frames.
         peak = 0;
         for (j = 0; j != 10; j++) {
           s32 depth;
@@ -150,8 +131,6 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           trails[i * 10 + j].velocityY = screenPosition.y;
           Transform_Pop();
         }
-        // Join the points with 16 motes each, unless a point projects at a
-        // scale over 399999 (about 6.1), very near the camera.
         if (peak <= 399999) {
           for (j = 0; j != 10; j++) {
             struct Particle *from = &((struct Particle *)PARTICLES)[j + i * 10];
@@ -171,11 +150,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         step->x += step->velocityX;
         step->y += step->velocityY;
         step->z += step->velocityZ;
-        // Star i hits 10 + i frames after its launch: knock the target 40
-        // pixels back, away from the middle, and shake the screen. The third
-        // star lets the battle show the damage; the others flash the target.
-        // The target hops at 5 pixels a frame under the usual gravity and
-        // slides at up to 8 pixels a frame.
+        // Each star knocks the target back and shakes the screen.
         if (frame == start + i + 10) {
           target->acceleration = px(2);
           target->speedLimit = px(8);
@@ -207,17 +182,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Eight spinning star outlines fall from 120 pixels above the user towards the
-/// first target, a few frames apart, and bounce off the ground near it, each
-/// bounce shaking the screen and flashing the targets; the battle shows the
-/// damage on frame 96.
+/// Eight spinning star outlines fall from above the user and bounce on the
+/// ground near the first target, each bounce flashing the targets.
 ///
-/// Abilities: Shining Star (BATTLE_EFFECT_SHINING_STAR).
-///
-/// It lasts 128 frames. work->particles 0 to 7 are the stars, battle positions
-/// in 16.16, each variant the frame it starts. Rebuilds the background ramp
-/// each frame (BattleEffect_UpdatePhasePalette, after loading the rune palette)
-/// and sets work->shakeFrames at each bounce.
+/// Abilities: Shining Star.
 void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -254,7 +222,6 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
                       graphics);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  // Trails keep half of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_HALF;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -262,16 +229,11 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // Each star starts 120 pixels above the user, at half its x (towards the
-  // middle of the field), aims at a random spot up to 64 pixels either side
-  // of the target, 20 pixels up, over 12 frames, and starts 8i to 8i + 15
-  // frames in (its variant).
   for (i = 0, point = work->particles; i != 8; i++) {
     s32 delay = i * 8;
 
     SET_POSITION(point, source->x.fixed / 2, source->y.fixed + px(120),
                  source->z.fixed);
-    // The signed -64..63 pixel offset scales without a negative left shift.
     point->velocityX = (target->x.fixed +
                         ((s32)((Random16() & 0x7f) - 64) * 65536) - point->x) /
                        12;
@@ -288,8 +250,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   size = 2;
   trails = PARTICLES;
   for (frame = 0; frame != 128; frame++) {
-    // The three channels sway a third of a turn apart, so the stars run
-    // through the colours of the rainbow.
+    // The stars run through the colours of the rainbow.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
                                     TRIG_TURN / 3, 0);
     if (frame == 96)
@@ -300,9 +261,6 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         Projection_Point(step, &screenPosition);
         screenPosition.x >>= 1;
-        // On the canvas, draw the star: its ten corners, tips and notches in
-        // turn, turning 1/32 turn a frame as it falls, joined by 12 motes
-        // each; x is halved for the canvas.
         if (screenPosition.x >= -8 && screenPosition.x <= 127 &&
             screenPosition.y <= 127 && screenPosition.y >= -8) {
           for (j = 0; j != 10; j++) {
@@ -332,8 +290,6 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
             }
           }
         }
-        // Bounce below 30 pixels up, losing half the speed across. There is
-        // no gravity: after a bounce a star rises as fast as it fell.
         if (step->y <= px(30) - 1) {
           step->velocityY = -step->velocityY;
           step->velocityX /= 2;

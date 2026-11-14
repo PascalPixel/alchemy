@@ -8,32 +8,13 @@
 #define BATTLE_OUTCOME_LOST -1
 #define BATTLE_OUTCOME_FLED 999
 
-/// The six enemy units, BATTLE_UNIT_SIZE bytes each: the
-/// HEAP_SLOT_ENEMY_UNITS heap slot, gEnemyUnits, which Unit_Get
-/// reads for unit ids 128 to 133 while it is allocated (game/game/units.c). The
-/// Battle Arena passes the opponent's party to the battle in a copy of this
-/// block (scene/battle_arena.c).
+/// The six enemy units, gEnemyUnits, which Unit_Get reads for unit ids 128 to
+/// 133 while the battle lasts.
 #define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
 
-/// Fights the battle against the enemy formation enemyGroup, from the
-/// opening transition to the end, and returns how it ended: the number of
-/// enemies defeated when the party won (or the link broke), BATTLE_OUTCOME_FLED
-/// when the party ran, or BATTLE_OUTCOME_LOST.
-///
-/// Each turn, the party's commands are chosen (or chosen automatically
-/// under FLAG_AUTO_BATTLE), every unit acts in action order, and the turn ends
-/// with the turn-end effects; the Djinn tutorial adds its two messages
-/// after each turn.
-///
-/// Reached through its far stub from MainRoutine_Run's switch on the
-/// sequence (SEQUENCE_BATTLE, with the entrance as enemyGroup), and from
-/// DebugBattle_RunMenu. Allocates the battle's heap slots (the camera,
-/// gBattleWork, the enemy units, the background transition, the battle message
-/// window and others), sets FLAG_IN_BATTLE, and on its way out resets the
-/// party's battle state, sets gMainRoutineWork.battleType back to
-/// BATTLE_TYPE_NORMAL and releases heap block 10. A broken link also sets flag
-/// FLAG_AREA_TEMP_E8, which the Battle Arena reads
-/// (BattleArena_Initialize).
+/// Fights the battle against the enemy formation enemyGroup, from the opening
+/// to the end. Returns the number of enemies defeated when the party won or the
+/// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -56,13 +37,9 @@ s32 Battle_Run(s32 enemyGroup) {
    * addresses the 48 at sp+20 to sp+67; as without it, 4 of 645 instructions
    * differ in tbs-en. */
   UNUSED u8 unused[48];
-  // The fill word Dma_Fill32Cell reads its zero from.
   volatile u32 fill;
 
-  // The battle's work areas. The actor system's sprite and layer pools
-  // are taken here from EWRAM first: ActorSystem_InitializeFar's own requests
-  // for them then get these blocks, as an allocated slot is returned as it
-  // is (field/field/sprite_animation.c, system/system/heap.c).
+  // The battle's work areas, all in EWRAM.
   camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   enemyUnits = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
@@ -70,12 +47,10 @@ s32 Battle_Run(s32 enemyGroup) {
                              sizeof(struct BattleBackgroundWork));
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
   focus = camera->focus;
-  // Default: 0 until the battle's outcome is known.
   result = 0;
   Iwram_ClearWords(enemyUnits, ENEMY_UNITS_SIZE);
   Task_ResetAll();
-  // The transition owns the background (flag) until the entry transition
-  // is over, the camera toward the party's view.
+  // The opening transition owns the background until it is over.
   view->frames = 0;
   view->targetYaw = YAW_PARTY_ACTION;
   view->flag = 1;
@@ -83,10 +58,8 @@ s32 Battle_Run(s32 enemyGroup) {
   view->unusedAfterFlag[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetFar(FLAG_IN_BATTLE);
-  // Flag 0x169 is set as every battle starts and never cleared; no code,
-  // event, flag range or byte read in this game reads it.
-  // XXX (no evidence): what it marks; with no reader in the ROM, nothing the
-  // game does shows its use.
+  // XXX (no evidence): what flag 0x169 marks; it is set as every battle starts
+  // and nothing reads it.
   GameFlag_SetFar(0x169);
   Transform_Reset();
 
@@ -106,9 +79,7 @@ s32 Battle_Run(s32 enemyGroup) {
   else
     WindowSystem_InitBattleFar(0);
 
-  // The camera's starting view, in 16.16 pixels and 1/65536 turns: the focus
-  // 64 pixels up, the eye at (0, 180, 64), a yaw of 5/32 of a turn and a
-  // distance of 256 pixels. Then the enemies.
+  // The camera's starting view, then the enemies.
   SET_VECTOR(focus, 0, px(64), 0);
   SET_VECTOR(camera->eye, 0, px(180), px(64));
   camera->yaw = TRIG_TURN * 5 / 32;
@@ -116,11 +87,9 @@ s32 Battle_Run(s32 enemyGroup) {
   camera->distance = 256 << 16;
   enemyCount = BattleFormation_BuildEnemyList(battle->formation);
 
-  // A link battle: wait for the connection, take this console's side, put
-  // the opponent's party into the enemy units from the copy the Battle Arena
-  // left at gActorSpriteSlots (scene/battle_arena.c), and lay it out left to
-  // right (FORMATION_LAYOUT_SHUFFLED). Both consoles start from seed 0 so their
-  // rolls agree; the opponent's party size is the enemy count.
+  // A link battle: the opponent's party, which the Battle Arena left in
+  // gActorSpriteSlots, becomes the enemies, and both consoles start from seed 0
+  // so that their rolls agree.
   if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
     battle->isLink = 1;
     Battle_SetType(BATTLE_TYPE_LINK);
@@ -176,24 +145,18 @@ s32 Battle_Run(s32 enemyGroup) {
     battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
     battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
-  // The party status window, opened PARTY_STATUS_CLOSED: laid out, but erased
-  // until it is drawn (window/screens/party_status.c).
   PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
   BattleCamera_SetDefaultView();
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
-  // The camera on the centre at 190 percent, until the opening sets its own
-  // zoom (BattleTransition_Run). With the background
-  // BATTLE_BACKGROUND_FIXED, BattleCamera_SetRange builds no plane page; it
-  // sets at most BG1's horizontal scroll from the camera's yaw.
+  // The camera on the centre at 190 percent until the opening zooms.
   BattleCamera_SetRange(px(160), px(80), 0, 0, 2 << 16);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
-  // 128 bytes of VRAM cache for the advance arrow's tiles, which
-  // playback shows after a message (PLAY_ADVANCE); taken again each turn.
+  // The advance arrow's tiles, taken again each turn.
   battle->arrowTiles = VramCache_AllocEntry(128);
 
   // A random encounter may open with a first strike (1 in 16) or a
@@ -234,10 +197,7 @@ s32 Battle_Run(s32 enemyGroup) {
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->arrowTiles);
     if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
-      // The free-memory reads around the command menu change nothing: each
-      // only subtracts, and its result is dropped.
-      // XXX (no evidence): who read them; a debug build might have shown the
-      // figures, but nothing in the ROM keeps them.
+      // XXX (no evidence): who read the free memory around the command menu.
       Heap_GetRemainingIwram();
       Heap_GetRemainingEwram();
       actionCount = Battle_GatherActions(battle->actions);
@@ -292,9 +252,7 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0)
       continue;
 
-    // The Djinn tutorial explains unleashing and standby: two windows that
-    // zoom open at tiles (0, 4) and (10, 4), the second closed by a key at
-    // the cursor, at pixel (92, 24).
+    // The Djinn tutorial explains unleashing, then standby.
     tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
     while (Message_AllTypedFar() == 0)
       wait(1);
@@ -307,10 +265,8 @@ s32 Battle_Run(s32 enemyGroup) {
   }
 
 won:
-  // Name the defeat ("X has been downed!" or "X's party goes down!") after
-  // the first enemy to fall, then hand out the spoils. Unit 128 is
-  // rewritten as that class to carry the name, bare: letter 26 is past every
-  // edition's last (BattleUnit_Set). DEFEAT_BY_PARTY_MEMBER shows no line.
+  // "X has been downed!" or "X's party goes down!", named after the first
+  // enemy to fall, then the spoils. Letter 26 gives the name with no letter.
   Battle_ClearSerialTransferPayload();
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->isLink != 0)
@@ -335,9 +291,7 @@ won:
   goto finished;
 
 aborted:
-  // The link broke, or no actions could be gathered. Flag FLAG_AREA_TEMP_E8
-  // tells the Battle Arena (BattleArena_Initialize) the battle did not
-  // finish.
+  // The link broke, or no actions could be gathered.
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
   REG_DISPCNT = DISPCNT_MODE_1;
@@ -370,8 +324,7 @@ fled:
   result = BATTLE_OUTCOME_FLED;
 
 finished:
-  // Every way out: Djinn recover one step, the next battle starts normally,
-  // and the per-frame sorting and the affine scanlines (block 10) go.
+  // Every way out: Djinn recover one step and the next battle starts normally.
   BattleParty_ResetActiveRuntimeFields();
   Battle_ReservedNoOpF674();
   DjinnRecovery_CountDown();
@@ -381,12 +334,8 @@ finished:
   return result;
 }
 
-/// Lists the party members who fight (the first four of the party, three in
-/// a link battle) and marks each unit as a party member. unitIds, if not
-/// null, receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many
-/// fight. Called across the battle parts whenever they need the party, and
-/// through its far stub by the party status window (party_status.c). Sets
-/// each fighting party member's side to BATTLE_SIDE_PARTY.
+/// Lists the party members who fight, three in a link battle, into unitIds when
+/// it is not null, and returns how many.
 s32 BattleParty_PrepareMembers(u16 *unitIds) {
   s32 limit;
   s32 count;
@@ -413,9 +362,7 @@ s32 BattleParty_PrepareMembers(u16 *unitIds) {
   return count;
 }
 
-/// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
-/// how many there are (0 when unitIds is null). A link battle looks only at
-/// the opponent's three places.
+/// Lists the enemy units present and returns how many, 0 when unitIds is null.
 s32 BattleEnemy_List(s16 *unitIds) {
   s16 *output = unitIds;
   s32 listed = 0;
@@ -439,12 +386,8 @@ s32 BattleEnemy_List(s16 *unitIds) {
   return count;
 }
 
-/// Lists the units still standing (HP above 0) on the sides in sideMask
-/// (BATTLE_SIDE_MASK_PARTY, BATTLE_SIDE_MASK_ENEMIES or both), party first.
-/// unitIds, if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns
-/// how many there are. Called across the battle parts (the turn, staging, auto
-/// battle, the turn's end and spoils) to test whether a side still stands and
-/// to pick targets.
+/// Lists the units still standing on the sides in sideMask, party first, into
+/// unitIds when it is not null, and returns how many.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
@@ -465,8 +408,6 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = LINK_PARTY_SIZE;
   }
-  // The party, in its battle order; then every enemy unit id that is
-  // present, which a link battle limits to the opponent's three.
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = activeMembers;
     activeCount = BattleParty_PrepareMembers(base);
@@ -489,7 +430,6 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    // remaining walks the enemy unit ids here.
     remaining = FIRST_ENEMY_UNIT;
     lastEnemy = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < lastEnemy) {
@@ -512,13 +452,8 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
-/// Lists the units in the battle's unit lists on the sides in sideMask,
-/// party first, skipping those removed from the battle. unitIds, if not
-/// null, receives them ended by BATTLE_UNIT_LIST_END. Returns how many
-/// there are. Unlike BattleUnit_ListLiving, it does not test HP.
-/// Called across the battle parts that draw or target units, and through
-/// its far stub by the command windows (battle_command_row.c,
-/// battle_party_commands.c).
+/// Lists the units in the battle on the sides in sideMask, standing or not, and
+/// returns how many.
 s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
   struct BattleWork *battle;
   s32 count;

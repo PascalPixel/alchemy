@@ -26,8 +26,7 @@ STATIC_ASSERT(offsetof(struct MenuCursor, targetX) == 0x08);
 STATIC_ASSERT(offsetof(struct MenuCursor, active) == 0x0c);
 
 /// A menu cursor: its window sprite, or the cursor that approaches its target.
-// Screens that write only the image pointer use the union to retain store
-// order.
+// Screens that set only the image pointer write it through the union.
 union MenuCursorRef {
   struct WindowSprite *sprite; ///< the image alone; cursor.anchor
   struct MenuCursor cursor;

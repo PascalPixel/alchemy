@@ -19,9 +19,7 @@ struct LzPackNode {
 };
 
 /// The LZ packer's work: a node per window position, a chain head per byte
-/// value, the byte at each position, the best match and the output. Only the
-/// packer in field/lucky_wheels.c uses it, and nothing in this game calls
-/// that.
+/// value, the byte at each position, the best match and the output.
 struct LzPackWork {
   struct LzPackNode nodes[1024];  ///< one per window position
   struct LzPackNode *bucket[256]; ///< each byte value's chain, or null

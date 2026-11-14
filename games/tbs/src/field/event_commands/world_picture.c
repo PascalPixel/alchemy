@@ -39,9 +39,7 @@
 #define WORLD_MAP_MARKER_ALLOCATION_SIZE 32
 #endif
 
-/// Scratch work while WorldPicture_Show owns gMapGridCellBuffer. Setup runs
-/// before the marker task; cleanup removes its window before map graphics reuse
-/// it.
+/// Scratch work while WorldPicture_Show owns gMapGridCellBuffer.
 struct WorldPictureWork {
   u16 markerVramBlock;           ///< owns the four generated marker tiles
   u16 cursorVramBlock;           ///< owns the cursor picture's tiles
@@ -256,9 +254,7 @@ void WorldPicture_UpdateMarkers(void) {
     cursorY = work->cursorY.part.pixel;
   }
 
-  // Actor id 0 consumes no marker row. Ordinary rows begin at actor id 11; a
-  // selected slot in 1..10 also consumes one. Zero rows reserve actors
-  // with no marker and -1 ends the table. A row is (tile << 16 | flag, map id).
+  // Actor id 0 consumes no marker row.
   for (markerIndex = 0; markerIndex < WORLD_MAP_MARKER_CAPACITY;
        markerIndex++) {
     if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_AREA_ACTOR)
@@ -388,10 +384,8 @@ void WorldPicture_UpdateMarkers(void) {
     }
   }
 
-  // Pulse the markers' transparency: they weigh blend sixteenths against
-  // the picture's 16 less blend (REG_BLDALPHA's EVA and EVB).
-  // Written out: BLEND_ALPHA(blend, 16 - blend) takes its operands the other
-  // way round and changes the registers.
+  // Pulse the markers' transparency: they weigh blend sixteenths against the
+  // picture's 16 less blend (REG_BLDALPHA's EVA and EVB).
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
                       IO_WRITE_16);
@@ -399,9 +393,6 @@ void WorldPicture_UpdateMarkers(void) {
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
 /// FieldSequence_Run reaches this for raised trigger -888 in World Map mode.
-/// The marker task stops before map graphics are restored, so neither uses the
-/// other's scratch storage. The picture argument is unused; the resource is
-/// fixed.
 void WorldPicture_Show(s32 picture) {
   struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
@@ -515,9 +506,7 @@ void Field_UpdateActorVisibilityBounds(void) {
 }
 
 /// On the World Map, zooms the view out to Q16_ONE * 8 / 13 while L is held,
-/// then back. Each zoom takes 6 frames; eight thirteenths sets the view 1.6
-/// times as far (WorldMap_StartZoom). FieldSequence_Run runs
-/// it for event -889; the overlay tasks are suspended meanwhile.
+/// then back.
 void WorldMap_ZoomOutWhileLHeld(void) {
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));

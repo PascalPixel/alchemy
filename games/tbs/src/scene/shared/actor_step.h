@@ -1,9 +1,6 @@
 #ifndef ALCHEMY_ACTOR_STEP_H
 #define ALCHEMY_ACTOR_STEP_H
 
-#include "types.h"
-#include "actor.h"
-#include "fixed_math.h"
 #include "macros.h"
 
 // The pushed-statue scenes (Bilibin, its cave, Kalay, Sol Sanctum's entrance,

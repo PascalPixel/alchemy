@@ -35,7 +35,6 @@
 
 #include "main_routine_work.h"
 #include "module/scene/vale_eruption.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "battle.h"
 #include "debug.h"
@@ -43,19 +42,12 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "sounds.h"
-#include "fixed_math.h"
 
 /// The placed actors, numbered in the order of gValeEruption_ActorPlacements.
 /// Garet's row places the party's Garet and takes no number.
@@ -116,10 +108,6 @@ const struct Trigger *ValeEruption_GetTriggers(void) {
 
 /// Arriving in Vale during the eruption plays the return from the mountain,
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE.
-///
-/// Called by FieldSequence_Run once the actors are placed.
-/// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
-/// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
   if (gMainRoutineWork.entrance == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     ValeEruption_ReturnFromMtAleph();
@@ -129,14 +117,6 @@ s32 ValeEruption_Initialize(void) {
 
 /// In Vale during the eruption, the volcano shakes the ground before the
 /// sanctum while the villagers wonder where Isaac and Garet are.
-///
-/// The two come down the mountain, tell that Jenna and Kraden were taken away,
-/// and follow the elders into the sanctum.
-///
-/// Called by ValeEruption_Initialize on arrival by
-/// VALE_ERUPTION_FROM_SOL_ENTRANCE. Clears FLAG_SHOW_AREA_NAME, sets
-/// FLAG_VALE_RETURNED_FROM_MT_ALEPH and takes VALE_ERUPTION_TO_SANCTUM, where
-/// Sanctum_RequestQuestAcceptance follows.
 static void ValeEruption_ReturnFromMtAleph(void) {
   struct FieldWork *work;
   const s32 *actionScript;

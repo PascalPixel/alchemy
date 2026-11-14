@@ -11,9 +11,8 @@ struct BattleWorkUnitListView {
 };
 #endif
 
-/// Picks a random place: with requireLivingUnit, a party member still standing;
-/// otherwise any enemy place in use. Returns its place code, or 0 when there is
-/// none. Takes one Random16 roll when any position qualifies.
+/// Picks a random place: a party member still standing with requireLivingUnit,
+/// otherwise any enemy place in use. Returns 0 when there is none.
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   u16 positions[6];
   s32 count;
@@ -49,9 +48,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   count = 0;
   order = (struct BattleWorkUnitListView *)gBattleWork;
 
-  // The party's places whose unit is still standing; then, in the else
-  // branch, the enemies' places in use, whether standing or not. Each walk
-  // indexes order from its list's offset in BattleWork, in halfwords.
+  // The party's standing places, else the enemies' places in use.
   if (requireLivingUnit != 0) {
     index = 0;
     slot = (u32)&((struct BattleWork *)0)->partyUnits / sizeof(s16);
@@ -100,16 +97,9 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   return positions[(Random16() * count) >> 16];
 }
 
-// The list disagrees with what Restore does: Restore and Tonic clear stun and
-// never confusion or charm (BattleAbility_ApplyToTarget), as Restore's
-// description and the party's target window (BattleTarget_RunSelection) have
-// it; only Battle_RollEffectSuccessFar counts confusion and charm too. So
-// Cerebus and the Hydros Statue, the enemies with Restore, pass over an ally
-// who is only stunned, and may spend it on one who is only confused or
-// charmed.
-// XXX (no evidence): whether the enemies were meant to see Restore this way;
-// the code is consistent with Battle_RollEffectSuccessFar's list, so only the
-// author's intent would say which list is the slip.
+// XXX (no evidence): which list is the slip; Restore cures stun and never
+// confusion or charm, but this counts confusion and charm and not stun, so
+// Cerebus and the Hydros Statue pass over an ally who is only stunned.
 /// Counts the statuses of unit that Restore is taken to cure: delusion,
 /// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
@@ -139,9 +129,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-/// Counts what Break would undo on unit: raised Attack, Defense and Resistance
-/// stages and a summon's boost in each element. A raised Agility, which Break
-/// also undoes, isn't counted.
+/// Counts what Break would undo on unit; a raised Agility is not counted.
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                  \
   {                                                                            \
     if ((unit)->attackStage > 0)                                               \
@@ -160,13 +148,9 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-/// How worthwhile an enemy's ability is against unit, in applies (0 for
-/// pointless): a stat change that can still move (one more when it is about
-/// to wear off), a cure or a heal the unit needs, a status it lacks, a
-/// revival of a downed unit (100). Failing its added effect, the ability's
-/// damage or healing must have something to work on. kindIndex receives the
-/// ability kind less one (enum AbilityFormula). The two unnamed effects below
-/// ABILITY_EFFECT_CURE_POISON, which no row has, count as nothing.
+/// How worthwhile an enemy's ability is against unit, 0 for pointless: a stat
+/// change that can still move, a cure or heal it needs, a status it lacks, a
+/// downed unit to revive.
 #define CHECK_EFFECT_TARGET(unit, action, applies, kindIndex)                  \
   {                                                                            \
     (applies) = 0;                                                             \
@@ -302,13 +286,9 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     }                                                                          \
   }
 
-/// Picks the target of an enemy's ability (or a confused unit's), as a place
-/// code: among the units of the side it may target, those it would affect
-/// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with a
-/// strategy favours the strongest, the first of the sorted targets 6 times in
-/// 11, 15 or 18, the next 5 times, and so on. Returns TARGET_PICK_SIDE_EMPTY
-/// when the side has no one, TARGET_PICK_NONE when the ability would affect no
-/// one. Takes Random16 rolls to choose among eligible targets.
+/// Picks the target of an enemy's ability, or a confused unit's, at random
+/// among those it would affect; a single-target attack by an enemy with a
+/// strategy favours the strongest.
 s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u16 orderPositions[6];
   s32 unitIds[6];
@@ -336,9 +316,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   targetCount = 0;
   candidateCount = 0;
 
-  // The candidates: every unit listed on the side the ability may target,
-  // downed or not (only the user, for ABILITY_TARGET_SELF), with its place
-  // code. Allies of a party unit and foes of an enemy are the party.
+  // The candidates: every unit on the side the ability may target.
   if (action->targetMode != ABILITY_TARGET_ONE) {
     ownSide = 0;
     if (action->targetMode == ABILITY_TARGET_ALLIES ||
@@ -401,11 +379,9 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
               ->targetStrategy != TARGET_STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
           ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
-    // A single-target ability of ABILITY_FORMULA_ATTACK to
-    // ABILITY_FORMULA_DAMAGE by an enemy with a strategy: sort the targets by
-    // HP left or by maximum HP, the most first. Each pass of the exchange sort
-    // starts one place later, so the order can come out wrong: HP 1, 2 and 3
-    // end as 2, 3 and 1.
+    // Sort the targets by HP, the most first.
+    // BUG: each pass starts one place later, so HP 1, 2 and 3 end as 2, 3
+    // and 1.
     selected = -1;
     for (targetIndex = 0; targetIndex < targetCount; targetIndex++) {
       for (innerIndex = targetIndex; innerIndex < targetCount - 1;
@@ -432,9 +408,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
       }
     }
 
-    // Weighted toward the front: two targets 6 and 5 in 11, three 6, 5 and 4
-    // in 15, four 6, 5, 4 and 3 in 18. Five or more fall through to the even
-    // roll below.
+    // Weighted toward the front; five or more fall through to an even roll.
     switch (targetCount) {
     case 1:
       selected = 0;

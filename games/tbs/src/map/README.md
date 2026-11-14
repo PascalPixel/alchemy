@@ -83,6 +83,11 @@ first row `gMaps` counts from.
 When the party arrives, the grid, the cell pictures, the shapes and the
 tiles are unpacked into memory, where the field reads them directly.
 
+The grid comes packed as three planes: the cell pictures, the behaviors
+and the shapes. As it is unpacked, a small routine copied into fast RAM
+weaves them into one word a cell, the picture in the low half and the
+behavior and shape in the high.
+
 ## Where the files are
 
 Each folder holds `map.txt` (the grid), `cell_pictures.tsv`,

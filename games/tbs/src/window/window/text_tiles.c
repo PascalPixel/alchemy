@@ -12,10 +12,7 @@
 #endif
 
 /// Draws window tile pattern over the tile of tilemap entry *entry, with its
-/// colours mapped through remap (0 leaves a pixel as it was). A shared tile
-/// first gets a free tile of its own, which entry and mirror then point to.
-/// Only nonzero remap entries replace pixels; shared tiles become private
-/// before upload. Nothing calls it.
+/// colours mapped through remap (0 leaves a pixel as it was).
 UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                       u8 *remap) {
   struct WindowWork *work = WINDOW_WORK;
@@ -81,18 +78,9 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
           REG_DMA3);
 }
 
-/// Draws a string of 16-bit character codes with the window font into tiles
-/// of their own, starting x pixels into the first tile, and points tiles (and
-/// the same entries in mirror) at them. Colour codes change the text colour.
-/// Returns how many tiles the text covers.
-/// The canvas is eight rows of 256 pixels; the pen must stay within each row.
-/// Text is one line: a new line code only moves the pen a space on. A tilemap
-/// entry that already names a text tile keeps its tile, which is redrawn;
-/// others get a new one, marked taken (attribute 1) until the tilemap stops
-/// showing it (Window_MarkVisibleTextTiles) or its rectangle is cleared.
-/// With every text tile taken, the search gives up and reuses the tile it
-/// ends on. tiles is the work block's tilemap and mirror the same place in
-/// VRAM, both written at once.
+/// Draws a string of 16-bit character codes with the window font into tiles of
+/// their own, starting x pixels into the first tile, and points tiles (and the
+/// same entries in mirror) at them.
 s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
@@ -121,11 +109,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   paletteBits = work->textPalette << 12;
   Iwram_ClearWords(pens, 16);
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
-  // leaves the background. In WINDOW_PALETTE shade 1 takes the colour's
-  // pen (gFont_ColorPens) and shade 3 colour 3, over
-  // WINDOW_BACKGROUND_COLOR; in another palette (WindowWork.textPalette, as the
-  // party status window sets for its numbers) shade 1 takes the colour itself
-  // and shade 3 colour 1, over TEXT_BACKGROUND_COLOR.
+  // leaves the background.
   if (paletteBits == WINDOW_PALETTE << 12) {
     pens[1] = gFont_ColorPens[work->colour & 15];
     pens[3] = 3;
@@ -177,8 +161,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         }
       } else {
         // A tilemap code (such as WINDOW_TILE_HP_LABEL) draws window tile
-        // glyphCode & 0xff. In Japanese a kana mark moves back 3 pixels onto
-        // the character before it and draws from glyphs 254 and 255.
+        // glyphCode & 0xff.
         glyphCode &= 0xFF;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
         if (glyphCode == TEXT_MARK_VOICED ||
@@ -304,10 +287,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 }
 
 /// Frees the text tiles under a tilemap rectangle (x, y, width and height in
-/// tiles) for reuse: their taken and shown bits are cleared. The callers do
-/// this before overwriting the rectangle's entries.
-/// Only the dynamic text-tile ranges have allocation attributes to clear;
-/// the second range only while alt is set.
+/// tiles) for reuse: their taken and shown bits are cleared.
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
@@ -331,11 +311,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 }
 
 /// Marks the text tiles the tilemap shows, and frees those it no longer shows:
-/// a tile taken but not marked shown (attribute exactly 1). The shown bit
-/// stays set afterwards, until the tile's rectangle is cleared. The field
-/// menus (menu/menu/djinn.c, djinn_preview.c, item.c, psynergy.c and status.c)
-/// and the battle menus (screens/battle_djinn_menu.c, battle_party_commands.c
-/// and battle_status.c) call it.
+/// a tile taken but not marked shown (attribute exactly 1).
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;
@@ -366,13 +342,9 @@ void Window_MarkVisibleTextTiles(void) {
   }
 }
 
-/// Frees the text tiles of the second range (attributes 128 to 255, tiles
-/// 512 to 639), and with allowAlternateTiles set lets text tiles take that
-/// range too; the first range's tiles keep their state. Both branches clear
-/// the same 128 attributes.
-/// The second range extends text capacity from 128 to 256 tiles. The field's
-/// Djinn, item, Psynergy and status menus and the battle's Djinn menu set it
-/// while open and clear it on leaving.
+/// Frees the text tiles of the second range (attributes 128 to 255, tiles 512
+/// to 639), and with allowAlternateTiles set lets text tiles take that range
+/// too; the first range's tiles keep their state.
 void Text_UseExtraTiles(s32 allowAlternateTiles) {
   s32 i;
   s32 j;
@@ -566,9 +538,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
   }
 }
 
-/// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
-/// figures with it (menu/menu/shared.c, screens/party_status.c), and
-/// set TEXT_COLOR_WHITE back after.
+/// Sets the text colour (0 to 15) of drawn text.
 void Text_SetColor(s32 param) {
   struct WindowWork *work = WINDOW_WORK;
 
@@ -584,9 +554,7 @@ void Text_SetStyle(u16 value) {
 }
 
 /// Decodes a message and draws it into a text canvas window at pixel (x, y),
-/// all at once. It decodes from the start of the ring of decoded text (count
-/// 0), overwriting whatever decoded text was there, and uses up the message
-/// arguments.
+/// all at once.
 void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y) {
   struct WindowWork *canvas = WINDOW_WORK;
   canvas->textBufferEnd = 0;
@@ -598,9 +566,7 @@ void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y) {
 
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
 /// offsetY) of its interior. offsetY is rounded down to a tile row; offsetX
-/// picks the tile, and its remainder is where the text starts in it. As
-/// Text_DrawMessage, it decodes from the ring's start. Nothing is drawn
-/// when the place falls outside the tilemap's 32 by 20 entries.
+/// picks the tile, and its remainder is where the text starts in it.
 void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
                              u32 offsetX, u32 offsetY) {
   s32 byteOffset;
@@ -641,10 +607,8 @@ static __inline__ void Text_WidenByteString(const u8 *input, u16 *output) {
   *output = 0;
 }
 
-/// Draws a byte string into a text canvas window at pixel (x, y).
-/// The 256-halfword scratch requires at most 255 input bytes before the
-/// terminator. The scratch comes from EWRAM, or IWRAM when EWRAM is full
-/// (Heap_AllocEwram), and is freed before returning.
+/// Draws a byte string into a text canvas window at pixel (x, y). The
+/// 256-halfword scratch requires at most 255 input bytes before the terminator.
 void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
   s16 *buffer;
 
@@ -656,8 +620,6 @@ void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
 
 /// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
 /// its interior.
-/// The conversion scratch has the same 255-byte input limit as
-/// Text_DrawString.
 void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
                              s32 offsetX, s32 offsetY) {
   s16 *buffer;
@@ -688,10 +650,8 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
   }
 }
 
-/// Draws a byte string into a window's tilemap at pixel (x, y) of its
-/// interior, rounded down to tiles.
-/// Bytes widen to character codes; pixel coordinates round down to tile
-/// coordinates.
+/// Draws a byte string into a window's tilemap at pixel (x, y) of its interior,
+/// rounded down to tiles.
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
                              u32 y) {
   u16 *buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);

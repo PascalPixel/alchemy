@@ -11,26 +11,17 @@ struct Spark {
   s32 life;      ///< frames left
 };
 
-/// The star field's sparks and rings, the frames in which a spent spark
-/// starts again, and its canvas's centre, the unit's place, in pixels; a
-/// ring's pictures are 32 by 32.
+/// The star field's sparks and rings, and the frames in which a spent spark
+/// starts again.
 #define STAR_FIELD_SPARKS 16
 #define STAR_FIELD_RINGS 3
 #define STAR_FIELD_SPAWN_FRAMES 25
 #define STAR_FIELD_CENTER 64
 #define STAR_FIELD_RING_SIZE 32
 
-/// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
-/// in the HEAP_SLOT_BATTLE_EFFECT heap slot from
-/// ElementGlow_InitializeStarField to
-/// ElementGlow_End, the 45 frames of a cast's glow
-/// (ElementGlow_Play, GLOW_STAR_FIELD). ElementGlow_UpdateStarField draws from
-/// it, ElementGlow_UploadStarField reads its ready flag, and ElementGlow_Play
-/// writes its canvas origin.
+/// The star field's work, for the 45 frames of a cast's glow.
 struct SparkWork {
-  /// The blue ring sheet's pictures, decoded: the sparks' sizes at
-  /// gElementGlow_StarPictures, the rings' pictures at
-  /// gElementGlow_RingPictures.
+  /// The blue ring sheet's pictures, the sparks' and the rings'.
   u8 sheet[4544];
   struct Spark sparks[STAR_FIELD_SPARKS];
   struct Ring rings[STAR_FIELD_RINGS];
@@ -50,12 +41,8 @@ STATIC_ASSERT(offsetof(struct SparkWork, canvasOrigin) ==
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
 
-// Draws the star field's next frame on the canvas (HEAP_SLOT_BATTLE_CANVAS):
-// each spark falls towards the centre and is drawn smaller as its life runs
-// out, a spent one starts again on a ring of random radius during the first 25
-// frames, and the three rings move outward through four frames. Sets
-// SparkWork.ready for ElementGlow_UploadStarField. Runs each frame as a task
-// added by ElementGlow_InitializeStarField.
+// Draws the star field's next frame: each spark falls towards the centre and
+// shrinks as its life runs out, and the three rings move outward.
 UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   s32 ringIndex;
   s32 picture;
@@ -89,9 +76,7 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   for (sparkIndex = 0; sparkIndex < STAR_FIELD_SPARKS; sparkIndex++) {
     spark = &work->sparks[sparkIndex];
     life = spark->life;
-    // A live spark ends within 0xfff (4 canvas pixels) of the centre; else
-    // each axis's velocity loses 1/128 and gains a pull of 1.1875
-    // towards the centre, the axis's share of its distance.
+    // A spark ends near the centre; until then it is pulled towards it.
     if (life != 0) {
       distance = FixedSqrt((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
                            (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
@@ -169,10 +154,8 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
   work->ready = 1;
 }
 
-// Copies the canvas, once a frame is drawn, to BG2's tiles in character block 1
-// through PaletteFade_BackupAndScaleThreeQuarters, and clears SparkWork.ready.
-// Runs each frame as a task added by ElementGlow_InitializeStarField. UB: the
-// task runner invokes a void task.
+// Copies the drawn canvas to BG2's tiles. UB: the task runner invokes a void
+// task.
 #ifdef UBFIX
 void ElementGlow_UploadStarField(void) {
 #else
@@ -200,16 +183,8 @@ u32 ElementGlow_UploadStarField(void) {
 #define STAR_FIELD_UPLOAD_FUNC ((TaskFunc)ElementGlow_UploadStarField)
 #endif
 
-/// Starts a star field of the element mode (0 to 3, enum Element order):
-/// sixteen sparks on random rings and three rings 120 degrees apart. Allocates
-/// the field's work (HEAP_SLOT_BATTLE_EFFECT) and a cleared 128 by 128 canvas
-/// (HEAP_SLOT_BATTLE_CANVAS), decodes the blue ring sheet into the work, loads
-/// the element's 64 colours over the first of BG palette RAM, sets BG2's affine
-/// parameters to no zoom, loads both blitters and adds
-/// ElementGlow_UpdateStarField and ElementGlow_UploadStarField. Also sets
-/// BattleBackgroundWork.mode to BATTLE_BACKGROUND_FIXED. Returns the upload
-/// task's task index (-1 when the task table is full), which the caller does
-/// not read.
+/// Starts a star field of the element: sixteen sparks on random rings and three
+/// rings 120 degrees apart. Returns the upload task's index.
 s32 ElementGlow_InitializeStarField(s32 element) {
   struct SparkWork *work;
   struct Spark *spark;
@@ -229,9 +204,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
    * differ in tbs-en. */
   do {
   } while (0);
-  // Each spark at a random angle, half of 1 to 2 (16.16) out, a random height
-  // above, swirling: its velocity points inward and a little sideways. An odd
-  // coordinate is mirrored, and the further out, the longer it lives.
+  // Each spark at a random angle and height, swirling inward; the further out,
+  // the longer it lives.
   for (effectIndex = 0; effectIndex < STAR_FIELD_SPARKS; effectIndex++) {
     s32 angle = Random16();
     u32 radius = Random16() + Q16_ONE;
@@ -299,9 +273,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   return Task_Add(STAR_FIELD_UPLOAD_FUNC, TASK_PASS_FRAME);
 }
 
-/// Ends a star field: clears BG2's tiles in character block 1, frees its
-/// blitters, canvas and work, turns BG2 off and removes both tasks. Returns
-/// Task_Remove's result, which the caller does not read.
+/// Ends a star field and turns BG2 off.
 s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
@@ -316,10 +288,6 @@ s32 ElementGlow_End(s32 unused) {
 
 /// Copies count colours from source to destination, each channel scaled by
 /// scale (16.16, at most 1), and returns 0.
-/// Called to darken the background's palette by
-/// BattleBackground_SetPaletteLevel, BattleBackground_Load,
-/// ElementGlow_Play, the item staging (staging.c) and the
-/// battle effects' canvas (canvas.c).
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 i;
@@ -349,16 +317,8 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   return 0;
 }
 
-/// Plays a glow of the element about a unit, and returns when it is over.
-/// The glow is mode (enum BattleElementGlow), GLOW_PILLAR at strength
-/// variant. Called with GLOW_STAR_FIELD by
-/// BattleStaging_HideField and BattleStaging_RunPsynergyCast,
-/// with GLOW_STREAKS by the latter, with GLOW_PILLAR by
-/// BattleUnit_ProcessActionEnd and with GLOW_BURST by Battle_ProcessTurnEnd and
-/// BattleActionRun_Build. Every glow first puts the background in
-/// BATTLE_BACKGROUND_FIXED and opens window 0 over lines 16 to 135, with BG2
-/// blended over the other layers; GLOW_STAR_FIELD leaves the background's
-/// palette and BattleWork.brightness darkened.
+/// Plays a glow of the element about a unit, and returns when it is over: the
+/// star field, the streaks, the pillar or the burst.
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 240 bytes it reserves (sub sp, #240), no instruction
@@ -396,9 +356,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == GLOW_STAR_FIELD) {
-    // The star field for 45 frames, darkening the background a level a
-    // frame for its first 25 and keeping BG2's canvas centred on the unit
-    // (its origin queued to BG2X and BG2Y with interrupts off).
+    // The star field for 45 frames, the background darkening for the first 25.
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
     ElementGlow_InitializeStarField(element);
     for (frame = 0; frame <= 44; frame++) {

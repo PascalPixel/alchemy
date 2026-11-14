@@ -5,11 +5,8 @@
 #include "sprite_ids.h"
 #include "module/window/window.h"
 
-/// A sprite's pulse, as a scale where 256 is its normal size: it swells to
-/// 1.5 times and back over 32 steps. The swelling sprites loop over it, the
-/// shrinking ones take every other step of its second half
-/// (WindowSprite_UpdateScaleAnimation), and the command rows' chosen icon
-/// pulses by it (screens/battle_command_row.c, icon_menu.c).
+/// A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5
+/// times and back over 32 steps.
 // clang-format off
 const u16 gWindowSprite_BounceScales[32] = {
     256, 256, 260, 266, 274, 284, 294, 306,
@@ -23,17 +20,13 @@ const s8 gWindowSprite_BounceScalesTail[8] = {
     -15, -28, -36, -40, -36, -28, -15, 0,
 };
 
-/// The selection cursor's bob: a 16-step wave of up to 3 pixels each way. The
-/// selection screen's hand takes a step every 4 frames, its large icon half
-/// the offset a step every 2.
+/// The selection cursor's bob: a 16-step wave of up to 3 pixels each way.
 const s8 gMenuCursor_BobOffsets[16] = {
     0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0,
 };
 
 /// The window colour wheel: one colour channel's level (0 to 31) over 96 hue
-/// steps. Red reads it at the hue, green 32 steps later and blue 64 steps
-/// later (WindowColor_Apply); a channel falls from 31 over 32 steps, stays
-/// 0 for 34 and climbs back. Nothing reads the 25 entries after the first 96.
+/// steps.
 const u8 gWindowColor_WaveTable[121] = {
     31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
     15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
@@ -45,10 +38,8 @@ const u8 gWindowColor_WaveTable[121] = {
     41, 44, 47, 49, 52, 54, 57, 60, 62,
 };
 
-/// The settings menu's command icons for each setting's choices: message
-/// speed Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
-/// Each is a command icon number for CommandIcon_Create, in the order of the
-/// setting's values.
+/// The settings menu's command icons for each setting's choices: message speed
+/// Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
 const s8 gSettingsMenu_SpeedIcons[3] = {
     COMMAND_ICON_SPEED_SLOW,
     COMMAND_ICON_SPEED_NORMAL,
@@ -75,9 +66,8 @@ const u8 gSettingsMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
 
-/// The command icon of each entry in the Pause menu (Save your quest,
-/// Sleep, Change settings, and the debug entries after them). The menu shows
-/// at most six; nothing reads the last two.
+/// The command icon of each entry in the Pause menu (Save your quest, Sleep,
+/// Change settings, and the debug entries after them).
 const s8 gPauseMenu_Icons[8] = {
     COMMAND_ICON_SAVE_QUEST, COMMAND_ICON_SLEEP, COMMAND_ICON_CHANGE_SETTINGS,
     COMMAND_ICON_DROP,       COMMAND_ICON_DROP,  COMMAND_ICON_DROP,

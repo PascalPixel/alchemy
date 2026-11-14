@@ -4,9 +4,7 @@
 
 #include "../screens_internal.h"
 
-// The three save files. Each is two 4 KB parts of backup memory: part
-// `file` holds the first half of the 8 KB save buffer and part
-// `file + SAVE_FILE_COUNT` the second.
+// The three save files.
 #define SAVE_FILE_COUNT 3
 #define SAVE_PART_BYTES 4096
 #define SAVE_NO_FREE_FILE 999
@@ -107,10 +105,6 @@ s32 Save_CountFilesExcludingSent(s32 excludeSent) {
 /// Loads the save file summaries for the File Screen and returns how many files
 /// there are: plus SAVE_SCAN_ALL_CLEARED when every file is cleared (its send
 /// flag set), or SAVE_ERROR_NO_MEMORY when the backup memory cannot be read.
-/// Sets gTitleBattleOptionEnabled, which offers Battle, when a file has any of
-/// game flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when
-/// a file has its send flag set and R and Left are held.
-/// FileList_SelectAction reads all three.
 s32 Save_ScanFileSummaries(void) {
   s32 error;
   s32 sentCount;
@@ -157,7 +151,6 @@ s32 Save_ScanFileSummaries(void) {
 /// (the leader's name, level and class, the play time, area, coins, Djinn of
 /// each element, the party, the send flag and how many of game flags 48-127 are
 /// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
-/// Returns the checksum.
 u32 Save_BuildFileSummary(void) {
   u16 members[14];
   struct SaveFileSummary *summary;
@@ -249,11 +242,8 @@ u32 Save_BuildFileSummary(void) {
 }
 
 /// Saves the game to the current file (gSaveSlot): builds the summary and
-/// writes both halves of the save buffer, as parts gSaveSlot and
-/// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
-/// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
-/// Save_ToChosenFile it asks nothing and does not capture gActors
-/// first (Save_CaptureActorsFar).
+/// writes both halves of the save buffer, as parts gSaveSlot and gSaveSlot +
+/// SAVE_FILE_COUNT.
 s16 Save_WriteCurrentFile(void) {
   s16 file;
   s16 result;
@@ -315,11 +305,7 @@ s32 Save_WriteFile(s32 file) {
 
 /// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
 /// half of the save buffer) into the current file's first part, leaving the
-/// rest of the part as it was saved. Returns 0, -1 when no file is chosen, or
-/// a SAVE_ERROR_* after showing its message. The Battle Arena saves its battle
-/// results this way (BattleArena_SaveBattleResults). The part's 4 KB buffer
-/// is taken from the EWRAM pool and freed before it returns, except when
-/// no file is chosen.
+/// rest of the part as it was saved.
 s32 Save_ProcessSelectedFile(void) {
   void *part;
   s32 result;
@@ -359,8 +345,7 @@ s32 Save_ProcessSelectedFile(void) {
 }
 
 /// Asks whether to save over the current file and, on Yes, writes the save
-/// stamp into it (Save_ProcessSelectedFile) and says so. "OK to save over
-/// this file?" and "Your game was saved." Returns that result.
+/// stamp into it (Save_ProcessSelectedFile) and says so.
 UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
   s32 result;
 
@@ -388,9 +373,7 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
 
 /// The file list's Copy (scene/file_screen.c): lets the player choose a file,
 /// reads both of its parts into the save buffer, overwriting it, and writes
-/// them to the first empty file. Returns 0, -1 when cancelled, or a
-/// SAVE_ERROR_* after showing its message (the game says "Failed to erase."
-/// both when no file is empty and when the write fails).
+/// them to the first empty file.
 s32 Save_CopyFile(void) {
   u32 error;
   s32 file;
@@ -440,9 +423,7 @@ s32 Save_CopyFile(void) {
 }
 
 /// The file list's Erase (scene/file_screen.c): lets the player choose a file,
-/// asks whether to erase it and on Yes deletes both of its parts. "OK to
-/// erase this?" Returns 0 (also when the player answers No), -1 when cancelled,
-/// or a SAVE_ERROR_* after showing its message.
+/// asks whether to erase it and on Yes deletes both of its parts.
 s32 Save_EraseSelectedFile(void) {
   s32 error;
   s32 file;
@@ -483,13 +464,8 @@ s32 Save_EraseSelectedFile(void) {
 
 #if TBS_PATCH_1
 
-/// A task that makes colours 8-11 of HIGHLIGHT_PALETTE glow: each
-/// follows a sine wave of the frame counter, eight frames behind the one
-/// before. With n the sine as a whole number from -4 to 4 (Trig_Sin's 16.16
-/// result over 16384, rounded toward zero), the colour is red 22 + 2n, green
-/// 16 + n and blue 20 + n (of 31): red 14 to 30, green 12 to 20 and blue 16
-/// to 24. The step of 3/256 of a turn a frame makes a cycle of about
-/// 85 frames. FileList_StartPulse runs it while the file list is open.
+/// A task that makes colours 8-11 of HIGHLIGHT_PALETTE glow: each follows a
+/// sine wave of the frame counter, eight frames behind the one before.
 void FileList_UpdatePulse(void) {
   s32 *vblankCount;
   volatile u16 *palette;
@@ -538,10 +514,9 @@ void FileList_StartPulse(void) {
 void FileList_StopPulse(void) { Task_Remove(FileList_UpdatePulse); }
 
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
-/// clipped to the screen as Window_SetTextTileBitRect clips, with the
-/// tile entry of tile 6 in HIGHLIGHT_PALETTE, the palette
-/// FileList_UpdatePulse animates. The file list marks the file under
-/// the cursor with it.
+/// clipped to the screen as Window_SetTextTileBitRect clips, with the tile
+/// entry of tile 6 in HIGHLIGHT_PALETTE, the palette FileList_UpdatePulse
+/// animates.
 void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
                             s32 height) {
   u16 *tilemap = (u16 *)gWindowWork[0];
@@ -589,9 +564,8 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 
 #endif
 
-/// The file list shows the chosen file's party as standing sprites in a
-/// row, and four Djinn sprites, one for each element, over the file's Djinn
-/// counts. Each sprite stands three tiles (24 pixels) from the one before.
+/// The file list shows the chosen file's party as standing sprites in a row,
+/// and four Djinn sprites, one for each element, over the file's Djinn counts.
 #define FILE_LIST_SPRITE_SPACING 3
 /// Task priority of the tasks that place the sprites every frame.
 #define FILE_LIST_SPRITE_PRIORITY (200 << 4)
@@ -738,8 +712,7 @@ void FileList_PlaceDjinnSprites(void) {
 }
 
 /// Draws the Djinn counts of save file `summary`, one for each element, two
-/// digits each, 24 pixels apart on row 16 of `window`, under the Djinn
-/// sprites. Does nothing when `window` is NULL.
+/// digits each, 24 pixels apart on row 16 of `window`, under the Djinn sprites.
 void FileList_DrawDjinnCounts(struct Window *window,
                               struct SaveFileSummary *summary) {
   s32 i;
@@ -767,8 +740,7 @@ void FileList_DrawDjinnCounts(struct Window *window,
 #endif
 
 /// Draws the summary of save file `summary` into `window`: the leader's name,
-/// level and class, the play time and the coins. Does nothing when `window`
-/// is 0.
+/// level and class, the play time and the coins.
 void FileList_DrawSummary(struct Window *window,
                           struct SaveFileSummary *summary) {
   u32 playTime[4]; // the play time text
@@ -813,10 +785,8 @@ void FileList_DrawSummary(struct Window *window,
   }
 }
 
-/// What the file list is choosing a file for, which decides the files
-/// the cursor may stop on. Each mode also indexes the heading the menu shows
-/// (gMenuTitlePictures: Save, Continue, Copy, Erase, Battle,
-/// Link).
+/// What the file list is choosing a file for, which decides the files the
+/// cursor may stop on.
 enum FileMenuMode {
   FILE_LIST_SAVE,     ///< saving: any file, empty ones too
   FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
@@ -830,12 +800,9 @@ enum FileMenuMode {
 /// FileList_SelectFile's result when no file can be chosen in its mode.
 #define FILE_LIST_NO_FILE -2
 
-// The file list: lists the three files with each one's leader and area
-// (or why it cannot be chosen) and, for the file under the cursor, its
-// summary, its party and its Djinn, with the file's own palette glow. The
-// cursor starts on `file` and moves up and down over the files `mode` allows
-// (see FileMenuMode). Returns the file chosen with A, -1 when cancelled with
-// B, or FILE_LIST_NO_FILE when no file is allowed.
+// The file list: lists the three files with each one's leader and area (or why
+// it cannot be chosen) and, for the file under the cursor, its summary, its
+// party and its Djinn, with the file's own palette glow.
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   struct Window *fileList;
 #if TBS_PATCH_1
@@ -1180,9 +1147,7 @@ done:
 
 /// The Save command: lets the player choose a file (the current one first),
 /// asks whether to save over it when it has data, then saves the game to it,
-/// gActors included, and makes it the current file. The question is "OK
-/// to save over this file?" Returns 0 (also when the player answers No), -1
-/// when cancelled, or a SAVE_ERROR_* after showing its message.
+/// gActors included, and makes it the current file.
 s32 Save_ToChosenFile(void) {
   s32 result;
   s32 file;
@@ -1244,9 +1209,7 @@ done:
 
 /// Lets the player choose a file in file list `mode` (see FileMenuMode) and
 /// loads it into the save buffer as the current file, restoring its play time
-/// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
-/// its message. The title's Continue (mode 1), Battle (4) and Send (5) load
-/// through here (scene/file_screen.c).
+/// and options.
 s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
   s32 error = Save_InitializeWork();
@@ -1282,12 +1245,9 @@ s32 Save_ChooseAndLoadFile(s32 mode) {
   return result;
 }
 
-/// Loads the pointing hand cursor's tiles (gPointingHandTiles, 128
-/// bytes) into a free VRAM slot and returns the slot, which the caller frees
-/// with VramCache_FreeEntry. The slot is not checked: with the cache full
-/// the load is given VRAM_CACHE_ENTRY_COUNT. Colosso's markers
-/// (scene/shared/colosso_marker.h) and, by far call, the world map's cursor
-/// (field/event_commands/world_picture.c) use it.
+/// Loads the pointing hand cursor's tiles (gPointingHandTiles, 128 bytes) into
+/// a free VRAM slot and returns the slot, which the caller frees with
+/// VramCache_FreeEntry.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 

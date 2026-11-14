@@ -14,10 +14,7 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
 
 /// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 /// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
-/// party trailing eight afterimages tinted for its element. Only
-/// Field_RequestDjinnBattle calls it, when DJINN_NO_HOP is clear. Nothing
-/// here releases the afterimages: they last until the scene is left for the
-/// battle.
+/// party trailing eight afterimages tinted for its element.
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *copy;
@@ -46,9 +43,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   wait(20);
   Actor_FaceDirectionById(djinniId, back, 0);
   wait(10);
-  // Sprite priority 0, over every background, until the end. With
-  // ACTOR_FACES_MOTION off it keeps facing the leader as it hops away, and
-  // with ACTOR_FALLS alone it falls without following the ground.
+  // Sprite priority 0, over every background, until the end.
   djinni->sprite->image.priority = 0;
   djinni->facing = back;
   Actor_GetById(djinniId)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -71,10 +66,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   wait(20);
 
   // Afterimages of the same sprite at 15/16 size, each closing half the
-  // distance to the one before it every frame, tinted by the Djinni's
-  // sprite: SPRITE_VENUS_DJINNI takes param 2, SPRITE_MARS_DJINNI 10, and
-  // SPRITE_MERCURY_DJINNI and SPRITE_JUPITER_DJINNI 9. They share one VRAM
-  // cache entry.
+  // distance to the one before it every frame, tinted by the Djinni's sprite:
+  // SPRITE_VENUS_DJINNI takes param 2, SPRITE_MARS_DJINNI 10, and
+  // SPRITE_MERCURY_DJINNI and SPRITE_JUPITER_DJINNI 9.
   sprite = djinni->sprite->entries[0]->animationId;
   tint = 9;
   if (sprite == SPRITE_VENUS_DJINNI)
@@ -128,14 +122,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
 /// A Djinni joins the party: djinn (0 to 19) of element goes to the party
 /// member with the fewest Djinn, or to no one and only its flag while
-/// FLAG_DJINN_LESSON is set. Unless slot is -1, the Djinni's actor slot first
-/// plays its element's capture effect and is released. Ends with
-/// `<Djinni> joined <member>.`
-///
-/// Nothing happens when Djinn_GiveToParty refuses the Djinni: -1
-/// when it was found before, -2 when no party member has room; its actor then
-/// stays. Called by Djinn_ResolvePending after a won Djinni battle, by
-/// 13 scenes directly and by the test scenes.
+/// FLAG_DJINN_LESSON is set.
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
@@ -177,15 +164,11 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   }
 }
 
-/// Puts a Djinni's actor back where its battle started from: for a
-/// pending Djinni battle (pendingDjinni 300 to 380,
-/// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
-/// for that Djinni (condition = its flag) goes back to its placement's
-/// position, or 32 pixels north of the leader when the event has DJINN_NO_HOP
-/// set, and stands (animation 1). FieldSequence_Run calls it as it
-/// rebuilds the scene, only while an event is still pending after
-/// Djinn_ResolvePending's first call, that is after a won battle; the second
-/// call then makes this actor join the party.
+/// Puts a Djinni's actor back where its battle started from: for a pending
+/// Djinni battle (pendingDjinni 300 to 380, FLAG_KEEP_PARTY_POSITION set, the
+/// battle over) the scene's actor placed for that Djinni (condition = its flag)
+/// goes back to its placement's position, or 32 pixels north of the leader when
+/// the event has DJINN_NO_HOP set, and stands (animation 1).
 void Djinn_RestoreActorAfterBattle(void) {
   s32 flags = gMainRoutineWork.pendingDjinni & DJINN_PENDING_KIND_MASK;
   u32 event = gMainRoutineWork.pendingDjinni & DJINN_PENDING_EVENT_MASK;
@@ -231,19 +214,8 @@ void Djinn_RestoreActorAfterBattle(void) {
 }
 
 /// Settles a pending Djinni battle as a scene loads, from the battle's result
-/// in sequenceResult (the enemies defeated, 999 when the party fled, -1
-/// when it lost). FieldSequence_Run calls it with shown 0 while it builds the
-/// scene and, while the event is still pending, with shown nonzero once the
-/// scene is on screen.
-///
-/// After a won battle the first call leaves the event pending and the second
-/// makes the Djinni join the party, 40 frames in (Djinn_JoinParty).
-/// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING flag, which
-/// hides the Djinni's actor until the scene
-/// is entered normally again (field_sequence/actors.c), and drops the event.
-/// A mimic chest's event (kind CONDITION_FLAG_SET, field_sequence/triggers.c)
-/// sets the chest's flag when the battle ended with exactly one enemy defeated,
-/// and is dropped.
+/// in sequenceResult (the enemies defeated, 999 when the party fled, -1 when it
+/// lost).
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s16 *pending = &st->pendingDjinni;
@@ -300,8 +272,7 @@ void Djinn_ResolvePending(s32 shown) {
 void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
 /// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
-/// starts their update task. The block is a whole field effect,
-/// gFieldEffectWork, the slot a field Psynergy also takes.
+/// starts their update task.
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
@@ -310,9 +281,8 @@ void FieldEffect_InitializeSlots(void) {
   Task_Add(FieldEffect_UpdateAllSlots, TASK_PASS_FRAME);
 }
 
-/// Stops the field effect sprites: removes their task, frees every slot
-/// still in use and releases their heap block, gFieldEffectWork with it. Then
-/// waits a frame. Pairs with FieldEffect_InitializeSlots.
+/// Stops the field effect sprites: removes their task, frees every slot still
+/// in use and releases their heap block, gFieldEffectWork with it.
 void FieldEffect_ReleaseSlots(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct FieldParticle *effect;
@@ -344,10 +314,7 @@ enum DjinniLightState {
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
 /// circles its centre while it widens for 60 frames, circles 40, drifts toward
-/// a point 20 pixels over the leader for 40, closes in for 60 and is freed. It
-/// turns 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
-/// pixel a frame. The slot's origin is the centre, in screen coordinates
-/// (Camera_WorldToScreen).
+/// a point 20 pixels over the leader for 40, closes in for 60 and is freed.
 void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *target;
   struct Vector3 position;

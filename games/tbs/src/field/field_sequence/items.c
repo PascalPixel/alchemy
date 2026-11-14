@@ -9,9 +9,7 @@
 typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 
 /// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
-/// what the leader faces, or 0 (item 0 matches any item). The event's trigger
-/// names an actor (TRIGGER_ITEM_ON_ACTOR) or a cell behavior, and may also
-/// require the leader to face within 0x17ff (about 34 degrees) of a direction.
+/// what the leader faces, or 0 (item 0 matches any item).
 s32 Field_FindItemTrigger(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -56,14 +54,7 @@ s32 Field_FindItemTrigger(s32 item) {
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
 /// character using it (bits 10 to 13; 15 for the character carrying most of
-/// it); slot is its inventory slot. The scene's item trigger for what the
-/// leader faces runs if there is one; otherwise an item with a field action
-/// uses it (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS
-/// still set afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes
-/// the item. Returns 0 when the scene's event ran or Retreat was declined, else
-/// -1, the item's own action included; FieldSequence_Run ignores it. Retreat
-/// sets gMainRoutineWork.next and .entrance to the Retreat point and raises
-/// work->exit.
+/// it); slot is its inventory slot.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -81,8 +72,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   itemId = ACT_ITEM_ID(packedItem);
   actorId = ACT_UNIT(packedItem);
   // Count the user's slots holding the item; with no user given, the user is
-  // whoever holds it in the most slots, the earlier on a tie. Nobody holding
-  // it ends the use at once.
+  // whoever holds it in the most slots, the earlier on a tie.
   {
     mostMatchingSlots = 0;
     partyCount = Party_CountMembersFar();
@@ -119,9 +109,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   trigger = (const struct Trigger *)Field_FindItemTrigger(itemId);
   if (trigger != 0 && trigger->value != 0) {
-    // The scene's event: a message, or a function. A value below
-    // TRIGGER_RESULT_MESSAGE_END is a message number; anything else is a code
-    // address. TRIGGER_SUBJECT_OWN_EFFECT skips the "uses the item" message.
+    // The scene's event: a message, or a function.
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
     if (!(trigger->subject & TRIGGER_SUBJECT_OWN_EFFECT)) {
@@ -175,8 +163,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar(MsgActorUsesItem, FIELD_MESSAGE_ZOOM);
       /* FAKEMATCH(type): called as returning a value, as a C89 call with no
-       * prototype is; through its void prototype, 1 of 265 instructions moves
-       * in tbs-en. */
+       * prototype is; as its void prototype, 2 of 253 instructions differ in
+       * tbs-en. */
       ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(abilityId, 0);
       work->psynergyActing = 1;
       FieldPsynergy_Run();
@@ -198,9 +186,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// Returns the scene's Psynergy trigger (TRIGGER_PSYNERGY) for Psynergy of the
 /// given group that applies to what the leader faces, or NULL; stores the actor
 /// the Psynergy would target in *target. eventFlags gives the event's phase and
-/// kind (PSYNERGY_TRIGGER_ANY for any phase). The event may apply to any target
-/// (TRIGGER_PSYNERGY_ANYWHERE), to an actor (TRIGGER_PSYNERGY_ON_ACTOR) or to a
-/// cell behavior.
+/// kind (PSYNERGY_TRIGGER_ANY for any phase).
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;

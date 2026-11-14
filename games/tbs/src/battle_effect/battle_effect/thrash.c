@@ -4,8 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-/// One 120x120 picture of a flashing strike; two fill work->imageStorage and
-/// two more Ram_MapGridCellBuffer.
+/// One 120x120 picture of a flashing strike.
 #define FLASHING_STRIKE_PICTURE_BYTES (120 * 120)
 
 /// The flashing strike's modes (BattleEffect_RunFlashingStrike): which two
@@ -16,14 +15,9 @@ enum FlashingStrikeMode {
   FLASHING_STRIKE_VORPAL_SLASH  ///< RevealMaskA and B
 };
 
-/// The user leaps high at the first target, then a burst of 32 sparks rises
-/// beneath it.
+/// The user leaps high at the first target, then sparks burst beneath it.
 ///
-/// Abilities: Thrash (BATTLE_EFFECT_THRASH).
-///
-/// The leap takes the user three quarters of the way in 24 steps, starting up
-/// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
-/// args->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
+/// Abilities: Thrash.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(61) / 5);
   wait(29);
@@ -31,18 +25,9 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
-/// Unused: no row of gAbilityBattleEffects names its kind, and the handler
-/// table is reached with no other kind (BattleEffect_RunFromTable). The user
-/// would leap at the first target, then a burst of 340 sparks would rise
-/// beneath it and the canvas flash. It is Severe Blow's effect in The Lost Age,
-/// whose row for Severe Blow names this kind; here Severe Blow plays a casting
-/// impact.
-///
-/// Abilities: none (BATTLE_EFFECT_UNUSED_SEVERE_BLOW_LEAP).
-///
-/// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
-/// after 12 frames with args->variant set to SPARK_GROUPS_SEVERE_BLOW,
-/// overriding the ability's own.
+/// Unused: no row of gAbilityBattleEffects names its kind. The user would leap
+/// at the first target, then sparks would burst beneath it and the canvas
+/// flash; it is Severe Blow's effect in The Lost Age.
 void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(36) / 5);
   wait(12);
@@ -53,7 +38,7 @@ void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
 /// The user leaps at the first target, four pictures flash across the effect
 /// layer, then it fills with one colour as the target is struck.
 ///
-/// Abilities: Quick Strike (BATTLE_EFFECT_QUICK_STRIKE).
+/// Abilities: Quick Strike.
 void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_QUICK_STRIKE);
 }
@@ -61,25 +46,12 @@ void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
 /// The user steps up to the first target, four pictures flash across the
 /// effect layer, then it fills with one colour as the target is struck.
 ///
-/// Abilities: Vorpal Slash (BATTLE_EFFECT_VORPAL_SLASH).
+/// Abilities: Vorpal Slash.
 void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_VORPAL_SLASH);
 }
 
-/// Plays a flashing strike, the runner of BattleEffect_RunQuickStrike and
-/// BattleEffect_RunVorpalSlash; nothing passes FLASHING_STRIKE_UNUSED.
-///
-/// The user steps up to the first target over 16 frames. Then four 120x120
-/// pictures show for four frames each (mirrored when args->side is
-/// EFFECT_SIDE_PARTY), the canvas fills at its brightest on frames 16 to 19,
-/// the battle shows the damage on frame 18, and on frame 20 the target reels
-/// and the screen shakes. 21 frames.
-///
-/// Opens and closes the canvas layer; the pictures take work->imageStorage
-/// and the start of Ram_MapGridCellBuffer.
-///
-/// mode: picks the pictures (enum FlashingStrikeMode); Quick Strike also
-///       makes the step a hop.
+/// Plays a flashing strike; nothing passes FLASHING_STRIKE_UNUSED.
 void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -92,8 +64,6 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = 0;
 
-  // Each resource holds two pictures: the first fills work->imageStorage, up
-  // to the particles, and the second the start of Ram_MapGridCellBuffer.
   if (mode == FLASHING_STRIKE_UNUSED) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
@@ -112,8 +82,6 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
-  // The step: three quarters of the way in 16 steps, a hop of 8 pixels a
-  // frame up for Quick Strike.
   if (mode == FLASHING_STRIKE_QUICK_STRIKE)
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, px(8));
   else
@@ -150,8 +118,6 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
   }
-  // Releases the blitter before stopping the transfer, the other way round
-  // from EFFECT_FINISH_CANVAS_ONE_BLITTER.
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();

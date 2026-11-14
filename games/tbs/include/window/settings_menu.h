@@ -12,11 +12,8 @@
 #include "static_assert.h"
 #include "heap.h"
 
-/// The settings menu's work (heap block 20): the settings being edited and
-/// how many values each takes, the page, and the cursor, markers and icons.
-/// SettingsMenu_InitializeWork takes and clears it and copies the settings in;
-/// SettingsMenu_Release frees it, and cancelling discards the edits. The pause
-/// menu takes the same slot for its cursor, entry (page) and icons.
+/// The settings menu's work (heap block 20): the settings being edited and how
+/// many values each takes, the page, and the cursor, markers and icons.
 struct OptionMenuWork {
   u8 unused[1024];
   /// Seven 52-byte entries (struct OptionMenuEntry in settings_menu.c), whose

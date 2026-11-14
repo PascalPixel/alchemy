@@ -4,29 +4,19 @@
 
 #include "../battle_internal.h"
 
-// _call_via_r0 is given the value of IwramIrqModeWord, the instruction
-// `orr r3, r3, #0x92` in irq.s, not its address, so it would branch to
-// 0xe3833092. The Lost Age's twin, between the same neighbours, calls its ARM
-// high-multiply helper with 5 and 0 before the three stops and nothing after
-// them, and nothing in either game calls the function.
-// XXX (no evidence): what the call was meant to run; neither game's copy
-// shows it, and no caller exists to say.
-/// Sets DMA3 three times over, stopping it, then calls the IRQ return
-/// instruction's word as a routine. Nothing in this game calls it.
+/// Unused: stops DMA3, then calls a routine that is not one.
 void Dma_StopAllThenRunHook(void) {
+  // XXX (no evidence): what the call was meant to run; it calls the word of the
+  // IRQ return instruction, which would branch into nonsense, and nothing calls
+  // this in either game.
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
   _call_via_r0(IwramIrqModeWord);
 }
 
-/// Starts playback of the action's targets when the effect's blow lands.
-/// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
-/// BattlePlayback_StartFar, from the battle effects (see the folder README).
-/// Only while playback is idle: sets the phase to
-/// BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET, and a nonzero cue to pendingSound; a
-/// later call before the reset does nothing.
-/// @param cue the hit's sound (an SE_ id); zero keeps the one set
+/// Starts playback of the action's targets when the effect's blow lands, with
+/// cue as the hit's sound (0 keeps the one set); later calls change nothing.
 void BattlePlayback_Start(s32 cue) {
   struct BattlePlaybackWork *events;
 
@@ -39,16 +29,8 @@ void BattlePlayback_Start(s32 cue) {
   }
 }
 
-/// Empties the playback queue and schedules playback of the commands queued
-/// next, with no targets to resolve. Called before a Djinni is set
-/// (BattleActionRun_Build) and for the Djinn the turn's and an action's end
-/// show (Battle_ProcessTurnEnd, BattleUnit_ProcessActionEnd), each followed by
-/// BattlePlayback_WaitForReady. Sets the phase to
-/// BATTLE_PLAYBACK_PHASE_DISPATCH and gBattleWork->actionRun's targetCount to
-/// 0, so playback goes to BATTLE_PLAYBACK_PHASE_READY once the queue is played;
-/// adds BattlePlayback_Run as a task and returns its task index (-1 when the
-/// task table is full), which no caller reads.
-/// @param frames the delay before the first command
+/// Empties the playback queue and plays the commands queued next, after frames
+/// frames, with no targets to resolve.
 s32 BattlePlayback_SchedulePhase(s32 frames) {
   struct BattlePlaybackWork *events;
 
@@ -75,17 +57,9 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 /// The Djinn bonus's colour cycle lasts 30 frames.
 #define FELLED_FLASH_FRAMES 30
 
-/// Plays the action's targets one at a time: resolves the next target with
-/// BattleAbility_ApplyToTarget, then plays the events it queued over the frames
-/// that follow, until every target is done. Runs each frame as a task
-/// (priority TASK_PASS_FRAME), added by the staging runners in
-/// staging.c and by BattlePlayback_SchedulePhase, and removed by
-/// BattlePlayback_WaitForReady. Idle until BattlePlayback_Start or the wait
-/// starts it. Advances gBattleWork->events (phase, eventIndex, timer,
-/// queue.targetIndex, unitId, arrowResource, arrow, flags); plays the sounds,
-/// message arguments, messages, flashes, falls and redraws as
-/// BattlePlayback_RunAll does, without waiting. Each pass of its loop handles
-/// one phase; a phase that has to wait for a later frame returns.
+/// Plays the action's targets one at a time: resolves each with
+/// BattleAbility_ApplyToTarget, then plays what it queued over the frames that
+/// follow, without waiting.
 void BattlePlayback_Run(void) {
   u16 selection[8];
   struct Sprite *records[4];
@@ -121,9 +95,8 @@ void BattlePlayback_Run(void) {
         events->phase = BATTLE_PLAYBACK_PHASE_READY;
       }
     } else if (events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH) {
-      // Play the queued events in order. The timer delays the next one; an
-      // event that has to wait (a message, a hit, a fall) changes the phase,
-      // which ends the loop, and its phase comes back here when done.
+      // Play the queued events in order; one that has to wait for later frames
+      // ends the loop.
       while (events->eventIndex < events->queue.count) {
         {
           s32 eventIndex = events->eventIndex;
@@ -163,9 +136,8 @@ void BattlePlayback_Run(void) {
           case PLAYBACK_MARK:
             gBattleMessageWork->marked = 1;
             break;
-          // A negative message shows nothing and only waits for the player.
-          // The key latch is cleared so that only a press after the message
-          // goes on.
+          // A message of MESSAGE_NONE only waits for the player, and only a
+          // press after the message goes on.
           case PLAYBACK_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
               BattleMessage_OpenFar(events->queue.operands[eventIndex]);
@@ -258,13 +230,8 @@ void BattlePlayback_Run(void) {
         events->timer = gVBlankCount;
       }
     } else if (events->phase == PLAY_ADVANCE) {
-      // Show the arrow, as BattleMessage_WaitForAdvance does, and wait
-      // for the player: B held or an advance key pressed goes on; after ten
-      // VBlanks, a held advance key does too. The arrow is an 8 by 16,
-      // 256-colour sprite (attribute 0 0xa000, which unlike that function's
-      // is not semi-transparent) cycling eight pictures of
-      // gBattleMessage_AdvanceArrowTiles, one every four frames, in the
-      // VRAM cache entry BattleWork.arrowTiles.
+      // Show the arrow and wait for the player, as BattleMessage_WaitForAdvance
+      // does, but with an opaque arrow.
       struct AdvanceArrowSprite *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
@@ -296,9 +263,7 @@ void BattlePlayback_Run(void) {
         return;
       }
     } else if (events->phase == PLAY_HIT) {
-      // Nine frames, counted by the timer from 0 to 8: at 1 and 5 the unit
-      // turns white and its party panel lights; at 3 and 7 it takes back its
-      // own colours and the panel goes dark.
+      // A hit: the unit flashes white twice, its party panel lighting with it.
       if (events->timer & 1) {
         if (events->timer & 2) {
           struct BattleObject *slot;
@@ -321,13 +286,8 @@ void BattlePlayback_Run(void) {
       events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
     } else if (events->phase == PLAY_FELLED) {
-      // A fallen enemy. Its timer runs: with the Djinn bonus first, from
-      // FELLED_FLASH, 30 frames cycling the colour modes SPRITE_COLOR_GRB to
-      // SPRITE_COLOR_BRG every 8 frames,
-      // with the defeat sound numbered one before its own; then from 0:
-      // SPRITE_COLOR_GREY and its own defeat sound, out of the lists at 4, and
-      // from 5 the dissolve, four steps a frame, until its tiles are cleared
-      // and its actor released.
+      // A fallen enemy: with the Djinn bonus it first cycles its colours for 30
+      // frames, then turns grey, leaves the lists and dissolves.
       if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
@@ -384,9 +344,7 @@ void BattlePlayback_Run(void) {
         return;
       }
       if (events->timer > 4) {
-        // The dissolve: steps 0 to 127 of SpriteDissolve_Step, four a
-        // frame from timer 5 to 36; at 37 the tiles are cleared, the actor
-        // released, and the queue goes on.
+        // The dissolve, four steps a frame.
         struct BattleObject *slot;
         struct Sprite *record;
         s32 count;
@@ -430,12 +388,6 @@ void BattlePlayback_Run(void) {
 }
 
 /// Stops playback and empties the playback queue.
-/// Called when an action is built (BattleActionRun_Build), after a queue
-/// is played (BattlePlayback_RunAll, BattlePlayback_WaitForReady), and
-/// before playback is scheduled (BattleActionRun_Build, turn_end.c). Sets
-/// gBattleWork->events' phase to BATTLE_PLAYBACK_PHASE_IDLE, clears the queue,
-/// the event index, the timer, the target index and the flags (the Djinn
-/// bonus), and sets the hit sound back to SE_HEAVY_IMPACT.
 void BattlePlayback_Reset(void) {
   struct BattlePlaybackWork *events;
 
@@ -449,11 +401,8 @@ void BattlePlayback_Reset(void) {
   events->flags = 0;
 }
 
-/// Waits, a frame at a time, until BattlePlayback_Run has played every
-/// target, then removes the task and resets the playback.
-/// Called after the effect by the staging runners in staging.c, and after a
-/// Djinn's effect by BattleActionRun_Build and turn_end.c. Playback still
-/// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here.
+/// Waits until playback has played every target, starting it if the effect
+/// never showed the damage.
 UNREAD_RESULT BattlePlayback_WaitForReady(void) {
   s32 state;
   struct BattlePlaybackWork *events;

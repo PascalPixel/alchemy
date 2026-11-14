@@ -93,11 +93,8 @@ struct MenuPoint {
   s32 y; ///< screen pixels
 };
 
-/// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (260 bytes),
-/// reached as gBattleMenuWork. Battle_CollectPartyCommands allocates it each
-/// turn; it holds the icons beside the command window, the camera slide, the
-/// cursor each list remembers, the link battle's timer, the Djinn tutorial's
-/// key presses and what each command has spent.
+/// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (260 bytes), reached
+/// as gBattleMenuWork.
 struct BattleMenuWork {
   /// The sprites UpdateLinkSessionCountdown draws each frame: the chosen
   /// command's icon, the chosen ability's icon and the party member's portrait.
@@ -128,8 +125,7 @@ struct BattleMenuWork {
   u8 listSlots[34];      ///< the Psynergy list's action slots, ended by 0
   u16 listAbilities[33]; ///< the Psynergy list's ability ids, ended by 0
   /// The Djinn tutorial's step: 0 off, 1 from the start of each turn while
-  /// FLAG_DJINN_LESSON is set, then one more for each hint shown. While it
-  /// is not 0 the menus press keys for the player.
+  /// FLAG_DJINN_LESSON is set, then one more for each hint shown.
   s32 tutorialStep;
   s32 tutorialDelay; ///< frames until the tutorial's next key press
   /// The party member whose commands are being chosen; -1 between members.

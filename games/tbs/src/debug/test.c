@@ -28,11 +28,8 @@
 #define DEBUG_ISAAC_LEVEL 30
 #endif
 
-/// The placed actors, numbered in the order of
-/// gMenuTest_ActorPlacements
-/// after its four party rows, which keep their characters' ids. Each is drawn
-/// with the sprite of someone or something in the game and named for it; what
-/// talking to each does is in gMenuTest_Triggers.
+/// The placed actors, numbered in the order of gMenuTest_ActorPlacements after
+/// its four party rows, which keep their characters' ids.
 enum MenuTestActorId {
   /// Kraden's sprite, 30 (ACTOR_KRADEN in
   /// sol_sanctum_elemental_star_room.c);
@@ -67,7 +64,6 @@ enum MenuTestActorId {
 };
 
 /// Recalculates the four heroes after a debug inventory or stat change.
-/// Preserve the original Isaac, Garet, Mia, Ivan order.
 static __inline__ void MenuTest_RecalculateParty(void) {
   Unit_Calculate(ISAAC);
   Unit_Calculate(GARET);
@@ -97,11 +93,7 @@ static void MenuTest_ShowMessageAndWait(s32 messageId) {
   wait(1);
 }
 
-/// Browses sample dialogue with A/Down and Up; B closes the window. Shows the
-/// messages from messageId on, one at a time: A or Down goes on, Up goes
-/// back, and any other held key shows the same message again. Ends after
-/// messageCount have been shown, whichever way the player went. The message
-/// speed is left at 2.
+/// Browses sample dialogue with A/Down and Up; B closes the window.
 static void MenuTest_BrowseMessageRange(s32 messageId, s32 messageCount) {
   struct Window *window;
   s32 messageIndex;
@@ -141,8 +133,6 @@ end:
 
 // The shop message browsers, run by talking to ACTOR_FELIX and
 // ACTOR_SECOND_FELIX while the leader faces a given way (gMenuTest_Triggers).
-// Each runs for the weapon shop's 43 messages; the Sanctum's count is its own,
-// also 43.
 static void MenuTest_BrowseWeaponShopMessages(void) {
   MenuTest_BrowseMessageRange(MsgWeaponShopWelcome,
                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -181,9 +171,7 @@ static void MenuTest_BrowseWarriorItemShopMessages(void) {
 
 #if TBS_PATCH_2
 /// Sets the event's message twice, so the second, MsgValeComeOnHurry, is the
-/// one shown, with no speaker (actor id -1), and waits until it closes. Talking
-/// to ACTOR_SECOND_FELIX while facing south, in German, Spanish, French and
-/// Italian.
+/// one shown, with no speaker (actor id -1), and waits until it closes.
 static void MenuTest_RunMessageTest(void) {
   Event_SetMessageId(MSGNO(MsgBattleAdditionalPsynergyHelp));
   Event_SetMessageId(MSGNO(MsgValeComeOnHurry));
@@ -191,9 +179,7 @@ static void MenuTest_RunMessageTest(void) {
 }
 #endif
 
-/// Runs the shop test's preset inventory, money and status setup. Talking
-/// to ACTOR_ARMOR_MERCHANT: the debug shop, with 200000 coins, broken
-/// equipment and afflicted party members (Shop_OpenDebugShop).
+/// Runs the shop test's preset inventory, money and status setup.
 static void DebugMenu_RunPresetShop(void) { Shop_OpenDebugShop(1); }
 
 UNUSED static void MenuTest_NoOp(void) {}
@@ -231,16 +217,11 @@ UNUSED static void MenuTest_GiveItemToParty(void) {
 s32 MenuTest_GetTriggers(void) { return (s32)gMenuTest_Triggers; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
-/// Talking to Garet: `You went up a level!`, then Isaac, Garet, Mia and Ivan
-/// are levelled up to 10 the first time, 20 the next, and so on.
-/// Unit_LevelUpTo only raises a level, and entering the scene has already set
-/// them to 30 (Isaac to 50 outside Japanese), so the first talks change
-/// nothing.
 static void MenuTest_RaisePartyLevels(void) {
   s32 *targetLevel;
 
   FieldMessage_Show(MsgDebugWentLevel, FIELD_MESSAGE_ZOOM);
-  targetLevel = &gMenuTest_SlotOffsets;
+  targetLevel = &gMenuTest_NextLevel;
   Unit_LevelUpTo(ISAAC, *targetLevel);
   Unit_LevelUpTo(GARET, *targetLevel);
   Unit_LevelUpTo(MIA, *targetLevel);
@@ -250,9 +231,7 @@ static void MenuTest_RaisePartyLevels(void) {
 }
 
 /// Attempts each consumable grant in order, including calls after a bag fills.
-/// Talking to Ivan: `You got an item!`. The numbered items are 180 the Herb,
-/// 183 the Potion, 186 the Psy Crystal, 192 the Cookie and 236 the Sacred
-/// Feather (MsgItemName + the number).
+/// Talking to Ivan: `You got an item!`.
 static void MenuTest_GiveConsumableTestStock(void) {
   FieldMessage_Show(MsgDebugGotItem, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -449,13 +428,7 @@ static void MenuTest_GiveConsumableTestStock(void) {
   MenuTest_RecalculateParty();
 }
 
-/// Grants and sets test Djinn. Talking to ACTOR_DORA: `You got a Djinni!`,
-/// then Isaac takes the first seven Venus Djinn, Garet seven Mars, Mia seven
-/// Mercury and Ivan six Jupiter, each set. In Japanese it first fills a local
-/// buffer sixteen times with 32 to 47 copies of a letter; nothing reads the
-/// buffer, so the loop's only lasting effect is gMenuTest_FillLetter, which
-/// nothing else reads either. The call the string presumably fed is gone from
-/// every edition.
+/// Grants and sets test Djinn.
 static void MenuTest_GivePartyDjinn(void) {
   /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times; the
    * other editions drop the loop but keep its 256 bytes, the whole of the ROM's
@@ -480,7 +453,6 @@ static void MenuTest_GivePartyDjinn(void) {
     }
   }
 #endif
-  // Add and set each element in separate passes, preserving recovery updates.
   FieldMessage_Show(MsgDebugGotDjinni, FIELD_MESSAGE_ZOOM);
   Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
   Djinn_Give(ISAAC, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
@@ -540,13 +512,10 @@ static void MenuTest_GivePartyDjinn(void) {
 }
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
-/// Talking to ACTOR_SATUROS: `The body is being torn apart.` Isaac is
-/// poisoned and haunted, Garet given deadly poison. Garet's curse is set to
-/// 1 too, but the closing Unit_Calculate clears the curse bits again unless he
-/// wears cursed equipment (game/game/units.c).
 static void MenuTest_DamageAndAfflictParty(void) {
-  // The statuses are set through the unit's bytes: poison (0x131), haunt
-  // (0x140) and curse (0x130).
+  /* FAKEMATCH(temporary): the unit written through a byte pointer moved on to
+   * haunt; as unit->poison, unit->haunt and unit->curse, 5 of 68 instructions
+   * differ in tbs-en. */
   u8 *record;
 
   FieldMessage_Show(MsgDebugBodyTornApart, FIELD_MESSAGE_ZOOM);
@@ -569,8 +538,6 @@ static void MenuTest_DamageAndAfflictParty(void) {
 }
 
 /// Adds the test equipment in each party member's original inventory order.
-/// Talking to Jenna: `You got sturdy equipment!`, then weapons and armor for
-/// each of the four, from the Gaia Blade to the Glittering Tiara.
 static void MenuTest_GiveEquipmentTestStock(void) {
   FieldMessage_Show(MsgDebugGotSturdyEquipment, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_SPIKED_ARMOR);
@@ -612,8 +579,6 @@ static void MenuTest_GiveEquipmentTestStock(void) {
 
 /// Browses item definitions and gives the selected item while party bags allow
 /// it. Talking to ACTOR_SECOND_FELIX in Japanese (MenuTest_OpenItemBrowser).
-/// Unlike the Increase item and level scene's browser it stops on every number,
-/// iconless ones too.
 static void MenuTest_SelectItem(void) {
   struct Window *window;
   struct Window *details;
@@ -657,7 +622,6 @@ static void MenuTest_SelectItem(void) {
         Text_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
       }
     }
-    // These are independent tests: a single frame can add and move the cursor.
     if (gKeysPressed & KEY_A) {
       if (PartyInventory_Add(selectedItemId) == -1) {
         Sound_Play(SE_MENU_CANCEL);
@@ -709,13 +673,9 @@ static void MenuTest_SelectItem(void) {
 
 UNUSED static void MenuTest_OpenItemBrowser(void) { MenuTest_SelectItem(); }
 
-/// Adds the original treasure test stock, retaining duplicate tickets and
-/// medals. Talking to ACTOR_MENARDI: `You got treasure!`. Among the items
-/// are the Orb of Force, Douse Drop, Frost Jewel, Lifting Gem, Halt Gem and
-/// Catch Beads, the four Elemental Stars and the Mythril Bag.
+/// Gives the party treasure: key items, eleven Game Tickets and eight Lucky
+/// Medals. Talking to ACTOR_MENARDI: `You got treasure!`.
 static void MenuTest_GiveTreasureTestStock(void) {
-  // Sharing the duplicate grants through a counted loop shrinks this function
-  // from 404 to 288; retain the original calls.
   FieldMessage_Show(MsgDebugGotTreasure, FIELD_MESSAGE_ZOOM);
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, ITEM_HALT_GEM);
@@ -764,21 +724,15 @@ static void MenuTest_GiveTreasureTestStock(void) {
   MenuTest_RecalculateParty();
 }
 
-/// Sets the debug party, stock counters and levels; returns zero. The scene's
-/// initialize entry, which FieldSequence_Run runs on every entry and whose
-/// result it ignores: so each visit adds to the shops' stock again, but
-/// Unit_LevelUpTo only raises, so a later visit changes no level unless a
-/// party member is below 30 (Isaac 50 outside Japanese).
+/// Sets the debug party, stock counters and levels; returns zero.
 s32 MenuTest_Initialize(void) {
-  // Assemble the test party before adding stock and setting levels: Jenna
-  // leaves, Garet, Mia and Ivan join.
+  // Jenna leaves; Garet, Mia and Ivan join.
   Party_RemoveMember(JENNA);
   Party_AddMember(GARET);
   Party_AddMember(MIA);
   Party_AddMember(IVAN);
-  // Populate the original shop counters, retaining repeated increments: how
-  // many of each rare item the shops may sell, here three Shamshirs, two
-  // Silver Blades, a Masamune and eight rare pieces of armor.
+  // How many of each rare item the shops may sell: three Shamshirs, two Silver
+  // Blades, a Masamune and eight rare pieces of armor.
   Item_AdjustCounter(ITEM_SHAMSHIR, 1);
   Item_AdjustCounter(ITEM_SHAMSHIR, 1);
   Item_AdjustCounter(ITEM_SHAMSHIR, 1);
@@ -815,10 +769,7 @@ static s32 MenuTest_SelectCharacter(void) { return PartyMemberChooser_Open(); }
 #endif
 
 #if !TBS_PATCH_3
-/// Forwards the selected party member and shop confirmation status. Talking to
-/// ACTOR_SECOND_DORA in Japanese, English and German: the sanctum's service
-/// menu, with ACTOR_SECOND_DORA as its keeper, since Scene_TalkToActor
-/// passes the actor's id.
+/// Forwards the selected party member and shop confirmation status.
 static s32 MenuTest_ConfirmShopAction(s32 unitId) {
   return Sanctum_Run(unitId);
 }
@@ -837,7 +788,7 @@ struct SceneEntrance gMenuTest_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// No exits: 511 is SCENE_EXITS_END's value.
+/// No exits.
 u32 gMenuTest_Exits[] = {
     SCENE_EXITS_END,
 };
@@ -875,11 +826,8 @@ struct ActorPlacement gMenuTest_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia
-/// Isaac's name, and the placed actors (enum MenuTestActorId) the rest.
-/// Outside Japanese, ACTOR_FELIX and ACTOR_SECOND_FELIX run a different
-/// browser for each way the leader faces (TALK_TRIGGER_FACING); in Japanese
-/// they open the character selector and the item browser.
+/// Who runs what: Garet levels, Jenna equipment, Ivan consumables, Mia Isaac's
+/// name, and the placed actors (enum MenuTestActorId) the rest.
 struct Trigger gMenuTest_Triggers[] = {
     {TRIGGER_TALK, GARET, CONDITION_ALWAYS, EVENT(MenuTest_RaisePartyLevels)},
     {TRIGGER_TALK, JENNA, CONDITION_ALWAYS,
@@ -949,7 +897,7 @@ struct Trigger gMenuTest_Triggers[] = {
 
 /// The level MenuTest_RaisePartyLevels levels the four to next: 10 at first,
 /// ten more after each use.
-s32 gMenuTest_SlotOffsets = 10;
+s32 gMenuTest_NextLevel = 10;
 
 /// One less than the character the Japanese loop of MenuTest_GivePartyDjinn
 /// fills with: 65 at first, so 'B', one more each pass, back to 65 after 96.

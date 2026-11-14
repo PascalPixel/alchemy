@@ -14,8 +14,7 @@
 
 // A command reaches the chip as GBATEK lists it: FLASH_UNLOCK_1 written to
 // FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_2 to FLASH_UNLOCK_ADDRESS, then the
-// command to FLASH_COMMAND_ADDRESS. An erase is two such sequences, its
-// FLASH_COMMAND_ERASE and then what to erase.
+// command to FLASH_COMMAND_ADDRESS.
 #define FLASH_COMMAND_ADDRESS 0x5555 ///< where the chip takes its commands
 #define FLASH_UNLOCK_ADDRESS 0x2AAA  ///< the second unlock write's address
 #define FLASH_UNLOCK_1 0xAA          ///< the first unlock byte
@@ -83,9 +82,8 @@ s32 Flash_VerifySector(u16 sector, u8 *source);
 
 extern u8 (*gFlashReadRoutine)(u8 *source);
 
-// The flash library's state, after pret's agb_flash: IdentifyFlash installs
-// the chip's routines and type. The credits borrow four of these cells while
-// no flash operation runs (menu/credits.c).
+// The flash library's state, after pret's agb_flash: IdentifyFlash installs the
+// chip's routines and type.
 /// The chip's erase-all routine (FlashSetupInfo.eraseChip).
 extern u16 (*gEraseFlashChip)(void);
 /// The chip's erase-sector routine (FlashSetupInfo.eraseSector).

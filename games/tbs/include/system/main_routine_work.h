@@ -32,19 +32,15 @@ enum HazardMode {
 /// maximum HP rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gMainRoutineWork.battleType: how the next battle starts (Battle_SetType);
-/// it is set back to BATTLE_TYPE_NORMAL as the battle ends. Any start but that
-/// one stops the opening's first-strike and surprise rolls (Battle_Run).
+/// gMainRoutineWork.battleType: how the next battle starts (Battle_SetType); it
+/// is set back to BATTLE_TYPE_NORMAL as the battle ends.
 enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's
   /// (field/field_sequence/triggers.c) and the travelers' fight in Vale
   /// (ValePlaza_FightTravelers, scene/vale_plaza.c).
   BATTLE_TYPE_NO_ESCAPE = 2,
-  /// The battles an event starts. Here and in a link battle the command menu
-  /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
-  /// running away!"), as it does once the party is challenged
-  /// (Battle_RefuseFlee, window/screens/link_timer.c).
+  /// The battles an event starts.
   BATTLE_TYPE_SCRIPTED = 3,
   BATTLE_TYPE_LINK = 4, ///< a link battle (Battle_Run, scene/battle_arena.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
@@ -52,19 +48,10 @@ enum BattleType {
   BATTLE_TYPE_DEBUG = 5
 };
 
-/// The main routine's work: the transition data the main routine reads
-/// between sequences (the scene and entrance it runs next, sequenceResult,
-/// the return point, the after-battle and defeat destinations and the restart
-/// point), and what every sequence shares (the party, coins, Djinn, play time
-/// and options). A save file keeps it.
-///
-/// It is a fixed struct, never freed and in no heap slot: the one
-/// gMainRoutineWork in EWRAM, right after the 512 bytes of game
-/// flags. Saving writes it whole in a file's first part, with the flags
-/// before it, and a file's checksum covers the 968 words from gGameFlagBytes
-/// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
-/// new game sets its defaults (MainRoutineWork_InitializeDefaults), and the
-/// field, battle, menus and scenes read and write it directly.
+/// The main routine's work: the transition data the main routine reads between
+/// sequences (the scene and entrance it runs next, sequenceResult, the return
+/// point, the after-battle and defeat destinations and the restart point), and
+/// what every sequence shares (the party, coins, Djinn, play time and options).
 struct MainRoutineWork {
   /// BuildStamp_GetTime's value when the game was last saved; its low
   /// half goes into the file's summary.
@@ -91,13 +78,9 @@ struct MainRoutineWork {
   u8 unusedAfterPrizes[132];
   /// What the main routine runs next: a scene (a SceneId_ row of gScenes),
   /// which means the field sequence running that scene, or a SEQUENCE_ value
-  /// above the table's rows for another sequence. During a scene it is the
-  /// scene running. An exit-table lookup overwrites it, and
-  /// EXIT_KEEP_DESTINATION keeps it.
+  /// above the table's rows for another sequence.
   s16 next;
   /// The destination's entrance; in SEQUENCE_BATTLE, the formation to fight.
-  /// Not a union with a formation member: alchemy-gcc pads a union to a word,
-  /// which would move every member after it.
   s16 entrance;
   /// The restart point, usually the last Sanctum: read after a defeat with no
   /// defeat destination, and by the File Screen.
@@ -170,10 +153,7 @@ struct MainRoutineWork {
   u8 idleSleepEnabled; ///< the option, saved from gIdleSleepEnabled
   u8 battleType;       ///< an enum BattleType
   /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
-  /// hazardLimit the party takes hazardDamage and the count starts again. A
-  /// fresh entry into a scene, not a return from battle, resets them to 1 HP
-  /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (FieldSequence_Run, LamakanDesert_Initialize).
+  /// hazardLimit the party takes hazardDamage and the count starts again.
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode

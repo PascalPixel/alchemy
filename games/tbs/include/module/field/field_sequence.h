@@ -11,12 +11,8 @@ struct Trigger;
 struct Vector3;
 struct ActorPlacement;
 
-/// The exit request whose destination is already in gMainRoutineWork.next
-/// and .entrance, so that Scene_TakeExit leaves them as they are. Random
-/// battles, Retreat and the event commands that set a destination
-/// (Event_SetDestination) raise it, and FieldSequence_Run returns it when
-/// the whole party falls; Scene_TakeExit also uses it for "no exit found"
-/// (main_routine.c, field_sequence.c).
+/// The exit request whose destination is already in gMainRoutineWork.next and
+/// .entrance, so that Scene_TakeExit leaves them as they are.
 #define EXIT_KEEP_DESTINATION 999
 
 /// gMainRoutineWork.movementMode: how the field sequence hands the party

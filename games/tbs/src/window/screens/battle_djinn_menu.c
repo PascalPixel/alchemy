@@ -32,12 +32,7 @@
 /// recovering ones in TEXT_COLOR_YELLOW with their turns, the one under the
 /// cursor described above the list with its change preview beside it
 /// (BattleDjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
-/// and Right turn them). Returns the chosen Djinni's entry (element << 8 |
-/// number, with DJINN_ENTRY_STANDBY when on standby), or -1 when cancelled,
-/// when the link battle's time runs out, or when the party member has no Djinn.
-/// A recovering Djinni, or one an earlier command this turn chose
-/// (BattleMenuWork.chosenDjinn), is refused. Battle_CollectPartyCommands runs
-/// it for the Djinn command; the Djinn tutorial presses A every 60 frames.
+/// and Right turn them).
 s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct CursorSprite cursorStorage;
   u16 messageText[64];
@@ -113,9 +108,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
-        // Owned but not set: look for its recovery in its side's list
-        // (units above 7 are enemies). When it is not there, k ends at the
-        // count and the turns read come from the first unused entry.
+        // Owned but not set: look for its recovery in its side's list (units
+        // above 7 are enemies).
         list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                      (u32)member > 7 ? 1 : 0))
                     ->list;
@@ -187,8 +181,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
           }
         } else if (selectedDjinn & DJINN_ENTRY_STANDBY) {
           // A recovering Djinni: its effect, with the turns as the argument
-          // (MESSAGE_ARGUMENT_NUMBER), and no preview. A ready one: the preview
-          // and "Ready to summon.", its element blinking in the party window.
+          // (MESSAGE_ARGUMENT_NUMBER), and no preview.
           if (selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
             MessageArgument_Push(
                 (s32)((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>

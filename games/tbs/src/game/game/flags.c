@@ -54,8 +54,7 @@ s32 GameFlag_GetByte(s32 flag) {
   return gGameFlagBytes[flag];
 }
 
-/// Sets the whole byte `flag` is in. Reached through FieldGameFlag_SetByte by
-/// the Colosso maps, the world map and the Battle Arena's win counts.
+/// Sets the whole byte `flag` is in.
 void GameFlag_SetByte(s32 flag, s32 value) {
   flag = GAME_FLAG_BYTE(flag);
 
@@ -84,9 +83,7 @@ u8 GameFlag_DecrementByte(s32 flag) {
   return flags[flag];
 }
 
-/// Returns the four bits `flag` is in, 0 to 15 (bit 2 of the number picks the
-/// half: flags n to n + 3, with n a multiple of 4, are one nibble). Only
-/// GAME.S's bare veneer reaches it; nothing calls it by name.
+/// Returns the four bits a flag is in, 0 to 15.
 s32 GameFlag_GetNibble(u32 flag) {
   s32 shift = flag & 4;
   s32 mask = 15 << shift;

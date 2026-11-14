@@ -56,7 +56,6 @@
 #include "main_routine_work.h"
 #include "module/scene/kolima_forest_tree.h"
 #include "module/scene/shared/kolima_palette.h"
-#include "module/field/field_sequence.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
@@ -67,30 +66,16 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "battle_sprite_id.h"
-#include "actor.h"
 #include "field_effect.h"
-#include "battle_unit.h"
-#include "event.h"
 #include "system_call.h"
-#include "scene_ids.h"
 #include "io_reg.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "actor_script.h"
-#include "fixed_math.h"
-#include "palette_buffers.h"
 #include "flags.h"
-#include "character_ids.h"
 #include "item_ids.h"
 #include "macros.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 
 /// The actors, numbering gKolimaForestTreeActorPlacements' rows
@@ -186,15 +171,7 @@ const struct Trigger *KolimaForestTree_GetTriggers(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestTree), the first time the party talks
-/// to Laurel (ACTOR_LAUREL_STAND_IN), she asks who the party is. She recognises
-/// the ones who resisted Tret's glamour and senses a great warmth in them, but
-/// says they are too late to rescue Tret. She tells them to leave before the
-/// forest is destroyed (sets FLAG_MET_LAUREL).
-///
-/// After that she gives only that warning.
-///
-/// Once the curse is lifted, the forest is alive again thanks to the party, and
-/// Laurel says, "We shall protect the forest from now on."
+/// to Laurel (ACTOR_LAUREL_STAND_IN), she asks who the party is.
 static void KolimaForestTree_TalkToLaurel(void) {
   Event_Start();
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
@@ -234,13 +211,6 @@ static void KolimaForestTree_TalkToLaurel(void) {
 
 /// In Kolima Forest (SceneId_KolimaForestTree), talking to Tret
 /// (ACTOR_TRET_STAND_IN) finds him silent until the curse is lifted.
-///
-/// Before the Tret Tree, his wrathful side answers, the screen darkening around
-/// its words. After it, if anyone carries Hermes' Water the File Screen opens.
-/// Once the curse is lifted, no axe shall touch him again.
-///
-/// Until FLAG_TRET_DEFEATED Mind Read on him runs this too, with no effect of
-/// its own (subject bit 10).
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterHolder;
 
@@ -290,9 +260,7 @@ static void KolimaForestTree_TalkToTret(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestTree), Mind Read on Laurel hears her
-/// thoughts. Before the curse is lifted, the healing waters of Mercury
-/// Lighthouse might save Tret, but its fountain has dried up. Afterwards, it
-/// must be horrible beyond the river.
+/// thoughts.
 static void KolimaForestTree_ReadLaurelThoughts(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -305,8 +273,7 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
 }
 
 /// In Kolima Forest (SceneId_KolimaForestTree), Mind Read on Tret hears his
-/// thoughts. Before the curse is lifted they are "People of Kolima... Forgive
-/// me..." Afterwards they are a plea to be careful beyond the river.
+/// thoughts.
 static void KolimaForestTree_ReadTretThoughts(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -334,9 +301,7 @@ static void KolimaForestTree_UseHermesWater(void) {
   Event_End();
 }
 
-/// Tret's wrathful side repels Hermes' Water. Sparks gather, the leader is
-/// thrown back and lands, and the voice says "I control Tret's heart! I shall
-/// not let you do anything to him!"
+/// Tret's wrathful side repels Hermes' Water.
 static void KolimaForestTree_RejectHermesWater(void) {
   struct Actor *leader;
 
@@ -402,7 +367,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
 }
 
 /// Gives all four companions the same nod, waiting on Ivan's animation.
-static __inline__ void KolimaForestTree_NodTogether(void) {
+static inline void KolimaForestTree_NodTogether(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
@@ -410,7 +375,7 @@ static __inline__ void KolimaForestTree_NodTogether(void) {
 }
 
 /// Turns the companions together and pauses after the final facing change.
-static __inline__ void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
+static inline void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, facing, 0);
   Actor_FaceDirection(ACTOR_GARET, facing, 0);
   Actor_FaceDirection(ACTOR_MIA, facing, 0);
@@ -418,20 +383,6 @@ static __inline__ void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
 }
 
 /// Hermes' Water heals Tret.
-///
-/// - The companions gather as the water seeps in and the forest's healthy
-///   colours spread.
-/// - Tret feels life flowing in him again and, asked by Laurel and the party,
-///   frees the people he turned into trees.
-/// - He and Laurel tell how the gems fell from the sky into their branches and
-///   twisted their anger and sorrow, and that only the elder trees were
-///   changed.
-/// - Laurel has seen that an evil forest has risen south of the river, and
-///   Tret, asking whether the party will go there, warns them to hurry.
-/// - Tret thanks the party for saving Kolima, the forest and himself.
-///
-/// Sets FLAG_KOLIMA_CURSE_LIFTED and turns the Hermes' Water back into an Empty
-/// Bottle.
 static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct Actor *leader;
@@ -440,7 +391,6 @@ static void KolimaForestTree_RestoreTret(void) {
   void (*spawnOrbitSparks)(void);
   const s32 *finalActions;
 
-  // Gather the companions while Hermes' Water seeps into Tret.
   includeMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
@@ -449,11 +399,11 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetScript(ACTOR_GARET, gKolimaForestTree_GaretApproachActions);
@@ -461,7 +411,7 @@ static void KolimaForestTree_RestoreTret(void) {
   if (includeMia != 0) {
     Actor_SetSpeed(ACTOR_MIA, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (leader != 0) {
+    if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetScript(ACTOR_MIA, gKolimaForestTree_MiaApproachActions);
@@ -499,7 +449,6 @@ static void KolimaForestTree_RestoreTret(void) {
   }
   Task_Remove(KolimaForestTree_UpdateHealingPalette);
   wait(10);
-  // Flash the two saved palettes before settling on the healthy forest.
   flash = 0;
   do {
     KolimaPalette_Restore(0);
@@ -507,7 +456,7 @@ static void KolimaForestTree_RestoreTret(void) {
     wait(6);
     KolimaPalette_Restore(1);
     PaletteFade_StartInterpolation(6);
-    flash = (flash + 1);
+    flash++;
     wait(6);
   } while ((u32)flash <= 3);
   KolimaPalette_Restore(0);
@@ -641,7 +590,6 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessage(ACTOR_GARET, 0);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
   Event_Wait(20);
-  // Explain the curse and how the falling Psynergy Stones changed the forest.
   Event_SetMessageId(MsgKolimaWasIndeedAngryPeopleHad);
   // "I was indeed angry that people had laid waste to my..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
@@ -772,7 +720,6 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 10);
   KolimaForestTree_NodTogether();
   Sound_Play(SOUND_FADE_OUT_BGM);
-  // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
   Actor_SetScript(ACTOR_GARET, finalActions);
   if (includeMia != 0) {
@@ -795,10 +742,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
-/// Sets up Tret, Laurel and the forest's colours on entry. Tret, Laurel and the
-/// wrathful side stand 28 pixels up, and nothing passes through them. Retreat
-/// is set to the forest's way in. The forest takes its cursed colours until the
-/// curse is lifted.
+/// Sets up Tret, Laurel and the forest's colours on entry.
 s32 KolimaForestTree_Initialize(void) {
   struct Actor *tretBlank;
   struct Actor *tretsWrathfulSide;
@@ -863,7 +807,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   if (gKolimaForestTreePlaySparkSound != 0)
     Sound_Play(SE_SPARKLE_FALL);
   effect = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, spawnY, spawnZ);
-  if (effect == 0)
+  if (effect == NULL)
     return;
   sprite = effect->sprite;
   sprite->flags = phase;
@@ -899,8 +843,8 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
 }
 
 /// Alternates two faces twice, ending on the first.
-static __inline__ void
-KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFace, s32 secondFace) {
+static inline void KolimaForestTree_AlternateFaces(s32 actorId, s32 firstFace,
+                                                   s32 secondFace) {
   Actor_SetAnimation(actorId, firstFace);
   wait(6);
   Actor_SetAnimation(actorId, secondFace);
@@ -1043,7 +987,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
       spark = FieldActor_Create(SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],
                                 gKolimaForestTreeSparkOrigin[1],
                                 gKolimaForestTreeSparkOrigin[2]);
-      if (spark != 0) {
+      if (spark != NULL) {
         previousSprite =
             Sprite_ShareVramCacheEntry(spark->sprite, previousSprite);
         spark->motionFlags = 0;

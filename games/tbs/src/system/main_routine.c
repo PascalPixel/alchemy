@@ -15,9 +15,7 @@
 
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
-// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
-// the whole table. SCENE_EXIT and SCENE_EXIT_UNLESS (scene_tables.h) give an
-// exit word's bits.
+// EXIT_HAS_FLAG is set).
 #define EXIT_SCENE_MASK 0xfff
 #define ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
@@ -28,8 +26,7 @@
 /// Chooses the scene and entrance to go to when the party leaves the current
 /// scene. exitId is the kind of exit FieldSequence_Run ended on; the scene's
 /// exit table gives the first exit of that kind (or of any kind) whose flag, if
-/// it has one, is not set. An exit of kind 0 or the end of the scene's exits
-/// falls back to the scene of its first exit, at entrance 0.
+/// it has one, is not set.
 void Scene_TakeExit(s32 exitId) {
   s16 currentMap;
   const u32 *exitTable;
@@ -97,10 +94,7 @@ void Scene_TakeExit(s32 exitId) {
 /// defeated, which revives the leader with 1 HP (and, with FLAG_CHILDHOOD,
 /// fully heals Isaac and Garet) and returns to the story battle's defeat point
 /// (Event_SetDefeatDestination) or, when none is set, to the restart point,
-/// usually the last Sanctum (Scene_SetRestartPoint). Any other result goes to
-/// the after-battle destination an event set, or to the return point (the scene
-/// the battle or minigame was started from) with the party keeping its position
-/// (FLAG_KEEP_PARTY_POSITION).
+/// usually the last Sanctum (Scene_SetRestartPoint).
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
@@ -194,13 +188,8 @@ MAIN_ROUTINE_DEFINE_RUN_MINIGAME(MainRoutine_RunDice, LuckyDice_StartFar)
 /// Runs the slots sequence (Lucky Wheels).
 MAIN_ROUTINE_DEFINE_RUN_MINIGAME(MainRoutine_RunSlots, LuckyWheels_StartFar)
 
-/// The main routine: runs one sequence after another and never returns.
-/// mode, an enum GameStart, chooses the first scene. Each pass resets the
-/// runtime, then either runs the battle, dice or slots sequence and picks the
-/// scene to return to, or runs the field sequence: loads the scene's code,
-/// starts its music and runs it until the party takes an exit. Called with
-/// GAME_START_TITLE through MainRoutine_RunFar by System_Initialize at
-/// power-on and by Game_RestartQuest.
+/// The main routine: runs one sequence after another and never returns. mode,
+/// an enum GameStart, chooses the first scene.
 void MainRoutine_Run(s32 mode) {
   const struct Scene *table;
   const struct Scene *record;
@@ -290,8 +279,7 @@ void MainRoutine_Run(s32 mode) {
         Scene_PlayMusic();
     } else if (gMainRoutineWork.returnMusic != -1) {
       // Back where the party was: resume the music saved when the Pause menu
-      // last opened (field_sequence.c). A random battle and every normal entry
-      // set returnMusic to -1, so the scene's own music plays instead.
+      // last opened (field_sequence.c).
       Sound_PlayFar(gMainRoutineWork.returnMusic);
     } else {
       Scene_PlayMusic();
@@ -313,11 +301,7 @@ void Scene_LoadOverlay(s32 unused) {
 #define MAP_HEADER(id) (&gScenes[id])
 
 /// Updates the flags and state that last for one scene or one area, on entering
-/// the current scene. Unless keep is set (the party returns to where it was, as
-/// after a battle), the flags of the last scene are cleared, and on entering a
-/// new area so are the area's flags and step counters, the area name is shown
-/// and the entrance becomes the point Retreat returns to. Then the area's
-/// visited flag (FLAG_AREA_VISITED) is set.
+/// the current scene.
 void Scene_Arrive(s32 unused, s32 keep) {
   s32 area = MAP_HEADER(gMainRoutineWork.next)->area;
   s32 flag;

@@ -12,9 +12,7 @@
 typedef u8 (*FlashByteRead)(u8 *address);
 
 /// Enters flash ID mode, waits for the chip and reads its device and
-/// manufacturer IDs. Returns device << 8 | maker; the makers' codes in
-/// gFlash_Chips' entries are 0xbf (SST), 0x1f (Atmel), 0xc2 (Macronix) and
-/// 0x32 (Panasonic).
+/// manufacturer IDs.
 s32 ReadFlashId(void) {
   struct {
     u8 buffer[64];
@@ -55,13 +53,8 @@ s32 ReadFlashId(void) {
   return result;
 }
 
-/// Selects matching chip handlers, falling back to the final table entry when
-/// unknown. Returns 0 when the chip's id is one of gFlash_Chips' SST, Atmel,
-/// Macronix and Panasonic entries and 1 when not; either way it installs an
-/// entry's routines, timings and type (gFlash), for an unknown chip
-/// gFlash_ChipDefault's: SST's routines and timings. It rewrites three of the
-/// cells the credits borrow; menu/credits.c says why that borrowing is
-/// harmless.
+/// Installs the handlers of the chip the cartridge holds; returns 1 if it is
+/// unknown.
 s32 IdentifyFlash(void) {
   u16 missing;
   u16 id;
@@ -72,14 +65,14 @@ s32 IdentifyFlash(void) {
   chip = gFlash_Chips;
   missing = 1;
   // Only the last entry, gFlash_ChipDefault, has a maker byte of 0.
-  while (((u8 *)&(*chip)->type.id)[0] != 0) {
-    if (id == (*chip)->type.id) {
+  while ((*chip)->type.id.separate.maker != 0) {
+    if (id == (*chip)->type.id.joined) {
       missing = 0;
       break;
     }
     chip++;
   }
-  // Install the selected entry, including the fallback when no ID matched.
+  // An unknown chip gets the last entry.
   gProgramFlashSector = (*chip)->program;
   gEraseFlashChip = (*chip)->eraseChip;
   gEraseFlashSector = (*chip)->eraseSector;
@@ -89,10 +82,7 @@ s32 IdentifyFlash(void) {
   return missing;
 }
 
-/// Counts down the active flash timeout and marks its expiration. The timer
-/// interrupt handler SetFlashTimerIntr hands out; it runs about once a
-/// millisecond while StartFlashTimer's timer runs, and sets gFlashTimeoutFlag
-/// when gFlashTimerCount reaches 0.
+/// Counts down the active flash timeout and marks its expiration.
 void FlashTimerIntr(void) {
   if (gFlashTimerCount != 0) {
     s32 countLeft = gFlashTimerCount;
@@ -107,8 +97,7 @@ void FlashTimerIntr(void) {
 
 /// Selects a hardware timer and returns its timeout interrupt callback:
 /// FlashTimerIntr goes to *callback, for the caller to install as timer
-/// timerIndex's interrupt handler. Returns 0, or 1 for a timer above 3 and
-/// nothing changed. Called by Save_InitializeWork with timer 2.
+/// timerIndex's interrupt handler.
 s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
   if (timerIndex > 3)
     return 1;
@@ -120,16 +109,11 @@ s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
 }
 
 /// Starts the selected operation timeout, saving the interrupt-enable state.
-/// timingIndex is the operation's phase (WaitForFlashWrite). Interrupts are
-/// on while the timer runs, whatever REG_IME was; StopFlashTimer puts the
-/// saved value back.
+/// timingIndex is the operation's phase (WaitForFlashWrite).
 void StartFlashTimer(u8 timingIndex) {
-  // Row timingIndex of the chip's max-time table (flashsst.s, flashat.s,
-  // flashmx.s, in flashset.s's flash_max_time form): interrupts to count, the
-  // timer's reload and its control. Every row in this game but Atmel's
-  // empty row 2 reloads 0xffbd with 0xc2, an interrupt every 67 timer counts of
-  // 256 cycles, about a millisecond.
-  u16 *timing = (u16 *)((u8 *)gFlashMaxTime + timingIndex * 6);
+  // Row timingIndex of the chip's wait-time table: interrupts to count, the
+  // timer's reload and its control.
+  u16 *timing = gFlashMaxTime + timingIndex * 3;
   u16 *timerRegister;
 
   gFlashSavedIme = REG_IME;
@@ -193,23 +177,18 @@ void CopyFlashReadRoutineToRam(void *destination) {
 }
 
 /// Polls for the expected byte until success or timeout, returning an operation
-/// error. Every chip's wait routine (gWaitForFlashWrite). timingIndex is the
-/// phase, 1 programming, 2 a sector erase and 3 a chip erase: it picks the
-/// max-time row and is the error's low byte. Returns 0 once address reads
-/// expected, else FLASH_ERROR_TIMEOUT | timingIndex. Reads through
-/// gFlashReadRoutine, which the caller must have copied to RAM
-/// (CopyFlashReadRoutineToRam).
+/// error.
 u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
   u16 result = 0;
 
   StartFlashTimer(timingIndex);
   while ((u8)gFlashReadRoutine((u8 *)address) != expected) {
     if (gFlashTimeoutFlag) {
-      // Allow a final successful read at the timeout boundary.
+      // One last read, in case the write finished as time ran out.
       if ((u8)gFlashReadRoutine((u8 *)address) == expected)
         break;
       // A Macronix chip (0x1cc2) is sent FLASH_COMMAND_RESET.
-      if (gFlash->id == 0x1cc2)
+      if (gFlash->id.joined == 0x1cc2)
         FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_COMMAND_RESET);
       result = timingIndex | FLASH_ERROR_TIMEOUT;
       break;
@@ -233,10 +212,6 @@ void ReadFlashCore(const u8 *source, u8 *destination, u32 size) {
 typedef void (*FlashReadCore)(const u8 *source, u8 *destination, u32 size);
 
 /// Copies the RAM reader and reads a range using the standard sector geometry.
-/// Reads `size` bytes from `offset` in `sector` into `destination`, running
-/// ReadFlashCore from a copy in a 128-byte local. Sectors are addressed with
-/// gFlash_ChipDefault's 4 KB geometry whatever the chip, which is the same:
-/// every entry gFlash can point to has 4 KB sectors.
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 code[64];
   u16 *sourceCode;
@@ -281,8 +256,7 @@ u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size) {
 typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 
 /// Copies the verifier to RAM and compares a standard flash sector with source
-/// data. Returns 0 when sector `sector` holds the 4 KB at `source`, else the
-/// address of its first differing byte.
+/// data.
 s32 Flash_VerifySector(u16 sector, u8 *source) {
   u16 code[128];
   u16 *sourceCode;

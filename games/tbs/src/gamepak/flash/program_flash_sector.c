@@ -6,11 +6,6 @@
 #include "../../../include/system/io_reg.h"
 
 /// Erases a standard sector and programs bytes until completion or an error.
-/// The program routine (gProgramFlashSector) of the Macronix and Panasonic
-/// chips, which Save_WriteSector calls with 4 KB at `source`. Returns 0,
-/// FLASH_ERROR_NO_SECTOR for a sector above 15, the erase's error, or a program
-/// timeout for the first byte that did not read back in time;
-/// gFlashNumRemainingBytes is left at the bytes not written.
 u16 ProgramFlashSector(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;
@@ -23,9 +18,8 @@ u16 ProgramFlashSector(u16 sector, u8 *source) {
   if (result != 0)
     return result;
 
-  // The byte reader WaitForFlashWrite polls with lives in savedCode until
-  // this function returns. The SRAM wait (REG_WAITCNT bits 1..0) is the
-  // chip's own while programming, 3 after.
+  // The byte reader WaitForFlashWrite polls with lives in savedCode until this
+  // function returns.
   CopyFlashReadRoutineToRam(savedCode);
   REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
   gFlashNumRemainingBytes = gFlash->sector.size;

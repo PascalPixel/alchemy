@@ -40,7 +40,6 @@
 
 #include "input.h"
 #include "module/scene/tolbi_games.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "module/game/game.h"
@@ -53,34 +52,20 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "event.h"
-#include "scene_tables.h"
-#include "scene_ids.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
 #include "heap_slots.h"
-#include "edition.h"
 #include "event_inline.h"
-#include "main_routine_work.h"
 #include "inventory.h"
-#include "menu_list.h"
 #include "iwram_call.h"
 #include "ability_ids.h"
 #include "io_write.h"
-#include "frame.h"
-#include "fixed_math.h"
 #include "item_ids.h"
-#include "map_grid.h"
 #include "map_grid_scroll.h"
 #include "flags.h"
-#include "sounds.h"
-#include "shared/colosso_story_flags.h"
 
 /// The spring has risen and faded into view this visit.
 #define FLAG_TOLBI_SPRING_RISEN FLAG_SCENE_TEMP_00
@@ -256,9 +241,9 @@ struct SpringObstacle {
   s16 hitCooldownFrames;
 };
 
-static __inline__ void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
+static inline void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
 
-static __inline__ void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
+static inline void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
 
 const struct SceneEntrance *TolbiSpring_GetEntrances(void) {
   return gTolbiSpring_Entrances;
@@ -308,9 +293,6 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
 }
 
 /// Searching Tolbi Spring lets the party toss a coin or a Lucky Medal.
-///
-/// The spring rises into view the first time in the visit, and the leader
-/// stands with their back to it to toss.
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gMainRoutineWork.leaderActorId;
 
@@ -358,15 +340,6 @@ const struct Trigger *TolbiSpring_GetTriggers(void) {
 }
 
 /// The setup of both scenes.
-///
-/// For Tolbi Spring it sets up the blend, the two mirrored props drawn
-/// underfoot and, from Tolbi (TOLBI_SPRING_FROM_TOLBI), the toss's obstacles.
-/// The spring is shown at once if it has risen in this visit.
-///
-/// For the Lucky Dice and Lucky Wheels rooms it removes the soldier after
-/// FLAG_COLOSSO_OVER, and handles the returns from the games.
-/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE announces Lucky Dice's coins and
-/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS hands over Lucky Wheels' prizes.
 s32 TolbiSpring_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
@@ -568,9 +541,6 @@ static void TolbiSpring_RiseAndFadeIn(void) {
 
 /// The Lucky Wheels attendant in Tolbi checks tickets and inventory space
 /// before sending the party to the game.
-///
-/// The game returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS. `spoken` is 1
-/// after a game with no prize, to offer another.
 static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -639,9 +609,6 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
 }
 
 /// Talking to the Lucky Dice attendant in Tolbi offers a game.
-///
-/// It costs ten coins a level of the party's average level. The event saves
-/// the coin total for the return to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE.
 static void TolbiSpring_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;
@@ -887,7 +854,6 @@ prompt:
       if (prizeIndex == 15) {
         prizeIndex = 14;
       }
-      // Reveal the selected item, then reduce its chance on later tosses.
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
       /* FAKEMATCH(dead): stepping routine away and back; without it, 6 of 280
        * instructions differ in tbs-en. */
@@ -926,14 +892,12 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   }
 
   if (category == 5) {
-    category = ((unsigned int)(Random_Next() * 5) >> 16);
+    category = Random_Below(5);
   }
 
   previousVariant = gMainRoutineWork.wonPrizes[8 + category];
 
-  variant =
-      (previousVariant + (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4) %
-      3;
+  variant = (previousVariant + (s32)Random_Below(2) + 4) % 3;
 
   gMainRoutineWork.wonPrizes[8 + category] = variant;
 
@@ -949,7 +913,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   struct Sprite *sprite;
   u32 count;
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->x.fixed = *coordinate++;
     actor->y.fixed = *coordinate++;
     actor->z.fixed = *coordinate;
@@ -962,9 +926,6 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   sprite = actor->sprite;
   count = sprite->count;
   if (count != 0) {
-    /* FAKEMATCH(temporary): none and picture hold the marker and the picture
-     * it is ored into; as entry->picture |= SPRITE_PICTURE_NONE, 1 of 53
-     * instructions differ in tbs-en. */
     u32 none = SPRITE_PICTURE_NONE;
     struct SpriteAnimation **animation = sprite->entries;
     u32 left = count;
@@ -989,7 +950,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
 static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   struct Actor *actor = Actor_Get(actorId);
 
-  if (actor != 0) {
+  if (actor != NULL) {
     actor->spriteStorageKind = storageKind;
   }
 }
@@ -1059,7 +1020,6 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         }
       }
 
-      // Pull the floating token toward the prize rings, then let it slow down.
       if (toss->attractionFrames > 0) {
         s32 deltaX;
         s32 deltaZ;
@@ -1350,7 +1310,6 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
     }
 
-    // Apply the obstacle's position, orientation and speed-dependent colors.
     switch (index) {
     case 0:
       TolbiSpring_SetActorAppearance(
@@ -1386,7 +1345,6 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     index++;
   } while (index != 4);
 
-  // Draw the token, its ground-level shadow and the three trailing copies.
   toss->shadow.x = toss->trail[0].x;
   toss->shadow.y = 0;
   toss->shadow.z = toss->trail[0].z;
@@ -1504,7 +1462,6 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     if (sTossFrame == 50) {
       Sound_Play(SE_TOLBI_SPRING_TOSS);
     }
-    // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;

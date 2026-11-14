@@ -82,21 +82,11 @@
 /// (examine triggers 100 to 102).
 
 #include "speaker.h"
-#include "version.h"
 #include "main_routine_work.h"
-#include "scene_ids.h"
 #include "module/scene/tree_rooms.h"
 #include "shared/walk_into_leader.h"
 #include "module/scene/shared/field_effect_spawn.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/game/game.h"
-#include "module/system/system.h"
 
-#include "actor.h"
-#include "types.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "create_configured_actor.h"
 #include "battle.h"
 #include "debug.h"
@@ -104,23 +94,16 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "battle_sprite_id.h"
 #include "heap_slots.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "event_inline.h"
-#include "io_reg.h"
 #include "text/msg_ids.h"
-#include "heap.h"
 #include "field_effect.h"
 #include "flags.h"
-#include "character_ids.h"
 #include "map_grid_scroll.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 
 /// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
@@ -182,7 +165,6 @@ static s16 *sLastCocoon;
 #include "shared/field_effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
-#include "actor_script.h"
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
@@ -257,10 +239,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTreeRoomsEntrances;
 }
 
-/// Returns the three exit regions 28 to 36 pixels up. They lead up to the
-/// second floor (TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
-/// (TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR) and back from Tret
-/// (TREE_ROOMS_TRET_TO_ENTRANCE).
+/// Returns the three exit regions 28 to 36 pixels up.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
   return gTreeRoomsRegions;
 }
@@ -275,14 +254,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Stepping on a cocoon in Tret Tree tears it at the first step and breaks
 /// through at the next.
-///
-/// The first step copies its torn picture from the staging cell (row 35) and
-/// sets its temporary flag.
-///
-/// The next step breaks through (row 36's cell). The leader spins and falls, to
-/// land at the given entrance, numbered as the cocoon.
-///
-/// The latch ignores the same cocoon again until the leader walks on.
 static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                                    s32 sourceRow, s32 entrance) {
   s32 destinationColumn;
@@ -326,7 +297,6 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   actor->layer = 2;
   Actor_SetSpritePriority(leaderActorId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
-
     actor->facing += 2 * FACING_STEP;
     wait(1);
   }
@@ -459,12 +429,6 @@ const struct Trigger *Scene_GetTriggers(void) { return gTreeRoomsTriggers; }
 
 /// Walking up to Tret in Tret Tree starts the battle with him (cell behavior
 /// 40, while FLAG_TRET_DEFEATED is clear).
-///
-/// He roars, the party gathers in front of him, and the evil within him scorns
-/// them before the battle with Tret starts. "Hm... HROOOM!!!" and "You hoped to
-/// find my kindly self?"
-///
-/// The battle returns to TREE_ROOMS_AFTER_FIGHT_TRET.
 static void TreeRooms_FightTret(void) {
   s32 hasMia;
   struct Actor *leader;
@@ -543,22 +507,12 @@ static void TreeRooms_FightTret(void) {
 
 /// After the battle with Tret, in Tret Tree, a passage opens in his room, and
 /// he comes to, thanks the party and says good-bye. "Oh... Mmmmm..."
-///
-/// Garet and Ivan stop him and he asks whether they need something. Answering
-/// no earns the leader a scolding.
-///
-/// Tret realises that he turned the people of Kolima into trees. He tries to
-/// free them in a swirl of sparks but cannot, and the party resolve to heal
-/// him.
-///
-/// Sets FLAG_TRET_DEFEATED, which lets Hermes' Water heal him in Kolima Forest.
 static void TreeRooms_PlayPostBattleConversation(void) {
   s32 hasMia;
   struct Actor *partyActor;
   TaskFunc sparkTask;
   const s32 *actions;
 
-  // Restore the party positions before opening the post-battle conversation.
   hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   Actor_Get(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_MIA, 2);
@@ -596,7 +550,6 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 152, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
-  // Open the passage in Tret's room before continuing the conversation.
   Sound_Play(SE_MAP_EXIT);
   MapGrid_CopyCellAttributes(26, 3, 1, 2, 10, 8);
   MapGrid_CopyCells(26, 38, 1, 1, 10, 43);
@@ -763,9 +716,6 @@ static void TreeRooms_PlayPostBattleConversation(void) {
 
 /// Sets the map grid by FLAG_TRET_DEFEATED. The passage in Tret's room is
 /// closed before and open after, with cells near entrance 20 redrawn.
-///
-/// With playRecoveryEvent it first plays the conversation after the battle,
-/// unless FLAG_KEEP_PARTY_POSITION is set.
 static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   if (playRecoveryEvent != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     TreeRooms_PlayPostBattleConversation();
@@ -787,10 +737,6 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
 /// Tret Tree's setup places or removes the Tret actors, starts the tint,
 /// redraws the torn cocoons after a battle, and sets the map grid by
 /// FLAG_TRET_DEFEATED.
-///
-/// It also plays what the entrance calls for. That is the falls on from
-/// entrances 50, 40, 30 and 20, the landing at entrance 10, or the conversation
-/// after the battle at TREE_ROOMS_AFTER_FIGHT_TRET.
 s32 TreeRooms_EnterRoom(void) {
   struct Actor *tret;
   struct Actor *actor;
@@ -802,7 +748,6 @@ s32 TreeRooms_EnterRoom(void) {
   struct Actor *secondTret;
 
   tret = Actor_Get(ACTOR_TRET);
-  // Point the cocoon latch at the scene state and save the palette first.
   sLastCocoon = (s16 *)gSceneLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
@@ -1076,7 +1021,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
       spark = FieldActor_Create(SPRITE_SPARKLE, sSparkOrigin.x, sSparkOrigin.y,
                                 sSparkOrigin.z);
-      if (spark != 0) {
+      if (spark != NULL) {
         previousResourceEntry =
             Sprite_ShareVramCacheEntry(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;
@@ -1127,9 +1072,7 @@ static void TreeRooms_CastReveal(void) {
 
 #include "shared/field_effect_advance.h"
 
-/// Entrance 10, at the end of the fall from cocoon 50. The leader drops in from
-/// 130 pixels up in front of Tret and lands in a ring of dust, and the map
-/// shakes.
+/// Entrance 10, at the end of the fall from cocoon 50.
 static void TreeRooms_RunLandingDustEvent(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;
@@ -1153,7 +1096,6 @@ static void TreeRooms_RunLandingDustEvent(void) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  // Spread particles around the leader while the landing effect finishes.
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;

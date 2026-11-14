@@ -9,15 +9,7 @@
 /// A fiery disc fades in, its rings running outward while every line of
 /// the display ripples, then fades out.
 ///
-/// Abilities: Torch (BATTLE_EFFECT_TORCH).
-///
-/// The disc is a mirrored radial picture whose pixels hold their distance from
-/// the middle, so rotating the palette moves the rings. It follows a Mars
-/// Djinni's entrance over the user, fades in over the first 9 frames, ripples
-/// throughout as BG2's x reference is fed line by line
-/// (BattleEffect_ArmBg2AffineHBlankDma), and fades out over the last 7.
-///
-/// Opens the canvas layer for the entrance and closes it at the end.
+/// Abilities: Torch.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -51,16 +43,12 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
                                  &screenX, &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
-  // Invisible until the fade-in; the canvas is shown 1.5 times its width.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Fill the 128x128 sheet with each pixel's distance from the middle,
-  // halved and held to 1 to 63, so the distance picks the colour. Rows count
-  // 7/8 of a pixel each, so the rings are a little taller than wide. Build
-  // one quadrant and mirror it into the other three.
+  // The disc: each pixel's colour is its distance from the middle.
   for (y = 0; y != 64; y++) {
     for (x = 0; x != 64; x++) {
       cy = y / 8 + 64;
@@ -79,10 +67,6 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     }
   }
 
-  // Colours 1 to 63: a fiery ramp that brightens to colour 32 and darkens
-  // again, red first, then green and blue (t is the distance from either
-  // end), written to the background palette and to a copy in
-  // Ram_MapGridCellBuffer that the frame loop rotates.
   pal = (u16 *)Ram_MapGridCellBuffer;
   for (i = 1; i != 64; i++) {
     if (i > 31)
@@ -114,8 +98,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   work->transferPending = 1;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
-  // Fade the radial picture in (frames 0 to 8), ripple each line of the
-  // display, then fade it out (frames 89 to 95, from 14 sixteenths down to 2).
+  // Fade the disc in, ripple the display, then fade it out.
   for (frame = 0; frame != TORCH_FRAMES; frame++) {
     if (frame <= 8) {
       level = frame * 2;
@@ -127,21 +110,13 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame > 88)
       REG_BLDALPHA = BLEND_ALPHA(192 - frame * 2, 16);
 
-    // BG2's x reference for each line of the display, in 20.8 texels: line i
-    // starts i + 1 texels in, slanting the picture a texel a line, swayed up to
-    // 32 texels either way by a sine of one turn every 128 lines whose phase
-    // moves 1/64 turn a frame. The HBlank DMA applies it.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + (4 << 16)) >> 10;
       angle += TRIG_TURN / 128;
     }
 
-    // Rotate colours 2 to 63 up by one, so the rings run outward: colour 63
-    // goes to colour 1 first, and the backward 62-halfword copy then moves 1
-    // to 62 up to 2 to 63, leaving colour 1 equal to the new colour 2. Then
-    // queue colours 1 to 63 for the background palette. The test against
-    // frame 127 never holds within the 96 frames.
+    // Rotate the colours so the rings run outward.
     if (frame > 127) {
       work->transferPending = 1;
     } else {
@@ -158,12 +133,9 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Shows the long Jupiter Djinni prelude (BattleEffect_RunDjinniEntrance with
-/// DJINNI_ENTRANCE_LONG, 84 frames instead of 64) over the first
-/// target, mirrored from the usual side; the Djinni's entrance is the whole
-/// effect.
+/// The long Jupiter Djinni entrance over the first target is the whole effect.
 ///
-/// Abilities: Kite (BATTLE_EFFECT_KITE).
+/// Abilities: Kite.
 void BattleEffect_RunKite(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   s32 originX;

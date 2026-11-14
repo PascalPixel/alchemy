@@ -1,18 +1,4 @@
-#include "battle.h"
-#include "debug.h"
-#include "field.h"
-#include "game.h"
-#include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
-#include "system.h"
-#include "heap_release.h"
 #include "dma.h"
-#include "io_reg.h"
-#include "heap.h"
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
 // in the room, actors in a row from the first the map passes, each
@@ -45,11 +31,7 @@ struct SolSanctumRingList {
   u16 count;
 };
 
-/// A task, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS. Every
-/// third frame each light grows to its largest scale and shrinks to a tenth; at
-/// the smallest it vanishes for 24 steps while its drift carries on, and comes
-/// back where the drift has taken it. Its drift is a random speed on each axis,
-/// as its tables allow, turned into a sine swing.
+/// A task, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS.
 static void SolSanctum_UpdateRing(void) {
   struct SolSanctumRingList *list = HeapSlot_AllocEwram(
       HEAP_SLOT_SOL_SANCTUM_LIGHTS, sizeof(struct SolSanctumRingList));
@@ -107,9 +89,9 @@ static void SolSanctum_UpdateRing(void) {
         actor->scaleX = scale;
         actor->scaleY = scale;
       }
-      rx = (gSolSanctum_RingDrift[i][0] * (u32)Import_RandomNext()) >> 16;
-      ry = (gSolSanctum_RingDrift[i][1] * (u32)Import_RandomNext()) >> 16;
-      rz = (gSolSanctum_RingDrift[i][2] * (u32)Import_RandomNext()) >> 16;
+      rx = (gSolSanctum_RingDrift[i][0] * (u32)Random_Next()) >> 16;
+      ry = (gSolSanctum_RingDrift[i][1] * (u32)Random_Next()) >> 16;
+      rz = (gSolSanctum_RingDrift[i][2] * (u32)Random_Next()) >> 16;
       rx = rx != 0 ? (rx << 16) / 1000 : 0;
       ry = ry != 0 ? (ry << 16) / 1000 : 0;
       rz = rz != 0 ? (rz << 16) / 1000 : 0;

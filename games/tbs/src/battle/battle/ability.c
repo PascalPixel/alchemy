@@ -5,9 +5,8 @@
 
 #include "../battle_internal.h"
 
-/// Returns 1 for an effect that still applies when the ability's damage has
-/// just knocked its target out: the drains, which give the damage they dealt
-/// back to the user.
+/// Returns 1 for an effect that still applies when the damage has just knocked
+/// the target out: the drains.
 s32 Ability_EffectAppliesToDowned(s32 effect) {
   switch (effect) {
   case ABILITY_EFFECT_DRAIN_HP:
@@ -31,18 +30,16 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// (Unit_Calculate).
 #define RESISTANCE_PER_STAGE 20
 
-// The turns a stat change or a status lasts. A status, or a lowered stat but
-// never a raised one or Agility, may end sooner at the rolls the end of every
-// turn makes (BattleUnit_RollCounterEarlyEnd).
+// The turns a stat change or a status lasts; a status or a lowered stat may end
+// sooner.
 #define STAT_CHANGE_TURNS 7
 #define AGILITY_CHANGE_TURNS 5
 #define STATUS_TURNS 7
 /// The Grim Reaper's countdown.
 #define CURSE_TURNS 7
 
-/// Unit.psySeal: Bind's seal counts its seven turns in the low three
-/// bits, and may end sooner; Luff's counts down 8 a turn, two turns that never
-/// end early (BattleUnit_CountDownPsynergySeal).
+/// Unit.psySeal: Bind's seal lasts seven turns and may end sooner; Luff's lasts
+/// two and never ends early.
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
 
@@ -87,37 +84,8 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
     }                                                                          \
   }
 
-/// Applies the action's ability to one of its targets: first its damage or
-/// healing, then its added effect (a status, a stat change, a revival...).
-/// Nothing is shown here: each step queues playback commands (the names and
-/// numbers a message needs, the message, the target's reactions) that
-/// BattlePlayback_Run then plays in order. The units themselves change at
-/// once: Unit_CalculateFar recalculates a unit's stats from its stages, and
-/// Unit_RecalculateGaugesFar its HP and PP gauges after either changes.
-///
-/// Called for each target in turn by BattlePlayback_Run (an action with an
-/// battle effect) and BattleStaging_RunActorEntries (one without). It takes
-/// Battle_RandomFar rolls, and borrows a heap block for the target's copy.
-///
-/// It runs in phases, each marked in the body:
-/// 1. Setup: a copy of the target as it was; the target's distance from the
-///    aimed place; the element's affinity (resisted, neutral or weak); the
-///    user's power in the element.
-/// 2. The Djinn bonus roll, and whether the effect lands (hit).
-/// 3. Calling an ally (Ally Search, Search for Help, Speed Surge).
-/// 4. The effects that change the damage step: Ground, Torch, Severe Blow,
-///    instant death, a self-destruct, Psy Drain.
-/// 5. Damage and healing, by the ability kind (attack, PP damage, HP and PP
-///    healing, Psynergy damage, an effect's damage).
-/// 6. The added effect, by the ability's effect: cures, heals, stat changes,
-///    revivals, statuses, drains, Break, the curse, guards.
-/// 7. Waking from damage, the recalculated stats, the redraw, and the evil
-///    spirit's share for a haunted unit.
-///
-/// @param plan the action under way: the acting unit, the ability, its element
-/// and its targets, each with its distance from the aimed position, damage
-/// multiplier, critical hit and any hit roll made in advance
-/// @param slot which of the action's targets (0 to plan->targetCount - 1)
+/// Applies the action's ability to one of its targets, slot, in the seven steps
+/// of README.md's "How an ability resolves", queueing what playback will show.
 UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
                                           s32 slot) {
   s32 distance; // steps from the aimed position, 0 to 5
@@ -146,9 +114,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   s32 amount; // the damage, or the HP or PP restored
   s32 unitSize;
 
-  //------------------------------------------------------------------
-  // 1. Setup
-  //------------------------------------------------------------------
+  // 1. The target as it was, its distance and the element.
   elementBonus = 0;
   battle = gBattleWork;
   halveDefense = 0;
@@ -171,9 +137,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   target = Unit_GetFar(targetId);
   Iwram_CopyWords(savedTarget, target, unitSize);
 
-  // The target's distance from the aimed position: every damage and
-  // healing table falls off with it. An ability that reaches the whole side
-  // treats every target as aimed at.
+  // An ability that reaches the whole side treats every target as aimed at.
   if (ability->range != ABILITY_RANGE_ALL) {
     distance = plan->targetOffset[slot];
     if (distance < 0)
@@ -182,9 +146,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     distance = 0;
   }
 
-  // The element's affinity: -1 when the target resists no element better
-  // than this one, 1 when it resists none worse. It picks the damage
-  // message ("damage.", "damage!" or "damage!!!").
+  // The affinity picks the message: "damage.", "damage!" or "damage!!!".
   if (element != ELEMENT_NONE) {
     s32 resistance;
     s32 i;
@@ -212,13 +174,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   else
     elementPower = 100;
 
-  //------------------------------------------------------------------
-  // 2. The Djinn bonus, and whether the effect lands
-  //------------------------------------------------------------------
-  // A Djinni striking the target's weakness may earn the Djinn bonus: an
-  // enemy it fells then gives more coins and experience and a better chance
-  // of its item (BattleEnemy_RecordDefeat). The chance is the power less
-  // the resistance, plus 30, in percent; the event's operand is unused.
+  // 2. The Djinn bonus, and whether the effect lands.
   if (plan->command == COMMAND_DJINN &&
       (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER) &&
       affinity > 0) {
@@ -247,13 +203,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       hit = plannedHit;
   }
 
-  //------------------------------------------------------------------
-  // 3. Calling an ally
-  //------------------------------------------------------------------
-  // Calling for help: an enemy calls another of its kind, or a random member
-  // of its formation, into an empty enemy slot. Speed Surge is an enemy
-  // splitting itself in two. It needs the roll, room among the enemy
-  // sprite slots (Enemy_HasSpriteRoom) and a free unit id.
+  // 3. Calling an ally; Speed Surge is an enemy splitting in two.
   if (ability->effect == ABILITY_EFFECT_CALL_ALLY ||
       ability->effect == ABILITY_EFFECT_CALL_HELP) {
     s32 classId;
@@ -321,17 +271,12 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     }
   }
 
-  //------------------------------------------------------------------
-  // 4. Effects that change how the damage step works
-  //------------------------------------------------------------------
+  // 4. Effects that change how the damage step works.
   if (hit != 0) {
     if (ability->effect == ABILITY_EFFECT_GROUND) {
       u32 i;
 
-      // Ground holds only a target with an entry in this turn's action
-      // list. BattleStaging_DispatchAction clears each entry once it has
-      // played, so a target that has already acted is left alone; the auto
-      // battle's AutoBattle_RunAction clears none.
+      // Ground holds only a target that has not yet acted this turn.
       hit = 0;
       for (i = 0; i < BATTLE_ACTION_CAPACITY; i++) {
         if (battle->actions[i].unitId == targetId) {
@@ -358,10 +303,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     }
   }
 
-  //------------------------------------------------------------------
-  // 5. Damage and healing
-  //------------------------------------------------------------------
-  // A downed target is skipped, unless the ability revives.
+  // 5. Damage and healing; a downed target is skipped unless the ability
+  // revives.
   if (skipDamage == 0 &&
       (target->hp != 0 || Battle_IsReviveEffectFar(ability->effect) != 0)) {
     s32 pp;
@@ -382,9 +325,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       defense = baseDefense;
       if (halveDefense != 0)
         defense = (u32)baseDefense / 2;
-      // This loop runs once, with pass 1, so its pass-0 code never runs:
-      // the element bonus always applies and the critical hit message is
-      // never shown.
+      // The loop runs only its pass 1: the element bonus always applies and the
+      // critical hit message is never shown.
       for (pass = 1; pass <= 1; pass++) {
         if (element != ELEMENT_NONE)
           elementBonus = elementPower - target->element[element].resistance;
@@ -719,21 +661,13 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     }
   }
 
-  //------------------------------------------------------------------
-  // 6. The added effect: a status, a stat change, a cure or a revival
-  //------------------------------------------------------------------
-  // It needs the effect to have landed on a target still standing, unless
-  // it revives or drains. The target's name goes first, for the effect's
-  // first message; a message uses up the arguments pushed before it, so each
-  // later message pushes the name again.
+  // 6. The added effect; each message after the first pushes the name again.
   BattlePlayback_Push(PLAYBACK_UNIT_NAME, targetId);
   if ((Battle_IsReviveEffectFar(ability->effect) != 0 || target->hp != 0 ||
        Ability_EffectAppliesToDowned(ability->effect) != 0) &&
       hit != 0) {
     switch (ability->effect) {
     // Tonic leaves confusion and charm, and ends sleep without a message.
-    // Most of its messages push the name for the next after them; Restore
-    // below clears the arguments and pushes the name before each instead.
     case ABILITY_EFFECT_CURE_ALL:
       if (target->delusion != 0) {
         target->delusion = 0;
@@ -872,10 +806,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
     }
 
-    // The stat changes. The amount shown is how much the stat itself moved,
-    // measured against the saved copy once Unit_Calculate has recalculated it,
-    // so a stage already at its limit shows 0; the turns start again either
-    // way. Zephyr and Vine set Agility's stage outright.
+    // The stat changes show how far the stat itself moved, 0 at its limit;
+    // Zephyr and Vine set Agility's stage outright.
     case ABILITY_EFFECT_AGILITY_UP:
       target->agilityStage = AGILITY_STAGE_DOUBLED;
       target->agilityTurns = AGILITY_CHANGE_TURNS;
@@ -1275,14 +1207,11 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     }
   }
 
-  //------------------------------------------------------------------
-  // 7. Waking from damage, and the recalculated stats
-  //------------------------------------------------------------------
+  // 7. Waking from damage, and the stats worked out again.
   BattlePlayback_Push(PLAYBACK_CLEAR_ARGUMENTS, 0);
 
-  // Losing HP or PP wakes a sleeping target still standing one time in four,
-  // unless it fell asleep this turn: Battle_ProcessTurnEnd has not yet
-  // counted it down from STATUS_TURNS.
+  // Damage wakes a sleeping target one time in four, unless it fell asleep this
+  // turn.
   if (target->hp != 0 && target->sleep != 0 && target->sleep < STATUS_TURNS &&
       damageDealt > 0 && (Battle_RandomFar() & 3) == 0) {
     target->sleep = 0;
@@ -1295,9 +1224,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
   PartyStatus_DrawFar(gBattleWork->partyStatus);
   if (target->hp != 0)
     BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
-  // A haunted unit pays, one time in four, for each target it took HP or PP
-  // from: a quarter of that (at least 1), gathered in hauntDamage and taken
-  // from its own HP at the end of its action (BattleUnit_ProcessActionEnd).
+  // A haunted unit pays, one time in four, a quarter of what it took, at the
+  // end of its action.
   if (actor->haunt != 0 && (Battle_RandomFar() & 3) == 0 && damageDealt > 0) {
     s32 share;
 

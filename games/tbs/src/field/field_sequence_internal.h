@@ -41,9 +41,7 @@ extern const struct SpeakerDefinition gSpeakerDefinitions[];
 
 /// Scene ids above the field scenes, which MainRoutine_Run runs without a
 /// layout; each returns a result to Scene_ReturnFromSequence instead of an
-/// exit. A 16.16 position that Vector_AddPolarOffset moves by a distance and a
-/// heading: the routine walks the coordinates as three words, and the callers
-/// read the result by name.
+/// exit.
 union PolarOffsetPosition {
   struct Vector3 vector;
   s32 coordinates[3];
@@ -54,10 +52,9 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// A map region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
-// A field Psynergy or item use, packed into one value (items.c, psynergy.c),
-// as work->psynergy and work->item hold it. bits: 13..10 the user (13 is
-// ACT_PACKED) | 9..0 the Psynergy or item. Since ACT_PACKED is the user's top
-// bit, a packed use names user 8 or above.
+// A field Psynergy or item use, packed into one value (items.c, psynergy.c), as
+// work->psynergy and work->item hold it. bits: 13..10 the user (13 is
+// ACT_PACKED) | 9..0 the Psynergy or item.
 #define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
 #define ACT_ITEM_ID(c) ((c) & 0x3ff)
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
@@ -73,9 +70,8 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
    MessageArgument_PushFar((act), MESSAGE_ARGUMENT_ABILITY),                   \
    FieldMessage_ShowFar((m), FIELD_MESSAGE_ZOOM))
 
-/// A scene's encounter zones (gScene_EncounterRules, encounter_rules.s),
-/// ended by scene -1. Encounter_SelectMapZones takes the first rule that
-/// matches the scene and entrance and is not turned off.
+/// A scene's encounter zones (gScene_EncounterRules, encounter_rules.s), ended
+/// by scene -1.
 struct SceneEncounterRule {
   s16 sceneId;               ///< -1 ends the table
   s16 entrance;              ///< -1 for any entrance

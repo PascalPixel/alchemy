@@ -16,10 +16,7 @@ u32 Random16(void) {
 }
 
 /// Moves the point `position` by `radius` in direction `angle` on the ground
-/// plane: x by the cosine, z by the sine. The point is any three s32
-/// coordinates x, y, z in a row (struct FieldPosition, struct Vector3 and
-/// others), so it takes a plain pointer. Byte offsets reach each coordinate
-/// without treating separate struct members as an array.
+/// plane: x by the cosine, z by the sine.
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position) {
   u8 *coordinate = position;
 
@@ -58,8 +55,7 @@ s32 ArcTan2(s32 x, s32 y) {
     // the largest angle the eight search bits can represent.
     result = TRIG_TURN / 4;
     if (ratio <= 64362) {
-      // Eight comparisons choose angle bits 0x2000 down to 0x40. Halving
-      // each table step retains the interval selected by the earlier bits.
+      // Eight comparisons choose angle bits 0x2000 down to 0x40.
       table = &gMath_TanTable[127];
       result = 0;
 
@@ -128,8 +124,7 @@ s32 Math_IntegerSqrt(s32 value) {
   s32 bit;
   s32 result;
 
-  // remainder is value - result squared. Each trial is the extra square
-  // cost of setting the next bit, preserving the higher bits already chosen.
+  // remainder is value - result squared.
   remainder = value;
   result = 0;
   for (bit = 15; bit >= 0; bit -= 1) {
@@ -146,8 +141,6 @@ s32 Math_IntegerSqrt(s32 value) {
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
-/// Returns the address of the basic sprite palettes (gBasicSpritePalettes)
-/// as a number. Called by the Djinn menu and the battle party status, which
-/// copy its first 16 colours into a background palette themselves (BG palette
-/// 5 and 14).
+/// Returns the address of the basic sprite palettes (gBasicSpritePalettes) as a
+/// number.
 s32 Palette_GetBasicSpriteColors(void) { return (s32)gBasicSpritePalettes; }

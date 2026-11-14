@@ -23,9 +23,7 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
 }
 
 /// Both winding directions share the countdown and position update. timer
-/// starts at 60 (FieldPsynergy_Frost). The particle circles its target point
-/// (targetX to targetZ) at a radius of 2 pixels and an angle of 1/32 turn for
-/// each frame left, so it closes in from 118 pixels.
+/// starts at 60 (FieldPsynergy_Frost).
 static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
                                                     s32 clockwise) {
   struct Actor *particle = (struct Actor *)actor;
@@ -67,11 +65,6 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *actor) {
 }
 
 /// Runs Frost cast on a target.
-///
-/// Abilities: Frost (FIELD_PSYNERGY_FROST).
-///
-/// The target is the actor in effectWork->child. With childMode the
-/// target is left as it is and only the particles appear.
 void FieldPsynergy_FrostOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *target = effectWork->child;
@@ -88,13 +81,6 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 
 /// 16 particles spiral in on the Psynergy's position and make the target flash
 /// 16 times; without childOption the target takes animation 2.
-///
-/// Abilities: Frost (FIELD_PSYNERGY_FROST).
-///
-/// The target's part runs only when a trigger named the target
-/// (FieldPsynergy_Dispatch clears enabled) and no event set childMode: it
-/// flashes, takes animation 2 with SE_SHIMMER unless childOption is set, keeps
-/// glinting (FieldEffect_UpdateFrostGlint) and runs the scene's Frost event.
 void FieldPsynergy_Frost(void) {
   s32 eventTarget;
   struct Vector3 pos;

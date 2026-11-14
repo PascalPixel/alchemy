@@ -4,13 +4,7 @@
 
 #include "text_font.h"
 
-// Articles and possessives, by edition. An item or name carries an article
-// class (the {article_class:N} code of its message), and the message builder
-// (Message_AppendArticleName in window/decode.c) copies the class's word in
-// front of the name. The decoder copies each article table whole as a struct
-// ArticleTable and each possessive table as a struct ItemPossessiveTable;
-// French's one pronoun is a plain string. Each table's words come before it in
-// .rodata.
+// Articles and possessives, by edition.
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 
@@ -28,8 +22,7 @@ const s8 *const gArticle_Table[8] = {
 };
 
 /// Counted nouns, each plural before its singular; gLocalizedWord_CountedNouns
-/// (window/counted_nouns.c) pairs them as {singular, plural}. "K\xe4pfe" is
-/// the ROM's spelling of K\xe4mpfe.
+/// (window/counted_nouns.c) pairs them as {singular, plural}.
 const u8 gLocalizedWord_Battles[] = "K\xe4pfe";
 const u8 gLocalizedWord_Battle[] = "Kampf";
 const u8 gLocalizedWord_Tickets[] = "Tickets";
@@ -178,8 +171,7 @@ const u8 gWindowSprite_CursorBobOffsets[80] = {
 };
 
 /// A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0
-/// while y rises at each side. WINDOW_SPRITE_MOTION_WOBBLE takes one of its 20 steps
-/// every other frame.
+/// while y rises at each side.
 const s8 gWindowSprite_WobbleOffsets[40] = {
     0, 4, 1, 4, 2, 3, 3, 2,
     4, 1, 4, 0, 4, 1, 3, 2,

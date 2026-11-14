@@ -9,15 +9,7 @@
 
 /// The World Map's encounter zones (struct WorldMapEncounterRule): {encounter
 /// region, battle environment (-1 for any), flag (-1, or a flag that turns the
-/// rule off once set), zone}, ended by region -1. The first matching rule wins
-/// (Encounter_ResolveWorldMapZoneAndBackdrop), and ground no rule matches
-/// has no random battles.
-///
-/// Each encounter region is an area of the map, whose zones are made for
-/// party levels from 3 (region 1) to 22 (region 6). Each region has two zones:
-/// BATTLE_ENVIRONMENT_FOREST (BATTLE_ENVIRONMENT_SNOW_FOREST in
-/// WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD) takes the second, with a rate of 9
-/// against the first's 20 or 25. No rule uses a flag or any environment.
+/// rule off once set), zone}, ended by region -1.
 const struct WorldMapEncounterRule gWorldMap_EncounterRules[] = {
     {1, BATTLE_ENVIRONMENT_BEACH, -1, 7},
     {1, BATTLE_ENVIRONMENT_SHALLOWS, -1, 7},
@@ -57,10 +49,7 @@ const struct WorldMapEncounterRule gWorldMap_EncounterRules[] = {
 };
 
 /// The encounter of each Djinni battle (Encounter_GetDjinnFormation): {zone,
-/// slot}, by Djinni number (element * 20 + index). The 20 rows of an element
-/// all use its zone (ENCOUNTER_ZONE_VENUS_DJINN to
-/// ENCOUNTER_ZONE_JUPITER_DJINN), slot
-/// index % 8, so Djinn 8 apart fight the same formation.
+/// slot}, by Djinni number (element * 20 + index).
 const struct DjinniBattle gEncounter_DjinnBattles[] = {
     [DJINNI_FLINT] = {ENCOUNTER_ZONE_VENUS_DJINN, 0},
     [DJINNI_GRANITE] = {ENCOUNTER_ZONE_VENUS_DJINN, 1},

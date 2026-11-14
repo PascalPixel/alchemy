@@ -14,19 +14,12 @@
   gCondemn_PictureX[(column)][(picture)]
 #define CONDEMN_PICTURE_Y(row, picture) gCondemn_PictureY[(row)][(picture)]
 
-/// A hooded reaper with a scythe sways across the screen three times, each of
-/// the first two passes fading out through a ripple, the last over the first
-/// target; on frame 88 the screen flashes white, the reaper swings, and the
-/// red crescent its scythe leaves fades away while the target is knocked
-/// back, bouncing on frame 120.
+/// A hooded reaper with a scythe sways across the screen three times, fading
+/// out through a ripple, the last pass over the first target; the screen
+/// flashes white, the reaper swings, and the red crescent its scythe leaves
+/// fades while the target is knocked back.
 ///
-/// Abilities: Condemn (BATTLE_EFFECT_CONDEMN).
-///
-/// Opens the tiled canvas (BattleEffect_StartTiledCanvas) and adds
-/// BattleEffect_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
-/// the fading crescent into Ram_MapGridCellBuffer; moves the target's actor;
-/// and reloads the battle background on BG1 before it closes the layer. It
-/// never calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
+/// Abilities: Condemn.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   void **slots;
   void **cursor;
@@ -61,10 +54,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The reaper and the crescent in work->sheet (enum
-  // ReaperSheetPicture), with their palette; the fading crescent in
-  // Ram_MapGridCellBuffer (enum RedCrescentPicture), whose own palette is
-  // skipped.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
@@ -81,10 +70,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                       COMPOSITE_TRANSPARENT);
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
-  // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
-  // swayCenter is the point the reaper sways about, in 16.16 pixels: the
-  // first pass high up on the near side.
   drawReaper = 1;
   if (work->args->side == EFFECT_SIDE_PARTY) {
     swayCenter[0] = -px(80);
@@ -102,16 +88,13 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 i;
     s32 *scanline;
 
-    // Frame loop. The reaper sways 16 pixels across and 4 up and down about
-    // swayCenter, a full turn every 128 frames.
     spin = frame * (TRIG_TURN / 128);
     screenX = (swayCenter[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
     screenY = (swayCenter[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
     if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
-    // Frame 32: the second pass, lower and further across; the reaper skips
-    // a frame while it moves, and comes back opaque on frame 33.
+    // The second pass, lower and further across.
     if (frame == 32) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = -px(32);
@@ -125,7 +108,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       drawReaper = 1;
     }
-    // Frame 64: the last pass, on the first target.
+    // The last pass, on the first target.
     if (frame == 64) {
       Projection_ScaledUnit(work->args->targets[0], position);
       if (work->args->side == EFFECT_SIDE_PARTY) {
@@ -140,8 +123,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       drawReaper = 1;
     }
-    // The last 16 frames of each of the first two passes ripple harder and
-    // harder (up to 30/4 texels) as the reaper fades out.
+    // Each of the first two passes ripples harder as the reaper fades out.
     scanline = work->bg2xLines;
     ripple = 0;
     if (frame <= 31) {
@@ -159,9 +141,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       ripple = 0;
     }
 
-    // Every line's BG2X carries the sway, so the reaper moves by scrolling
-    // the canvas rather than by where it is drawn. The ripple is a wave 32
-    // lines long that moves up a line a frame.
+    // The reaper moves by scrolling the canvas line by line, not by where it is
+    // drawn.
     i = 0;
     lineOffset = (6 - screenX) << 8;
     angle = frame * (TRIG_TURN / 32);
@@ -179,10 +160,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
          * instructions differ in tbs-en. */
         pictureRow = i >> 31;
       }
-      // The reaper with its scythe raised until frame 91, and swung from
-      // frame 88; a white flash (the brightest level over the whole canvas,
-      // covering what was drawn) on frames 88 and 89; then the crescent,
-      // fading through five pictures, two frames each.
       if (frame <= 87) {
         draw[work->args->side](
             canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
@@ -233,8 +210,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         }
       }
     }
-    // Frame 88: knock the target back, away from the middle of the field,
-    // to twice its x at up to 2 pixels a frame.
+    // Knock the target back.
     if (frame == CONDEMN_SWING_FRAME) {
       target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
       target->velocityY = px(1);
@@ -247,21 +223,14 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_DAMAGE,
                                TINT_KEEP, 0);
     }
-    // Frame 120: the target, sent up at a pixel a frame with no gravity on
-    // frame 88, gets the battle units' usual gravity back (BATTLE_UNIT_GRAVITY,
-    // as battle/motion.c sets).
     if (frame == CONDEMN_BOUNCE_FRAME) {
       GetBattleObjectSlotFar(work->args->targets[0])->actor->gravity =
           BATTLE_UNIT_GRAVITY;
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  // Finish: the tasks, then the battle background reloaded into
-  // character blocks 2 and 3, its palettes darkened to level 24, as
-  // BattleEffect_SetupBlendedDisplay does after a summon. It repairs nothing:
-  // this effect writes neither those blocks nor the battle's palette, and
-  // BattleEffect_EndCanvasLayer rebuilds the background's maps and fades its
-  // palette back from level 21 itself.
+  // Finish: the tasks, then the battle background reloaded, which repairs
+  // nothing this effect changed.
   // XXX (no evidence): why Condemn reloads the background; the reload puts
   // back the picture already there, so nothing the game shows says why.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

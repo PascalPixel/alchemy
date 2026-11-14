@@ -11,7 +11,6 @@
 #include "playback_queue.h"
 #include "battle_action_run.h"
 #include "main_routine_work.h"
-#include "far_call.h"
 
 /// The item the battle spoils could not fit in the inventory. It is
 /// gMainRoutineWork.pendingItem under a second name (system/ewram.s

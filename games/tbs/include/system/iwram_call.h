@@ -11,10 +11,7 @@
 
 #include "types.h"
 
-// Fixed addresses of IWRAM-resident routines. System_InstallIwramAndIrqs
-// copies the resident routines to 0x03000000; C calls its routines at these
-// numbers, and ARM code running from RAM reaches them as offsets from
-// IwramIrqMain (IWRAM_ENTRY), so they cannot move.
+// Fixed addresses of IWRAM-resident routines.
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
 #define Iwram_ClearWordsEntry                                                  \
@@ -48,10 +45,7 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03001388, IwramCopyWords)
 
-/// value * Q16_ONE / divisor: the 16.16 ratio of two 16.16 numbers. It is
-/// value times (1 << 30) / divisor, shifted down 14 from a 64-bit product,
-/// so that quotient is truncated toward zero first and a large divisor costs
-/// precision.
+/// value * Q16_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
 static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {
   return Iwram_RatioMulQ14Entry(divisor, value);
 }

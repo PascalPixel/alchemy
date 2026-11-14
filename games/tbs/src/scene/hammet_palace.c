@@ -49,9 +49,7 @@
 /// `Business and You` and `The Good Host`. A chest holds a Water Jacket and a
 /// barrel a Nut.
 #include "main_routine_work.h"
-#include "scene_ids.h"
 #include "module/scene/hammet_palace.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
 #include "battle.h"
@@ -60,20 +58,14 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
-#include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "flags.h"
-#include "sounds.h"
-#include "palette_buffers.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or has freed him, so
 /// Layana waits elsewhere in her room.
@@ -131,7 +123,6 @@ enum HammetPalaceActorId {
   ACTOR_ASKING_ABOUT_THE_SILK_TRADE
 };
 
-// Entrance setup and the two long conversations use the helpers below.
 static void HammetPalace_SetUpEntrance(void);
 static void HammetPalace_IvanReportsToLayana(void);
 static void HammetPalace_FacePartyOutward(s32 waitFrames);
@@ -139,8 +130,7 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames);
 static void HammetPalace_HammetsHomecoming(void);
 
 /// Advances within the current conversation's consecutive message block.
-static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
-
+static inline void HammetPalace_AdvanceMessage(s32 amount) {
   gFieldWork->message += amount;
 }
 
@@ -181,8 +171,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Talking to one of the people of Hammet Palace before Hammet is free: he
 /// hopes for his release.
-///
-/// `Lord Hammet will be released soon. Right?`
 static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayLordHammetWillReleasedSoon);
@@ -195,8 +183,6 @@ static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
 
 /// Talking to one of the people of Hammet Palace before Hammet is free: he
 /// worries for Hammet's silk trade.
-///
-/// `Has the legacy of Lord Hammet's silk trading come to an end?`
 static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayHasLegacyLordHammetsSilk);
@@ -208,17 +194,7 @@ static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
 }
 
 /// Layana scolds Isaac for sneaking into Lunpa.
-///
-/// It's the first talk with her in Hammet Palace after the party has heard in
-/// Lunpa that Hammet is held there (area temp flag
-/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA).
-///
-/// `Isaac, you sneaked into Lunpa? That's far too dangerous!`
-///
-/// She is glad Hammet is unhurt, but asks the party not to go back, and to
-/// fulfill their quest.
 static void HammetPalace_LayanaScoldsLunpaVisit(void) {
-
   Event_Start();
   Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Event_SetMessageId(MsgKalayIsaacSneakedIntoLunpaThats);
@@ -240,7 +216,6 @@ static void HammetPalace_LayanaScoldsLunpaVisit(void) {
 /// Walking north into a door of Hammet Palace (step triggers 2, 3, 4 and 14):
 /// it opens, and the leader walks through it to the next room.
 static void HammetPalace_LeaveThroughDoor(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -263,7 +238,6 @@ static void HammetPalace_LeaveThroughDoor(void) {
   }
   Event_Wait(16);
   Import_EventSetExitRequest(work->stepTrigger);
-  // Restore the layer entries before returning control to the field.
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
   Event_End();
@@ -281,16 +255,6 @@ s32 Scene_Initialize(void) {
 }
 
 /// Sets up the room the party enters by.
-///
-/// - In Layana's room (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM), Hammet
-///   stands beside her once he is free, and his homecoming plays the first
-///   time. Before that she stands elsewhere once the party has heard of him
-///   in Lunpa (FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA).
-/// - By the door to the underground passage
-///   (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
-///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open
-///   once FLAG_KALAY_TUNNEL_OPEN is set.
-/// - HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS is Ivan's report.
 static void HammetPalace_SetUpEntrance(void) {
   struct Actor *actor;
   s32 facing;
@@ -346,14 +310,7 @@ static void HammetPalace_SetUpEntrance(void) {
 
 /// Ivan's report in Hammet Palace, when the guards at the door bring the party
 /// to Layana: she had hoped Hammet came back with him.
-///
-/// - The ransom was paid long ago, yet Dodonpa holds Hammet still.
-/// - Layana will not risk him by sending the soldiers, nor the party.
-/// - She tells of the prophecy, the Jupiter Adept who gave Hammet the Shaman's
-///   Rod and Ivan, and what the rod is to find.
-/// - Then she sends everyone back to their posts.
 static void HammetPalace_IvanReportsToLayana(void) {
-
   struct FieldWork *work;
   s32 advanceAfterReply;
   const s32 *partyScript;
@@ -877,14 +834,7 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
 
 /// Hammet's homecoming in Hammet Palace, the first time the party walks into
 /// Layana's room once he is free.
-///
-/// - Hammet welcomes them.
-/// - Layana scolds Ivan for going to Lunpa against her word.
-/// - Ivan decides to leave at once on the quest.
-/// - Hammet sends them to Hesperia with the Shaman's Rod, as the Jupiter Adept
-///   said.
 static void HammetPalace_HammetsHomecoming(void) {
-
   struct Actor *leader;
   struct FieldWork *work;
   s32 answeredYes;
@@ -894,7 +844,6 @@ static void HammetPalace_HammetsHomecoming(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   FieldCamera_MoveTo(864, CAMERA_KEEP, 536, 0);
-  // Pan from the entrance while the party walks into its speaking positions.
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 864, 630);
@@ -909,15 +858,15 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 864, 498);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
+  if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkTo(ACTOR_PARTY_LEADER, 856, 486);

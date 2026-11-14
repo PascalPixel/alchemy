@@ -33,8 +33,7 @@ struct WorldMapAffinePair {
 
 /// The world map's affine work in HEAP_SLOT_WORLD_MAP_AFFINE: the scanline
 /// terms and two pages of per-line affine parameters, one built while the other
-/// is shown. The world map's setup takes the slot; the next scene change frees
-/// it.
+/// is shown.
 struct WorldMapAffineWork {
   struct WorldMapScanline scanlines[160];
   struct WorldMapAffinePair pages[2][160];

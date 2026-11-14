@@ -32,9 +32,7 @@
 #include "module/import.h"
 #include "module/scene/kolima_forest_floodgate.h"
 #include "module/scene/shared/kolima_palette.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "module/system/system.h"
 #include "battle.h"
 #include "debug.h"
@@ -42,26 +40,17 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
 #include "system_call.h"
-#include "heap_release.h"
 #include "dma.h"
 #include "map_grid.h"
-#include "io_reg.h"
-#include "irq.h"
 #include "text/msg_ids.h"
-#include "scene_tables.h"
 #include "map_grid_scroll.h"
 #include "macros.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
 #include "item_ids.h"
-#include "heap.h"
 
 /// The actors, numbering gKolimaForestFloodgateActorPlacements'
 /// rows from ACTOR_FIRST_PLACED.
@@ -135,9 +124,7 @@ static void KolimaForestFloodgate_MarkShortLogCells(void) {
   }
 }
 
-/// Draws the river at its level and sets each log to match. High water floats
-/// the logs 26 pixels up over their own cells, and low water lays them on the
-/// riverbed.
+/// Draws the river at its level and sets each log to match.
 static void KolimaForestFloodgate_DrawWaterLevel(void) {
   struct Actor *piece;
   struct FloodgateLog *record = gKolimaForestFloodgateRecords;
@@ -235,10 +222,6 @@ static void KolimaForestFloodgate_CaptureShakeScroll(void) {
 
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
 /// Switch flips it. "Isaac flipped the switch."
-///
-/// The camera turns to the floodgate, which opens or closes. The ground rumbles
-/// and the top of the screen shakes harder for 100 frames, and the river rises
-/// or falls.
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
@@ -313,7 +296,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   gKolimaForestFloodgate_ShakeChance = 0;
   do {
     wait(1);
-    nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
+    nextShakeChance = gKolimaForestFloodgate_ShakeChance + 1;
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
@@ -339,7 +322,6 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), walking west into the
 /// short log makes the leader shove it west to x 72.
 static void KolimaForestFloodgate_PushShortLogWest(void) {
-
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
@@ -366,7 +348,6 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), walking east into the
 /// short log makes the leader shove it east to x 104.
 static void KolimaForestFloodgate_PushShortLogEast(void) {
-
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
@@ -390,10 +371,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Event_End();
 }
 
-/// Sets up the logs and the river's level on entry. The logs come back from
-/// gSceneLocalState, or on a first visit from the defaults with the water high.
-/// The logs are made and the river is drawn at its level. The forest keeps its
-/// cursed colours until the curse is lifted.
+/// Sets up the logs and the river's level on entry.
 s32 KolimaForestFloodgate_Initialize(void) {
   struct Actor *actor;
 
@@ -551,7 +529,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Vector_AddPolarOffset(px(16), facing, point);
   run = KolimaForestFloodgate_FindLogAt(runs, point[0] / px(16),
                                         point[2] / px(16));
-  if (run == 0)
+  if (run == NULL)
     return;
   for (i = 0; i <= 10; i++) {
     point[0] = run->x << 20;

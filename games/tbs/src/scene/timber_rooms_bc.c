@@ -46,30 +46,21 @@
 #include "scene_ids.h"
 #include "module/import.h"
 #include "module/scene/timber_rooms_bc.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
-#include "module/shop/shop.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
-#include "event.h"
-#include "scene_tables.h"
 #include "event_inline.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "actor_script.h"
-#include "sounds.h"
 #include "flags.h"
 #include "shared/walk_into_leader.h"
 static void TimberRoomsBC_TellFaranAboutJenna(void);
@@ -220,8 +211,6 @@ const struct SceneExitRegion *TimberRoomsBC_GetRegions(void) {
 const u32 *TimberRoomsBC_GetExits(void) { return gTimberRoomsBC_Exits; }
 
 /// The people of each scene.
-///
-/// Faran's house fills up after Venus Lighthouse.
 const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_TimberRoomsC) {
     // Faran's house and the inn.
@@ -235,20 +224,11 @@ const struct ActorPlacement *TimberRoomsBC_GetActorPlacements(void) {
 
 /// The side the leader faces, which is the facing rounded to the nearest of
 /// east, south, west and north.
-///
-/// Facing north, the leader is across the counter from a shopkeeper.
 static inline u16 TimberRoomsBC_LeaderGetSide(void) {
   return (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
 }
 
 /// The weapon merchant sells weapons, or talks of Sheba and the sea.
-///
-/// In Lalivero's shops (TimberRoomsB), across the counter, it's the weapon
-/// shop.
-///
-/// From elsewhere, before Venus Lighthouse, they ask whether the party has
-/// heard that Sheba was taken hostage and Faran went after her. After it
-/// they tell of the rough sea.
 static void TimberRoomsBC_TalkToWeaponMerchant(s32 keeper) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   // The side of the counter the leader faces, as TimberRoomsBC_LeaderGetSide
@@ -343,9 +323,6 @@ static void TimberRoomsBC_TalkToInnkeeper(s32 innkeeper) {
 
 /// In Lalivero (TimberRoomsC), before Venus Lighthouse, the inn worker stops
 /// her chores to apologize.
-///
-/// Worry for Sheba keeps her from concentrating. A leader standing west of
-/// her steps aside to the south before she starts again.
 static void TimberRoomsBC_TalkToInnWorker(void) {
   s16 side;
 
@@ -385,8 +362,6 @@ static void TimberRoomsBC_TalkToInnWorker(void) {
 
 /// In Lalivero (TimberRoomsC), the camera finds Iodem, who asks the party to
 /// wait for him outside.
-///
-/// It plays at step trigger 51 in Faran's house after the report.
 static void TimberRoomsBC_IodemCallsOut(void) {
   GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   Event_Start();
@@ -434,13 +409,6 @@ const struct Trigger *TimberRoomsBC_GetTriggers(void) {
 
 /// In Lalivero (TimberRoomsC), back from Venus Lighthouse, the party reports
 /// to Faran and Iodem.
-///
-/// It plays on arriving by TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE.
-///
-/// - There is no sign of Sheba, nor of Jenna and the others.
-/// - Faran's faith that Sheba lived.
-/// - What an Adept is.
-/// - A farewell as the party sets out to search for Jenna.
 static void TimberRoomsBC_ReportToFaran(void) {
   Event_Start();
   Party_RestoreHpPp(1);
@@ -772,8 +740,6 @@ static void TimberRoomsBC_ReportToFaran(void) {
 
 /// The party tells Faran and Iodem what became of Jenna and the others, when
 /// it did not see the ship at Idejima.
-///
-/// Felix said he sent Jenna ahead to the ship.
 static void TimberRoomsBC_TellFaranAboutJenna(void) {
   Event_SetMessageId(MsgLaliveroTellOthers);
   Event_Wait(20);
@@ -845,11 +811,6 @@ static void TimberRoomsBC_TellFaranAboutJenna(void) {
 }
 
 /// Sets both scenes up as the party enters.
-///
-/// - Shopkeepers and the innkeeper stand behind their counters.
-/// - The Sanctum becomes the place to wake after a defeat.
-/// - The inn worker is back at her chores.
-/// - The report to Faran plays on coming back from Venus Lighthouse.
 s32 Scene_Initialize(void) {
   s32 sceneId;
   s16 entrance;

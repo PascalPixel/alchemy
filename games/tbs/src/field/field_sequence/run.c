@@ -8,17 +8,8 @@
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
-/// gMainRoutineWork: a random battle, a party that fell outside battle,
-/// Retreat or an event's destination. Sets the scene up (map, actors,
-/// encounters, return points), runs its initialization, fades it in, then
-/// loops: the party walks (Field_UpdateWalking each frame) until a request is
-/// made, and then the requests are handled until none is left.
-///
-/// Allocates the field work in HEAP_SLOT_FIELD, cleared, and frees it on the
-/// way out, with every block the scene took after it from the same pool; sets
-/// gMainRoutineWork's return point, after-battle and defeat destinations, and
-/// clears FLAG_IN_BATTLE and, once the scene has started,
-/// FLAG_KEEP_PARTY_POSITION.
+/// gMainRoutineWork: a random battle, a party that fell outside battle, Retreat
+/// or an event's destination.
 s32 FieldSequence_Run(s32 entrance) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -75,8 +66,7 @@ s32 FieldSequence_Run(s32 entrance) {
   work->transitionActive = 0;
   // Field_UpdateWalking scales the leader's speed by this (16.16) into the
   // distance counted towards PP, Djinn recovery and poison: Q16_ONE / 160
-  // counts each of them on by one about every 160 pixels walked. Towns turn it
-  // off and block Retreat.
+  // counts each of them on by one about every 160 pixels walked.
   work->walkingDistanceScale = Q16_ONE / 160;
   work->walkingDistance = 0;
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
@@ -209,8 +199,6 @@ s32 FieldSequence_Run(s32 entrance) {
           work->raisedTrigger = 0;
         } else if (work->encounter != 0) {
           // A random encounter: save the actors and go to the battle.
-          // Field_StartEncounterTransition closes the screen itself and
-          // clears transitionActive, so the scene ends without another fade.
           Leader_StopMoving();
           Actor_Snapshot();
           gMainRoutineWork.returnMusic = -1;

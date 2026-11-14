@@ -4,10 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes. It lives
-/// from FieldPsynergy_StartMindReadWave to
-/// FieldPsynergy_StopMindReadWave, after the conversation Mind
-/// Read reads.
+/// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes.
 struct MindReadWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
   /// turn; 160 of each page's 162 are used.
@@ -27,12 +24,6 @@ struct MindReadWork {
 /// Starts the wave effect of caster x on target y (actor ids): fades the
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldPsynergy_UpdateMindReadWave) after 8 frames.
-///
-/// Abilities: Mind Read (FIELD_PSYNERGY_MIND_READ).
-///
-/// The Psynergy stays up until FieldPsynergy_FinishMindRead ends it
-/// after the after event; meanwhile the message windows show thoughts
-/// (FieldPsynergy_GreyMindReadPalette sets the window mode).
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y) {
   struct MindReadWork *work;
 
@@ -235,7 +226,6 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 
 /// Per-frame update: once the actor has arrived (no destination left on any
 /// axis), releases it: gFieldEffect_UntargetedActorScript is a lone SC_RELEASE.
-/// Mind Read's particles end this way at the caster.
 void FieldEffect_ReleaseOnArrival(struct Actor *actor) {
   s32 targetY;
   s32 targetX;

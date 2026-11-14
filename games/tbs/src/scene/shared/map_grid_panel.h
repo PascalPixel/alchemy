@@ -1,7 +1,4 @@
-#include "types.h"
 #include "ram_buffer.h"
-#include "map_grid.h"
-#include "io_reg.h"
 
 // Crossbone Isle Cave (SceneId_CrossboneIsleSteppingStones to
 // SceneId_CrossboneIsleDragonStatue) and Kolima Forest

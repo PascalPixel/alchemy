@@ -114,7 +114,7 @@ void InventorySnapshot_Restore(void) {
     source++;
 #else
     *(u16 *)gMainRoutineWork.party = *source++;
-    *(u16 *)((u8 *)gMainRoutineWork.party + 2) = *source;
+    *(u16 *)&gMainRoutineWork.party[2] = *source;
 #endif
     source = gInventorySnapshot;
     *source = 0;

@@ -8,9 +8,7 @@
 #include "static_assert.h"
 
 /// The storm's lightning work: the colours it flashes between and their
-/// difference, the countdown to the next flash and whether the thunder is
-/// loud. It is heap slot HEAP_SLOT_FIELD_BLEND (gFieldBlendWork), which the
-/// lightning and Weather_StartLightningFlash take.
+/// difference, the countdown to the next flash and whether the thunder is loud.
 struct FieldBlendWork {
   /// The storm's dark colours (PALETTE_TINT_WARM), as the palette fade's
   /// B, G and R channels: each flash fades back to them.

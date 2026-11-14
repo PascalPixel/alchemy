@@ -1,10 +1,5 @@
-#include "types.h"
 #include "field_effect.h"
-#include "edition.h"
 #include "far_call.h"
-#include "scene_tables.h"
-#include "sprite_ids.h"
-#include "fixed_math.h"
 
 // Twenty-four scenes, and the main image's field Psynergy (whirlwind.c, with
 // EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn, which places a small effect moving
@@ -62,11 +57,11 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
     struct Sprite *sprite;                                                     \
     const s32 *script;                                                         \
                                                                                \
-    if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)                        \
+    if ((flags & EFFECT_USE_TYPE) != 0 && options != NULL)                     \
       effect = (struct FieldEffect *)create(options->type, x, y, z);           \
     else                                                                       \
       effect = (struct FieldEffect *)create(EFFECT_DEFAULT_TYPE, x, y, z);     \
-    if (effect == 0)                                                           \
+    if (effect == NULL)                                                        \
       return;                                                                  \
                                                                                \
     sprite = effect->sprite;                                                   \
@@ -79,7 +74,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
     FieldEffect_InitializeMotion(effect, sprite, party, velocityX, velocityY,  \
                                  velocityZ);                                   \
                                                                                \
-    if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)                     \
+    if ((flags & EFFECT_OPTION_MASK) == 0 || options == NULL)                  \
       return;                                                                  \
     if ((flags & EFFECT_USE_PALETTE) != 0)                                     \
       Actor_SetSpriteColor((struct Actor *)effect, options->palette);          \

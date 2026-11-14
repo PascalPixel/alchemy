@@ -6,16 +6,9 @@
 
 #define FLARE_ARC_COUNT 9 ///< flames on the arc
 
-/// Nine flames rise one after another, 4 frames apart, along half an ellipse,
-/// over 80 frames.
+/// Nine flames rise one after another along half an ellipse.
 ///
-/// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_EFFECT_FLARE).
-///
-/// Each target flashes red in turn, 8 frames apart from frame 16.
-///
-/// args: the targets. Flare Wall, the stronger variant, adds a second flame
-///         16 pixels above each one, and Flare Storm, the strongest, a third
-///         32 pixels above (and longer trails).
+/// Abilities: Flare, Flare Wall, Flare Storm.
 void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -31,7 +24,6 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   struct Particle *arcFlame;
   struct Particle *flame;
 
-  // The work, the canvas, and BG1 and BG2 blended at 14:16.
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
@@ -45,11 +37,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
                       COMPOSITE_ADDITIVE);
   draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
-  // The arc: from -90 to 90 degrees in steps of 22.5, half an ellipse with
-  // radii of 32 pixels across and 16 up and down, centred on x 20 (84 on the
-  // party's side) and dipping from y 40 at its ends to 56 at its middle.
-  // Against enemies (ids from FIRST_ENEMY_UNIT) it runs from the left,
-  // otherwise from the right.
+  // The arc of flames.
   if (work->args->targets[0] >= FIRST_ENEMY_UNIT) {
     originX = 0;
     direction = 1;
@@ -60,8 +48,6 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   angle = -TRIG_TURN / 4;
   i = 0;
   delay = 0;
-  // Each flame starts 4 frames after the one before: its variant counts up
-  // from a negative delay, and the flame shows from 0.
   arcFlame = work->particles;
   do {
     arcFlame->x =
@@ -74,7 +60,6 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     arcFlame++;
   } while (i != FLARE_ARC_COUNT);
 
-  // Trails keep half of each level, or three quarters for Flare Storm.
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
     work->transferValue = CANVAS_FADE_THREE_QUARTERS;
@@ -85,15 +70,11 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_WHOOSH);
   frame = 0;
   do {
-    // Frame 24 lets the battle show the damage, with SE_IMPACT as the hit
-    // sound.
     if (frame == 24) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
 
-    // Each flame shows six pictures, 4 frames each, and goes out; the last
-    // flame (delay -32) is out after frame 55. Each puff picture stands on its
-    // own baseline (gBattleEffect_PuffArcPictureBiasY) and is centred across x.
+    // Each flame plays six pictures and goes out.
     i = 0;
     flame = work->particles;
     do {
@@ -149,7 +130,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
       flame++;
     } while (i != FLARE_ARC_COUNT);
 
-    // The targets flash red, 8 frames apart from frame 16.
+    // The targets flash red.
     for (i = 0; i != work->args->targetCount; i++) {
       if (frame == (i * 8) + 16) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
@@ -165,11 +146,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 }
 
 /// Lists the indices within indexRadius of where currentValue sits in values,
-/// keeping only those from 0 to entryLimit - 1. Writes the indices to output
-/// and returns how many there are.
-///
-/// Only the first indexRadius * 2 + 1 values are searched, and with no match
-/// the window centres on index 0. Nothing calls it.
+/// up to entryLimit, and returns how many.
 UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                                s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;

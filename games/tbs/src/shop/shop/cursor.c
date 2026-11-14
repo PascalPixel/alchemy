@@ -20,10 +20,8 @@ static const u16 sSelectorTileOffsets[30] = {
 };
 // clang-format on
 
-/// Colours the first `itemCount` segments of the quantity bar in `tileBuffer`:
-/// each segment is two pixels wide on rows 1 to 6 of its tile, the left pixel
-/// colour 1 and the right one colour `paletteSelector` (a colour number, not a
-/// palette).
+/// Colours the first itemCount segments of the quantity bar, each two pixels
+/// wide.
 void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   s32 segment;
 
@@ -73,12 +71,8 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   } while (count >= 0);
 }
 
-/// Builds a price of up to five digits in scratch tiles
-/// (HEAP_SLOT_TILE_SCRATCH), loads them into a free VRAM cache slot and
-/// attaches them to `window` as one sprite at (x, y). Returns the sprite, or
-/// NULL with no free slot. A price of 100000 or more shows its last five
-/// digits. The scratch block is released before returning; the cache entry is
-/// not freed here.
+/// Builds a price of up to five digits as a sprite on window at (x, y). Returns
+/// the sprite, or NULL with no free slot.
 struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
                                             s32 x, s32 y) {
   u8 *tileBuffer;
@@ -119,8 +113,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
 }
 
 /// Saves the field colours in the field work and fades to `layer` over 16
-/// frames. Called before sanctum and Djinn capture effects and Altmiller's wall
-/// burst; Shop_RestoreFieldPalette restores the saved colours afterward.
+/// frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gFieldWork.
 #ifdef UBFIX
@@ -142,17 +135,13 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 }
 
 /// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
-/// frames. Called when the sanctum, Djinn capture or Altmiller wall effect
-/// ends.
+/// frames.
 void Shop_RestoreFieldPalette(void) {
   PaletteFade_SetTargetFar((s32)gFieldWork + 0x236, 1);
   PaletteFade_StartInterpolationFar(16);
 }
 
-/// Moves the cursor from its saved position toward its target, in a straight
-/// line over `kind` frames, one frame a call; `active` counts the frames and
-/// both go back to 0 on arrival. Runs every frame from MenuCursor_Step, and
-/// from the settings menu's, name entry screen's and file list's cursor tasks.
+/// Moves the cursor a frame along its straight line toward its target.
 void MenuCursor_Advance(struct MenuCursor *cursor) {
   struct WindowSprite *sprite;
   s32 durationFrames;
@@ -243,8 +232,7 @@ void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
 }
 
 /// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
-/// that has already arrived. Called when a counter, the option and pause
-/// menus or the name entry screen opens.
+/// that has already arrived.
 void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 
   {

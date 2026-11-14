@@ -11,12 +11,8 @@
 struct Sprite;
 struct Actor;
 
-/// The work of a field Psynergy: its caster and target, where it takes
-/// place, the map state it restores and its 24 field effect sprites.
-/// It is the HEAP_SLOT_FIELD_EFFECT heap slot, read as gFieldEffectWork,
-/// cleared when allocated: FieldPsynergy_LoadResources takes it for a
-/// Psynergy or item use, and FieldEffect_InitializeSlots for the Djinn joining
-/// effects and Altmiller Cave's scene. Its end releases it.
+/// The work of a field Psynergy: its caster and target, where it takes place,
+/// the map state it restores and its 24 field effect sprites.
 struct FieldEffectWork {
   s32 angle;         ///< 1/65536 turns
   s32 x;             ///< 16.16 fixed-point pixels

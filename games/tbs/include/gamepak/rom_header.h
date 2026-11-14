@@ -6,9 +6,7 @@
 
 #include "types.h"
 
-/// The cartridge's first instruction. The soft reset in wait() jumps
-/// here, and SerialTest_Run, a link cable test nothing reaches, sends the
-/// first 640 bytes from here.
+/// The cartridge's first instruction.
 #define Cart_Start FIXED_ADDRESS((u32), 0x08000000, Rom_Start)
 /// The cartridge's first byte, as the link places it (rom_header.s).
 extern const u8 Rom_Start[];

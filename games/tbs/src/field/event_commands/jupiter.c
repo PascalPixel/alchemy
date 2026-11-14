@@ -6,9 +6,7 @@
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into 24 light particles that circle and close in on the
-/// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED. Uses all
-/// 24 field effect sprites (FieldEffect_InitializeSlots), tints the field
-/// palette and fades it back at the end.
+/// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;
@@ -74,9 +72,8 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   FieldEffect_ReleaseSlots();
 }
 
-/// Per-frame update: makes an actor pulse, switching its scale between the
-/// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
-/// joining sets it on the leader, and clears it to end the pulse.
+/// Per-frame update: makes an actor pulse, switching its scale between the two
+/// values of gFieldEffect_PulseScales every 4 frames.
 void FieldEffect_PulseActorScale(struct Actor *actor) {
   const u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
@@ -86,9 +83,7 @@ void FieldEffect_PulseActorScale(struct Actor *actor) {
 }
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
-/// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames. The
-/// caller zeroes the frame count first (Actor.spinRampFrames), as the Mars
-/// Djinni's joining does.
+/// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames.
 void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   u32 step;
 

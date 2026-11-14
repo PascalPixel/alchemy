@@ -39,11 +39,8 @@ s32 Inn_RoomPrice(s32 innId) {
   return pricePerGuest * guestCount;
 }
 
-/// Runs an inn's counter: the innkeeper names the price, and on Yes, with the
-/// coins, the party sleeps (Inn_PlaySleep) and the innkeeper speaks again.
-/// Holds the shop's work block while it runs; returns 0. `innId` is the row of
-/// sInnPricesPerGuest, 0 to 11, which nothing checks; `objectId` is the
-/// innkeeper, whose portrait the lines show.
+/// Runs an inn's counter: the innkeeper names the price, and on Yes the party
+/// sleeps. actorId is the innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 actorId) {
   struct InnWork *state;
   struct Actor *innkeeper;
@@ -100,10 +97,8 @@ s32 Inn_CheckIn(s32 innId, s32 actorId) {
   return 0;
 }
 
-/// Charges `roomPrice`, restores the HP and PP of each party member still
-/// standing, and plays the night: a fade to black, the inn's music and a fade
-/// back. A downed party member stays down: the inn neither charges for it nor
-/// heals it.
+/// Charges the room and restores the HP and PP of each party member still
+/// standing over a night: a fade to black, the inn's music and a fade back.
 void Inn_PlaySleep(s32 roomPrice) {
   s16 partyMemberIds[8];
   s32 memberCount;
@@ -124,9 +119,7 @@ void Inn_PlaySleep(s32 roomPrice) {
     }
   }
 
-  // Sleep between the two screen-transition halves and the rest sound.
-  // The night's fades take 60 frames each; the 16 set at the end is what
-  // the field's transitions take again afterward
+  // The night's fades take 60 frames each.
   work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

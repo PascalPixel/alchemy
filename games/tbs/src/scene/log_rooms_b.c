@@ -55,7 +55,6 @@
 #include "module/scene/log_rooms_b.h"
 #include "log_rooms_a.h"
 #include "module/scene/shared/vault_item_icon.h"
-#include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"
 #include "module/game/game.h"
 #include "battle.h"
@@ -64,20 +63,15 @@
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
 #include "event.h"
 #include "system_call.h"
-#include "scene_tables.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "flags.h"
-#include "heap.h"
 
 /// The townspeople, numbering the actor placement rows from
 /// ACTOR_FIRST_PLACED and named by what they say on the party's return.
@@ -161,15 +155,11 @@ static inline void LogRoomsB_FaceAndSpeak(s32 actorId, s32 message) {
 }
 
 /// The wife thought she saw the cat paw the gemstone on the table.
-/// Then the treasure was gone. She's in the house at
-/// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST.
 static void LogRoomsB_WifeSawCatTakeGem(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE, MsgVaultThoughtSawCatGetUp);
 }
 
 /// The boy doubts the thieves were from Lunpa after all.
-/// He points out Dodonpa's henchmen never attacked. He's in the house at
-/// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH.
 static void LogRoomsB_BoyDoubtsThievesWereFromLunpa(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_BOY, MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
@@ -181,13 +171,6 @@ static void LogRoomsB_HusbandLongsForColosso(void) {
 }
 
 /// In his house, the mayor welcomes Isaac back.
-///
-/// The thieves he caught have escaped from jail, and Vault feared they would
-/// come after him. He asks whether the party has run into them, and a yes and
-/// a no get different warnings.
-///
-/// Sets FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, after which the mayor only
-/// warns of their revenge, and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
@@ -221,24 +204,12 @@ static void LogRoomsB_WarnOfThievesRevenge(void) {
 
 /// Unused: the cook upstairs at the inn offers the party her leftover bones,
 /// but gives none.
-///
-/// She would have said `I did some cooking, so now I've got all these useless
-/// bones.` and asked `...You want some?`.
-///
-/// Her earlier talk row, MsgVaultWeDontGetALotOf with no condition, always
-/// answers first, because Scene_FindTrigger takes the first match. So the
-/// player only ever hears that travelers are few in winter.
 static void LogRoomsB_UnusedOfferLeftoverBones(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
 /// The girl at the inn offers leftover bones from dinner, or more of them once
 /// one was taken (FLAG_VAULT_BONE_RECEIVED).
-///
-/// A yes gets a Bone if there is room, and a no gets a nod.
-///
-/// Her talk row needs FLAG_VAULT_LEADER_BESIDE_BONE clear, that is, the leader
-/// not standing beside the floor Bone.
 static void LogRoomsB_OfferBones(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
@@ -252,7 +223,6 @@ static void LogRoomsB_OfferBones(void) {
     Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
   }
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    // Show the offer before checking whether the party can carry the gift.
     Event_Wait(20);
     Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
     Event_Wait(20);
@@ -292,8 +262,6 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAYOR, 1);
   Event_End();
-  // Keep the actor paused through the conversation, then resume
-  // action 2.
   paused = &Actor_Get(ACTOR_MAYOR)->paused;
   *paused = 1;
   LogRoomsB_WelcomeIsaacBack();
@@ -305,8 +273,6 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
 #include "shared/vault_bone.h"
 
 /// Across the counter the weapon shop opens.
-/// From elsewhere the merchant talks of a river of fire on the other side of
-/// Mt. Aleph.
 static void LogRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -363,8 +329,6 @@ static void LogRoomsB_TalkToItemMerchant(void) {
 }
 
 /// Across the counter the inn opens.
-/// From elsewhere the innkeeper complains that no one comes, what with the
-/// volcano.
 static void LogRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -383,8 +347,6 @@ static void LogRoomsB_TalkToInnkeeper(void) {
 }
 
 /// Mind Read on the girl at the inn shows what is on her mind.
-/// She is hungry while cooking or, once a Bone was given, wonders whether
-/// "he" has a calcium deficiency.
 static void LogRoomsB_ReadBoneGiverMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
@@ -400,13 +362,6 @@ static void LogRoomsB_ReadBoneGiverMind(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsB_Triggers; }
 
 /// Opens the room through a window transition.
-///
-/// Entering the house at LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST sets its
-/// owner on the floor and takes the stone off his table.
-///
-/// Entering the inn (LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST, or from
-/// upstairs by LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) places the floor Bone
-/// beside the girl and starts Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
   s32 entrance;
 
@@ -415,16 +370,12 @@ s32 Scene_Initialize(void) {
   entrance = gMainRoutineWork.entrance;
 
   if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
-    // Draw the table bare, its stone gone, and set the gem owner back on the
-    // floor.
     MapGrid_CopyCellsTo(0, 120, 8, 67, 4, 3);
     Actor_Get(ACTOR_GEM_OWNER)->motionFlags = 0;
     Actor_Get(ACTOR_GEM_OWNER)->y.fixed = 0;
     Actor_Get(ACTOR_GEM_OWNER)->groundHeight = 0;
   } else if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
              entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
-    // Show the Bone lying in the room, and track whether the leader stands
-    // beside it (FLAG_VAULT_LEADER_BESIDE_BONE).
     Vault_PlaceItemIcon(ITEM_BONE, px(568), px(16), px(672));
     Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
   }

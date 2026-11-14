@@ -9,23 +9,13 @@
 #include "../static_assert.h"
 
 /// SoundInfo.ident and MusicPlayerInfo.ident when free; its bytes spell `Smsh`
-/// in memory order. A call raises the word while it changes the driver or a
-/// music player, which turns away the mixer and other calls: a library call
-/// that changes the driver checks the word is exactly ID_NUMBER, adds 1 while
-/// it works and puts ID_NUMBER back, so a call meeting a raised word is
-/// dropped, not delayed. m4aSoundVSyncOff adds 10 instead, so a suspended
-/// driver can be told from a busy one, and SoundInit holds it at 0 while it
-/// clears the driver's work.
+/// in memory order.
 #define ID_NUMBER 0x68736D53
 
 #define SOUND_INFO_PTR (*(struct SoundInfo **)0x03007FF0)
 
 /// The PCM buffer's size in samples, one byte each; pret calls it
-/// PCM_DMA_BUF_SIZE. It holds transferPeriod VBlanks of samples (this /
-/// pcmSamplesPerVBlank, rounded down: 4 of 352 at the game's rate), after which
-/// m4aSoundVSync starts the DMAs again from its start; the mixer
-/// (resident_mixer_render.s) reaches the left buffer this far past the right
-/// one.
+/// PCM_DMA_BUF_SIZE.
 #define SOUND_PCM_BUFFER_SIZE 1584
 
 // A sound mode word, as m4aSoundMode and a song header's mode byte take it,
@@ -83,11 +73,7 @@ typedef void (*MPlayFunc)(struct MusicPlayerInfo *player,
 /// parameters, through the generic function type so neither cast warns.
 #define MPLAY_FUNC_CAST(type, routine) ((type)(void (*)(void))(routine))
 
-/// Entries of gMPlayJumpTable, in gMPlayJumpTableTemplate's order. A
-/// song byte from 0xB1 to 0xCE runs entry (byte - 0xB1) for its track; bytes
-/// from 0xCF up start notes through the work's noteOn instead, so entries 30
-/// to 35 are the driver's helper tail, reached only by its own calls. Unused
-/// entries hold ply_fine.
+/// Entries of gMPlayJumpTable, in gMPlayJumpTableTemplate's order.
 ///@{
 /// Byte 0xB1: ends the track, releasing and unlinking its notes.
 #define MPLAY_JUMP_FINE 0
@@ -152,17 +138,13 @@ enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 /// A voice a track plays its notes with: its kind and base key, the sample or
 /// wave it plays, and its attack, decay, sustain and release.
 struct ToneData {
-  /// bits: 7 rhythm | 6 key split | 3 fixed rate for PCM, bias rounding for
-  /// CGB | 2..0 CGB channel (0 PCM).
-  /// A rhythm or split voice plays an entry of the voice table at target,
-  /// chosen by the key (rhythm) or through the key map that attack's four
-  /// bytes point to (split).
+  /// bits: 7 rhythm | 6 key split | 3 fixed rate for PCM, bias rounding for CGB
+  /// | 2..0 CGB channel (0 PCM).
   u8 kind;
   u8 baseKey; ///< Key a rhythm entry plays every note at.
   u8 length;  ///< CGB sound length (NRx1); 0 plays until released.
   /// CGB_CHANNEL_SQUARE_1's sweep (NR10) when bit 7 is clear and bits 6..4 are
-  /// not; else no sweep. In a rhythm entry with bit 7 set, the note's pan is
-  /// (value - 192) * 2.
+  /// not; else no sweep.
   u8 panOrSweep;
   /// The PCM sample, the CGB wave pattern, duty or noise width, or for a
   /// rhythm or split voice its voice table.
@@ -175,10 +157,18 @@ struct ToneData {
   u8 release; ///< PCM: envelope * release / 256 a VBlank. CGB: VBlanks a step.
 };
 
-/// A PCM note, one of 12 the mixer renders: its state and envelope, its
-/// output levels, and its links to the other notes of its track. A track's
-/// note list holds CGB notes through this type too; the names from 0x0a to
-/// 0x1c come from the CGB layout (CgbChannel).
+/// A PCM sample's header, before its bytes.
+struct WaveData {
+  u16 type;
+  u16 status;
+  u32 freq; ///< The rate it plays at for its base key.
+  u32 loopStart;
+  u32 size;
+  s8 data[1];
+};
+
+/// A PCM note, one of 12 the mixer renders: its state and envelope, its output
+/// levels, and its links to the other notes of its track.
 struct SoundChannel {
   /// 0 when free. bits: 7 start | 6 released | 4 looping | 2 echo |
   /// 1..0 phase (3 attack, 2 decay, 1 sustain, 0 release).
@@ -397,8 +387,7 @@ struct MusicPlayerTrack {
   u8 tailLevel;       ///< Each new note's echo level.
   u8 tailLength;      ///< Each new note's echo length in VBlanks.
   /// The notes this track started, newest first, linked through
-  /// SoundChannel.next; PCM notes from SoundInfo.pcmNotes and CGB notes. NULL
-  /// ends the list or leaves it empty.
+  /// SoundChannel.next; PCM notes from SoundInfo.pcmNotes and CGB notes.
   struct SoundChannel *notes;
   /// Copied from the player's voice table by the voice command, or set a field
   /// at a time by extended commands.

@@ -5,7 +5,7 @@
 #include "scene_tables.h"
 
 extern s32 gCrossboneIsleKeys_BaneSquashScript[];
-extern s32 gCrossboneIsleKeys_BaneWalkTargets[];
+extern s32 gCrossboneIsleKeys_BaneWalkTargets[][2];
 extern struct SceneEntrance gCrossboneIsleKeysEntrancesOther[];
 extern struct SceneEntrance gCrossboneIsleKeysRoomEntrances[];
 extern struct SceneEntrance gCrossboneIsleStatuesEntrances[];

@@ -1,8 +1,6 @@
 /// @file
 /// Vault, before and after the thieves are caught: villagers who walk about
 /// stop when someone is close in front of them.
-#include "types.h"
-#include "actor.h"
 
 /// Stops the actor (paused, standing) when the target is nearer than
 /// range pixels and lies ahead of it, within a sixteenth of a turn either side

@@ -66,27 +66,6 @@
 /// and a passage. The switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
 ///
-/// Scene temp flags:
-/// - FLAG_LUNPA_FORTRESS_PARTY_SPOTTED: a guard has spotted the party.
-///   FLAG_SCENE_TEMP_15 is set beside it and never read.
-/// - FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY and
-///   FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY: LunpaFortressCave's first and
-///   second switches are still hidden by their ivy.
-/// - FLAG_LUNPA_FORTRESS_ENTRANCE_GUARD_CAUGHT_PARTY and
-///   FLAG_LUNPA_FORTRESS_SENTRIES_CAUGHT_PARTY: the entrance guard or the
-///   sentries have thrown the party out.
-/// - FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE and
-///   FLAG_LUNPA_FORTRESS_OLD_MAN_STARTLED: the startled old man has promised to
-///   keep quiet, and has been startled.
-/// - FLAG_LUNPA_FORTRESS_FINDING_HAMMET: LunpaFortress_FindHammet is under way.
-///
-/// Map-section temp flags:
-/// - FLAG_LUNPA_FORTRESS_DODONPA_JUDGED: Donpa has judged Dodonpa.
-/// - FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA: his attendant has told of
-///   him.
-/// - FLAG_LUNPA_FORTRESS_REWARD_SHOWN: she has shown his reward.
-/// - FLAG_AREA_TEMP_50 to FLAG_AREA_TEMP_5C: the opened cell doors.
-///
 /// Unused: four item pickups that set out an Arctic Blade, a Masamune, a Silver
 /// Blade and a Shamshir on LunpaFortressGroundFloor's first four rows, and
 /// copies of West Lunpa Cave's exits and actor placements, which these
@@ -97,39 +76,25 @@
 #include "module/import.h"
 #include "module/scene/lunpa_fortress.h"
 #include "shared/walk_into_leader.h"
-#include "module/field/field_sequence.h"
-#include "module/field/event_commands.h"
-#include "module/field/field.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
 #include "sound.h"
 #include "system.h"
-#include "heap_slots.h"
-#include "heap.h"
 #include "io_write.h"
 #include "lunpa_fortress.h"
 #include "pushed_actor.h"
-#include "actor.h"
-#include "scene_ids.h"
-#include "tbs_edition.h"
 #include "map_grid_scroll.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "scene_tables.h"
 #include "item_ids.h"
 #include "actor_script.h"
 #include "flags.h"
 #include "djinn_ids.h"
-#include "sounds.h"
 #include "sound_driver_symbols.h"
-#include "fixed_math.h"
 #include "io_reg.h"
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
@@ -255,8 +220,7 @@ enum {
 /// animation tables and frames under graphics/sprite draw them.
 enum LunpaFortressAnimation {
   /// One of Dodonpa's men lying beaten on the floor (man_with_orange_hair.png),
-  /// as the three
-  /// guards lie after their fight.
+  /// as the three guards lie after their fight.
   ANIM_GUARD_BEATEN = 5,
   /// Donpa lying in bed, only his head on the pillow showing (donpa.png).
   ANIM_DONPA_IN_BED = 5,
@@ -291,8 +255,6 @@ enum LunpaFortressRaisedTrigger {
   RAISED_SENTRIES_SPOTTED
 };
 
-/// Reveal's phases: the hidden things show, and hide again.
-
 /// Where a party caught by a guard is sent: the Lunpa Fortress Gates.
 enum { EXIT_THROWN_OUT = 60 };
 
@@ -318,8 +280,8 @@ enum {
 /// layer.
 #define LUNPA_FORTRESS_ROOM_LAYERS (DISPCNT_BG2_ON | DISPCNT_BG3_ON)
 
-/// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
-// The paired patrol computes this layer offset in floating point.
+/// The paired patrol's layer origin across, 136 pixels, written in floating
+/// point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId);
@@ -349,7 +311,8 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 /// Donpa's attendant has shown the party his reward, Tonic, and stands beside
 /// it.
 #define FLAG_LUNPA_FORTRESS_REWARD_SHOWN FLAG_AREA_TEMP_14
-/// A guard has spotted the party.
+/// A guard has spotted the party. FLAG_SCENE_TEMP_15 is set beside it and never
+/// read.
 #define FLAG_LUNPA_FORTRESS_PARTY_SPOTTED FLAG_SCENE_TEMP_14
 /// LunpaFortressCave's first switch is still hidden by its ivy.
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY FLAG_SCENE_TEMP_17
@@ -443,7 +406,7 @@ static void LunpaFortress_LowerCrates(void) {
   MapGrid_CopyCellAttributes(15, 20, 1, 1, 15, 22);
   MapGrid_CopyCellAttributes(17, 23, 1, 3, 15, 23);
   cratesActor = Actor_Get(ACTOR_CAVE_CRATES);
-  if (cratesActor != 0) {
+  if (cratesActor != NULL) {
     Actor_SetSpriteFlags(cratesActor, 0);
     cratesActor->motionFlags = 0;
     cratesActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -625,9 +588,8 @@ static void LunpaFortress_UnlockGroundFloorDoor(void) {
   }
 }
 
-/// Lunpa Fortress, every scene: searching a cell door without the Cell Key,
-/// it stays shut.
-/// "The door is tightly locked."
+/// Lunpa Fortress, every scene: searching a cell door without the Cell Key, it
+/// stays shut.
 static void LunpaFortress_SearchLockedDoor(void) {
   if (PartyInventory_FindMember(ITEM_CELL_KEY) == -1) {
     FieldMessage_Show(MsgFieldDoorTightlyLocked, 1);
@@ -685,10 +647,6 @@ static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
 }
 
 /// Unused: called only by the four pickups above.
-///
-/// Opens the chest and gives the item, showing its picture before the leader.
-/// With no room for it, the chest peeks and shuts. Returns whether it was
-/// given.
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
@@ -729,27 +687,18 @@ static void LunpaFortress_TakeCellKey(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_CELL_KEY);
   Actor_SetPosition(ACTOR_UPPER_FLOOR_CELL_KEY, 0, 0);
 }
+
 /// Where the patrolling pair cannot see the leader: the west end of their
 /// corridor and the cells below its gap.
 static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderFixedZ = leader->z.fixed;
-  s32 leaderFixedX;
-  s32 leaderTileZ, leaderTileX;
+  s32 leaderTileZ = leader->z.fixed / px(16);
+  s32 leaderTileX = leader->x.fixed / px(16);
 
-  if (leaderFixedZ < 0) {
-    leaderFixedZ += px(16) - 1;
-  }
-  leaderFixedX = leader->x.fixed;
-  leaderTileZ = leaderFixedZ >> 20;
-  if (leaderFixedX < 0) {
-    leaderFixedX += px(16) - 1;
-  }
-  leaderTileX = leaderFixedX >> 20;
-  if ((u32)(leaderTileZ - 5) <= 2 && leaderTileX <= 10) {
+  if (leaderTileZ >= 5 && leaderTileZ <= 7 && leaderTileX <= 10) {
     return 1;
   }
-  if ((u32)(leaderTileX - 8) <= 1 && leaderTileZ > 22) {
+  if (leaderTileX >= 8 && leaderTileX <= 9 && leaderTileZ > 22) {
     return 1;
   }
   return 0;
@@ -757,13 +706,6 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
 /// corridor.
-///
-/// - They stand still while FLAG_MENU_OPEN is set or Psynergy or an item is in
-///   use.
-/// - Otherwise they walk, with MAPGRID_LAYER_OVERHEAD shaking and following
-///   the first.
-/// - Close to a cloaked leader they request CLOAK_NEAR_GUARD.
-/// - Seeing an uncloaked leader, they raise RAISED_PATROL_PAIR_SPOTTED.
 static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct Actor *firstGuard = Actor_Get(ACTOR_UPPER_FLOOR_FIRST_PATROL);
   struct Actor *secondGuard = Actor_Get(ACTOR_UPPER_FLOOR_SECOND_PATROL);
@@ -838,25 +780,10 @@ static void LunpaFortress_PatrolPairThrowsPartyOut(void) {
 static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
-  s32 leaderFixedX = leader->x.fixed;
-  s32 guardFixedZ;
-  s32 guardFixedX;
-  s32 leaderTileX, guardTileZ, guardTileX;
+  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 guardTileZ = guard->z.fixed / px(16);
+  s32 guardTileX = guard->x.fixed / px(16);
 
-  if (leaderFixedX < 0) {
-    leaderFixedX += px(16) - 1;
-  }
-  leaderTileX = leaderFixedX >> 20;
-  guardFixedZ = guard->z.fixed;
-  if (guardFixedZ < 0) {
-    guardFixedZ += px(16) - 1;
-  }
-  guardFixedX = guard->x.fixed;
-  guardTileZ = guardFixedZ >> 20;
-  if (guardFixedX < 0) {
-    guardFixedX += px(16) - 1;
-  }
-  guardTileX = guardFixedX >> 20;
   if (leaderTileX == 52 && guardTileX == 57 && guardTileZ > 34 &&
       guardTileZ <= 40) {
     return 1;
@@ -870,9 +797,7 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
 
 /// Every frame in LunpaFortressUpperFloor: the patrol in the east hall, as
 /// LunpaFortress_UpdatePairedGuardDetection.
-/// Seeing the leader, it raises RAISED_HALL_PATROL_SPOTTED.
 static void LunpaFortress_UpdateHallGuardDetection(void) {
-
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -930,13 +855,15 @@ static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
   s32 leaderTileZ = leader->z.fixed / px(16);
   s32 leaderTileX = leader->x.fixed / px(16);
 
-  if ((u32)(leaderTileX - 41) <= 3 && leaderTileZ > 25 && leaderTileZ <= 28) {
+  if (leaderTileX >= 41 && leaderTileX <= 44 && leaderTileZ > 25 &&
+      leaderTileZ <= 28) {
     return 1;
   }
   if (leaderTileX == 41 && leaderTileZ > 37 && leaderTileZ <= 41) {
     return 1;
   }
-  if ((u32)(leaderTileX - 54) <= 2 && leaderTileZ > 30 && leaderTileZ <= 40) {
+  if (leaderTileX >= 54 && leaderTileX <= 56 && leaderTileZ > 30 &&
+      leaderTileZ <= 40) {
     return 1;
   }
   return 0;
@@ -944,9 +871,7 @@ static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
 
 /// Every frame in LunpaFortressGroundFloor: the patrolling guard, as
 /// LunpaFortress_UpdatePairedGuardDetection.
-/// Seeing the leader, it raises RAISED_GROUND_FLOOR_PATROL_SPOTTED.
 static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
-
   struct Actor *guard = Actor_Get(ACTOR_GROUND_FLOOR_PATROL_GUARD);
   struct MapGridLayerScroll *patrolLayer =
       &((struct MapGridScrollWork *)gMapGridWork[0])
@@ -1011,7 +936,6 @@ static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
 /// Every frame in LunpaFortressGroundFloor's upper hall: the guard who sees the
 /// uncloaked leader raises RAISED_UPPER_HALL_SPOTTED.
 static void LunpaFortress_CheckUpperHallGuard(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -1042,7 +966,6 @@ static void LunpaFortress_UpperHallGuardThrowsPartyOut(void) {
 /// or main passage: the guard who sees the uncloaked leader raises
 /// RAISED_ENTRANCE_GUARD_SPOTTED, once.
 static void LunpaFortress_CheckEntranceGuard(void) {
-
   struct FieldWork *work = gFieldWork;
 
   if (LunpaFortress_CanGuardSeeLeader(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD) != 0 &&
@@ -1059,7 +982,6 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 /// or main passage: either sentry who sees the uncloaked leader raises
 /// RAISED_SENTRIES_SPOTTED, once for both.
 static void LunpaFortress_CheckFirstEntranceSentry(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -1077,7 +999,6 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
 /// The second sentry, as the first.
 static void LunpaFortress_CheckSecondEntranceSentry(void) {
-
   struct FieldWork *work;
 
   work = gFieldWork;
@@ -1200,7 +1121,6 @@ static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
 /// Every frame in LunpaFortressGroundFloor: walking into the second cell door's
 /// column with the Cell Key unlocks it.
 static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
-
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(GROUND_FLOOR_DOOR_FLAG + 1) == 0) {
@@ -1220,7 +1140,6 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
 /// Every frame in LunpaFortressUpperFloor: walking east or west into the first
 /// cell door's column with the Cell Key unlocks it.
 static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
-
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(UPPER_FLOOR_DOOR_FLAG) == 0) {
@@ -1305,7 +1224,6 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
 /// A guard faces the leader with one of four challenges, chosen at random
 /// when the scene was entered.
 static void LunpaFortress_GuardChallengesParty(s32 actorId) {
-
   Actor_FaceActor(actorId, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, actorId, 0);
   switch (gLunpaFortressRandomPick & 3) {
@@ -1374,15 +1292,15 @@ static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
   Event_ShowMessage(actorId, 0);
   Event_Wait(120);
   Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Event_SetMessageId((messageBase + 1));
+  Event_SetMessageId(messageBase + 1);
   // "...Wait a minute! Who are you?"
   Event_ShowMessage(actorId, 0);
   Actor_RunRepeatedMotion(actorId, 1);
-  Event_SetMessageId((messageBase + 2));
+  Event_SetMessageId(messageBase + 2);
   // "I've never seen you before! Intruder!"
   Event_ShowMessage(actorId, 0);
   Actor_SetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
-  Event_SetMessageId((messageBase + 3));
+  Event_SetMessageId(messageBase + 3);
   // "Come on! You'll have to deal with me!"
   Event_ShowMessage(actorId, 0);
 }
@@ -1411,7 +1329,6 @@ static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId) {
 /// LunpaFortressUpperFloor, step trigger 33: walking up to the west guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void LunpaFortress_FightWestGuard(void) {
-
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Sound_Play(SE_MENU_CANCEL);
   Actor_ShowEmote(ACTOR_UPPER_FLOOR_WEST_GUARD,
@@ -1429,7 +1346,6 @@ static void LunpaFortress_FightWestGuard(void) {
 /// LunpaFortressUpperFloor, step trigger 30: walking up to the hall guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void LunpaFortress_FightHallGuard(void) {
-
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Sound_Play(SE_MENU_CANCEL);
   Actor_ShowEmote(ACTOR_UPPER_FLOOR_HALL_GUARD,
@@ -1446,8 +1362,6 @@ static void LunpaFortress_FightHallGuard(void) {
 
 /// LunpaFortressUpperFloor, step trigger 31: walking up to the three guards,
 /// they argue, then fight the party together as three Brigands. "Who are you!?"
-///
-/// After the battle the party comes back here.
 static void LunpaFortress_FightThreeGuards(void) {
   s32 messageBase;
 
@@ -1476,22 +1390,22 @@ static void LunpaFortress_FightThreeGuards(void) {
                       FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST,
                       FACING_NORTH_NORTHEAST, 0);
-  Event_SetMessageId((messageBase + 1));
+  Event_SetMessageId(messageBase + 1);
   // "Could this be the guy who's come to get Hammet back?"
   Event_ShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 0);
   Actor_SetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ANIM_NOD);
-  Event_SetMessageId((messageBase + 2));
+  Event_SetMessageId(messageBase + 2);
   // "Yeah! I bet he is!"
   Event_ShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 0);
-  Event_SetMessageId((messageBase + 3));
+  Event_SetMessageId(messageBase + 3);
   // "What a bold rascal!"
   Event_ShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
   Actor_RunRepeatedMotion(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 1);
-  Event_SetMessageId((messageBase + 4));
+  Event_SetMessageId(messageBase + 4);
   // "Dodonpa will be livid if we lose Hammet!"
   Event_ShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 0);
   Actor_SetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ANIM_NOD);
-  Event_SetMessageId((messageBase + 5));
+  Event_SetMessageId(messageBase + 5);
   // "We're really going to be in for it if we let these kids get..."
   Event_ShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 0);
   Actor_SetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ANIM_NOD);
@@ -1506,7 +1420,7 @@ static void LunpaFortress_FightThreeGuards(void) {
 #endif
   Actor_SetAnimationAndWait(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, ANIM_NOD);
   Event_Wait(30);
-  Event_SetMessageId((messageBase + 6));
+  Event_SetMessageId(messageBase + 6);
   // "You're not going any farther! Not without some serious..."
   Event_ShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
   gFieldWork->transition =
@@ -1540,7 +1454,6 @@ static void LunpaFortress_PlaceThreeBeatenGuards(void) {
 /// LunpaFortressUpperFloor, step trigger 32: walking up to the east guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void LunpaFortress_FightEastGuard(void) {
-
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Sound_Play(SE_MENU_CANCEL);
   Actor_ShowEmote(ACTOR_UPPER_FLOOR_EAST_GUARD,
@@ -1631,9 +1544,8 @@ static void LunpaFortress_OpenIvyPassage(void) {
 }
 
 /// A switch flips in two frames, then its passage opens.
-static __inline__ void
-LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
-                               void (*openPassage)(void)) {
+static inline void LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
+                                                  void (*openPassage)(void)) {
   MapGrid_CopyCells(6, 77, 1, 2, cellX, cellY);
   Event_Wait(5);
   MapGrid_CopyCells(7, 77, 1, 2, cellX, cellY);
@@ -1642,8 +1554,7 @@ LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
 }
 
 /// LunpaFortressCave, examine trigger 52 once uncovered: searching the first
-/// switch while Reveal shows it flips it, and its passage opens. "You flipped
-/// the switch."
+/// switch while Reveal shows it flips it, and its passage opens.
 static void LunpaFortress_FlipFirstSwitch(void) {
   if (gFieldWork->revealActive != 0) {
     if (Event_GetFlag(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
@@ -1658,8 +1569,7 @@ static void LunpaFortress_FlipFirstSwitch(void) {
 }
 
 /// LunpaFortressCave, examine trigger 51 once uncovered: searching the second
-/// switch while Reveal shows it flips it, and its passage opens. "You flipped
-/// the switch."
+/// switch while Reveal shows it flips it, and its passage opens.
 static void LunpaFortress_FlipSecondSwitch(void) {
   if (gFieldWork->revealActive != 0) {
     if (Event_GetFlag(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
@@ -1792,13 +1702,6 @@ static void LunpaFortress_PositionPartyForMonster(void) {
 }
 
 /// LunpaFortressToadonpa, step trigger 20: walking into Hammet's cell.
-///
-/// The first time:
-/// - Hammet hears the party out and recognizes Ivan.
-/// - Dodonpa arrives, gloats, pulls a lever and frees Toadonpa on them.
-///
-/// After a lost battle, the event goes straight to the trap. Either way, the
-/// battle follows.
 static void LunpaFortress_FindHammet(void) {
   s32 messageBase;
 
@@ -2095,15 +1998,8 @@ static void LunpaFortress_FindHammet(void) {
 
 /// LunpaFortressToadonpa, LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE after the battle
 /// with Toadonpa: the monster has fallen on Dodonpa.
-///
-/// - The party may pull it off him.
-/// - They argue over his punishment until his father Donpa arrives.
-/// - Donpa orders him locked up, thanks the party, and lets them leave with
-///   Hammet.
-///
-/// Sets FLAG_DODONPA_LOCKED_UP.
 static void LunpaFortress_DonpaJudgesDodonpa(void) {
-  struct Actor *leader;
+  struct Actor *actor;
   s32 aftermathMessage;
   s32 punishmentMessage;
   s32 donpaMessage;
@@ -2113,8 +2009,8 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
   LunpaFortress_OpenToadonpaDoor(4);
   Event_Start();
-  leader = Actor_Get(ACTOR_TOADONPA_HAMMET);
-  Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+  actor = Actor_Get(ACTOR_TOADONPA_HAMMET);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 456, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_SetPosition(ACTOR_GARET, 440, 192);
@@ -2142,7 +2038,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   // "Uhnn! Get it off me!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Event_SetMessageId((aftermathMessage + 1));
+  Event_SetMessageId(aftermathMessage + 1);
   // "How did Dodonpa get trapped under the monster?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 1);
@@ -2151,7 +2047,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(60);
   Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(60);
-  Event_SetMessageId((aftermathMessage + 2));
+  Event_SetMessageId(aftermathMessage + 2);
   // "He tried to pull another dirty trick on you!"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -2162,12 +2058,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 512, 232);
   Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_SHAKE_HEAD);
   Event_Wait(60);
-  Event_SetMessageId((aftermathMessage + 3));
+  Event_SetMessageId(aftermathMessage + 3);
   // "When Dodonpa saw his monster was losing, he tried to get..."
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(15);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-  Event_SetMessageId((aftermathMessage + 4));
+  Event_SetMessageId(aftermathMessage + 4);
   // "Just a second longer, and you'd have been history!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2175,34 +2071,34 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-  Event_SetMessageId((aftermathMessage + 5));
+  Event_SetMessageId(aftermathMessage + 5);
   // "You dirty snake!"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(80);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
-  Event_SetMessageId((aftermathMessage + 6));
+  Event_SetMessageId(aftermathMessage + 6);
   // "Dodonpa, you are rotten to the core!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 65);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 2);
   Event_Wait(100);
-  Event_SetMessageId((aftermathMessage + 7));
+  Event_SetMessageId(aftermathMessage + 7);
   // "Yeah, OK! I'm sorry! Now, get this thing off of me!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
-  Event_SetMessageId((aftermathMessage + 8));
+  Event_SetMessageId(aftermathMessage + 8);
   // "'Get this thing off of me'!?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(30);
-  Event_SetMessageId((aftermathMessage + 9));
+  Event_SetMessageId(aftermathMessage + 9);
   // "I don't know. That thing looks awfully heavy for us kids to..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-  Event_SetMessageId((aftermathMessage + 10));
+  Event_SetMessageId(aftermathMessage + 10);
   // "What should we do, Isaac? Should we try to move it?"
   Event_OpenMessage(ACTOR_MIA, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -2212,7 +2108,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(60);
   } else {
-    Event_SetMessageId((aftermathMessage + 11));
+    Event_SetMessageId(aftermathMessage + 11);
     // "I agree. What do you think, Hammet?"
     Event_ShowMessage(ACTOR_MIA, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_HAMMET, 0);
@@ -2227,7 +2123,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
     Actor_SetAnimationAndWait(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
     Event_Wait(30);
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessageId((aftermathMessage + 12));
+    Event_SetMessageId(aftermathMessage + 12);
     // "I think we have to try, at least."
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     Event_Wait(60);
@@ -2278,7 +2174,6 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(100);
   Sound_Play(SE_LOG_PUSH);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
-  // Move the party and both monster parts together to free Dodonpa.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -24, 0);
   Actor_SetSpeed(ACTOR_GARET, 0.1);
@@ -2342,7 +2237,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
-  Event_SetMessageId((punishmentMessage + 1));
+  Event_SetMessageId(punishmentMessage + 1);
   // "I... I can't."
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(20);
@@ -2351,7 +2246,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_TOADONPA_DODONPA, 0);
-  Event_SetMessageId((punishmentMessage + 2));
+  Event_SetMessageId(punishmentMessage + 2);
   // "Did you break your leg or something?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
@@ -2359,12 +2254,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE_SLUMP);
   Event_Wait(70);
-  Event_SetMessageId((punishmentMessage + 3));
+  Event_SetMessageId(punishmentMessage + 3);
   // "It's not broken... I should be able to stand after a bit."
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Event_SetMessageId((punishmentMessage + 4));
+  Event_SetMessageId(punishmentMessage + 4);
   // "Thank goodness..."
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
@@ -2372,7 +2267,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WalkTo(ACTOR_GARET, 440, 208);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
-  Event_SetMessageId((punishmentMessage + 5));
+  Event_SetMessageId(punishmentMessage + 5);
   // "What do you mean, 'thank goodness'!?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
@@ -2385,51 +2280,51 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 75);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
-  Event_SetMessageId((punishmentMessage + 6));
+  Event_SetMessageId(punishmentMessage + 6);
   // "Didn't he just try to kill us?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(60);
-  Event_SetMessageId((punishmentMessage + 7));
+  Event_SetMessageId(punishmentMessage + 7);
   // "Can't we just forgive and forget?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_WalkTo(ACTOR_GARET, 448, 208);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
-  Event_SetMessageId((punishmentMessage + 8));
+  Event_SetMessageId(punishmentMessage + 8);
   // "Dodonpa kidnapped you, remember!?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
   Event_Wait(60);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(60);
-  Event_SetMessageId((punishmentMessage + 9));
+  Event_SetMessageId(punishmentMessage + 9);
   // "Oh, that's right..."
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_Wait(60);
-  Event_SetMessageId((punishmentMessage + 10));
+  Event_SetMessageId(punishmentMessage + 10);
   // "Get a grip, you guys!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(30);
-  Event_SetMessageId((punishmentMessage + 11));
+  Event_SetMessageId(punishmentMessage + 11);
   // "But Hammet is safe now, isn't he?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_MIA, 0);
   Event_Wait(20);
-  Event_SetMessageId((punishmentMessage + 12));
+  Event_SetMessageId(punishmentMessage + 12);
   // "Yeah, but do you really think Dodonpa will reform if Hammet..."
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
   Actor_FaceActor(ACTOR_MIA, ACTOR_GARET, 0);
-  Event_SetMessageId((punishmentMessage + 13));
+  Event_SetMessageId(punishmentMessage + 13);
   // "Hmm... I wonder..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DODONPA, 0);
-  Event_SetMessageId((punishmentMessage + 14));
+  Event_SetMessageId(punishmentMessage + 14);
   // "How about it, Dodonpa?"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DODONPA, 0);
@@ -2442,20 +2337,20 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(120);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
   Event_Wait(60);
-  Event_SetMessageId((punishmentMessage + 15));
+  Event_SetMessageId(punishmentMessage + 15);
   // "He already said he wouldn't do anything!"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 110);
   Actor_WalkTo(ACTOR_GARET, 456, 212);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
-  Event_SetMessageId((punishmentMessage + 16));
+  Event_SetMessageId(punishmentMessage + 16);
   // "Of course, he's going to say that! He wants us to forgive him!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_GARET, 0);
   Event_Wait(60);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-  Event_SetMessageId((punishmentMessage + 17));
+  Event_SetMessageId(punishmentMessage + 17);
   // "What do you think we should do with him, Garet?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_TOADONPA_DODONPA, 0);
@@ -2471,21 +2366,21 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(80);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
-  Event_SetMessageId((punishmentMessage + 18));
+  Event_SetMessageId(punishmentMessage + 18);
   // "We should lock him up here, just like he did to Hammet."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Event_Wait(70);
-  Event_SetMessageId((punishmentMessage + 19));
+  Event_SetMessageId(punishmentMessage + 19);
   // "No! How can you be so cruel!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Event_SetMessageId((punishmentMessage + 20));
+  Event_SetMessageId(punishmentMessage + 20);
   // "Oh? And yet you have no problem being that cruel to Hammet!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Event_Wait(80);
-  Event_SetMessageId((punishmentMessage + 21));
+  Event_SetMessageId(punishmentMessage + 21);
   // "What should we do, Isaac? Should we lock Dodonpa up?"
   Event_OpenMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -2496,12 +2391,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetSpeed(ACTOR_TOADONPA_DONPA, 0.5);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Sound_Play(MUS_SILENCE);
-    Event_SetMessageId((punishmentMessage + 22));
+    Event_SetMessageId(punishmentMessage + 22);
     // "Serves the little punk right!"
     Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   } else {
     Sound_Play(MUS_SILENCE);
-    Event_SetMessageId((punishmentMessage + 23));
+    Event_SetMessageId(punishmentMessage + 23);
     // "Just leave him here like this for a while!"
     Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   }
@@ -2524,7 +2419,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 440, 256);
   FieldCamera_MoveTo(456, CAMERA_KEEP, 224, 1);
-  Event_SetMessageId((donpaMessage + 1));
+  Event_SetMessageId(donpaMessage + 1);
   // "Dodonpa... You pitiful wretch."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
@@ -2532,12 +2427,12 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
   Event_Wait(89);
-  Event_SetMessageId((donpaMessage + 2));
+  Event_SetMessageId(donpaMessage + 2);
   // "I always told you that if you did evil to others... others..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_RunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-  Event_SetMessageId((donpaMessage + 3));
+  Event_SetMessageId(donpaMessage + 3);
   // "You must right all of the misdeeds you've done!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -2546,31 +2441,31 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(80);
   Actor_FaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 4));
+  Event_SetMessageId(donpaMessage + 4);
   // "I feel bad for spoiling you. Look at the trouble it has..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
-  Event_SetMessageId((donpaMessage + 5));
+  Event_SetMessageId(donpaMessage + 5);
   // "See! It's all your fault that all this happened!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 6));
+  Event_SetMessageId(donpaMessage + 6);
   // "Yes, which is why this is going to hurt you more than it..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
   Actor_ShowEmote(ACTOR_TOADONPA_DODONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Event_SetMessageId((donpaMessage + 7));
+  Event_SetMessageId(donpaMessage + 7);
   // "You're not serious, are you, Dad?"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  Event_SetMessageId((donpaMessage + 8));
+  Event_SetMessageId(donpaMessage + 8);
   // "I most certainly am!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-  Event_SetMessageId((donpaMessage + 9));
+  Event_SetMessageId(donpaMessage + 9);
   // "You're going to spend some time here thinking about all that..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Event_Wait(20);
@@ -2583,26 +2478,26 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DONPA, 0);
-  Event_SetMessageId((donpaMessage + 10));
+  Event_SetMessageId(donpaMessage + 10);
   // "Dodonpa has caused you all sorts of trouble, hasn't he?"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
-  Event_SetMessageId((donpaMessage + 11));
+  Event_SetMessageId(donpaMessage + 11);
   // "No, not at all!"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 12));
+  Event_SetMessageId(donpaMessage + 12);
   // "I must apologize deeply for all of this."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Event_SetMessageId((donpaMessage + 13));
+  Event_SetMessageId(donpaMessage + 13);
   // "Thank you, Donpa, but you do not need to apologize."
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-  Event_SetMessageId((donpaMessage + 14));
+  Event_SetMessageId(donpaMessage + 14);
   // "Then you forgive me?"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
@@ -2616,11 +2511,11 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Event_Wait(120);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_SMILE, 180);
-  Event_SetMessageId((donpaMessage + 15));
+  Event_SetMessageId(donpaMessage + 15);
   // "I am sorry about the trouble, but I do have one request."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Event_SetMessageId((donpaMessage + 16));
+  Event_SetMessageId(donpaMessage + 16);
   // "A request?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -2633,7 +2528,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_IVAN, ACTOR_TOADONPA_DONPA, 0);
   Actor_FaceActor(ACTOR_MIA, ACTOR_TOADONPA_DONPA, 0);
   Event_Wait(60);
-  Event_SetMessageId((donpaMessage + 17));
+  Event_SetMessageId(donpaMessage + 17);
   // "I don't know how you got in here, but please leave by the..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2641,17 +2536,17 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Event_Wait(100);
-  Event_SetMessageId((donpaMessage + 18));
+  Event_SetMessageId(donpaMessage + 18);
   // "Huh? Donpa, didn't you just say you're going to lock up Dodonpa?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
   Event_Wait(60);
-  Event_SetMessageId((donpaMessage + 19));
+  Event_SetMessageId(donpaMessage + 19);
   // "So we shouldn't have to sneak around, should we?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_IVAN, 0);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 20));
+  Event_SetMessageId(donpaMessage + 20);
   // "Some of Dodonpa's henchmen are still loyal to him."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2661,11 +2556,11 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(120);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
   Event_Wait(120);
-  Event_SetMessageId((donpaMessage + 21));
+  Event_SetMessageId(donpaMessage + 21);
   // "I'm ashamed to say it, but they won't listen to any of my..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_DONPA, EMOTE_IN_FRONT | EMOTE_WINCE, 90);
-  Event_SetMessageId((donpaMessage + 22));
+  Event_SetMessageId(donpaMessage + 22);
   // "This new gang of thieves will attack Hammet if they find him..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2676,83 +2571,83 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(80);
   Actor_SetAnimation(ACTOR_TOADONPA_DONPA, ANIM_SHAKE_HEAD);
   Event_Wait(120);
-  Event_SetMessageId((donpaMessage + 23));
+  Event_SetMessageId(donpaMessage + 23);
   // "And they may come to check his cell, right?"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   60);
-  Event_SetMessageId((donpaMessage + 24));
+  Event_SetMessageId(donpaMessage + 24);
   // "I see. Then they'd free Dodonpa, wouldn't they?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(20);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DONPA, 1);
   Event_Wait(50);
-  Event_SetMessageId((donpaMessage + 25));
+  Event_SetMessageId(donpaMessage + 25);
   // "And then he'd head straight for Kalay seeking his revenge!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Event_Wait(70);
-  Event_SetMessageId((donpaMessage + 26));
+  Event_SetMessageId(donpaMessage + 26);
   // "I see. Yes, you're right."
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
-  Event_SetMessageId((donpaMessage + 27));
+  Event_SetMessageId(donpaMessage + 27);
   // "It would be terrible if Kalay were attacked."
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 28));
+  Event_SetMessageId(donpaMessage + 28);
   // "That's why you must go while you still can!"
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 90);
-  Event_SetMessageId((donpaMessage + 29));
+  Event_SetMessageId(donpaMessage + 29);
   // "You mean immediately?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_FaceDirection(ACTOR_TOADONPA_DONPA, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 30));
+  Event_SetMessageId(donpaMessage + 30);
   // "I heard of your intrusion, so I spread some rumors through..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_HAMMET, 1);
   Event_Wait(60);
-  Event_SetMessageId((donpaMessage + 31));
+  Event_SetMessageId(donpaMessage + 31);
   // "Rumors?"
   Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_HAMMET, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 32));
+  Event_SetMessageId(donpaMessage + 32);
   // "I said brigands had snuck in to kidnap Hammet, but failed..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-  Event_SetMessageId((donpaMessage + 33));
+  Event_SetMessageId(donpaMessage + 33);
   // "Why in the world did you do that?"
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
-  Event_SetMessageId((donpaMessage + 34));
+  Event_SetMessageId(donpaMessage + 34);
   // "Now, they won't let anyone down here at all. Plus, many of..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 80);
-  Event_SetMessageId((donpaMessage + 35));
+  Event_SetMessageId(donpaMessage + 35);
   // "Donpa, you are a shrewd one!"
   Event_ShowMessage(ACTOR_MIA, 0);
   Actor_SetAnimationAndWait(ACTOR_TOADONPA_DONPA, ANIM_NOD);
-  Event_SetMessageId((donpaMessage + 36));
+  Event_SetMessageId(donpaMessage + 36);
   // "I just thought I'd try to help however I could..."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(100);
-  Event_SetMessageId((donpaMessage + 37));
+  Event_SetMessageId(donpaMessage + 37);
   // "With Dodonpa's henchmen gone, this is our chance to escape,..."
   Event_OpenMessage(ACTOR_IVAN, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
-    Event_SetMessageId((donpaMessage + 38));
+    Event_SetMessageId(donpaMessage + 38);
     // "Why did I even bother asking? Let's get a move on!"
     Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   }
@@ -2765,27 +2660,24 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_NOD);
   Event_Wait(100);
-  // Rejoin the companions, then escort Hammet out of the fortress.
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != 0) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
+  actor = Actor_Get(ACTOR_PARTY_LEADER);
+  if (actor != NULL) {
+    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -2800,11 +2692,11 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Wait(20);
   Actor_FaceActor(ACTOR_TOADONPA_DONPA, ACTOR_TOADONPA_DODONPA, 0);
   Event_Wait(20);
-  Event_SetMessageId((donpaMessage + 39));
+  Event_SetMessageId(donpaMessage + 39);
   // "The next time you meet Dodonpa, he will be a changed man."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);
   Actor_RunRepeatedMotion(ACTOR_TOADONPA_DODONPA, 2);
-  Event_SetMessageId((donpaMessage + 40));
+  Event_SetMessageId(donpaMessage + 40);
   // "I get it already! I won't do anything wrong! Come on, let me go!"
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2852,10 +2744,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
-/// He has one of eight thoughts, chosen at random when the scene was entered.
-/// In one he looks around first.
 static void LunpaFortress_ReadSentrysThoughts(void) {
-
   switch (gLunpaFortressRandomPick) {
   case 0:
     Event_SetMessageId(MsgLunpaHammetGreatMerchant);
@@ -2912,7 +2801,6 @@ static void LunpaFortress_ReadSentrysThoughts(void) {
 /// LunpaFortressGroundFloor: the second sentry looks around, hearing someone he
 /// cannot see.
 static void LunpaFortress_TalkToSentry(void) {
-
   s32 messageBase;
 
   Actor_ShowEmote(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
@@ -2941,12 +2829,6 @@ static void LunpaFortress_TalkToSentry(void) {
 }
 
 /// LunpaFortressUpperFloor: Donpa's attendant.
-///
-/// Before the rescue the attendant hushes the party, glances at the sleeping
-/// Donpa, asks a question and tells of Donpa and his spoiled son. Once told,
-/// only a line.
-///
-/// After the rescue, Donpa is grateful.
 static void LunpaFortress_TalkToAttendant(void) {
   s32 whisperMessage;
   s32 familyMessage;
@@ -3060,9 +2942,6 @@ static void LunpaFortress_ReadDonpasThoughts(void) {
 }
 
 /// LunpaFortressUpperFloor: Donpa, asleep before the rescue. "ZZZZ..."
-///
-/// After it, the first time, he thanks the party and has his attendant show
-/// them his reward, Tonic.
 static void LunpaFortress_TalkToDonpa(void) {
   s32 rewardMessage;
 
@@ -3177,9 +3056,6 @@ static void LunpaFortress_AskWhereDodonpaIs(void) {
 
 /// LunpaFortressGroundFloor: a bent old man asks whether the party sneaked in.
 /// "Wh-Wh-Who goes there!"
-///
-/// He's startled the first time, and wants to know whether it came in search
-/// of something. On yes, he promises to keep quiet.
 static void LunpaFortress_TalkToStartledOldMan(void) {
   s32 frightMessage;
   s32 purposeMessage;
@@ -3234,10 +3110,7 @@ static void LunpaFortress_TalkToStartledOldMan(void) {
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the startled resident.
-/// Once they have promised, a thought about Hammet. Before, Mind Read stops
-/// and they talk instead.
 static void LunpaFortress_ReadStartledResidentsThoughts(void) {
-
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE)) {
     Event_SetMessageId(MsgLunpaMaybeMerchantReason);
     // "Maybe that merchant is the reason they've closed off the..."
@@ -3255,7 +3128,6 @@ static void UNUSED LunpaFortress_DoNothingF(void) {}
 
 /// LunpaFortressToadonpa, after Donpa's judgment: Dodonpa behind bars begs his
 /// father's forgiveness.
-/// With the Cell Key, a further line shows.
 static void LunpaFortress_TalkToJailedDodonpa(void) {
   s32 pleaMessage = MsgLunpaWrongTurnOver;
 
@@ -3275,10 +3147,6 @@ static void LunpaFortress_ReadJailedDodonpasThoughts(void) {
 }
 
 /// Sets each scene up.
-///
-/// That is a random pick for the guards' lines, the doors already opened, the
-/// watching guards and, in LunpaFortressToadonpa, the room after the battle
-/// with Toadonpa or Dodonpa jailed.
 s32 Scene_Initialize(void) {
   struct Actor *mapActor;
 
@@ -3299,15 +3167,15 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_STILL);
     LunpaFortress_RestoreToadonpaDoors();
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_WEST_JAR);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_CHEST);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_EAST_JAR);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
@@ -3330,7 +3198,7 @@ s32 Scene_Initialize(void) {
       }
     }
     mapActor = Actor_Get(ACTOR_INVISIBLE_TOADONPA_BOSS_PART);
-    if (mapActor != 0)
+    if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     mapActor->scaleX = 4 * Q16_ONE / 5;
@@ -3399,10 +3267,6 @@ static void LunpaFortress_InitializeGroundFloor(void) {
 }
 
 /// Sets LunpaFortressUpperFloor up.
-///
-/// Beaten guards are gone or lying where they fell, and the Cell Key is gone
-/// once taken. The patrols are set by entrance, and Donpa's attendant by his
-/// reward's place.
 static void LunpaFortress_InitializeUpperFloor(void) {
   struct Actor *keyActor;
 
@@ -3489,9 +3353,6 @@ static void LunpaFortress_InitializeUpperFloor(void) {
 }
 
 /// Sets LunpaFortressCave up.
-///
-/// The doors, the crates, the ivy Whirlwind blows away and the switches are
-/// as the party left them.
 static void LunpaFortress_InitializeCave(void) {
   struct Actor *mapActor;
 
@@ -3523,24 +3384,24 @@ static void LunpaFortress_InitializeCave(void) {
   }
   Event_Start();
   mapActor = Actor_Get(ACTOR_CAVE_FIRST_SWITCH_IVY);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   mapActor = Actor_Get(ACTOR_CAVE_PASSAGE_IVY);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   mapActor = Actor_Get(ACTOR_CAVE_SECOND_SWITCH_IVY);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   mapActor = Actor_Get(ACTOR_INVISIBLE_CAVE_JAR);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     Actor_SetSpriteFlags(mapActor, 0);
   }
   mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   mapActor = Actor_Get(ACTOR_CAVE_CRATES);
-  if (mapActor != 0) {
+  if (mapActor != NULL) {
     mapActor->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_CAVE_JAR), 0);
@@ -3603,9 +3464,8 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
   }
 }
 
-// The ROM keeps the pushed-actor tables in .rodata, but the shared declarations
-// in field.h and staged_actor.h lack const, so a section attribute places
-// each one.
+// Lunpa Fortress keeps its pushed-actor tables with its read-only data, though
+// the shared declarations in field.h and staged_actor.h are not const.
 #define PUSHED_ACTOR_TABLE_SECTION __attribute__((section(".rodata")))
 #include "shared/pushed_actor_tables.h"
 // clang-format off

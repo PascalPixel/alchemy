@@ -6,7 +6,6 @@
 
 // The 3D transform. gTransform is twelve s32 in 16.16 fixed point (1.0 is
 // Q16_ONE): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
-// Iwram_TransformMatrix multiplies the matrix it is given into gTransform.
 
 #define TRANSFORM_DMA (DMA_COPY_WORDS(12)) ///< one matrix
 
@@ -58,8 +57,7 @@ void Transform_ResetMatrix(void) {
 }
 
 /// Rotates gTransform by angles[0], angles[1] and angles[2] about the X, Y and
-/// Z axes, in that order, with one combined matrix. Reached through the
-/// far-call table.
+/// Z axes, in that order, with one combined matrix.
 void Transform_ApplyRotation(s32 *angles) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 matrix[12];
@@ -318,10 +316,8 @@ void Transform_ApplyLookAt(s32 *eye, s32 *target) {
 }
 
 /// Sets gProjection from a vertical field of view (1/65536 turns): the focal
-/// length, in 16.16 pixels, is 80 (half the screen height) over the tangent
-/// of half the angle. Points nearer than `nearDepth` or farther than
-/// `farDepth` (16.16, along the view axis) are not drawn. Reached through the
-/// far-call table.
+/// length, in 16.16 pixels, is 80 (half the screen height) over the tangent of
+/// half the angle.
 void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
   s32 halfAngle;
   s32 sine;
@@ -346,11 +342,8 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
 }
 
 /// Reads three word-aligned coordinates from `point`, transforms them by
-/// gTransform and projects them to the screen: screen[0] and screen[1] are
-/// its pixel position and screen[2] its whole-unit depth. Returns the
-/// projection scale (16.16), or 0 when the point is outside the depth range,
-/// when only the transformed point is written. Called by the battle and field
-/// code that places sprites in 3D.
+/// gTransform and projects them to the screen: screen[0] and screen[1] are its
+/// pixel position and screen[2] its whole-unit depth.
 s32 Transform_ProjectPoint(const void *point, s32 *screen) {
   struct Projection *projection;
   s32 depth;

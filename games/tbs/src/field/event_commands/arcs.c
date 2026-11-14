@@ -81,11 +81,7 @@ struct SpriteArcOamView {
 };
 
 /// Spawns the two swelling arcs (SPRITE_GOLDEN_RINGS) on an actor, A and B (B
-/// upside down); they follow it for 32 frames, then release themselves. They
-/// draw with the Psynergy's spark tiles, so they need the Psynergy's work; the
-/// casting update routines below spawn them every 16 frames, and
-/// FieldPsynergy_End waits for the last to end (at most 30
-/// frames).
+/// upside down); they follow it for 32 frames, then release themselves.
 void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *source = effectWork->mainActor;
@@ -122,7 +118,6 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
   }
   // Arc B in front of everything, arc A at the caster's priority.
   // BUG: allocation failures above leave a missing arc or sprite here.
-  // The original does not define a partial-pair recovery path.
   arcs[0]->update = FieldEffect_UpdateScaledArcActorB;
   arcs[0]->sprite->image.priority = 0;
   arcs[1]->update = FieldEffect_UpdateScaledArcActorA;
@@ -131,8 +126,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
 }
 
 /// Per-frame update: flashes an actor between sprite param 7 and 0 every 2
-/// frames and spawns the swelling arcs on it every 16. FieldPsynergy_StartCast
-/// gives it to the caster as a cast starts with a flash (effectWork->visible).
+/// frames and spawns the swelling arcs on it every 16.
 void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_WHITE);
@@ -146,8 +140,6 @@ void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *actor) {
 
 /// Per-frame update: cycles an actor through sprite params 0 to 5, one step
 /// every 2 frames, and spawns the swelling arcs on it every 16.
-/// FieldPsynergy_StartCast gives it to the caster in place of the flicker
-/// while FLAG_PLAY_PSYNERGY_CAST is set.
 void FieldEffect_CycleActorAndSpawnArcs(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;

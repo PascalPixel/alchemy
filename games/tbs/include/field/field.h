@@ -108,9 +108,8 @@ extern s32 gKalay_DanceStep;
 extern u32 gKolimaForestFloodgate_ShakeChance;
 /// The background scroll words captured each frame for the shaken lines.
 extern u32 gKolimaForestFloodgate_ShakeScroll[];
-/// The healthy colours: the first 448 colours (896 bytes) of the colour
-/// buffer, kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
-/// SceneId_KolimaForestGlade and SceneId_KolimaForestCliff each define one.
+/// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
+/// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
 extern u8 gKolimaPalette_Healthy[];
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 extern u8 gKolimaPalette_Cursed[];
@@ -127,9 +126,7 @@ extern u16 gColosso_GaugePalette[];
 extern s32 gColosso_PointerOam[3];
 // The lettering's three eases (Colosso_UpdateLettering): each value goes from
 // Start to Target over Duration frames, Step counting them; Duration 0 holds
-// Target. Blend is the lettering's BLDALPHA weight out of 16, Scale its size
-// with 256 for full, and Move what is added to its x each frame, in 1/256
-// pixels.
+// Target.
 extern s16 gColosso_ModeBlendDuration;
 extern s16 gColosso_ModeBlendStart;
 extern s16 gColosso_ModeBlendStep;
@@ -146,8 +143,7 @@ extern u32 gColosso_LetteringSprites[];
 /// LOG_ROOMS_A_CORNERED_FRAMES the chase raises its event.
 extern u16 gLogRoomsA_StopTimer;
 /// The size of Actor_UpdateAll's code, an address equal to the size
-/// (ld_script.ld). Only the unused Actor_RunUpdateAllFromHeap reads it, to
-/// copy the routine to the heap and run it once.
+/// (ld_script.ld).
 extern u8 Actor_UpdateAllCodeSize[];
 extern const u8 gActor_BlinkSpriteColors[];
 // The actor motion scripts: movement types 1 to 7, which

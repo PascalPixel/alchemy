@@ -1,6 +1,3 @@
-#include "types.h"
-#include "actor.h"
-#include "scene_tables.h"
 
 // Mercury and Venus Lighthouses' aeries.
 
@@ -20,7 +17,7 @@ s32 Actor_FindNearestFloatingPlatform(void) {
   slot = &work->actors[ACTOR_FIRST_PLACED];
   do {
     struct Actor *actor = *slot++;
-    if (actor != 0) {
+    if (actor != NULL) {
       if (actor->sprite->entries[0]->animationId == SPRITE_FLOATING_PLATFORM) {
         s32 dist = Actor_Distance(origin, actor);
         if (dist < minDist) {

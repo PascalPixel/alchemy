@@ -62,8 +62,7 @@ extern const char gDjinnMenu_TextSlash[];
   (*(struct ActorSystemWork **)&gHeapSlots[HEAP_SLOT_ACTOR_SYSTEM])
 /// The number text buffer: String_FormatHex writes eight digits and
 /// String_FormatDecimal eleven characters, right-aligned, each with a
-/// terminator. The debug text routines and the Djinn preview's numbers
-/// (String_FormatNumberToHalfwords) read it.
+/// terminator.
 extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
 #define gSelectionMenuWork                                                     \

@@ -1,8 +1,6 @@
 /// @file
 /// Altin Peak's frozen puddle and the main image's Frost (frost.c), each with
 /// its own colour-mode routine.
-#include "types.h"
-#include "field.h"
 
 /// An update routine that makes a frozen thing glint: its colour mode is
 /// SPRITE_COLOR_RBG for two frames in every eight.

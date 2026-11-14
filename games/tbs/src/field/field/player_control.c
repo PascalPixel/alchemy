@@ -4,10 +4,7 @@
 
 #include "../field_internal.h"
 
-// What differs by edition. On the world map, L and R raise their
-// fixed events while held in the Japanese release, and once for each press
-// from the English one on. The world map's probes for a step reach 8 pixels in
-// Japan and 7 from the English release on.
+// What differs by edition.
 #if TBS_PATCH_1
 #define FIELD_SHORTCUT_KEYS gKeysPressed
 #define WORLD_MAP_PROBE_RADIUS px(7)
@@ -39,9 +36,7 @@ enum FieldShortcutKind {
 #define FIELD_SHORTCUT_ID_MASK 0x3fff
 
 /// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
-/// Actor_MoveOnWorldMap). A step blocked either way counts towards
-/// gFieldWork->blockedSteps, which the step triggers that need pushing, the
-/// ledges and the jumps wait on.
+/// Actor_MoveOnWorldMap).
 enum PlayerStepBlock {
   PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
   /// A solid actor ahead, or one with no room to be pushed.
@@ -67,13 +62,7 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 }
 
 /// Handles a shortcut key's assignment: its top two bits choose what it
-/// requests (enum FieldShortcutKind) and the low 14 bits which one. With
-/// FLAG_MENUS_RAISE_TRIGGER set it raises FIELD_RAISED_TRIGGER_MENUS instead,
-/// as the menus do then; on the world map R raises
-/// FIELD_RAISED_TRIGGER_WORLD_PICTURE and L
-/// FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM. Returns the request id, the
-/// assignment's low 14 bits, even when it raised an event instead; a shortcut
-/// with nothing assigned returns 0, as no key pressed does.
+/// requests (enum FieldShortcutKind) and the low 14 bits which one.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;
@@ -103,11 +92,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 
 /// Checks the keys the player has configured: Select, A and Start set their
 /// flag in the field work and return 1; the two shortcut keys pass on their
-/// assignment (Field_RequestShortcut) and return its request id. Returns 0
-/// when none is pressed, or with no field work. Every caller drops the result.
-/// Only the first configured key pressed this frame counts, in that order.
-///
-/// Sets work->fieldMenu, aButton or pauseMenu.
+/// assignment (Field_RequestShortcut) and return its request id.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = gFieldWork;
   s32 result = 0;
@@ -146,11 +131,9 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
   s32 dz = (*firstCoordinate - *secondCoordinate) >> 16;
   s32 radius = radiusA + radiusB;
 
-  // The bound is 64 pixels in 16.16, the units before the shift, but dx and
-  // dz are already whole pixels (at most 32768), so these tests always pass
-  // and only the distance decides. No two actors on a 2,048-pixel map are
-  // far enough apart for the squares to overflow, so nothing the player sees
-  // changes.
+  // The bound is 64 pixels in 16.16, the units before the shift, but dx and dz
+  // are already whole pixels (at most 32768), so these tests always pass and
+  // only the distance decides.
   if (!(dx > px(64)) && !(dz > px(64)) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
     return 0;
@@ -158,12 +141,8 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 }
 
 /// SC_PLAYER: moves the player on the field by the direction pad: walking or
-/// running, sliding around walls, pushing movable actors, turning, playing
-/// the matching animation and leaving footprints. Also checks the configured
-/// keys. Returns 1.
-///
-/// Sets the leader's speed, target, velocity, angle and timer, moves the actors
-/// it pushes, counts gFieldWork->blockedSteps and creates the footprint actors.
+/// running, sliding around walls, pushing movable actors, turning, playing the
+/// matching animation and leaving footprints.
 s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 
   struct FieldPosition position;
@@ -293,8 +272,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
         }
       }
       // The pad's way is blocked: try 22.5, 45 and 67.5 degrees off, nearest
-      // first, each needing the same three clear probes. The first that
-      // passes slides the player along the wall.
+      // first, each needing the same three clear probes.
       direction = angle;
       headingCount = 0;
       angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
@@ -449,8 +427,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   }
 
   // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame; the
-  // next footprint is the pair. Otherwise move to the step, keeping the speed
-  // but along the heading.
+  // next footprint is the pair.
   if (collision != 0) {
     actor->targetX = TARGET_UNSET;
     actor->targetY = TARGET_UNSET;
@@ -498,10 +475,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       struct Sprite *animation;
 
       // collision is 0 here: the footprint takes no motion flags (it stays
-      // where it is laid) and its sprite no shadow. It lasts 120 frames,
-      // sorts underfoot, draws at OAM priority 3, under
-      // any map layer of priority 0 to 2, and lies rotated a quarter turn
-      // from the heading.
+      // where it is laid) and its sprite no shadow.
       effect->groundHeight = actor->groundHeight;
       animation = effect->sprite;
       Actor_StartScript(effect, gWorldMap_FootprintActions);
@@ -513,9 +487,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
         animation->rotation = footprintAngle + TRIG_TURN / 4;
         animation->image.priority = 3;
       }
-      // The first footprint after a stop is the pair and restarts the
-      // sides; each second one faces a half turn round.
-      // Read signed: the footprint side was a signed halfword here.
+      // The first footprint after a stop is the pair and restarts the sides;
+      // each second one faces a half turn round.
       if (*(s16 *)&actor->userValue == FOOTPRINT_BOTH_FEET) {
         Sprite_StartAnimation(animation, FOOTPRINT_BOTH_FEET);
         actor->userValue = collision;
@@ -536,12 +509,6 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 
 /// SC_WORLD: moves the player on the world map by the direction pad, as
 /// SC_PLAYER does on the field, and turns the world map camera with the pad.
-/// Shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER) leaves a ripple and a
-/// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
-///
-/// Sets the leader's speed, target, velocity, angle and timer, turns the
-/// perspective work's yaw, counts gFieldWork->blockedSteps and creates the
-/// ripple actors.
 s32 Actor_MoveOnWorldMap(struct Actor *actor) {
 
   struct FieldPosition position;
@@ -574,8 +541,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
 #if !TBS_PATCH_1
   count = 0;
 #endif
-  // Walk, or run with the dash keys. L, as it repeats, raises the limit
-  // further; unlike the field's fast walk, no debug test or flag guards it.
+  // Walk, or run with the dash keys.
   if (gKeysHeld & gMainRoutineWork.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
@@ -597,10 +563,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
     position.y = actor->y.fixed;
     position.z = actor->z.fixed;
     Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
-    // Debug L walks anywhere. Otherwise the English release on tests the
-    // step and 22.5 and 45 degrees either side, then headings up to 90
-    // degrees off; the Japanese one tests the step and 30 degrees (TRIG_TURN /
-    // 12) either side, then headings up to 67.5 degrees off.
+    // Debug L walks anywhere.
     if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
 #if TBS_PATCH_1
       if (WorldMap_IsWalkable((s32)actor, (struct WorldPosition *)&position) ==
@@ -853,13 +816,8 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
   return 1;
 }
 
-/// SC_KEYS: moves an actor 8 pixels at a time by the direction pad, with up
-/// and down changing its height (y) rather than its depth. Refuses steps
-/// into an occupied cell, across a change of cell behavior, or onto ground
-/// too high (up) or too low (down). Returns 1.
-///
-/// Sets the leader's speed, angle, target or velocity, and counts
-/// gFieldWork->blockedSteps.
+/// SC_KEYS: moves an actor 8 pixels at a time by the direction pad, with up and
+/// down changing its height (y) rather than its depth.
 s32 Actor_MoveByKeys(struct Actor *actor) {
 
   struct FieldPosition position;

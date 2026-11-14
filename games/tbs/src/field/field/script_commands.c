@@ -31,9 +31,7 @@ enum {
 /// SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label.
 #define SCRIPT_LABEL_KEY_MASK 0xbfffffff
 
-/// SC_WAIT(n): waits n frames; this frame counts as the first. Sets
-/// interpreter->wait to n - 1, which the update loops count down, and moves
-/// past its operand. Returns 0 to end the actor's commands for this frame.
+/// SC_WAIT(n): waits n frames; this frame counts as the first.
 s32 ActorScript_Wait(struct Actor *interpreter) {
   s16 commandCursor = interpreter->scriptCursor;
 
@@ -42,10 +40,9 @@ s32 ActorScript_Wait(struct Actor *interpreter) {
   return 0;
 }
 
-/// SC_SYNC: waits until the actor arrives at its target, or until a solid
-/// actor has blocked it for 60 frames (refused is the blocked count, which
-/// Actor_UpdateAllThumb raises). Returns 1 (run on) once it has, clearing
-/// refused when it gave up, and 0 (wait) until then.
+/// SC_SYNC: waits until the actor arrives at its target, or until a solid actor
+/// has blocked it for 60 frames (refused is the blocked count, which
+/// Actor_UpdateAllThumb raises).
 s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   if (interpreter->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     interpreter->refused = 0;
@@ -59,10 +56,7 @@ s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   return 0;
 }
 
-/// SC_CALL(fn): calls fn with the actor. A non-zero result waits and calls
-/// it again next frame; zero moves on, past the command unless fn moved the
-/// cursor itself. Events and the field effect scripts of
-/// field_sequence_tables.c use it to run their own per-actor routines.
+/// SC_CALL(fn): calls fn with the actor.
 s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
   s16 initialCursor = interpreter->scriptCursor;
   ScriptCommand callback =
@@ -105,10 +99,7 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
 }
 
 /// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
-/// moves on; with n = SC_FOREVER it always jumps. Counts in
-/// interpreter->repeatCount and clears it when the loop ends, so loops do not
-/// nest. The field's own scripts (actor_script.c) end with
-/// SC_LOOP(SC_FOREVER, SC_TOP).
+/// moves on; with n = SC_FOREVER it always jumps.
 s32 ActorScript_RepeatOrJump(struct Actor *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
@@ -171,8 +162,7 @@ s32 ActorScript_JumpIfFalse(struct Actor *interpreter) {
 }
 
 /// SC_END: hands the actor back to the idle script, gActorScript_EndScript,
-/// whose lone SC_END runs again each frame. Returns 0. The table's unused
-/// command numbers from 36 also point here.
+/// whose lone SC_END runs again each frame. Returns 0.
 s32 ActorScript_End(struct Actor *interpreter) {
   s32 result;
 
@@ -232,9 +222,8 @@ s32 ActorScript_SetAnimation(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_RELEASE: releases the actor through Actor_Release, which
-/// releases its sprites and zeroes its slot. Returns 0: with its script now
-/// null, the update loop skips the rest of the actor's frame.
+/// SC_RELEASE: releases the actor through Actor_Release, which releases its
+/// sprites and zeroes its slot.
 s32 ActorScript_Release(struct Actor *interpreter) {
   Actor_Release(interpreter);
   return 0;
@@ -254,8 +243,7 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
 }
 
 /// Returns -1 when an actor at position values would overlap a solid actor
-/// (ACTOR_SOLID), each radius less 2 pixels; otherwise 0. The actor itself is
-/// skipped.
+/// (ACTOR_SOLID), each radius less 2 pixels; otherwise 0.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
   s32 actorIndex;
   u8 *collisionFlags;
@@ -384,13 +372,8 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
   return 1;
 }
 
-/// SC_CAMERA: keeps the camera actor on its leader (watchedActor), clamped
-/// so the view stays on the map. It closes an eighth of the distance a frame,
-/// at most its speed limit, and a quarter of a large height difference; when
-/// timer is set it jumps there at once.
-///
-/// Clears the camera's flags and target, moves its position, and counts its
-/// step.
+/// SC_CAMERA: keeps the camera actor on its leader (watchedActor), clamped so
+/// the view stays on the map.
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
 
   struct Actor *leader;
@@ -491,12 +474,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
   return 1;
 }
 
-/// SC_APPROACH_WATCHED: follows the watched actor at its speed. More than 16
-/// pixels away it walks to 16 pixels short of it and runs on;
-/// within 16 it stands and waits for the next frame.
-///
-/// Copies the watched actor's speed limit and acceleration, and sets the move
-/// target.
+/// SC_APPROACH_WATCHED: follows the watched actor at its speed.
 s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 
   s32 distancePixels;
@@ -535,12 +513,10 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   return 0;
 }
 
-/// SC_WANDER(base, range, limit): walks to a random point base to base +
-/// range away, within 90 degrees either side of its heading (scriptValue),
-/// that no solid actor or wall blocks, with clear ground 8 pixels further at
-/// 45 degrees either side, and within limit pixels of home. After seven
-/// failed tries it turns around (turnedBack) and waits for the next frame.
-/// No script in games/tbs names SC_WANDER; events use SC_WANDER_HOME.
+/// SC_WANDER(base, range, limit): walks to a random point base to base + range
+/// away, within 90 degrees either side of its heading (scriptValue), that no
+/// solid actor or wall blocks, with clear ground 8 pixels further at 45 degrees
+/// either side, and within limit pixels of home.
 s32 Actor_Wander(struct Actor *actor) {
 
   struct FieldPosition candidatePosition;
@@ -571,9 +547,8 @@ retry:
   if (attempts <= SCRIPT_WANDER_TRIES) {
     SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
                  actor->z.fixed);
-    // Random16 is a 16.16 fraction below 1, so the distance is base plus up
-    // to range. Two quarter-turn rolls give a heading within 90 degrees
-    // either side; their difference falls nearer the heading more often.
+    // Random16 is a 16.16 fraction below 1, so the distance is base plus up to
+    // range.
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = actor->facing + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
@@ -632,12 +607,9 @@ retry:
   return 1;
 }
 
-/// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing
-/// more ground around the point, while it is within limit pixels of home;
-/// outside that, or when no point works, it heads back towards home.
-///
-/// Sets bit 1 of collisionFlags while it roams and clears it on the way home,
-/// sets the move target, and always moves on to the next command.
+/// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing more
+/// ground around the point, while it is within limit pixels of home; outside
+/// that, or when no point works, it heads back towards home.
 s32 ActorScript_WanderNearHome(struct Actor *actor) {
 
   struct FieldPosition candidatePosition;
@@ -726,10 +698,9 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
       goto done;
     }
   }
-  // Head back: aim opposite the angle from home to the actor (dx and dz
-  // as measured at the start, or at the last point found too far from home),
-  // with the same spread, testing only the near and far points. After seven
-  // more failures the actor stays put this time.
+  // Head back: aim opposite the angle from home to the actor (dx and dz as
+  // measured at the start, or at the last point found too far from home), with
+  // the same spread, testing only the near and far points.
   attempts = 0;
   angle = (u16)ArcTan2(dz, dx) + SCRIPT_HALF_TURN;
 back:
@@ -899,10 +870,8 @@ SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseCounter, riseCounter,
 SCRIPT_DEFINE_OPERAND_NARROW(ActorScript_SetOrCompareRiseEnabled, riseEnabled,
                              u8)
 
-/// Reads the two words after the command (a work value number and a value)
-/// and passes operation to that value's handler. The number is not checked
-/// against the table's 41 entries; only a null entry is skipped, and the
-/// table has none. Moves past both operands and returns 1.
+/// Reads the two words after the command (a work value number and a value) and
+/// passes operation to that value's handler.
 static __inline__ s32
 ActorScript_ApplyOperandCommand(struct ScriptOperands *operands,
                                 s32 operation) {

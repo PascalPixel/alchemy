@@ -5,9 +5,8 @@
 
 #include "../battle_internal.h"
 
-/// Pulses HIGHLIGHT_PALETTE's colours: each takes the matching colour of
-/// WINDOW_PALETTE brightened by up to twelve steps, rising and falling with the
-/// frame count. Nothing in the source calls it. Writes BG palette RAM.
+/// Unused: pulses HIGHLIGHT_PALETTE, the window colours brightening and dimming
+/// with the frame count.
 void Palette_UpdatePulseBrightness(void) {
   u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   s32 i;
@@ -37,10 +36,7 @@ void Palette_UpdatePulseBrightness(void) {
 }
 
 /// Sets the camera up for the fixed view the battle shows while commands are
-/// chosen, raised by verticalOffset pixels, with its projection and the
-/// background's zoom to match. Writes the camera, gBattleBackgroundWork's
-/// targetYaw and flag (left 1, so the camera task leaves the background alone),
-/// gProjection and the background's affine page.
+/// chosen, raised by verticalOffset pixels.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
@@ -49,8 +45,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   struct FixedPointPosition eyeOffset;
   u32 result;
 
-  // Positions are 16.16 pixels and angles 1/65536 turns: the focus 5
-  // pixels up, a quarter turn of yaw, a pitch of -3/64 of a turn, 750
+  // The focus 5 pixels up, a quarter turn of yaw, a slight downward pitch, 750
   // pixels away.
   camera->focus[1] = px(5);
   camera->focus[0] = 0;
@@ -75,9 +70,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
   Projection_Set(0, result, px(1938));
 
-  // While active (the view's busy) is set, BattleCamera_SetRange leaves
-  // BG1's scroll alone. The range: centre (120, 118 less verticalOffset),
-  // offset 8 pixels in y, in 8.8, scale 2.0.
+  // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
   gProjection.centerY = verticalOffset + 120;
   view->busy = 1;
   BattleCamera_SetRange(px(120), px(118 - verticalOffset), 0, 8 << 8,
@@ -103,12 +96,10 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
-/// Rolls whether the party gets away. The chance, in hundredths of a percent,
-/// is 5000 plus 2000 for each attempt that failed, plus 500 times the party's
-/// average level, less 500 times the enemies' average level. A party that
-/// struck first always gets away; no one gets away from a battle that forbids
-/// it. Every attempt counts toward the next. Returns 1 when the party gets
-/// away. Each roll, even a successful one, raises gBattleWork->fleeFailures.
+/// Rolls whether the party gets away: 50 percent, 20 more for each failed
+/// attempt, and 5 for each level the party's average is above the enemies'. A
+/// party that struck first always gets away, and no one from a battle that
+/// forbids it. Returns 1 when the party gets away.
 s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
   u8 *failedAttempts;
@@ -150,15 +141,11 @@ s32 BattleFlee_CheckSuccess(void) {
   return escaped;
 }
 
-/// The party's actions for the turn, from the command menu: a party member who
-/// is asleep, confused, charmed or stunned loses each of their actions
-/// (COMMAND_NONE); the others choose theirs (Battle_CollectPartyCommandsFar).
-/// Returns how many actions there are, or -1 if the menu gave up. Fills
-/// entries.
+/// The party's actions for the turn, from the command menu; one who is asleep,
+/// confused, charmed or stunned loses theirs. Returns how many there are, or -1
+/// if the menu gave up.
 s32 Battle_BuildPartyActions(struct BattleAction *entries) {
-  // Two lists, freed before the return; the allocator rounds them up to 20
-  // and 12 bytes: up to eight choosers and the up to four party members with
-  // their end mark.
+  // Up to eight choosers, and up to four party members with their end mark.
   u16 *choosingUnits = Heap_AllocEwram(17);
   u16 *unitIds = Heap_AllocEwram(9);
   s32 unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
@@ -206,12 +193,10 @@ s32 Battle_BuildPartyActions(struct BattleAction *entries) {
   }
 }
 
-/// The enemies' actions for the turn, in a shuffled order, each chosen by
-/// BattleAI_ChooseAction; a sleeping or stunned enemy loses its actions. An
-/// enemy acting more than once a turn acts later at half its Agility. None act
-/// when the party struck first; when the party is caught by surprise, only two
-/// to five enemies act, once each. Returns how many actions there are. Fills
-/// entries.
+/// The enemies' actions for the turn, in a shuffled order. An enemy acting more
+/// than once acts later at half its Agility; none act when the party struck
+/// first, and when the party is caught by surprise two to five act once each.
+/// Returns how many there are.
 s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
@@ -288,8 +273,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
 #define DJINN_FIRST_PRIORITY 10000
 
 /// Sorts the turn's actions into action order, fastest first, after moving the
-/// guarding and grounding Djinn to the front. Raises those Djinn actions'
-/// priority and reorders entries in place.
+/// guarding and grounding Djinn to the front.
 void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
   s32 actionIndex;
   s32 sortIndex;
@@ -334,13 +318,8 @@ void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
   } while (swapCount != 0);
 }
 
-/// The header a link battle sends before its actions: how many there are,
-/// the next random number to check the consoles agree, and the parent's
-/// random seed for the turn. Battle_AppendLinkedActions takes it
-/// from the EWRAM pool (40 bytes) for one exchange and frees it before
-/// returning. One header serves both ways: the parent's received header
-/// overwrites the one it sent, and the child receives first, then writes
-/// its count over the received header and sends it back.
+/// The header a link battle sends before its actions: how many, the next random
+/// number to check the consoles agree, and the parent's seed for the turn.
 struct BattleLinkedActionState {
   s32 count; ///< actions that follow the header
   s32 check; ///< the parent's next Battle_RandomFar; the child checks its own
@@ -359,15 +338,8 @@ struct BattleLinkedActionState {
    LINK_PACKET_BYTES)
 
 /// Link battle: exchanges the turn's actions with the other console and appends
-/// the opponent's after the count of this console's. Each console sees its own
-/// party as the party: the received actions' units take the ids they have here
-/// and their targets swap sides. The parent sends first and gives the turn its
-/// random seed; the child checks both consoles agree on the next random number.
-/// A party member's priority is made even on the parent and odd on the child,
-/// so equal speeds sort alike on both. Returns how many actions were received,
-/// or -1 when the exchange fails. Sets gBattleRandomSeed, writes each action's
-/// slot and priority, and on a failure resets the link transfer and removes its
-/// interrupt handlers.
+/// the opponent's, their units and targets seen from this side. Returns how
+/// many were received, or -1 when the exchange fails.
 s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   struct BattleWork *battle = gBattleWork;
   s32 result = 0;
@@ -528,11 +500,7 @@ fail:
   return -1;
 }
 
-/// Copies BG palette 15 to 14 and 5 to 4, brightened or darkened. Called by
-/// Battle_GatherActions with 8, as the turn's commands are
-/// chosen.
-/// @param offset added to each of the red, green and blue values (held in 0
-/// to 31)
+/// Copies BG palette 15 to 14 and 5 to 4, each channel moved by offset.
 void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bank;
   s32 source = 15;
@@ -572,13 +540,9 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
   }
 }
 
-/// Builds the turn's actions and sorts them into action order: the party's
-/// commands, then the link opponent's or the enemies' actions. Returns how many
-/// actions there are; negative to abort (a link failure). Clears
-/// gBattleWork->actions, sets every defender's defendLevel, may set firstStrike
-/// to FIRST_STRIKE_ENEMIES after a failed attempt to flee, and holds
-/// FLAG_CHOOSING_COMMANDS while the commands are chosen. @param actions the
-/// actions (20 at most)
+/// Builds the turn's actions and sorts them: the party's commands, then the
+/// link opponent's or the enemies' actions. Returns how many there are,
+/// negative when the link fails.
 s32 Battle_GatherActions(struct BattleAction *actions) {
   struct Unit *unit;
   struct BattleWork *battle;
@@ -660,10 +624,7 @@ finish:
   return count;
 }
 
-/// Returns the unit id at a list place. Called by BattleActionRun_Build
-/// for a command's target.
-/// @param taggedPlace the place in the low four bits; 0x80 set for the
-/// enemies' list
+/// Returns the unit id at a list place, 0x80 set for the enemies' list.
 s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
   struct BattleWork *battle = gBattleWork;
 
@@ -672,10 +633,8 @@ s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
   return battle->partyUnits[taggedPlace & 0xf];
 }
 
-/// Returns the list place of unit id, or -1 if it is in neither list: the
-/// party's as PLACE_PARTY | place, the enemies' as PLACE_ENEMY | place. Called
-/// by the enemies' command choice (enemy_ai.c) to aim at a unit.
-/// @param unitId 0 to 7 the party, any other an enemy
+/// Returns the list place of a unit, PLACE_PARTY or PLACE_ENEMY with its place,
+/// or -1 when it is in neither list.
 s32 Battle_FindUnitPlace(u32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 placeIndex;

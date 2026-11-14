@@ -162,7 +162,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 
   slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
   slot = slots;
-  work = (struct BattleEffectWork *)*slot++;
+  work = *slot++;
   canvas = *slot;
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);

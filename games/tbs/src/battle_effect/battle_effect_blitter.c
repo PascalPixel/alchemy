@@ -328,7 +328,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
     *(site) |= BRANCH_FIELD(site, codeWords);                                  \
   } while (0)
 
-  codeWords = (u32 *)HeapSlot_Alloc(slot, wordCount << 2);
+  codeWords = HeapSlot_Alloc(slot, wordCount << 2);
   templateWords = gBlitterTemplate;
 
   BLITTER_WALK();

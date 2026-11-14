@@ -344,8 +344,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
-      (struct BattleLinkedActionState *)Heap_AllocEwram(
-          sizeof(struct BattleLinkedActionState));
+      Heap_AllocEwram(sizeof(struct BattleLinkedActionState));
   s32 index;
 
   // Sends the header, then this console's actions. Both transfers share one

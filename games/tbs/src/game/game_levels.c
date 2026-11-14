@@ -170,8 +170,8 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
 struct LevelUpWork {
   s32 classIndex; ///< the unit's class, written and not read again
   s32 level;      ///< the level before this one
-  struct CharacterDefinition *growth; ///< the character's growth curves
-  u8 unused[32];                      ///< never written
+  const struct CharacterDefinition *growth; ///< the character's growth curves
+  u8 unused[32];                            ///< never written
 };
 
 /// Teaches a character action `value` for good (or makes a class action
@@ -226,10 +226,10 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
 
 /// Returns character `index`'s definition: growth curves, starting level and
 /// equipment.
-struct CharacterDefinition *Character_GetDefinition(s32 index) {
-  struct CharacterDefinition *base;
+const struct CharacterDefinition *Character_GetDefinition(s32 index) {
+  const struct CharacterDefinition *base;
 
-  base = (struct CharacterDefinition *)gCharacter_DefinitionTable;
+  base = gCharacter_DefinitionTable;
   return &base[index];
 }
 
@@ -238,7 +238,7 @@ struct CharacterDefinition *Character_GetDefinition(s32 index) {
 /// raised to their starting level.
 void Party_InitializeCharacters(void) {
   struct Unit *unit;
-  struct CharacterDefinition *character;
+  const struct CharacterDefinition *character;
   u16 nameBuf[16];
   s32 unitId;
   const s32 *startingUnitId = gCharacter_StartingEquipUnitIds;

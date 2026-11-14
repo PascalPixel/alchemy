@@ -313,10 +313,9 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   void *palette;
   s32 i;
 
-  work = (struct BattleEffectWork *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT,
-                                                   sizeof *work);
-  canvas = (void *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  sheet = (u8 *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  sheet = HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
   camera = gBattleCamera;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);

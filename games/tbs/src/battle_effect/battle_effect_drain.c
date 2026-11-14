@@ -132,7 +132,7 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-  camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   if (args->variant == EFFECT_VARIANT_BASIC)
     alternate = 0;
   else

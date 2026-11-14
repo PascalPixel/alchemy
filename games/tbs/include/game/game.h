@@ -162,7 +162,7 @@ s32 Unit_RefreshPsynergy(s32 unitId);
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value);
 struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
                                         struct LevelUpResult *gains);
-struct CharacterDefinition *Character_GetDefinition(s32 index);
+const struct CharacterDefinition *Character_GetDefinition(s32 index);
 void Party_InitializeCharacters(void);
 void Unit_LevelNoOp(void);
 u32 Unit_GetExperienceForLevel(s32 unitId, s32 level);

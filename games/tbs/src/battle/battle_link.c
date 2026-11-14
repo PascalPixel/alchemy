@@ -129,7 +129,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     // The Djinn recovery list, its units renumbered for the opponent.
     size = LINK_PARTY_OFFER_BYTES;
     Heap_Release(buffer);
-    buffer = (u8 *)Heap_AllocEwram(size);
+    buffer = Heap_AllocEwram(size);
     /* FAKEMATCH(dead): the copy in a once-only block. */
     do {
       Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),

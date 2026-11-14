@@ -33,7 +33,7 @@ next:
   nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  object->unk5c[0] = 3;
+  object->retainSpriteCache = 3;
   if (Event_GetFlag(nextFlag)) {
     Actor_SetPosition(id, 0, 0);
   } else {

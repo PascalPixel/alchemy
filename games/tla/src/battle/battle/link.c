@@ -56,7 +56,7 @@ s32 LinkBattle_ReceiveParty(void) {
   }
   Heap_Release(buffer);
   buffer = Heap_AllocEwram(340);
-  if (Serial_StartReceive(Resource_FarCall005(1)) != -1) {
+  if (Serial_StartReceive(Djinn_GetRecoveryTableFar(1)) != -1) {
     Serial_WaitForReceive();
     wait(2);
   }

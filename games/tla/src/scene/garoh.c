@@ -238,18 +238,18 @@ extern struct MapGridCellAnimation gGaroh_Doors[];
 const void *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Garoh1) {
+  if (scene == SCENE_GAROH_1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gGaroh_Room1DayPlacements;
     return gGaroh_Room1Placements;
   }
-  if (scene == (s32)&SceneId_Garoh2)
+  if (scene == SCENE_GAROH_2)
     return gGaroh_Room2Placements;
-  if (scene == (s32)&SceneId_Garoh3)
+  if (scene == SCENE_GAROH_3)
     return gGaroh_Room3Placements;
-  if (scene == (s32)&SceneId_Garoh4)
+  if (scene == SCENE_GAROH_4)
     return gGaroh_Room4Placements;
-  if (scene == (s32)&SceneId_Garoh5)
+  if (scene == SCENE_GAROH_5)
     return gGaroh_Room5Placements;
   return gGaroh_Placements;
 }
@@ -528,18 +528,18 @@ void Garoh_MeetInTheCave(void) {
 const void *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Garoh1) {
+  if (scene == SCENE_GAROH_1) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gGaroh_Room1DayTriggers;
     return gGaroh_Room1Triggers;
   }
-  if (scene == (s32)&SceneId_Garoh2)
+  if (scene == SCENE_GAROH_2)
     return gGaroh_Room2Triggers;
-  if (scene == (s32)&SceneId_Garoh3)
+  if (scene == SCENE_GAROH_3)
     return gGaroh_Room3Triggers;
-  if (scene == (s32)&SceneId_Garoh4)
+  if (scene == SCENE_GAROH_4)
     return gGaroh_Room4Triggers;
-  if (scene == (s32)&SceneId_Garoh5)
+  if (scene == SCENE_GAROH_5)
     return gGaroh_Room5Triggers;
   return gGaroh_Triggers;
 }
@@ -558,9 +558,9 @@ void Garoh_InitializeRoom2(void);
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Garoh4) {
+  if (gMainRoutineWork.next == SCENE_GAROH_4) {
     gFieldWork->transition = 0x204;
-  } else if (gMainRoutineWork.next == (s32)&SceneId_Garoh5) {
+  } else if (gMainRoutineWork.next == SCENE_GAROH_5) {
     FieldActor_SetSpritePriority(13, 1);
     FieldActor_SetSpritePriority(14, 1);
     if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
@@ -581,15 +581,15 @@ s32 Scene_Initialize(void) {
     }
   } else {
     gFieldWork->transition = 0;
-    if (gMainRoutineWork.next == (s32)&SceneId_Garoh1) {
+    if (gMainRoutineWork.next == SCENE_GAROH_1) {
       Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
       Garoh_InitializeRoom1();
-    } else if (gMainRoutineWork.next == (s32)&SceneId_Garoh2) {
+    } else if (gMainRoutineWork.next == SCENE_GAROH_2) {
       Garoh_InitializeRoom2();
-    } else if (gMainRoutineWork.next == (s32)&SceneId_Garoh3) {
+    } else if (gMainRoutineWork.next == SCENE_GAROH_3) {
       Garoh_InitializeRoom3();
       if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
-        gMainRoutineWork.restartScene = (s32)&SceneId_GarohInteriors3;
+        gMainRoutineWork.restartScene = SCENE_GAROH_INTERIORS_3;
         gMainRoutineWork.restartEntrance = 2;
       }
     }

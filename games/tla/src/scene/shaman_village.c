@@ -314,9 +314,9 @@ void ShamanVillage_MeetAroma(void) { Djinn_JoinParty(18, 3, 13); }
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ShamanVillage5)
+  if (scene == SCENE_SHAMAN_VILLAGE_5)
     return gShamanVillage_Room5Entrances;
-  if (scene == (s32)&SceneId_ShamanVillage6)
+  if (scene == SCENE_SHAMAN_VILLAGE_6)
     return gShamanVillage_Room6Entrances;
   return gShamanVillage_Entrances;
 }
@@ -349,20 +349,20 @@ extern struct ActorPlacement gShamanVillage_Room6Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ShamanVillage1)
+  if (scene == SCENE_SHAMAN_VILLAGE_1)
     return gShamanVillage_Room1Placements;
-  if (scene == (s32)&SceneId_ShamanVillage3)
+  if (scene == SCENE_SHAMAN_VILLAGE_3)
     return gShamanVillage_Room3Placements;
-  if (scene == (s32)&SceneId_ShamanVillage2) {
+  if (scene == SCENE_SHAMAN_VILLAGE_2) {
     if (Event_GetFlag(FLAG_MOAPA_BEATEN))
       gShamanVillage_Room2Placements.field16 = 1;
     return &gShamanVillage_Room2Placements;
   }
-  if (scene == (s32)&SceneId_ShamanVillage4)
+  if (scene == SCENE_SHAMAN_VILLAGE_4)
     return gShamanVillage_Room4Placements;
-  if (scene == (s32)&SceneId_ShamanVillage5)
+  if (scene == SCENE_SHAMAN_VILLAGE_5)
     return gShamanVillage_Room5Placements;
-  if (scene == (s32)&SceneId_ShamanVillage6)
+  if (scene == SCENE_SHAMAN_VILLAGE_6)
     return gShamanVillage_Room6Placements;
   return gShamanVillage_Placements;
 }
@@ -531,7 +531,7 @@ row:
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = px(3) / 2;
-      spark->unk4c = spark->z;
+      spark->riseBaseY = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Import_ActorSetMode((struct Actor *)spark, 7);
       Import_ActorStartScript((struct Actor *)spark, gFieldEffect_MediumScript);
@@ -716,17 +716,17 @@ extern struct Trigger gShamanVillage_Room6Triggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ShamanVillage1)
+  if (scene == SCENE_SHAMAN_VILLAGE_1)
     return gShamanVillage_Room1Triggers;
-  if (scene == (s32)&SceneId_ShamanVillage3)
+  if (scene == SCENE_SHAMAN_VILLAGE_3)
     return gShamanVillage_Room3Triggers;
-  if (scene == (s32)&SceneId_ShamanVillage2)
+  if (scene == SCENE_SHAMAN_VILLAGE_2)
     return gShamanVillage_Room2Triggers;
-  if (scene == (s32)&SceneId_ShamanVillage4)
+  if (scene == SCENE_SHAMAN_VILLAGE_4)
     return gShamanVillage_Room4Triggers;
-  if (scene == (s32)&SceneId_ShamanVillage5)
+  if (scene == SCENE_SHAMAN_VILLAGE_5)
     return gShamanVillage_Room5Triggers;
-  if (scene == (s32)&SceneId_ShamanVillage6)
+  if (scene == SCENE_SHAMAN_VILLAGE_6)
     return gShamanVillage_Room6Triggers;
   return gShamanVillage_Triggers;
 }
@@ -1444,7 +1444,7 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     object->motionFlags = 0;
-    object->unk5c[0] = 1;
+    object->retainSpriteCache = 1;
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
     buffer = HeapSlot_Alloc(68, 0x608);
@@ -2594,15 +2594,15 @@ void ShamanVillage_AdviseQuitting(void) {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ShamanVillage1)
+  if (scene == SCENE_SHAMAN_VILLAGE_1)
     ShamanVillage_SetUpVillage();
-  else if (scene == (s32)&SceneId_ShamanVillage3)
+  else if (scene == SCENE_SHAMAN_VILLAGE_3)
     ShamanVillage_SetUpRoom3();
-  else if (scene == (s32)&SceneId_ShamanVillage2)
+  else if (scene == SCENE_SHAMAN_VILLAGE_2)
     ShamanVillage_SetUpRoom2();
-  else if (scene == (s32)&SceneId_ShamanVillage4)
+  else if (scene == SCENE_SHAMAN_VILLAGE_4)
     ShamanVillage_SetUpRoom4();
-  else if (scene == (s32)&SceneId_ShamanVillage6)
+  else if (scene == SCENE_SHAMAN_VILLAGE_6)
     ShamanVillage_SetUpRoom6();
   return 0;
 }
@@ -2697,7 +2697,7 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *object = ((struct Actor *)Import_ActorCreate(285, x, y, z));
 
   if (object != NULL) {
-    object->unk5c[0] = 2;
+    object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
     object->priorityFlags &= ~1;

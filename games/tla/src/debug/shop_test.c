@@ -185,7 +185,6 @@ void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
 void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
 
 void Party_AdjustCoins(s32 amount);
-struct ItemDefinition *ShopTest_GetItem(s32 item);
 s32 PartyInventory_FindRoom(s32 item);
 void ItemDisplay_ShowItem(s32 item, s32 mode);
 void Forge_Run(s32 actor);
@@ -244,7 +243,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
-    u32 price = (u16)ShopTest_GetItem(item)->price;
+    u32 price = (u16)Item_GetDirect(item)->price;
     s32 message;
 
     MessageArgument_Push(item, 2);
@@ -492,7 +491,7 @@ void ShopTest_DamageAndAfflictParty(void) {
   unit->poison = 2;
   unit = Unit_Get(FELIX);
   for (i = 0; i <= 14; i++) {
-    item = ShopTest_GetItem(unit->inventory[i]);
+    item = Item_GetDirect(unit->inventory[i]);
     if (unit->inventory[i] == 0)
       break;
     if (item->useType == 2) {
@@ -502,7 +501,7 @@ void ShopTest_DamageAndAfflictParty(void) {
   }
   unit = Unit_Get(JENNA);
   for (i = 0; i <= 14; i++) {
-    item = ShopTest_GetItem(unit->inventory[i]);
+    item = Item_GetDirect(unit->inventory[i]);
     if (unit->inventory[i] == 0)
       break;
     if (item->useType == 2) {
@@ -756,13 +755,13 @@ void ShopTest_SelectItem(void) {
     }
     if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           ShopTest_GetItem(item & 0x1ff)->icon == 0;
+           Item_GetDirect(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT - 1) % entryCount)
         ;
     }
     if (step == 1) {
       for (item = (item + ITEM_COUNT) % entryCount;
-           ShopTest_GetItem(item & 0x1ff)->icon == 0;
+           Item_GetDirect(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT + 1) % entryCount)
         ;
     }

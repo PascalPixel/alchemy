@@ -375,7 +375,7 @@ s32 Scene_Initialize(void) {
   if (state->entrance == 90) {
     Event_SetFlag(0x90a);
     state->ownerOverride = 1;
-    Event_SetDestination((s32)&SceneId_NorthernReaches, 4);
+    Event_SetDestination(SCENE_NORTHERN_REACHES, 4);
   }
   RisingParticles_Start();
   return 0;

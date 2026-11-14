@@ -76,7 +76,7 @@ s32 FieldSequence_Run(void) {
   gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
   Djinn_ResolvePending(0);
-  if (gMainRoutineWork.mapId == (s32)&SceneId_Clear) {
+  if (gMainRoutineWork.mapId == SCENE_CLEAR) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.unk244[0] = 1;
     mode = 3;
@@ -181,7 +181,7 @@ s32 FieldSequence_Run(void) {
         s32 zero = 0;
 
         Teleport_PlaySparksAndFade();
-        if (ARRIVAL.scene != (s16)(s32)&SceneId_WorldMap)
+        if (ARRIVAL.scene != (s16)SCENE_WORLD_MAP)
           goto clearOwner;
         /* FAKEMATCH(barrier): an empty asm clobbering r0. */
         asm("" : : : "r0");
@@ -471,7 +471,7 @@ s32 FieldSequence_Run(void) {
       leader = WorldMap_Unfreeze();
       if (gDebugMode == 0 || !GameFlag_Get(FLAG_DEBUG_STEPS_OFF)) {
         if (*pending == 0 ||
-            (leader->timer == 0 && *(s16 *)&leader->unk66 == 0))
+            (leader->timer == 0 && *(s16 *)&leader->userValue == 0))
           Field_UpdateWalking(leader->terrainId, leader->x, leader->y,
                               leader->z);
       }

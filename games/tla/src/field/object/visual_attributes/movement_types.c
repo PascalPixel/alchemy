@@ -369,7 +369,7 @@ again:
         continue;
       if (!(entry->priorityFlags & 0x80))
         continue;
-      if (entry->unk56 != 0)
+      if (entry->arrivalAxis != 0)
         continue;
       if (entry == leader)
         continue;
@@ -484,7 +484,7 @@ again:
     result = 0;
   }
   leader->timer = 8;
-  leader->unk66 = 0;
+  leader->userValue = 0;
   return result;
 }
 
@@ -579,7 +579,7 @@ s32 Field_ClimbDown(void) {
     leader->actionFlags = 1;
     leader->facing = TRIG_TURN * 3 / 4;
     leader->timer = 0;
-    leader->unk66 = 0;
+    leader->userValue = 0;
   }
   Event_End();
   return 0;
@@ -684,7 +684,7 @@ s32 Field_ClimbUp(void) {
     gMainRoutineWork.movementMode = 0;
     leader->actionFlags = 1;
     leader->timer = 0;
-    leader->unk66 = 0;
+    leader->userValue = 0;
   }
   Event_End();
   return 0;
@@ -748,7 +748,7 @@ s32 Leader_StepOntoRope(void) {
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
-  leader->unk66 = sprite->nextFrame;
+  leader->userValue = sprite->nextFrame;
   ((struct GrabSave *)leader)->priority = sprite->priority;
   leader->priorityFlags = *flags & ~1;
   sprite->nextFrame = 0;
@@ -784,7 +784,7 @@ s32 Leader_StepOffRope(void) {
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
   leader->scaleX = Q16_ONE;
-  sprite->nextFrame = leader->unk66;
+  sprite->nextFrame = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
   leader->speedLimit = px(2);
@@ -852,7 +852,7 @@ s32 Leader_StepOntoTightrope(void) {
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
-  leader->unk66 = sprite->nextFrame;
+  leader->userValue = sprite->nextFrame;
   ((struct GrabSave *)leader)->priority = sprite->priority;
   flags = &leader->priorityFlags;
   leader->priorityFlags = *flags & ~1;
@@ -888,7 +888,7 @@ s32 Leader_StepOffTightrope(void) {
   leader->facing = angle;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
-  sprite->nextFrame = leader->unk66;
+  sprite->nextFrame = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
   leader->acceleration = px(1);

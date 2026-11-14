@@ -214,10 +214,10 @@ extern struct ActorPlacement gYallam_Room2Placements[];
 extern struct ActorPlacement gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1 &&
+  if (gMainRoutineWork.next == SCENE_YALLAM_1 &&
       gMainRoutineWork.entrance == 15)
     return gYallam_SongGamePlacements;
-  if (gMainRoutineWork.next == (s32)&SceneId_Yallam2)
+  if (gMainRoutineWork.next == SCENE_YALLAM_2)
     return gYallam_Room2Placements;
   return gYallam_Placements;
 }
@@ -325,10 +325,10 @@ extern struct Trigger gYallam_RoomTwoTriggers[];
 extern struct Trigger gYallam_EntranceFifteenTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1 &&
+  if (gMainRoutineWork.next == SCENE_YALLAM_1 &&
       gMainRoutineWork.entrance == 15)
     return gYallam_EntranceFifteenTriggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_Yallam2)
+  if (gMainRoutineWork.next == SCENE_YALLAM_2)
     return gYallam_RoomTwoTriggers;
   return gYallam_Triggers;
 }
@@ -1269,7 +1269,7 @@ void Yallam_UpdateSongGame(void) {
   struct Actor *c = Actor_Get(9);
   struct Actor *d = Actor_Get(11);
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 value = (s16)a->unk66;
+  s32 value = (s16)a->userValue;
 
   switch (value) {
   case 1:
@@ -1294,7 +1294,7 @@ void Yallam_UpdateSongGame(void) {
     BYTE_AT(leader, 98) = 3;
     break;
   }
-  a->unk66 = 0;
+  a->userValue = 0;
   Yallam_RunSongPath(8);
   Yallam_RunSongPath(10);
   Yallam_RunSongPath(9);
@@ -1308,27 +1308,27 @@ void Yallam_PauseSongGame(void) {
 
   object = Actor_Get(8);
   gYallam_SavedSongGame[0].action = object->timer;
-  gYallam_SavedSongGame[0].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[0].mode = (s16)object->userValue;
   gYallam_SavedSongGame[0].byte98 = BYTE_AT(object, 98);
   gYallam_SavedSongGame[0].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(10);
   gYallam_SavedSongGame[1].action = object->timer;
-  gYallam_SavedSongGame[1].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[1].mode = (s16)object->userValue;
   gYallam_SavedSongGame[1].byte98 = BYTE_AT(object, 98);
   gYallam_SavedSongGame[1].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(9);
   gYallam_SavedSongGame[2].action = object->timer;
-  gYallam_SavedSongGame[2].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[2].mode = (s16)object->userValue;
   gYallam_SavedSongGame[2].byte98 = BYTE_AT(object, 98);
   gYallam_SavedSongGame[2].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(11);
   gYallam_SavedSongGame[3].action = object->timer;
-  gYallam_SavedSongGame[3].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[3].mode = (s16)object->userValue;
   gYallam_SavedSongGame[3].byte98 = BYTE_AT(object, 98);
   gYallam_SavedSongGame[3].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   gYallam_SavedSongGame[4].action = object->timer;
-  gYallam_SavedSongGame[4].mode = (s16)object->unk66;
+  gYallam_SavedSongGame[4].mode = (s16)object->userValue;
   gYallam_SavedSongGame[4].byte98 = BYTE_AT(object, 98);
   gYallam_SavedSongGame[4].byte99 = BYTE_AT(object, 99);
   FieldTask_Remove(Yallam_UpdateSongGame);
@@ -1340,27 +1340,27 @@ void Yallam_ResumeSongGame(void) {
 
   object = Actor_Get(8);
   object->timer = gYallam_SavedSongGame[0].action;
-  object->unk66 = gYallam_SavedSongGame[0].mode;
+  object->userValue = gYallam_SavedSongGame[0].mode;
   BYTE_AT(object, 98) = gYallam_SavedSongGame[0].byte98;
   BYTE_AT(object, 99) = gYallam_SavedSongGame[0].byte99;
   object = Actor_Get(10);
   object->timer = gYallam_SavedSongGame[1].action;
-  object->unk66 = gYallam_SavedSongGame[1].mode;
+  object->userValue = gYallam_SavedSongGame[1].mode;
   BYTE_AT(object, 98) = gYallam_SavedSongGame[1].byte98;
   BYTE_AT(object, 99) = gYallam_SavedSongGame[1].byte99;
   object = Actor_Get(9);
   object->timer = gYallam_SavedSongGame[2].action;
-  object->unk66 = gYallam_SavedSongGame[2].mode;
+  object->userValue = gYallam_SavedSongGame[2].mode;
   BYTE_AT(object, 98) = gYallam_SavedSongGame[2].byte98;
   BYTE_AT(object, 99) = gYallam_SavedSongGame[2].byte99;
   object = Actor_Get(11);
   object->timer = gYallam_SavedSongGame[3].action;
-  object->unk66 = gYallam_SavedSongGame[3].mode;
+  object->userValue = gYallam_SavedSongGame[3].mode;
   BYTE_AT(object, 98) = gYallam_SavedSongGame[3].byte98;
   BYTE_AT(object, 99) = gYallam_SavedSongGame[3].byte99;
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   object->timer = gYallam_SavedSongGame[4].action;
-  object->unk66 = gYallam_SavedSongGame[4].mode;
+  object->userValue = gYallam_SavedSongGame[4].mode;
   BYTE_AT(object, 98) = gYallam_SavedSongGame[4].byte98;
   BYTE_AT(object, 99) = gYallam_SavedSongGame[4].byte99;
   Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_VBLANK);
@@ -1466,7 +1466,7 @@ void Yallam_ShowSongGame(void) {
   }
   // "Go north past the twins, passing two swirls, run deasil twice 'round..."
   Event_ShowMessage(8, 0);
-  actor->unk66 = 1;
+  actor->userValue = 1;
 wait1:
   {
     s16 *count;
@@ -1476,27 +1476,27 @@ wait1:
     }
   }
 
-  actor->unk66 = 2;
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
-  actor->unk66 = 1;
+  actor->userValue = 1;
 wait2:
   System_Wait(1);
 
   if (actor->timer != 42) {
     goto wait2;
   }
-  actor->unk66 = 2;
+  actor->userValue = 2;
   System_Wait(1);
   Event_ShowMessage(8, 0);
-  actor->unk66 = 1;
+  actor->userValue = 1;
 wait3:
   System_Wait(1);
 
   if (actor->timer != 108) {
     goto wait3;
   }
-  actor->unk66 = 3;
+  actor->userValue = 3;
   System_Wait(1);
   Event_ShowMessage(8, 0);
   Yallam_PauseSongGame();
@@ -1751,7 +1751,7 @@ void Yallam_PlaceFallenPillar(void) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1) {
+  if (gMainRoutineWork.next == SCENE_YALLAM_1) {
     if (gMainRoutineWork.entrance == 15)
       Yallam_StartWatchers();
     else
@@ -1761,7 +1761,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Yallam1 &&
+  if (gMainRoutineWork.next == SCENE_YALLAM_1 &&
       Event_GetFlag(FLAG_AREA_TEMP_00))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;

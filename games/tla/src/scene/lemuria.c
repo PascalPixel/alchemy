@@ -322,7 +322,7 @@ void Lemuria_LeaveForAncientLemuria(void) {
   struct MainRoutineWork *party;
 
   Teleport_PlaySparksAndFade();
-  Event_SetDestination((s32)&SceneId_Lemuria, 2);
+  Event_SetDestination(SCENE_LEMURIA, 2);
   party = &gMainRoutineWork;
 
   party->unk2c2 = 2;

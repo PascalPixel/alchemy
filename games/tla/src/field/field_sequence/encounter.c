@@ -193,8 +193,6 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   return sum;
 }
 
-#define Scene_GetArea ((s32 (*)(s32))Scene_GetArea)
-
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = gFieldWork->encounterZones;
 

@@ -6,6 +6,7 @@
 #include "../window_internal.h"
 #include "flags.h"
 #include "sounds.h"
+#include "scene_ids.h"
 
 struct ScreenWork {
   u8 unk000[0x5a4];
@@ -255,8 +256,6 @@ done:
   return index;
 }
 
-extern char SceneId_JupiterLighthouseRoom4;
-
 /* VIEW(window): routine Event_SetDestinationFar as void
  * Event_SetDestinationFar(s32 scene, s32 entrance);
  * gamepak/far_call/field_sequence.h has void Event_SetDestinationFar(s16
@@ -268,27 +267,13 @@ void Event_SetDestinationFar__window(s32 scene, s32 entrance) __asm__(
     "Event_SetDestinationFar");
 #define Event_SetDestinationFar Event_SetDestinationFar__window
 
-extern char SceneId_Alhafra1;
-
-extern char SceneId_EasternAlhafra1;
-
-extern char SceneId_Champa1;
-
-extern char SceneId_ShamanVillage4;
-
-extern char SceneId_Prox2;
-
-extern char SceneId_MarsLighthouseAerie1;
-
-extern char SceneId_MarsLighthouseStarRoom1;
-
 /// The debug warp presets, each named for its row of gDebugWarp_Presets
 /// ("0:Jupiter" to "8:Kaoru Special1"): each sets the flags, items and
 /// events of a point in the story and sends the party to one room.
 void DebugWarp_Jupiter(void) {
   Inventory_AddItemFar(4, 243);
   Inventory_AddItemFar(4, 244);
-  Event_SetDestinationFar((s32)&SceneId_JupiterLighthouseRoom4, 4);
+  Event_SetDestinationFar(SCENE_JUPITER_LIGHTHOUSE_ROOM_4, 4);
 }
 
 void DebugWarp_Arafura2(void) {
@@ -301,7 +286,7 @@ void DebugWarp_Arafura2(void) {
 
     party->packedEvents[1] = 141;
   }
-  Event_SetDestinationFar((s32)&SceneId_Alhafra1, 1);
+  Event_SetDestinationFar(SCENE_ALHAFRA_1, 1);
 }
 
 void DebugWarp_EnergySample(void) {}
@@ -315,7 +300,7 @@ void DebugWarp_Arafura3(void) {
 
     party->packedEvents[1] = 141;
   }
-  Event_SetDestinationFar((s32)&SceneId_EasternAlhafra1, 1);
+  Event_SetDestinationFar(SCENE_EASTERN_ALHAFRA_1, 1);
 }
 
 void DebugWarp_Champa2(void) {
@@ -328,7 +313,7 @@ void DebugWarp_Champa2(void) {
 
     party->packedEvents[1] = 141;
   }
-  Event_SetDestinationFar((s32)&SceneId_Champa1, 9);
+  Event_SetDestinationFar(SCENE_CHAMPA_1, 9);
 }
 
 void DebugWarp_KaoruSpecial4(void) {
@@ -336,7 +321,7 @@ void DebugWarp_KaoruSpecial4(void) {
   GameFlag_Set(0x94c);
   GameFlag_Set(0x9e1);
   GameFlag_Set(0x94f);
-  Event_SetDestinationFar((s32)&SceneId_ShamanVillage4, 30);
+  Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_4, 30);
 }
 
 void DebugWarp_KaoruSpecial3(void) {
@@ -347,11 +332,11 @@ void DebugWarp_KaoruSpecial3(void) {
   GameFlag_Set(0x9c0);
   GameFlag_Set(0x9c1);
   GameFlag_Set(0x9c2);
-  Event_SetDestinationFar((s32)&SceneId_Prox2, 1);
+  Event_SetDestinationFar(SCENE_PROX_2, 1);
 }
 
 void DebugWarp_KaoruSpecial2(void) {
-  Event_SetDestinationFar((s32)&SceneId_MarsLighthouseAerie1, 1);
+  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_AERIE_1, 1);
 }
 
 void DebugWarp_KaoruSpecial1(void) {

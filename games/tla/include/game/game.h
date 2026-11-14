@@ -114,7 +114,6 @@ s32 Class_Determine(s32 classId, u32 *djinn, s32 item);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 *output);
 void Unit_RefreshPsynergy(s32);
 s32 Owner_UpdateClassActions(s32 owner_id);
-void *Resource_FarCall005(s32);
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 
 /// How many summons there are (summon_table.c), and the number that ends a

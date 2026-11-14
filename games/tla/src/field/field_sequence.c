@@ -41,19 +41,6 @@
  * `GameFlag_GetByte'. */
 u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__event_commands
-/* VIEW(event_commands): routine Actor_SetHorizontalPositionWithTerrain as void
- * Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
- * field/event.h has void Actor_SetHorizontalPositionWithTerrain(s32 actorId,
- * s32 x, s32 z); tried as the definition's void
- * Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence.c:50: conflicting types for
- * `Actor_SetHorizontalPositionWithTerrain'. */
-void Actor_SetHorizontalPositionWithTerrain__event_commands(
-    u32 objectId, s32 x,
-    s32 z) __asm__("Actor_SetHorizontalPositionWithTerrain");
-#define Actor_SetHorizontalPositionWithTerrain                                 \
-  Actor_SetHorizontalPositionWithTerrain__event_commands
 // The event commands read the game flags through the view above.
 #include "game/game_flags.h"
 

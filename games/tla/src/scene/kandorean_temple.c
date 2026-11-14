@@ -147,15 +147,6 @@ void KandoreanTemple_StartRoom6(void);
 void KandoreanTemple_StartFogRoom(void);
 void KandoreanTemple_StartGate(void);
 void KandoreanTemple_StartPoisHall(void);
-extern char SceneId_KandoreanTemple1;
-extern char SceneId_KandoreanTemple2;
-extern char SceneId_KandoreanTemple3;
-extern char SceneId_KandoreanTemple4;
-extern char SceneId_KandoreanTemple5;
-extern char SceneId_KandoreanTemple6;
-extern char SceneId_KandoreanTemple7;
-extern char SceneId_KandoreanTemple8;
-extern char SceneId_KandoreanTemple9;
 void KandoreanTemple_ShrinkColumn(s32 id, s32 dy, s32 scale);
 void Scene_QueueMusic(s32 a);
 void Rope_Initialize(void);
@@ -324,7 +315,7 @@ void KandoreanTemple_FightFog(void) {
 u32 KandoreanTemple_CountDownSteam(struct Actor *object) {
   s32 left;
 
-  left = --*(s16 *)&object->unk66;
+  left = --*(s16 *)&object->userValue;
   return (u32)(-left | left) >> 31;
 }
 
@@ -332,7 +323,8 @@ s32 KandoreanTemple_MeditateRestlessly(struct Actor *object) {
   if (object->timer != 0) {
     object->timer--;
   } else {
-    Actor_ShowEmoteById((s16)object->unk66, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+    Actor_ShowEmoteById((s16)object->userValue, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                        0);
     object->timer = ((Random16() * 240) >> 16) + 240;
   }
   return 1;
@@ -384,9 +376,9 @@ extern u32 gKandoreanTemple_ChestbeaterRoomRegions[];
 u32 *Scene_GetExitRegions(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_KandoreanTemple3)
+  if (scene == SCENE_KANDOREAN_TEMPLE_3)
     return gKandoreanTemple_ChestbeaterRoomRegions;
-  if (scene == (s32)&SceneId_KandoreanTemple5)
+  if (scene == SCENE_KANDOREAN_TEMPLE_5)
     return gKandoreanTemple_Room5Regions;
   return 0;
 }
@@ -402,15 +394,15 @@ extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
 void *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_KandoreanTemple1)
+  if (scene == SCENE_KANDOREAN_TEMPLE_1)
     return gKandoreanTemple_LiftRoomPlacements;
-  if (scene == (s32)&SceneId_KandoreanTemple3)
+  if (scene == SCENE_KANDOREAN_TEMPLE_3)
     return gKandoreanTemple_ChestbeaterRoomPlacements;
-  if (scene == (s32)&SceneId_KandoreanTemple4)
+  if (scene == SCENE_KANDOREAN_TEMPLE_4)
     return gKandoreanTemple_VentRoomPlacements;
-  if (scene == (s32)&SceneId_KandoreanTemple7)
+  if (scene == SCENE_KANDOREAN_TEMPLE_7)
     return gKandoreanTemple_FogRoomPlacements;
-  if (scene == (s32)&SceneId_KandoreanTemple8) {
+  if (scene == SCENE_KANDOREAN_TEMPLE_8) {
     if (GameFlag_Get(FLAG_MET_POI)) {
       gKandoreanTemple_GatePlacements[3].talkFacing = 0;
       gKandoreanTemple_GatePlacements[4].talkFacing = 0;
@@ -418,7 +410,7 @@ void *Scene_GetActorPlacements(void) {
     }
     return gKandoreanTemple_GatePlacements;
   }
-  if (scene == (s32)&SceneId_KandoreanTemple9) {
+  if (scene == SCENE_KANDOREAN_TEMPLE_9) {
     if (GameFlag_Get(FLAG_MET_POI)) {
       gKandoreanTemple_PoisHallPlacements[5].talkFacing = 3;
       gKandoreanTemple_PoisHallPlacements[6].x = px(368);
@@ -475,23 +467,23 @@ extern struct Trigger gKandoreanTemple_PoisHallEvents[];
 void *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_KandoreanTemple1)
+  if (scene == SCENE_KANDOREAN_TEMPLE_1)
     return gKandoreanTemple_LiftRoomEvents;
-  if (scene == (s32)&SceneId_KandoreanTemple2)
+  if (scene == SCENE_KANDOREAN_TEMPLE_2)
     return gKandoreanTemple_Room2Events;
-  if (scene == (s32)&SceneId_KandoreanTemple3)
+  if (scene == SCENE_KANDOREAN_TEMPLE_3)
     return gKandoreanTemple_ChestbeaterRoomEvents;
-  if (scene == (s32)&SceneId_KandoreanTemple4)
+  if (scene == SCENE_KANDOREAN_TEMPLE_4)
     return gKandoreanTemple_VentRoomEvents;
-  if (scene == (s32)&SceneId_KandoreanTemple5)
+  if (scene == SCENE_KANDOREAN_TEMPLE_5)
     return gKandoreanTemple_Room5Events;
-  if (scene == (s32)&SceneId_KandoreanTemple6)
+  if (scene == SCENE_KANDOREAN_TEMPLE_6)
     return gKandoreanTemple_Room6Events;
-  if (scene == (s32)&SceneId_KandoreanTemple7)
+  if (scene == SCENE_KANDOREAN_TEMPLE_7)
     return gKandoreanTemple_FogRoomEvents;
-  if (scene == (s32)&SceneId_KandoreanTemple8)
+  if (scene == SCENE_KANDOREAN_TEMPLE_8)
     return gKandoreanTemple_GateEvents;
-  if (scene == (s32)&SceneId_KandoreanTemple9)
+  if (scene == SCENE_KANDOREAN_TEMPLE_9)
     return gKandoreanTemple_PoisHallEvents;
   return gKandoreanTemple_Events;
 }
@@ -603,10 +595,10 @@ void KandoreanTemple_UpdateVentSteam(struct Actor *object) {
 
   object->x += vx;
   object->y += object->gravity;
-  vz = object->unk4c;
+  vz = object->riseBaseY;
   object->z += vz;
   object->bounce = vx - vx / 18;
-  object->unk4c = vz - vz / 16;
+  object->riseBaseY = vz - vz / 16;
   rate = object->speedLimit;
   scale = object->scaleX;
   sprite = object->sprite;
@@ -615,14 +607,14 @@ void KandoreanTemple_UpdateVentSteam(struct Actor *object) {
   sprite->rotation += object->timer;
   if (leader->y == 0) {
     if (KandoreanTemple_IsOverActor(object, leader)) {
-      object->z -= object->unk4c;
-      object->gravity += object->unk4c >> 2;
-      object->unk4c = 0;
+      object->z -= object->riseBaseY;
+      object->gravity += object->riseBaseY >> 2;
+      object->riseBaseY = 0;
     }
     if (leader->y == 0 && KandoreanTemple_IsOverActor(object, other)) {
-      object->z -= object->unk4c;
-      object->gravity += object->unk4c >> 2;
-      object->unk4c = 0;
+      object->z -= object->riseBaseY;
+      object->gravity += object->riseBaseY >> 2;
+      object->riseBaseY = 0;
     }
   }
 }
@@ -653,7 +645,7 @@ void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
 
     object->bounce = Trig_Cos(((Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
-    object->unk4c = (u16)(Random16() * 2) + value;
+    object->riseBaseY = (u16)(Random16() * 2) + value;
     timer = (u16)Random16() - 0x8000;
     object->timer = timer;
     KandoreanTemple_InitializeSteam(object, 3);
@@ -673,10 +665,10 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
 
   object->x += vx;
   object->y += object->gravity;
-  vz = object->unk4c;
+  vz = object->riseBaseY;
   object->z += vz;
   object->bounce = vx - vx / 18;
-  object->unk4c = vz - vz / 16;
+  object->riseBaseY = vz - vz / 16;
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
   } while (0);
@@ -695,16 +687,16 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
     sprite->rotation += object->timer;
     if (KandoreanTemple_IsOverActor(first, leader)) {
       ((struct FieldSprite *)object->sprite)->priority = 3;
-      object->z -= object->unk4c;
-      object->gravity += object->unk4c >> 2;
-      object->unk4c = 0;
+      object->z -= object->riseBaseY;
+      object->gravity += object->riseBaseY >> 2;
+      object->riseBaseY = 0;
     }
   }
   if (KandoreanTemple_IsOverActor(object, other)) {
     ((struct FieldSprite *)object->sprite)->priority = 3;
-    object->z -= object->unk4c;
-    object->gravity += object->unk4c >> 3;
-    object->unk4c = 0;
+    object->z -= object->riseBaseY;
+    object->gravity += object->riseBaseY >> 3;
+    object->riseBaseY = 0;
   }
 }
 
@@ -717,7 +709,7 @@ void KandoreanTemple_BlowStreamSteam(void) {
 
     object->bounce = Trig_Cos(((Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
-    object->unk4c = (u16)(Random16() * 2) + 0x58000;
+    object->riseBaseY = (u16)(Random16() * 2) + 0x58000;
     timer = (u16)Random16() - 0x8000;
     object->timer = timer;
     KandoreanTemple_InitializeSteam(object, 1);
@@ -1782,7 +1774,7 @@ void KandoreanTemple_FightChestbeaters(void) {
   do {
   } while (0);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  Event_SetAfterBattleDestination((s32)&SceneId_KandoreanTemple3, 3);
+  Event_SetAfterBattleDestination(SCENE_KANDOREAN_TEMPLE_3, 3);
   Field_RequestBattleFromEncounterTable(9, 4);
   Event_End();
 }
@@ -1812,23 +1804,23 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_KandoreanTemple1)
+  if (scene == SCENE_KANDOREAN_TEMPLE_1)
     KandoreanTemple_StartLiftRoom();
-  else if (scene == (s32)&SceneId_KandoreanTemple2)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_2)
     KandoreanTemple_StartRoom2();
-  else if (scene == (s32)&SceneId_KandoreanTemple3)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_3)
     KandoreanTemple_StartChestbeaterRoom();
-  else if (scene == (s32)&SceneId_KandoreanTemple4)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_4)
     KandoreanTemple_StartVentRoom();
-  else if (scene == (s32)&SceneId_KandoreanTemple5)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_5)
     KandoreanTemple_StartRoom5();
-  else if (scene == (s32)&SceneId_KandoreanTemple6)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_6)
     KandoreanTemple_StartRoom6();
-  else if (scene == (s32)&SceneId_KandoreanTemple7)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_7)
     KandoreanTemple_StartFogRoom();
-  else if (scene == (s32)&SceneId_KandoreanTemple8)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_8)
     KandoreanTemple_StartGate();
-  else if (scene == (s32)&SceneId_KandoreanTemple9)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_9)
     KandoreanTemple_StartPoisHall();
   return 0;
 }
@@ -2431,7 +2423,7 @@ void KandoreanTemple_StartMeditating(s32 id, s32 base) {
 
   Actor_SetModeById(id, 5);
   object->timer = base + ((Random16() * 400) >> 16);
-  object->unk66 = id;
+  object->userValue = id;
   Actor_SetMovementTypeById(id, gKandoreanTemple_MeditateScript);
 }
 
@@ -3104,7 +3096,7 @@ void KandoreanTemple_CreateLashPebble(void) {
     sprite->fullColor = 0;
     sprite->palette = 0;
     object->motionFlags = zero;
-    object->unk5c[0] = 1;
+    object->retainSpriteCache = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);

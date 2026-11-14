@@ -1376,7 +1376,7 @@ void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
     if (life != 0) {
       SET_POSITION(&pos, particle->targetX, particle->targetY,
                    particle->targetZ);
-      Vector_AddPolarOffset(life << 17, (s16)particle->unk66 + (life << 11),
+      Vector_AddPolarOffset(life << 17, (s16)particle->userValue + (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
@@ -1397,7 +1397,7 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
     if (life != 0) {
       SET_POSITION(&pos, particle->targetX, particle->targetY,
                    particle->targetZ);
-      Vector_AddPolarOffset(life << 17, (s16)particle->unk66 - (life << 11),
+      Vector_AddPolarOffset(life << 17, (s16)particle->userValue - (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
@@ -1456,7 +1456,7 @@ void FieldPsynergy_Frost(void) {
 
       particle->facing = Random16();
       particle->timer = 60;
-      particle->unk66 = Random16();
+      particle->userValue = Random16();
       Actor_SetSpriteColorModeFar((struct Actor *)particle, 9);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
@@ -1535,7 +1535,8 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *object) {
       radius = life << 16;
 
       pos.z = scene->z;
-      Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
+      Vector_AddPolarOffset(radius, (s16)object->userValue + (life << 11),
+                            &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
       Actor_StartScriptFar((struct Actor *)object,
@@ -1608,7 +1609,7 @@ void FieldPsynergy_Ply(void) {
       object->scaleX = 0xb333;
       object->update = (void (*)(void))FieldEffect_UpdateShrinkingOrbitActor;
       object->timer = 120;
-      object->unk66 = i << 13;
+      object->userValue = i << 13;
       object->motionFlags = 4;
       last = Sprite_ShareVramCacheEntry(object->sprite, last);
     }

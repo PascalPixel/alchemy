@@ -208,7 +208,7 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
       Func_08038248__visual_attributes(resource, buffer);
       tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
       HeapSlot_Release(68);
-      object->unk5c[0] = kind;
+      object->retainSpriteCache = kind;
       SpriteAnimation_ClearFar(sprite->record);
       sprite->record = NULL;
       sprite->unk1b[0] = zero;

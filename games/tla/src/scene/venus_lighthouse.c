@@ -587,7 +587,7 @@ s32 VenusLighthouse_Start(void) {
   gFieldWork->transition = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
     // From patch 1 it also saves this scene and entrance 22.
-    routine->restartScene = (s32)&SceneId_VenusLighthouse;
+    routine->restartScene = SCENE_VENUS_LIGHTHOUSE;
     routine->restartEntrance = 22;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);

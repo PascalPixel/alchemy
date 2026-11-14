@@ -81,8 +81,4 @@ void AirsRock_SetLedgeCellsByLevel(void);
 
 struct Actor;
 
-extern char SceneId_AirsRock1;
-extern char SceneId_AirsRock2;
-extern char SceneId_AirsRock3;
-
 #endif

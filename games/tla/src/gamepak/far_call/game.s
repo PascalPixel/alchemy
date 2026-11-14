@@ -4,10 +4,6 @@
 	.include "games/tla/src/gamepak/far_call/veneer.s"
 	.global FarCall_GameTable
 FarCall_GameTable:
-@ link.c still calls the first entry, Djinn_GetRecoveryTableFar, by this
-@ name.
-	.global Resource_FarCall005
-Resource_FarCall005:
 	export Djinn_GetRecoveryTableFar, Djinn_GetRecoveryTable
 	export Unit_CalculateFar, Unit_Calculate
 	export Item_GetDirectFar, Item_GetDirect

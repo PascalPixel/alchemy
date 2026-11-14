@@ -869,6 +869,10 @@
 #define FLAG_AREA_TEMP_FE 0x3fe
 #define FLAG_AREA_TEMP_FF 0x3ff
 
+/// The flag a row of the stock table adds to: that shop's artifacts are in
+/// stock, for the shop counter's Artifacts list.
+#define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
+
 /// The Mad Plants hidden in bushes, one flag each, set once it is beaten, in
 /// the order of their battles in ENCOUNTER_TABLE_MAD_PLANTS: the Gabomba
 /// Catacombs' (0), Taopo Swamp's, Gaia Rock's, Jupiter Lighthouse's and

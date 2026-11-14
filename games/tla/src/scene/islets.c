@@ -154,11 +154,6 @@ extern struct Trigger gIslets_Room3Triggers[];
 extern struct Trigger gIslets_Room4Triggers[];
 extern struct Trigger gIslets_Room5Triggers[];
 extern u16 gSceneState[];
-extern char SceneId_Islets1;
-extern char SceneId_Islets2;
-extern char SceneId_Islets3;
-extern char SceneId_Islets4;
-extern char SceneId_Islets5;
 
 void Islets_InitializeRoom1(void);
 void Islets_InitializeRoom2(void);
@@ -229,15 +224,15 @@ void FieldPsynergy_StopMindReadWave(void);
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Islets1)
+  if (scene == SCENE_ISLETS_1)
     return gIslets_Room1Placements;
-  if (scene == (s32)&SceneId_Islets2)
+  if (scene == SCENE_ISLETS_2)
     return gIslets_Room2Placements;
-  if (scene == (s32)&SceneId_Islets3)
+  if (scene == SCENE_ISLETS_3)
     return gIslets_Room3Placements;
-  if (scene == (s32)&SceneId_Islets4)
+  if (scene == SCENE_ISLETS_4)
     return gIslets_Room4Placements;
-  if (scene == (s32)&SceneId_Islets5) {
+  if (scene == SCENE_ISLETS_5) {
     if (Event_GetFlag(0xaa5))
       gIslets_Room5Placements[1].talkFacing = 1;
     return gIslets_Room5Placements;
@@ -275,15 +270,15 @@ void Islets_PushLogIntoWater(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Islets1)
+  if (scene == SCENE_ISLETS_1)
     return gIslets_Room1Triggers;
-  if (scene == (s32)&SceneId_Islets2)
+  if (scene == SCENE_ISLETS_2)
     return gIslets_Room2Triggers;
-  if (scene == (s32)&SceneId_Islets3)
+  if (scene == SCENE_ISLETS_3)
     return gIslets_Room3Triggers;
-  if (scene == (s32)&SceneId_Islets4)
+  if (scene == SCENE_ISLETS_4)
     return gIslets_Room4Triggers;
-  if (scene == (s32)&SceneId_Islets5)
+  if (scene == SCENE_ISLETS_5)
     return gIslets_Room5Triggers;
   return gIslets_Triggers;
 }
@@ -610,7 +605,7 @@ void Islets_TradeWithCow(void) {
           Actor_SetItemIcon(item, 453);
           Actor_SetSpriteFlags(item, 0);
           item->motionFlags = 0;
-          item->unk5c[0] = 1;
+          item->retainSpriteCache = 1;
         }
         Event_Wait(10);
         FieldPsynergy_GreyMindReadPalette();
@@ -645,7 +640,7 @@ void Islets_TradeWithCow(void) {
         Actor_SetSpriteFlags(item, 0);
         item->motionFlags = 0;
         zero.v = 0;
-        item->unk5c[0] = 1;
+        item->retainSpriteCache = 1;
       }
       STEP(gMainRoutineWork.leaderActorId, 120, 190);
       Actor_FaceDirectionById(10, FACING_SOUTH_SOUTHEAST, 0);
@@ -717,7 +712,7 @@ struct Actor *Islets_ShowItemAbove(struct Actor *object, s32 value) {
     spawned->motionFlags = 0;
     FieldActor_SetItemIcon(spawned, value);
     Actor_SetSpriteFlags(spawned, 0);
-    spawned->unk5c[0] = 1;
+    spawned->retainSpriteCache = 1;
   }
   return spawned;
 }
@@ -1793,15 +1788,15 @@ s32 Scene_Initialize(void) {
 
   work->transition = 0x100;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_Islets1)
+  if (scene == SCENE_ISLETS_1)
     Islets_InitializeRoom1();
-  else if (scene == (s32)&SceneId_Islets2)
+  else if (scene == SCENE_ISLETS_2)
     Islets_InitializeRoom2();
-  else if (scene == (s32)&SceneId_Islets3)
+  else if (scene == SCENE_ISLETS_3)
     Islets_InitializeRoom3();
-  else if (scene == (s32)&SceneId_Islets4)
+  else if (scene == SCENE_ISLETS_4)
     Islets_InitializeRoom4();
-  else if (scene == (s32)&SceneId_Islets5)
+  else if (scene == SCENE_ISLETS_5)
     Islets_InitializeRoom5();
   return 0;
 }
@@ -1833,7 +1828,7 @@ void Islets_InitializeRoom1(void) {
       FieldActor_SetItemIcon(spawned, 454);
       Actor_SetSpriteFlags(spawned, 0);
       spawned->collisionFlags = 9;
-      spawned->unk5c[0] = 1;
+      spawned->retainSpriteCache = 1;
     }
     Actor_Get(11)->facing = FACING_NORTH_NORTHEAST;
   } else {
@@ -1846,7 +1841,7 @@ void Islets_StartIceberg(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SetSpriteFlags(object, 0);
-  object->unk5c[0] = 3;
+  object->retainSpriteCache = 3;
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
   object->acceleration = 0x2666;
@@ -1856,7 +1851,7 @@ void Islets_StartIceberg(s32 id) {
 void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   struct Actor *object = Actor_Get(id);
   s32 x = (column * 32 + object->timer) << 16;
-  s32 z = (row * 32 + (s16)object->unk66) << 16;
+  s32 z = (row * 32 + (s16)object->userValue) << 16;
 
   FieldActor_SetMoveTargetFixed(object, x, object->y, z);
 }
@@ -2000,7 +1995,7 @@ void Islets_InitializeRoom3(void) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, 453);
       Actor_SetSpriteFlags(spawned, 0);
-      spawned->unk5c[0] = 1;
+      spawned->retainSpriteCache = 1;
     }
     Actor_SetPosition(10, 104, 204);
   }

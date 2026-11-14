@@ -391,13 +391,13 @@ static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 /// entrance 6, where the leader leaves in a ring of light (Scene_Initialize).
 void PsynergyTest_DepartInRing(void) {
   Map_CopyCells(34, 26, 5, 4, 2, 10, 0);
-  Event_SetDestination((s32)&SceneId_PsynergyTest, 6);
+  Event_SetDestination(SCENE_PSYNERGY_TEST, 6);
 }
 
 /// Cyclone on cell 13 comes back in by entrance 8, where the leader arrives
 /// in a ring of light.
 void PsynergyTest_ArriveInRing(void) {
-  Event_SetDestination((s32)&SceneId_PsynergyTest, 8);
+  Event_SetDestination(SCENE_PSYNERGY_TEST, 8);
 }
 
 /// Cyclone on cell 57: the Mad Plant leaps, and its battle starts with no

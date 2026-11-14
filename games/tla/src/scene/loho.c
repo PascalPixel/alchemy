@@ -88,7 +88,7 @@ void Loho_MeetLull(void) { Djinn_JoinParty(19, 3, 16); }
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const u32 *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Loho2)
+  if (gMainRoutineWork.next == SCENE_LOHO_2)
     return gLoho_Regions;
   return 0;
 }
@@ -96,7 +96,7 @@ const u32 *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Loho2)
+  if (gMainRoutineWork.next == SCENE_LOHO_2)
     return gLoho_Room2Placements;
   return gLoho_Placements;
 }
@@ -562,9 +562,9 @@ void Loho_LiftRock(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Loho1)
+  if (gMainRoutineWork.next == SCENE_LOHO_1)
     return gLoho_Room1Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_Loho2)
+  if (gMainRoutineWork.next == SCENE_LOHO_2)
     return gLoho_Room2Triggers;
   return gLoho_Triggers;
 }
@@ -754,7 +754,7 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Loho1) {
+  if (gMainRoutineWork.next == SCENE_LOHO_1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
@@ -777,7 +777,7 @@ s32 Scene_Initialize(void) {
       Loho_PlaceFacing(18, px(442), px(203), FACING_WEST);
       Loho_PlaceFacing(17, px(490), px(188), FACING_SOUTHEAST);
       Actor_GetById(17)->timer = Actor_GetById(17)->x >> 16;
-      Actor_GetById(17)->unk66 = Actor_GetById(17)->z >> 16;
+      Actor_GetById(17)->userValue = Actor_GetById(17)->z >> 16;
       Actor_SetScript(17, 2);
     }
   }
@@ -785,7 +785,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Loho1 && Event_GetFlag(0xa5f))
+  if (gMainRoutineWork.next == SCENE_LOHO_1 && Event_GetFlag(0xa5f))
     Loho_DrawBrokenWall();
   return 0;
 }

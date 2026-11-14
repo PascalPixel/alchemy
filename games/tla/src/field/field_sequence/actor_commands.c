@@ -58,7 +58,7 @@ void Actor_ResetTargetsAndVelocity(u32 objectId) {
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
     SET_VELOCITY(object, 0, 0, 0);
-    object->unk56 = 0;
+    object->arrivalAxis = 0;
   }
 }
 

@@ -1179,9 +1179,8 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
      * CSE's block. */
     gMainRoutineWork.battleType = BATTLE_TYPE_LOST;
   } while (0);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_JupiterLighthouseRoomM,
-                                       77);
-  Event_SetDefeatDestination((s32)&SceneId_JupiterLighthouseRoomM, 77);
+  FieldEvent_SetAfterBattleDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M, 77);
+  Event_SetDefeatDestination(SCENE_JUPITER_LIGHTHOUSE_ROOM_M, 77);
   Party_RemoveMember(4);
   Party_RemoveMember(7);
   Party_RemoveMember(5);

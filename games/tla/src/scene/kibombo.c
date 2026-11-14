@@ -117,7 +117,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Kibombo3)
+  if (scene == SCENE_KIBOMBO_3)
     return gKibombo_Room3Regions;
   return 0;
 }
@@ -140,15 +140,15 @@ extern struct Trigger gKibombo_Triggers[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Kibombo1)
+  if (scene == SCENE_KIBOMBO_1)
     return gKibombo_Room1Placements;
-  if (scene == (s32)&SceneId_Kibombo4)
+  if (scene == SCENE_KIBOMBO_4)
     return gKibombo_Room4Placements;
-  if (scene == (s32)&SceneId_Kibombo2)
+  if (scene == SCENE_KIBOMBO_2)
     return gKibombo_Room2Placements;
-  if (scene == (s32)&SceneId_Kibombo5)
+  if (scene == SCENE_KIBOMBO_5)
     return gKibombo_Room5Placements;
-  if (scene == (s32)&SceneId_Kibombo3) {
+  if (scene == SCENE_KIBOMBO_3) {
     if (GameFlag_Get(0x8ee))
       gKibombo_Room3Placements[0].talkFacing = 0;
     return gKibombo_Room3Placements;
@@ -159,15 +159,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Kibombo1)
+  if (scene == SCENE_KIBOMBO_1)
     return gKibombo_Room1Triggers;
-  if (scene == (s32)&SceneId_Kibombo4)
+  if (scene == SCENE_KIBOMBO_4)
     return gKibombo_Room4Triggers;
-  if (scene == (s32)&SceneId_Kibombo2)
+  if (scene == SCENE_KIBOMBO_2)
     return gKibombo_Room2Triggers;
-  if (scene == (s32)&SceneId_Kibombo5)
+  if (scene == SCENE_KIBOMBO_5)
     return gKibombo_Room5Triggers;
-  if (scene == (s32)&SceneId_Kibombo3)
+  if (scene == SCENE_KIBOMBO_3)
     return gKibombo_Room3Triggers;
   return gKibombo_Triggers;
 }
@@ -327,9 +327,9 @@ void Kibombo_ReadMindNeverAgain(void) {
 void Kibombo_SetActorsHidden(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Kibombo2 || scene == (s32)&SceneId_Kibombo5)
+  if (scene == SCENE_KIBOMBO_2 || scene == SCENE_KIBOMBO_5)
     Actors_SetHidden(show, 15, 2);
-  else if (scene == (s32)&SceneId_Kibombo3)
+  else if (scene == SCENE_KIBOMBO_3)
     Actors_SetHidden(show, 26, 2);
 }
 
@@ -1531,7 +1531,7 @@ void Kibombo_CreateBlackCrystal(void) {
     sprite->palette = 0;
     sprite->priority = 1;
     object->motionFlags = zero;
-    object->unk5c[0] = 1;
+    object->retainSpriteCache = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);
@@ -1592,7 +1592,7 @@ void Kibombo_RaiseEmbers(void) {
     if (object != 0) {
       object->bounce = Trig_Cos(((Random16() << 13) >> 16) + 0x3000);
       object->gravity = px(1);
-      object->unk4c = 0x40000 - (u16)Random16();
+      object->riseBaseY = 0x40000 - (u16)Random16();
       value = (u16)Random16() + 0xffff8000;
       object->timer = value;
       object->motionFlags = 0;
@@ -1628,7 +1628,7 @@ void Kibombo_PuffSmoke(void) {
     s32 mask;
 
     if (object != 0) {
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
       object->motionFlags = 0;
       object->timer = 0;
       object->priorityFlags &= ~1;
@@ -1651,12 +1651,12 @@ void Kibombo_FlickerFlame(struct Actor *object) {
     object->timer--;
   } else {
     object->timer = ((Random16() * 10) >> 16) + 10;
-    if (object->unk66 != 0) {
+    if (object->userValue != 0) {
       object->scaleX = Q16_ONE * 3 / 2;
-      object->unk66 = 0;
+      object->userValue = 0;
     } else {
       object->scaleX = 0xfffe8000;
-      object->unk66 = 1;
+      object->userValue = 1;
     }
   }
 }
@@ -1671,7 +1671,7 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
     object->priorityFlags &= ~1;
     object->scaleY = Q16_ONE * 2;
     object->timer = ((Random16() * 10) >> 16) + 10;
-    object->unk66 = 0;
+    object->userValue = 0;
     object->update = (void (*)(void))Kibombo_FlickerFlame;
     sprite = object->sprite;
     sprite->priority = 1;
@@ -1805,14 +1805,14 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   s32 turn;
 
   if (*timer != 0)
-    wobble = Trig_Sin((actor->timer + (s16)actor->unk66) * 9 << 9) * 6;
+    wobble = Trig_Sin((actor->timer + (s16)actor->userValue) * 9 << 9) * 6;
   object = (union Whirl *)actor;
   action = &object->actor.timer;
   centre.x = object->actor.targetX;
   centre.y = object->actor.targetY;
   centre.z = object->actor.targetZ;
-  radius = object->actor.unk4c;
-  spin = (s16)object->actor.unk66;
+  radius = object->actor.riseBaseY;
+  spin = (s16)object->actor.userValue;
   turn = *action;
   Vector_AddPolarOffset((radius << 16) + wobble, turn * 3 * 256 + spin,
                         &centre);
@@ -1823,7 +1823,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   switch (*stage) {
   case 0:
     *action += 4;
-    object->actor.unk4c = 1;
+    object->actor.riseBaseY = 1;
     ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
     object->actor.scaleX += 0x666;
     object->actor.scaleY += 0x666;
@@ -1850,9 +1850,9 @@ void Kibombo_SpinSpark(struct Actor *actor) {
     break;
   case 3:
     *action += 1;
-    object->actor.unk4c += 2;
+    object->actor.riseBaseY += 2;
     *timer = 10;
-    if (object->actor.unk4c > 40)
+    if (object->actor.riseBaseY > 40)
       *stage = 4;
     break;
   case 4:
@@ -1862,11 +1862,11 @@ void Kibombo_SpinSpark(struct Actor *actor) {
     break;
   case 5:
     *action += 1;
-    object->actor.unk4c -= 2;
+    object->actor.riseBaseY -= 2;
     if (object->actor.targetY < px(136))
       object->actor.targetY += px(2);
-    if (object->actor.unk4c <= 1) {
-      object->actor.unk4c = 0;
+    if (object->actor.riseBaseY <= 1) {
+      object->actor.riseBaseY = 0;
       *stage = 6;
     }
     break;
@@ -1922,8 +1922,8 @@ void Kibombo_AkafubuChants(void) {
       Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 1);
       spark->timer = 0;
-      spark->unk4c = 0;
-      spark->unk66 = angle / 360;
+      spark->riseBaseY = 0;
+      spark->userValue = angle / 360;
       spark->riseCounter = 0;
       spark->targetX = center->x;
       spark->targetY = center->y + px(24);
@@ -2045,11 +2045,11 @@ void Kibombo_CastScoop(void) {
 void Kibombo_StopFireFlicker(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Kibombo4)
+  if (scene == SCENE_KIBOMBO_4)
     Task_Remove(Kibombo_FlickerVillageFires);
-  else if (scene == (s32)&SceneId_Kibombo5)
+  else if (scene == SCENE_KIBOMBO_5)
     Task_Remove(Kibombo_FlickerCeremonyFires);
-  else if (scene == (s32)&SceneId_Kibombo6)
+  else if (scene == SCENE_KIBOMBO_6)
     Task_Remove(Kibombo_FlickerStatueFires);
 }
 
@@ -2862,17 +2862,17 @@ void Kibombo_CeremonyEnds(void) {
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Kibombo1)
+  if (scene == SCENE_KIBOMBO_1)
     Kibombo_InitializeRoom1();
-  else if (scene == (s32)&SceneId_Kibombo4)
+  else if (scene == SCENE_KIBOMBO_4)
     Kibombo_InitializeRoom4();
-  else if (scene == (s32)&SceneId_Kibombo2)
+  else if (scene == SCENE_KIBOMBO_2)
     Kibombo_InitializeRoom2();
-  else if (scene == (s32)&SceneId_Kibombo5)
+  else if (scene == SCENE_KIBOMBO_5)
     Kibombo_InitializeRoom5();
-  else if (scene == (s32)&SceneId_Kibombo6)
+  else if (scene == SCENE_KIBOMBO_6)
     Kibombo_InitializeRoom6();
-  else if (scene == (s32)&SceneId_Kibombo3)
+  else if (scene == SCENE_KIBOMBO_3)
     Kibombo_InitializeRoom3();
   return 0;
 }
@@ -3141,7 +3141,7 @@ void Kibombo_InitializeRoom5(void) {
   Event_WaitTransitionFrames();
   Task_Add(Kibombo_FlickerCeremonyFires, 0x480);
   for (i = 0; i <= 7; i++) {
-    u8 *field = &Actor_GetById(i + 18)->unk5c[0];
+    u8 *field = &Actor_GetById(i + 18)->retainSpriteCache;
     s32 value = 2;
 
     *field = value;

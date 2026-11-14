@@ -294,7 +294,7 @@ void LuckyDice_Run(void) {
   diceWork = HeapSlot_AllocEwram(92, 0x7b7c);
   sprites = HeapSlot_AllocEwram(180, 0x614);
   camera = HeapSlot_AllocEwram(48, 76);
-  Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
+  Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   Camera_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;

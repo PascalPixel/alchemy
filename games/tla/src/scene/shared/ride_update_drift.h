@@ -9,10 +9,10 @@ void Ride_UpdateDrift(struct Actor *object) {
 
   object->x += dx;
   object->y += object->gravity;
-  dz = object->unk4c;
+  dz = object->riseBaseY;
   object->z += dz;
   object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
+  object->riseBaseY = dz - dz / 16;
   rate = object->speedLimit;
   scale = object->scaleX;
   parts = object->sprite;
@@ -20,8 +20,8 @@ void Ride_UpdateDrift(struct Actor *object) {
   object->scaleY += object->acceleration;
   parts->unk12 += object->timer;
   if (leader->y == leader->terrainHeight && Actor_IsAbove(object, leader)) {
-    object->z -= object->unk4c;
-    object->gravity += object->unk4c >> 2;
-    object->unk4c = 0;
+    object->z -= object->riseBaseY;
+    object->gravity += object->riseBaseY >> 2;
+    object->riseBaseY = 0;
   }
 }

@@ -271,7 +271,7 @@ s32 Clear_CanRetreat(void) {
 
   if (FIELD_AT(party, s16, 0x25e) == 2)
     return 0;
-  mode = party->next ^ (s32)&SceneId_WorldMap;
+  mode = party->next ^ SCENE_WORLD_MAP;
   return -((u32)(-mode | mode) >> 31);
 }
 
@@ -359,7 +359,7 @@ s32 Scene_Initialize(void) {
     Event_FinishScreenTransition();
     Sound_Play(SOUND_FADE_OUT_BGM);
     Event_Wait(300);
-    Event_SetDestination((s32)&SceneId_Title, 1);
+    Event_SetDestination(SCENE_TITLE, 1);
     return 0;
   }
   gSleepDisabled = started;
@@ -368,7 +368,7 @@ top:
   if (result < 0 && gDebugMode) {
     gMainRoutineWork.unk244[6] = 1;
     gIdleSleepEnabled = 1;
-    FieldMessage_ShowCentered((s32)&SceneId_DailaInteriors1, 1, 8);
+    FieldMessage_ShowCentered(SCENE_DAILA_INTERIORS_1, 1, 8);
   }
   if (result == 0 && !started) {
     wait(30);
@@ -492,7 +492,7 @@ top:
         goto save;
     }
   leave:
-    Event_SetDestination((s32)&SceneId_Title, 8);
+    Event_SetDestination(SCENE_TITLE, 8);
     goto finish;
   }
   if (result == 1) {
@@ -551,14 +551,14 @@ top:
       struct MainRoutineWork *party = &gMainRoutineWork;
 
       party->leaderActorId = 4;
-      if (Event_GetFlag(0x9ff))
+      if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT))
         InventorySnapshot_Restore();
       WindowColor_Apply(party->paletteGlow[0], party->paletteGlow[1]);
       Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
       Event_ClearFlag(FLAG_MENU_OPEN);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
-      Event_SetDestination((s32)&SceneId_Lobby, 1);
+      Event_SetDestination(SCENE_LOBBY, 1);
     }
     goto finish;
   }

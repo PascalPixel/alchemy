@@ -6,11 +6,11 @@ void Ride_SpawnForward(s32 *position, s32 speed, s32 mode) {
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = speed;
+    object->riseBaseY = speed;
     Actor_ResetScriptedFor(object, 2);
     object->update = Flame_UpdateForward;
     if (mode)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }

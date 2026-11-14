@@ -128,7 +128,7 @@ void Field_PlaceTreasureSpots(void) {
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
         object->timer = object->x / Q16_ONE;
-        object->unk66 = object->z / Q16_ONE;
+        object->userValue = object->z / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
         work->objects[i] = object;
@@ -171,7 +171,7 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   if (mode == 0) {
     object->x = 0;
     object->z = 0;
-    object->unk4c = 0x31415927;
+    object->riseBaseY = 0x31415927;
     return;
   }
   sprite = object->sprite;

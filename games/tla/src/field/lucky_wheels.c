@@ -1071,7 +1071,7 @@ void LuckyWheels_Run(void) {
   state = HeapSlot_AllocEwram(180, sizeof(struct ReelWork));
   tiles = Ram_MapCellBuffer;
   save = (struct ReelSave *)Data_0200024c;
-  Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
+  Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
@@ -1202,9 +1202,9 @@ void LuckyWheels_Run(void) {
       }
     }
 
-    Resource_FarCall00C(104, 8, 7, 3, 1);
+    BattleEffect_BuildBlitterFar(104, 8, 7, 3, 1);
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    Resource_FarCall00C(188, 8, 7, 3, 0);
+    BattleEffect_BuildBlitterFar(188, 8, 7, 3, 0);
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);

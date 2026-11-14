@@ -68,7 +68,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 s16 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Mikasalla2)
+  if (scene == SCENE_MIKASALLA_2)
     return gMikasalla_TunnelRegions;
   return 0;
 }
@@ -78,7 +78,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Mikasalla1)
+  if (scene == SCENE_MIKASALLA_1)
     return gMikasalla_VillagePlacements;
   return gMikasalla_TunnelPlacements;
 }
@@ -147,7 +147,7 @@ void Mikasalla_MeetSpark(void) { Djinn_JoinParty(ACTOR_SPARK, 2, 8); }
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Mikasalla2)
+  if (scene == SCENE_MIKASALLA_2)
     return gMikasalla_TunnelTriggers;
   return gMikasalla_VillageTriggers;
 }
@@ -222,7 +222,7 @@ s32 Scene_PrepareMap(void) {
   } while (0);
   object->priorityFlags = flags;
   Actor_GetById(party->leaderActorId)->priorityFlags |= 0x20;
-  if (party->next == (s32)&SceneId_Mikasalla2) {
+  if (party->next == SCENE_MIKASALLA_2) {
     if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
       Map_SetLayerEntryFlag(0);
       Map_SetLayerEntryFlag(1);
@@ -250,7 +250,7 @@ void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Mikasalla1) {
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_1) {
     exit = 12;
     drop = 17;
   } else {

@@ -84,7 +84,7 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
     Actor_FaceDirection(14, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Event_Wait(10);
-    Event_SetDestination((s32)&SceneId_WorldMap, 67);
+    Event_SetDestination(SCENE_WORLD_MAP, 67);
   } else {
     Event_SetMessageId(msg + 2);
     Event_ShowMessageAndWait(actor, 0);
@@ -275,7 +275,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, 1);
     while (gInput.held == 0)
       wait(1);
-    Event_SetDestination((s32)&SceneId_AlhafraManor, 80);
+    Event_SetDestination(SCENE_ALHAFRA_MANOR, 80);
   }
   return 0;
 }

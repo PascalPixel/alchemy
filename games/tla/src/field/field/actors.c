@@ -309,9 +309,9 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
     object->collisionFlags = 0;
     object->actionFlags = 1;
     object->facing = TRIG_TURN / 4;
-    object->unk4c = 0;
+    object->riseBaseY = 0;
     object->timer = x / 65536;
-    object->unk66 = z / 65536;
+    object->userValue = z / 65536;
     *(s32 *)&object->unk70[12] = 0;
     *(s32 *)&object->unk70[0] = 0;
     *(s32 *)&object->unk70[4] = 0;
@@ -326,8 +326,8 @@ void Actor_StartScript(struct Actor *object, const s32 *script) {
     object->step = 0;
     object->script = script;
     object->movementState = 0;
-    object->unk5c[1] = 0;
-    object->unk57 = 0;
+    object->repeatCount = 0;
+    object->conditionResult = 0;
   }
 }
 
@@ -723,7 +723,7 @@ void ActorSystem_PlaceSprites(void) {
         continue;
       if (kind != 1)
         continue;
-      if ((u16)system->suspended != 0 && !(object->unk5c[0] & 1)) {
+      if ((u16)system->suspended != 0 && !(object->retainSpriteCache & 1)) {
         struct PlacedSprite *frozen = object->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
@@ -852,9 +852,10 @@ void ActorSystem_PlaceSprites(void) {
                                          scale.values, object->facing);
         continue;
       }
-      if (object->unk5c[0] & 2) {
+      if (object->retainSpriteCache & 2) {
         Sprite_ComposePicture(sprite, object->facing);
-      } else if (!(object->unk5c[0] & 1) && !(sprite->retainCacheEntry & 1)) {
+      } else if (!(object->retainSpriteCache & 1) &&
+                 !(sprite->retainCacheEntry & 1)) {
         VramCache_ReleaseVram(sprite->slot);
         sprite->dirty = 1;
       }
@@ -864,7 +865,7 @@ void ActorSystem_PlaceSprites(void) {
       if (kind == 1) {
         struct PlacedSprite *frozen = object->sprite;
 
-        if (object->unk5c[0] == 0 && !(frozen->retainCacheEntry & 1)) {
+        if (object->retainSpriteCache == 0 && !(frozen->retainCacheEntry & 1)) {
           VramCache_ReleaseVram(frozen->slot);
           frozen->dirty = kind;
         }

@@ -93,9 +93,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_YallamInteriors1)
+  if (scene == SCENE_YALLAM_INTERIORS_1)
     return gYallamInteriors_Room1Placements;
-  if (scene == (s32)&SceneId_YallamInteriors2)
+  if (scene == SCENE_YALLAM_INTERIORS_2)
     return gYallamInteriors_Room2Placements;
   return gYallamInteriors_Placements;
 }
@@ -204,9 +204,9 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_YallamInteriors1)
+  if (scene == SCENE_YALLAM_INTERIORS_1)
     return gYallamInteriors_Room1Triggers;
-  if (scene == (s32)&SceneId_YallamInteriors2)
+  if (scene == SCENE_YALLAM_INTERIORS_2)
     return gYallamInteriors_Room2Triggers;
   return gYallamInteriors_Triggers;
 }
@@ -457,8 +457,6 @@ void YallamInteriors_TalkToSunshine(void) {
   }
 }
 
-u16 *Import_ItemGet(s32 item);
-
 /// Sunshine's wife keeps the smithy: she explains the forge, hands over what
 /// Sunshine made and takes the payment.
 /// "This? This is the blacksmith Sunshine's smithy, the best forge in Weyard!"
@@ -473,7 +471,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
     Event_ShowMessage(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
-    u32 price = *Import_ItemGet(item);
+    u32 price = Item_GetDirect(item)->price;
     s32 message;
 
     MessageArgument_Push(item, 2);
@@ -521,7 +519,7 @@ s32 Scene_Initialize(void) {
 
     scene = party->next;
   }
-  if (scene == (s32)&SceneId_YallamInteriors1) {
+  if (scene == SCENE_YALLAM_INTERIORS_1) {
     if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
       Actor_SetPosition(14, 600, 360);
       Actor_SetPosition(16, 632, 346);
@@ -536,7 +534,7 @@ s32 Scene_Initialize(void) {
                          0);
     Actor_SetSpritePriority(11, 2);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_YallamInteriors2) {
+  if (gMainRoutineWork.next == SCENE_YALLAM_INTERIORS_2) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpritePriority(12, 2);
     ((struct YallamInteriorsObject *)Actor_GetById(12))->collisionFlags |= 4;

@@ -68,14 +68,14 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AttekaInlet1) {
+  if (scene == SCENE_ATTEKA_INLET_1) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       return gAttekaInlet_HarbourActorPlacementsOnceFlown;
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
       return gAttekaInlet_HarbourActorPlacementsOnceWinged;
     return gAttekaInlet_HarbourActorPlacements;
   }
-  if (scene == (s32)&SceneId_AttekaInlet2) {
+  if (scene == SCENE_ATTEKA_INLET_2) {
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
       return gAttekaInlet_ShoreActorPlacementsOnceWinged;
     return gAttekaInlet_ShoreActorPlacements;
@@ -88,9 +88,9 @@ extern struct Trigger gAttekaInlet_HarbourTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AttekaInlet1)
+  if (scene == SCENE_ATTEKA_INLET_1)
     return gAttekaInlet_HarbourTriggers;
-  if (scene == (s32)&SceneId_AttekaInlet2)
+  if (scene == SCENE_ATTEKA_INLET_2)
     return gAttekaInlet_ShoreTriggers;
   return gAttekaInlet_Triggers;
 }
@@ -520,9 +520,9 @@ void AttekaInlet_OpenDoorAndEnter(void) {
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AttekaInlet1)
+  if (scene == SCENE_ATTEKA_INLET_1)
     AttekaInlet_SetUpTheHarbour();
-  else if (scene == (s32)&SceneId_AttekaInlet2)
+  else if (scene == SCENE_ATTEKA_INLET_2)
     AttekaInlet_SetUpTheShore();
   return 0;
 }
@@ -530,8 +530,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AttekaInlet1 &&
-      GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
+  if (scene == SCENE_ATTEKA_INLET_1 && GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);

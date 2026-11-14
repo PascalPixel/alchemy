@@ -397,13 +397,13 @@ s32 MarsLighthouseRoomF_SetUpStatue(struct Actor *object) {
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF4)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_4)
     return gMarsLighthouseRoomF_Room4Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF2)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_2)
     return gMarsLighthouseRoomF_Room2Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF1)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_1)
     return gMarsLighthouseRoomF_Room1Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF3)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_3)
     return gMarsLighthouseRoomF_Room3Placements;
   return gMarsLighthouseRoomF_Placements;
 }
@@ -1037,13 +1037,13 @@ UNUSED void MarsLighthouseRoomF_SlideFromEdge(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF4)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_4)
     return gMarsLighthouseRoomF_Room4Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF2)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_2)
     return gMarsLighthouseRoomF_Room2Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF1)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_1)
     return gMarsLighthouseRoomF_Room1Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_MarsLighthouseRoomF3)
+  if (gMainRoutineWork.next == SCENE_MARS_LIGHTHOUSE_ROOM_F_3)
     return gMarsLighthouseRoomF_Room3Triggers;
   return gMarsLighthouseRoomF_Triggers;
 }
@@ -1087,7 +1087,7 @@ s32 Scene_Initialize(void) {
   value = 516;
   Flag_Set(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
-  if (scene == (s32)&SceneId_MarsLighthouseRoomF1) {
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_F_1) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
     if (entrance - 1 <= 1U) {
@@ -1115,7 +1115,7 @@ s32 Scene_Initialize(void) {
       PushTarget_FillFootprint(ACTOR_MARS_PIPE_B);
       MarsLighthouseRoomF_RouteFireThroughPipes();
     }
-  } else if (scene == (s32)&SceneId_MarsLighthouseRoomF2) {
+  } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_F_2) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
     FlameThrowers_Start(gMarsLighthouseRoomF_MercuryFlameThrowers,
@@ -1174,7 +1174,7 @@ s32 Scene_Initialize(void) {
     if (Flag_IsSet(FLAG_ICEBERGS_MELTED))
       MarsLighthouseRoomF_MeltIcebergs();
     Task_Add(MarsLighthouseRoomF_StopSlideWhileHit, 0x480);
-  } else if (scene == (s32)&SceneId_MarsLighthouseRoomF3) {
+  } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_F_3) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
     JupiterLighthouse_LoadPalettesZero(1);
@@ -1208,7 +1208,7 @@ s32 Scene_Initialize(void) {
       if (entrance == 16 && !Flag_IsSet(FLAG_KEEP_PARTY_POSITION))
         CrackedTile_DropIn();
     }
-  } else if (scene == (s32)&SceneId_MarsLighthouseRoomF4) {
+  } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_F_4) {
     FieldEffect_StartBlankOverlay(0);
     ((struct FieldWork *)heap->fieldWork)->transition = value;
     Tightrope_Initialize();
@@ -1256,8 +1256,8 @@ s32 Scene_PrepareMap(void) {
 
   party = &gMainRoutineWork;
   if (Event_GetFlag(flag))
-    Map_CopyPalette(party->mapId + ((s32)&SceneId_MarsLighthouseRoomM3 -
-                                    (s32)&SceneId_Prox2),
+    Map_CopyPalette(party->mapId +
+                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
                     0x5000000);
   return 0;
 }
@@ -1649,11 +1649,11 @@ void Ride_SpawnForward(s32 *position, s32 speed, s32 mode) {
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = speed;
+    object->riseBaseY = speed;
     Actor_ResetScriptedFor(object, 2);
     object->update = Flame_UpdateForward;
     if (mode)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1673,11 +1673,11 @@ void Ride_SpawnBackward(s32 *position, s32 speed, s32 mode) {
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = -speed;
+    object->riseBaseY = -speed;
     Actor_SetupScriptedPart(object, 3);
     object->update = Flame_UpdateForward;
     if (mode)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1689,11 +1689,11 @@ void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 mode) {
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = speed;
+    object->riseBaseY = speed;
     Actor_SetupScriptedPart(object, 3);
     object->update = Flame_UpdateLanding;
     if (mode)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1705,11 +1705,11 @@ void Ride_SpawnLandingBackward(s32 *position, s32 speed, s32 mode) {
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = -speed;
+    object->riseBaseY = -speed;
     Actor_SetupScriptedPart(object, 3);
     object->update = Flame_UpdateLanding;
     if (mode)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1728,7 +1728,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed) {
   if (object != NULL) {
     object->bounce = Trig_Cos((u16)(Random16() * 3 >> 4) + 0x3000);
     object->gravity = (u16)Random16();
-    object->unk4c = (u16)(Random16() << 1) + speed;
+    object->riseBaseY = (u16)(Random16() << 1) + speed;
     spin = (u16)Random16() + 0xffff8000;
     object->timer = spin;
     Actor_SetupScriptedFor(object, 2);
@@ -1898,7 +1898,7 @@ void Ride_Create(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
-  object->unk5c[0] = 2;
+  object->retainSpriteCache = 2;
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
@@ -2487,7 +2487,7 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   Actor_SelectAnimation(object, 1);
   object->watchedObject = source;
   object->timer = 0;
-  object->unk66 = a3;
+  object->userValue = a3;
   BYTE_AT(object, 98) = kind;
   object->update = Actor_HoldDuringEvent;
 }
@@ -2498,7 +2498,7 @@ void Actor_RollAndCrumble(struct Actor *actor);
 
 void Actor_LaunchAhead(struct Actor *self) {
   struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
-  s32 angle = (s16)self->unk66;
+  s32 angle = (s16)self->userValue;
   struct FieldSprite *sprite = actor->sprite;
   volatile s32 position[3];
 

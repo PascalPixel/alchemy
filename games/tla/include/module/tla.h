@@ -265,8 +265,6 @@ extern u16 gData_02003a74[];
 
 extern s32 gData_020017b0;
 
-extern char SceneId_MarsLighthouseAerie1;
-
 void TundariaTower_StartEffectScript(struct FieldEffect *effect,
                                      const s32 *script);
 

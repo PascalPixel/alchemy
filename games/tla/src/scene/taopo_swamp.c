@@ -27,18 +27,6 @@
 
 extern u32 gSceneExits[];
 
-extern char SceneId_TaopoSwamp1;
-extern char SceneId_TaopoSwamp2;
-extern char SceneId_TaopoSwamp3;
-extern char SceneId_TaopoSwamp4;
-extern char SceneId_TaopoSwamp5;
-extern char SceneId_TaopoSwamp6;
-extern char SceneId_TaopoSwamp7;
-extern char SceneId_TaopoSwamp8;
-extern char SceneId_TaopoSwamp9;
-extern char SceneId_TaopoSwamp10;
-extern char SceneId_TaopoSwamp11;
-
 void GameFlag_SetByte(s32 flag, s32 value);
 void Vent_SetGust(s32 id, s32 a);
 void Vents_SetId(s32 a, s32 b);
@@ -206,21 +194,21 @@ extern struct ActorPlacement gTaopoSwamp_Room11Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_TaopoSwamp2)
+  if (scene == SCENE_TAOPO_SWAMP_2)
     return gTaopoSwamp_Room2Placements;
-  if (scene == (s32)&SceneId_TaopoSwamp4)
+  if (scene == SCENE_TAOPO_SWAMP_4)
     return gTaopoSwamp_Room4Placements;
-  if (scene == (s32)&SceneId_TaopoSwamp5)
+  if (scene == SCENE_TAOPO_SWAMP_5)
     return gTaopoSwamp_Room5Placements;
-  if (scene == (s32)&SceneId_TaopoSwamp7)
+  if (scene == SCENE_TAOPO_SWAMP_7)
     return gTaopoSwamp_Room7Placements;
-  if (scene == (s32)&SceneId_TaopoSwamp8)
+  if (scene == SCENE_TAOPO_SWAMP_8)
     return gTaopoSwamp_Room8Placements;
-  if (scene == (s32)&SceneId_TaopoSwamp9)
+  if (scene == SCENE_TAOPO_SWAMP_9)
     return gTaopoSwamp_Room9Placements;
-  if (scene == (s32)&SceneId_TaopoSwamp10)
+  if (scene == SCENE_TAOPO_SWAMP_10)
     return gTaopoSwamp_Room10Placements;
-  if (scene == (s32)&SceneId_TaopoSwamp11)
+  if (scene == SCENE_TAOPO_SWAMP_11)
     return gTaopoSwamp_Room11Placements;
   return gTaopoSwamp_Placements;
 }
@@ -414,14 +402,14 @@ void TaopoSwamp_StepOnVent(s32 hole) {
   struct Vector3 position;
   s32 found, result, slip;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp5) {
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_5) {
     found = Vent_IsActive(gTaopoSwamp_Room5HoleVents[hole - 10]);
     if (hole == 12 && Event_GetFlag(0xa6e))
       return;
     if (hole == 18 && Event_GetFlag(0xa6d))
       return;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp7) {
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_7) {
     u8 *table = gTaopoSwamp_Room7HoleVents + 1;
     s32 at = hole - 10;
     found = Vent_IsActive(table[at]);
@@ -430,12 +418,12 @@ void TaopoSwamp_StepOnVent(s32 hole) {
     if (hole == 12 && Event_GetFlag(FLAG_SCENE_TEMP_21))
       return;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp8) {
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_8) {
     found = Vent_IsActive(hole - 10);
     if (hole == 10 && Event_GetFlag(FLAG_SCENE_TEMP_21))
       return;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TaopoSwamp9)
+  if (gMainRoutineWork.next == SCENE_TAOPO_SWAMP_9)
     found = Vent_IsActive(hole - 10);
   if (found == 0)
     return;
@@ -912,27 +900,27 @@ extern struct Trigger gTaopoSwamp_Room11Triggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_TaopoSwamp1)
+  if (scene == SCENE_TAOPO_SWAMP_1)
     return (const struct Trigger *)gTaopoSwamp_Room1Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp2)
+  if (scene == SCENE_TAOPO_SWAMP_2)
     return (const struct Trigger *)gTaopoSwamp_Room2Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp3)
+  if (scene == SCENE_TAOPO_SWAMP_3)
     return (const struct Trigger *)gTaopoSwamp_Room3Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp4)
+  if (scene == SCENE_TAOPO_SWAMP_4)
     return (const struct Trigger *)gTaopoSwamp_Room4Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp5)
+  if (scene == SCENE_TAOPO_SWAMP_5)
     return (const struct Trigger *)gTaopoSwamp_Room5Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp6)
+  if (scene == SCENE_TAOPO_SWAMP_6)
     return (const struct Trigger *)gTaopoSwamp_Room6Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp7)
+  if (scene == SCENE_TAOPO_SWAMP_7)
     return (const struct Trigger *)gTaopoSwamp_Room7Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp8)
+  if (scene == SCENE_TAOPO_SWAMP_8)
     return (const struct Trigger *)gTaopoSwamp_Room8Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp9)
+  if (scene == SCENE_TAOPO_SWAMP_9)
     return (const struct Trigger *)gTaopoSwamp_Room9Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp10)
+  if (scene == SCENE_TAOPO_SWAMP_10)
     return (const struct Trigger *)gTaopoSwamp_Room10Triggers;
-  if (scene == (s32)&SceneId_TaopoSwamp11)
+  if (scene == SCENE_TAOPO_SWAMP_11)
     return (const struct Trigger *)gTaopoSwamp_Room11Triggers;
   return (const struct Trigger *)gTaopoSwamp_Triggers;
 }
@@ -1208,8 +1196,8 @@ s32 Scene_Initialize(void) {
   s32 id, entrance;
 
   gFieldWork->transition = 513;
-  if (scene == (s32)&SceneId_TaopoSwamp2) {
-    gMainRoutineWork.retreatScene = (s32)&SceneId_TaopoSwamp1;
+  if (scene == SCENE_TAOPO_SWAMP_2) {
+    gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_1;
     gMainRoutineWork.retreatEntrance = 1;
     TaopoSwamp_ResetMud();
     for (id = 8; id <= 12; id++) {
@@ -1231,16 +1219,16 @@ s32 Scene_Initialize(void) {
     Task_Add(TaopoSwamp_DripAtRandom, 0x480);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
-  } else if (scene == (s32)&SceneId_TaopoSwamp3) {
+  } else if (scene == SCENE_TAOPO_SWAMP_3) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
-  } else if (scene == (s32)&SceneId_TaopoSwamp4) {
+  } else if (scene == SCENE_TAOPO_SWAMP_4) {
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
-  } else if (scene == (s32)&SceneId_TaopoSwamp5) {
+  } else if (scene == SCENE_TAOPO_SWAMP_5) {
     FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
@@ -1250,7 +1238,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPositionFixed(10, px(472), px(248));
     TaopoSwamp_StartVents(gTaopoSwamp_Room5Vents, gTaopoSwamp_Room5VentPair,
                           TaopoSwamp_CycleDjinniVents);
-  } else if (scene == (s32)&SceneId_TaopoSwamp7) {
+  } else if (scene == SCENE_TAOPO_SWAMP_7) {
     FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInRoom7, 0x480);
     if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
@@ -1277,7 +1265,7 @@ s32 Scene_Initialize(void) {
       piece->y = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp8) {
+  } else if (scene == SCENE_TAOPO_SWAMP_8) {
     if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
         gMainRoutineWork.entrance != 9) {
       Rope_Initialize();
@@ -1301,7 +1289,7 @@ s32 Scene_Initialize(void) {
       }
       MapGrid_CopyCells(50, 36, 13, 13, 60, 5);
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp9) {
+  } else if (scene == SCENE_TAOPO_SWAMP_9) {
     TaopoSwamp_StartVents(gTaopoSwamp_RockRoomVents, 0,
                           TaopoSwamp_CycleRockRoomVents);
     if (!Event_GetFlag(FLAG_AREA_TEMP_38)) {
@@ -1323,7 +1311,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(9)->priorityFlags |= 2;
       MapGrid_CopyCellAttributes(30, 13, 1, 1, 31, 11);
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp10) {
+  } else if (scene == SCENE_TAOPO_SWAMP_10) {
     piece = Actor_GetById(19);
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
       Actor_SetPositionFixed(19, px(480), px(248));
@@ -1360,7 +1348,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimation(10, 0);
       }
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp11) {
+  } else if (scene == SCENE_TAOPO_SWAMP_11) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_40)) {
       Event_SetFlag(FLAG_AREA_TEMP_41);
     } else {
@@ -1400,8 +1388,8 @@ s32 Scene_Initialize(void) {
   s32 id, entrance;
 
   *effect = 0;
-  if (scene == (s32)&SceneId_TaopoSwamp2) {
-    gMainRoutineWork.retreatScene = (s32)&SceneId_TaopoSwamp1;
+  if (scene == SCENE_TAOPO_SWAMP_2) {
+    gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_1;
     gMainRoutineWork.retreatEntrance = 1;
     TaopoSwamp_ResetMud();
     for (id = 8; id <= 12; id++) {
@@ -1423,18 +1411,18 @@ s32 Scene_Initialize(void) {
     Task_Add(TaopoSwamp_DripAtRandom, 0x480);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
-  } else if (scene == (s32)&SceneId_TaopoSwamp3) {
+  } else if (scene == SCENE_TAOPO_SWAMP_3) {
     *effect = 516;
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
-  } else if (scene == (s32)&SceneId_TaopoSwamp4) {
+  } else if (scene == SCENE_TAOPO_SWAMP_4) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
-  } else if (scene == (s32)&SceneId_TaopoSwamp5) {
+  } else if (scene == SCENE_TAOPO_SWAMP_5) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(FLAG_AREA_TEMP_10))
@@ -1445,9 +1433,9 @@ s32 Scene_Initialize(void) {
       Actor_SetPositionFixed(10, px(472), px(248));
     TaopoSwamp_StartVents(gTaopoSwamp_Room5Vents, gTaopoSwamp_Room5VentPair,
                           TaopoSwamp_CycleDjinniVents);
-  } else if (scene == (s32)&SceneId_TaopoSwamp6) {
+  } else if (scene == SCENE_TAOPO_SWAMP_6) {
     *effect = 516;
-  } else if (scene == (s32)&SceneId_TaopoSwamp7) {
+  } else if (scene == SCENE_TAOPO_SWAMP_7) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
     Task_Add(TaopoSwamp_DripInRoom7, 0x480);
@@ -1475,7 +1463,7 @@ s32 Scene_Initialize(void) {
       piece->y = 0;
       MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp8) {
+  } else if (scene == SCENE_TAOPO_SWAMP_8) {
     *effect = 516;
     if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
         gMainRoutineWork.entrance != 9) {
@@ -1500,7 +1488,7 @@ s32 Scene_Initialize(void) {
       }
       MapGrid_CopyCells(50, 36, 13, 13, 60, 5);
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp9) {
+  } else if (scene == SCENE_TAOPO_SWAMP_9) {
     *effect = 516;
     TaopoSwamp_StartVents(gTaopoSwamp_RockRoomVents, 0,
                           TaopoSwamp_CycleRockRoomVents);
@@ -1523,7 +1511,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(9)->priorityFlags |= 2;
       MapGrid_CopyCellAttributes(30, 13, 1, 1, 31, 11);
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp10) {
+  } else if (scene == SCENE_TAOPO_SWAMP_10) {
     *effect = 516;
     piece = Actor_GetById(19);
     if (Event_GetFlag(FLAG_AREA_TEMP_30)) {
@@ -1561,7 +1549,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimation(10, 0);
       }
     }
-  } else if (scene == (s32)&SceneId_TaopoSwamp11) {
+  } else if (scene == SCENE_TAOPO_SWAMP_11) {
     *effect = 516;
     if (!Event_GetFlag(FLAG_AREA_TEMP_40)) {
       Event_SetFlag(FLAG_AREA_TEMP_41);
@@ -1827,7 +1815,7 @@ void Vent_Puff(s32 *position, s32 base) {
   if (object != 0) {
     object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
-    object->unk4c = (u16)(Random16() << 1) + base;
+    object->riseBaseY = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): an s32 local keeps the zero extension and the pool
      * word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;

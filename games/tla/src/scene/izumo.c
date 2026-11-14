@@ -90,7 +90,7 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
 void Actor_ShowEmoteById(s32 id, s32 a, s32 b);
 void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);

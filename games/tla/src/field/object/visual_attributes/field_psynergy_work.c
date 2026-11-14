@@ -151,19 +151,19 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->savedShakeX = map->shakeX;
   work->savedShakeY = map->shakeY;
   work->savedShakeDecay = map->shakeDecay;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_GabombaCatacombs5)
+  if (gMainRoutineWork.mapId == SCENE_GABOMBA_CATACOMBS_5)
     work->lit = 1;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_TundariaTower1)
+  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_1)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_TundariaTower2)
+  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_2)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_7)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_JupiterLighthouseAerie)
+  if (gMainRoutineWork.mapId == SCENE_JUPITER_LIGHTHOUSE_AERIE)
     *((u8 *)work + 0x41) = 1;
   if (gMainRoutineWork.mapId == (s32)&SceneId_JupiterLighthouseAerieBeacon)
     *((u8 *)work + 0x41) = 1;
-  if (gMainRoutineWork.mapId == (s32)&SceneId_Loho1)
+  if (gMainRoutineWork.mapId == SCENE_LOHO_1)
     *((u8 *)work + 0x41) = 1;
   FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId, -1);
   if (work->animation != 8)

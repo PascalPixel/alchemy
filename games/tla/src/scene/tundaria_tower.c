@@ -195,9 +195,9 @@ extern u32 gTundariaTower_Room6Regions[];
 extern u32 gTundariaTower_Room7Regions[];
 
 const struct ActorPlacement *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
     return (const struct ActorPlacement *)gTundariaTower_Room6Regions;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_7)
     return (const struct ActorPlacement *)gTundariaTower_Room7Regions;
   return 0;
 }
@@ -212,17 +212,17 @@ extern struct ActorPlacement gTundariaTower_Room6Placements[];
 extern struct ActorPlacement gTundariaTower_Room7Placements[];
 
 const struct Trigger *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower2)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_2)
     return (const struct Trigger *)gTundariaTower_Room2Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower3)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
     return (const struct Trigger *)gTundariaTower_Room3Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower4)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_4)
     return (const struct Trigger *)gTundariaTower_Room4Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower5)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_5)
     return (const struct Trigger *)gTundariaTower_Room5Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
     return (const struct Trigger *)gTundariaTower_Room6Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_7)
     return (const struct Trigger *)gTundariaTower_Room7Placements;
   return (const struct Trigger *)gTundariaTower_Room2Placements;
 }
@@ -513,13 +513,13 @@ void TundariaTower_LiftPillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->next == (s32)&SceneId_TundariaTower6) {
+  if (party->next == SCENE_TUNDARIA_TOWER_6) {
     struct Actor *object;
 
     Actor_LiftTargetBlock(gTundariaTower_Room6Pillars);
     object = *(struct Actor **)((u8 *)work + 0xcbc);
     object->timer = ((object->x >> 20) << 8) | ((object->z >> 20) & 0xff);
-  } else if (party->next == (s32)&SceneId_TundariaTower7) {
+  } else if (party->next == SCENE_TUNDARIA_TOWER_7) {
     Actor_LiftTargetBlock(gTundariaTower_Room7Pillar);
   }
 }
@@ -578,7 +578,7 @@ void TundariaTower_SetDownPillar(void) {
     object->terrainId = 0;
   }
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6) {
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6) {
     /* FAKEMATCH(temporary): the copy makes each column test reload X. */
     struct Actor *o = object;
 
@@ -674,19 +674,19 @@ void TundariaTower_BurstIcyWall(s32 mode, s32 cue) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower1)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_1)
     return gTundariaTower_Room1Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower2)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_2)
     return gTundariaTower_Room2Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower3)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
     return gTundariaTower_Room3Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower4)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_4)
     return gTundariaTower_Room4Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower5)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_5)
     return gTundariaTower_Room5Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower6)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
     return gTundariaTower_Room6Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TundariaTower7)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_7)
     return gTundariaTower_Room7Triggers;
   return gTundariaTower_Room2Triggers;
 }
@@ -697,7 +697,7 @@ void TundariaTower_ReflectLeader(struct Actor *object) {
   struct ReflectionAnimation *leaderAnimation = leader->sprite;
   struct ReflectionAnimation *animation = object->sprite;
 
-  if (leader->z <= object->unk4c) {
+  if (leader->z <= object->riseBaseY) {
     object->z = 0;
     object->x = 0;
     REG_BG2CNT &= 0xfffc;
@@ -714,7 +714,7 @@ void TundariaTower_ReflectLeader(struct Actor *object) {
 
       object->x = leader->x;
       object->y = leader->y;
-      object->z = object->unk4c - (leader->z - object->unk4c);
+      object->z = object->riseBaseY - (leader->z - object->riseBaseY);
       object->facing = ~leader->facing;
       source = leaderAnimation->sprite;
       sprite->unk10 = source->unk10;
@@ -859,8 +859,8 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_TundariaTower1) {
-  } else if (scene == (s32)&SceneId_TundariaTower2) {
+  if (scene == SCENE_TUNDARIA_TOWER_1) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -896,7 +896,7 @@ s32 Scene_Initialize(void) {
       }
       break;
     }
-  } else if (scene == (s32)&SceneId_TundariaTower4) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_4) {
     switch (gMainRoutineWork.entrance) {
     case 6:
     case 7:
@@ -915,9 +915,9 @@ s32 Scene_Initialize(void) {
         TundariaTower_LandFromSlide();
       break;
     }
-  } else if (scene == (s32)&SceneId_TundariaTower5) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_5) {
     TundariaTower_SetUpIceColumns(gTundariaTower_Room5Columns);
-  } else if (scene == (s32)&SceneId_TundariaTower6) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_6) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       object = FieldActor_Create(0x11e, px(472), 0, px(200));
@@ -951,7 +951,7 @@ s32 Scene_Initialize(void) {
         union FieldObject **slot = &gTundariaTower_Reflection;
         struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
-        effect->unk4c = 144 << 18;
+        effect->riseBaseY = 144 << 18;
         effect->update = TundariaTower_ReflectLeader;
         *slot = (union FieldObject *)effect;
         effect->motionFlags = 0;
@@ -963,7 +963,7 @@ s32 Scene_Initialize(void) {
       union FieldObject **slot = &gTundariaTower_Reflection;
       struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
-      effect->unk4c = 156 << 18;
+      effect->riseBaseY = 156 << 18;
       effect->update = TundariaTower_ReflectLeader;
       *slot = (union FieldObject *)effect;
       effect->motionFlags = 0;
@@ -974,7 +974,7 @@ s32 Scene_Initialize(void) {
         TundariaTower_LandFromSlide();
       break;
     }
-  } else if (scene == (s32)&SceneId_TundariaTower7) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_7) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_ICY_WALL_BURST)) {
       MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
@@ -1247,7 +1247,7 @@ test:
 }
 
 void TundariaTower_SetPillarMode3(s32 id) {
-  Actor_GetById(id)->unk5c[0] = 3;
+  Actor_GetById(id)->retainSpriteCache = 3;
   Actor_DisableById(id);
 }
 
@@ -1289,7 +1289,7 @@ next:
   nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
   shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  object->unk5c[0] = 3;
+  object->retainSpriteCache = 3;
   if (GameFlag_Get(nextFlag)) {
     Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
   } else {

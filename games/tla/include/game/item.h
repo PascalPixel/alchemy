@@ -56,6 +56,23 @@ enum ItemFlags {
 #define ITEM_USE_TEACHES 3
 #define ITEM_USE_EMPTIES 4 ///< Hermes' Water leaves an Empty Bottle
 
+/// What Item_GetEquipmentGroup sorts an item into.
+enum EquipmentGroup {
+  EQUIPMENT_GROUP_NONE = 0, ///< anything not a weapon or armor, rings included
+  EQUIPMENT_GROUP_WEAPON = 1,
+  EQUIPMENT_GROUP_ARMOR = 2
+};
+
+/// Why Inventory_CheckDiscard or Inventory_CheckUnequip refuses an item, as
+/// bits; 0 when it may go.
+enum InventoryRefusal {
+  /// Equipped and ITEM_CANNOT_UNEQUIP: "You can't remove it!"
+  INVENTORY_REFUSE_CANNOT_UNEQUIP = 1,
+  /// ITEM_INDISPENSABLE: "You can't drop it!"
+  INVENTORY_REFUSE_INDISPENSABLE = 2,
+  INVENTORY_REFUSE_EMPTY = 8 ///< the slot holds no item
+};
+
 /// An item's type (struct ItemDefinition's type, item_table.c's type field).
 /// A unit equips one item of each type, except Psynergy items.
 enum ItemType {

@@ -38,6 +38,7 @@
 #include "minigame.h"
 #include "battle/battle_unit.h"
 #include "game/item.h"
+#include "flags.h"
 #include "battle/battle_system.h"
 #include "game/game_flags.h"
 #include "owner_state.h"
@@ -65,13 +66,6 @@ enum ShopAction {
   SHOP_ACTION_ARTIFACTS,
   SHOP_ACTION_REPAIR,
   SHOP_ACTION_FORGE
-};
-
-/// What Item_GetEquipmentGroup sorts an item into.
-enum EquipmentGroup {
-  EQUIPMENT_GROUP_NONE = 0, ///< anything not a weapon or armor, rings included
-  EQUIPMENT_GROUP_WEAPON = 1,
-  EQUIPMENT_GROUP_ARMOR = 2
 };
 
 /// A shop's type, the last column of its stock row: the equipment group it
@@ -146,24 +140,6 @@ enum ItemPickerMode {
   ITEM_PICKER_DROP = 0, ///< an item to drop, by Inventory_CheckDiscard
   ITEM_PICKER_SHOW = 1  ///< an item to show, by Inventory_CheckUnequip
 };
-
-/// Why Inventory_CheckDiscard or Inventory_CheckUnequip refuses an item, as
-/// bits; 0 when it may go.
-enum InventoryRefusal {
-  /// Equipped and ITEM_CANNOT_UNEQUIP: "You can't remove it!"
-  INVENTORY_REFUSE_CANNOT_UNEQUIP = 1,
-  /// ITEM_INDISPENSABLE: "You can't drop it!"
-  INVENTORY_REFUSE_INDISPENSABLE = 2,
-  INVENTORY_REFUSE_EMPTY = 8 ///< the slot holds no item
-};
-
-/// What using an item costs (ItemDefinition.useType), as The Broken Seal's;
-/// the shops test only this one.
-#define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
-
-/// The flag a row of the stock table adds to: that shop's artifacts are in
-/// stock, for the shop counter's Artifacts list.
-#define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
 
 /// What the forge does with a material, its recipe's second column; the item
 /// list shows it from MsgItemCondition on, after "----------" for an item the

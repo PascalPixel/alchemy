@@ -912,7 +912,7 @@ s32 WorldPicture_Show(s32 mode) {
           continue;
         place = FlagEntries_GetTable();
         place += world->shown;
-        routine->unk2be = (s32)&SceneId_WorldMap;
+        routine->unk2be = SCENE_WORLD_MAP;
         choice->flag = place->flag;
         WorldMap_SetReturnForScene(place->scene, place->entrance);
         goto done;

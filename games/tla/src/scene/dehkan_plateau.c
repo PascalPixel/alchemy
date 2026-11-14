@@ -182,17 +182,17 @@ extern struct Trigger gDehkanPlateau_Room6Triggers[];
 const u8 *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_DehkanPlateau1)
+  if (scene == SCENE_DEHKAN_PLATEAU_1)
     return gDehkanPlateau_Room1Placements;
-  if (scene == (s32)&SceneId_DehkanPlateau2)
+  if (scene == SCENE_DEHKAN_PLATEAU_2)
     return gDehkanPlateau_Room2Placements;
-  if (scene == (s32)&SceneId_DehkanPlateau3)
+  if (scene == SCENE_DEHKAN_PLATEAU_3)
     return gDehkanPlateau_Room3Placements;
-  if (scene == (s32)&SceneId_DehkanPlateau4)
+  if (scene == SCENE_DEHKAN_PLATEAU_4)
     return gDehkanPlateau_Room4Placements;
-  if (scene == (s32)&SceneId_DehkanPlateau5)
+  if (scene == SCENE_DEHKAN_PLATEAU_5)
     return gDehkanPlateau_Room5Placements;
-  if (scene == (s32)&SceneId_DehkanPlateau6)
+  if (scene == SCENE_DEHKAN_PLATEAU_6)
     return gDehkanPlateau_Room6Placements;
   return gDehkanPlateau_Placements;
 }
@@ -200,17 +200,17 @@ const u8 *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_DehkanPlateau1)
+  if (scene == SCENE_DEHKAN_PLATEAU_1)
     return gDehkanPlateau_Room1Triggers;
-  if (scene == (s32)&SceneId_DehkanPlateau2)
+  if (scene == SCENE_DEHKAN_PLATEAU_2)
     return gDehkanPlateau_Room2Triggers;
-  if (scene == (s32)&SceneId_DehkanPlateau3)
+  if (scene == SCENE_DEHKAN_PLATEAU_3)
     return gDehkanPlateau_Room3Triggers;
-  if (scene == (s32)&SceneId_DehkanPlateau4)
+  if (scene == SCENE_DEHKAN_PLATEAU_4)
     return gDehkanPlateau_Room4Triggers;
-  if (scene == (s32)&SceneId_DehkanPlateau5)
+  if (scene == SCENE_DEHKAN_PLATEAU_5)
     return gDehkanPlateau_Room5Triggers;
-  if (scene == (s32)&SceneId_DehkanPlateau6)
+  if (scene == SCENE_DEHKAN_PLATEAU_6)
     return gDehkanPlateau_Room6Triggers;
   return gDehkanPlateau_Triggers;
 }
@@ -275,15 +275,15 @@ void Actors_SetHidden(s32 show, s32 first, u32 count);
 void DehkanPlateau_SetActorsHidden(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_DehkanPlateau1)
+  if (scene == SCENE_DEHKAN_PLATEAU_1)
     Actors_SetHidden(show, 13, 14);
-  else if (scene == (s32)&SceneId_DehkanPlateau2)
+  else if (scene == SCENE_DEHKAN_PLATEAU_2)
     Actors_SetHidden(show, 25, 13);
-  else if (scene == (s32)&SceneId_DehkanPlateau3)
+  else if (scene == SCENE_DEHKAN_PLATEAU_3)
     Actors_SetHidden(show, 26, 10);
-  else if (scene == (s32)&SceneId_DehkanPlateau4)
+  else if (scene == SCENE_DEHKAN_PLATEAU_4)
     Actors_SetHidden(show, 8, 3);
-  else if (scene == (s32)&SceneId_DehkanPlateau6)
+  else if (scene == SCENE_DEHKAN_PLATEAU_6)
     Actors_SetHidden(show, 10, 6);
 }
 
@@ -871,7 +871,6 @@ void DehkanPlateau_JoltCamera(void) {
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
 /* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as
@@ -1217,7 +1216,6 @@ extern s16 gDehkanPlateau_Room3MovablePillars[];
 void DehkanPlateau_LeaveConeCell(void);
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void DehkanPlateau_ForgetFall(void);
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
@@ -1385,7 +1383,7 @@ void DehkanPlateau_LeaveRoom(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (gMainRoutineWork.next == (s32)&SceneId_DehkanPlateau1)
+  if (gMainRoutineWork.next == SCENE_DEHKAN_PLATEAU_1)
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -1396,17 +1394,17 @@ void DehkanPlateau_LeaveRoom(void) {
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_DehkanPlateau1)
+  if (scene == SCENE_DEHKAN_PLATEAU_1)
     DehkanPlateau_InitializeRoom1();
-  else if (scene == (s32)&SceneId_DehkanPlateau2)
+  else if (scene == SCENE_DEHKAN_PLATEAU_2)
     DehkanPlateau_InitializeRoom2();
-  else if (scene == (s32)&SceneId_DehkanPlateau3)
+  else if (scene == SCENE_DEHKAN_PLATEAU_3)
     DehkanPlateau_InitializeRoom3();
-  else if (scene == (s32)&SceneId_DehkanPlateau4)
+  else if (scene == SCENE_DEHKAN_PLATEAU_4)
     DehkanPlateau_InitializeRoom4();
-  else if (scene == (s32)&SceneId_DehkanPlateau5)
+  else if (scene == SCENE_DEHKAN_PLATEAU_5)
     DehkanPlateau_InitializeRoom5();
-  else if (scene == (s32)&SceneId_DehkanPlateau6)
+  else if (scene == SCENE_DEHKAN_PLATEAU_6)
     DehkanPlateau_InitializeRoom6();
   return 0;
 }
@@ -1790,7 +1788,7 @@ void DehkanPlateau_CreatePoundCube(void) {
     sprite->fullColor = 0;
     sprite->palette = 0;
     object->motionFlags = zero;
-    object->unk5c[0] = 1;
+    object->retainSpriteCache = 1;
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);

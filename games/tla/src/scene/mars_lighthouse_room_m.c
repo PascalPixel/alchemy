@@ -251,12 +251,6 @@ struct MarsLighthouseRoomMRideWork {
 };
 
 extern u8 gInventorySnapshot[];
-extern char SceneId_MarsLighthouseRoomM1;
-extern char SceneId_MarsLighthouseRoomM2;
-extern char SceneId_MarsLighthouseRoomM3;
-extern char SceneId_MarsLighthouseRoomM4;
-extern char SceneId_MarsLighthouseRoomM5;
-extern char SceneId_MarsLighthouseRoomM6;
 
 void Actor_SelectAnimation(struct Actor *object, s32 value);
 void Actor_StartScript(struct Actor *object, const void *script);
@@ -304,9 +298,9 @@ void Event_WaitTransitionFrames(void);
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MarsLighthouseRoomM6)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6)
     return gMarsLighthouseRoomM_Room6Placements;
-  if (scene == (s32)&SceneId_MarsLighthouseRoomM1)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1)
     return gMarsLighthouseRoomM_Room1Placements;
   return gMarsLighthouseRoomM_Placements;
 }
@@ -656,14 +650,14 @@ void MarsLighthouseRoomM_TeleportToAerie(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_MarsLighthouseRoomM6)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6)
     return gMarsLighthouseRoomM_Room6Triggers;
-  if (scene == (s32)&SceneId_MarsLighthouseRoomM1)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1)
     return gMarsLighthouseRoomM_Room1Triggers;
-  if (scene == (s32)&SceneId_MarsLighthouseRoomM2 ||
-      scene == (s32)&SceneId_MarsLighthouseRoomM3 ||
-      scene == (s32)&SceneId_MarsLighthouseRoomM4 ||
-      scene == (s32)&SceneId_MarsLighthouseRoomM5)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_2 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_3 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_4 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_5)
     return gMarsLighthouseRoomM_Room5Triggers;
   return gMarsLighthouseRoomM_Triggers;
 }
@@ -695,8 +689,8 @@ s32 Scene_Initialize(void) {
                         (s32)gMarsLighthouseRoomM_FadeColorsFrom,
                         (s32)gMarsLighthouseRoomM_FadeColorsTo,
                         (s32)gMarsLighthouseRoomM_FadeOrder);
-  if (scene != (s32)&SceneId_MarsLighthouseRoomM6 &&
-      scene == (s32)&SceneId_MarsLighthouseRoomM1) {
+  if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_6 &&
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     gFieldWork->transition = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
@@ -738,7 +732,7 @@ s32 Scene_Initialize(void) {
         actor->y = px(16);
         actor->terrainHeight = px(16);
         ((u8 *)actor)[98] = ACTOR_FIREBALL;
-        actor->unk66 = 0x4000;
+        actor->userValue = 0x4000;
         actor->watchedObject = (struct Actor *)unset;
         Actor_LaunchAhead__s0b64();
         System_Wait(40);
@@ -797,15 +791,15 @@ s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
-  if (scene == (s32)&SceneId_MarsLighthouseRoomM6 ||
-      scene == (s32)&SceneId_MarsLighthouseRoomM2 ||
-      scene == (s32)&SceneId_MarsLighthouseRoomM3 ||
-      scene == (s32)&SceneId_MarsLighthouseRoomM4 ||
-      scene == (s32)&SceneId_MarsLighthouseRoomM5) {
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_2 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_3 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_4 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_5) {
     Weather_StartRain(1);
     SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
   }
-  if (scene == (s32)&SceneId_MarsLighthouseRoomM6) {
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6) {
     switch (entrance) {
     case ENTRANCE_FROM_VENUS_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GRB);
@@ -841,7 +835,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->z = px(104);
     FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, 0x480);
-  } else if (scene == (s32)&SceneId_MarsLighthouseRoomM1) {
+  } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       Ride_Create();
@@ -879,7 +873,7 @@ s32 Scene_PrepareMap(void) {
 
     Map_CopyPalette(
         gMainRoutineWork.mapId +
-            ((s32)&SceneId_MarsLighthouseRoomM3Second - (s32)&SceneId_Prox2),
+            ((s32)&SceneId_MarsLighthouseRoomM3Second - SCENE_PROX_2),
         0x5000000);
   }
   return 0;
@@ -1235,11 +1229,11 @@ void Ride_SpawnForward(struct MarsLighthouseRoomMVector *position, s32 value,
   if (object != 0) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = value;
+    object->riseBaseY = value;
     ((void (*)())Actor_ResetScripted)(object, 2);
     object->update = Flame_UpdateForward;
     if (flag != 0)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1263,11 +1257,11 @@ void Ride_SpawnBackward(struct MarsLighthouseRoomMVector *position, s32 value,
   if (object != 0) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = -value;
+    object->riseBaseY = -value;
     Actor_SetupScriptedPart(object, 3);
     object->update = Flame_UpdateForward;
     if (flag != 0)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1280,11 +1274,11 @@ void Ride_SpawnLandingForward(struct MarsLighthouseRoomMVector *position,
   if (object != 0) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = value;
+    object->riseBaseY = value;
     Actor_SetupScriptedPart(object, 3);
     object->update = Flame_UpdateLanding;
     if (flag != 0)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1297,11 +1291,11 @@ void Ride_SpawnLandingBackward(struct MarsLighthouseRoomMVector *position,
   if (object != 0) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = -value;
+    object->riseBaseY = -value;
     Actor_SetupScriptedPart(object, 3);
     object->update = Flame_UpdateLanding;
     if (flag != 0)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1329,19 +1323,19 @@ void Ride_UpdateDrift(struct Actor *object) {
   vx = object->bounce;
   object->x += vx;
   object->y += object->gravity;
-  vz = object->unk4c;
+  vz = object->riseBaseY;
   object->z += vz;
   object->bounce = vx - vx / 18;
-  object->unk4c = vz - vz / 16;
+  object->riseBaseY = vz - vz / 16;
   rate = object->speedLimit;
   object->scaleX += rate;
   animation = object->sprite;
   object->scaleY += object->acceleration;
   animation->angle += object->timer;
   if (target->y == target->terrainHeight && Actor_IsAbove(object, target)) {
-    object->z -= object->unk4c;
-    object->gravity += object->unk4c >> 2;
-    object->unk4c = 0;
+    object->z -= object->riseBaseY;
+    object->gravity += object->riseBaseY >> 2;
+    object->riseBaseY = 0;
   }
 }
 
@@ -1355,7 +1349,7 @@ void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value) {
   if (object != 0) {
     object->bounce = Trig_Cos(((u32)(Random16() * 3 << 12) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
-    object->unk4c = ((u32)(Random16() << 17) >> 16) + value;
+    object->riseBaseY = ((u32)(Random16() << 17) >> 16) + value;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
      * extension and the pool word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;
@@ -1530,7 +1524,7 @@ void Ride_Create(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
-  object->unk5c[0] = 2;
+  object->retainSpriteCache = 2;
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;
@@ -1822,7 +1816,7 @@ void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
   Actor_SelectAnimation(object, 1);
   object->watchedObject = source;
   object->timer = 0;
-  object->unk66 = angle;
+  object->userValue = angle;
   ((u8 *)object)[0x62] = value;
   object->update = Actor_HoldDuringEvent;
 }

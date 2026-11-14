@@ -60,7 +60,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_GabombaStatueChamber1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
     return gGabombaStatueChamber_Room1Regions;
   return 0;
 }
@@ -70,9 +70,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_GabombaStatueChamber1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
     return gGabombaStatueChamber_Room1Placements;
-  if (scene == (s32)&SceneId_GabombaStatueChamber3)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_3)
     return gGabombaStatueChamber_Room3Placements;
   return gGabombaStatueChamber_Placements;
 }
@@ -80,11 +80,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_GabombaStatueChamber1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
     return gGabombaStatueChamber_Room1Triggers;
-  if (scene == (s32)&SceneId_GabombaStatueChamber2)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_2)
     return gGabombaStatueChamber_Room2Triggers;
-  if (scene == (s32)&SceneId_GabombaStatueChamber3)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_3)
     return gGabombaStatueChamber_Room3Triggers;
   return gGabombaStatueChamber_Triggers;
 }
@@ -393,9 +393,9 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   GameFlag_Set(FLAG_GABOMBA_MESSAGE_CARRIED);
   GameFlag_Clear(0x86b);
   GameFlag_Clear(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
-  gMainRoutineWork.retreatScene = (s32)&SceneId_Kibombo1;
+  gMainRoutineWork.retreatScene = SCENE_KIBOMBO_1;
   gMainRoutineWork.retreatEntrance = 1;
-  gMainRoutineWork.restartScene = (s32)&SceneId_Kibombo3;
+  gMainRoutineWork.restartScene = SCENE_KIBOMBO_3;
   gMainRoutineWork.restartEntrance = 6;
   Import_EventSetExitRequest(3);
 }
@@ -979,11 +979,11 @@ s32 Scene_Initialize(void) {
   ((struct GabombaStatueChamberObject *)Actor_GetById(Party_GetLeaderActor()))
       ->priorityFlags |= 0x20;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_GabombaStatueChamber1)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
     GabombaStatueChamber_InitializeRoom1();
-  else if (scene == (s32)&SceneId_GabombaStatueChamber2)
+  else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_2)
     GabombaStatueChamber_InitializeRoom2();
-  else if (scene == (s32)&SceneId_GabombaStatueChamber3)
+  else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_3)
     GabombaStatueChamber_InitializeRoom3();
   return 0;
 }

@@ -32,7 +32,6 @@ void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
 void Sound_Play(s32 cue);
-void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_Release(struct Actor *object);

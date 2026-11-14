@@ -276,7 +276,6 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void MapGrid_PlayMapEdit(const void *data, s32 a, s32 b);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y,
                                                     s32 z);
 
@@ -642,7 +641,6 @@ void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Actor_WalkToById(s32 id, s32 x, s32 z);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
 void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_LaunchFromLeader(s32 id, s32 a, s32 b, s32 c);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,

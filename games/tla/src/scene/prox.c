@@ -388,18 +388,18 @@ extern struct ActorPlacement gProx_Room4PlacementsOnceLit__prox[] __asm__(
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Prox1 && Event_GetFlag(FLAG_THANKED_FOR_BEACON) &&
+  if (scene == SCENE_PROX_1 && Event_GetFlag(FLAG_THANKED_FOR_BEACON) &&
       !Event_GetFlag(FLAG_SAID_FAREWELL))
     return gProx_Room1FarewellPlacements;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_Prox2)
+  if (scene == SCENE_PROX_2)
     return gProx_Room2Placements;
-  if (scene == (s32)&SceneId_Prox3) {
+  if (scene == SCENE_PROX_3) {
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT))
       return gProx_Room3PlacementsOnceLit;
     return gProx_Room3Placements;
   }
-  if (scene == (s32)&SceneId_Prox4) {
+  if (scene == SCENE_PROX_4) {
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
       gProx_Room4PlacementsOnceLit__prox[1].talkFacing = 3;
       gProx_Room4PlacementsOnceLit__prox[4].talkFacing = 3;
@@ -407,12 +407,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     }
     return gProx_Room4Placements;
   }
-  if (scene == (s32)&SceneId_Prox5) {
+  if (scene == SCENE_PROX_5) {
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT))
       return gProx_Room5PlacementsOnceLit;
     return gProx_Room5Placements;
   }
-  if (scene == (s32)&SceneId_Prox6)
+  if (scene == SCENE_PROX_6)
     return gProx_Room6Placements;
   return gProx_Room1Placements;
 }
@@ -434,17 +434,17 @@ extern struct Trigger gProx_Room4Triggers[];
 const u8 *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Prox1)
+  if (scene == SCENE_PROX_1)
     return gProx_Room1Triggers;
-  if (scene == (s32)&SceneId_Prox2)
+  if (scene == SCENE_PROX_2)
     return gProx_Room2Triggers;
-  if (scene == (s32)&SceneId_Prox3)
+  if (scene == SCENE_PROX_3)
     return gProx_Room3Triggers;
-  if (scene == (s32)&SceneId_Prox4)
+  if (scene == SCENE_PROX_4)
     return gProx_Room4Triggers;
-  if (scene == (s32)&SceneId_Prox5)
+  if (scene == SCENE_PROX_5)
     return gProx_Room5Triggers;
-  if (scene == (s32)&SceneId_Prox6)
+  if (scene == SCENE_PROX_6)
     return gProx_Room6Triggers;
   return gProx_Triggers;
 }
@@ -1116,7 +1116,7 @@ void Prox_AddPuff(s32 a0, s32 a1, s32 a2) {
 void Prox_PuffFromRoofs(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Prox2) {
+  if (scene == SCENE_PROX_2) {
     if ((gFrameCount & 63) == 0)
       Prox_AddPuff(536 << 16, 40 << 16, 232 << 16);
     if (((gFrameCount + 60) & 63) == 0)
@@ -1127,7 +1127,7 @@ void Prox_PuffFromRoofs(void) {
     }
     if (((gFrameCount + 40) & 63) == 0)
       Prox_AddPuff(336 << 16, 42 << 16, 362 << 16);
-  } else if (scene == (s32)&SceneId_Prox3) {
+  } else if (scene == SCENE_PROX_3) {
     if ((gFrameCount & 63) == 0)
       Prox_AddPuff(568 << 16, 104 << 16, 296 << 16);
   }
@@ -1559,13 +1559,13 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   }
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_Prox4) {
+  if (scene == SCENE_PROX_4) {
     gFieldWork->transition = 0x209;
     Prox_InitializeRoom4();
-  } else if (scene == (s32)&SceneId_Prox5) {
+  } else if (scene == SCENE_PROX_5) {
     gFieldWork->transition = 0x209;
     Prox_InitializeRoom5();
-  } else if (scene == (s32)&SceneId_Prox6) {
+  } else if (scene == SCENE_PROX_6) {
     s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument pinned to the r0 it is passed in. */
     register s32 skip __asm__("r0");
@@ -1592,11 +1592,11 @@ s32 Scene_Initialize(void) {
       Map_ClearLayerEntryFlag(6);
     }
     scene = gMainRoutineWork.next;
-    if (scene == (s32)&SceneId_Prox2) {
+    if (scene == SCENE_PROX_2) {
       if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
         Actor_SetWideSprite(64, 1);
       Prox_InitializeRoom2();
-    } else if (scene == (s32)&SceneId_Prox3) {
+    } else if (scene == SCENE_PROX_3) {
       Prox_InitializeRoom3();
     }
     if (Event_GetFlag(FLAG_STORM_RAGING)) {

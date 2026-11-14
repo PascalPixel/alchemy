@@ -807,7 +807,7 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/entry/rooms.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/debug/test_scenes.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/debug/test_scenes.o"(.data)
@@ -818,7 +818,7 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/entry/level.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/debug/level.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/debug/level.o"(.data)
@@ -829,7 +829,7 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/entry/psynergy_test.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.data)
@@ -844,7 +844,7 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/entry/psynergy_test_2.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2.o"(.data)
@@ -855,7 +855,7 @@ SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/games/tla/src/debug/entry/shop_test.o"(.text)
+        "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.data)

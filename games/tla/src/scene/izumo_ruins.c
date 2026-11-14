@@ -58,8 +58,6 @@ struct IzumoRuinsEffectWork {
 };
 
 extern u8 gMapGridCellBuffer[];
-extern char SceneId_IzumoRuinsFirstRoom;
-extern char SceneId_IzumoRuinsSecondRoom;
 
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
@@ -251,9 +249,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const u32 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
+  if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
     return gIzumoRuins_FirstRoomRegions;
-  if (scene == (s32)&SceneId_IzumoRuinsSecondRoom)
+  if (scene == SCENE_IZUMO_RUINS_SECOND_ROOM)
     return gIzumoRuins_SecondRoomRegions;
   return 0;
 }
@@ -263,9 +261,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
+  if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
     return gIzumoRuins_FirstRoomActorPlacements;
-  if (scene == (s32)&SceneId_IzumoRuinsSecondRoom)
+  if (scene == SCENE_IZUMO_RUINS_SECOND_ROOM)
     return gIzumoRuins_SecondRoomActorPlacements;
   return gIzumoRuins_ActorPlacements;
 }
@@ -278,7 +276,7 @@ void IzumoRuins_PoundPillar(s32 aArg, s32 b) {
   s16 scene;
 
   scene = party->next;
-  if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
+  if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
     Pound_SinkTarget(gIzumoRuins_FirstRoomPoundPillars, aArg, b);
   else
     Pound_SinkTarget(gIzumoRuins_SecondRoomPoundPillars, aArg, b);
@@ -316,7 +314,7 @@ void IzumoRuins_SinkIntoSand(void) {
 // Outside the first room, sets the high byte of map cell (50, 13) on layer 2
 // to 0xff; then starts the room's effect.
 void IzumoRuins_StartMovingPillar(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_IzumoRuinsFirstRoom) {
+  if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomMovablePillars);
   } else {
     /* FAKEMATCH(signature): the cell read through an s16 return type. */
@@ -332,7 +330,7 @@ void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.next == (s32)&SceneId_IzumoRuinsSecondRoom)
+  if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_SECOND_ROOM)
     MapGrid_SetCellWord(2, 50, 13, MapGrid_GetCellWord(2, 50, 13) & 255);
   Event_End();
 }
@@ -348,7 +346,7 @@ void IzumoRuins_ParchThePool(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_IzumoRuinsFirstRoom)
+  if (scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
     return gIzumoRuins_FirstRoomTriggers;
   return gIzumoRuins_SecondRoomTriggers;
 }
@@ -361,7 +359,7 @@ s32 Scene_Initialize(void) {
   work->transition = 0x204;
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == (s32)&SceneId_IzumoRuinsFirstRoom) {
+  if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_PlaceBlocks(gIzumoRuins_FirstRoomMovablePillars);
     IzumoRuins_PlacePillars((u16 *)gIzumoRuins_FirstRoomPoundPillars);
     FlagBlock_PlaceAll(gIzumoRuins_Puddles);

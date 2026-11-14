@@ -57,7 +57,7 @@ void GondowanCliffs_FightKindle(void) {
 }
 
 const u8 *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCliffsPass)
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
     return gGondowanCliffs_PassEntrances;
   return gGondowanCliffs_Entrances;
 }
@@ -70,7 +70,7 @@ extern struct ActorPlacement gGondowanCliffs_ActorPlacements[];
 extern struct ActorPlacement gGondowanCliffs_PassActorPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCliffsPass)
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
     return gGondowanCliffs_PassActorPlacements;
   return gGondowanCliffs_ActorPlacements;
 }
@@ -303,7 +303,7 @@ void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCliffsPass)
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS)
     return gGondowanCliffs_PassTriggers;
   return gGondowanCliffs_Triggers;
 }
@@ -328,7 +328,7 @@ void GondowanCliffs_SetUpPass(void) {
   if (gMainRoutineWork.entrance == 99) {
     gMainRoutineWork.movementMode = 7;
     gMainRoutineWork.ownerOverride = 1;
-    Event_SetDestination((s32)&SceneId_GondowanCliffsPass, 1);
+    Event_SetDestination(SCENE_GONDOWAN_CLIFFS_PASS, 1);
   }
   Tightrope_Initialize();
   Value3((s32 (*)())Tightrope_Place, 0, 9, 10);
@@ -412,7 +412,7 @@ s32 Scene_Initialize(void) {
   s32 height;
 
   gFieldWork->transition = 513;
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCliffsPass) {
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS) {
     GondowanCliffs_SetUpPass();
     return 0;
   }
@@ -421,7 +421,7 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-  if (gMainRoutineWork.next != (s32)&SceneId_GondowanCliffs)
+  if (gMainRoutineWork.next != SCENE_GONDOWAN_CLIFFS)
     goto done;
   Rope_Initialize();
   Rope_Place(0, 0x200, 10, 11);
@@ -468,7 +468,7 @@ done:
 extern s32 gGondowanCliffs_MapRects[];
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GondowanCliffs)
+  if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS)
     *(const u8 **)Ram_HeapSlots->mapWork->unk0fc = gGondowanCliffs_MapRects;
   return 0;
 }

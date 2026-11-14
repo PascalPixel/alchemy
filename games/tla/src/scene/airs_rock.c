@@ -192,9 +192,9 @@ extern s16 gAirsRock_Regions[];
 s16 *Scene_GetExitRegions(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AirsRock1)
+  if (scene == SCENE_AIRS_ROCK_1)
     return gAirsRock_Room1Regions;
-  if (scene == (s32)&SceneId_AirsRock2)
+  if (scene == SCENE_AIRS_ROCK_2)
     return gAirsRock_Room2Regions;
   return gAirsRock_Regions;
 }
@@ -204,9 +204,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AirsRock1)
+  if (scene == SCENE_AIRS_ROCK_1)
     return gAirsRock_Room1Placements;
-  if (scene == (s32)&SceneId_AirsRock2)
+  if (scene == SCENE_AIRS_ROCK_2)
     return gAirsRock_Room2Placements;
   return gAirsRock_Placements;
 }
@@ -341,9 +341,9 @@ void AirsRock_ClimbLedge(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AirsRock1)
+  if (scene == SCENE_AIRS_ROCK_1)
     return gAirsRock_Room1Triggers;
-  if (scene == (s32)&SceneId_AirsRock2)
+  if (scene == SCENE_AIRS_ROCK_2)
     return gAirsRock_Room2Triggers;
   return gAirsRock_Triggers;
 }
@@ -452,7 +452,7 @@ void AirsRock_BlowGust(void) {
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = 0xcccc;
-      spark->unk4c = spark->z;
+      spark->riseBaseY = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -603,7 +603,7 @@ void AirsRock_SwirlLeaf(struct Actor *object) {
 
   object->y += object->gravity;
   object->x += object->bounce;
-  object->z += object->unk4c;
+  object->z += object->riseBaseY;
   if ((object->x >> 19) <= 39) {
     object->bounce += Q16_ONE * 3 / 2;
     scale = object->scaleX + 0xccc;
@@ -693,7 +693,7 @@ row:
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = px(3) / 2;
-      spark->unk4c = spark->z;
+      spark->riseBaseY = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -1254,7 +1254,7 @@ row:
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = px(3) / 2;
-      spark->unk4c = spark->z;
+      spark->riseBaseY = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -1484,7 +1484,7 @@ void AirsRock_WhirlwindClearsFog(void) {
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = px(3) / 2;
-      spark->unk4c = spark->z;
+      spark->riseBaseY = spark->z;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
       Actor_StartScript(spark, gFieldEffect_MediumScript);
@@ -1619,10 +1619,10 @@ s32 Scene_Initialize(void) {
   volatile struct DmaRegisters *dma;
 
   gFieldWork->transition = 516;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_AirsRock1;
+  gMainRoutineWork.retreatScene = SCENE_AIRS_ROCK_1;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
-  if (gMainRoutineWork.next == (s32)&SceneId_AirsRock1) {
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_1) {
     switch (gMainRoutineWork.entrance) {
     case 2:
     case 3:
@@ -1676,7 +1676,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AirsRock2) {
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_2) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1743,7 +1743,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AirsRock3) {
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_3) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:

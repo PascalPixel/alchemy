@@ -275,9 +275,9 @@ extern struct Trigger gIsletCave_Room3Triggers[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_IsletCave1)
+  if (scene == SCENE_ISLET_CAVE_1)
     return gIsletCave_Room1Placements;
-  if (scene == (s32)&SceneId_IsletCave2)
+  if (scene == SCENE_ISLET_CAVE_2)
     return gIsletCave_Room2Placements;
   return gIsletCave_Placements;
 }
@@ -285,9 +285,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_IsletCave2)
+  if (scene == SCENE_ISLET_CAVE_2)
     return gIsletCave_Room2Triggers;
-  if (scene == (s32)&SceneId_IsletCave3)
+  if (scene == SCENE_ISLET_CAVE_3)
     return gIsletCave_Room3Triggers;
   return gIsletCave_Triggers;
 }
@@ -416,17 +416,17 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 521;
   FieldEffect_StartBlankOverlay(0);
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_IsletCave1) {
+  if (scene == SCENE_ISLET_CAVE_1) {
     IsletCave_PlaceLogs();
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
                       gIsletCave_DimColors, gIsletCave_CycleSlots);
-  } else if (scene == (s32)&SceneId_IsletCave3) {
+  } else if (scene == SCENE_ISLET_CAVE_3) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
       GameFlag_Set(0x9cf);
     }
-  } else if (scene == (s32)&SceneId_IsletCave2) {
+  } else if (scene == SCENE_ISLET_CAVE_2) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
@@ -437,12 +437,12 @@ s32 Scene_Initialize(void) {
   } else {
     goto other;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_IsletCave2)
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_2)
     goto fade;
 other:
-  if (gMainRoutineWork.next == (s32)&SceneId_IsletCave3) {
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_3) {
   fade:
-    if (gMainRoutineWork.next == (s32)&SceneId_IsletCave2)
+    if (gMainRoutineWork.next == SCENE_ISLET_CAVE_2)
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
@@ -777,7 +777,7 @@ void IsletCave_SentinelAwaits(void) {
                              FIELD_AT((u8 *)object, s16, 18));
   }
   Event_Wait(20);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_IsletCave3, 2);
+  FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_3, 2);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the

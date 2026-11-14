@@ -269,7 +269,7 @@ counted:
       object->facing += difference;
     }
     object->timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     if (object->timer != 0)
@@ -370,7 +370,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 
   created = Actor_Create(14, object->x, object->y + 0x40000, object->z);
   sprite = object->sprite;
-  if (!(object->unk66 & 1))
+  if (!(object->userValue & 1))
     Sound_PlayFar(SE_WADE);
   if (created != NULL) {
     struct Child *child = created->sprite;
@@ -643,7 +643,7 @@ counted:
       object->facing += difference;
     }
     object->timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     s32 speed;
 
@@ -683,7 +683,7 @@ counted:
           object->timer = 8;
         else
           object->timer = 12;
-        object->unk66 ^= 1;
+        object->userValue ^= 1;
       }
     } else if (!(oldFlags & 8)) {
       sprite->flags = ((u8)oldFlags | 1) & ~4;
@@ -712,17 +712,17 @@ counted:
         effectSprite->rotation = footprintAngle + TRIG_TURN / 4;
         effectSprite->priority = 3;
       }
-      if (*(s16 *)&object->unk66 == 2) {
+      if (*(s16 *)&object->userValue == 2) {
         Animation_ApplyChildArgument(effectSprite, 2);
-        object->unk66 = collision;
+        object->userValue = collision;
       }
-      if (*(s16 *)&object->unk66 != 0)
+      if (*(s16 *)&object->userValue != 0)
         effect->facing = TRIG_TURN / 2;
       if (movementAnimation == 5)
         object->timer = 12;
       else
         object->timer = 18;
-      object->unk66 ^= 1;
+      object->userValue ^= 1;
     }
   }
   Field_CheckConfiguredKeys();

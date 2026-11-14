@@ -515,7 +515,7 @@ void FieldPsynergy_Sand(void) {
   else
     gMainRoutineWork.movementMode = 5;
   owner->timer = 0;
-  owner->unk66 = 0;
+  owner->userValue = 0;
   event->unkd4a = 3;
   gMainRoutineWork.pendingThird = 1;
   if (event->standing == 0)

@@ -142,34 +142,34 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
     scene = gMainRoutineWork.next;
-    if (scene == (s32)&SceneId_ChampaCliffCaves1)
+    if (scene == SCENE_CHAMPA_CLIFF_CAVES_1)
       return gChampaCliffCaves_Room1PlacementsAfterAvimander;
-    if (scene == (s32)&SceneId_ChampaCliffCaves2)
+    if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
       return gChampaCliffCaves_Room2PlacementsAfterAvimander;
-    if (scene == (s32)&SceneId_ChampaCliffCaves3)
+    if (scene == SCENE_CHAMPA_CLIFF_CAVES_3)
       return gChampaCliffCaves_Room3PlacementsAfterAvimander;
-    if (scene == (s32)&SceneId_ChampaCliffCaves4)
+    if (scene == SCENE_CHAMPA_CLIFF_CAVES_4)
       return gChampaCliffCaves_Room4PlacementsAfterAvimander;
   } else {
     if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
       scene = gMainRoutineWork.next;
-      if (scene == (s32)&SceneId_ChampaCliffCaves1)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_1)
         return gChampaCliffCaves_Room1PlacementsBriggsHome;
-      if (scene == (s32)&SceneId_ChampaCliffCaves2)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
         return gChampaCliffCaves_Room2PlacementsBriggsHome;
-      if (scene == (s32)&SceneId_ChampaCliffCaves3)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_3)
         return gChampaCliffCaves_Room3PlacementsBriggsHome;
-      if (scene == (s32)&SceneId_ChampaCliffCaves4)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_4)
         return gChampaCliffCaves_Room4PlacementsBriggsHome;
     } else {
       scene = gMainRoutineWork.next;
-      if (scene == (s32)&SceneId_ChampaCliffCaves1)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_1)
         return gChampaCliffCaves_Room1Placements;
-      if (scene == (s32)&SceneId_ChampaCliffCaves2)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
         return gChampaCliffCaves_Room2Placements;
-      if (scene == (s32)&SceneId_ChampaCliffCaves3)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_3)
         return gChampaCliffCaves_Room3Placements;
-      if (scene == (s32)&SceneId_ChampaCliffCaves4)
+      if (scene == SCENE_CHAMPA_CLIFF_CAVES_4)
         return gChampaCliffCaves_Room4Placements;
     }
   }
@@ -297,7 +297,7 @@ void ChampaCliffCaves_CloseWall(void) {
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   x = object->x >> 20;
   z = object->z >> 20;
-  if (gMainRoutineWork.next == (s32)&SceneId_ChampaCliffCaves4 && x == 41 &&
+  if (gMainRoutineWork.next == SCENE_CHAMPA_CLIFF_CAVES_4 && x == 41 &&
       (u32)(z - 13) <= 4)
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
                                            px(664), px(280));
@@ -310,13 +310,13 @@ void ChampaCliffCaves_PickUpTrident(s32 a) { Event_PickUpItem(a, 326, 0x978); }
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ChampaCliffCaves1)
+  if (scene == SCENE_CHAMPA_CLIFF_CAVES_1)
     return gChampaCliffCaves_Room1Triggers;
-  if (scene == (s32)&SceneId_ChampaCliffCaves2)
+  if (scene == SCENE_CHAMPA_CLIFF_CAVES_2)
     return gChampaCliffCaves_Room2Triggers;
-  if (scene == (s32)&SceneId_ChampaCliffCaves3)
+  if (scene == SCENE_CHAMPA_CLIFF_CAVES_3)
     return gChampaCliffCaves_Room3Triggers;
-  if (scene == (s32)&SceneId_ChampaCliffCaves4)
+  if (scene == SCENE_CHAMPA_CLIFF_CAVES_4)
     return gChampaCliffCaves_Room4Triggers;
   return gChampaCliffCaves_Room1Triggers;
 }
@@ -329,10 +329,10 @@ s32 Scene_Initialize(void) {
 #else
   gFieldWork->transition = 513;
 #endif
-  if (party->next != (s32)&SceneId_ChampaCliffCaves1)
+  if (party->next != SCENE_CHAMPA_CLIFF_CAVES_1)
     Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (party->next == (s32)&SceneId_ChampaCliffCaves4) {
+  if (party->next == SCENE_CHAMPA_CLIFF_CAVES_4) {
     if (party->entrance == 98)
       ChampaCliffCaves_AskIfBriggsLearned();
     if (party->entrance == 99) {
@@ -347,7 +347,7 @@ s32 Scene_Initialize(void) {
     }
     if (GameFlag_Get(0x977))
       Actor_SetPosition(8, 664, 200);
-  } else if (party->next == (s32)&SceneId_ChampaCliffCaves3) {
+  } else if (party->next == SCENE_CHAMPA_CLIFF_CAVES_3) {
     if (GameFlag_Get(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
       Actor_SetModeById(8, 11);
       Actor_SetSpriteFlags(Actor_GetById(8), 0);
@@ -528,7 +528,6 @@ void ChampaCliffCaves_ObabaAsksForSecondPiece(s32 actor) {
 
 extern struct ThrowAnimations gChampaCliffCaves_ThrowAnimations;
 void Actor_ShowItemIconById(s32 id, s32 animation);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 
 void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   struct Actor *thrown = Actor_GetById(10);
@@ -981,8 +980,8 @@ void ChampaCliffCaves_FightAvimander(void) {
     Sound_Play(SE_BEAST_CRY);
     Actor_SetSpeed(13, 3.2);
     Actor_WalkToAndWait(13, 584, 248);
-    Party_SetFields1f2And1f4((s32)&SceneId_ChampaCliffCaves4, 98);
-    Event_SetAfterBattleDestination((s32)&SceneId_ChampaCliffCaves4, 99);
+    Party_SetFields1f2And1f4(SCENE_CHAMPA_CLIFF_CAVES_4, 98);
+    Event_SetAfterBattleDestination(SCENE_CHAMPA_CLIFF_CAVES_4, 99);
     party = &gMainRoutineWork;
     /* FAKEMATCH(dead): holds the 2's store after the party pointer. */
     do {

@@ -207,9 +207,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AquaRock1)
+  if (scene == SCENE_AQUA_ROCK_1)
     return gAquaRock_Room1Regions;
-  if (scene == (s32)&SceneId_AquaRock2)
+  if (scene == SCENE_AQUA_ROCK_2)
     return gAquaRock_Room2Regions;
   return 0;
 }
@@ -243,7 +243,7 @@ again:
     coordinate = p->z;
     if (coordinate < 0)
       coordinate += 0xffff;
-    dz = (coordinate >> 16) - (s16)object->unk66;
+    dz = (coordinate >> 16) - (s16)object->userValue;
     if (dx * dx + dz * dz > maxDistanceSquared)
       goto again;
     goto found;
@@ -281,9 +281,9 @@ s32 AquaRock_StartDrifter(struct Actor *object) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AquaRock1)
+  if (scene == SCENE_AQUA_ROCK_1)
     return gAquaRock_Room1Placements;
-  if (scene == (s32)&SceneId_AquaRock2)
+  if (scene == SCENE_AQUA_ROCK_2)
     return gAquaRock_Room2Placements;
   return gAquaRock_Placements;
 }
@@ -600,7 +600,7 @@ void AquaRock_RideStreamUp(void) {
     owner = gMainRoutineWork.leaderActorId;
     carried = work->camera;
     leader = Actor_GetById(owner);
-    if (gMainRoutineWork.next == (s32)&SceneId_AquaRock1 &&
+    if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 &&
         leader->terrainHeight == 0)
       return;
     ahead.x = leader->x;
@@ -628,7 +628,7 @@ void AquaRock_RideStreamUp(void) {
     ahead.z = leader->z - px(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
-      if (gMainRoutineWork.next != (s32)&SceneId_AquaRock1)
+      if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1)
         return;
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -815,9 +815,9 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AquaRock1)
+  if (scene == SCENE_AQUA_ROCK_1)
     return gAquaRock_Room1Triggers;
-  if (scene == (s32)&SceneId_AquaRock2)
+  if (scene == SCENE_AQUA_ROCK_2)
     return gAquaRock_Room2Triggers;
   return gAquaRock_Triggers;
 }
@@ -906,7 +906,7 @@ void AquaRock_SwayMoai(struct Actor *object) {
   s16 *amplitude;
 
   object->timer += 0x2000;
-  amplitude = (s16 *)&object->unk66;
+  amplitude = (s16 *)&object->userValue;
   *amplitude += 32;
   if (*amplitude > 0x200)
     *amplitude = 0x200;
@@ -918,7 +918,7 @@ void AquaRock_SwayMoaiBack(struct Actor *object) {
   s16 *amplitude;
 
   object->timer += 0x2000;
-  amplitude = (s16 *)&object->unk66;
+  amplitude = (s16 *)&object->userValue;
   *amplitude -= 16;
   if (*amplitude < 0) {
     *amplitude = 0;
@@ -955,7 +955,7 @@ scatter:
     object->acceleration = 0x400;
     object->update = (void (*)(void))AquaRock_SwayMoai;
     object->timer = Random16();
-    object->unk66 = 0;
+    object->userValue = 0;
   }
   if (++i <= 21)
     goto scatter;
@@ -998,11 +998,11 @@ s32 Scene_Initialize(void) {
   s16 *entrance;
 
   gFieldWork->transition = 516;
-  gMainRoutineWork.retreatScene = (s32)&SceneId_AquaRock1;
+  gMainRoutineWork.retreatScene = SCENE_AQUA_ROCK_1;
   gMainRoutineWork.retreatEntrance = 1;
   map->mode = 1;
   Scene_QueueMusic(SE_170);
-  if (scene == (s32)&SceneId_AquaRock1) {
+  if (scene == SCENE_AQUA_ROCK_1) {
     Actor_SetSpriteColor(Actor_GetById(8), 4);
     Actor_SetSpriteColor(Actor_GetById(9), 4);
     Actor_SetSpriteColor(Actor_GetById(10), 4);
@@ -1023,7 +1023,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(id, 3);
     for (id = 15; id <= 23; id++)
       Actor_SetSpritePriority(id, 1);
-    Actor_GetById(15)->unk5c[0] = 2;
+    Actor_GetById(15)->retainSpriteCache = 2;
     Actor_SetModeById(15, 3);
     for (id = 16; id <= 23; id++) {
       Actor_SetModeById(id, 1);
@@ -1073,7 +1073,7 @@ s32 Scene_Initialize(void) {
     AquaRock_SetUpStreams();
     if (gMainRoutineWork.entrance == 4)
       AquaRock_ArriveFromPassage();
-  } else if (scene == (s32)&SceneId_AquaRock2) {
+  } else if (scene == SCENE_AQUA_ROCK_2) {
     Actor_SetSpriteFlags(Actor_GetById(14), 0);
     if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       MapGrid_CopyCellAttributes(42, 32, 1, 1, 44, 32);
@@ -1170,8 +1170,7 @@ void AquaRock_FlowWithStream(void) {
     anchor = work->camera;
   }
   leader = Actor_GetById(owner);
-  if (gMainRoutineWork.next == (s32)&SceneId_AquaRock1 &&
-      leader->terrainHeight == 0)
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && leader->terrainHeight == 0)
     return;
   position[0] = leader->x;
   position[1] = leader->y;

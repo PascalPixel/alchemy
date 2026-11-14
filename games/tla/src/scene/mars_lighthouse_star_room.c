@@ -305,7 +305,6 @@ void CrackedTile_DropIn(void);
 void Map_CenterOnFollowedPoint(void);
 void FieldEffect_StartBlankOverlay(s32 a);
 extern struct Actor *gMarsLighthouseStarRoom_MarsStar;
-extern char SceneId_MarsLighthouseStarRoom1;
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
@@ -389,15 +388,13 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-extern char SceneId_MarsLighthouseRoomM3;
 void Map_CopyPalette(s32 scene, s32 a1);
 
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
-    Map_CopyPalette(
-        gMainRoutineWork.mapId +
-            ((s32)&SceneId_MarsLighthouseRoomM3 - (s32)&SceneId_Prox2),
-        0x5000000);
+    Map_CopyPalette(gMainRoutineWork.mapId +
+                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
+                    0x5000000);
   if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
     Event_SetFlag(FLAG_FLAME_DRAGONS_BEATEN);
   return 0;
@@ -405,7 +402,6 @@ s32 Scene_PrepareMap(void) {
 
 void Event_Start(void);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-extern char SceneId_GondowanCliffsHideout;
 
 /// Free of the ice, the Flame Dragons rise and roar, and the battle begins.
 void MarsLighthouseStarRoom_WakeFlameDragons(void) {
@@ -445,7 +441,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseStarRoom1,
                                        ENTRANCE_AFTER_BATTLE);
-  gMainRoutineWork.battleBackground = (s32)&SceneId_GondowanCliffsHideout;
+  gMainRoutineWork.battleBackground = SCENE_GONDOWAN_CLIFFS_HIDEOUT;
   Field_RequestBattleFromEncounterTable(102, 0);
 }
 
@@ -669,7 +665,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   sprite->palette = 0;
   sprite->priority = 1;
   object->motionFlags = 3;
-  object->unk5c[0] = 1;
+  object->retainSpriteCache = 1;
   object->update = MarsLighthouseStarRoom_KeepStarAtLeaderPriority;
   size = 0x608;
   sprite->nextFrame = zero;
@@ -830,9 +826,6 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   Event_End();
 }
 
-extern char SceneId_MarsLighthouseRoomM3;
-extern char SceneId_Naribwe;
-
 void Scene_PlayMusic(void);
 void MarsLighthouseStarRoom_SpawnThawSparks(void);
 
@@ -866,7 +859,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     sprite->palette = 0;
     sprite->priority = 2;
     object->motionFlags = 0;
-    object->unk5c[0] = 1;
+    object->retainSpriteCache = 1;
     sprite->unk1b[0] = 0;
     object->priorityFlags |= 2;
     buffer = HeapSlot_Alloc(68, 0x608);
@@ -908,8 +901,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  Map_CopyPalette(gMainRoutineWork.mapId + ((s32)&SceneId_MarsLighthouseRoomM3 -
-                                            (s32)&SceneId_Prox2),
+  Map_CopyPalette(gMainRoutineWork.mapId +
+                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
                   screen);
   zero = 0;
   *screen = zero;
@@ -950,7 +943,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->actionFlags |= 1;
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
-  gMainRoutineWork.battleBackground = (s32)&SceneId_Naribwe;
+  gMainRoutineWork.battleBackground = SCENE_NARIBWE;
   Event_End();
 }
 
@@ -987,7 +980,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       sprite->palette = 0;
       sprite->priority = 2;
       object->motionFlags = 0;
-      object->unk5c[0] = 1;
+      object->retainSpriteCache = 1;
       sprite->unk1b[0] = 0;
       object->priorityFlags |= 2;
       buffer = HeapSlot_Alloc(68, 0x608);
@@ -1050,7 +1043,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     sprite2->palette = 0;
     sprite2->priority = 2;
     object2->motionFlags = 0;
-    object2->unk5c[0] = 1;
+    object2->retainSpriteCache = 1;
     object2->priorityFlags |= 2;
     buffer2 = HeapSlot_Alloc(68, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
@@ -1091,8 +1084,8 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
-  Map_CopyPalette(gMainRoutineWork.mapId + ((s32)&SceneId_MarsLighthouseRoomM3 -
-                                            (s32)&SceneId_Prox2),
+  Map_CopyPalette(gMainRoutineWork.mapId +
+                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
                   screen);
   *screen = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -1130,7 +1123,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
   Event_SetFlag(FLAG_MARS_STAR_SET);
-  gMainRoutineWork.battleBackground = (s32)&SceneId_Naribwe;
+  gMainRoutineWork.battleBackground = SCENE_NARIBWE;
   Event_End();
 L_020093b0:
   return;
@@ -1202,7 +1195,7 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
   if (object != NULL) {
     /* FAKEMATCH(barrier): an empty asm clobbering r0. */
     asm("" : : : "r0");
-    object->unk5c[0] = 2;
+    object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
     object->priorityFlags &= 0xfe;
@@ -1253,11 +1246,11 @@ void Ride_SpawnForward(s32 *position, s32 speed, s32 flag) {
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = speed;
+    object->riseBaseY = speed;
     ((void (*)())Actor_ResetScripted)(object, 2);
     object->update = Flame_UpdateForward;
     if (flag != 0)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1281,11 +1274,11 @@ void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
     if (object != NULL) {                                                      \
       object->bounce = 0;                                                      \
       object->gravity = 0;                                                     \
-      object->unk4c = -speed;                                                  \
+      object->riseBaseY = -speed;                                              \
       Actor_SetupScriptedPart(object, 3);                                      \
       object->update = call1;                                                  \
       if (flag != 0)                                                           \
-        object->unk5c[0] = 2;                                                  \
+        object->retainSpriteCache = 2;                                         \
       Actor_SelectAnimation(object, 2);                                        \
     }                                                                          \
   }
@@ -1299,11 +1292,11 @@ void Ride_SpawnLandingForward(s32 *position, s32 speed, s32 flag) {
   if (object != NULL) {
     object->bounce = 0;
     object->gravity = 0;
-    object->unk4c = speed;
+    object->riseBaseY = speed;
     Actor_SetupScriptedPart(object, 3);
     object->update = Flame_UpdateLanding;
     if (flag != 0)
-      object->unk5c[0] = 2;
+      object->retainSpriteCache = 2;
     Actor_SelectAnimation(object, 2);
   }
 }
@@ -1346,7 +1339,7 @@ void Ride_SpawnSpark(s32 *position, s32 base) {
   if (object != 0) {
     object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
-    object->unk4c = (u16)(Random16() << 1) + base;
+    object->riseBaseY = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
      * extension and the pool word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;
@@ -1526,7 +1519,7 @@ void Ride_Create(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     Iwram_ClearWordsEntry(work, 116);
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
-  object->unk5c[0] = 2;
+  object->retainSpriteCache = 2;
   Actor_SelectAnimation(object, 1);
   animation = object->sprite;
   work->handle = object;

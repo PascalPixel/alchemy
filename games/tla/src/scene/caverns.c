@@ -40,10 +40,6 @@ struct CavernsMapWork {
   struct CavernsMapLayer layers[3];
 };
 
-extern char SceneId_Caverns1;
-extern char SceneId_Caverns2;
-extern char SceneId_Caverns3;
-extern char SceneId_Caverns4;
 extern u8 gMapGridCellBuffer[];
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
@@ -122,7 +118,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const s16 *Scene_GetExitRegions(void) {
   const s16 *result = NULL;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_Caverns2)
+  if (gMainRoutineWork.next == SCENE_CAVERNS_2)
     result = gCaverns_OseniaRegions;
   return result;
 }
@@ -132,9 +128,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Caverns1)
+  if (scene == SCENE_CAVERNS_1)
     return gCaverns_IndraPlacements;
-  if (scene == (s32)&SceneId_Caverns4)
+  if (scene == SCENE_CAVERNS_4)
     return gCaverns_AngaraPlacements;
   return gCaverns_Placements;
 }
@@ -196,7 +192,7 @@ loop:
   MapGrid_SetCellHeight(object->x, object->z, 0, height);
   MapGrid_SetCellHeight(object->x, object->z, 2, height);
   cell = MapCell_GetAttributes(0, object->x >> 20, object->z >> 20);
-  object->unk4c = cell;
+  object->riseBaseY = cell;
   MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, cell | 0x80);
   ids++;
   if (*ids != 0xffff)
@@ -302,16 +298,16 @@ void Caverns_StartMovingAngaraBlock(void) {
   height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) - 2;
   MapGrid_SetCellHeight(object->x, object->z, 0, height);
   MapGrid_SetCellHeight(object->x, object->z, 2, height);
-  MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, object->unk4c);
+  MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, object->riseBaseY);
 }
 
 // A dust puff's step: drifts, slows, grows and turns.
 void Caverns_DriftDust(struct Actor *object) {
   object->x += object->bounce;
   object->y += object->gravity;
-  object->z += object->unk4c;
+  object->z += object->riseBaseY;
   object->bounce -= object->bounce / 12;
-  object->unk4c -= object->unk4c / 10;
+  object->riseBaseY -= object->riseBaseY / 10;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct FieldSprite *)object->sprite)->rotation += object->timer;
@@ -444,27 +440,27 @@ void Caverns_FinishMovingAngaraBlock(void) {
   MapGrid_SetCellHeight(object->x, object->z, 0, height);
   MapGrid_SetCellHeight(object->x, object->z, 2, height);
   value = MapCell_GetAttributes(0, object->x >> 20, object->z >> 20);
-  object->unk4c = value;
+  object->riseBaseY = value;
   MapCell_SetAttributes(0, object->x >> 20, object->z >> 20, value | 128);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Caverns1)
+  if (scene == SCENE_CAVERNS_1)
     return gCaverns_IndraTriggers;
-  if (scene == (s32)&SceneId_Caverns3)
+  if (scene == SCENE_CAVERNS_3)
     return gCaverns_AttekaTriggers;
-  if (scene == (s32)&SceneId_Caverns4)
+  if (scene == SCENE_CAVERNS_4)
     return gCaverns_AngaraTriggers;
   return gCaverns_OseniaTriggers;
 }
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
-  if (gMainRoutineWork.next == (s32)&SceneId_Caverns1)
+  if (gMainRoutineWork.next == SCENE_CAVERNS_1)
     Caverns_InitializeIndra();
-  if (gMainRoutineWork.next == (s32)&SceneId_Caverns4)
+  if (gMainRoutineWork.next == SCENE_CAVERNS_4)
     Caverns_InitializeAngara();
   return 0;
 }
@@ -472,11 +468,11 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Caverns2)
+  if (scene == SCENE_CAVERNS_2)
     Caverns_PrepareOsenia();
-  else if (scene == (s32)&SceneId_Caverns3)
+  else if (scene == SCENE_CAVERNS_3)
     Caverns_PrepareAtteka();
-  else if (scene == (s32)&SceneId_Caverns4)
+  else if (scene == SCENE_CAVERNS_4)
     Caverns_PrepareAngara();
   return 0;
 }

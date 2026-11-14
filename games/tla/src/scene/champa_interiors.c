@@ -66,7 +66,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Shop_Run(s32 a, s32 b);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_ChampaInteriors &&
+  if (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return gChampaInteriors_IsletHouseActorPlacements;
   return gChampaInteriors_ActorPlacements;
@@ -79,7 +79,7 @@ void ChampaInteriors_OpenArtifactShop(s32 actor) { Shop_Run(25, actor); }
 void ChampaInteriors_OpenInn(s32 actor) { Inn_CheckIn(10, actor); }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_ChampaInteriors &&
+  if (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return gChampaInteriors_IsletHouseTriggers;
   if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
@@ -96,7 +96,7 @@ s32 Scene_Initialize(void) {
 #endif
 
   *effect = value;
-  if (gMainRoutineWork.next == (s32)&SceneId_ChampaInteriors &&
+  if (gMainRoutineWork.next == SCENE_CHAMPA_INTERIORS &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     Scene_FadeInAndClearFlag();
   return 0;

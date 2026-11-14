@@ -273,10 +273,6 @@ inner:
   return NULL;
 }
 
-extern char SceneId_YampiDesertCave1;
-extern char SceneId_YampiDesertCave2;
-extern char SceneId_YampiDesertCave3;
-
 struct YampiDesertCaveRect {
   s32 word[6];
 };
@@ -582,9 +578,9 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave2)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2)
     return gYampiDesertCave_Room2Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave3)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3)
     return gYampiDesertCave_Room3Placements;
   return gYampiDesertCave_Placements;
 }
@@ -607,7 +603,7 @@ void YampiDesertCave_TryPushLog(void) {
                                                                                \
       party[0x2c2] = 2;                                                        \
     }                                                                          \
-    Event_SetDestination((s32)&SceneId_YampiDesertCave1, n1);                  \
+    Event_SetDestination(SCENE_YAMPI_DESERT_CAVE_1, n1);                       \
     Event_Wait(40);                                                            \
     YampiDesertCave_StopMarkGlow();                                            \
   }
@@ -637,13 +633,13 @@ DEFINE_BURST_PILLAR(YampiDesertCave_BurstRoom1Pillar, 0x300, 11)
 DEFINE_BURST_PILLAR(YampiDesertCave_BurstRoom3Pillar, 0x301, 15)
 
 void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave2) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2) {
     s32 row = 12;
 
     MapGrid_CopyCellAttributes(98, 3, 3, 3, 97, row);
     MapGrid_CopyCellAttributes(33, 12, 1, 1, 34, row);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
     if (id == 12) {
       MapGrid_CopyCellAttributes(102, 15, 1, 1, 103, 15);
       MapGrid_CopyCellAttributes(43, 14, 1, 1, 39, 16);
@@ -664,7 +660,7 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
 void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave2) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2) {
     s32 row = object->z >> 20;
 
     if (row == 13) {
@@ -678,7 +674,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
     if (id == 12) {
       s32 column;
 
@@ -706,11 +702,11 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
 /// Sand: the leader sinks into the sand and the rooms' sand-only cells open.
 void YampiDesertCave_CastSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 2;
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave1) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_1) {
     MapGrid_CopyCellAttributes(55, 71, 4, 1, 43, 70);
     MapGrid_CopyCellAttributes(43, 71, 4, 1, 55, 71);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
     MapGrid_CopyCellAttributes(110, 45, 5, 2, 90, 50);
     MapGrid_CopyCellAttributes(113, 47, 2, 1, 90, 52);
     MapGrid_CopyCellAttributes(107, 48, 3, 2, 90, 53);
@@ -723,9 +719,9 @@ void YampiDesertCave_CastSand(void) {
 /// Sand fades: the leader rises and the cells close again.
 void YampiDesertCave_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->terrainId = 0;
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave1)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_1)
     MapGrid_CopyCellAttributes(43, 70, 4, 1, 55, 71);
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
     MapGrid_CopyCellAttributes(90, 50, 5, 2, 110, 45);
     MapGrid_CopyCellAttributes(90, 52, 2, 1, 113, 47);
     MapGrid_CopyCellAttributes(90, 53, 3, 2, 107, 48);
@@ -841,16 +837,16 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
     FIELD_AT(&gMainRoutineWork, u16, 0x254) = 0x19cd;
     FIELD_AT(&gMainRoutineWork, u8, 0x24b) = 2;
   } while (0);
-  FIELD_AT(&gMainRoutineWork, u16, 0x1f6) = (s32)&SceneId_AirsRockInside4;
+  FIELD_AT(&gMainRoutineWork, u16, 0x1f6) = SCENE_AIRS_ROCK_INSIDE_4;
   Field_RequestBattleFromEncounterTable(103, 1);
 }
 
 void YampiDesertCave_ScoopTreasure(s32 a) { Event_DigUpTreasure(a, 64, 0x302); }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave2)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2)
     return gYampiDesertCave_Room2Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave3)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3)
     return gYampiDesertCave_Room3Triggers;
   return gYampiDesertCave_Triggers;
 }
@@ -871,7 +867,7 @@ void Actor_SetWideSprite(s32 id, s32 wide);
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave1) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_1) {
     YampiDesertCave_SetMarkColors(
         gYampiDesertCave_MarkPaletteSlots, gYampiDesertCave_MarkColorsLit,
         gYampiDesertCave_MarkColorsDim, gYampiDesertCave_MarkCycle);
@@ -887,18 +883,18 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance == 1) {
       if (Event_GetFlag(0xa29)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert1;
+        gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_1;
         gMainRoutineWork.retreatEntrance = 1;
       } else if (Event_GetFlag(0xa2a)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert8;
+        gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_8;
         gMainRoutineWork.retreatEntrance = 2;
       } else if (Event_GetFlag(0xa2b)) {
-        gMainRoutineWork.retreatScene = (s32)&SceneId_YampiDesert9;
+        gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_9;
         gMainRoutineWork.retreatEntrance = 2;
       }
     }
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave2) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2) {
     if (Event_GetFlag(FLAG_AREA_TEMP_03)) {
       Actor_SetPosition(8, 552, 216);
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, 13);
@@ -909,7 +905,7 @@ s32 Scene_Initialize(void) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetWideSprite(64, 1);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_YampiDesertCave3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 2) {
       REG_BG1CNT &= ~3;
       REG_BG1CNT |= 1;

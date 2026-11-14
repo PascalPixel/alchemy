@@ -496,42 +496,42 @@ s32 Scene_Initialize(void) {
   WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
   case 0:
-    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(2);
-    Event_SetDestination((s32)&SceneId_MtAlephSummit, 2);
+    Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, 2);
     break;
   case 1:
-    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(3);
-    Event_SetDestination((s32)&SceneId_StaffCredit, 2);
+    Event_SetDestination(SCENE_STAFF_CREDIT, 2);
     break;
   case 2:
     StaffCredit_ShowBeacon(0);
-    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(4);
-    Event_SetDestination((s32)&SceneId_StaffCredit, 3);
+    Event_SetDestination(SCENE_STAFF_CREDIT, 3);
     break;
   case 3:
     StaffCredit_ShowBeacon(1);
-    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(5);
-    Event_SetDestination((s32)&SceneId_StaffCredit, 4);
+    Event_SetDestination(SCENE_STAFF_CREDIT, 4);
     break;
   case 4:
     StaffCredit_ShowBeacon(2);
-    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(6);
-    Event_SetDestination((s32)&SceneId_StaffCredit, 5);
+    Event_SetDestination(SCENE_STAFF_CREDIT, 5);
     break;
   case 5:
     StaffCredit_ShowBeacon(3);
-    Resource_ReservedNoOp((s32)&ResourceId_FarCall00A);
+    Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(7);
-    Event_SetDestination((s32)&SceneId_StaffCredit, 6);
+    Event_SetDestination(SCENE_STAFF_CREDIT, 6);
     break;
   case 6:
     StaffCredit_ShowBeacon(4);
-    Event_SetDestination((s32)&SceneId_MtAlephSummit, 3);
+    Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, 3);
     break;
   }
   return 0;

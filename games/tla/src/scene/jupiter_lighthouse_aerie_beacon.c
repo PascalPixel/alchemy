@@ -312,7 +312,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
       effect->motionFlags = 0;
       angle = Random16() & 0xffff000;
       effect->timer = angle;
-      effect->unk66 = 0;
+      effect->userValue = 0;
       {
         u32 counter = Random16() >> 13;
 
@@ -395,7 +395,7 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
     effect->timer = angle;
-    effect->unk66 = 0;
+    effect->userValue = 0;
     effect->update = JupiterLighthouse_CircleBeacon;
     effect->speedLimit = Math_Sin((u32)(Random16() * 0xffff) >> 20) * 24 >> 16;
     sprite->nextFrame = 0;
@@ -485,7 +485,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         sprite->priority = 0;
         created->priorityFlags &= 254;
         created->motionFlags = 0;
-        created->unk5c[0] = 1;
+        created->retainSpriteCache = 1;
         created->speedLimit = 0x6666;
         created->acceleration = 0xccc;
         buffer = HeapSlot_Alloc(68, 0x608);

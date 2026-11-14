@@ -41,12 +41,6 @@ void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 
 extern u32 gGabombaCatacombs_SprayScript[];
 
-extern char SceneId_GabombaCatacombs1;
-extern char SceneId_GabombaCatacombs2;
-extern char SceneId_GabombaCatacombs3;
-extern char SceneId_GabombaCatacombs4;
-extern char SceneId_GabombaCatacombs5;
-
 static __inline__ void GabombaCatacombs_ClearBushes(s32 a, s32 b, s32 c, s32 d,
                                                     s32 e, s32 f, s32 g) {
   Cyclone_CopyTouchedCells(a, b, c, d, e, f, g);
@@ -464,7 +458,7 @@ void GabombaCatacombs_TalkToStatue(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
     return (const struct SceneRegion *)gGabombaCatacombs_Room1Regions;
   return 0;
 }
@@ -474,29 +468,29 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct Trigger gGabombaCatacombs_Triggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs2)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_2)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs3)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs4)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_4)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs5)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room5Placements;
   return (const struct ActorPlacement *)gGabombaCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
     return gGabombaCatacombs_Room1Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs2)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_2)
     return gGabombaCatacombs_Room2Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs3)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
     return gGabombaCatacombs_Room3Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs4)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_4)
     return gGabombaCatacombs_Room4Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs5)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
     return gGabombaCatacombs_Room5Triggers;
   return gGabombaCatacombs_Triggers;
 }
@@ -516,21 +510,21 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs1 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1 &&
       (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Get(0xa27)) {
-      gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatue7;
+      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_7;
       gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Get(0xa28)) {
-      gMainRoutineWork.retreatScene = (s32)&SceneId_GabombaStatueChamber1;
+      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_1;
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs2 &&
+      gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_2 &&
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs3) {
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_00))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
     if (GameFlag_Get(FLAG_SCENE_TEMP_01))
@@ -546,10 +540,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_06))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs5 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5 &&
       GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaCatacombs4 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_4 &&
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(64);

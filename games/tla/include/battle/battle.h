@@ -36,7 +36,7 @@ void FieldPsynergy_FadeToCastColor(void);
 void BattlePlayback_Run(void);
 void FieldEffect_DrawScaledActor(struct FieldParticle *object);
 #ifndef OWN_BattleEffect_GetResourceGroup
-s8 Scene_GetArea(s32 effect_index);
+s32 Scene_GetArea(s32 sceneId);
 #endif
 void FieldPsynergy_FadeFromCastColor(void);
 void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);

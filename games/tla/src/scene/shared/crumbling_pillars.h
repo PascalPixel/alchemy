@@ -160,7 +160,7 @@ void CrumblingPillar_Collapse(const void *data, s32 id) {
 }
 
 void CrumblingPillar_Prepare(s32 id) {
-  Actor_Get(id)->unk5c[0] = 3;
+  Actor_Get(id)->retainSpriteCache = 3;
   Actor_DisableById(id);
 }
 
@@ -192,7 +192,7 @@ void CrumblingPillars_PlaceWithStandIns(u16 *list) {
     struct MapCell *cells = map->layers[actor->terrainId].cells;
     u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
-    actor->unk5c[0] = 3;
+    actor->retainSpriteCache = 3;
     if (Event_GetFlag(next)) {
       Actor_SetPosition(id, 0, 0);
     } else {

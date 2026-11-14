@@ -269,7 +269,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   actor->update = (void (*)(void))WorldMap_UpdateBobbingMarker;
   actor->motionFlags = 0;
   actor->timer = 0;
-  actor->unk66 = 0;
+  actor->userValue = 0;
   actor->scaleX = Q16_ONE / 2;
   actor->scaleY = Q16_ONE / 2;
   return 0;
@@ -735,7 +735,7 @@ s32 Scene_Initialize(void) {
     ship->z = gMainRoutineWork.savedZ;
     ship->facing = gMainRoutineWork.unk280;
     ship->timer = 0;
-    ship->unk66 = 0;
+    ship->userValue = 0;
   }
   if (gMainRoutineWork.ownerOverride != 0)
     FieldEffect_ScheduleRatioTransition(0x10000, 1);
@@ -823,7 +823,7 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_SHIP_FLIES);
     Event_SetFlag(FLAG_DEBUG_STEPS_OFF);
     Event_SetFlag(0x11d);
-    Event_SetDestination((s32)&SceneId_WorldMap, 61);
+    Event_SetDestination(SCENE_WORLD_MAP, 61);
     break;
   case 99:
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
@@ -1008,7 +1008,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     do {
     } while (0);
     {
-      s32 worldMap = (s32)&SceneId_WorldMap;
+      s32 worldMap = SCENE_WORLD_MAP;
 
       FieldEvent_SetAfterBattleDestination(worldMap, 73);
       Party_SetFields1f2And1f4(worldMap, 74);
@@ -1358,7 +1358,7 @@ void WorldMap_MeetEcho(void) {
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     {
       s32 one = 1;
-      *(u16 *)&djinni->unk66 = one;
+      *(u16 *)&djinni->userValue = one;
     }
     Actor_FaceActorById(9, owner, 0);
     wait(16);
@@ -1877,7 +1877,7 @@ void Func_02002e00(void) {
   FieldCamera_MoveTo(11890, CAMERA_KEEP, 10090, 1);
   while (gInput.held == 0)
     wait(1);
-  Event_SetDestination((s32)&SceneId_AlhafraManor, 80);
+  Event_SetDestination(SCENE_ALHAFRA_MANOR, 80);
 }
 
 void WorldMap_TakeTheTiller(void) {

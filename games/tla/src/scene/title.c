@@ -92,7 +92,7 @@ s32 Title_Run(void) {
       if (gInput.pressed != 0)
         break;
     }
-    Event_SetDestination((s32)&SceneId_Title, 2);
+    Event_SetDestination(SCENE_TITLE, 2);
     return 0;
   }
   if (gMainRoutineWork.entrance == 8) {
@@ -103,10 +103,10 @@ s32 Title_Run(void) {
     ScreenFade_Wait();
     Event_Wait(240);
     Event_PlaySound(MUS_SILENCE);
-    Event_SetDestination((s32)&SceneId_Title, 2);
+    Event_SetDestination(SCENE_TITLE, 2);
     return 0;
   }
-  Resource_ReservedNoOp((s32)&ResourceId_FarCall00B);
+  Resource_ReservedNoOp((s32)&ResourceId_TitleFarCalls);
   if (gMainRoutineWork.entrance == 1) {
     for (;;) {
       Event_PlaySound(MUS_SILENCE);
@@ -139,7 +139,7 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Event_SetDestination((s32)&SceneId_Clear, 1);
+    Event_SetDestination(SCENE_CLEAR, 1);
   } else {
     if (gMainRoutineWork.entrance == 2) {
       Event_PlaySound(MUS_TITLE);
@@ -147,7 +147,7 @@ s32 Title_Run(void) {
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderJenna();
-      Event_SetDestination((s32)&SceneId_VenusLighthouse, 99);
+      Event_SetDestination(SCENE_VENUS_LIGHTHOUSE, 99);
     }
     if (gMainRoutineWork.entrance == 3) {
       Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
@@ -155,7 +155,7 @@ s32 Title_Run(void) {
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
-      Event_SetDestination((s32)&SceneId_Idejima, 13);
+      Event_SetDestination(SCENE_IDEJIMA, 13);
     }
   }
   Event_PlaySound(SOUND_FADE_OUT_BGM);

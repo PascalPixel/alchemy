@@ -129,7 +129,7 @@ void Weather_StartRain(struct Actor *object);
 /// Each frame while waiting in the storm: now and then the actor looks
 /// another way.
 void MarsLighthouseAerie_LookAround(struct Actor *object) {
-  u8 *timer = &object->unk5c[6];
+  u8 *timer = &object->riseCounter;
 
   if (*timer != 0) {
     (*timer)--;
@@ -156,7 +156,7 @@ void MarsLighthouseAerie_Throb(struct Actor *object) {
     object->scaleX = scale - 0x800;
     object->scaleY -= 0x400;
   }
-  timer = &object->unk5c[6];
+  timer = &object->riseCounter;
   if (*timer != 0) {
     (*timer)--;
   } else {
@@ -180,7 +180,7 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *object) {
   u8 *counter;
 
   cosine = Trig_Cos(angle);
-  counter = &object->unk5c[6];
+  counter = &object->riseCounter;
   {
     s32 radius = object->speedLimit + *counter;
     struct Actor *a;
@@ -314,8 +314,8 @@ s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 1 &&
       Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
     Weather_StartRain(1);
-  Map_CopyPalette(gMainRoutineWork.mapId + ((s32)&SceneId_MarsLighthouseRoomM3 -
-                                            (s32)&SceneId_Prox2),
+  Map_CopyPalette(gMainRoutineWork.mapId +
+                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
                   0x5000000);
   return 0;
 }
@@ -351,7 +351,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
 
         object->timer = action;
       }
-      object->unk66 = phase;
+      object->userValue = phase;
       object->update = MarsLighthouseAerie_SwingBeaconFlame;
       zero = 0;
       object->watchedObject = anchor;
@@ -386,7 +386,7 @@ void MarsLighthouseAerie_StartLookingAround(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_Stop(id);
-  object->unk5c[6] = (((u32)Random16() * 40) >> 16) + 20;
+  object->riseCounter = (((u32)Random16() * 40) >> 16) + 20;
   object->update = (void (*)(void))MarsLighthouseAerie_LookAround;
 }
 
@@ -1243,7 +1243,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_Jump(19, 4, 10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | 19, 0);
   FIELD_AT(work, u8, 0x24b) = 2;
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseAerie1, 2);
+  FieldEvent_SetAfterBattleDestination(SCENE_MARS_LIGHTHOUSE_AERIE_1, 2);
   Field_RequestBattleFromEncounterTable(102, 1);
   return;
 }
@@ -1997,7 +1997,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
         object->timer = action;
       }
       zero = 0;
-      object->unk66 = 0;
+      object->userValue = 0;
       {
         /* FAKEMATCH(temporary): the byte held in a local. */
         u8 phase = Random16() >> 13;
@@ -3229,7 +3229,7 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
 
 /// The rings round the actor rise out and stop.
 void MarsLighthouseAerie_EndRisingRings(struct Actor *object) {
-  object->unk5c[6] = 1;
+  object->riseCounter = 1;
 }
 
 #include "text/msg_ids.h"

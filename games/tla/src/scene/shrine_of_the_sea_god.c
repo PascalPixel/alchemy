@@ -146,7 +146,7 @@ static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
                                                     s32 angle);
 void Event_SetMessageId(s32 message);
@@ -295,11 +295,11 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
     return (const struct SceneRegion *)gShrineOfTheSeaGod_Room9Regions;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod10)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_10)
     return (const struct SceneRegion *)gShrineOfTheSeaGod_Room10Regions;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod11)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_11)
     return (const struct SceneRegion *)gShrineOfTheSeaGod_Room11Regions;
   return 0;
 }
@@ -329,21 +329,21 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_1)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room1Placements;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room2Placements;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room3Placements;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room4Placements;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_5)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room5Placements;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room6Placements;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_7)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room7Placements;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_8)
     return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room8Placements;
   return (const struct ActorPlacement *)gShrineOfTheSeaGod_Placements;
 }
@@ -351,23 +351,23 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_1)
     return gShrineOfTheSeaGod_Room1Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
     return gShrineOfTheSeaGod_Room2Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
     return gShrineOfTheSeaGod_Room3Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
     return gShrineOfTheSeaGod_Room4Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_5)
     return gShrineOfTheSeaGod_Room5Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
     return gShrineOfTheSeaGod_Room6Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_7)
     return gShrineOfTheSeaGod_Room7Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_8)
     return gShrineOfTheSeaGod_Room8Triggers;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
     return gShrineOfTheSeaGod_Room9Triggers;
   return gShrineOfTheSeaGod_Triggers;
 }
@@ -927,7 +927,7 @@ UNUSED void ShrineOfTheSeaGod_SetLeaderFlag20(void) {
 void ShrineOfTheSeaGod_SetActorsHidden(s32 show, s32 first, u32 count);
 
 void ShrineOfTheSeaGod_SetSlideActorsShown(s32 show) {
-  if (gMainRoutineWork.next == (s32)&SceneId_ShrineOfTheSeaGod6)
+  if (gMainRoutineWork.next == SCENE_SHRINE_OF_THE_SEA_GOD_6)
     ShrineOfTheSeaGod_SetActorsHidden(show, 9, 3);
 }
 
@@ -1816,25 +1816,25 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_ShrineOfTheSeaGod1)
+  if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_1)
     ShrineOfTheSeaGod_InitializeRoom1();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod2)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
     ShrineOfTheSeaGod_InitializeRoom2();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod3)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
     ShrineOfTheSeaGod_InitializeRoom3();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod4)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
     ShrineOfTheSeaGod_InitializeRoom4();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod5)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_5)
     ShrineOfTheSeaGod_InitializeRoom5();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod6)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
     ShrineOfTheSeaGod_InitializeRoom6();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod7)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_7)
     ShrineOfTheSeaGod_InitializeRoom7();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod8)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_8)
     ShrineOfTheSeaGod_InitializeRoom8();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod9)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
     ShrineOfTheSeaGod_InitializeRoom9();
-  else if (scene == (s32)&SceneId_ShrineOfTheSeaGod11)
+  else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_11)
     ShrineOfTheSeaGod_InitializeRoom11();
   return 0;
 }

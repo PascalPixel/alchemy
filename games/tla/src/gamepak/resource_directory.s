@@ -20,9 +20,9 @@ Resource_DirectoryTable:
 	resource , FarCall_MenuTable
 	resource , FarCall_ShopTable
 	resource , FarCall_BattleTable
-	resource FarCall00A, FarCall_CreditsTable
-	resource FarCall00B, FarCall_TitleTable
-	resource FarCall00C, FarCall_BattleEffectTable
+	resource CreditsFarCalls, FarCall_CreditsTable
+	resource TitleFarCalls, FarCall_TitleTable
+	resource BattleEffectFarCalls, FarCall_BattleEffectTable
 	resource , FarCall_LuckyDiceTable
 	resource , FarCall_LuckyWheelsTable
 	resource , FarCall_SuperLuckyDiceTable

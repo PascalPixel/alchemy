@@ -158,10 +158,6 @@ extern u32 gGaiaRockInside_FlameScript[];
 extern s32 gGaiaRockInside_SerpentTurnLeftScript[];
 extern s32 gGaiaRockInside_SerpentTurnRightScript[];
 
-extern char SceneId_GaiaRockInside2;
-extern char SceneId_GaiaRockInside3;
-extern char SceneId_GaiaRockInside4;
-
 extern struct ActorPlacement gGaiaRockInside_Placements[];
 extern struct ActorPlacement gGaiaRockInside_LairPlacements[];
 extern struct ActorPlacement gGaiaRockInside_Room3Placements[];
@@ -187,8 +183,6 @@ void GaiaRockInside_SaveSusa(void);
 void GaiaRockInside_RestoreSusa(void);
 
 void Actor_Release(struct Actor *object);
-
-extern char SceneId_GaiaRockInside1;
 
 s32 Scene_TalkToActor();
 
@@ -246,14 +240,12 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-extern char SceneId_GaiaRockInside5;
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 extern u32 gGaiaRockInside_Regions[];
 
 const u8 *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
     return gGaiaRockInside_Regions;
   return 0;
 }
@@ -428,7 +420,7 @@ s32 GaiaRockInside_SerpentSpits(void) {
   sprite = object->sprite;
   sprite->priority = 1;
   object->bounce = 0;
-  object->unk4c = 0;
+  object->riseBaseY = 0;
   object->update = (void (*)(void))GaiaRockInside_FlickerSpray;
   return 0;
 }
@@ -507,7 +499,7 @@ s32 GaiaRockInside_SerpentBreathesFire(void) {
         Actor_StartScript(dust, gGaiaRockInside_FlameScript);
         ((struct DustSprite__s07f4 *)dust->sprite)->layer = 1;
         dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1;
-        dust->unk4c = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
+        dust->riseBaseY = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
         dust->timer = ((Random16() << 9) >> 16) - 0x100;
         dust->speedLimit = 0;
@@ -582,13 +574,13 @@ extern s32 gGaiaRockInside_PlatformDownScript[];
 
 // Return the table for the current room.
 const void *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside2)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2)
     return gGaiaRockInside_Room2Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside3)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_3)
     return gGaiaRockInside_Room3Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside4)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
     return gGaiaRockInside_Room4Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
     return gGaiaRockInside_Room5Placements;
   if (gMainRoutineWork.entrance > 8)
     return gGaiaRockInside_LairPlacements;
@@ -1439,7 +1431,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
      */
     do {
     } while (0);
-    scene = (s32)&SceneId_GaiaRockInside1;
+    scene = SCENE_GAIA_ROCK_INSIDE_1;
     FieldEvent_SetAfterBattleDestination(scene, 10);
     if (FieldPartyInventory_FindMember(451) != -1) {
       if (count == 0)
@@ -1648,13 +1640,13 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
     MapGrid_CopyCellAttributes(27, 23, 1, 1, 28, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 29, 22);
     i = 0;
-    if (object->unk56 != 0) {
+    if (object->arrivalAxis != 0) {
       do {
         object->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
-      } while (object->unk56 != 0);
+      } while (object->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 28, 85);
     for (i = 9; i >= 0; i--) {
@@ -1737,13 +1729,13 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
     MapGrid_CopyCellAttributes(35, 23, 1, 1, 36, 22);
     Map_CopyCellAttributeRect(32, 16, 2, 1, 37, 22);
     i = 0;
-    if (object->unk56 != 0) {
+    if (object->arrivalAxis != 0) {
       do {
         object->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
-      } while (object->unk56 != 0);
+      } while (object->arrivalAxis != 0);
     }
     MapGrid_CopyCells(2, 93, 1, 5, 36, 85);
     for (i = 9; i >= 0; i--) {
@@ -1826,13 +1818,13 @@ void GaiaRockInside_PlaceDollOnRoom5Altar(void) {
     Map_CopyCellAttributeRect(27, 15, 2, 1, 23, 23);
     Map_CopyCellAttributeRect(25, 25, 1, 1, 25, 23);
     i = 0;
-    if (object->unk56 != 0) {
+    if (object->arrivalAxis != 0) {
       do {
         object->velocityY = Random16();
         wait(1);
         if (++i > 299)
           break;
-      } while (object->unk56 != 0);
+      } while (object->arrivalAxis != 0);
     }
     MapGrid_CopyCells(1, 85, 1, 4, 25, 85);
     for (i = 9; i >= 0; i--) {
@@ -1918,7 +1910,6 @@ void GaiaRockInside_StepOnThirdStatueSpot(void) {
   GaiaRockInside_StatueRisesUnderLeader(13, 0x305);
 }
 
-extern char SceneId_GaiaRockInside5;
 extern struct Trigger gGaiaRockInside_Triggers[];
 extern struct Trigger gGaiaRockInside_LairTriggers[];
 extern struct Trigger gGaiaRockInside_MazeTriggers[];
@@ -1929,13 +1920,13 @@ extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
 // Returns the current room's table.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside2)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2)
     return gGaiaRockInside_Room2Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside3)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_3)
     return gGaiaRockInside_Room3Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside4)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
     return gGaiaRockInside_Room4Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5)
     return gGaiaRockInside_Room5Triggers;
   if (gMainRoutineWork.entrance == 9)
     return gGaiaRockInside_LairTriggers;
@@ -1986,7 +1977,7 @@ void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
   object->speedLimit = px(1);
   object->y = px(16);
   object->timer = object->x >> 16;
-  object->unk66 = object->z >> 16;
+  object->userValue = object->z >> 16;
   Actor_SetAnimation(id, mode);
 }
 
@@ -2232,7 +2223,7 @@ s32 Scene_Initialize(void) {
 
   work = &gMainRoutineWork;
   gFieldWork->transition = 516;
-  if (work->next == (s32)&SceneId_GaiaRockInside1) {
+  if (work->next == SCENE_GAIA_ROCK_INSIDE_1) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -2718,7 +2709,7 @@ s32 Scene_Initialize(void) {
       C2(WorldMap_SetReturnLeavingScene, room->next, *entrance);
       Event_End();
     }
-  } else if (work->next == (s32)&SceneId_GaiaRockInside2) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_2) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -2750,10 +2741,10 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11,
          gGaiaRockInside_RockSpots[(s8)high][0] << 19,
          gGaiaRockInside_RockSpots[(s8)high][1] << 19);
-  } else if (work->next == (s32)&SceneId_GaiaRockInside4) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_4) {
     if (Test(0xa63))
       C1(GaiaRockInside_StartPlatforms, 1);
-  } else if (work->next == (s32)&SceneId_GaiaRockInside3) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_3) {
     struct Actor *object;
     struct Actor *other;
 
@@ -2827,7 +2818,7 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
     if (!Test(0x109) && gMainRoutineWork.entrance == 3)
       GaiaRockInside_RaiseDust();
-  } else if (work->next == (s32)&SceneId_GaiaRockInside5) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_5) {
     C2(HangingVine_Place, 10, 1);
     C2(GaiaRockInside_SetPlatformPose, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
@@ -2888,11 +2879,6 @@ struct GaiaRockAnimation {
   u16 angle;
 };
 
-extern char SceneId_GaiaRockInside1;
-extern char SceneId_GaiaRockInside2;
-extern char SceneId_GaiaRockInside3;
-extern char SceneId_GaiaRockInside4;
-extern char SceneId_GaiaRockInside5;
 extern u32 gGaiaRockInside_SerpentGlowScript[];
 extern u32 gGaiaRockInside_SerpentSmokeScript[];
 extern u32 gGaiaRockInside_KushinadaScript[];
@@ -2933,7 +2919,7 @@ s32 Scene_Initialize(void) {
 
   work = &gMainRoutineWork;
   gFieldWork->transition = 516;
-  if (work->next == (s32)&SceneId_GaiaRockInside1) {
+  if (work->next == SCENE_GAIA_ROCK_INSIDE_1) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -3421,7 +3407,7 @@ s32 Scene_Initialize(void) {
          (s16)room->restartEntrance);
       Event_End();
     }
-  } else if (work->next == (s32)&SceneId_GaiaRockInside2) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_2) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -3453,10 +3439,10 @@ s32 Scene_Initialize(void) {
       C3(Actor_SetHorizontalPositionWithTerrain, 11,
          gGaiaRockInside_RockSpots[(s8)high][0] << 19,
          gGaiaRockInside_RockSpots[(s8)high][1] << 19);
-  } else if (work->next == (s32)&SceneId_GaiaRockInside4) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_4) {
     if (Test(0xa63))
       C1(GaiaRockInside_StartPlatforms, 1);
-  } else if (work->next == (s32)&SceneId_GaiaRockInside3) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_3) {
     struct Actor *object;
     struct Actor *other;
 
@@ -3528,7 +3514,7 @@ s32 Scene_Initialize(void) {
     }
     if (!Test(0x9c4))
       C3(Actor_SetHorizontalPositionWithTerrain, 11, 0, 0);
-  } else if (work->next == (s32)&SceneId_GaiaRockInside5) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_5) {
     C2(HangingVine_Place, 10, 1);
     C2(GaiaRockInside_SetPlatformPose, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
@@ -3603,7 +3589,7 @@ void GaiaRockInside_SwayPlatformDown__platforms(void) __asm__(
   GaiaRockInside_SwayPlatformDown__platforms
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside1) {
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_1) {
     u8 *map = (u8 *)Ram_HeapSlots->mapWork;
 
     if (gMainRoutineWork.entrance <= 4) {
@@ -3676,7 +3662,7 @@ s32 Scene_PrepareMap(void) {
                       24);
       BlendScript_Start((u16 *)(Ram_MapCollision + 0x1e00));
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside2) {
+  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -3697,7 +3683,7 @@ s32 Scene_PrepareMap(void) {
       GaiaRockInside_ClearMazeLayer(101);
       break;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_GaiaRockInside5) {
+  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_5) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 3:

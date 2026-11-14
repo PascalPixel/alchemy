@@ -13,21 +13,21 @@ void Flame_UpdateForward(struct Actor *object) {
 
   object->x += dx;
   object->y += object->gravity;
-  dz = object->unk4c;
+  dz = object->riseBaseY;
   object->z += dz;
   object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
+  object->riseBaseY = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
   if (actor->y == actor->terrainHeight && Actor_IsTouching(object, actor) &&
       gMainRoutineWork.movementMode == 0) {
-    if (object->unk4c != 0) {
+    if (object->riseBaseY != 0) {
       work->direction.x = 0;
       {
         u16 *cell = &work->direction.z;
 
-        if (object->unk4c > 0) {
+        if (object->riseBaseY > 0) {
           direction = 1;
           *cell = direction;
         } else {
@@ -38,9 +38,9 @@ void Flame_UpdateForward(struct Actor *object) {
     }
     object->priorityFlags = 2;
     {
-      s32 speed = object->unk4c;
+      s32 speed = object->riseBaseY;
 
-      object->unk4c = 0;
+      object->riseBaseY = 0;
       object->z -= speed;
       object->gravity += speed >> 2;
     }
@@ -55,8 +55,8 @@ void Flame_UpdateForward(struct Actor *object) {
         s32 speed;
 
         object->priorityFlags = 2;
-        speed = object->unk4c;
-        object->unk4c = 0;
+        speed = object->riseBaseY;
+        object->riseBaseY = 0;
         object->z -= speed;
         object->gravity += speed >> 2;
       } else {

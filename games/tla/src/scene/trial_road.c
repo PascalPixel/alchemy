@@ -74,13 +74,13 @@ s32 TrialRoad_SettleOnGround(struct Actor *object) {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad1)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_1)
     return gTrialRoad_Room1Placements[pattern & 7];
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad3)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_3)
     return gTrialRoad_Room3Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad4)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_4)
     return gTrialRoad_Room4Placements;
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad2)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_2)
     return gTrialRoad_Room2Placements;
   return gTrialRoad_Placements;
 }
@@ -432,7 +432,7 @@ s32 TrialRoad_OfferToGiveUp(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 message;
 
-  if (Event_GetFlag(0x9ff)) {
+  if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId,
@@ -1104,7 +1104,7 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
     s32 height;
 
     object->x = object->timer << 16;
-    object->z = (s16)object->unk66 << 16;
+    object->z = (s16)object->userValue << 16;
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->terrainHeight = height;
     object->y = height;
@@ -1297,7 +1297,7 @@ DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_RevealPoolTiles, 33, 35)
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_HidePoolTiles, 34, 36)
 
 void TrialRoad_OpenSummitGate(s32 sound) {
-  if (Event_GetFlag(0x9ff)) {
+  if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     if (gTrialRoadState->mirrored == 0) {
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
       MapGrid_CopyCellAttributes(78, 18, 1, 1, 77, 18);
@@ -1326,8 +1326,8 @@ void TrialRoad_ChallengeMoapa(void) {
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
   do {
   } while (0);
-  Event_SetAfterBattleDestination((s32)&SceneId_TrialRoad2, 4);
-  Party_SetFields1f2And1f4((s32)&SceneId_TrialRoad2, 5);
+  Event_SetAfterBattleDestination(SCENE_TRIAL_ROAD_2, 4);
+  Party_SetFields1f2And1f4(SCENE_TRIAL_ROAD_2, 5);
   Field_RequestBattleFromEncounterTable(13, 4 - count);
 }
 
@@ -1352,13 +1352,13 @@ extern s32 gTrialRoad_Room1Triggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s32 pattern = gTrialRoadState->pattern;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad1)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_1)
     return gTrialRoad_Room1Triggers[pattern & 7];
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad3)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_3)
     return gTrialRoad_Room3Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad4)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_4)
     return gTrialRoad_Room4Triggers;
-  if (gMainRoutineWork.next == (s32)&SceneId_TrialRoad2)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_2)
     return gTrialRoad_Room2Triggers;
   return gTrialRoad_Triggers;
 }
@@ -1733,7 +1733,7 @@ void TrialRoad_SetUpPeak(void) {
     InventorySnapshot_Restore();
     TrialRoad_LoseToMoapa();
     Import_EventSetExitRequest(5);
-  } else if (Event_GetFlag(0x9ff)) {
+  } else if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_83))
       TrialRoad_OpenSummitGate(0);
     if (Event_GetFlag(FLAG_AREA_TEMP_85))
@@ -1765,7 +1765,7 @@ s32 Scene_Initialize(void) {
 
   if (gFieldWork->exit != 0)
     return 0;
-  if (scene == (s32)&SceneId_TrialRoad1) {
+  if (scene == SCENE_TRIAL_ROAD_1) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
@@ -1774,11 +1774,11 @@ s32 Scene_Initialize(void) {
       TrialRoad_ShowTraps();
     }
   }
-  if (scene == (s32)&SceneId_TrialRoad3)
+  if (scene == SCENE_TRIAL_ROAD_3)
     TrialRoad_SetUpCave();
-  if (scene == (s32)&SceneId_TrialRoad4)
+  if (scene == SCENE_TRIAL_ROAD_4)
     TrialRoad_SetUpPoolRoom();
-  if (scene == (s32)&SceneId_TrialRoad2) {
+  if (scene == SCENE_TRIAL_ROAD_2) {
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
     TrialRoad_SetUpPeak();
   }
@@ -1921,7 +1921,7 @@ s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
 
-  if (scene == (s32)&SceneId_TrialRoad1) {
+  if (scene == SCENE_TRIAL_ROAD_1) {
     struct MapWork *map = Ram_HeapSlots->mapWork;
     struct TrialRoadState *state = gTrialRoadState;
     struct Actor *leader;
@@ -1950,7 +1950,7 @@ s32 Scene_PrepareMap(void) {
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination((s32)&SceneId_TrialRoad1, n);
+      Event_SetDestination(SCENE_TRIAL_ROAD_1, n);
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Get(FLAG_AREA_TEMP_80)) {
         unit = Unit_Get(gMainRoutineWork.leaderActorId);
@@ -1981,7 +1981,7 @@ s32 Scene_PrepareMap(void) {
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
       state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination((s32)&SceneId_TrialRoad1, n);
+      Event_SetDestination(SCENE_TRIAL_ROAD_1, n);
     } else if (entrance == 50) {
       unit = Unit_Get(gMainRoutineWork.leaderActorId);
       Iwram_ClearWordsEntry(state, 32);
@@ -1995,7 +1995,7 @@ s32 Scene_PrepareMap(void) {
       state->leaderBest = 0;
       state->rivalBest = 0;
       state->pattern = state->order[0];
-      Event_SetDestination((s32)&SceneId_TrialRoad1, 55);
+      Event_SetDestination(SCENE_TRIAL_ROAD_1, 55);
     } else {
       s32 *viewX = &map->viewX;
       s32 *viewZ = &map->viewZ;
@@ -2119,9 +2119,9 @@ s32 Scene_PrepareMap(void) {
         }
       }
     }
-  } else if (scene == (s32)&SceneId_TrialRoad3) {
-  } else if (scene == (s32)&SceneId_TrialRoad4) {
-  } else if (scene == (s32)&SceneId_TrialRoad2 && GameFlag_Get(2559) &&
+  } else if (scene == SCENE_TRIAL_ROAD_3) {
+  } else if (scene == SCENE_TRIAL_ROAD_4) {
+  } else if (scene == SCENE_TRIAL_ROAD_2 && GameFlag_Get(2559) &&
              !GameFlag_Get(FLAG_AREA_TEMP_85)) {
     if (gTrialRoadState->mirrored != 0)
       MapGrid_CopyCellsLayered(26, 79, 1, 2, 13, 79);
@@ -2979,7 +2979,7 @@ void TrialRoad_CrumblePillar(const void *data, s32 id) {
 }
 
 void MagmaRockInside_SetPillarMode3(s32 id) {
-  Actor_GetById(id)->unk5c[0] = 3;
+  Actor_GetById(id)->retainSpriteCache = 3;
   Actor_DisableById(id);
 }
 
@@ -4393,8 +4393,10 @@ LAST_DATA struct Trigger gTrialRoad_Room4Triggers[] = {
 
 LAST_DATA struct Trigger gTrialRoad_Room2Triggers[] = {
     {TRIGGER_STEP, 33, 0x283, EVENT(TrialRoad_OpenSummitGate)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(0x9ff), EVENT(TrialRoad_ChallengeMoapa)},
-    {TRIGGER_STEP, 41, IF_FLAG_SET(0x9ff), EVENT(TrialRoad_ChallengeMoapa)},
+    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
+     EVENT(TrialRoad_ChallengeMoapa)},
+    {TRIGGER_STEP, 41, IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
+     EVENT(TrialRoad_ChallengeMoapa)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

@@ -55,10 +55,5 @@ extern s16 gGaroh_TallDoorFrames[];
 void Garoh_LashRope(void);
 
 extern u16 gGaroh_WaveLines[];
-extern char SceneId_Garoh1;
-extern char SceneId_Garoh2;
-extern char SceneId_Garoh3;
-extern char SceneId_Garoh4;
-extern char SceneId_Garoh5;
 
 #endif

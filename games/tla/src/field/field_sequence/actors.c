@@ -24,7 +24,7 @@ s32 Party_GetCharacterSprite(s32 character) {
   if (sprite <= 8) {
     if (sprite == 8) {
       sprite = 9;
-      if (gMainRoutineWork.mapId != (s32)&SceneId_Clear)
+      if (gMainRoutineWork.mapId != SCENE_CLEAR)
         sprite = 11;
       if (GameFlag_Get(FLAG_SHIP_FLIES))
         sprite++;
@@ -227,7 +227,7 @@ void Actor_ResetForLeader(s32 table) {
   object = work->actors[leader];
   object->terrainId = gMainRoutineWork.layer;
   object->timer = 0;
-  object->unk66 = 0;
+  object->userValue = 0;
   if (work->mode == 3) {
     if (gMainRoutineWork.ownerOverride != 0)
       gMainRoutineWork.movementMode = 7;

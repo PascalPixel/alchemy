@@ -39,7 +39,6 @@
 #include "version.h"
 #include "text/msg_ids.h"
 
-void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                        s32 height);
 
@@ -107,7 +106,7 @@ const void *Scene_GetExits(void) {
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors2)
+  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2)
     return gDailaInteriors2Placements;
   if (GameFlag_Get(FLAG_TAVI_RESCUED))
     return gDailaInteriors1PlacementsOnceTaviIsRescued;
@@ -185,7 +184,7 @@ extern struct Trigger gDailaInteriors1Events[];
 const struct Trigger *Scene_GetTriggers(void) {
   s32 flag = GameFlag_Get(FLAG_TAVI_RESCUED);
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 id = (s32)&SceneId_DailaInteriors2;
+  s32 id = SCENE_DAILA_INTERIORS_2;
 
   if (flag) {
     if (party->next == id)
@@ -567,7 +566,7 @@ s32 DailaInteriors_Start(void) {
   s32 value = 0x209;
 
   *effect = value;
-  if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors1) {
+  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_1) {
     if (gMainRoutineWork.entrance == 7) {
       Scene_FadeInAndClearFlag();
     } else {
@@ -583,7 +582,7 @@ s32 DailaInteriors_Start(void) {
       Actor_SetSpritePriority(19, 2);
       Actor_GetById(19)->collisionFlags |= 4;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors2) {
+  } else if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapWork;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -615,7 +614,7 @@ s32 DailaInteriors_Start(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_DailaInteriors2 &&
+  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2 &&
       GameFlag_Get(FLAG_TAVI_RESCUED)) {
     Map_SetLayerEntryFlag(0);
     MapGrid_CopyCells(29, 33, 10, 6, 10, 12);

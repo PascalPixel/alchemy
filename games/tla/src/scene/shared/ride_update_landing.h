@@ -11,19 +11,19 @@ void Flame_UpdateLanding(struct Actor *object) {
 
   object->z += dx;
   object->y += object->gravity;
-  dz = object->unk4c;
+  dz = object->riseBaseY;
   object->x += dz;
   object->bounce = dx - dx / 18;
-  object->unk4c = dz - dz / 16;
+  object->riseBaseY = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
   if (other->y == other->terrainHeight && Actor_IsTouching(object, other) &&
       gMainRoutineWork.movementMode == 0) {
-    if (object->unk4c != 0) {
+    if (object->riseBaseY != 0) {
       work->direction.z = 0;
       direction = &work->direction;
-      if (object->unk4c > 0)
+      if (object->riseBaseY > 0)
         direction->x = 1;
       else
         direction->x = 0xffff;
@@ -31,7 +31,7 @@ void Flame_UpdateLanding(struct Actor *object) {
     object->priorityFlags = 2;
     object->z -= object->bounce;
     object->gravity += object->bounce >> 2;
-    object->unk4c = 0;
+    object->riseBaseY = 0;
     work->active = 1;
     event->stepTrigger = work->value0a;
   }
@@ -44,9 +44,9 @@ void Flame_UpdateLanding(struct Actor *object) {
     if (other->y == other->terrainHeight && Actor_IsBeside(object, other)) {
       if (work->slots[i].blocked == 0) {
         object->priorityFlags = 2;
-        object->z -= object->unk4c;
-        object->gravity += object->unk4c >> 2;
-        object->unk4c = 0;
+        object->z -= object->riseBaseY;
+        object->gravity += object->riseBaseY >> 2;
+        object->riseBaseY = 0;
       } else {
         work->blocked = 1;
       }

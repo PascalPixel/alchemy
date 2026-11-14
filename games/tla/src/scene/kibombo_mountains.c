@@ -112,9 +112,9 @@ extern struct ActorPlacement gKibomboMountains_Room2Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_KibomboMountains1)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_1)
     return gKibomboMountains_Room1Placements;
-  if (scene == (s32)&SceneId_KibomboMountains2)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_2)
     return gKibomboMountains_Room2Placements;
   return gKibomboMountains_Placements;
 }
@@ -339,11 +339,11 @@ extern s16 gKibomboMountains_Room3Triggers[];
 const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_KibomboMountains1)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_1)
     return gKibomboMountains_Room1Triggers;
-  if (scene == (s32)&SceneId_KibomboMountains2)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_2)
     return gKibomboMountains_Room2Triggers;
-  if (scene == (s32)&SceneId_KibomboMountains3)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_3)
     return gKibomboMountains_Room3Triggers;
   return gKibomboMountains_Triggers;
 }
@@ -366,7 +366,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = EVENT_WORK_VALUE;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_KibomboMountains1) {
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_1) {
     Actor_SetSpritePriority(18, 1);
     Actor_SetSpritePriority(19, 1);
     Actor_SetSpriteFlags(Actor_GetById(19), 0);
@@ -404,7 +404,7 @@ s32 Scene_Initialize(void) {
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else
       Actor_GetById(13)->scaleY = Q16_ONE * 5 / 4;
-  } else if (scene == (s32)&SceneId_KibomboMountains2) {
+  } else if (scene == SCENE_KIBOMBO_MOUNTAINS_2) {
     Actor_SetSpritePriority(8, 1);
     Actor_SetSpritePriority(9, 1);
     Rope_Initialize();
@@ -592,7 +592,7 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
 // on this visit.
 void KibomboMountains_SendPartyBack(void) {
   s32 moved = Event_GetFlag(FLAG_TURNED_BACK);
-  s32 scene = (s32)&SceneId_KibomboMountains2;
+  s32 scene = SCENE_KIBOMBO_MOUNTAINS_2;
 
   if (moved)
     Event_SetDestination(scene, 9);

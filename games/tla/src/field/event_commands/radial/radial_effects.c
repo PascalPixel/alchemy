@@ -941,7 +941,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->mapId == (s32)&SceneId_Clear)
+  if (party->mapId == SCENE_CLEAR)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -968,7 +968,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->watchedObject;
-  if (party->mapId == (s32)&SceneId_Clear)
+  if (party->mapId == SCENE_CLEAR)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y;
@@ -1040,7 +1040,7 @@ void FieldEffect_UpdateAvoidCaster(struct ArcEffectObject *caster) {
   elapsedFrames = (s16)caster->step++;
   party = &gMainRoutineWork;
 
-  if (party->mapId == (s32)&SceneId_Clear) {
+  if (party->mapId == SCENE_CLEAR) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles(caster);
   } else if (elapsedFrames % 5 == 0) {

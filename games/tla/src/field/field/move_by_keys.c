@@ -437,7 +437,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     actor->timer = 0;
     actor->terrainHeight = groundHere;
   }
-  if ((s16)actor->unk66 != 0) {
+  if ((s16)actor->userValue != 0) {
     if (groundAhead < y) {
       s32 topZ = cellZ + 0xfff80000;
 
@@ -447,12 +447,12 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       } else {
         Actor_SetMoveTarget(actor, actor->x, groundAhead, topZ);
         actor->timer = 1;
-        actor->unk66 = 0;
+        actor->userValue = 0;
         goto done;
       }
     }
     if (groundHere > y) {
-      actor->unk66 = 0;
+      actor->userValue = 0;
       actor->terrainHeight = groundHere;
       actor->motionFlags = 3;
       goto done;
@@ -635,7 +635,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
       actor->y += px(1);
-      actor->unk66 = 1;
+      actor->userValue = 1;
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->velocityZ = 0;
@@ -653,7 +653,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       actor->motionFlags = 0;
       Actor_SetMoveTarget(actor, actor->x, groundHere + 0xfffe0000, cellZ);
       actor->timer = 1;
-      actor->unk66 = 1;
+      actor->userValue = 1;
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->velocityZ = 0;
@@ -772,7 +772,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
 
   collision = 0;
   count = 0;
-  object->unk66 = collision;
+  object->userValue = collision;
   object->timer = 1;
   object->speedLimit = px(1) / 2;
   object->acceleration = px(1) / 4;
@@ -855,7 +855,7 @@ update_object:
     }
     timer = (u8 *)object + 98;
     *timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +

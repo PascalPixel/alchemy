@@ -442,22 +442,22 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// the near half of the circle and behind it on the far half.
 void JupiterLighthouse_CircleTheBeam(struct Actor *object) {
   s16 angle = object->timer;
-  s16 height = object->unk66;
+  s16 height = object->userValue;
 
   SET_POSITION(object,
                Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (214 << 16),
                (height * 3 << 16) + 0x80000, 170 << 18);
   // Read signed, as the phase is above; the field is declared unsigned.
-  if ((s16)object->unk66 == 0)
+  if ((s16)object->userValue == 0)
     Actor_SelectAnimation(object, 7);
   if (object->y > 170 << 17)
-    object->unk66 = 0xffff;
+    object->userValue = 0xffff;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
   else
     ((struct FieldSprite *)object->sprite)->priority = 2;
   object->timer += object->acceleration;
-  object->unk66++;
+  object->userValue++;
 }
 
 void JupiterLighthouse_SpawnBeamMotes(void) {
@@ -473,7 +473,7 @@ void JupiterLighthouse_SpawnBeamMotes(void) {
     object->acceleration = ((Random16() << 11) >> 16) + 0x800;
     object->update = JupiterLighthouse_CircleTheBeam;
     object->timer = Random16();
-    object->unk66 = phase;
+    object->userValue = phase;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;

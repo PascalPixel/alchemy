@@ -136,7 +136,7 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 4)
       Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
   }
-  gMainRoutineWork.restartScene = (s32)&SceneId_Contigo2;
+  gMainRoutineWork.restartScene = SCENE_CONTIGO_2;
   gMainRoutineWork.restartEntrance = 6;
   return 0;
 }

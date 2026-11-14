@@ -303,25 +303,25 @@ extern struct ActorPlacement gAquaRockInside_Room10Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AquaRockInside1)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_1)
     return gAquaRockInside_Room1Placements;
-  if (scene == (s32)&SceneId_AquaRockInside2)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_2)
     return gAquaRockInside_Room2Placements;
-  if (scene == (s32)&SceneId_AquaRockInside3)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_3)
     return gAquaRockInside_Room3Placements;
-  if (scene == (s32)&SceneId_AquaRockInside4)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_4)
     return gAquaRockInside_Room4Placements;
-  if (scene == (s32)&SceneId_AquaRockInside5)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_5)
     return gAquaRockInside_Room5Placements;
-  if (scene == (s32)&SceneId_AquaRockInside6)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_6)
     return gAquaRockInside_Room6Placements;
-  if (scene == (s32)&SceneId_AquaRockInside7)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_7)
     return gAquaRockInside_Room7Placements;
-  if (scene == (s32)&SceneId_AquaRockInside8)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_8)
     return gAquaRockInside_Room8Placements;
-  if (scene == (s32)&SceneId_AquaRockInside9)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_9)
     return gAquaRockInside_Room9Placements;
-  if (scene == (s32)&SceneId_AquaRockInside10)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_10)
     return gAquaRockInside_Room10Placements;
   return gAquaRockInside_Placements;
 }
@@ -726,7 +726,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   struct Vector3 target;
   s32 result;
 
-  if (gMainRoutineWork.next == (s32)&SceneId_AquaRockInside5) {
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_5) {
     s32 column = Actor_Get(8)->x >> 20;
 
     if (trigger == 77 && column == 17)
@@ -734,7 +734,7 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
     if (trigger == 78 && column == 19)
       clear = 0;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_AquaRockInside6) {
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_6) {
     if (trigger == 77 && Actor_Get(10)->x >> 20 == 9)
       clear = 0;
     if (trigger == 78 && Actor_Get(11)->x >> 20 == 13)
@@ -1137,7 +1137,7 @@ burst:
   i = 0;
   /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
    * weight 1. */
-  probe = second->unk57;
+  probe = second->conditionResult;
   if (probe & 0x100) {
     wait(1);
     goto tail;
@@ -1146,10 +1146,10 @@ spiral:
   spark = FieldActor_Create(672, second->x, second->y, second->z);
   Sound_Play(SE_195);
   spark->timer = (Random16() & 0x7fff) + 0x8000;
-  spark->unk66 = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
+  spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
   noMotion = 0;
   spark->motionFlags = noMotion;
-  spark->unk4c = 0x7a0000;
+  spark->riseBaseY = 0x7a0000;
   spark->watchedObject = second;
   ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
   Actor_SetSpriteColor(spark, 2);
@@ -1157,7 +1157,7 @@ spiral:
   Actor_SelectAnimation(spark, 7);
   Actor_SetSpriteFlags(spark, 0);
   Actor_SetBlendMode(spark, 1);
-  FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
+  FieldVector_AddPolarOffset(spark->riseBaseY, spark->timer, &spark->x);
   Actor_StartScript(spark, gAquaRockInside_RisingSparkScript);
   if (i == 3) {
     Actor_SetSpriteColorById(secondId, 256);
@@ -1178,11 +1178,11 @@ column:
   riser = FieldActor_Create(672, second->x, second->y + i * 0x10000 - 0x80000,
                             second->z);
   riser->timer = Random16();
-  riser->unk66 = 0x800;
+  riser->userValue = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
   ((union ActorView *)riser)->bytes.unk63 = 1;
   riser->bounce = riser->x;
-  riser->unk4c = 0;
+  riser->riseBaseY = 0;
   riser->gravity = riser->z;
   riser->watchedObject = second;
   riser->motionFlags = (u16)0;
@@ -1355,25 +1355,25 @@ extern struct Trigger gAquaRockInside_Room10Triggers[];
 const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_AquaRockInside1)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_1)
     return gAquaRockInside_Room1Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside2)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_2)
     return gAquaRockInside_Room2Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside3)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_3)
     return gAquaRockInside_Room3Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside4)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_4)
     return gAquaRockInside_Room4Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside5)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_5)
     return gAquaRockInside_Room5Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside6)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_6)
     return gAquaRockInside_Room6Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside7)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_7)
     return gAquaRockInside_Room7Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside8)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_8)
     return gAquaRockInside_Room8Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside9)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_9)
     return gAquaRockInside_Room9Triggers;
-  if (scene == (s32)&SceneId_AquaRockInside10)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_10)
     return gAquaRockInside_Room10Triggers;
   return gAquaRockInside_Triggers;
 }
@@ -1482,7 +1482,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   gFieldWork->transition = 0x204;
-  if (scene == (s32)&SceneId_AquaRockInside1) {
+  if (scene == SCENE_AQUA_ROCK_INSIDE_1) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       AquaRockInside_SetMoaiFace(8);
       Actor_SetAnimation(8, 3);
@@ -1495,7 +1495,7 @@ s32 Scene_Initialize(void) {
     } else {
       FieldActor_SetSpriteColor(Actor_GetById(9), 6);
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside2) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_2) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_40)) {
       MapGrid_CopyCellsLayered(118, 15, 5, 32, 110, 15);
       MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
@@ -1512,10 +1512,10 @@ s32 Scene_Initialize(void) {
       object->y = 0;
       object->terrainHeight = 0;
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside3) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_3) {
     if (entrance == 7)
       Leader_RiseFromWater();
-  } else if (scene == (s32)&SceneId_AquaRockInside4) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_4) {
     AquaRockInside_SetMoaiFace(10);
     Actor_SetAnimation(10, 3);
     AquaRockInside_SetMoaiFace(11);
@@ -1538,14 +1538,14 @@ s32 Scene_Initialize(void) {
       object->terrainHeight = -px(32);
       object->y = -px(32);
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside5) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_5) {
     if ((u32)(entrance - 5) <= 1) {
       AquaRockInside_SetUpOutlets(gAquaRockInside_FirstOutletSpots,
                                   gAquaRockInside_FirstOutletLevels,
                                   AquaRockInside_UpdateVents);
       Scene_QueueMusic(SE_170);
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside6) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_6) {
     if (entrance == 5 || entrance == 7) {
       AquaRockInside_SetUpOutlets(gAquaRockInside_SecondOutletSpots,
                                   gAquaRockInside_SecondOutletLevels,
@@ -1564,7 +1564,7 @@ s32 Scene_Initialize(void) {
     object->update = (void (*)(void))AquaRockInside_SplashBeneath;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && entrance == 13)
       AquaRockInside_FallThroughWater();
-  } else if (scene == (s32)&SceneId_AquaRockInside9) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_9) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_4B)) {
       FieldActor_SetSpriteColor(Actor_GetById(9), 5);
       AquaRockInside_SetMoaiFace(9);
@@ -1615,7 +1615,7 @@ s32 Scene_PrepareMap(void) {
 
   ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
   AquaRockInside_StartPillars();
-  if (scene == (s32)&SceneId_AquaRockInside1) {
+  if (scene == SCENE_AQUA_ROCK_INSIDE_1) {
     if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
       AquaRockInside_AddSpouts(33, 0, -2);
     } else if (entrance == 5 || entrance == 7) {
@@ -1666,7 +1666,7 @@ s32 Scene_PrepareMap(void) {
     if (GameFlag_Get(0x95b)) {
       Actor_SetPosition(11, 824, 216);
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside2) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_2) {
     if ((u32)(entrance - 1) <= 1) {
       AquaRockInside_AddSpouts(33, 0, -2);
     }
@@ -1674,7 +1674,7 @@ s32 Scene_PrepareMap(void) {
     actor->motionFlags = 0;
     actor->terrainHeight = 0;
     actor->y = 0;
-  } else if (scene == (s32)&SceneId_AquaRockInside3) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_3) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpriteFlags((s32)Actor_GetById(9), 0);
     Actor_SetSpriteFlags((s32)Actor_GetById(10), 0);
@@ -1698,7 +1698,7 @@ s32 Scene_PrepareMap(void) {
     } else {
       MapGrid_CopyCellAttributes(17, 32, 5, 1, 17, 31);
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside4) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_4) {
     FieldEffect_StartBlankOverlay(0);
     if ((u32)(entrance - 6) <= 1)
       goto statues;
@@ -1745,7 +1745,7 @@ s32 Scene_PrepareMap(void) {
     if (GameFlag_Get(0xa6a)) {
       AquaRockInside_ParchPool();
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside5) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_5) {
     AquaRockInside_AddSpouts(33, 0, -2);
     AquaRockInside_AddSpouts(40, 0, 0);
     FieldEffect_StartBlankOverlay(0);
@@ -1755,7 +1755,7 @@ s32 Scene_PrepareMap(void) {
       for (i10 = 0; i10 <= 4; i10++)
         AquaRockInside_AdvanceStreams(33, 55);
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside6) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_6) {
     FieldEffect_StartBlankOverlay(0);
     if (entrance == 1 || entrance == 13) {
       AquaRockInside_AddSpouts(33, 0, -2);
@@ -1785,14 +1785,14 @@ s32 Scene_PrepareMap(void) {
         }
       }
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside7) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_7) {
     AquaRockInside_AddSpouts(33, 0, -2);
-  } else if (scene == (s32)&SceneId_AquaRockInside8) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_8) {
     FieldEffect_StartBlankOverlay(0);
     AquaRockInside_AddSpouts(33, 0, -2);
     Tightrope_Initialize();
     Tightrope_Place(0, 8, 9);
-  } else if (scene == (s32)&SceneId_AquaRockInside9) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_9) {
     if ((u32)(entrance - 3) <= 1) {
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       Value3((s32 (*)())AquaRockInside_AddPillar, 10, 6, 4);
@@ -1843,7 +1843,7 @@ s32 Scene_PrepareMap(void) {
     if ((u32)(entrance - 1) <= 1) {
       FieldEffect_StartBlankOverlay(0);
     }
-  } else if (scene == (s32)&SceneId_AquaRockInside10) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_10) {
     FieldEffect_StartBlankOverlay(0);
     AquaRockInside_AddSpouts(33, 0, -2);
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
@@ -1895,8 +1895,7 @@ void AquaRockInside_FlowWithStream(void) {
     center = work->camera;
   }
   actor = Actor_Get(id);
-  if (gMainRoutineWork.next == (s32)&SceneId_AquaRock1 &&
-      actor->terrainHeight == 0)
+  if (gMainRoutineWork.next == SCENE_AQUA_ROCK_1 && actor->terrainHeight == 0)
     return;
   position[0] = actor->x;
   position[1] = actor->y;
@@ -2382,7 +2381,7 @@ void Vent_Puff(s32 *position, s32 base) {
   if (object != 0) {
     object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
-    object->unk4c = (u16)(Random16() << 1) + base;
+    object->riseBaseY = (u16)(Random16() << 1) + base;
     /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool
      * word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;

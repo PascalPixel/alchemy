@@ -198,17 +198,17 @@ extern u32 gGabombaStatue_Room5Regions[];
 const u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_GabombaStatue7)
+  if (scene == SCENE_GABOMBA_STATUE_7)
     return gGabombaStatue_Room7Regions;
-  if (scene == (s32)&SceneId_GabombaStatue1)
+  if (scene == SCENE_GABOMBA_STATUE_1)
     return gGabombaStatue_Room1Regions;
-  if (scene == (s32)&SceneId_GabombaStatue2)
+  if (scene == SCENE_GABOMBA_STATUE_2)
     return gGabombaStatue_Room2Regions;
-  if (scene == (s32)&SceneId_GabombaStatue3)
+  if (scene == SCENE_GABOMBA_STATUE_3)
     return gGabombaStatue_Room3Regions;
-  if (scene == (s32)&SceneId_GabombaStatue4)
+  if (scene == SCENE_GABOMBA_STATUE_4)
     return gGabombaStatue_Room4Regions;
-  if (scene == (s32)&SceneId_GabombaStatue5)
+  if (scene == SCENE_GABOMBA_STATUE_5)
     return gGabombaStatue_Room5Regions;
   return NULL;
 }
@@ -333,19 +333,19 @@ const u8 *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Placements;
 
-  if (scene == (s32)&SceneId_GabombaStatue1)
+  if (scene == SCENE_GABOMBA_STATUE_1)
     table = gGabombaStatue_Room1Placements;
-  else if (scene == (s32)&SceneId_GabombaStatue2)
+  else if (scene == SCENE_GABOMBA_STATUE_2)
     table = gGabombaStatue_Room2Placements;
-  else if (scene == (s32)&SceneId_GabombaStatue3)
+  else if (scene == SCENE_GABOMBA_STATUE_3)
     table = gGabombaStatue_Room3Placements;
-  else if (scene == (s32)&SceneId_GabombaStatue4)
+  else if (scene == SCENE_GABOMBA_STATUE_4)
     table = gGabombaStatue_Room4Placements;
-  else if (scene == (s32)&SceneId_GabombaStatue5)
+  else if (scene == SCENE_GABOMBA_STATUE_5)
     table = gGabombaStatue_Room5Placements;
-  else if (scene == (s32)&SceneId_GabombaStatue6)
+  else if (scene == SCENE_GABOMBA_STATUE_6)
     table = gGabombaStatue_Room6Placements;
-  else if (scene == (s32)&SceneId_GabombaStatue7)
+  else if (scene == SCENE_GABOMBA_STATUE_7)
     table = gGabombaStatue_Room7Placements;
   return table;
 }
@@ -684,7 +684,7 @@ void GabombaStatue_RideRollingCog(void) {
     }
     GabombaStatue_HopOffCog(actor, 0, (sign * 3) << 18, 0x20000);
   }
-  if (gMainRoutineWork.next != (s32)&SceneId_GabombaStatue4)
+  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_4)
     return;
   x = actor->x >> 20;
   if (actor->z >> 20 != 15)
@@ -902,19 +902,19 @@ const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Triggers;
 
-  if (scene == (s32)&SceneId_GabombaStatue1)
+  if (scene == SCENE_GABOMBA_STATUE_1)
     table = gGabombaStatue_Room1Triggers;
-  else if (scene == (s32)&SceneId_GabombaStatue2)
+  else if (scene == SCENE_GABOMBA_STATUE_2)
     table = gGabombaStatue_Room2Triggers;
-  else if (scene == (s32)&SceneId_GabombaStatue3)
+  else if (scene == SCENE_GABOMBA_STATUE_3)
     table = gGabombaStatue_Room3Triggers;
-  else if (scene == (s32)&SceneId_GabombaStatue4)
+  else if (scene == SCENE_GABOMBA_STATUE_4)
     table = gGabombaStatue_Room4Triggers;
-  else if (scene == (s32)&SceneId_GabombaStatue5)
+  else if (scene == SCENE_GABOMBA_STATUE_5)
     table = gGabombaStatue_Room5Triggers;
-  else if (scene == (s32)&SceneId_GabombaStatue6)
+  else if (scene == SCENE_GABOMBA_STATUE_6)
     table = gGabombaStatue_Room6Triggers;
-  else if (scene == (s32)&SceneId_GabombaStatue7)
+  else if (scene == SCENE_GABOMBA_STATUE_7)
     table = gGabombaStatue_Room7Triggers;
   return table;
 }
@@ -1138,9 +1138,9 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionCarriesLeaderWest, 440,
                                      184)
 
 void GabombaStatue_SetActorsHidden(s32 show) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaStatue1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_1)
     Actors_SetHidden(show, 8, 1);
-  else if (gMainRoutineWork.next == (s32)&SceneId_GabombaStatue2)
+  else if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_2)
     Actors_SetHidden(show, 29, 2);
 }
 
@@ -1422,7 +1422,7 @@ void GabombaStatue_SetCogTurn(s32 id, s32 direction, s32 value) {
 
   Actor_SelectAnimation(object,
                         gGabombaStatue_CogAnimations[(direction + 1) & 3]);
-  object->unk5c[0] = 2;
+  object->retainSpriteCache = 2;
   Sprite_SetAnimationTimers(animation, value);
 }
 
@@ -1432,7 +1432,7 @@ void GabombaStatue_TurnCogs(s32 direction) {
 
   gGabombaStatue_CogDirection = direction;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_GabombaStatue2) {
+  if (scene == SCENE_GABOMBA_STATUE_2) {
     GabombaStatue_SetCogTurn(14, direction, 0);
     GabombaStatue_SetCogTurn(21, direction, 1);
     GabombaStatue_SetCogTurn(26, direction, 2);
@@ -1442,29 +1442,29 @@ void GabombaStatue_TurnCogs(s32 direction) {
       MapGrid_CopyCellAttributes(23, 21, 1, 3, 23, 9);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(24, 21, 1, 3, 23, 9);
-  } else if (scene == (s32)&SceneId_GabombaStatue3) {
+  } else if (scene == SCENE_GABOMBA_STATUE_3) {
     GabombaStatue_SetCogTurn(8, direction, 0);
     GabombaStatue_SetCogTurn(15, direction, 1);
     GabombaStatue_SetCogTurn(20, direction, 2);
     GabombaStatue_SetCogTurn(25, direction, 3);
     GabombaStatue_SetCogTurn(29, direction, 4);
-  } else if (scene == (s32)&SceneId_GabombaStatue4) {
+  } else if (scene == SCENE_GABOMBA_STATUE_4) {
     GabombaStatue_SetCogTurn(8, direction, 0);
     GabombaStatue_SetCogTurn(21, direction, 1);
     GabombaStatue_SetCogTurn(29, direction, 2);
     GabombaStatue_SetCogTurn(35, direction, 3);
     GabombaStatue_SetCogTurn(38, direction, 4);
-  } else if (scene == (s32)&SceneId_GabombaStatue5) {
+  } else if (scene == SCENE_GABOMBA_STATUE_5) {
     GabombaStatue_SetCogTurn(10, direction, 0);
     GabombaStatue_SetCogTurn(12, direction, 1);
     if (direction == 0)
       MapGrid_CopyCellAttributes(34, 12, 1, 3, 27, 12);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(35, 12, 1, 3, 27, 12);
-  } else if (scene == (s32)&SceneId_GabombaStatue6) {
+  } else if (scene == SCENE_GABOMBA_STATUE_6) {
     Actor_SetAnimation(13, 5);
     Actor_SetSpriteFlags(Actor_Get(13), 0);
-  } else if (scene == (s32)&SceneId_GabombaStatue7) {
+  } else if (scene == SCENE_GABOMBA_STATUE_7) {
     GabombaStatue_SetCogTurn(8, direction, 0);
     GabombaStatue_SetCogTurn(9, direction, 1);
     GabombaStatue_SetCogTurn(10, direction, 2);
@@ -2027,7 +2027,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
 
   gFieldWork->transition = 521;
-  if (gMainRoutineWork.next != (s32)&SceneId_GabombaStatue1) {
+  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_1) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       GabombaStatue_TurnCogs(0);
     else if (Event_GetFlag(FLAG_GABOMBA_COGS_TURNED_BACK))
@@ -2038,25 +2038,25 @@ s32 Scene_Initialize(void) {
   }
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_GabombaStatue1) {
+  if (scene == SCENE_GABOMBA_STATUE_1) {
     GabombaStatue_InitializeRoom1();
-  } else if (scene == (s32)&SceneId_GabombaStatue2) {
+  } else if (scene == SCENE_GABOMBA_STATUE_2) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
     GabombaStatue_InitializeRoom2();
-  } else if (scene == (s32)&SceneId_GabombaStatue3) {
+  } else if (scene == SCENE_GABOMBA_STATUE_3) {
     GabombaStatue_InitializeRoom3();
-  } else if (scene == (s32)&SceneId_GabombaStatue5) {
+  } else if (scene == SCENE_GABOMBA_STATUE_5) {
     GabombaStatue_InitializeRoom5();
-  } else if (scene == (s32)&SceneId_GabombaStatue6) {
+  } else if (scene == SCENE_GABOMBA_STATUE_6) {
     GabombaStatue_InitializeRoom6();
-  } else if (scene == (s32)&SceneId_GabombaStatue7) {
+  } else if (scene == SCENE_GABOMBA_STATUE_7) {
     GabombaStatue_InitializeRoom7();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_GabombaStatue7 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_7 &&
       gMainRoutineWork.entrance == 1 &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(FLAG_GABOMBA_COGS_TURNED_BACK);
@@ -3044,7 +3044,7 @@ s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id) {
     GabombaStatue_ShowTiles(id, 0);
     Task_AddFrame(GabombaStatue_DrawFloatingTiles, TASK_PASS_VBLANK);
   }
-  Actor_Get(id)->unk5c[0] = 2;
+  Actor_Get(id)->retainSpriteCache = 2;
   return count;
 }
 
@@ -3218,7 +3218,7 @@ done:
     ball->x = x;
     ball->z = z;
     ball->facing = angle;
-    ball->unk4c++;
+    ball->riseBaseY++;
   }
 }
 

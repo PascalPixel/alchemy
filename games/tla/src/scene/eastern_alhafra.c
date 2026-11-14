@@ -1634,7 +1634,7 @@ void EasternAlhafra_WorkersTellMayor(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Event_SetDestination((s32)&SceneId_AlhafraManor, 81);
+  Event_SetDestination(SCENE_ALHAFRA_MANOR, 81);
   Event_End();
 }
 
@@ -1910,7 +1910,7 @@ scroll:
   FieldEvent_Wait(30);
   Event_End();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Event_SetDestination((s32)&SceneId_EasternAlhafra1, 99);
+  Event_SetDestination(SCENE_EASTERN_ALHAFRA_1, 99);
 }
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two

@@ -1771,7 +1771,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
       object->facing += difference;
     }
     object->timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     if (object->timer != 0)

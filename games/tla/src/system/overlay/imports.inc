@@ -155,7 +155,6 @@
 	export Text_GetMessageSize, Text_GetMessageSizeFar
 	export Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
 	export PartyInventory_Discard, PartyInventory_DiscardFar
-	export Import_ItemGet, Item_GetDirectFar
 	export Message_CloseFinishedWindows, Message_CloseFinishedWindowsFar
 	export FileList_SelectAction, FileList_SelectActionFar
 	export IconMenu_ChooseSendOption, IconMenu_ChooseSendOptionFar
@@ -188,7 +187,6 @@
 	export Unit_Calculate, Unit_CalculateFar
 	export Item_GetDirect, Item_GetDirectFar
 	export Inventory_GetQuantity, Inventory_GetQuantityFar
-	export ShopTest_GetItem, Item_GetDirectFar
 	export PartyInventory_FindMember, PartyInventory_FindMemberFar
 	export Inventory_AddItem, Inventory_AddItemFar
 	export PartyInventory_Add, PartyInventory_AddFar
@@ -459,6 +457,8 @@
 	export EasternAlhafraShip_CountAnswer, Event_CountAnswerFar
 	export Actor_WatchActor, Actor_WatchActorFar
 	export MapGrid_SetAttributeBAt, MapGrid_SetAttributeBAtFar
+@ A second row for Credits_RunFar: the staff credits overlay's table keeps
+@ its stub at this place, after the field's.
 	export StaffCredit_RunCredits, Credits_RunFar
 	export DjinnMenu_Run, DjinnMenu_RunFar
 	export Actor_TakeLeaderLayer, Actor_TakeLeaderLayerFar

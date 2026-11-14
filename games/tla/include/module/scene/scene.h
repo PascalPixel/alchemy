@@ -1027,63 +1027,22 @@ extern u8 gField_CachedTilesC[];
 
 // The scene's setup: places its actors, then plays what the entrance it was
 // reached by calls for.
-extern char SceneId_LemuriaEntrance;
-
-extern char SceneId_Loho2;
-
-extern char SceneId_MadraCatacombs1;
-extern char SceneId_MadraCatacombs2;
-extern char SceneId_MadraCatacombs3;
-extern char SceneId_MadraCatacombs4;
-extern char SceneId_MadraCatacombs5;
-extern char SceneId_MadraCatacombs6;
 
 void Func_02001e80(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
 
-extern char SceneId_MarsLighthouseRoomM3;
-
-extern char SceneId_MarsLighthouseEntrance1;
-extern char SceneId_MarsLighthouseEntrance2;
-extern char SceneId_MarsLighthouseEntrance3;
-extern char SceneId_MarsLighthouseEntrance4;
-extern char SceneId_MarsLighthouseEntrance5;
-extern char SceneId_MarsLighthouseEntrance6;
-extern char SceneId_MarsLighthouseEntrance7;
-
-extern char SceneId_MarsLighthouseRoomF1;
-extern char SceneId_MarsLighthouseRoomF2;
-extern char SceneId_MarsLighthouseRoomF3;
-extern char SceneId_MarsLighthouseRoomF4;
-
-extern char SceneId_MarsLighthouseRoomM6;
-extern char SceneId_MarsLighthouseRoomM1;
-
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-extern char SceneId_StaffCredit;
-
-extern char SceneId_NorthernReaches;
 extern char ResourceId_FieldEffectIceShard;
 
-extern char ResourceId_FarCall00A;
+extern char ResourceId_CreditsFarCalls;
 
 s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
 
 extern const u8 gWorldMapPackedTilesC[];
 
-extern char SceneId_SuhallaGate2;
-extern char SceneId_SuhallaGate3;
-extern char SceneId_SuhallaGate1;
-
-extern char SceneId_Idejima;
-extern char ResourceId_FarCall00B;
-
-extern char SceneId_Yallam1;
-extern char SceneId_Yallam2;
-
-extern char SceneId_AirsRockInside4;
+extern char ResourceId_TitleFarCalls;
 
 struct SparkSprite__jupiter_lighthouse_room_5;
 struct Vector3;
@@ -1114,7 +1073,5 @@ struct FieldAnimation {
 struct FieldPart {
   s16 kind;
 };
-
-extern char SceneId_Lobby;
 
 #endif

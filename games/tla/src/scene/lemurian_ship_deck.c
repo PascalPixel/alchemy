@@ -50,7 +50,7 @@ extern struct ActorPlacement gLemurianShipDeck_Room1Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_LemurianShipDeck1)
+  if (scene == SCENE_LEMURIAN_SHIP_DECK_1)
     return gLemurianShipDeck_Room1Placements;
   return gLemurianShipDeck_Placements;
 }
@@ -99,7 +99,7 @@ extern struct Trigger gLemurianShipDeck_Room2Triggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_LemurianShipDeck2)
+  if (scene == SCENE_LEMURIAN_SHIP_DECK_2)
     return gLemurianShipDeck_Room2Triggers;
   return gLemurianShipDeck_Triggers;
 }
@@ -545,7 +545,7 @@ s32 Scene_Initialize(void) {
   } while (0);
   party = &gMainRoutineWork;
   map->bits = bits;
-  if (party->next == (s32)&SceneId_LemurianShipDeck1) {
+  if (party->next == SCENE_LEMURIAN_SHIP_DECK_1) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     gFieldWork->transition = 0x100;
@@ -565,7 +565,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShipDeck1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_DECK_1) {
     MapGrid_CopyCellsTo(2, 2, 10, 24, 18, 10);
     MapGrid_CopyCellsTo(0, 62, 26, 62, 3, 8);
     MapGrid_CopyCellsTo(50, 65, 25, 61, 6, 1);
@@ -771,7 +771,7 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   sprite->palette = 0;
   sprite->priority = 1;
   object->motionFlags = 0;
-  object->unk5c[0] = 1;
+  object->retainSpriteCache = 1;
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
   buffer = HeapSlot_Alloc(68, 0x608);

@@ -107,11 +107,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_GarohInteriors1)
+  if (scene == SCENE_GAROH_INTERIORS_1)
     return gGarohInteriors_InnActorPlacements;
-  if (scene == (s32)&SceneId_GarohInteriors2)
+  if (scene == SCENE_GAROH_INTERIORS_2)
     return gGarohInteriors_HouseActorPlacements;
-  if (scene == (s32)&SceneId_GarohInteriors3)
+  if (scene == SCENE_GAROH_INTERIORS_3)
     return gGarohInteriors_SanctumActorPlacements;
   return gGarohInteriors_NoActorPlacements;
 }
@@ -356,14 +356,14 @@ void GarohInteriors_AskAboutReveal(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 shared = GameFlag_Get(FLAG_GAROH_SECRET_SHARED);
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 room1 = (s32)&SceneId_GarohInteriors1;
+  s32 room1 = SCENE_GAROH_INTERIORS_1;
   s32 scene;
 
   if (shared) {
     scene = party->next;
     if (scene == room1)
       return gGarohInteriors_InnMorningTriggers;
-    if (scene == (s32)&SceneId_GarohInteriors2)
+    if (scene == SCENE_GAROH_INTERIORS_2)
       return gGarohInteriors_HouseMorningTriggers;
   } else {
     scene = party->next;
@@ -372,10 +372,10 @@ const struct Trigger *Scene_GetTriggers(void) {
         return gGarohInteriors_InnMorningTriggers;
       return gGarohInteriors_InnNightTriggers;
     }
-    if (scene == (s32)&SceneId_GarohInteriors2)
+    if (scene == SCENE_GAROH_INTERIORS_2)
       return gGarohInteriors_HouseNightTriggers;
   }
-  if (scene == (s32)&SceneId_GarohInteriors3)
+  if (scene == SCENE_GAROH_INTERIORS_3)
     return gGarohInteriors_SanctumTriggers;
   return gGarohInteriors_DoorTriggers;
 }
@@ -386,7 +386,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 521;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == (s32)&SceneId_GarohInteriors1) {
+  if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_1) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
         gMainRoutineWork.entrance == 99) {
       Actor_SetHorizontalPositionWithTerrain(ACTOR_DISAPPOINTED_TRAVELERS_BED,

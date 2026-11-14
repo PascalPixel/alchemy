@@ -923,7 +923,7 @@ void ObjectEvent_Remove(u32 objectId);
 void Camera_ResetViewDefaults(void);
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
-extern char ResourceId_FarCall00C;
+extern char ResourceId_BattleEffectFarCalls;
 
 void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
 void ColorBuffer_ScaleNonzeroThreeQuarters(u8 *source, u8 *destination,
@@ -933,7 +933,8 @@ extern u8 Data_0200024c[];
 
 extern const u16 gLuckyWheels_SparkCellOffsets[];
 
-s32 Resource_FarCall00C(s32 slot, s32 a, s32 b, s32 c, s32 d);
+s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
+                                 s32 flags, s32 mode);
 
 extern char ResourceId_SlotsMachinePicture;
 extern char ResourceId_SlotsIcons;

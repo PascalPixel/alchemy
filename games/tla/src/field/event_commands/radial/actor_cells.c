@@ -53,7 +53,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     tag = MapCollision_FindOrAddTag(object->terrainId, key, level + 4);
     cell = &cells[slot];
     flags = cell->flags;
-    object->unk4c = flags;
+    object->riseBaseY = flags;
     cell->flags = flags | 0x80;
     *shapes = tag;
     // Reused for the block in layer 2's table.
@@ -109,7 +109,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
-      cells->flags = target->unk4c;
+      cells->flags = target->riseBaseY;
       blocks->block = zero;
       *(struct Actor **)(event + 0xcbc) = target;
     }
@@ -155,7 +155,7 @@ void Actor_PlaceMovedBlock(void) {
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
     flags = cells->flags;
-    target->unk4c = flags;
+    target->riseBaseY = flags;
     cells->flags = flags | 0x80;
     blocks += slot;
     blocks->block = 0xff;

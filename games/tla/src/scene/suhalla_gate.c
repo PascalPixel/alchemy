@@ -117,9 +117,9 @@ void SuhallaGate_FightDew(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_SuhallaGate2)
+  if (scene == SCENE_SUHALLA_GATE_2)
     return gSuhallaGate_CliffsEntrances;
-  if (scene == (s32)&SceneId_SuhallaGate3)
+  if (scene == SCENE_SUHALLA_GATE_3)
     return gSuhallaGate_CaveEntrances;
   return gSuhallaGate_RoadEntrances;
 }
@@ -131,9 +131,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_SuhallaGate2)
+  if (scene == SCENE_SUHALLA_GATE_2)
     return gSuhallaGate_CliffsPlacements;
-  if (scene == (s32)&SceneId_SuhallaGate1)
+  if (scene == SCENE_SUHALLA_GATE_1)
     return gSuhallaGate_RoadPlacements;
   return gSuhallaGate_CavePlacements;
 }
@@ -141,9 +141,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_SuhallaGate2)
+  if (scene == SCENE_SUHALLA_GATE_2)
     return gSuhallaGate_CliffsTriggers;
-  if (scene == (s32)&SceneId_SuhallaGate3)
+  if (scene == SCENE_SUHALLA_GATE_3)
     return gSuhallaGate_CaveTriggers;
   return gSuhallaGate_RoadTriggers;
 }
@@ -199,11 +199,11 @@ s32 Scene_Initialize(void) {
   work = Ram_HeapSlots->fieldWork;
   work->transition = 256;
   scene = gMainRoutineWork.next;
-  if (scene == (s32)&SceneId_SuhallaGate1)
+  if (scene == SCENE_SUHALLA_GATE_1)
     SuhallaGate_SetUpRoad();
-  else if (scene == (s32)&SceneId_SuhallaGate2)
+  else if (scene == SCENE_SUHALLA_GATE_2)
     SuhallaGate_SetUpCliffs();
-  else if (scene == (s32)&SceneId_SuhallaGate3)
+  else if (scene == SCENE_SUHALLA_GATE_3)
     SuhallaGate_SetUpCave();
   return 0;
 }
@@ -271,9 +271,8 @@ void SuhallaGate_RuffianSpotsParty(void) {
   // "Who cares! I can handle some girl and her grandpa!"
   Event_ShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
   Actor_WalkToAndWait(ACTOR_ROAD_RUFFIAN, 456, 312);
-  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate1,
-                                  ENTRANCE_AFTER_BATTLE);
-  Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance,
+  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_1, ENTRANCE_AFTER_BATTLE);
+  Party_SetFields1f2And1f4(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                            ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 1);
@@ -319,9 +318,9 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   Actor_SetAnimationAndWait(ACTOR_WEST_RUFFIAN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIDDLE_RUFFIAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_EAST_RUFFIAN, ANIM_NOD);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_SuhallaGate2,
+  FieldEvent_SetAfterBattleDestination(SCENE_SUHALLA_GATE_2,
                                        ENTRANCE_AFTER_BATTLE);
-  Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance,
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
   work->battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 2);
@@ -337,9 +336,8 @@ void SuhallaGate_FightPunchAnt(void) {
     Actor_SetDestination(ACTOR_PUNCH_ANT, ((s16 *)&owner->x)[1],
                          ((s16 *)&owner->z)[1]);
   Event_Wait(20);
-  Event_SetAfterBattleDestination((s32)&SceneId_SuhallaGate3,
-                                  ENTRANCE_AFTER_BATTLE);
-  Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance,
+  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_3, ENTRANCE_AFTER_BATTLE);
+  Party_SetFields1f2And1f4(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                            ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 3);
@@ -599,7 +597,7 @@ struct Trigger gSuhallaGate_CliffsTriggers[] = {
     {TRIGGER_TALK, ACTOR_WEST_RUFFIAN, CONDITION_ALWAYS,
      EVENT(SuhallaGate_FightDew)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_SUHALLA_GATE_MINT,
-     0x100000 | ITEM_MINT},
+     FIND_ITEM(ITEM_MINT)},
     {TRIGGER_TABLE_END},
 };
 

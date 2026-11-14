@@ -196,23 +196,23 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// the ground; drawn in front while the sine is negative and behind otherwise.
 void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 angle = object->timer;
-  s16 height = object->unk66;
+  s16 height = object->userValue;
 
   SET_POSITION(object,
                Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (232 << 16),
                (height * 3 << 16) - (120 << 16), 130 << 18);
-  if ((s16)object->unk66 == 1)
+  if ((s16)object->userValue == 1)
     Actor_SelectAnimation(object, 7);
-  if ((s16)object->unk66 == 38)
+  if ((s16)object->userValue == 38)
     Actor_SelectAnimation(object, 2);
   if (object->y > 0)
-    object->unk66 = 0xffff;
+    object->userValue = 0xffff;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
   else
     ((struct FieldSprite *)object->sprite)->priority = 3;
   object->timer += object->acceleration;
-  object->unk66++;
+  object->userValue++;
 }
 
 void JupiterLighthouse_SpawnCirclingMotes(void) {
@@ -229,7 +229,7 @@ void JupiterLighthouse_SpawnCirclingMotes(void) {
     object->acceleration = ((Random16() << 11) >> 16) + 0x800;
     object->update = (void (*)(void))JupiterLighthouse_CircleTheMote;
     object->timer = Random16();
-    object->unk66 = phase;
+    object->userValue = phase;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 2);
     ((struct FieldSprite *)object->sprite)->priority = 1;

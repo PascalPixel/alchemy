@@ -429,11 +429,11 @@ extern struct ActorPlacement gContigo_Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Contigo1)
+  if (scene == SCENE_CONTIGO_1)
     return gContigo_Room1Placements;
-  if (scene == (s32)&SceneId_Contigo4)
+  if (scene == SCENE_CONTIGO_4)
     return gContigo_Room4Placements;
-  if (scene == (s32)&SceneId_Contigo2) {
+  if (scene == SCENE_CONTIGO_2) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Get(0x9b2) != 0)
         return gContigo_Room2Placements;
@@ -443,7 +443,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     }
     return gContigo_Room2PlacementsBeforeReunion;
   }
-  if (scene == (s32)&SceneId_Contigo3)
+  if (scene == SCENE_CONTIGO_3)
     return gContigo_Room3Placements;
   return gContigo_Placements;
 }
@@ -455,16 +455,16 @@ extern struct Trigger gContigo_Room3Triggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Contigo1)
+  if (scene == SCENE_CONTIGO_1)
     return gContigo_Room1Triggers;
-  if (scene == (s32)&SceneId_Contigo4)
+  if (scene == SCENE_CONTIGO_4)
     return gContigo_Room4Triggers;
-  if (scene == (s32)&SceneId_Contigo2) {
+  if (scene == SCENE_CONTIGO_2) {
     if (gMainRoutineWork.entrance == 4)
       return gContigo_Room2ReunionTriggers;
     return gContigo_Room2Triggers;
   }
-  if (scene == (s32)&SceneId_Contigo3)
+  if (scene == SCENE_CONTIGO_3)
     return gContigo_Room3Triggers;
   return gContigo_Triggers;
 }
@@ -565,7 +565,7 @@ void Contigo_RaiseMotes(void) {
       object->update = Contigo_CircleGlow;
       object->motionFlags = 0;
       object->timer = -(s32)((u32)(Random16() * 16) >> 16) * 2 + 20;
-      object->unk66 = 0;
+      object->userValue = 0;
       object->gravity = 0x1999;
       object->velocityY = px(3);
       object->facing = Random16();
@@ -940,7 +940,7 @@ void Contigo_TeleportOut(void) {
   Teleport_PlaySparks();
 
   gMainRoutineWork.unk2c2 = 2;
-  Event_SetDestination((s32)&SceneId_AnemosInnerSanctum1, 99);
+  Event_SetDestination(SCENE_ANEMOS_INNER_SANCTUM_1, 99);
   Event_Wait(40);
   Contigo_StopPaletteCycle();
 }
@@ -1208,7 +1208,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
   GameFlag_Set(0x9e5);
   wait(1);
   Event_LeaveFor(508, 0);
-  Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 20);
+  Event_SetAfterBattleDestination(SCENE_CONTIGO_3, 20);
 }
 
 struct ContigoTopicState {
@@ -1267,7 +1267,7 @@ void Contigo_SendToLuckyDice(void) {
     GameFlag_Set(0x9e5);
     wait(1);
     Event_LeaveFor(509, 0);
-    Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 19);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_3, 19);
   } else {
     gFieldWork->message++;
     // "No? Oh, well. Who's next?"
@@ -1304,8 +1304,8 @@ void Contigo_SendToSuperLuckyDice(void) {
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(0x9e5);
     wait(1);
-    Event_LeaveFor(507, 0);
-    Event_SetAfterBattleDestination((s32)&SceneId_Contigo3, 18);
+    Event_LeaveFor(SEQUENCE_SUPER_DICE, 0);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_3, 18);
   } else {
     gFieldWork->message++;
     // "Oh really? That's a shame!"
@@ -2139,13 +2139,13 @@ struct SpriteAttributes {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_Contigo1)
+  if (scene == SCENE_CONTIGO_1)
     Contigo_InitializeRoom1();
-  else if (scene == (s32)&SceneId_Contigo4)
+  else if (scene == SCENE_CONTIGO_4)
     Contigo_InitializeRoom4();
-  else if (scene == (s32)&SceneId_Contigo2)
+  else if (scene == SCENE_CONTIGO_2)
     Contigo_InitializeRoom2();
-  else if (scene == (s32)&SceneId_Contigo3)
+  else if (scene == SCENE_CONTIGO_3)
     Contigo_InitializeRoom3();
   return 0;
 }

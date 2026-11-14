@@ -248,8 +248,8 @@ s32 Scene_TalkToActor(s32 id) {
       *busy = 1;
       if (silent == 0)
         FieldMessage_ShowFar(found + (s32)&MsgKey0dc4, 1);
-      if (gMainRoutineWork.next == (s32)&SceneId_VenusLighthouse &&
-          noHint == 0 && !GameFlag_Get(flag)) {
+      if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE && noHint == 0 &&
+          !GameFlag_Get(flag)) {
         MessageArgument_PushFar(contents, 2);
         FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
       }

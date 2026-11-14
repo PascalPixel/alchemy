@@ -435,7 +435,7 @@ L_0200871e:
   DebugText_Clear();
   gOamCopyEnabled = 1;
   Event_ClearFlag(FLAG_CANNOT_SAVE_HERE);
-  Event_SetDestination((s32)&SceneId_Clear, 2);
+  Event_SetDestination(SCENE_CLEAR, 2);
   return 0;
 }
 

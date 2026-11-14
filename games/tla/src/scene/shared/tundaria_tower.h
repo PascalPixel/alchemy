@@ -35,7 +35,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Import_LeaderStopMoving(void);
 void Import_EventResolveAllPendingActions(void);
 void Event_ResolvePendingActions(s32 a);

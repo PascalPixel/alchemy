@@ -165,7 +165,7 @@ void JupiterLighthouse_RestartSpark(struct Actor *object) {
     FieldVector_AddPolarOffset((radius << 5) + 0x80000, angle, position);
     SET_POSITION(object, position[0], position[1], position[2]);
   }
-  object->unk66 = object->timer;
+  object->userValue = object->timer;
   if (object->timer == 212)
     Actor_SelectAnimation(object, 9);
   else
@@ -194,9 +194,9 @@ void JupiterLighthouse_UpdateSpark(struct Actor *object) {
       object->blockMarked--;
     return;
   }
-  if (object->unk66 == 0)
+  if (object->userValue == 0)
     JupiterLighthouse_RestartSpark(object);
-  object->unk66--;
+  object->userValue--;
   /* FAKEMATCH(dead): an empty once-only block, whose loop note ends the
    * scheduling block. */
   do {
@@ -230,7 +230,7 @@ void JupiterLighthouse_SpawnSparks(void) {
     ((struct FieldSprite *)object->sprite)->priority = 1;
     Actor_SetBlendMode(object, 1);
     action = &object->timer;
-    timer = (s16 *)&object->unk66;
+    timer = (s16 *)&object->userValue;
     next = i + 1;
     if (i & 1) {
       s32 parameter = 212;

@@ -124,7 +124,7 @@ update_object:
       object->facing += difference;
     }
     object->timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
@@ -444,7 +444,7 @@ counted:
       object->facing += difference;
     }
     object->timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     s32 speed;
 
@@ -621,7 +621,7 @@ update_object:
       object->facing += difference;
     }
     object->timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
@@ -824,7 +824,7 @@ update_object:
       object->facing += difference;
     }
     object->timer = 0;
-    object->unk66 = 2;
+    object->userValue = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +

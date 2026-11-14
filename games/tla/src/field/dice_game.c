@@ -371,7 +371,7 @@ extern u8 gMapGridCellBuffer[];
 extern char MsgLuckyDiceCoins, MsgLuckyDiceWinnings, MsgDiceGameThrow,
     MsgDiceGameHigher, MsgDiceGameLower, MsgDiceGameHigherAgain,
     MsgDiceGameLowerAgain, MsgDiceGameChoose, MsgDiceGameDoubleUp;
-extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
+extern char ResourceId_BattleEffectFarCalls, ResourceId_SlotsDomePicture,
     ResourceId_Data087, ResourceId_SlotsSmallDoubleUpBanner,
     ResourceId_SlotsFinalGameBanner, ResourceId_SlotsOrangeDigits,
     ResourceId_SlotsTimesSign, ResourceId_SlotsPinkDigits,
@@ -447,7 +447,7 @@ void SuperLuckyDice_Run(void) {
   dice = HeapSlot_AllocEwram(92, 0x7b7c);
   sprites = HeapSlot_AllocEwram(180, 0x614);
   camera = HeapSlot_AllocEwram(48, 76);
-  Resource_ReservedNoOp((s32)&ResourceId_FarCall00C);
+  Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   SuperLuckyDice_ResetViewDefaults();
   Task_ResetAll();
   gOamCopyEnabled = 0;

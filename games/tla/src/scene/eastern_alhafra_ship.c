@@ -495,7 +495,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_WalkBy(8, 0, -16);
   Actor_WalkByById(9, 0, -16);
   Event_Wait(10);
-  Event_SetAfterBattleDestination((s32)&SceneId_EasternAlhafraShip, 99);
+  Event_SetAfterBattleDestination(SCENE_EASTERN_ALHAFRA_SHIP, 99);
 
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(10, 1);

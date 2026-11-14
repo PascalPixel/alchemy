@@ -521,7 +521,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   dx = x - object->x;
   dy = y - object->y;
   dz = z - object->z;
-  arrivalAxis = &object->unk56;
+  arrivalAxis = &object->arrivalAxis;
   *arrivalAxis = 16;
   if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
     *arrivalAxis = 18;

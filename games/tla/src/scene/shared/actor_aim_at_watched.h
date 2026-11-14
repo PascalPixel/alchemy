@@ -6,7 +6,7 @@ s32 Actor_AimAtWatched(struct Actor *object) {
 
   object->bounce = (target->x - object->x) / (steps = 10);
   from = object->y;
-  object->unk4c = (target->y - from + 0x100000) / steps;
+  object->riseBaseY = (target->y - from + 0x100000) / steps;
   object->gravity = (target->z - object->z) / steps;
   BYTE_AT(object, 98) = steps;
   return 0;

@@ -258,7 +258,7 @@ s32 Scene_Initialize(void) {
     Party_RemoveMember(ACTOR_FELIX);
     Party_RemoveMember(ACTOR_SHEBA);
     Party_RemoveMember(ACTOR_PIERS);
-    Event_SetDestination((s32)&SceneId_VenusLighthouseEntrance, 1);
+    Event_SetDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 1);
   }
   if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN)) {
     Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, 5);
@@ -1136,9 +1136,8 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Actor_WalkBy(ACTOR_WAITING_RUFFIAN, 26, 0);
   FieldEvent_Wait(8);
   Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance,
-                                       99);
-  Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 98);
+  FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 99);
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 98);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 0);
   Event_End();

@@ -47,8 +47,8 @@ struct Actor {
   /// ground, in 16.16 fixed-point pixels per frame.
   s32 gravity;
   /// Not read by the motion update; field code keeps its own values here (a
-  /// drifting speed, a 0x31415927 marker).
-  s32 unk4c;
+  /// drifting speed, a 0x31415927 marker), and scene code a resting height.
+  s32 riseBaseY;
   /// Its sprite (a struct FieldSprite) when animationKind is 1, or its list of
   /// sprites when it is 2. Code that reads one kind converts it: typed, or as a
   /// union of the two, this pointer compiles differently where a store comes
@@ -60,21 +60,25 @@ struct Actor {
   u8 motionFlags; ///< bit 1: falls by its gravity and bounces
   /// The axis watched for arrival at the target; zero once it arrives, and
   /// cleared with the target.
-  u8 unk56;
-  u8 unk57;        ///< not named by TLA code
-  u8 snapToTarget; ///< nonzero lands it exactly on its target
+  u8 arrivalAxis;
+  u8 conditionResult; ///< the actor script's last flag test
+  u8 snapToTarget;    ///< nonzero lands it exactly on its target
   /// bits: 4 targeted from half as far again | 3 skipped by the target
   /// searches | 2 counts as 10/13 as far in the nearest search | 0 solid
   u8 collisionFlags;
   u8 actionFlags; ///< bit 0: turns toward its velocity, 1/16 turn a frame
   u8 movementState;
-  u8 unk5c[0x04];
+  /// Keeps its sprite's VRAM cache entry (Actor_SetItemIcon sets it).
+  u8 retainSpriteCache;
+  u8 repeatCount; ///< the actor script's loop count
+  s16 wait;       ///< the actor script's wait, in frames
   /// The field's effects keep a hook here; a scene whose actor bobs keeps its
   /// own frame count in the third byte instead.
   union {
     void *callback;
     struct {
-      u8 unk60[2];
+      u8 refused; ///< frames in a row a solid actor has refused its move
+      u8 frozen;
       u8 riseCounter; ///< frames into the bob, its low six bits a cycle
       /// A block's: nonzero while it blocks the cells ahead of and behind it.
       u8 blockMarked;
@@ -83,7 +87,7 @@ struct Actor {
   /// The parameter its action script reads (a follow distance or an angle to
   /// face).
   s16 timer;
-  s16 unk66;
+  s16 userValue; ///< the side of the player's next footprint, or scene scratch
   /// The object its action script follows or faces.
   struct Actor *watchedObject;
   void (*update)(void); ///< the object's per-frame hook

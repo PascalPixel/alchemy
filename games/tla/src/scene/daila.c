@@ -92,14 +92,14 @@ static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
 }
 
 s32 *Scene_GetExits(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Daila2)
+  if (gMainRoutineWork.next == SCENE_DAILA_2)
     return gDaila2Exits;
   else
     return gDaila1Exits;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Daila2)
+  if (gMainRoutineWork.next == SCENE_DAILA_2)
     return gDaila2ActorPlacements;
   else
     return gDaila1ActorPlacements;
@@ -131,7 +131,7 @@ void Daila_DigUpPsyCrystal(s32 mode) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Daila2)
+  if (gMainRoutineWork.next == SCENE_DAILA_2)
     return gDaila2Triggers;
   else
     return gDaila1Triggers;
@@ -485,19 +485,19 @@ void Actor_SetWideSprite(s32 actor, s32 flag);
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
-  if (gMainRoutineWork.next == (s32)&SceneId_Daila1)
+  if (gMainRoutineWork.next == SCENE_DAILA_1)
     Actor_FallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
-  else if (gMainRoutineWork.next == (s32)&SceneId_Daila2)
+  else if (gMainRoutineWork.next == SCENE_DAILA_2)
     FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
   Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
-  if (gMainRoutineWork.next == (s32)&SceneId_Daila2 &&
+  if (gMainRoutineWork.next == SCENE_DAILA_2 &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
     Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, 0);
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_Daila2) {
+  if (gMainRoutineWork.next == SCENE_DAILA_2) {
     if (GameFlag_Get(FLAG_DAILA_FIRST_PUDDLE_PARCHED))
       MapGrid_CopyCellAttributes(10, 19, 1, 1, 11, 19);
     if (GameFlag_Get(FLAG_DAILA_SECOND_PUDDLE_PARCHED))

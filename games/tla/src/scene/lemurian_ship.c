@@ -58,9 +58,9 @@ extern s16 gLemurianShip_Room2Entrances[];
 u8 *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_LemurianShip1)
+  if (scene == SCENE_LEMURIAN_SHIP_1)
     return gLemurianShip_Room1Entrances;
-  if (scene == (s32)&SceneId_LemurianShip2)
+  if (scene == SCENE_LEMURIAN_SHIP_2)
     return gLemurianShip_Room2Entrances;
   return gLemurianShip_Entrances;
 }
@@ -68,9 +68,9 @@ u8 *Scene_GetEntrances(void) {
 u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_LemurianShip1)
+  if (scene == SCENE_LEMURIAN_SHIP_1)
     return gLemurianShip_Room1Regions;
-  if (scene == (s32)&SceneId_LemurianShip2)
+  if (scene == SCENE_LEMURIAN_SHIP_2)
     return gLemurianShip_Room2Regions;
   return 0;
 }
@@ -124,7 +124,7 @@ extern struct ActorPlacement gLemurianShip_LedgeRoomPlacements[];
 extern struct ActorPlacement gLemurianShip_SevenJellyRoomPlacements[];
 
 struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -144,7 +144,7 @@ struct ActorPlacement *Scene_GetActorPlacements(void) {
     case 30:
       return gLemurianShip_SevenJellyRoomPlacements;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip2) {
+  } else if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -300,7 +300,7 @@ extern struct Trigger gLemurianShip_HoldTriggers[];
 extern struct Trigger gLemurianShip_PillarRoomTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -322,7 +322,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     default:
       return gLemurianShip_CabinTriggers;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip2) {
+  } else if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -609,7 +609,7 @@ void LemurianShip_FightAquaHydra(void) {
   Actor_RunScriptAndWait(8, gLemurianShip_HydraSwells);
 
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  Event_SetAfterBattleDestination((s32)&SceneId_LemurianShip2, 15);
+  Event_SetAfterBattleDestination(SCENE_LEMURIAN_SHIP_2, 15);
   Field_RequestBattleFromEncounterTable(11, 1);
   Event_SetFlag((FLAG_FIGHTING_JELLY + 15));
 }
@@ -1070,7 +1070,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x209;
   if (Event_GetFlag(0x9b4))
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
-  if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip1) {
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
     case 4:
@@ -1099,7 +1099,7 @@ s32 Scene_Initialize(void) {
       LemurianShip_SetUpSevenJellyRoom();
       break;
     }
-  } else if (gMainRoutineWork.next == (s32)&SceneId_LemurianShip2) {
+  } else if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_2) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:

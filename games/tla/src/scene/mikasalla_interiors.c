@@ -51,7 +51,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors2)
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_2)
     return gMikasallaInteriors_SanctumPlacements;
   return gMikasallaInteriors_InnPlacements;
 }
@@ -83,7 +83,7 @@ s32 MikasallaInteriors_MindReadIslanderComplaints(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors2)
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_2)
     return gMikasallaInteriors_SanctumTriggers;
   return gMikasallaInteriors_InnTriggers;
 }
@@ -215,7 +215,7 @@ void MikasallaInteriors_TalkAboutFarShores(s32 actor) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x209;
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
-  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors1) {
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_1) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
@@ -227,7 +227,7 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_Get(18), 4);
     return 0;
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_MikasallaInteriors2) {
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_2) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 1) {

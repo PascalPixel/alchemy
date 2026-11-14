@@ -127,13 +127,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const u8 *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_TreasureIsle2)
+  if (scene == SCENE_TREASURE_ISLE_2)
     return gTreasureIsle_Room2Placements;
-  if (scene == (s32)&SceneId_TreasureIsle3)
+  if (scene == SCENE_TREASURE_ISLE_3)
     return gTreasureIsle_Room3Placements;
-  if (scene == (s32)&SceneId_TreasureIsle4)
+  if (scene == SCENE_TREASURE_ISLE_4)
     return gTreasureIsle_Room4Placements;
-  if (scene == (s32)&SceneId_TreasureIsle5)
+  if (scene == SCENE_TREASURE_ISLE_5)
     return gTreasureIsle_Room5Placements;
   return gTreasureIsle_Placements;
 }
@@ -293,7 +293,7 @@ void TreasureIsle_RaiseLastSpikyRock(void) {
 void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle1) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_1) {
     if (id == 8 && object->x >> 20 == 16)
       Event_SetFlag(FLAG_AREA_TEMP_00);
     if (id == 9 && object->x >> 20 == 20)
@@ -301,17 +301,17 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
     if (id == 10 && object->x >> 20 == 27)
       Event_SetFlag(FLAG_AREA_TEMP_02);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle2) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_2) {
     if (id == 10 && object->x >> 19 == 33)
       Event_SetFlag(FLAG_AREA_TEMP_08);
     if (id == 11 && object->x >> 19 == 85 && object->z >> 19 == 83)
       TreasureIsle_RaiseLastSpikyRock();
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle3) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_3) {
     if (id == 10 && object->x >> 19 == 83)
       Event_SetFlag(FLAG_AREA_TEMP_09);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle4) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_4) {
     if (id == 8 && object->x >> 19 == 87)
       Event_SetFlag(FLAG_AREA_TEMP_0D);
   }
@@ -414,13 +414,13 @@ extern struct Trigger gTreasureIsle_Room1Triggers[];
 const u8 *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_TreasureIsle2)
+  if (scene == SCENE_TREASURE_ISLE_2)
     return gTreasureIsle_Room2Triggers;
-  if (scene == (s32)&SceneId_TreasureIsle3)
+  if (scene == SCENE_TREASURE_ISLE_3)
     return gTreasureIsle_Room3Triggers;
-  if (scene == (s32)&SceneId_TreasureIsle4)
+  if (scene == SCENE_TREASURE_ISLE_4)
     return gTreasureIsle_Room4Triggers;
-  if (scene == (s32)&SceneId_TreasureIsle5)
+  if (scene == SCENE_TREASURE_ISLE_5)
     return gTreasureIsle_Room5Triggers;
   return (const u8 *)gTreasureIsle_Room1Triggers;
 }
@@ -481,7 +481,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x204;
   Tightrope_Initialize();
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle1) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_1) {
     Event_SetFlag(FLAG_AREA_TEMP_00);
     Event_SetFlag(FLAG_AREA_TEMP_01);
     Event_SetFlag(FLAG_AREA_TEMP_02);
@@ -492,7 +492,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetPosition(10, 440, 344);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle2) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_2) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, 8, 9);
     if (Event_GetFlag(FLAG_AREA_TEMP_08))
@@ -508,7 +508,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_07))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle3) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_3) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, 8, 9);
     if (Event_GetFlag(FLAG_AREA_TEMP_09))
@@ -520,7 +520,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_0C))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
   }
-  if (gMainRoutineWork.next == (s32)&SceneId_TreasureIsle4) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_4) {
     if (Event_GetFlag(FLAG_AREA_TEMP_0D))
       Actor_SetPosition(8, 696, 600);
     Tightrope_Place(0, 17, 18);

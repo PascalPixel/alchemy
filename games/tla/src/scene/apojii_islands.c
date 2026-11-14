@@ -179,11 +179,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ApojiiIslands1)
+  if (scene == SCENE_APOJII_ISLANDS_1)
     return gApojiiIslands_Room1Placements;
-  if (scene == (s32)&SceneId_ApojiiIslands3)
+  if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Placements;
-  if (scene == (s32)&SceneId_ApojiiIslands2)
+  if (scene == SCENE_APOJII_ISLANDS_2)
     return gApojiiIslands_Room2Placements;
   return gApojiiIslands_Placements;
 }
@@ -522,11 +522,11 @@ void ApojiiIslands_JumpDownLedge(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == (s32)&SceneId_ApojiiIslands1)
+  if (scene == SCENE_APOJII_ISLANDS_1)
     return gApojiiIslands_Room1Triggers;
-  if (scene == (s32)&SceneId_ApojiiIslands3)
+  if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Triggers;
-  if (scene == (s32)&SceneId_ApojiiIslands2)
+  if (scene == SCENE_APOJII_ISLANDS_2)
     return gApojiiIslands_Room2Triggers;
   return gApojiiIslands_Triggers;
 }
@@ -621,13 +621,13 @@ s32 Scene_Initialize(void) {
   *effect = 0x202;
   party = &gMainRoutineWork;
   scene = party->next;
-  if (scene == (s32)&SceneId_ApojiiIslands2) {
+  if (scene == SCENE_APOJII_ISLANDS_2) {
     ApojiiIslands_InitializeRoom2();
-  } else if (scene == (s32)&SceneId_ApojiiIslands1) {
+  } else if (scene == SCENE_APOJII_ISLANDS_1) {
     FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, 0x480);
     if (Event_GetFlag(0x95e))
       ApojiiIslands_FatherSeesTheStone();
-  } else if (scene == (s32)&SceneId_ApojiiIslands3) {
+  } else if (scene == SCENE_APOJII_ISLANDS_3) {
     *effect = 0x100;
     if (party->entrance == 6)
       ApojiiIslands_LeaveQuietly();
@@ -690,7 +690,7 @@ void ApojiiIslands_FlowWithStream(void) {
   s32 position[3];
   s32 result;
 
-  if (gMainRoutineWork.next != (s32)&SceneId_AquaRock1 ||
+  if (gMainRoutineWork.next != SCENE_AQUA_ROCK_1 ||
       leader->terrainHeight != 0) {
     position[0] = leader->x;
     position[1] = leader->y;

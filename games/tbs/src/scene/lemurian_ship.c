@@ -174,8 +174,7 @@ static void LemurianShip_SprayUpdate(struct Actor *drop) {
     s32 drift;
 
     drop->timer--;
-    drift = Random_Next();
-    drift -= Random_Next();
+    drift = Random_Next() - Random_Next();
     drop->x.fixed += drift;
     drop->y.fixed += px(4) / 5;
   } else if ((s16)drop->userValue != 0) {

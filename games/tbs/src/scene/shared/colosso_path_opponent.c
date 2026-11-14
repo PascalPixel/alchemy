@@ -144,8 +144,7 @@ static void Colosso_DrawGauge(void) {
     return;
   }
 
-  y = gauge->level * 6 - 8;
-  y &= 255;
+  y = (gauge->level * 6 - 8) & 255;
   width = segments * 16;
   x = 104 - width;
   // shape holds each sprite's size in turn.

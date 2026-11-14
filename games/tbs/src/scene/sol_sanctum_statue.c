@@ -701,8 +701,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   u32 column;
 
   if (screenY >= -16 && screenY <= 159) {
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 10) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 10) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
@@ -710,8 +710,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 9) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 9) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
@@ -719,8 +719,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = (gSolSanctumStatue_ScrollPhase >> 8) - cameraX;
-    scrollX |= -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
+    scrollX = ((gSolSanctumStatue_ScrollPhase >> 8) - cameraX) |
+              -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY + SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET;

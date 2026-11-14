@@ -280,8 +280,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
     firstBandScaled =
         (((firstSpeedBand << 1) + firstSpeedBand) << 2) + firstSpeedBand;
-    firstFallingSpeed = firstBandScaled << 6;
-    firstFallingSpeed -= firstBandScaled;
+    firstFallingSpeed = (firstBandScaled << 6) - firstBandScaled;
     firstFallingSpeed <<= 3;
     firstFallingSpeed += firstSpeedBand;
     firstStyle = Random_Below(2);
@@ -300,8 +299,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondSpeedBand = Random_Below(5);
       secondBandScaled =
           (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
-      secondFallingSpeed = secondBandScaled << 6;
-      secondFallingSpeed -= secondBandScaled;
+      secondFallingSpeed = (secondBandScaled << 6) - secondBandScaled;
       secondFallingSpeed <<= 3;
       secondFallingSpeed += secondSpeedBand;
       secondStyle = Random_Below(2);
@@ -357,13 +355,11 @@ static void GomaCavePillar_PushStumpOver(void) {
     Sound_Play(SE_STONE_GRIND);
     fixedX = Actor_Get(ACTOR_STUMP)->x.fixed + px(Random_Below(12));
     heightSource = Actor_Get(ACTOR_STUMP);
-    fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
-    fixedZ += px(6);
+    fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed + px(6);
     speedBand = Random_Below(5);
     // A last piece of dust, with the same tenth-pixel speed bands.
     bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
-    fallingSpeed = bandScaled << 6;
-    fallingSpeed -= bandScaled;
+    fallingSpeed = (bandScaled << 6) - bandScaled;
     fallingSpeed <<= 3;
     fallingSpeed += speedBand;
     style = Random_Below(2);

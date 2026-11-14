@@ -2300,8 +2300,7 @@ static s32 WorldMap_GetRowingBalance(void) {
   s32 negativeTotal;
 
   positiveTotal += WorldMap_GetSeatRowValue(2);
-  negativeTotal = WorldMap_GetSeatRowValue(1);
-  negativeTotal += WorldMap_GetSeatRowValue(3);
+  negativeTotal = WorldMap_GetSeatRowValue(1) + WorldMap_GetSeatRowValue(3);
   return positiveTotal - negativeTotal;
 }
 

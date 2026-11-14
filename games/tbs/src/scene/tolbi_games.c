@@ -952,8 +952,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
 
         entry->colorMode = colorVariant;
         // No picture is cached in the new colours yet.
-        picture = entry->picture;
-        picture |= none;
+        picture = entry->picture | none;
         entry->picture = picture;
       }
     } while (--left != 0);

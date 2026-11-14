@@ -1246,8 +1246,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   options.targetScaleX = 8 * Q16_ONE / 5;
   options.targetScaleY = 8 * Q16_ONE / 5;
   draw = Random_Next();
-  mask = 0x0ffff000;
-  mask &= draw;
+  mask = 0x0ffff000 & draw;
   options.rotation = mask;
   options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 

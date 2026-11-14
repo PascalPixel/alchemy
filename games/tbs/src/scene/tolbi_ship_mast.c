@@ -853,10 +853,10 @@ static s32 TolbiShipMast_GetRowingBalance(void) {
   s32 westSeats;
   s32 eastSeats;
 
-  westSeats = TolbiShipMast_GetSeatRowValue(0);
-  westSeats += TolbiShipMast_GetSeatRowValue(2);
-  eastSeats = TolbiShipMast_GetSeatRowValue(1);
-  eastSeats += TolbiShipMast_GetSeatRowValue(3);
+  westSeats =
+      TolbiShipMast_GetSeatRowValue(0) + TolbiShipMast_GetSeatRowValue(2);
+  eastSeats =
+      TolbiShipMast_GetSeatRowValue(1) + TolbiShipMast_GetSeatRowValue(3);
   return westSeats - eastSeats;
 }
 

@@ -73,19 +73,16 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  s32 v = variant;
-  struct RenderInput *w = window;
-  s32 xx = x;
   struct ItemMenuBlocks *data = Ram_HeapSlots->menuRuntime;
 
-  if (v == 0)
+  if (variant == 0)
     resource = (u16)data->resourceSlots[0];
   else
     resource = (u16)data->resourceSlots[1];
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
-    if (variant || xx)
+    if (variant || x)
       return -1;
     else
       return -1;
@@ -102,22 +99,19 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
                                    s32 variant) {
   struct WindowSprite *object;
   u32 resource;
-  s32 v = variant;
-  struct RenderInput *w = window;
-  s32 xx = x;
   struct ItemMenuBlocks *data = Ram_HeapSlots->menuRuntime;
 
-  if (v == 0) {
+  if (variant == 0) {
     resource = (u16)data->resourceSlots[0];
     y -= 3;
   } else {
     resource = (u16)data->resourceSlots[1];
     y -= 4;
   }
-  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, w, xx, y);
+  object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms are alike. */
-    if (v || x)
+    if (variant || x)
       return -1;
     else
       return -1;

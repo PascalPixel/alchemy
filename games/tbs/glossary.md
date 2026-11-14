@@ -196,9 +196,10 @@ The objects are then laid end to end to make the cartridge. The word has
 nothing to do with the people and things in a scene, which are
 [actors](#actor).
 
-A very long file is written as several smaller parts in a folder of its own
-name, and still makes one object. The shops are one: `src/shop/shop.c`
-gathers the inn, buying and selling from `src/shop/shop/`
+A very long file is written as several smaller parts beside it, each named
+for it, and still makes one object. The shops are one: `src/shop/shop.c`
+gathers the inn, buying and selling from `shop_inn.c`, `shop_buy.c` and
+`shop_sell.c`
 ([Source](src/README.md#objects-and-parts)).
 
 Evidence: plain English; the GNU tools' "object file".

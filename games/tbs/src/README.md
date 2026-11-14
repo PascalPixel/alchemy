@@ -26,10 +26,10 @@ For the rest:
 | the inside of a house | follow the door: the town's exit row names the scene, such as `CottageRoomsC` |
 | what an item, ability, enemy, class or Djinni is | its row in a `src/game/*_table.c` |
 | what a shop sells | [src/shop/shop_stock.c](shop/shop_stock.c) |
-| how an ability looks | its file in `src/battle_effect/battle_effect/`, whose opening comment lists the abilities it draws |
+| how an ability looks | its `battle_effect_*.c` file in `src/battle_effect/`, whose opening comment lists the abilities it draws |
 | a picture | a PNG under `src/graphics/` |
 | a tune | a MIDI file under [`sound/songs`](../sound/songs) |
-| a map | `src/map/map_NNN/map.txt` ([Maps](map/README.md#finding-a-scenes-map) says how to find its number) |
+| a map | `src/map/<place>/map.txt`, named for the scene or place that uses it ([Maps](map/README.md#finding-a-scenes-map)) |
 | the name of a flag, sound, scene, item or sprite | a header in `include/`: `flags.h`, `sounds.h`, `scene_ids.h`, `item_ids.h`, `sprite_ids.h` |
 
 To read the game in the order it runs, start at `System_Initialize` in

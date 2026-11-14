@@ -3106,23 +3106,11 @@ done:
   Actor_SelectAnimation(actor, 1);
 }
 
-#define SLIDE_FROM_EDGE Leader_SlideOnIceFromEdge
-#define SLIDE_STOPPED gSlideOnIce_Stopped
-#define SLIDE_STOP_LEADER Leader_StopIfPending
-#define SLIDE_ANGLES gSlideOnIce_AnglesByKey
-#define SLIDE_SET_ANIMATION Actor_SelectAnimation
-#define SLIDE_HAS_ARRIVED Actor_HasArrived
-#define SLIDE_KEEP_SLIDING Actor_SteerByPad
-#define SLIDE_SPHERES_OVERLAP Import_FieldCheckSpheresOverlap
+// This room's copy reaches Field_CheckSpheresOverlap through the overlay's
+// first import of it, Import_FieldCheckSpheresOverlap.
+#define Field_CheckSpheresOverlap Import_FieldCheckSpheresOverlap
 #include "shared/slide_on_ice_from_edge.c"
-#undef SLIDE_FROM_EDGE
-#undef SLIDE_STOPPED
-#undef SLIDE_STOP_LEADER
-#undef SLIDE_ANGLES
-#undef SLIDE_SET_ANIMATION
-#undef SLIDE_HAS_ARRIVED
-#undef SLIDE_KEEP_SLIDING
-#undef SLIDE_SPHERES_OVERLAP
+#undef Field_CheckSpheresOverlap
 
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
@@ -3874,14 +3862,6 @@ s32 gPushLeaderSteps[] = {
   };
 // clang-format on
 
-#undef SLIDE_FROM_EDGE
-#undef SLIDE_STOPPED
-#undef SLIDE_STOP_LEADER
-#undef SLIDE_ANGLES
-#undef SLIDE_SET_ANIMATION
-#undef SLIDE_HAS_ARRIVED
-#undef SLIDE_KEEP_SLIDING
-#undef SLIDE_SPHERES_OVERLAP
 #undef ABS
 #undef MapLayer
 

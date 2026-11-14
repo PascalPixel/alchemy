@@ -1013,8 +1013,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
       s32 entry;
 
       entry = (s16)(((k * 16 + j * 2 + 1) << 8) | ((k * 8 + j) * 2));
-      /* FAKEMATCH(volatile): the map written through a volatile pointer. */
-      *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
+      *(volatile u16 *)(BG_SCREEN_BLOCK(7) + i) = *(u16 *)&entry;
     }
   }
 

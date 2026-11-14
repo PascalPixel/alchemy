@@ -354,7 +354,6 @@ void Credits_DrawEnteringCrawlLine(void) {
 /// adds Credits_UpdateCrawlSprites and Credits_DrawEnteringCrawlLine, as The
 /// Broken Seal's Credits_InitTextSprites starts its credits.
 void Credits_InitCrawlSprites(void) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   u32 *entry;
   u32 i;
@@ -540,7 +539,6 @@ void Credits_DrawEnteringLine(void) {
 /// Credits_UpdateTextSprites and Credits_DrawEnteringLine to the task table and
 /// draws the first 32 lines blank.
 void Credits_InitTextSpritesAtPage(s32 page) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 fill;
   s32 marks;
   u32 *entry;
@@ -944,7 +942,6 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
 /// resource's 64-colour palette. Then it copies the map at position into the
 /// tilemap (CopyScrollMap), flips the block and restarts the fade-in counter.
 void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
-  /* FAKEMATCH(volatile): the DMA fill word volatile. */
   volatile u32 cell;
   u32 word;
   u32 fill = 0;

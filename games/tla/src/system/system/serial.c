@@ -204,20 +204,19 @@ void Serial_PrepareSendPacket(void *payload) {
 
   sr = SERIAL_RUNTIME;
   {
-    u8 *pkt;
+    // volatile: the serial interrupt sends from this buffer.
+    volatile u8 *pkt;
     u8 cur;
     u8 recv;
 
-    pkt = (u8 *)sr->sendBuffer[0];
+    pkt = (volatile u8 *)sr->sendBuffer[0];
     pkt[0] = sr->packetNumber;
     cur = sr->currentMask;
     recv = sr->receivedMask;
     sum = 0;
-    /* FAKEMATCH(volatile): the checksum's zero stored through a volatile cast.
-     */
     *(volatile u16 *)(pkt + 2) = sum;
     pkt[1] = recv ^ cur;
-    Dma_Set(payload, pkt + 4, DMA_COPY_WORDS(6), REG_DMA3);
+    Dma_Set(payload, (void *)(pkt + 4), DMA_COPY_WORDS(6), REG_DMA3);
   }
   {
     u16 *pkt;

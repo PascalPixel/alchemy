@@ -335,64 +335,7 @@ struct PsynergyMenuOam {
   u16 unused;
 };
 
-struct SummaryElement {
-  s16 power;
-  s16 resist;
-};
-
-struct SummaryPsynergy {
-  u16 id;
-  u16 unk02;
-};
-
 /// A unit as the summary screen reads it.
-struct SummaryUnit {
-  u8 name[15];
-  u8 level;
-  u8 unk10[0x24];
-  s16 hpMax;
-  s16 ppMax;
-  s16 hp;
-  s16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 unk43[5];
-  struct SummaryElement element[4];
-  struct SummaryPsynergy psynergy[32];
-  u16 items[15];
-  u8 unkf6[2];
-  u32 djinnOwned[4];
-  u32 djinnSet[4];
-  u8 djinnHeld[4];
-  u8 djinnSetCount[4];
-  u8 unk120[4];
-  u32 experience;
-  u8 unk128;
-  u8 classId;
-  u8 unk12a[6];
-  s8 curse;
-  s8 poison;
-  u8 attackTurns;
-  s8 attackStage;
-  u8 defenseTurns;
-  s8 defenseStage;
-  u8 resistanceTurns;
-  s8 resistanceStage;
-  u8 delusion;
-  u8 unk139[2];
-  u8 stun;
-  u8 sleep;
-  u8 psySeal;
-  u8 unk13e[2];
-  u8 haunt;
-  u8 grimReaper;
-  u8 unk142[5];
-  s8 agilityStage;
-  u8 unk148[4];
-};
-
 struct SummaryOam {
   u8 unk00[4];
   union {

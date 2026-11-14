@@ -114,7 +114,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   s32 psynergyCount;
   s32 itemCount;
   s32 keys;
-  struct SummaryUnit *unit;
+  struct BattleUnit *unit;
   s32 i;
   s32 j;
   struct SummaryNavigation *navigation;
@@ -515,13 +515,13 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       count = 0;
       j = -1;
-      for (index = 0; index != 15 && (item = unit->items[index]) != 0;
+      for (index = 0; index != 15 && (item = unit->inventory[index]) != 0;
            index++) {
         Item_GetDirectFar(item);
         if (Item_ClassifyUseAbility(member, item) == 0)
           entries[count++] = item;
       }
-      for (index = 0; index != 15 && (item = unit->items[index]) != 0;
+      for (index = 0; index != 15 && (item = unit->inventory[index]) != 0;
            index++) {
         Item_GetDirectFar(item);
         if (Item_ClassifyUseAbility(member, item) != 0)
@@ -586,7 +586,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       WindowSprite_RedrawSavedRect(statusWindow);
       shownRow = j;
       for (index = 0;
-           index != 32 && (id = unit->psynergy[index].id & 0x3fff) != 0;
+           index != 32 &&
+           (id = unit->actionSlots[index].encodedAction & 0x3fff) != 0;
            index++) {
         if (Ability_Get(id)->flags & 0x80)
           entries[count++] = id;
@@ -676,10 +677,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
         for (bit = 0; bit <= 19; bit++) {
-          if (unit->djinnSet[element] & (1 << bit)) {
+          if (unit->djinnActive[element] & (1 << bit)) {
             djinnList[djinnCount] = (element << 8) | bit;
             djinnCount++;
-          } else if (unit->djinnOwned[element] & (1 << bit)) {
+          } else if (unit->djinnAvailable[element] & (1 << bit)) {
             struct SummaryRecoveryList *recovery =
                 &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar(
                       (u32)member > 7))
@@ -822,11 +823,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
       Text_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 24);
-      Text_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
+      Text_DrawNumberInWindow(unit->maxHp, 4, statusWindow, 96, 24);
       Text_DrawStringAtOffset(gOwnerStatus_PpString, statusWindow, 40, 32);
       Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
-      Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
+      Text_DrawNumberInWindow(unit->maxPp, 4, statusWindow, 96, 32);
       Text_DrawMessageAsTiles((s32)MsgExp - 10, statusWindow, 136, 16);
       Text_DrawNumberInWindow(unit->atk, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               16);
@@ -839,8 +840,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       Text_DrawMessageAsTiles((s32)MsgExp - 7, statusWindow, 136, 40);
       Text_DrawNumberInWindow(unit->luck, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               40);
-      Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, statusWindow,
-                              0, 48);
+      Text_DrawMessageAsTiles((s32)MsgClassName + unit->classIndex,
+                              statusWindow, 0, 48);
       if (page == 0) {
         if (hasDjinn != 0)
           Text_DrawMessageAsTiles((s32)MsgExp - 1, statusWindow, 0, 72);
@@ -855,18 +856,18 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Window_SetTilemapEntry(statusWindow, 0x5001 + j, 7 + j * 4, pal + 8,
                                  0);
           if (hasDjinn != 0) {
-            Text_DrawNumberInWindow(unit->djinnSetCount[j], 1, statusWindow,
+            Text_DrawNumberInWindow(unit->djinnActiveCounts[j], 1, statusWindow,
                                     40 + j * 32, 72);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow,
                                     48 + j * 32, 72);
-            Text_DrawNumberInWindow(unit->djinnHeld[j], 1, statusWindow,
+            Text_DrawNumberInWindow(unit->djinnOwnedCounts[j], 1, statusWindow,
                                     48 + j * 32 + 8, 72);
           }
           Text_DrawNumberInWindow(Unit_GetElementLevelFar(member, j), 2,
                                   statusWindow, 48 + j * 32, 80);
           Text_DrawNumberInWindow(unit->element[j].power, 3, statusWindow,
                                   40 + j * 32, 88);
-          Text_DrawNumberInWindow(unit->element[j].resist, 3, statusWindow,
+          Text_DrawNumberInWindow(unit->element[j].resistance, 3, statusWindow,
                                   40 + j * 32, 96);
         }
       }
@@ -878,7 +879,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         i = 1;
       }
       do {
-        if (unit->curse != 0) {
+        if (unit->restraint != 0) {
           statusKinds[i++] = 15;
         }
         if (i > 7)
@@ -982,7 +983,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       if ((u32)cursor.helpEntry >= 14) {
         s32 statusKind = statusKinds[cursor.helpEntry - 14];
-        struct SummaryUnit *savedUnit;
+        struct BattleUnit *savedUnit;
         s32 attackDelta;
         s32 defenseDelta;
         s32 agilityDelta;

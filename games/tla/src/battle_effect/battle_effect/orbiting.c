@@ -86,7 +86,7 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
         size = 9 - (pos.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet +
-                    ((i & 3) * 770 + gBattleEffect_MoteCells[size - 1]),
+                    ((i & 3) * 770 + gBattleEffect_MotePictures[size - 1]),
                 pos.x - size / 2, pos.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(star, 60, 0);
 

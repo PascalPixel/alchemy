@@ -99,8 +99,8 @@ extern u8 gMapCellBuffer[];
 extern const u16 Data_08199484[][FUME_COLUMNS];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern const u8 gData_08199340[]; // the head's mesh
-extern const u8 Data_081991e0[];  // its corners
+extern const u8 gBattleEffect_SquareMesh64[];  // the head's mesh
+extern const u8 gBattleEffect_SquareCorners[]; // its corners
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
@@ -306,7 +306,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
 
           // The claw at the arc's end.
           if (frame <= 22) {
-            model->mesh = gData_08199340;
+            model->mesh = gBattleEffect_SquareMesh64;
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
@@ -314,7 +314,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
             Transform_ApplyRoll(TRIG_TURN / 4 - arc.head * 32);
             SceneTransform_ApplyUniformScale(width * 28 / 32);
-            Render_TransformVertices(Data_081991e0, buffer, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, buffer, 4);
             Render_DrawModelList(model);
           }
         }

@@ -44,19 +44,19 @@ extern char ResourceId_OrangePaletteA;
 // ☀️'s gGaia_Bg2Shifts, by side and variant.
 extern s8 gGaia_Bg2Shifts[][3];
 // The growing wall's nine rows: ☀️'s gGaia_RowWidths and
-// gGaia_RowCells.
+// gGaia_RowPictures.
 extern u8 gGaia_RowWidths[];
-extern u16 gGaia_RowCells[];
+extern u16 gGaia_RowPictures[];
 // The mound's three cels: ☀️'s gGaia_MoundWidths, _MoundHeights and
 // _MoundSheetOffsets.
 extern u8 gGaia_FlameWidths[];
 extern u8 gGaia_FlameHeights[];
-extern u16 gGaia_MoundCells[];
+extern u16 gGaia_FlamePictures[];
 // ☀️'s gGaia_LateRockColumns.
 extern u8 gGaia_LateRockColumns[];
 
 // ☀️'s gRisingWall_UnitScale.
-extern struct Scale Data_08196e44;
+extern struct Scale gGaia_UnitScale;
 
 void Animation_ApplyChildArgumentFar(void *object, s32 value);
 
@@ -229,11 +229,11 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
       if (cel > 2)
         cel = (cel & 1) + 1;
-      draw[0](canvas, work->sheet + gGaia_MoundCells[cel],
+      draw[0](canvas, work->sheet + gGaia_FlamePictures[cel],
               wallX - gGaia_FlameWidths[cel] + 64,
               116 - gGaia_FlameHeights[cel], gGaia_FlameWidths[cel],
               gGaia_FlameHeights[cel]);
-      draw[1](canvas, work->sheet + gGaia_MoundCells[cel], wallX + 64,
+      draw[1](canvas, work->sheet + gGaia_FlamePictures[cel], wallX + 64,
               116 - gGaia_FlameHeights[cel], gGaia_FlameWidths[cel],
               gGaia_FlameHeights[cel]);
     }
@@ -247,10 +247,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       if (row > 7)
         row = 7;
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowCells[row],
+        draw[0](canvas, work->sheet + gGaia_RowPictures[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
@@ -264,10 +264,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       if (row > 7)
         row = 7;
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowCells[row],
+        draw[0](canvas, work->sheet + gGaia_RowPictures[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
@@ -289,7 +289,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
@@ -311,7 +311,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
         s32 slot;
 
         if (rock->variant == 0) {
-          scale = Data_08196e44;
+          scale = gGaia_UnitScale;
           if (frame > 71) {
             scale.x = (k << 12) + Q16_ONE / 2;
             scale.x += effect->variant << 14;

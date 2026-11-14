@@ -223,7 +223,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           Iwram_FillWords(canvas, 0x3c00, Data_08197760[i]);
         }
       }
-      req = Data_08196de0;
+      req = gEclipse_Scales;
       place[3] = 0;
       place[1] = 0xff0000;
       baseX += velX;
@@ -339,7 +339,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         texture.logHeight = 2;
         texture.pixels = work->sheet + 0x4000;
         model->kind = 6;
-        model->mesh = Data_08199220;
+        model->mesh = gBattleEffect_SquareMesh32;
         model->texture = &texture;
         model->vertices = verts;
         for (i = 0; i != 8; i++) {
@@ -359,7 +359,8 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyScale3(
                 Trig_Sin(work->particles[i].variant * 682) + TRIG_TURN / 4,
                 0x20000, 0x10000);
-            Render_TransformVertices(gData_081991b0, verts, 4);
+            Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
+                                     4);
             Render_DrawModelList(model);
           }
         }
@@ -376,7 +377,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           model->kind = 7;
           texture.pixels = texturePixels;
           model->texture = &texture;
-          model->mesh = gData_08199340;
+          model->mesh = gBattleEffect_SquareMesh64;
           model->vertices = verts;
           Transform_Reset();
           SceneTransform_ApplyPosition3(cx + -0x3e0000, cy + -0x420000, 0);
@@ -384,7 +385,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           Transform_ApplyPitch(TRIG_TURN / 8);
           Transform_ApplyRoll(0x2800);
           Transform_ApplyYaw(-frame << 10);
-          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
         if (frame >= 172 && frame <= 220) {
@@ -398,7 +399,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           } else {
             SceneTransform_ApplyScale3(0x80000, Q16_ONE * 2, Q16_ONE);
           }
-          Render_TransformVertices(Data_081991c0, verts, 4);
+          Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
           Render_DrawModelList(model);
         }
         Heap_Release(model);
@@ -415,22 +416,24 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
             s32 size = work->particles[16].variant * 2;
 
             x = Random16() % size + (cx >> 16) - (size >> 1) -
-                (gData_08197492[t] >> 1);
+                (gBattleEffect_GlintPictureWidths[t] >> 1);
             y = Random16() % size + (cy >> 16) - (size >> 1) -
-                (gData_08197498[t] >> 1);
+                (gBattleEffect_GlintPictureHeights[t] >> 1);
           } else {
             u32 a = Random16() & 63;
             s32 r = work->particles[16].variant;
 
-            x = (cx >> 16) - (a >> 1) - (gData_08197492[t] >> 1) +
-                Random16() % r - r / 2 - 8;
-            y = a + (cy >> 16) - (gData_08197498[t] >> 1);
+            x = (cx >> 16) - (a >> 1) -
+                (gBattleEffect_GlintPictureWidths[t] >> 1) + Random16() % r -
+                r / 2 - 8;
+            y = a + (cy >> 16) - (gBattleEffect_GlintPictureHeights[t] >> 1);
           }
           BattleEffect_BuildBlitter(SLOT_ALT, 7, 7,
-                                    Data_08197744[Random16() & 3] | 3, 1);
+                                    gEclipse_GlintFlips[Random16() & 3] | 3, 1);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-              canvas, work->sheet + 0x2000 + gBattleEffect_GlintCells[t], x, y,
-              gData_08197492[t], gData_08197498[t]);
+              canvas, work->sheet + 0x2000 + gBattleEffect_GlintPictures[t], x,
+              y, gBattleEffect_GlintPictureWidths[t],
+              gBattleEffect_GlintPictureHeights[t]);
           HeapSlot_Release(SLOT_ALT);
         }
       }
@@ -517,7 +520,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       texture2.logWidth = 5;
       texture2.logHeight = 2;
       texture2.pixels = work->sheet + 0x3840;
-      model->mesh = Data_08199220;
+      model->mesh = gBattleEffect_SquareMesh32;
       model->shade = fade;
       model->texture = &texture2;
       model->vertices = verts;
@@ -543,7 +546,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(0xdc500, 0x29c40, Q16_ONE / 2);
-        Render_TransformVertices(Data_081991c0, verts, 4);
+        Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
         Render_DrawModelList(model);
       }
       Heap_Release(model);
@@ -639,7 +642,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         q->variant = (Random16() & 15) + 16;
       }
       {
-        const u16 *sizeOffsets = gBattleEffect_MoteCells;
+        const u16 *sizeOffsets = gBattleEffect_MotePictures;
         for (i = 0; i != 512; i++) {
           p = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000) + i;
           if (p->variant >= 0) {
@@ -666,7 +669,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         texture3.logWidth = 5;
         texture3.logHeight = 2;
         texture3.pixels = work->sheet + 0x3840;
-        model->mesh = Data_08199220;
+        model->mesh = gBattleEffect_SquareMesh32;
         model->shade = shade;
         model->vertices = gMapCellBuffer;
         model->kind = 6;
@@ -676,7 +679,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll(0x9800);
         SceneTransform_ApplyScale3(s, Q16_ONE * 2, Q16_ONE / 2);
-        Render_TransformVertices(Data_081991c0, gMapCellBuffer, 4);
+        Render_TransformVertices(gBattleEffect_BeamCorners, gMapCellBuffer, 4);
         Render_DrawModelList(model);
       }
       if (frame == 0) {
@@ -1010,7 +1013,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
       texture.pixels = work->sheet + 0x3000;
       model->kind = 7;
       model->texture = &texture;
-      model->model = Data_08199220;
+      model->model = gBattleEffect_SquareMesh32;
       model->corners = corners;
 
       // The rings rise for 24 frames, spinning and swelling.
@@ -1032,7 +1035,8 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
           Transform_ApplyRoll(ring->x);
           SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + TRIG_TURN,
                                      0x20000, 0x10000);
-          Render_TransformVertices(gData_081991b0, corners, 4);
+          Render_TransformVertices(gBattleEffect_TaperedBeamCorners, corners,
+                                   4);
           Render_DrawModelList(model);
         }
       }

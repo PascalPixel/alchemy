@@ -30,10 +30,10 @@ struct FxControl {
 };
 
 extern char ResourceId_FireBlobSheet;
-extern struct FxPair gData_08196e7c; // ☀️ gObjectRow_SweepPair
-extern struct FxPair gData_08196e84; // ☀️ gObjectRow_RisePair
-extern u8 gKirin_Columns[];          // the row's x offsets
-extern u8 gKirin_Rows[];             // the row's heights
+extern struct FxPair gKirin_RowScale;    // ☀️ gObjectRow_SweepPair
+extern struct FxPair gKirin_ChargeScale; // ☀️ gObjectRow_RisePair
+extern u8 gKirin_Columns[];              // the row's x offsets
+extern u8 gKirin_Rows[];                 // the row's heights
 
 // Summon 3: the battlefield turns to forest; a row of nine riders gallops in
 // from the right over a ring of embers, trailing fire, while flames climb at
@@ -152,7 +152,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
 
     // The row bobs in on a sine wave, shaking the screen every 32 frames.
     if (frame <= 149) {
-      struct FxPair pair = gData_08196e7c;
+      struct FxPair pair = gKirin_RowScale;
       s32 lift;
 
       lift = 0;
@@ -200,7 +200,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         s32 x = ((Trig_Sin(ang) * (grow * 2 + 8)) >> 16) + grow + 96;
         s32 y = ((Trig_Cos(ang) * (grow * 12 + 48)) >> 16) + 64;
 
-        draw(canvas, sheet + gBattleEffect_MoteCells[size - 1], x - size / 2,
+        draw(canvas, sheet + gBattleEffect_MotePictures[size - 1], x - size / 2,
              y - size, size, size * 2);
       }
     }
@@ -221,7 +221,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
 
-          draw(canvas, sheet + gBattleEffect_MoteCells[size - 1], fire->x,
+          draw(canvas, sheet + gBattleEffect_MotePictures[size - 1], fire->x,
                HI(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;
@@ -310,7 +310,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     frame = 0;
     do {
       if (frame <= 23) {
-        struct FxPair pair2 = gData_08196e84;
+        struct FxPair pair2 = gKirin_ChargeScale;
         s32 ang;
         s32 rise;
 
@@ -383,7 +383,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
         if (burst->variant > 0) {
           s32 size = 3;
 
-          draw(canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
           burst->x += burst->velocityX;
           burst->y += burst->velocityY;

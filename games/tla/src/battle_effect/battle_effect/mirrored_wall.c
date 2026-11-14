@@ -230,11 +230,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
           if (pic > 2)
             pic = (pic & 1) + 1;
           if (frame < start + 100) {
-            draw[0](canvas, work->sheet + gMirroredWall_Cells[pic],
+            draw[0](canvas, work->sheet + gMirroredWall_Pictures[pic],
                     pos.x - gDjinnBeams_HeadWidths[pic],
                     pos.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
-            draw[1](canvas, work->sheet + gMirroredWall_Cells[pic], pos.x,
+            draw[1](canvas, work->sheet + gMirroredWall_Pictures[pic], pos.x,
                     pos.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
           }
@@ -494,7 +494,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
           flip = effect->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
-              work->sheet + gLobbedShells_ShardOffsets[picture] + SHARD_SHEET,
+              work->sheet + gLobbedShells_ShardPictures[picture] + SHARD_SHEET,
               position.x - gLobbedShells_ShardWidths[picture] / 2,
               position.y - gLobbedShells_ShardHeights[picture] / 2,
               gLobbedShells_ShardWidths[picture],

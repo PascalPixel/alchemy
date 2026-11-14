@@ -102,9 +102,9 @@ extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_YellowOrbSheet;
-// The strike's six cels: ☀️'s gBeam_Cells and
+// The strike's six cels: ☀️'s gBeam_Pictures and
 // gTargetStrike_Reach, _StrikeWidths and _StrikeHeights.
-extern u16 gBeam_Cells[];
+extern u16 gBeam_Pictures[];
 extern u8 gBeam_PictureReaches[];
 extern u8 gBeam_PictureWidths[];
 extern u8 gBeam_PictureHeights[];
@@ -327,12 +327,12 @@ void BattleEffect_RunAttackSlash(struct BattleEffectArgument *effect) {
         s32 cel = frame / 3;
 
         if (effect->side == 0)
-          draw[0](canvas, work->sheet + gBeam_Cells[cel],
+          draw[0](canvas, work->sheet + gBeam_Pictures[cel],
                   pos.x + gBeam_PictureReaches[cel] + shake - 58,
                   pos.y - gBeam_PictureHeights[cel] / 2,
                   gBeam_PictureWidths[cel], gBeam_PictureHeights[cel]);
         else
-          draw[0](canvas, work->sheet + gBeam_Cells[cel],
+          draw[0](canvas, work->sheet + gBeam_Pictures[cel],
                   pos.x - gBeam_PictureReaches[cel] + shake -
                       gBeam_PictureWidths[cel] + 58,
                   pos.y - gBeam_PictureHeights[cel] / 2,

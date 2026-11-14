@@ -91,11 +91,11 @@ extern char ResourceId_Data134;
 extern char ResourceId_EffectPalette02;
 extern char ResourceId_MercuryDjinnSheet;
 extern u8 gMapCellBuffer[];
-extern const u8 Data_08199244[];   // a quad's mesh
-extern const u8 Data_081991e0[];   // its corners
-extern const s32 Data_08198bfc[4]; // per pillar: its size,
-extern const s8 Data_08198c0c[4];  // its shade
-extern s8 Data_08198c10[4];        // and its offset
+extern const u8 gBattleEffect_SquareMesh32Reversed[]; // a quad's mesh
+extern const u8 gBattleEffect_SquareCorners[];        // its corners
+extern const s32 Data_08198bfc[4];                    // per pillar: its size,
+extern const s8 Data_08198c0c[4];                     // its shade
+extern s8 Data_08198c10[4];                           // and its offset
 
 #define LIGHT_SURGE_FRAMES 74
 #define SURGE_BOLTS 14
@@ -298,7 +298,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     texture.logWidth = 5;
     texture.logHeight = 2;
     model->texture = &texture;
-    model->mesh = Data_08199244;
+    model->mesh = gBattleEffect_SquareMesh32Reversed;
     model->vertices = vertices;
     model->shade = shade;
     model->kind = 7;
@@ -364,7 +364,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       texture.logHeight = 5;
       texture.pixels = work->sheet + 0x1000;
       model->kind = 6;
-      model->mesh = Data_08199244;
+      model->mesh = gBattleEffect_SquareMesh32Reversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
         s32 x = ((center.x / 2 - 64) << 16) -
@@ -395,7 +395,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         Transform_Reset();
         SceneTransform_ApplyPosition3(x, z, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
-        Render_TransformVertices(Data_081991e0, vertices, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }
     }

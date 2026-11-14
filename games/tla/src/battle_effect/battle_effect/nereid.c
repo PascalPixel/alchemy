@@ -201,7 +201,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
           if (frame > 76)
             size = 10;
           draw[spark->velocityY > 0](
-              canvas, graphics + gBattleEffect_MoteCells[size - 1],
+              canvas, graphics + gBattleEffect_MotePictures[size - 1],
               HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;

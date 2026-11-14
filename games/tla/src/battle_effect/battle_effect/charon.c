@@ -188,15 +188,15 @@ extern char ResourceId_Data134;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_FlashBurstSheet;
 
-extern const struct ScalePair Data_08196ea8;
-extern const struct ScalePair Data_08196eb0;
-extern const struct ScalePair Data_08196eb8;
-extern const struct ScalePair Data_08196ec0;
-extern u16 gBattleEffect_MoteCells[];
+extern const struct ScalePair gCharon_SwarmScale;
+extern const struct ScalePair gCharon_PulseScale;
+extern const struct ScalePair gCharon_RevealScale;
+extern const struct ScalePair gCharon_FinaleScale;
+extern u16 gBattleEffect_MotePictures[];
 extern u8 gData_08198c67[];
-extern const u8 gData_08199210[];
-extern const u8 gData_08199340[];
-extern const u8 gData_08199364[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
+extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh128[];
 
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -370,7 +370,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   for (j = 0; j != 10; j++) {
     cell = 4;
     for (i = 0; i != cell * cell * 2; i++) {
-      s32 value = work->buffer[gBattleEffect_MoteCells[cell - 1] + i];
+      s32 value = work->buffer[gBattleEffect_MotePictures[cell - 1] + i];
 
       if (value != 0) {
         value -= j * 7;
@@ -465,7 +465,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame >= 132 && frame < 240) {
-      struct ScalePair scale168 = Data_08196ea8;
+      struct ScalePair scale168 = gCharon_SwarmScale;
 
       scale168.v[1] = Q16_ONE * 5 / 4;
       scale168.v[0] = Q16_ONE * 5 / 4;
@@ -504,7 +504,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     t56 = frame - 56;
     if (t56 >= 0 && t56 < 76) {
-      struct ScalePair scale160 = Data_08196eb0;
+      struct ScalePair scale160 = gCharon_PulseScale;
 
       scale160.v[0] = scale160.v[1] = Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
       pos232[3] = 0;
@@ -819,7 +819,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         desc144.tiles = work->buffer + 0x1000;
         model->kind = 7;
         model->desc = &desc144;
-        model->mesh = gData_08199364;
+        model->mesh = gBattleEffect_SquareMesh128;
         model->texture = texture;
         if (frame <= 282) {
           Transform_Reset();
@@ -828,7 +828,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Transform_ApplyPitch(0xe000);
           Transform_ApplyRoll(TRIG_TURN / 4 - t * 256);
           Transform_ApplyYaw(-t << 10);
-          Render_TransformVertices(gData_08199210, texture, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
+                                   4);
           Render_DrawModelList(model);
         }
         if (frame > 231) {
@@ -846,7 +847,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           model->depth = depth;
           desc144.tiles = work->buffer;
           model->desc = &desc144;
-          model->mesh = gData_08199340;
+          model->mesh = gBattleEffect_SquareMesh64;
           model->kind = 7;
           model->texture = texture;
           Transform_Reset();
@@ -854,14 +855,15 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(TRIG_TURN * 3 / 4);
           Transform_ApplyYaw(-t << 10);
-          Render_TransformVertices(gData_08199210, texture, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
+                                   4);
           Render_DrawModelList(model);
         }
         Heap_Release(model);
         Heap_Release(texture);
       }
       if (frame >= 244 && frame < 310) {
-        struct ScalePair scale136 = Data_08196eb8;
+        struct ScalePair scale136 = gCharon_RevealScale;
 
         if (frame < 260) {
           u8 *low = REVEAL_BUFFER;
@@ -987,7 +989,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           desc128.tiles = work->buffer + 0x1000;
           model->kind = 7;
           model->desc = &desc128;
-          model->mesh = gData_08199364;
+          model->mesh = gBattleEffect_SquareMesh128;
           model->texture = texture;
           for (k = 0; k != 3; k++) {
             x = frame - 302 - k * 8;
@@ -1012,7 +1014,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                 Transform_ApplyRoll(0xe000);
               }
               Transform_ApplyPitch(TRIG_TURN / 32);
-              Render_TransformVertices(gData_08199210, texture, 4);
+              Render_TransformVertices(gBattleEffect_GroundSquareCorners,
+                                       texture, 4);
               Render_DrawModelList(model);
             }
           }
@@ -1024,7 +1027,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Iwram_FillWords(PLTT + 0x1c0, 64, 0x7c1f7c1f);
       }
       if (frame >= 330 && frame < 351) {
-        struct ScalePair scale120 = Data_08196ec0;
+        struct ScalePair scale120 = gCharon_FinaleScale;
         s32 dx = 0;
         s32 dz = 0;
 
@@ -1271,7 +1274,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       desc112.tiles = work->buffer;
       model->kind = 7;
       model->desc = &desc112;
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh64;
       model->texture = texture;
       if (depth > -48) {
         model->depth = depth;
@@ -1284,7 +1287,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         } else {
           Transform_ApplyYaw(-frame << 10);
         }
-        Render_TransformVertices(gData_08199210, texture, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
         Render_DrawModelList(model);
       }
       if (frame > 95) {
@@ -1297,7 +1300,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         SceneTransform_ApplyUniformScale(-0xa710);
         Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(-frame << 9);
-        Render_TransformVertices(gData_08199210, texture, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
         Render_DrawModelList(model);
       }
       if (frame > 55) {
@@ -1313,7 +1316,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         SceneTransform_ApplyUniformScale(0x58f0);
         Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(frame << 10);
-        Render_TransformVertices(gData_08199210, texture, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
         Render_DrawModelList(model);
         /* FAKEMATCH(dead): twice raised to frame though nothing reads it again.
          */
@@ -1326,7 +1329,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           SceneTransform_ApplyUniformScale(-0x31e0);
           Transform_ApplyPitch(TRIG_TURN / 8);
           Transform_ApplyYaw(-frame << 10);
-          Render_TransformVertices(gData_08199210, texture, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
+                                   4);
           Render_DrawModelList(model);
         }
       }
@@ -1543,7 +1547,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           s32 k;
 
           for (k = 0; k != 4; k++) {
-            routine[0](canvas, glyphs + gBattleEffect_MoteCells[size - 1],
+            routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
                        (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                        size * 2);
             BattleEffectKernels_IntegrateVector2(p, 63, 0);
@@ -1734,7 +1738,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           if (p->timer >= 0) {
             s32 size = (p->timer >> 3) + 2;
 
-            routine[0](canvas, glyphs + gBattleEffect_MoteCells[size - 1],
+            routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
                        (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                        size * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0);
@@ -1751,7 +1755,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         desc104.b = 6;
         desc104.tiles = work->buffer + 0x3000;
         model->kind = 9;
-        model->mesh = gData_08199340;
+        model->mesh = gBattleEffect_SquareMesh64;
         model->desc = &desc104;
         model->texture = texture;
         for (i = 0; i != arg->count; i++) {
@@ -1770,7 +1774,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
                                           (member->y - 56) << 16, 0);
             SceneTransform_ApplyScale3(size / 3, size, size);
             Transform_ApplyPitch(TRIG_TURN * 3 / 4);
-            Render_TransformVertices(gData_08199210, texture, 4);
+            Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
+                                     4);
             Render_DrawModelList(model);
           }
           Heap_Release(model);

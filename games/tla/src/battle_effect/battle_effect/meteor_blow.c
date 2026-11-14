@@ -99,8 +99,8 @@ extern char ResourceId_Data0DA;
 extern char ResourceId_Data0C1;
 extern u8 gMapCellBuffer[];
 extern s32 Data_02010018[]; // the shards' variants, 28 bytes apart
-extern u16 gBattleEffect_MoteCells[];
-extern const struct PointPair Data_08196f20;
+extern u16 gBattleEffect_MotePictures[];
+extern const struct PointPair gMeteorBlow_DoubleScale;
 extern const u8 Data_08199e70[];
 extern const u8 Data_08199e77[];
 extern const u16 Data_08199e7e[];
@@ -112,8 +112,8 @@ extern const u8 Data_08199e9c[];
 extern const s8 Data_08199ea0[];
 extern const u8 gData_081990d0[];
 extern const u8 gData_08199090[];
-extern const u8 Data_08198ec4[];
-extern const u8 Data_08198cac[];
+extern const u8 gBattleEffect_CylinderMesh[];
+extern const u8 gBattleEffect_CylinderCorners[];
 
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 void BattleEffect_ArmMeteorBlowPaletteDma(void);
@@ -553,7 +553,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       hz = 0;
     }
     if (frame <= 33) {
-      req2 = Data_08196f20;
+      req2 = gMeteorBlow_DoubleScale;
       place2[3] = 0;
       place2[1] = 0xff0000;
       place2[0] = hx << 16;
@@ -648,7 +648,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         }
       }
     }
-    model->mesh = Data_08198ec4;
+    model->mesh = gBattleEffect_CylinderMesh;
     texture2.pixels = work->sheet + 0x5000;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
@@ -671,7 +671,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3(half << 16, Data_08199ea0[i] << 16, 0);
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(2000);
-          Render_TransformVertices(Data_08198cac, verts, 32);
+          Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);
         }
       }
@@ -687,7 +687,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         if (p->variant >= 0) {
           s32 n = (p->variant >> 2) + 1;
 
-          blit[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+          blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                   HI(p->x) - n / 2, HI(p->y) - n, n, n * 2);
           p->variant--;
           BattleEffectKernels_IntegrateVector2(p, 56, 0x2000);

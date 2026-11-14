@@ -52,8 +52,8 @@ extern char ResourceId_MarsDjinnSheet;
 
 // The burst quad: its face list and its four corners, 64x64 pixels standing
 // on its base.
-extern const u8 gData_08199340[];
-extern const u8 gData_081991f0[];
+extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_StandingSquareCorners[];
 
 // Per mode: the quad's scale (16.16, doubled when used) and its unk14.
 extern const s32 gData_081994d0[];
@@ -160,14 +160,15 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
         texture.size = (texture.size & ~0xff00) | 6 << 8;
         texture.pixels = work->sheet + cel * CEL_SIZE;
         quad->kind = 6;
-        quad->faces = gData_08199340;
+        quad->faces = gBattleEffect_SquareMesh64;
         quad->texture = &texture;
         quad->unk14 = gData_081994e0[mode];
         quad->vertices = vertices;
         Transform_Reset();
         SceneTransform_ApplyPosition3(0, (target.y - 58) << 16, 0);
         SceneTransform_ApplyUniformScale(gData_081994d0[mode] << 1);
-        Render_TransformVertices(gData_081991f0, vertices, 4);
+        Render_TransformVertices(gBattleEffect_StandingSquareCorners, vertices,
+                                 4);
         Render_DrawModelList(quad);
         Heap_Release(quad);
         Heap_Release(vertices);
@@ -360,10 +361,10 @@ extern char ResourceId_FlashBurstSheet;
 
 extern char ResourceId_SmokeSheet;
 
-extern u16 gBattleEffect_MoteCells[];
-extern Vec2 Data_08196ed0;
-extern Vec2 Data_08196ed8;
-extern Vec2 Data_08196ee0;
+extern u16 gBattleEffect_MotePictures[];
+extern Vec2 gDaedalus_WaveScale;
+extern Vec2 gDaedalus_ShipScale;
+extern Vec2 gDaedalus_ParticleScale;
 extern s8 Data_081994f0[];
 extern u8 Data_08199508[];
 extern u8 Data_08199514[][2];
@@ -375,8 +376,8 @@ extern s8 Data_08199590[];
 extern u8 Data_08199592[][2];
 extern u8 Data_0819959c[][6][2];
 extern u16 Data_081995cc[];
-extern const u8 gData_08199210[];
-extern const u8 gData_08199364[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
+extern const u8 gBattleEffect_SquareMesh128[];
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void RagingHeat_FillGradientCanvas(void);
@@ -520,7 +521,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         v = k * 2;
         mp = (u8 *)(v + (s32)map);
         do {
-          v = ((u8 *)work)[gBattleEffect_MoteCells[n] + i + off];
+          v = ((u8 *)work)[gBattleEffect_MotePictures[n] + i + off];
           /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load.
            */
           w = 32;
@@ -603,7 +604,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       s32 row;
       Sprite **slot;
 
-      scale = Data_08196ed0;
+      scale = gDaedalus_WaveScale;
       pos.w = 0;
       pos.y = px(255);
       waveScroll += 0x8000;
@@ -842,7 +843,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       if (shipY < 0)
         shipY += 0x2000;
-      scale2 = Data_08196ed8;
+      scale2 = gDaedalus_ShipScale;
       bobX = 0;
       bobY = 0;
       if (frame > 537) {
@@ -1116,7 +1117,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         bitmap.data = pixels;
         beam[4] = (s32)&bitmap;
         beam[1] = 0;
-        beam[2] = (s32)gData_08199364;
+        beam[2] = (s32)gBattleEffect_SquareMesh128;
         beam[0] = 7;
         beam[3] = (s32)buffer;
         v = frame - 568;
@@ -1130,7 +1131,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           Transform_ApplyRoll(0x4300);
           Transform_ApplyPitch(-TRIG_TURN / 32);
           SceneTransform_ApplyUniformScale((v << 14) + 0x4180);
-          Render_TransformVertices(gData_08199210, buffer, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, buffer,
+                                   4);
           Render_DrawModelList(beam);
         }
         Heap_Release(beam);
@@ -1397,7 +1399,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         for (i = 0; i != 512; i++)
           PARTICLES[i].timer = -1;
       }
-      scale3 = Data_08196ee0;
+      scale3 = gDaedalus_ParticleScale;
       pos3.w = 0;
       pos3.y = px(255);
       for (i = 0; i != 16; i++) {
@@ -1544,9 +1546,9 @@ struct PlacementSource__f17e698 {
   s32 y;
 };
 extern const struct PlacementSource__f17e698
-    Data_08196ee8;                // the summon's placement source
-extern const u8 Data_08199220[];  // the rings' mesh
-extern const u8 gData_081991b0[]; // their corners
+    gDaedalusAlt_SummonScale;                 // the summon's placement source
+extern const u8 gBattleEffect_SquareMesh32[]; // the rings' mesh
+extern const u8 gBattleEffect_TaperedBeamCorners[]; // their corners
 /* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep
  * gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest
  * of the object declares it, it does not compile in tla-ja:
@@ -1706,7 +1708,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     if (frame <= 91) {
       struct SummonObject *object;
 
-      source = Data_08196ee8;
+      source = gDaedalusAlt_SummonScale;
       object = work->objects[0];
       object->unk17 = 32;
       object->unk16 = 0;
@@ -1774,7 +1776,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + 0x4000;
       model->kind = 7;
       model->texture = &texture;
-      model->mesh = Data_08199220;
+      model->mesh = gBattleEffect_SquareMesh32;
 
       for (i = 0; i != 6; i++) {
         ring = &work->particles[i];
@@ -1792,7 +1794,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           Transform_ApplyRoll(ring->x);
           SceneTransform_ApplyScale3(Trig_Sin(ring->variant * 682) + TRIG_TURN,
                                      0x20000, 0x10000);
-          Render_TransformVertices(gData_081991b0, vertices, 4);
+          Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
+                                   4);
           Render_DrawModelList(model);
         }
       }

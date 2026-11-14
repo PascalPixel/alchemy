@@ -257,9 +257,10 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
         glint = &work->particles[i * 4 + j];
         if (glint->variant >= 0) {
           cell = glint->variant / 2 + (j / 2) * 3;
-          draw[j & 1](canvas, work->sheet + gBattleEffect_GlintCells[cell],
-                      glint->x + x, glint->y + y, gData_08197492[cell],
-                      gData_08197498[cell]);
+          draw[j & 1](canvas, work->sheet + gBattleEffect_GlintPictures[cell],
+                      glint->x + x, glint->y + y,
+                      gBattleEffect_GlintPictureWidths[cell],
+                      gBattleEffect_GlintPictureHeights[cell]);
         }
         glint->variant++;
         if (glint->variant == GLINT_CELS) {

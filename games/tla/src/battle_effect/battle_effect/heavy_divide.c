@@ -66,13 +66,13 @@ void Transform_Pop(void);
 extern char ResourceId_GreatSwordSheet;
 extern char ResourceId_AxeSheet;
 extern u8 gMapCellBuffer[];
-extern const u8 Data_0819928c[];  // the sword's mesh
-extern const u8 Data_081991c0[];  // its corners
-extern const u8 gData_08199340[]; // the axe's mesh
-extern const u8 Data_081991e0[];  // its corners
-extern u8 Data_08198b96[];        // per mode: the strike's frame
-extern u8 Data_08198b98[];        // per mode: the chips
-extern const u8 Data_08198b9a[];  // a chip's two pixels
+extern const u8 Data_0819928c[];               // the sword's mesh
+extern const u8 gBattleEffect_BeamCorners[];   // its corners
+extern const u8 gBattleEffect_SquareMesh64[];  // the axe's mesh
+extern const u8 gBattleEffect_SquareCorners[]; // its corners
+extern u8 Data_08198b96[];                     // per mode: the strike's frame
+extern u8 Data_08198b98[];                     // per mode: the chips
+extern const u8 Data_08198b9a[];               // a chip's two pixels
 
 // The body of Heavy Divide (mode 0) and Strong Hit (mode 1). Heavy Divide:
 // a great sword (with four fading after-images, each a dimmer copy of the
@@ -226,12 +226,12 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
           if (effect->side == 0) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
-          Render_TransformVertices(Data_081991c0, vertices, 4);
+          Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
           Render_DrawModelList(model);
         }
       }
     } else {
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh64;
       texture.logWidth = 6;
       texture.logHeight = 6;
       if (frame == 0) {
@@ -260,7 +260,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectArgument *effect, s32 mode) {
         if (effect->side == 0) {
           Transform_ApplyYaw(TRIG_TURN / 2);
         }
-        Render_TransformVertices(Data_081991e0, vertices, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
         BattleEffectKernels_IntegrateVector3(work->particles, 64, 0);
       }
@@ -330,7 +330,7 @@ extern s16 Data_08198b9c[];
 extern u8 Data_08198bb0[];
 extern u8 Data_08198bba[];
 extern u8 Data_08198bc4[];
-// The Broken Seal's gEruption_PuffCells and gCybele_EmberSizes:
+// The Broken Seal's gEruption_PuffPictures and gCybele_EmberSizes:
 // the spark pictures by stage.
 extern u16 Data_08198bce[];
 extern u16 Data_08198bdc[];
@@ -525,10 +525,11 @@ extern char ResourceId_Data134;
 extern char ResourceId_Data0D8;
 
 extern u8 gData_02014000[];
-extern u16 gBattleEffect_MoteCells[];
-extern const s8 Data_08198bea[];  // the drops' bounce speeds
-extern const u8 Data_08199244[];  // the glow's and the splashes' mesh
-extern const u8 gData_08199210[]; // its four corners
+extern u16 gBattleEffect_MotePictures[];
+extern const s8 Data_08198bea[]; // the drops' bounce speeds
+extern const u8
+    gBattleEffect_SquareMesh32Reversed[]; // the glow's and the splashes' mesh
+extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 
@@ -672,7 +673,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         if (frame > i * 8 && drop->variant == 0) {
           s32 dropSize = drop->z;
 
-          draw[0](canvas, sprites + gBattleEffect_MoteCells[dropSize - 1],
+          draw[0](canvas, sprites + gBattleEffect_MotePictures[dropSize - 1],
                   HI(drop->x) - dropSize / 2, HI(drop->y) - dropSize, dropSize,
                   dropSize * 2);
           BattleEffectKernels_IntegrateVector2(drop, 64, 0x8000);
@@ -694,7 +695,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     texture.logHeight = 5;
     texture.pixels = work->sheet + 0x1000;
     model->kind = 6;
-    model->mesh = Data_08199244;
+    model->mesh = gBattleEffect_SquareMesh32Reversed;
     model->texture = &texture;
     model->vertices = vertices;
     model->shade = zero;
@@ -726,7 +727,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPosition3(last->x - 0x400000, last->y - 0x400000, 0);
       SceneTransform_ApplyScale3(scale * 2, scale, scale * 2);
       Transform_ApplyPitch(-TRIG_TURN / 8);
-      Render_TransformVertices(gData_08199210, vertices, 4);
+      Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
       Render_DrawModelList(model);
     }
 
@@ -734,7 +735,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     texture.logWidth = 5;
     texture.logHeight = 5;
     model->kind = 7;
-    model->mesh = Data_08199244;
+    model->mesh = gBattleEffect_SquareMesh32Reversed;
     splash = 25000;
     /* FAKEMATCH(barrier): an empty asm through splash hides its constant. */
     asm("" : "+r"(splash));
@@ -748,7 +749,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPosition3(drop->x - 0x400000, drop->y - 0x300000, 0);
       SceneTransform_ApplyScale3(splash >> 1, splash, splash >> 1);
       Transform_ApplyPitch(-TRIG_TURN / 4);
-      Render_TransformVertices(gData_08199210, vertices, 4);
+      Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
       Render_DrawModelList(model);
       BattleEffectKernels_IntegrateVector2(drop, 60, -0x8000);
     }
@@ -798,7 +799,7 @@ struct Model;
 extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
 
-extern const u8 gData_08199364[]; // a textured square
+extern const u8 gBattleEffect_SquareMesh128[]; // a textured square
 
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
@@ -939,7 +940,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + 0x1000;
       model->kind = 6;
       model->vertices = vertices;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_SquareMesh128;
       model->texture = &texture;
       i = 0;
       square = work->particles;
@@ -957,7 +958,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
           Transform_ApplyRoll(square->velocityZ);
           Transform_ApplyPitch(square->velocityY);
           SceneTransform_ApplyUniformScale(roll);
-          Render_TransformVertices(Data_081991e0, vertices, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
           Render_DrawModelList(model);
         }
       }

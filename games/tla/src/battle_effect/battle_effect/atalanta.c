@@ -227,8 +227,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
               screen.x = (screen.x >> 1) + x;
               screen.y = screen.y + y + 16;
               trail->x -= 4;
-              draw[1](canvas, sheet + gBattleEffect_MoteCells[4], screen.x - 2,
-                      screen.y - 5, 5, 10);
+              draw[1](canvas, sheet + gBattleEffect_MotePictures[4],
+                      screen.x - 2, screen.y - 5, 5, 10);
             }
           }
         }
@@ -284,11 +284,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
             s32 cell = slash->variant / 4;
             u32 width;
 
-            draw[i & 1](canvas,
-                        Ram_MapCellBuffer + gBattleEffect_PuffArcCells[cell],
-                        slash->x - ((width = gData_08197467[cell]) >> 1) - 8,
-                        slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40,
-                        width, gBattleEffect_PuffArcCellHeights[cell]);
+            draw[i & 1](
+                canvas, Ram_MapCellBuffer + gBattleEffect_PuffArcPictures[cell],
+                slash->x -
+                    ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1) -
+                    8,
+                slash->y + gBattleEffect_PuffArcPictureBiasY[cell] - 40, width,
+                gBattleEffect_PuffArcPictureHeights[cell]);
             if (slash->variant <= 11) {
               draw[0](canvas, work->sheet + SLASH_TOP, slash->x + 4,
                       slash->y - 40, 16, 21);

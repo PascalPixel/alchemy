@@ -147,7 +147,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
               s32 y =
                   from->velocityY + (to->velocityY - from->velocityY) * k / 16;
 
-              draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+              draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       x - size / 2, y - size, size, size * 2);
             }
           }
@@ -299,7 +299,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
                   s32 y = from->velocityY +
                           (to->velocityY - from->velocityY) * k / 12;
 
-                  draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+                  draw[0](canvas,
+                          graphics + gBattleEffect_MotePictures[size - 1],
                           x - size / 2, y - size, size, size * 2);
                 }
               }

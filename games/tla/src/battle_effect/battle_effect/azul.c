@@ -109,9 +109,9 @@ extern const u8 Data_0819883c[];
 extern const u8 Data_08198848[];
 extern const s8 Data_08198850[];
 extern const s8 Data_08198858[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_08199340[];
-extern const u8 gData_08199364[];
+extern const u8 gBattleEffect_SquareCorners[];
+extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh128[];
 
 /* VIEW(f15cde8): routine EffectSprite_Acquire as struct AzulObject
  * *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode); the
@@ -732,7 +732,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         if (shade > -64) {
           texture2.pixels = gData_02014000;
           texture2.logWidth = 7;
-          model->mesh = gData_08199364;
+          model->mesh = gBattleEffect_SquareMesh128;
           /* FAKEMATCH(dead): a once-only block. */
           do {
             texture2.logHeight = 7;
@@ -742,7 +742,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3(0x2c0000, 0, 0);
           Transform_ApplyYaw(0x3448);
           SceneTransform_ApplyUniformScale(size);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
@@ -754,12 +754,12 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         texture2.logHeight = 6;
         texture2.pixels = gData_02014000;
         model->shade = shade;
-        model->mesh = gData_08199340;
+        model->mesh = gBattleEffect_SquareMesh64;
         Transform_Reset();
         SceneTransform_ApplyPosition3(-0x100000, pos.y + -0x500000, 0);
         SceneTransform_ApplyScale3(size >> 1, size, size >> 1);
         Transform_ApplyRoll(frame << 11);
-        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
       Heap_Release(model);

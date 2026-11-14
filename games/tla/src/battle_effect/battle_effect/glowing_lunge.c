@@ -66,14 +66,14 @@ extern u8 gData_02014000[];
 // The streak quad's faces (32x64) and the flash quad's (128x128), and the
 // corners of a 64x64 square around the origin, which both scale.
 extern u8 Data_081992b0[];
-extern const u8 gData_08199364[];
-extern const u8 Data_081991e0[];
+extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareCorners[];
 
 // The streak's scale per mode, 16.16.
 extern const s32 Data_081994b8[];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -234,7 +234,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
                                  Data_081994b8[mode] << 1, Data_081994b8[mode]);
       if (effect->side == 1)
         Transform_ApplyYaw(TRIG_TURN / 2);
-      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
     }
 
@@ -255,7 +255,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
       texture.logHeight = 7;
       texture.pixels = flashPixels;
       quad->kind = 7;
-      quad->faces = gData_08199364;
+      quad->faces = gBattleEffect_SquareMesh128;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (effect->side == 0)
@@ -265,7 +265,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
         SceneTransform_ApplyPosition3((target.x - 112) << 16,
                                       (target.y - 84) << 16, 0);
       SceneTransform_ApplyScale3(scale, scale << 2, scale);
-      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
     }
     Heap_Release(quad);
@@ -301,7 +301,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
           EffectPosition_ProjectPoint(&spark->x, &screen);
           screen.x >>= 1;
           height = size * 2;
-          draw[i & 1](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
+          draw[i & 1](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
                       screen.x - size / 2, screen.y - size, size, height);
           BattleEffectKernels_IntegrateVector3(spark, 60, -0x200);
           spark->variant--;

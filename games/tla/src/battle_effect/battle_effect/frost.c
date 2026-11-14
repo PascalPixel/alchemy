@@ -139,16 +139,16 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
           u32 height;
 
           if (frame >= TIMING(RISE_FRAME) - 7) {
-            draw[1](canvas, work->sheet + gFrost_ColumnCells[cel],
-                    gFrost_ColumnSpots[i * 2],
-                    gFrost_ColumnSpots[i * 2 + 1] -
-                        (height = gFrost_ColumnHeights[cel]),
+            draw[1](canvas, work->sheet + gFrost_MoundPictures[cel],
+                    gFrost_MoundSpots[i * 2],
+                    gFrost_MoundSpots[i * 2 + 1] -
+                        (height = gFrost_MoundHeights[cel]),
                     32, height);
           } else {
-            pair[0](canvas, work->sheet + gFrost_ColumnCells[cel],
-                    gFrost_ColumnSpots[i * 2],
-                    gFrost_ColumnSpots[i * 2 + 1] -
-                        (height = gFrost_ColumnHeights[cel]),
+            pair[0](canvas, work->sheet + gFrost_MoundPictures[cel],
+                    gFrost_MoundSpots[i * 2],
+                    gFrost_MoundSpots[i * 2 + 1] -
+                        (height = gFrost_MoundHeights[cel]),
                     32, height);
           }
         }
@@ -215,9 +215,9 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
           s32 cel = (17 - puff->variant) / 2;
           u32 size;
 
-          draw[1](canvas, dots + gBattleEffect_PuffCells[cel],
+          draw[1](canvas, dots + gBattleEffect_SparklePictures[cel],
                   HI(puff->velocityX) -
-                      ((size = gBattleEffect_PuffSizes[cel]) >> 1),
+                      ((size = gBattleEffect_SparkleSizes[cel]) >> 1),
                   HI(puff->velocityY) - (size >> 1) - rise, size, size);
         }
         puff->variant--;

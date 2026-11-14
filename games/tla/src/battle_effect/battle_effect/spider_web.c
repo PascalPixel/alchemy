@@ -174,7 +174,7 @@ void Palette_MirrorBgColors(void) {
 }
 
 // A scale of one in 16.16 on both axes.
-extern const struct SpriteScale gData_08196e4c;
+extern const struct SpriteScale gUlysses_ParticleScale;
 
 // A frame callback of summon 17 (BattleEffect_RunUlysses adds and removes it):
 // places effect object 7 at the last particle's point (x across, y in depth)
@@ -185,7 +185,7 @@ extern const struct SpriteScale gData_08196e4c;
 void Ulysses_MoveLastParticle(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  struct SpriteScale scale = gData_08196e4c;
+  struct SpriteScale scale = gUlysses_ParticleScale;
   struct SpritePlacement place;
 
   place.groundHeight = 0;
@@ -300,10 +300,10 @@ extern char ResourceId_EmberStreakSheet;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010200[];
 extern u16 gBattleEffect_FlarePictures[];
-extern u16 gBattleEffect_PuffArcCells[];
-extern u8 gData_08197467[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
+extern u16 gBattleEffect_PuffArcPictures[];
+extern u8 gBattleEffect_PuffArcPictureWidths[];
+extern u8 gBattleEffect_PuffArcPictureBiasY[];
+extern u8 gBattleEffect_PuffArcPictureHeights[];
 extern const u16 Data_08198686[];
 extern const u8 Data_08198662[];
 extern const u8 Data_08198674[];
@@ -315,10 +315,10 @@ struct PlacementSource {
   s32 unk04;
 };
 
-extern const struct PlacementSource Data_08196e54;
-extern const u8 gData_08199340[];
-extern const u8 gData_08199364[];
-extern const u8 gData_08199210[];
+extern const struct PlacementSource gUlysses_ShipScale;
+extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
 
 void BattleEffect_ProcessPendingBlock2Transfer(void);
 void Display_ApplyBg2Affine(void);
@@ -506,12 +506,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         if ((u32)p->variant <= 17) {
           s32 k = p->variant / 3;
           s32 side = i & 1;
-          u8 *source = work->sheet + gBattleEffect_PuffArcCells[k];
-          u8 w = gData_08197467[k];
+          u8 *source = work->sheet + gBattleEffect_PuffArcPictures[k];
+          u8 w = gBattleEffect_PuffArcPictureWidths[k];
 
           blit[side](canvas, source, p->x - (w >> 1),
-                     p->y + gBattleEffect_PuffArcCellBiasY[k] - 32, w,
-                     gBattleEffect_PuffArcCellHeights[k]);
+                     p->y + gBattleEffect_PuffArcPictureBiasY[k] - 32, w,
+                     gBattleEffect_PuffArcPictureHeights[k]);
         }
         p->variant++;
       }
@@ -661,7 +661,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->kind = 7;
       model->shade = shade;
       model->texture = &texture;
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh64;
       model->vertices = verts;
       for (i = 0, step = work->particles; i != 6; step++, i++) {
         s32 delay = i * 8;
@@ -682,12 +682,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         }
         if ((u32)t <= 35) {
           s32 k = (t / 6) % 6;
-          u8 *source = work->sheet + gBattleEffect_PuffArcCells[k];
-          u8 w = gData_08197467[k];
+          u8 *source = work->sheet + gBattleEffect_PuffArcPictures[k];
+          u8 w = gBattleEffect_PuffArcPictureWidths[k];
 
           blits[0](canvas, source, HI(step->x) - (w >> 1),
-                   HI(step->y) + gBattleEffect_PuffArcCellBiasY[k] - 36, w,
-                   gBattleEffect_PuffArcCellHeights[k]);
+                   HI(step->y) + gBattleEffect_PuffArcPictureBiasY[k] - 36, w,
+                   gBattleEffect_PuffArcPictureHeights[k]);
           t = step->variant;
         }
         if ((u32)(t - 12) <= 31) {
@@ -738,7 +738,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             Transform_ApplyPitch(TRIG_TURN * 3 / 4);
             Transform_ApplyYaw(step->z);
             SceneTransform_ApplyUniformScale(s);
-            Render_TransformVertices(gData_08199210, verts, 4);
+            Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
+                                     4);
             Render_DrawModelList(model);
           }
           t = step->variant;
@@ -813,7 +814,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->texture = &texture2;
       texture2.pixels = work->sheet + 0x2781;
       model->kind = 7;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_SquareMesh128;
       model->vertices = verts;
       j = 0;
       for (; j != 2; j++) {
@@ -847,7 +848,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             }
             Transform_ApplyYaw(t << 9);
           }
-          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
@@ -856,7 +857,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
 
     if ((u32)(frame - 108) <= 179) {
-      req = Data_08196e54;
+      req = gUlysses_ShipScale;
       if (frame > 131) {
         s32 u = frame - 132;
 
@@ -889,12 +890,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       for (i = 0, step = work->particles; i != 32; i++, step++) {
         if ((u32)step->variant <= 23 && draw) {
           s32 k = (step->variant / 4) % 6;
-          u8 *source = work->sheet + gBattleEffect_PuffArcCells[k];
-          u8 w = gData_08197467[k];
+          u8 *source = work->sheet + gBattleEffect_PuffArcPictures[k];
+          u8 w = gBattleEffect_PuffArcPictureWidths[k];
 
           blits[0](canvas, source, step->x - (w >> 1),
-                   step->y + gBattleEffect_PuffArcCellBiasY[k] - 48, w,
-                   gBattleEffect_PuffArcCellHeights[k]);
+                   step->y + gBattleEffect_PuffArcPictureBiasY[k] - 48, w,
+                   gBattleEffect_PuffArcPictureHeights[k]);
         }
         step->variant++;
       }
@@ -1019,13 +1020,13 @@ void BattleEffect_RunSpinningBeat(void *object) {
 extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
 extern char ResourceId_LimePalette;
-// The swirl's six cels: ☀️'s gSpiderWeb_Cells, _CellX (six
+// The swirl's six cels: ☀️'s gSpiderWeb_Pictures, _CellX (six
 // for each side), _CellWidths, _CellBiasY and _CellHeights.
-extern const u16 gSpiderWeb_Cells[];
-extern const u8 gSpiderWeb_CellX[];
-extern const u8 gSpiderWeb_CellWidths[];
+extern const u16 gSpiderWeb_Pictures[];
+extern const u8 gSpiderWeb_PictureX[];
+extern const u8 gSpiderWeb_PictureWidths[];
 extern const s8 gData_081986ec[];
-extern const u8 gSpiderWeb_CellHeights[];
+extern const u8 gSpiderWeb_PictureHeights[];
 
 void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   struct HeapSlots *slots;
@@ -1087,15 +1088,15 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     cel = frame / 4;
     if (cel <= 5) {
       if (cel <= 3)
-        draw[0](canvas, work->sheet + gSpiderWeb_Cells[cel],
-                gSpiderWeb_CellX[cel + effect->side * 6],
-                gData_081986ec[cel] + 32, gSpiderWeb_CellWidths[cel],
-                gSpiderWeb_CellHeights[cel]);
+        draw[0](canvas, work->sheet + gSpiderWeb_Pictures[cel],
+                gSpiderWeb_PictureX[cel + effect->side * 6],
+                gData_081986ec[cel] + 32, gSpiderWeb_PictureWidths[cel],
+                gSpiderWeb_PictureHeights[cel]);
       else
-        draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Cells[cel],
-                gSpiderWeb_CellX[cel + effect->side * 6],
-                gData_081986ec[cel] + 32, gSpiderWeb_CellWidths[cel],
-                gSpiderWeb_CellHeights[cel]);
+        draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Pictures[cel],
+                gSpiderWeb_PictureX[cel + effect->side * 6],
+                gData_081986ec[cel] + 32, gSpiderWeb_PictureWidths[cel],
+                gSpiderWeb_PictureHeights[cel]);
     }
     // The hit.
     if (frame == 8) {

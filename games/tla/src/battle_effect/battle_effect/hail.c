@@ -172,14 +172,14 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
 extern char ResourceId_PortalSheet;
 
-// The chips: ☀️'s gHail_ChipFlips (a blitter's flags), and, by shape,
-// gHail_ChipCells, _ChipX, _ChipY, _ChipWidths and _ChipHeights.
-extern const u8 gHail_ChipFlips[];
-extern const u16 gHail_ChipCells[];
-extern const u8 gHail_ChipX[];
-extern const u8 gHail_ChipY[];
-extern const u8 gHail_ChipWidths[];
-extern const u8 gHail_ChipHeights[];
+// The chips: ☀️'s gHail_CrackleFlips (a blitter's flags), and, by shape,
+// gHail_PortalPictures, _ChipX, _ChipY, _ChipWidths and _ChipHeights.
+extern const u8 gHail_CrackleFlips[];
+extern const u16 gHail_PortalPictures[];
+extern const u8 gHail_PortalX[];
+extern const u8 gHail_PortalY[];
+extern const u8 gHail_PortalWidths[];
+extern const u8 gHail_PortalHeights[];
 
 // Steps the background colours one shade toward a resource's palette.
 void BattleEffect_StepPaletteToResource(s32 resource);
@@ -275,7 +275,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
           struct EffectStep *chip = &work->particles[FIRST_CHIP + i];
 
           chip->velocityX = Random16() % 6 + 3;
-          chip->velocityY = gHail_ChipFlips[Random16() & 3];
+          chip->velocityY = gHail_CrackleFlips[Random16() & 3];
         }
       }
 
@@ -297,13 +297,13 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             y = position.y - 24;
             draw[0](canvas, work->sheet, x, y, 24, 48);
             if ((frame & 3) <= 1)
-              draw[0](canvas, work->sheet + gHail_ChipCells[1],
-                      x + gHail_ChipX[1], y + gHail_ChipY[1],
-                      gHail_ChipWidths[1], gHail_ChipHeights[1]);
+              draw[0](canvas, work->sheet + gHail_PortalPictures[1],
+                      x + gHail_PortalX[1], y + gHail_PortalY[1],
+                      gHail_PortalWidths[1], gHail_PortalHeights[1]);
             else
-              draw[0](canvas, work->sheet + gHail_ChipCells[2],
-                      x + gHail_ChipX[2], y + gHail_ChipY[2],
-                      gHail_ChipWidths[2], gHail_ChipHeights[2]);
+              draw[0](canvas, work->sheet + gHail_PortalPictures[2],
+                      x + gHail_PortalX[2], y + gHail_PortalY[2],
+                      gHail_PortalWidths[2], gHail_PortalHeights[2]);
             for (j = 0; j != CHIPS_PER_ROCK; j++) {
               struct EffectStep *chip =
                   &work->particles[FIRST_CHIP + i * CHIPS_PER_ROCK + j];
@@ -322,18 +322,19 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               }
               draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
               if (chip->velocityY & COMPOSITE_FLIP_X)
-                chipX = x - gHail_ChipWidths[chip->velocityX] -
-                        gHail_ChipX[chip->velocityX] + 24;
+                chipX = x - gHail_PortalWidths[chip->velocityX] -
+                        gHail_PortalX[chip->velocityX] + 24;
               else
-                chipX = x + gHail_ChipX[chip->velocityX];
+                chipX = x + gHail_PortalX[chip->velocityX];
               if (chip->velocityY & COMPOSITE_FLIP_Y)
-                chipY = y - gHail_ChipHeights[chip->velocityX] -
-                        gHail_ChipY[chip->velocityX] + 48;
+                chipY = y - gHail_PortalHeights[chip->velocityX] -
+                        gHail_PortalY[chip->velocityX] + 48;
               else
-                chipY = y + gHail_ChipY[chip->velocityX];
-              draw[1](canvas, work->sheet + gHail_ChipCells[chip->velocityX],
-                      chipX, chipY, gHail_ChipWidths[chip->velocityX],
-                      gHail_ChipHeights[chip->velocityX]);
+                chipY = y + gHail_PortalY[chip->velocityX];
+              draw[1](canvas,
+                      work->sheet + gHail_PortalPictures[chip->velocityX],
+                      chipX, chipY, gHail_PortalWidths[chip->velocityX],
+                      gHail_PortalHeights[chip->velocityX]);
               HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
             }
             rock->x += rock->velocityX;

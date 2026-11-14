@@ -232,7 +232,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectArgument *effect) {
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                picture = cells + gBattleEffect_MoteCells[size - 1];
+                picture = cells + gBattleEffect_MotePictures[size - 1];
                 px -= size / 2;
                 py -= size;
                 draw[lane](canvas, picture, px, py, size, size * 2);
@@ -545,7 +545,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
             size = 9;
           if (frame > 76)
             size = 10;
-          draw[0](canvas, cells + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, cells + gBattleEffect_MotePictures[size - 1],
                   HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
 
           dust->x += dust->velocityX;
@@ -609,7 +609,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
               u8 *cell;
 
               size = spark->variant / 5 + 1;
-              cell = cells + gBattleEffect_MoteCells[size - 1];
+              cell = cells + gBattleEffect_MotePictures[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;
@@ -713,13 +713,13 @@ struct JudgmentScale {
   s32 y;
 };
 
-extern const struct JudgmentScale Data_08196e74;
+extern const struct JudgmentScale gJudgment_UnitScale;
 extern const u8 gJudgment_BurstPictures[];
 extern const u8 gJudgment_ShardWidths[];
 extern const u8 gJudgment_ShardHeights[];
 extern const u16 gJudgment_ShardPictures[];
-extern const u8 gData_08199364[];
-extern const u8 gData_08199210[];
+extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
 
 void Palette_LoadBasicSpriteColors(void);
 void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);

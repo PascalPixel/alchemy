@@ -184,7 +184,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
       texture.pixels = work->sheet + SHEET_TEXTURE;
       job->kind = 6;
       job->texture = &texture;
-      job->faces = gData_08199340;
+      job->faces = gBattleEffect_SquareMesh64;
       job->vertices = vertices;
 
       for (i = 0; i != QUAD_COUNT; i++) {
@@ -218,7 +218,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectArgument *effect,
           Transform_ApplyRoll(quad->velocityZ);
           quad->velocityX += px(1) / 64;
           quad->velocityZ += px(1) / 64;
-          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                   4);
           Render_DrawModelList(job);
         }
       }
@@ -306,7 +307,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       for (j = 0; j != 10; j++) {
         size = 4;
         for (i = 0; i != size * size * 2; i++) {
-          s32 offset = gBattleEffect_MoteCells[size - 1] + i + 0x700;
+          s32 offset = gBattleEffect_MotePictures[size - 1] + i + 0x700;
           s32 value = ((u8 *)work)[offset];
 
           if (value != 0) {
@@ -507,7 +508,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
 
     // Zagan.
-    request = Data_08196e0c;
+    request = gZagan_UnitScale;
     placement[3] = 0;
     placement[1] = 0;
     if (!(frame & 1) || !skip) {
@@ -575,19 +576,20 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       texture.pixels = ringPixels;
       model->texture = &texture;
       model->kind = 7;
-      model->mesh = Data_08198ec4;
+      model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
       for (k = 0; k != 4; k++) {
-        s32 start = Data_08197a94[k] + 157;
+        s32 start = gZagan_RingStarts[k] + 157;
         s32 scale;
         s32 shade;
 
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * Data_08197a98[k] * 125) << 4) + Q16_ONE / 2;
+        scale =
+            (((frame - start) * gZagan_RingGrowth[k] * 125) << 4) + Q16_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -597,11 +599,12 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-0x100000, Data_08197a9c[k] << 16, 0);
+        SceneTransform_ApplyPosition3(-0x100000, gZagan_RingHeights[k] << 16,
+                                      0);
         SceneTransform_ApplyScale3(scale, scale * 4 / 3, scale);
         Transform_ApplyPitch(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;
-        Render_TransformVertices(Data_08198cac, vertices, 32);
+        Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
         Render_DrawModelList(model);
       }
       Heap_Release(model);

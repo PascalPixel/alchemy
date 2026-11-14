@@ -180,7 +180,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
@@ -305,7 +305,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 1;
 
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
@@ -454,7 +454,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
       if (dot->variant != -1) {
         s32 size = dot->variant / 16 + 2;
 
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(dot, 62, 0x2000);
         dot->variant--;
@@ -486,10 +486,10 @@ extern char ResourceId_EmberStreakSheet;
 
 // The ember puff's six cels: ☀️'s gBattleEffect_PuffArcCellWidths, _CellHeights,
 // _CellBiasY and _CellSourceOffsets.
-extern u8 gData_08197467[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u16 gBattleEffect_PuffArcCells[];
+extern u8 gBattleEffect_PuffArcPictureWidths[];
+extern u8 gBattleEffect_PuffArcPictureHeights[];
+extern u8 gBattleEffect_PuffArcPictureBiasY[];
+extern u16 gBattleEffect_PuffArcPictures[];
 
 void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
@@ -586,10 +586,11 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
           s32 cel = puff->variant / 8;
           u32 width;
 
-          blit[0](canvas, work->sheet + gBattleEffect_PuffArcCells[cel],
-                  puff->x - ((width = gData_08197467[cel]) >> 1),
-                  puff->y + gBattleEffect_PuffArcCellBiasY[cel], width,
-                  gBattleEffect_PuffArcCellHeights[cel]);
+          blit[0](canvas, work->sheet + gBattleEffect_PuffArcPictures[cel],
+                  puff->x -
+                      ((width = gBattleEffect_PuffArcPictureWidths[cel]) >> 1),
+                  puff->y + gBattleEffect_PuffArcPictureBiasY[cel], width,
+                  gBattleEffect_PuffArcPictureHeights[cel]);
         }
         member++;
         puff->variant++;
@@ -609,7 +610,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
 
         size = (member & 1) + 3;
         x = HI(spark->x) + ((Trig_Sin(spark->z) * 4) >> 16);
-        draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), HI(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 64, -0x2000);
         wobble = spark->z;

@@ -24,9 +24,9 @@ extern u8 gSpire_ShardOffsets[];
 // ☀️'s gSpire_RockX and gSpire_DropFrames, by boulder.
 extern s8 gSpire_RockX[];
 extern u8 gSpire_DropFrames[];
-// The shard cels: ☀️'s gSpire_ShardCells, _ShardWidths and
+// The shard cels: ☀️'s gSpire_ShardPictures, _ShardWidths and
 // _ShardHeights.
-extern u16 gSpire_ShardCells[];
+extern u16 gSpire_ShardPictures[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[];
 
@@ -109,7 +109,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
         for (j = 0; j != SHARDS_PER_ROCK; j++) {
           shard = &SHARDS[i * SHARDS_PER_ROCK + j];
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
-          blit(canvas, work->sheet + gSpire_ShardCells[cel] + 0x83c,
+          blit(canvas, work->sheet + gSpire_ShardPictures[cel] + 0x83c,
                HI(shard->x) - ((width = gSpire_ShardWidths[cel]) >> 1),
                HI(shard->y) - ((height = gData_081974ad[cel]) >> 1), width,
                height);

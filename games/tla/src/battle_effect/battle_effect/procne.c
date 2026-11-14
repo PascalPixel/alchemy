@@ -303,7 +303,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
       if (frame > 159) {
         // The formation sways on a slow wave, pushed back by each strike.
-        scale = Data_08196df8;
+        scale = gProcne_UnitScale;
         size = 16;
         if (frame - 160 <= 64)
           size = 32;
@@ -362,7 +362,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                 if (screen.depth > 350)
                   screen.depth = 350;
                 span = 6 - Math_UnsignedMulHigh(screen.depth - 170, 0x071c71c8);
-                draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+                draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                         screen.x - span / 2, screen.y - span, span, span * 2);
                 point->x -= point->x / dist;
                 point->y -= point->y / dist;
@@ -375,7 +375,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
             if (alive > 0) {
               span = alive / 10 + 1;
-              draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+              draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                       (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                       span, span * 2);
             }
@@ -425,7 +425,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                     screen.depth = 350;
                   span =
                       3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
-                  draw[0](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+                  draw[0](canvas,
+                          graphics + gBattleEffect_MotePictures[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);
                   spark[index].x += spark[index].velocityX;
                   spark[index].y += spark[index].velocityY;
@@ -468,9 +469,9 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               cel = (frame - threshold) / 2;
               if (cel > 2)
                 cel = 2;
-              draw[1](canvas, work->sheet + gProcne_Cells[cel], mark->x,
-                      mark->y - gProcne_CellBiasY[cel], gProcne_CellWidths[cel],
-                      gProcne_CellHeights[cel]);
+              draw[1](canvas, work->sheet + gProcne_Pictures[cel], mark->x,
+                      mark->y - gProcne_PictureBiasY[cel],
+                      gProcne_PictureWidths[cel], gProcne_PictureHeights[cel]);
               mark->x -= 8;
               mark->y += 2;
 
@@ -500,7 +501,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
                     screen.depth = 350;
                   span =
                       3 - Math_UnsignedMulHigh(screen.depth - 170, 0x02d82d83);
-                  draw[0](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+                  draw[0](canvas,
+                          graphics + gBattleEffect_MotePictures[span - 1],
                           screen.x - span / 2, screen.y - span, span, span * 2);
                   slot++;
                 } while (slot != 28);
@@ -713,10 +715,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
           if (grain->variant == -1) {
             grain->x = ((Random16() & 255) - 32) << 16;
             grain->y = px(112);
-            grain->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
+            grain->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                                << 9;
-            grain->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
-                               << 11;
+            grain->velocityY =
+                -((Random16() & 127) + gTiamat_EmberSpeeds[i & 3]) << 11;
             grain->variant = 0;
             spawned++;
             if (spawned == limit)
@@ -838,10 +840,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
           struct EffectStep *grain = &PARTICLES[i];
 
           if (grain->variant >= 0) {
-            u8 size = gTiamat_DropSizes[i & 3];
+            u8 size = gTiamat_EmberSizes[i & 3];
             s32 height = size * 2;
 
-            draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     HI(grain->x) - size / 2, HI(grain->y) - size, size, height);
             grain->x += grain->velocityX * dir;
             grain->y += grain->velocityY;
@@ -908,7 +910,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
               draw[0](canvas,
                       work->sheet + gTiamat_FlamePictures[cel] + STREAK_SHEET,
                       streak->x - gTiamat_FlameWidths[cel] / 2,
-                      streak->y + gTiamat_StreakDrops[cel],
+                      streak->y + gTiamat_FlameDrops[cel],
                       gTiamat_FlameWidths[cel], gTiamat_FlameHeights[cel]);
             }
             streak->variant++;
@@ -921,7 +923,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
             streak->y += 6;
             if (frame <= 47 && streak->y > 55)
               Sound_PlayFar(SE_WHOOSH);
-            draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     streak->x - size / 2, streak->y + 30, size, size * 2);
           } else {
             streak->variant++;

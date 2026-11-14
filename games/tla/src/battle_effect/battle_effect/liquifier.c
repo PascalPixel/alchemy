@@ -160,7 +160,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
             for (; j != 2; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
-                  canvas, graphics + gBattleEffect_MoteCells[size - 1],
+                  canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   HI(step->x) - half, HI(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, 64, 0);
             }
@@ -209,7 +209,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
             for (; j != 4; j++) {
               (*(DrawRectangle *)((u8 *)draw + blend))(
-                  canvas, graphics + gBattleEffect_MoteCells[size - 1],
+                  canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   HI(step->x) - half, HI(step->y) - size, size, twice);
               BattleEffectKernels_IntegrateVector2(step, 64, 0);
             }
@@ -258,7 +258,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       texture.logWidth = 5;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x1000;
-      model->mesh = Data_08199220;
+      model->mesh = gBattleEffect_SquareMesh32;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         s32 zero = 0;
@@ -275,7 +275,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyRoll(step->z);
           SceneTransform_ApplyScale3(scale, Q16_ONE, Q16_ONE / 2);
-          Render_TransformVertices(Data_081991c0, projected, 4);
+          Render_TransformVertices(gBattleEffect_BeamCorners, projected, 4);
           Render_DrawModelList(model);
         }
       }
@@ -284,7 +284,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = splash;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_SquareMesh128;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         struct EffectStep *step = &work->particles[i + 32];
@@ -305,7 +305,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition3(step->x - px(128), step->y - px(64), 0);
           Transform_ApplyPitch(0x3c00);
           SceneTransform_ApplyScale3(scale, scale, scale);
-          Render_TransformVertices(Data_081991e0, projected, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
       }
@@ -327,7 +327,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
           Transform_ApplyRoll(TRIG_TURN * 3 / 8 - (i << 14));
           Transform_ApplyPitch(-TRIG_TURN / 16);
-          Render_TransformVertices(gData_08199210, projected, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, projected,
+                                   4);
           Render_DrawModelList(model);
         }
       }
@@ -585,7 +586,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
               s32 half = size >> 1;
               s32 y = to.y + ((Trig_Cos(step->z) * radius) >> 16);
 
-              draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+              draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       x - half, y - 32 - size, width, height);
             }
           }
@@ -681,7 +682,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 2) + 1;
 
-          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, 0);
           spark->variant--;

@@ -280,7 +280,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
           size = 2;
         step->variant--;
         BattleEffectKernels_IntegrateVector2(step, 60, 0x2000);
-        draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
       }
     }
@@ -376,7 +376,7 @@ extern char ResourceId_CrackedTextureSheet;
 extern char ResourceId_Data0B4;
 extern char ResourceId_SmokeSheet;
 extern char ResourceId_CrystalSheet;
-extern const u8 gData_08199340[]; // the splash's mesh
+extern const u8 gBattleEffect_SquareMesh64[]; // the splash's mesh
 
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
@@ -704,7 +704,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
       EffectPosition_ProjectBattler(effect->actors[0], &target);
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh64;
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
@@ -729,7 +729,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectArgument *effect, s32 mode) {
         Transform_ApplyPitch(TRIG_TURN / 16);
         Transform_ApplyYaw(angle);
         SceneTransform_ApplyUniformScale(t * 0x3000);
-        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                 4);
         Render_DrawModelList(model);
       }
     }
@@ -1019,17 +1020,17 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
 extern char ResourceId_CrystalBitmapSheet;
 extern char ResourceId_Data0C1;
 
-extern u8 Data_02014e20[];         // gMapCellBuffer + 20000, the berg
-extern s32 gData_08197834[];       // the shards' cells: offsets,
-extern u8 gPrism_ShardWidths[];    // widths
-extern u8 gData_08197826[];        // and heights
-extern const u8 Data_08198ec4[];   // the ripple's mesh
-extern const u8 Data_08198cac[];   // its corners
-extern const u8 Data_08198b26[4];  // per ripple: its start,
-extern const u8 Data_08198b2a[4];  // its growth
-extern const s8 Data_08198b2e[4];  // and its height
-extern const s16 Data_08198b32[8]; // per flash: its roll
-extern const s16 Data_08198b42[8]; // and pitch
+extern u8 Data_02014e20[];      // gMapCellBuffer + 20000, the berg
+extern s32 gData_08197834[];    // the shards' cells: offsets,
+extern u8 gPrism_ShardWidths[]; // widths
+extern u8 gData_08197826[];     // and heights
+extern const u8 gBattleEffect_CylinderMesh[];    // the ripple's mesh
+extern const u8 gBattleEffect_CylinderCorners[]; // its corners
+extern const u8 Data_08198b26[4];                // per ripple: its start,
+extern const u8 Data_08198b2a[4];                // its growth
+extern const s8 Data_08198b2e[4];                // and its height
+extern const s16 Data_08198b32[8];               // per flash: its roll
+extern const s16 Data_08198b42[8];               // and pitch
 
 #define DIAMOND_BERG_FRAMES 148
 
@@ -1211,7 +1212,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       texture.pixels = cells;
       model->unk04 = 0;
-      model->mesh = Data_08198ec4;
+      model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
@@ -1240,7 +1241,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
-        Render_TransformVertices(Data_08198cac, vertices, 32);
+        Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
         Render_DrawModelList(model);
       }
 
@@ -1248,7 +1249,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = work->sheet + 0x3080;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_SquareMesh128;
       model->scrollU = 0;
       model->scrollV = 0;
       for (k = 0; k != 8; k++) {
@@ -1276,7 +1277,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         Transform_ApplyRoll(Data_08198b32[k]);
         Transform_ApplyPitch(Data_08198b42[k]);
         SceneTransform_ApplyUniformScale(scale);
-        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                 4);
         Render_DrawModelList(model);
       }
       Heap_Release(model);

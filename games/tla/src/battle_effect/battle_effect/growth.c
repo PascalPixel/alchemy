@@ -160,7 +160,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                   // side is set to 1 and then masked with i, which builds the 1
                   side = 1;
                   side &= i;
-                  cell = work->sheet + gGrowth_VineCells[shape];
+                  cell = work->sheet + gGrowth_VinePictures[shape];
                   width = gGrowth_VineWidths[shape];
                   ((DrawRectangle)draw[side])(
                       canvas, cell, column->x - (width >> 1),
@@ -177,7 +177,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                   // side is set to 1 and then masked with i, which builds the 1
                   side = 1;
                   side &= i;
-                  cell = work->sheet + gGrowth_PillarCells[shape];
+                  cell = work->sheet + gGrowth_PillarPictures[shape];
                   width = gGrowth_PillarWidths[shape];
                   ((DrawRectangle)draw[side])(
                       canvas, cell, column->x - (width >> 1),
@@ -236,12 +236,12 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
             puffCells = 0xaff;
           }
           ((DrawRectangle)rectangle[0])(
-              canvas, work->sheet + (gGrowth_PuffCells[cel] + puffCells),
+              canvas, work->sheet + (gGrowth_PuffPictures[cel] + puffCells),
               puff->x - gGrowth_PuffWidths[cel],
               puff->y - (s8)gGrowth_PuffHeights[cel] / 2,
               gGrowth_PuffWidths[cel], (s8)gGrowth_PuffHeights[cel]);
           ((DrawRectangle)rectangle[1])(
-              canvas, work->sheet + (gGrowth_PuffCells[cel] + puffCells),
+              canvas, work->sheet + (gGrowth_PuffPictures[cel] + puffCells),
               puff->x, puff->y - (s8)gGrowth_PuffHeights[cel] / 2,
               gGrowth_PuffWidths[cel], (s8)gGrowth_PuffHeights[cel]);
           puff->variant++;
@@ -528,12 +528,12 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       if (PUFFS[i].variant >= 0) {
         s32 cel = PUFFS[i].variant / 2;
 
-        draw(canvas, work->sheet + gGrowth_ThornPuffCells[cel],
+        draw(canvas, work->sheet + gGrowth_ThornPuffPictures[cel],
              PUFFS[i].x - gGrowth_ThornPuffWidths[cel],
              PUFFS[i].y - (s8)gGrowth_ThornPuffHeights[cel] / 2,
              gGrowth_ThornPuffWidths[cel], (s8)gGrowth_ThornPuffHeights[cel]);
-        drawFlip(canvas, work->sheet + gGrowth_ThornPuffCells[cel], PUFFS[i].x,
-                 PUFFS[i].y - (s8)gGrowth_ThornPuffHeights[cel] / 2,
+        drawFlip(canvas, work->sheet + gGrowth_ThornPuffPictures[cel],
+                 PUFFS[i].x, PUFFS[i].y - (s8)gGrowth_ThornPuffHeights[cel] / 2,
                  gGrowth_ThornPuffWidths[cel],
                  (s8)gGrowth_ThornPuffHeights[cel]);
         if (++PUFFS[i].variant == PUFF_LIFE) {

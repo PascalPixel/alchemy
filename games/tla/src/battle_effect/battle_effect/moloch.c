@@ -23,15 +23,15 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0C1;
 extern char ResourceId_Data134;
 extern u8 gMapCellBuffer[];
-extern const u8 Data_08196f28[];
+extern const u8 gMoloch_MoteSizes[];
 // The particle sheet's cell offsets by size (The Broken Seal's
-// gBattleEffect_MoteCells).
-extern u16 gBattleEffect_MoteCells[];
-extern const u8 Data_08198ec4[];
-extern const u8 Data_08198cac[];
-extern const u8 Data_08199f34[];
-extern const u8 Data_08199f38[];
-extern const s8 Data_08199f3c[];
+// gBattleEffect_MotePictures).
+extern u16 gBattleEffect_MotePictures[];
+extern const u8 gBattleEffect_CylinderMesh[];
+extern const u8 gBattleEffect_CylinderCorners[];
+extern const u8 gMoloch_RingStarts[];
+extern const u8 gMoloch_RingGrowth[];
+extern const s8 gMoloch_RingHeights[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
@@ -159,9 +159,9 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         for (i = 0; i != 256; i++) {
           mote = &motes[i];
           if (mote->variant == 0) {
-            s32 size = Data_08196f28[i & 7];
+            s32 size = gMoloch_MoteSizes[i & 7];
 
-            draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     HI(mote->x) - (size >> 1), HI(mote->y) - size, size,
                     size * 2);
 
@@ -285,20 +285,20 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
         texture.logWidth = 7;
         texture.logHeight = 5;
         texture.pixels = work->sheet + 0x3000;
-        model->mesh = Data_08198ec4;
+        model->mesh = gBattleEffect_CylinderMesh;
         model->kind = 7;
         model->texture = &texture;
         model->vertices = projected;
         model->scrollU = 0;
         model->scrollV = 0;
         for (i = 0; i != 4; i++) {
-          s32 start = Data_08199f34[i] + 136;
+          s32 start = gMoloch_RingStarts[i] + 136;
           s32 scale;
           s32 shade;
 
           if (frame <= start)
             continue;
-          scale = (frame - start) * Data_08199f38[i] * 2000 + Q16_ONE / 2;
+          scale = (frame - start) * gMoloch_RingGrowth[i] * 2000 + Q16_ONE / 2;
           shade = (start - frame) * 8 + 56;
           if (shade > 0)
             shade = 0;
@@ -306,11 +306,13 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
             continue;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(16), Data_08199f3c[i] << 16, 0);
+          SceneTransform_ApplyPosition3(px(16), gMoloch_RingHeights[i] << 16,
+                                        0);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
-          Render_TransformVertices(Data_08198cac, projected, 32);
+          Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
+                                   32);
           Render_DrawModelList(model);
         }
         Heap_Release(model);
@@ -472,7 +474,8 @@ void Iris_DrawDrop(u32 frame, s32 x, s32 y, s32 small) {
     return;
 next:
   draw[0](canvas,
-          work->sheet + (gBattleEffect_MoteCells[size - 1] + frame / 2 * 0x302),
+          work->sheet +
+              (gBattleEffect_MotePictures[size - 1] + frame / 2 * 0x302),
           x - size / 2, trailY, size, size * 2);
   i++;
   trailY = y + i * half;
@@ -482,13 +485,13 @@ next:
 
 // One model vertex: signed byte coordinates, padded to a word.
 
-extern const struct ModelVertex Data_08196f30[6];
-extern const u16 Data_08199f4c[];
+extern const struct ModelVertex gIris_PillarVertices[6];
+extern const u16 gIris_PillarMesh[];
 
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 /// Iris: draws one rising pillar, a textured strip of six vertices whose
-/// two lower rows come from Data_08196f30 and whose top row is raised to
+/// two lower rows come from gIris_PillarVertices and whose top row is raised to
 /// height. x is the pillar's screen column (63 is the centre); the base sits
 /// height pixels below row 63, so the pillar grows upward from there.
 void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
@@ -501,7 +504,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
 
   projected = Heap_AllocEwram(48);
   model = Render_AllocateModelList(1);
-  memcpy(vertices, Data_08196f30, sizeof(vertices));
+  memcpy(vertices, gIris_PillarVertices, sizeof(vertices));
 
   // A 16x16 texture at 0x302 into the sheet.
   texture.logWidth = 4;
@@ -524,7 +527,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
 
   model->kind = 4;
   model->texture = &texture;
-  model->mesh = Data_08199f4c;
+  model->mesh = gIris_PillarMesh;
   model->vertices = projected;
   Render_TransformVertices(vertices, projected, 6);
   Render_DrawModelList(model);
@@ -670,38 +673,38 @@ extern struct IrisSparks Data_02011f40;
 extern struct IrisScene Data_02012ee0;
 #define Data_02012ef4 ((struct IrisPoint(*)[10])(Ram_MapCellBuffer + 0x2ef4))
 
-extern const struct Scale Data_08196f48;
-extern const struct Widths5 Data_08196f50;
-extern const struct Widths7 Data_08196f64;
-extern const struct Widths7 Data_08196f80;
-extern const struct Spans4 Data_08196f9c;
-extern const struct Spans4 Data_08196fbc;
-extern s32 Data_08199f40[];
-extern const u8 Data_08199f48[];
-extern const u8 Data_08199f88[];
-extern const u8 Data_08199f98[];
-extern const u8 Data_08199fbc[];
-extern const u16 Data_08199fc8[];
-extern const u16 Data_08199fd2[];
-extern const s8 Data_08199fde[];
-extern const u8 Data_08199fed[];
-extern const u16 Data_08199ffc[];
-extern const s16 Data_0819a01a[];
-extern const u8 Data_0819a038[];
-extern s32 Data_0819a040[];
-extern const u16 Data_0819a048[];
-extern const u16 Data_0819a054[];
-extern const u8 Data_0819a060[];
-extern const u8 Data_0819a066[];
-extern const u8 Data_0819a06c[];
-extern const u8 Data_0819a072[];
-extern const u8 Data_0819a078[];
-extern const u8 Data_0819a07e[];
-extern const u8 Data_0819a084[];
-extern const u8 Data_0819a0ac[];
-extern const u8 Data_0819a0d4[];
-extern const u8 Data_0819a140[];
-extern const u8 Data_0819a160[];
+extern const struct Scale gIris_UnitScale;
+extern const struct Widths5 gIris_RisingPillarWidths;
+extern const struct Widths7 gIris_WideningPillarWidths;
+extern const struct Widths7 gIris_NarrowingPillarWidths;
+extern const struct Spans4 gIris_LeftStripSpans;
+extern const struct Spans4 gIris_RightStripSpans;
+extern s32 gIris_SplashRadii[];
+extern const u8 gIris_SplashOffsetsY[];
+extern const u8 gIris_ParticleCorners[];
+extern const u8 gIris_ParticleMesh[];
+extern const u8 gIris_PsynergySoundFrames[];
+extern const u16 gIris_DoorSoundFrames[];
+extern const u16 gIris_PowerUpSoundFrames[];
+extern const s8 gIris_StreakX[];
+extern const u8 gIris_StreakY[];
+extern const u16 gIris_StreakAngles[];
+extern const s16 gIris_StreakSpeeds[];
+extern const u8 gIris_LineShades[];
+extern s32 gIris_MoteSizes[];
+extern const u16 gIris_SplashStarts[];
+extern const u16 gIris_SplashEnds[];
+extern const u8 gIris_SplashX[];
+extern const u8 gIris_SplashY[];
+extern const u8 gIris_SplashSmall[];
+extern const u8 gIris_DropSpeeds[];
+extern const u8 gIris_DropFrames[];
+extern const u8 gIris_DropPictureSteps[];
+extern const u8 gIris_LeftStripCorners[];
+extern const u8 gIris_RightStripCorners[];
+extern const u8 gIris_StripMesh[];
+extern const u8 gIris_ConeCorners[];
+extern const u8 gIris_ConeMesh[];
 
 #define EffectSprite_CreateWithTiles EffectSprite_CreateWithTiles
 /* VIEW(summon_effects): routine EffectSprite_Acquire as struct IrisSprite
@@ -768,8 +771,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   sprites = Ram_HeapSlots->unk64[0];
   draw = Ram_HeapSlots->unk64[1];
   drawAlt = Ram_HeapSlots->unkb8[1];
-  if (t < *(Data_08199f40 + small) * 2) {
-    r = *(Data_08199f40 + small) * 2 - t;
+  if (t < *(gIris_SplashRadii + small) * 2) {
+    r = *(gIris_SplashRadii + small) * 2 - t;
     cel = r / 6;
     cel8 = cel * 8;
     sheetOffset = cel * 0x302;
@@ -811,7 +814,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
       }
-      draw(canvas, work->sheet + (gBattleEffect_MoteCells[8] + sheetOffset),
+      draw(canvas, work->sheet + (gBattleEffect_MotePictures[8] + sheetOffset),
            x - 4, y - 9, 9, 18);
     } else {
       s32 offset = 294;
@@ -842,14 +845,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
       }
-      draw(canvas, work->sheet + (gBattleEffect_MoteCells[6] + sheetOffset),
+      draw(canvas, work->sheet + (gBattleEffect_MotePictures[6] + sheetOffset),
            x - 3, y - 7, 7, 14);
     }
   } else {
-    if (t < *(Data_08199f40 + small) * 2 + *(Data_08199f40 + small)) {
+    if (t < *(gIris_SplashRadii + small) * 2 + *(gIris_SplashRadii + small)) {
       s32 ringCel;
 
-      r = t - *(Data_08199f40 + small) * 2;
+      r = t - *(gIris_SplashRadii + small) * 2;
       ringCel = r / 3 * 8;
       if (ringCel == 64)
         ringCel = 56;
@@ -869,16 +872,16 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 py;
         a = point << 10;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
-        py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
+        py = (r * Trig_Cos(a) >> 16) + y + gIris_SplashOffsetsY[small] * 2;
         draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
       }
     }
-    for (segment = 0;
-         segment < t - *(Data_08199f40 + small) * 2 && y + segment * 32 <= 112;
+    for (segment = 0; segment < t - *(gIris_SplashRadii + small) * 2 &&
+                      y + segment * 32 <= 112;
          segment++)
       draw(canvas, sprites + 508, x - 4, y + segment * 32, 8, 32);
-    if (t < *(Data_08199f40 + small) * 2 + 8) {
-      s32 shake = (*(Data_08199f40 + small) * 2 - t + 8) >> 1;
+    if (t < *(gIris_SplashRadii + small) * 2 + 8) {
+      s32 shake = (*(gIris_SplashRadii + small) * 2 - t + 8) >> 1;
       typeof(gBgScroll[0]) *scroll = gBgScroll;
       s16 base = 32;
 
@@ -1033,9 +1036,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           work->particles[i].velocityZ += px(1) / 8;
           model->kind = 4;
           model->texture = &texture;
-          model->mesh = Data_08199f98;
+          model->mesh = gIris_ParticleMesh;
           model->vertices = verts;
-          Render_TransformVertices(Data_08199f88, verts, 4);
+          Render_TransformVertices(gIris_ParticleCorners, verts, 4);
           Render_DrawModelList(model);
           Heap_Release(model);
           Heap_Release(verts);
@@ -1043,7 +1046,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             work->particles[i].variant = 0;
         } else {
           ((DrawRectangle)draw[0])(
-              canvas, work->sheet + (gBattleEffect_MoteCells[n - 1] + offset),
+              canvas,
+              work->sheet + (gBattleEffect_MotePictures[n - 1] + offset),
               px - n / 2, py - n, n, n * 2);
         }
         work->particles[i].x += work->particles[i].velocityX;
@@ -1178,15 +1182,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame == 0)
       Sound_PlayFar(SE_CURSE_FALL);
     for (i = 0; i != 11; i++)
-      if (frame == Data_08199fbc[i])
+      if (frame == gIris_PsynergySoundFrames[i])
         Sound_PlayFar(SE_PSYNERGY_START);
     if (frame == 175)
       Sound_PlayFar(SE_POWER_UP);
     for (i = 0; i != 5; i++)
-      if (frame == Data_08199fc8[i])
+      if (frame == gIris_DoorSoundFrames[i])
         Sound_PlayFar(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
     for (i = 0; i != 6; i++)
-      if (frame == Data_08199fd2[i])
+      if (frame == gIris_PowerUpSoundFrames[i])
         Sound_PlayFar(SE_POWER_UP);
     if (frame == 369)
       Sound_PlayFar(SE_CURSE_FALL);
@@ -1209,10 +1213,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = streaks[i];
 
-        s->x = Data_08199fde[i] << 16;
-        s->y = Data_08199fed[i] << 16;
-        s->angle = Data_08199ffc[i];
-        s->speed = Data_0819a01a[i];
+        s->x = gIris_StreakX[i] << 16;
+        s->y = gIris_StreakY[i] << 16;
+        s->angle = gIris_StreakAngles[i];
+        s->speed = gIris_StreakSpeeds[i];
         s->unk10 = 0;
         for (j = 1; j != 10; j++) {
           STREAK(i, j).x = px(150);
@@ -1243,7 +1247,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             size = (i & 3) + 5;
             for (j = 0; j != 10; j++) {
               u8 *to = canvas;
-              u8 *cell = sprites + gBattleEffect_MoteCells[size - 1];
+              u8 *cell = sprites + gBattleEffect_MotePictures[size - 1];
               struct IrisPoint *p = &STREAK(i, j);
 
               ((DrawRectangle)draw[1])(to, cell, HALF(p, 1) - (size >> 1),
@@ -1391,7 +1395,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       work->transferValue = 70;
     }
     if ((u32)(frame - 177) <= 216) {
-      scale = Data_08196f48;
+      scale = gIris_UnitScale;
       pos[3] = 0;
       pos[1] = 0xff0000;
       lift = 0;
@@ -1487,12 +1491,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 py = Trig_Cos(a) * radius;
 
         ((DrawRectangle)draw[0])(canvas,
-                                 work->sheet + gBattleEffect_MoteCells[3],
+                                 work->sheet + gBattleEffect_MotePictures[3],
                                  (px >> 16) + 58, (py * 2 >> 16) + 48, 4, 8);
       }
       for (i = 0; i != 12; i++) {
         ((DrawRectangle)draw[0])(canvas,
-                                 work->sheet + gBattleEffect_MoteCells[1],
+                                 work->sheet + gBattleEffect_MotePictures[1],
                                  (work->particles[i].x >> 16) - 2,
                                  (work->particles[i].y >> 16) - 2, 2, 4);
         work->particles[i].x += work->particles[i].velocityX;
@@ -1509,8 +1513,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 next;
 
         for (j = 0; j != 10; j = next) {
-          u8 *src = work->sheet + gBattleEffect_MoteCells[j];
-          u8 *out = work->sheet + (gBattleEffect_MoteCells[j] + i * 0x302);
+          u8 *src = work->sheet + gBattleEffect_MotePictures[j];
+          u8 *out = work->sheet + (gBattleEffect_MotePictures[j] + i * 0x302);
           s32 off = 0;
 
           next = j + 1;
@@ -1537,13 +1541,14 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
       for (i = 0; i != 32; i++)
         for (j = 0; j != 8; j++)
-          sprites[508 + i * 8 + j] = Data_0819a038[j];
+          sprites[508 + i * 8 + j] = gIris_LineShades[j];
       dst = sprites;
       for (i = 0; i != 2; i++) {
         for (j = 0; j != 3; j++) {
-          u8 *src = work->sheet + gBattleEffect_MoteCells[Data_0819a040[i] - 1];
+          u8 *src =
+              work->sheet + gBattleEffect_MotePictures[gIris_MoteSizes[i] - 1];
 
-          for (m = 0; m != *(Data_0819a040 + i) * *(Data_0819a040 + i) * 2;
+          for (m = 0; m != *(gIris_MoteSizes + i) * *(gIris_MoteSizes + i) * 2;
                m++) {
             s32 v = *src - j * 16;
 
@@ -1556,7 +1561,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       for (j = 0; j != 8; j++) {
-        u8 *src = work->sheet + gBattleEffect_MoteCells[1];
+        u8 *src = work->sheet + gBattleEffect_MotePictures[1];
 
         for (m = 0; m != 8; m++) {
           s32 v = *src - j * 8;
@@ -1576,27 +1581,27 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       Palette_BrightenSavedBattleBg(v, v, v);
     }
     for (j = 0; j != 6; j++) {
-      if (frame > Data_0819a048[j]) {
-        if (frame < Data_0819a054[j]) {
-          Iris_DrawSplash(frame - Data_0819a048[j], Data_0819a060[j],
-                          Data_0819a066[j], Data_0819a06c[j]);
-          if (Data_0819a048[j] - Data_0819a06c[j] * 16 + 48 == frame) {
+      if (frame > gIris_SplashStarts[j]) {
+        if (frame < gIris_SplashEnds[j]) {
+          Iris_DrawSplash(frame - gIris_SplashStarts[j], gIris_SplashX[j],
+                          gIris_SplashY[j], gIris_SplashSmall[j]);
+          if (gIris_SplashStarts[j] - gIris_SplashSmall[j] * 16 + 48 == frame) {
             for (i = 0; i != 6; i++) {
               s32 s = FindFreeSpark();
 
               sparks->life[s] = 0x7900;
-              sparks->x[s] = Data_0819a060[j] << 17;
-              sparks->y[s] = (Data_0819a066[j] << 16) + 0x200000;
+              sparks->x[s] = gIris_SplashX[j] << 17;
+              sparks->y[s] = (gIris_SplashY[j] << 16) + 0x200000;
               sparks->vx[s] = ((Random16() & 31) - 16) << 12;
               sparks->vy[s] = -(Random16() & 31) << 12;
             }
           }
-        } else if (frame < Data_0819a054[j] + Data_0819a078[j]) {
-          s32 t = frame - Data_0819a054[j];
+        } else if (frame < gIris_SplashEnds[j] + gIris_DropFrames[j]) {
+          s32 t = frame - gIris_SplashEnds[j];
 
-          Iris_DrawDrop(t / Data_0819a07e[j], Data_0819a060[j],
-                        Data_0819a066[j] - Data_0819a072[j] * t / 2,
-                        Data_0819a06c[j]);
+          Iris_DrawDrop(t / gIris_DropPictureSteps[j], gIris_SplashX[j],
+                        gIris_SplashY[j] - gIris_DropSpeeds[j] * t / 2,
+                        gIris_SplashSmall[j]);
         }
       }
     }
@@ -1631,7 +1636,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Iris_DrawPillar(3, 34, h);
       }
       if (frame > 375) {
-        struct Widths5 widths = Data_08196f50;
+        struct Widths5 widths = gIris_RisingPillarWidths;
         s32 h = (frame - 375) << 3;
 
         if (h > 127)
@@ -1639,7 +1644,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Iris_DrawPillar(widths.w[h >> 5], (h >> 5) * 2 + 94, h);
       }
       if (frame > 380) {
-        struct Widths7 widths = Data_08196f64;
+        struct Widths7 widths = gIris_WideningPillarWidths;
         s32 h = (frame - 380) << 2;
         s32 q;
 
@@ -1649,7 +1654,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Iris_DrawPillar(widths.w[q], q + 12, h);
       }
       if (frame > 382) {
-        struct Widths7 widths = Data_08196f80;
+        struct Widths7 widths = gIris_NarrowingPillarWidths;
         s32 h = (frame - 382) << 3;
         s32 q;
 
@@ -1785,8 +1790,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 next;
 
         for (j = 0; j != 10; j = next) {
-          u8 *src = work->sheet + gBattleEffect_MoteCells[j];
-          u8 *out = work->sheet + (gBattleEffect_MoteCells[j] + i * 0x302);
+          u8 *src = work->sheet + gBattleEffect_MotePictures[j];
+          u8 *out = work->sheet + (gBattleEffect_MotePictures[j] + i * 0x302);
           s32 off = 0;
 
           next = j + 1;
@@ -1846,7 +1851,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       texture.logHeight = 6;
       Transform_ResetMatrix();
       model->kind = 4;
-      model->mesh = Data_0819a0d4;
+      model->mesh = gIris_StripMesh;
       model->vertices = verts;
       if (frame <= 563) {
         scroll = 0x1000;
@@ -1859,7 +1864,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (!(frame & 7)) {
           s32 s;
 
-          spans = Data_08196f9c;
+          spans = gIris_LeftStripSpans;
           s = FindFreeSpark();
 
           if (s != -1) {
@@ -1875,7 +1880,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
         model->texture = &texture;
-        Render_TransformVertices(Data_0819a084, verts, 10);
+        Render_TransformVertices(gIris_LeftStripCorners, verts, 10);
         Render_DrawModelList(model);
       }
       if (frame <= 563) {
@@ -1889,7 +1894,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (!(frame & 7) && frame <= 501) {
           s32 s;
 
-          spans2 = Data_08196fbc;
+          spans2 = gIris_RightStripSpans;
           s = FindFreeSpark();
 
           if (s != -1) {
@@ -1921,7 +1926,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
         model->texture = &texture;
-        Render_TransformVertices(Data_0819a0ac, verts, 10);
+        Render_TransformVertices(gIris_RightStripCorners, verts, 10);
         Render_DrawModelList(model);
       }
       Heap_Release(model);
@@ -1982,7 +1987,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (638 + j < frame && frame < 670 + j) {
           s32 t = frame - j - 638;
           s32 ry = t >> 1;
-          s32 tile = gBattleEffect_MoteCells[0] + t / 4 * 0x302;
+          s32 tile = gBattleEffect_MotePictures[0] + t / 4 * 0x302;
 
           for (i = 0; i != 128; i++) {
             s32 a = i << 9;
@@ -2037,7 +2042,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0x5800);
       s32 cosT = Trig_Cos(0x5800);
       s32 t = frame - 758;
-      s32 tile = gBattleEffect_MoteCells[5] + t / 4 * 0x302;
+      s32 tile = gBattleEffect_MotePictures[5] + t / 4 * 0x302;
 
       for (i = 0; i != 96; i++) {
         s32 a = i * 384;
@@ -2054,7 +2059,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0xe800);
       s32 cosT = Trig_Cos(0xe000);
       s32 t = frame - 782;
-      s32 tile = gBattleEffect_MoteCells[5] + t / 6 * 0x302;
+      s32 tile = gBattleEffect_MotePictures[5] + t / 6 * 0x302;
 
       for (i = 0; i != 197; i++) {
         s32 a = i * 384;
@@ -2090,10 +2095,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       grow[2] = 0;
       SceneTransform_ApplyScale(grow);
       model->kind = 4;
-      model->mesh = Data_0819a160;
+      model->mesh = gIris_ConeMesh;
       model->texture = &texture2;
       model->vertices = verts;
-      Render_TransformVertices(Data_0819a140, verts, 8);
+      Render_TransformVertices(gIris_ConeCorners, verts, 8);
       Render_DrawModelList(model);
       Heap_Release(model);
       Heap_Release(verts);

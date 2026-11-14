@@ -53,8 +53,8 @@ extern char ResourceId_RuneSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_StarCrossSheet;
 
-extern const u8 gData_08199340[]; // a textured square
-extern const u8 gData_08199210[]; // its four corners
+extern const u8 gBattleEffect_SquareMesh64[];        // a textured square
+extern const u8 gBattleEffect_GroundSquareCorners[]; // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -193,7 +193,7 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
     texture.logHeight = 6;
     model->kind = 6;
     model->texture = &texture;
-    model->mesh = gData_08199340;
+    model->mesh = gBattleEffect_SquareMesh64;
     model->vertices = vertices;
     if (mode == 0) {
       // Rime's crystal fades in over the first eight frames and turns in
@@ -223,7 +223,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
             Transform_ApplyYaw((frame << 9) - TRIG_TURN / 4);
         }
         SceneTransform_ApplyScale3(scale >> 1, scale >> 1, scale >> 1);
-        Render_TransformVertices(gData_08199210, vertices, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                 4);
         Render_DrawModelList(model);
       }
     } else {
@@ -247,7 +248,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectArgument *effect, s32 mode) {
           Transform_ApplyYaw(frame << 9);
           size /= 2;
           SceneTransform_ApplyScale3(size, size, size);
-          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                   4);
           Render_DrawModelList(model);
         }
         star->variant++;

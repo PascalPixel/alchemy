@@ -84,10 +84,10 @@ extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern u16 gBattleEffect_MoteCells[];
-extern const u8 gData_08199364[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_081991f0[];
+extern u16 gBattleEffect_MotePictures[];
+extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_SquareCorners[];
+extern const u8 gBattleEffect_StandingSquareCorners[];
 extern u8 Data_081992b0[];
 extern const u16 Data_08199ee0[]; // the five rings' start frames
 extern const s16 Data_08199ecc[];
@@ -562,7 +562,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           if (y < 0) {
             y += 128;
           }
-          blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1], mx, y,
+          blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1], mx, y,
                   size, 2);
         }
       }
@@ -587,8 +587,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         s32 size = 1;
 
         Render_ProjectPoint(p, screen);
-        blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1], screen[0],
-                screen[1], size, 4);
+        blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
+                screen[0], screen[1], size, 4);
         p->y -= 2;
       }
     }
@@ -599,7 +599,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     texture2.logHeight = 7;
     texture2.pixels = sheet2;
     model->kind = 7;
-    model->mesh = gData_08199364;
+    model->mesh = gBattleEffect_SquareMesh128;
     model->texture = &texture2;
     model->vertices = verts;
     for (i = 0; i != 5; i++) {
@@ -626,7 +626,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(Data_08199ecc[i]);
           Transform_ApplyYaw(Data_08199ed6[i]);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
@@ -673,7 +673,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         Transform_ApplyPitch(Data_08199eea[i]);
         Transform_ApplyYaw(Data_08199efa[i]);
         SceneTransform_ApplyScale3(s / 4, s * 4, s / 2);
-        Render_TransformVertices(gData_081991f0, verts, 4);
+        Render_TransformVertices(gBattleEffect_StandingSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
     }

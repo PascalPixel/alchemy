@@ -74,16 +74,17 @@ extern char ResourceId_VioletPaletteC;
  * member `variant' in something not a structure or union. */
 extern struct EffectStep
     gData_02014000__f16fca8[] __asm__("gData_02014000"); // the sparks
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 // Heights not const: a const table's second height read issues two places
 // early (6).
-extern u16 gBattleEffect_GlintCells[]; // the flashes' cells: offsets,
-extern u8 gData_08197492[];            // widths
-extern u8 gData_08197498[];            // and heights
-extern const u8 Data_08198bee[4];      // their flips
-extern const u8 gData_08199268[];      // a bolt's mesh
-extern const u8 gData_081991b0[];      // its corners (Thunder Mine)
-extern const u8 Data_081991c0[];       // and (Earth Force)
+extern u16 gBattleEffect_GlintPictures[];      // the flashes' cells: offsets,
+extern u8 gBattleEffect_GlintPictureWidths[];  // widths
+extern u8 gBattleEffect_GlintPictureHeights[]; // and heights
+extern const u8 gBoltTrail_GlintFlips[4];      // their flips
+extern const u8 gBattleEffect_ColumnMesh[];    // a bolt's mesh
+extern const u8
+    gBattleEffect_TaperedBeamCorners[];      // its corners (Thunder Mine)
+extern const u8 gBattleEffect_BeamCorners[]; // and (Earth Force)
 
 // The body of Thunder Mine (mode 0) and Earth Force (mode 1): a ball of
 // light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
@@ -271,19 +272,20 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
-        s32 flashX =
-            x + ((Trig_Sin(angle) * half) >> 16) - (gData_08197492[cell] >> 1);
-        s32 flashY =
-            y + ((Trig_Cos(angle) * half) >> 16) - (gData_08197498[cell] >> 1);
-        s32 flags = 3 | Data_08198bee[Random16() & 3];
+        s32 flashX = x + ((Trig_Sin(angle) * half) >> 16) -
+                     (gBattleEffect_GlintPictureWidths[cell] >> 1);
+        s32 flashY = y + ((Trig_Cos(angle) * half) >> 16) -
+                     (gBattleEffect_GlintPictureHeights[cell] >> 1);
+        s32 flags = 3 | gBoltTrail_GlintFlips[Random16() & 3];
 
         /* FAKEMATCH(dead): a once-only block. */
         do {
         } while (0);
         BattleEffect_BuildBlitter(188, 7, 7, flags, 1);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-            canvas, work->sheet + 0x800 + gBattleEffect_GlintCells[cell],
-            flashX, flashY, gData_08197492[cell], gData_08197498[cell]);
+            canvas, work->sheet + 0x800 + gBattleEffect_GlintPictures[cell],
+            flashX, flashY, gBattleEffect_GlintPictureWidths[cell],
+            gBattleEffect_GlintPictureHeights[cell]);
         HeapSlot_Release(188);
       }
       BattleEffectKernels_IntegrateVector2(ball, 64, 0);
@@ -297,7 +299,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
           s32 step;
 
           for (step = 0; step != 8; step++) {
-            draw[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     (dot->x >> 16) - size / 2, (dot->y >> 16) - size, size,
                     size * 2);
             BattleEffectKernels_IntegrateVector2(dot, 62, 0x200);
@@ -324,7 +326,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
       }
       model->kind = 6;
       model->texture = &texture;
-      model->mesh = gData_08199268;
+      model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = vertices;
       for (i = 0, bolt = &work->particles[1]; i != 40; i++, bolt++) {
         s32 shade;
@@ -350,10 +352,11 @@ void BattleEffect_RunBoltTrail(struct BattleEffectArgument *effect, s32 mode) {
         bolt->z += bolt->velocityZ;
         if (mode == 0) {
           SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
-          Render_TransformVertices(gData_081991b0, vertices, 4);
+          Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
+                                   4);
         } else {
           SceneTransform_ApplyScale3(radius << 11, radius * 312, Q16_ONE);
-          Render_TransformVertices(Data_081991c0, vertices, 4);
+          Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
         }
         Render_DrawModelList(model);
       }
@@ -392,12 +395,12 @@ struct Point {
   s32 x;
   s32 y;
 };
-extern const struct Point Data_08196e94;
+extern const struct Point gMegaera_UnitScale;
 
-extern u16 gBattleEffect_PuffCells[]; // the sparkles' cells
-extern u8 gBattleEffect_PuffSizes[];  // and sizes
+extern u16 gBattleEffect_SparklePictures[]; // the sparkles' cells
+extern u8 gBattleEffect_SparkleSizes[];     // and sizes
 
-extern const u8 Data_08198bf4[];
+extern const u8 gMegaera_GlintFlips[];
 extern const u8 Data_08198bf8[];
 
 // Abilities: Megaera.
@@ -621,10 +624,11 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           continue;
         }
         k = (p->variant / 2) % 9;
-        blitters[0](canvas, (PICTURES + 0x2e16) + gBattleEffect_PuffCells[k],
-                    HI(p->x) - gBattleEffect_PuffSizes[k] / 2,
-                    HI(p->y) - gBattleEffect_PuffSizes[k] / 2,
-                    gBattleEffect_PuffSizes[k], gBattleEffect_PuffSizes[k]);
+        blitters[0](
+            canvas, (PICTURES + 0x2e16) + gBattleEffect_SparklePictures[k],
+            HI(p->x) - gBattleEffect_SparkleSizes[k] / 2,
+            HI(p->y) - gBattleEffect_SparkleSizes[k] / 2,
+            gBattleEffect_SparkleSizes[k], gBattleEffect_SparkleSizes[k]);
         BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
           p->velocityX += -(px(1) / 32);
@@ -656,7 +660,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           s32 t = frame - start;
           s32 fall = t * 16 - 16;
 
-          request = Data_08196e94;
+          request = gMegaera_UnitScale;
           if (fall > 131) {
             fall = 132;
           }
@@ -693,18 +697,21 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           if (frame >= start + 10) {
             for (j = 0; j != 2;) {
               s32 k = j & 3;
-              s32 gx = column + (Random16() & 7) - (gData_08197492[k] >> 1);
-              s32 gy = (Random16() & 63) - (gData_08197498[k] >> 1);
+              s32 gx = column + (Random16() & 7) -
+                       (gBattleEffect_GlintPictureWidths[k] >> 1);
+              s32 gy = (Random16() & 63) -
+                       (gBattleEffect_GlintPictureHeights[k] >> 1);
 
               /* FAKEMATCH(dead): an empty once-only loop. */
               do {
               } while (0);
               BattleEffect_BuildBlitter(188, 7, 7,
-                                        3 | Data_08198bf4[Random16() & 3],
+                                        3 | gMegaera_GlintFlips[Random16() & 3],
                                         Data_08198bf8[effect->variant]);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-                  canvas, PICTURES + gBattleEffect_GlintCells[k], gx - 4,
-                  gy + 40, gData_08197492[k], gData_08197498[k]);
+                  canvas, PICTURES + gBattleEffect_GlintPictures[k], gx - 4,
+                  gy + 40, gBattleEffect_GlintPictureWidths[k],
+                  gBattleEffect_GlintPictureHeights[k]);
               j++;
               HeapSlot_Release(188);
             }
@@ -722,7 +729,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           }
           size = i % 3 + 1;
           blitters[p->velocityY > 0](
-              canvas, sprites + gBattleEffect_MoteCells[size - 1],
+              canvas, sprites + gBattleEffect_MotePictures[size - 1],
               HI(p->x) - size / 2, HI(p->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(p, 62, 0x4000);
           p->variant++;
@@ -758,7 +765,7 @@ extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_CometSheetB;
 extern char ResourceId_RuneSheet;
 extern u8 gMapCellBuffer[];
-extern const s8 Data_08196e9c[]; // the hexagon's corners (z, y)
+extern const s8 gVoidBeam_Corners[]; // the hexagon's corners (z, y)
 
 #define VOID_BEAM_FRAMES 88
 #define BEAM_SEGMENTS 10
@@ -892,8 +899,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
         for (i = 0; i != 6; i++) {
           s32 corner = (i + 4) % 6;
 
-          point[1] = (Data_08196e9c[corner * 2 + 1] << 16) + 0x1e0000;
-          point[2] = (Data_08196e9c[corner * 2] << 16) + caster->z;
+          point[1] = (gVoidBeam_Corners[corner * 2 + 1] << 16) + 0x1e0000;
+          point[2] = (gVoidBeam_Corners[corner * 2] << 16) + caster->z;
           EffectPosition_ProjectPoint(point, &corners[i]);
           corners[i].x >>= 1;
         }
@@ -914,7 +921,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
                 corners[i].y +
                 Iwram_MulQ16(k * (corners[(i + 1) % 6].y - corners[i].y), 1820);
 
-            draw[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     x - size / 2, y - size, size, size * 2);
           }
         }
@@ -938,7 +945,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
         if (ring.depth > 799) {
           ring.depth = 799;
         }
-        draw[1](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+        draw[1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 ring.x - size / 2, ring.y - size, size, size * 2);
       }
 

@@ -48,14 +48,14 @@ extern char ResourceId_BlueFlameSheet;
 
 // The bite's quad: its mesh and its four corners, 192 x 128 around the
 // origin.
-extern const u8 gData_08199364[];
-extern const u8 gData_08199210[];
+extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
 
 // The three bites' frames: 0, 12 and 24.
 extern u8 gData_08199d94[];
 
 // The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 
@@ -141,7 +141,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = pixels;
-    model->mesh = gData_08199364;
+    model->mesh = gBattleEffect_SquareMesh128;
     model->kind = 7;
     model->texture = &texture;
     model->vertices = vertices;
@@ -196,7 +196,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           SceneTransform_ApplyUniformScale(scale);
-          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                   4);
           Render_DrawModelList(model);
         }
       }
@@ -210,10 +211,10 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
       if (left >= 0) {
         s32 size = (left >> 2) + 3;
 
-        draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+        draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                 HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
-        draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+        draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                 HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
         drawn->variant--;

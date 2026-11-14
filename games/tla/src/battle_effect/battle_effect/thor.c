@@ -25,10 +25,10 @@ extern char ResourceId_ParticleSpritesC;
 extern char ResourceId_VioletLightningSheetB;
 extern char ResourceId_VioletMoteSheet;
 
-extern const s16 Data_08196e2c[6][2]; // the three lines' end points
+extern const s16 gThor_Points[6][2]; // the three lines' end points
 
 extern const u8 gThor_TargetPalettes[];
-extern const u8 gThor_SmokeFlips[];
+extern const u8 gThor_CrackleFlips[];
 
 #define STORM_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
 #define STORM_MOTE_CELLS 0x6000
@@ -211,8 +211,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        SET_VECTOR(point, (Data_08196e2c[i][0] - 96) << 16, 0,
-                   (Data_08196e2c[i][1] - 96) << 16);
+        SET_VECTOR(point, (gThor_Points[i][0] - 96) << 16, 0,
+                   (gThor_Points[i][1] - 96) << 16);
         EffectPosition_ProjectPoint(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
@@ -230,7 +230,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             s32 y = screen[i * 2].y +
                     Iwram_MulQ16((screen[i * 2 + 1].y - screen[i * 2].y) * j,
                                  0x555);
-            blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+            blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     x - size / 2, y - size, size, size * 2);
           }
         }
@@ -269,7 +269,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         drawAlt(canvas,
                 work->sheet +
                     (level * STORM_DIMMED_DOT_BYTES +
-                     gBattleEffect_MoteCells[dotSize - 1]) +
+                     gBattleEffect_MotePictures[dotSize - 1]) +
                     STORM_DIMMED_DOTS,
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
@@ -505,7 +505,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               s32 x = spark->x >> 16;
               s32 y = spark->y >> 16;
               s32 dotSize = spark->variant / 16 + 1;
-              draw(canvas, sprites + gBattleEffect_MoteCells[dotSize - 1],
+              draw(canvas, sprites + gBattleEffect_MotePictures[dotSize - 1],
                    x - dotSize / 2, y - dotSize, dotSize, dotSize * 2);
             }
           }
@@ -540,18 +540,20 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           cell = i & 3;
           angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) * 8) >> 16) + formationScreenX -
-              (gData_08197492[cell] >> 1);
-          y = ((Trig_Cos(angle) * 40) >> 16) - (gData_08197498[cell] >> 1);
+              (gBattleEffect_GlintPictureWidths[cell] >> 1);
+          y = ((Trig_Cos(angle) * 40) >> 16) -
+              (gBattleEffect_GlintPictureHeights[cell] >> 1);
           /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0,
            * that clears y. */
           if (never || neverToo) {
             y = 0;
           }
           BattleEffect_BuildBlitter(188, 7, 7,
-                                    3 | gThor_SmokeFlips[Random16() & 3], 1);
+                                    3 | gThor_CrackleFlips[Random16() & 3], 1);
           BLITTER_ALTERNATE(
-              canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[cell], x,
-              y + 56, gData_08197492[cell], gData_08197498[cell]);
+              canvas, Ram_MapCellBuffer + gBattleEffect_GlintPictures[cell], x,
+              y + 56, gBattleEffect_GlintPictureWidths[cell],
+              gBattleEffect_GlintPictureHeights[cell]);
           HeapSlot_Release(188);
         }
       }

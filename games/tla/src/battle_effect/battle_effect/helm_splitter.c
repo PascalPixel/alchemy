@@ -11,10 +11,10 @@ extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SkullSheet;
 extern char ResourceId_BlueFlameSheet;
 
-extern u16 gHelmSplitter_Cells[];
-extern s8 gHelmSplitter_CellBiasX[];
-extern s8 gHelmSplitter_CellBiasY[];
-extern u8 gHelmSplitter_CellWidths[];
+extern u16 gHelmSplitter_Pictures[];
+extern s8 gHelmSplitter_PictureBiasX[];
+extern s8 gHelmSplitter_PictureBiasY[];
+extern u8 gHelmSplitter_PictureWidths[];
 extern u8 gData_08199d38[];
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -101,16 +101,16 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  gHelmSplitter_CellBiasX[cell] + 30,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
-                  gHelmSplitter_CellWidths[cell], gData_08199d38[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
+                  gHelmSplitter_PictureBiasX[cell] + 30,
+                  gHelmSplitter_PictureBiasY[cell] + position.y - 60,
+                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  -gHelmSplitter_CellBiasX[cell] -
-                      gHelmSplitter_CellWidths[cell] + 98,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
-                  gHelmSplitter_CellWidths[cell], gData_08199d38[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
+                  -gHelmSplitter_PictureBiasX[cell] -
+                      gHelmSplitter_PictureWidths[cell] + 98,
+                  gHelmSplitter_PictureBiasY[cell] + position.y - 60,
+                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
         }
       }
     } else {
@@ -121,16 +121,16 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  position.x / 2 + gHelmSplitter_CellBiasX[cell] - 16,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
-                  gHelmSplitter_CellWidths[cell], gData_08199d38[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
+                  position.x / 2 + gHelmSplitter_PictureBiasX[cell] - 16,
+                  gHelmSplitter_PictureBiasY[cell] + position.y - 92,
+                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  position.x / 2 - gHelmSplitter_CellBiasX[cell] -
-                      gHelmSplitter_CellWidths[cell] + 16,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
-                  gHelmSplitter_CellWidths[cell], gData_08199d38[cell]);
+          draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
+                  position.x / 2 - gHelmSplitter_PictureBiasX[cell] -
+                      gHelmSplitter_PictureWidths[cell] + 16,
+                  gHelmSplitter_PictureBiasY[cell] + position.y - 92,
+                  gHelmSplitter_PictureWidths[cell], gData_08199d38[cell]);
         }
       }
     }
@@ -209,13 +209,13 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_DualStreamPath;
 
 // The puff arc's six cells, cut from the ember streak sheet.
-extern u8 gData_08197467[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u16 gBattleEffect_PuffArcCells[];
+extern u8 gBattleEffect_PuffArcPictureWidths[];
+extern u8 gBattleEffect_PuffArcPictureHeights[];
+extern u8 gBattleEffect_PuffArcPictureBiasY[];
+extern u16 gBattleEffect_PuffArcPictures[];
 
 // The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 // How many of the 56 embers are sparks, by variant (48 and 40); the rest
 // are flashes.

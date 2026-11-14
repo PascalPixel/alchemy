@@ -425,8 +425,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
               if (mode == 0 || mode == 3 || mode == 4 || mode == 5 ||
                   mode == 7 || mode == 8 || mode == 9 || mode == 11 ||
                   mode == 13) {
-                u8 *cell = work->sheet + gBattleEffect_PuffCells[size];
-                u32 edge = gBattleEffect_PuffSizes[size];
+                u8 *cell = work->sheet + gBattleEffect_SparklePictures[size];
+                u32 edge = gBattleEffect_SparkleSizes[size];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, screen.x - half, screen.y - half, edge,
@@ -435,7 +435,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
                 blit[0](canvas, work->sheet + BEAM_BYTES, screen.x - 6,
                         screen.y - 12, 12, 24);
               } else {
-                draw[1](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+                draw[1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                         screen.x - size / 2, screen.y - size, size, size * 2);
               }
 

@@ -84,20 +84,20 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     do {
       if (p->variant >= 0 && p->variant <= 23) {
         cell = p->variant / 4;
-        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-             p->x - ((w = gData_08197467[cell]) >> 1),
-             p->y + gBattleEffect_PuffArcCellBiasY[cell], w,
-             gBattleEffect_PuffArcCellHeights[cell]);
+        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
+             p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
+             p->y + gBattleEffect_PuffArcPictureBiasY[cell], w,
+             gBattleEffect_PuffArcPictureHeights[cell]);
         if (effect->variant != 0)
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-               p->x - ((w = gData_08197467[cell]) >> 1),
-               (p->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, w,
-               gBattleEffect_PuffArcCellHeights[cell]);
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
+               p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
+               (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 16, w,
+               gBattleEffect_PuffArcPictureHeights[cell]);
         if (effect->variant == 2)
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-               p->x - ((w = gData_08197467[cell]) >> 1),
-               (p->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, w,
-               gBattleEffect_PuffArcCellHeights[cell]);
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
+               p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
+               (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 32, w,
+               gBattleEffect_PuffArcPictureHeights[cell]);
       }
       i += 1;
       p->variant += 1;

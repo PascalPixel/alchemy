@@ -81,20 +81,20 @@ extern u8 gMapCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02011400[];
 extern u8 Data_02012964[]; // 128 sparks
-extern const struct PlacementSource Data_08196f18;
-extern u16 gBattleEffect_MoteCells[];
-extern u16 gBattleEffect_GlintCells[]; // the glints' cells
-extern u8 gData_08197492[];            // widths
-extern u8 gData_08197498[];            // heights
-extern const u8 Data_08198cac[];
-extern const u8 Data_08198ec4[];
-extern const u8 gData_08199268[];
+extern const struct PlacementSource gTrident_UnitScale;
+extern u16 gBattleEffect_MotePictures[];
+extern u16 gBattleEffect_GlintPictures[];      // the glints' cells
+extern u8 gBattleEffect_GlintPictureWidths[];  // widths
+extern u8 gBattleEffect_GlintPictureHeights[]; // heights
+extern const u8 gBattleEffect_CylinderCorners[];
+extern const u8 gBattleEffect_CylinderMesh[];
+extern const u8 gBattleEffect_ColumnMesh[];
 extern const u8 Data_08199dcb[];  // each ring's start
 extern const u8 Data_08199dd3[];  // growth
 extern const s8 Data_08199ddb[];  // height
 extern const s32 Data_08199de4[]; // each trident's yaw and turn
 extern const u8 Data_08199e24[];
-extern const u8 Data_08199e54[];
+extern const u8 gTrident_GlintFlips[];
 
 // Abilities: Trident (Poseidon).
 //
@@ -252,7 +252,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         visible = visible - rise - 20;
       }
       if (visible > 0) {
-        source = Data_08196f18;
+        source = gTrident_UnitScale;
         placement[3] = 0;
         placement[1] = px(255);
         for (i = 0; i != 4; i++) {
@@ -326,7 +326,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       model->kind = 7;
       model->texture = &texture;
       model->unk04 = 0;
-      model->mesh = Data_08198ec4;
+      model->mesh = gBattleEffect_CylinderMesh;
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;
@@ -354,7 +354,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
-        Render_TransformVertices(Data_08198cac, vertices, 32);
+        Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
         Render_DrawModelList(model);
       }
 
@@ -368,7 +368,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         texture.logHeight = 7;
         model->texture = &texture;
         model->kind = 7;
-        model->mesh = gData_08199268;
+        model->mesh = gBattleEffect_ColumnMesh;
         model->vertices = vertices;
         model->scrollU = 0;
         model->scrollV = 0;
@@ -456,7 +456,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         drawn->variant++;
       }
-      for (i = 0, cellTable = (const u8 *)gBattleEffect_MoteCells,
+      for (i = 0, cellTable = (const u8 *)gBattleEffect_MotePictures,
           drawn = (struct EffectStep *)Data_02012964;
            i != 128; i++, drawn++) {
         s32 spark;
@@ -480,13 +480,13 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       for (i = 0; i != 4; i++) {
         s32 k = i & 3;
         s32 angle = Random16();
-        s32 x =
-            centerX + ((Trig_Sin(angle) << 3) >> 16) - (gData_08197492[k] >> 1);
+        s32 x = centerX + ((Trig_Sin(angle) << 3) >> 16) -
+                (gBattleEffect_GlintPictureWidths[k] >> 1);
         s32 y = (i << 5) + ((Trig_Cos(angle) << 4) >> 16) -
-                (gData_08197498[k] >> 1);
+                (gBattleEffect_GlintPictureHeights[k] >> 1);
 
         {
-          s32 c = Data_08199e54[Random16() & 3] | 3;
+          s32 c = gTrident_GlintFlips[Random16() & 3] | 3;
 
           /* FAKEMATCH(dead): an empty once-only block before the blitter call.
            */
@@ -495,8 +495,9 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           BattleEffect_BuildBlitter(188, 7, 7, c, 1);
         }
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-            canvas, work->sheet + gBattleEffect_GlintCells[k], x, y,
-            gData_08197492[k], gData_08197498[k]);
+            canvas, work->sheet + gBattleEffect_GlintPictures[k], x, y,
+            gBattleEffect_GlintPictureWidths[k],
+            gBattleEffect_GlintPictureHeights[k]);
         HeapSlot_Release(188);
       }
     }
@@ -529,10 +530,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, BattleEffect_RunLeapingStrike, 1)
 extern char ResourceId_FlameballSheet;
 extern char ResourceId_ClawSlashSheet;
 
-extern const u8 gData_08199340[];
+extern const u8 gBattleEffect_SquareMesh64[];
 extern const u8 gData_081990d0[];
 
-extern const u8 Data_081991e0[];
+extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 gData_08199090[];
 
 extern const u8 Data_08199e58[];
@@ -740,7 +741,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
         texture.logHeight = 6;
         texture.pixels = work->sheet + 0x3000;
         model->kind = kind;
-        model->mesh = gData_08199340;
+        model->mesh = gBattleEffect_SquareMesh64;
         model->texture = &texture;
         model->vertices = projected;
         model->shade = shade;
@@ -756,7 +757,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
             Transform_ApplyRoll(-0x3388);
           }
           SceneTransform_ApplyUniformScale(0x286a0);
-          Render_TransformVertices(Data_081991e0, projected, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
 
@@ -799,7 +800,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
 
         // Two pillars where the caster landed, from their own frames.
         model->scrollV = 0;
-        model->mesh = Data_08198ec4;
+        model->mesh = gBattleEffect_CylinderMesh;
         texture.pixels = work->sheet + 0x5000;
         texture.logWidth = 7;
         texture.logHeight = 7;
@@ -833,7 +834,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
                                             Data_08199e6c[i] << 16, 0);
               SceneTransform_ApplyScale3(scale, scale * 2, scale);
               Transform_ApplyPitch(2000);
-              Render_TransformVertices(Data_08198cac, projected, 32);
+              Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
+                                       32);
               Render_DrawModelList(model);
             }
           }
@@ -861,7 +863,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectArgument *effect,
         } else if ((u32)spark->x < px(127) && spark->y >= 0) {
           s32 size = spark->variant / 8 + 1;
 
-          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   (spark->x >> 16) - size / 2, (spark->y >> 16) - size, size,
                   size * 2);
         }

@@ -155,13 +155,13 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
           size = pos.depth / 20 + 2;
           pos.x += 56;
           pos.y += 96;
-          draw[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                   pos.x - size / 2, pos.y - size, size, size * 2);
         }
       }
     }
 
-    req = Data_08196e74;
+    req = gJudgment_UnitScale;
     place[3] = 0;
     place[1] = 0;
     for (i = 0; i != 16; i++) {
@@ -311,7 +311,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       texture.pixels = gData_02014000;
       model->texture = &texture;
       model->kind = 7;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_SquareMesh128;
       model->vertices = verts;
       if (frame > 151) {
         shade = (frame * -8) + 1216;
@@ -321,7 +321,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPosition3(-0x40000, 0x180000, 0);
       SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(3000);
-      Render_TransformVertices(gData_08199210, verts, 4);
+      Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
       Heap_Release(verts);
@@ -588,7 +588,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       shade = 0;
       model->kind = 7;
       model->texture = &glare;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_SquareMesh128;
       model->vertices = verts;
       if (frame > 79) {
         shade = (frame * -8) + 640;
@@ -598,7 +598,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPosition3(-0x40000, 0x80000, 0);
       SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(5000);
-      Render_TransformVertices(gData_08199210, verts, 4);
+      Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
       Heap_Release(verts);

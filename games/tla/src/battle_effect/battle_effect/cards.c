@@ -73,7 +73,7 @@ extern char ResourceId_RedCrescentSheetA;
 extern char ResourceId_SmokeSheet;
 
 // The dagger's shards, ☀️'s palette ramp shards.
-extern u16 gStatChange_ShardCells[];
+extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
 
@@ -83,7 +83,7 @@ extern u8 gData_0819751a[];
 
 // The card's quad: its mesh and its corners.
 extern u8 Data_081992b0[];
-extern const u8 Data_081991e0[];
+extern const u8 gBattleEffect_SquareCorners[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
@@ -358,7 +358,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
       Transform_ApplyYaw(0x1770);
       SceneTransform_ApplyUniformScale(scale);
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
-      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
       Heap_Release(vertices);
@@ -481,7 +481,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
           cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
           draw[0](canvas,
                   work->sheet + 0x2580 +
-                      (fade * 696 + gStatChange_ShardCells[cell]),
+                      (fade * 696 + gStatChange_ShardPictures[cell]),
                   overflow + HI(step->x) - gStatChange_ShardWidths[cell] / 2,
                   HI(step->y) - gStatChange_ShardHeights[cell] / 2,
                   gStatChange_ShardWidths[cell],

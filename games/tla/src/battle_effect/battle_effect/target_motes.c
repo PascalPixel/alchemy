@@ -178,7 +178,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (({
-                 w = gData_08197492;
+                 w = gBattleEffect_GlintPictureWidths;
                  w;
                })[frame & 3] >>
                1);
@@ -187,7 +187,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           __asm__("" : "=r"(w) : "0"(w));
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
               (({
-                 h = gData_08197498;
+                 h = gBattleEffect_GlintPictureHeights;
                  h;
                })[frame & 3] >>
                1);
@@ -196,11 +196,11 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
           __asm__("" : "=r"(h) : "0"(h));
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
                                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                        Data_08197a34[Random16() & 3],
+                                        gTargetMotes_GlintFlips[Random16() & 3],
                                     BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas,
-              work->sheet + gBattleEffect_GlintCells[frame & 3] +
+              work->sheet + gBattleEffect_GlintPictures[frame & 3] +
                   RENDER_MODE_TORNADO,
               x, y + 16, w[frame & 3], h[frame & 3]);
           HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
@@ -636,7 +636,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
         if (screen.depth > 634)
           screen.depth = 634;
         size = 9 - (screen.depth - 250) / 64;
-        callbacks[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        callbacks[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                      screen.x - size / 2, screen.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(spark, 60, 0);
         if (frame > i + 30) {
@@ -735,8 +735,8 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;
               {
-                u8 *cell = sheet + gBattleEffect_PuffCells[cel];
-                u32 edge = gBattleEffect_PuffSizes[cel];
+                u8 *cell = sheet + gBattleEffect_SparklePictures[cel];
+                u32 edge = gBattleEffect_SparkleSizes[cel];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);

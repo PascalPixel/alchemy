@@ -192,7 +192,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
           if (size <= 0)
             size = 1;
-          draw[i & 1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[i & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                       px - size / 2, py - size, size, size * 2);
         }
       }

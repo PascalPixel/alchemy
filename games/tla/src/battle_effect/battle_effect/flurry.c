@@ -90,7 +90,7 @@ extern char ResourceId_WaveSheet;
 extern u8 Data_081985b3[];
 
 // A glint's four flips.
-extern const u8 Data_0819861b[];
+extern const u8 gBurstScene_GlintFlips[];
 
 void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                                 s32 variant) {
@@ -318,7 +318,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
         pos.x /= 2;
         size >>= 3;
         size++;
-        draw[(i / 2) & 1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[(i / 2) & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                           pos.x - size / 2, pos.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(mote, 60, -0x400);
         if (mote->y < 0x80000)
@@ -339,21 +339,22 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
           s32 cel = frame & 3;
           s32 radius = (Random16() & 31) + 4;
           s32 x = spot.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
-                  gData_08197492[cel] / 2;
+                  gBattleEffect_GlintPictureWidths[cel] / 2;
           s32 y = spot.y - ((Trig_Cos(angle) * radius) >> 17) -
-                  gData_08197498[cel] / 2;
+                  gBattleEffect_GlintPictureHeights[cel] / 2;
           u32 flip = Random16();
 
           /* FAKEMATCH(dead): an empty once-only loop. */
           do {
           } while (0);
           BattleEffect_BuildBlitter(HEAP_BLITTER_ALTERNATE, 7, 7,
-                                    Data_0819861b[flip & 3] | COMPOSITE_CLIP_X |
-                                        COMPOSITE_CLIP_Y,
+                                    gBurstScene_GlintFlips[flip & 3] |
+                                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     BLIT_ADDITIVE);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-              canvas, work->sheet + gBattleEffect_GlintCells[cel], x, y,
-              gData_08197492[cel], gData_08197498[cel]);
+              canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
+              gBattleEffect_GlintPictureWidths[cel],
+              gBattleEffect_GlintPictureHeights[cel]);
           HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         }
       }

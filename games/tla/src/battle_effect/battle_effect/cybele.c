@@ -288,13 +288,13 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
           if ((i & 1) != 0) {
             s32 y = ((vine->y - top) & 127) - 16;
             s32 kind = i % 3;
-            s32 full = gCybele_LeafSizes[kind];
+            s32 full = gCybele_FlowerSizes[kind];
             s32 rows = full;
 
             if (y + rows > vine->y)
               rows -= y + rows - vine->y;
             if (rows > 0)
-              draw[i & 1](canvas, work->sheet + gCybele_LeafOffsets[kind],
+              draw[i & 1](canvas, work->sheet + gCybele_FlowerPictures[kind],
                           vine->x + 8, y, full, rows);
           }
         }
@@ -370,7 +370,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
             spark->y = screen.y + (Random16() & 15) - 40;
           }
           if (spark->variant >= 0 && spark->variant <= 4) {
-            u8 *cell = work->sheet + gCybele_SparkOffsets[spark->variant];
+            u8 *cell = work->sheet + gCybele_SparkPictures[spark->variant];
             u32 size = gCybele_SparkSizes[spark->variant];
             u32 half = size >> 1;
 
@@ -515,7 +515,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
             screen.x >>= 1;
             if (ember->variant >= 0 && ember->variant <= 26) {
               s32 cel = 6;
-              u8 *source = work->sheet + gCybele_EmberOffsets[cel];
+              u8 *source = work->sheet + gCybele_BlastPictures[cel];
               u32 size = gCybele_BlastSizes[cel];
 
               draw[0](canvas, source, screen.x - (size >> 1),

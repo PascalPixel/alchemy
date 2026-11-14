@@ -39,10 +39,10 @@ struct FxScale {
 
 extern char ResourceId_DesertBackdrop;
 
-extern struct FxScale gData_08196e6c; // one to one
-extern u8 gRamses_ObjectColumns[];
-extern u8 gRamses_ObjectRows[];
-extern u16 gRamses_PuffPictures[]; // ☀️ gEruption_PuffCells
+extern struct FxScale gRamses_UnitScale; // one to one
+extern u8 gRamses_StatueColumns[];
+extern u8 gRamses_StatueRows[];
+extern u16 gRamses_PuffPictures[]; // ☀️ gEruption_PuffPictures
 extern u16 gRamses_PuffSizes[];    // ☀️ gCybele_EmberSizes
 
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
@@ -164,7 +164,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       Sound_PlayFar(SE_SWITCH_MECHANISM);
     if (frame == HIT_FRAME)
       Sound_PlayFar(SE_CRASH);
-    scale = gData_08196e6c;
+    scale = gRamses_UnitScale;
     if (frame >= ROCKS_FALL && frame <= 251)
       work->shakeFrames = 1;
     else if (frame >= HIT_FRAME && frame <= HIT_FRAME + 3)
@@ -174,8 +174,8 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = (gRamses_ObjectColumns[i] << 16) + base.x - 0x200000;
-      position.y = (gRamses_ObjectRows[i] << 16) + base.y - 0x200000;
+      position.x = (gRamses_StatueColumns[i] << 16) + base.x - 0x200000;
+      position.y = (gRamses_StatueRows[i] << 16) + base.y - 0x200000;
       Render_ApplyProjectedPlacementFar(work->objects[i], &position, &scale.x,
                                         0);
     }
@@ -310,7 +310,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        draw[i & 1](canvas, cells + gBattleEffect_MoteCells[size - 1],
+        draw[i & 1](canvas, cells + gBattleEffect_MotePictures[size - 1],
                     HI(spark->x) - size / 2, HI(spark->y) - size, size,
                     size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 62, 0x1000);

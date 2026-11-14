@@ -104,7 +104,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
           screen.depth = 799;
         size = 10 - (screen.depth - 160) / 64;
         draw[frame < start + 48 ? 1 : 0](
-            canvas, sheet + gBattleEffect_MoteCells[size - 1],
+            canvas, sheet + gBattleEffect_MotePictures[size - 1],
             screen.x - size / 2, screen.y - size, size, size * 2);
         ember->x += ember->velocityX;
         ember->y += ember->velocityY;
@@ -155,7 +155,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
         u32 width;
 
         cel = ember->variant / 2;
-        draw[1](canvas, work->sheet + gFire_FlareCells[cel],
+        draw[1](canvas, work->sheet + gFire_FlarePictures[cel],
                 ember->x - ((width = gFire_FlareWidths[cel]) >> 1),
                 ember->y + gFire_FlareBiasY[cel] - 56, width,
                 gFire_FlareHeights[cel]);

@@ -84,9 +84,9 @@ extern char ResourceId_Data134, ResourceId_JupiterDjinnSmallSheet;
 extern char ResourceId_MarsDjinnSheet, ResourceId_WaterSpraySheet;
 
 extern u8 gMapCellBuffer[];
-extern u16 gBattleEffect_MoteCells[];
-extern const u8 gData_08199340[];
-extern const u8 gData_08199210[];
+extern u16 gBattleEffect_MotePictures[];
+extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
 
 void Render_ProjectVertices__ability_effects(struct ModelVertex *vertices,
                                              struct ProjectedVertex *screen,
@@ -343,7 +343,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
                 BattleEffectKernels_IntegrateVector3(q, 62, 1024);
               }
               EffectPosition_ProjectPoint(q, &proj);
-              blit[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+              blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                       proj.x / 2 - n / 2, proj.y - n, n, n * 2);
             }
           }
@@ -499,7 +499,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
         }
         texture.logWidth = 6;
         texture.logHeight = 6;
-        model->mesh = gData_08199340;
+        model->mesh = gBattleEffect_SquareMesh64;
         model->vertices = vertices;
         model->shade = shade;
         model->scrollU = 0;
@@ -525,7 +525,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectArgument *effect,
               Transform_ApplyPitch(-TRIG_TURN / 16);
               Transform_ApplyYaw(frame << 12);
               SceneTransform_ApplyUniformScale(s);
-              Render_TransformVertices(gData_08199210, vertices, 4);
+              Render_TransformVertices(gBattleEffect_GroundSquareCorners,
+                                       vertices, 4);
               Render_DrawModelList(model);
             }
           }

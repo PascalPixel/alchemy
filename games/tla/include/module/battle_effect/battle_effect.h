@@ -101,16 +101,19 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 extern u8 Data_02011000[];
 extern u8
     Data_02012000[]; // the crystal texture and the flashes, after the map cells
-extern u16 gBattleEffect_MoteCells[]; // ☀️ gBattleEffect_MoteCells: dot sizes 1
-                                      // to 10, cell offsets in the sheet
-extern u16 gBattleEffect_GlintCells[];
-extern u8 gData_08197492[]; // ☀️ gBattleEffect_GlintCellWidths
-extern u8 gData_08197498[]; // ☀️ gBattleEffect_GlintCellHeights
-extern const u8 gData_081991b0[];
-extern const u8 Data_081991c0[];
-extern const u8 gData_08199210[]; // a quad's four corners, x y z for each
-extern const u8 Data_08199220[];
-extern const u8 gData_08199340[]; // the quad's face
+extern u16
+    gBattleEffect_MotePictures[]; // ☀️ gBattleEffect_MotePictures: dot sizes 1
+                                  // to 10, cell offsets in the sheet
+extern u16 gBattleEffect_GlintPictures[];
+extern u8 gBattleEffect_GlintPictureWidths[]; // ☀️ gBattleEffect_GlintCellWidths
+extern u8
+    gBattleEffect_GlintPictureHeights[]; // ☀️ gBattleEffect_GlintCellHeights
+extern const u8 gBattleEffect_TaperedBeamCorners[];
+extern const u8 gBattleEffect_BeamCorners[];
+extern const u8 gBattleEffect_GroundSquareCorners[]; // a quad's four corners, x
+                                                     // y z for each
+extern const u8 gBattleEffect_SquareMesh32[];
+extern const u8 gBattleEffect_SquareMesh64[]; // the quad's face
 void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
@@ -122,8 +125,8 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
-// The models: the rings' quad (Data_08199220), its corners, the crystal and its
-// corners.
+// The models: the rings' quad (gBattleEffect_SquareMesh32), its corners, the
+// crystal and its corners.
 extern const u8 gData_081990d0[];
 extern const u8 gData_08199090[];
 extern char ResourceId_Data0DA;
@@ -134,8 +137,8 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_SetupCanvasWindows(void); // the BG2 canvas's registers
 extern u8 gData_02014000[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_08199364[];
+extern const u8 gBattleEffect_SquareCorners[];
+extern const u8 gBattleEffect_SquareMesh128[];
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);
 void BattleEffect_RunRamses(struct BattleEffectArgument *effect);
 void BattleEffect_RunNereid(struct BattleEffectArgument *effect);
@@ -165,12 +168,12 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect);
 extern char ResourceId_Data134; // The Broken Seal's ParticleSpritesA
 extern char ResourceId_PetalSheet;
 extern char ResourceId_Data0C1;
-extern const u8 Data_08198cac[];
-extern const u8 Data_08198ec4[];
+extern const u8 gBattleEffect_CylinderCorners[];
+extern const u8 gBattleEffect_CylinderMesh[];
 // The sparkle puff's size and cell for each of its nine pictures
-// (gBattleEffect_PuffSizes and gBattleEffect_PuffCells).
-extern u8 gBattleEffect_PuffSizes[];
-extern u16 gBattleEffect_PuffCells[];
+// (gBattleEffect_SparkleSizes and gBattleEffect_SparklePictures).
+extern u8 gBattleEffect_SparkleSizes[];
+extern u16 gBattleEffect_SparklePictures[];
 void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
                                   s32 mode);
@@ -286,13 +289,13 @@ struct DualColumn {
 
 extern char ResourceId_EffectPalette01;
 extern char ResourceId_Data0C2;
-extern u8 gData_08197467[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u16 gBattleEffect_PuffArcCells[];
+extern u8 gBattleEffect_PuffArcPictureWidths[];
+extern u8 gBattleEffect_PuffArcPictureHeights[];
+extern u8 gBattleEffect_PuffArcPictureBiasY[];
+extern u16 gBattleEffect_PuffArcPictures[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[]; // the shard heights
-extern u16 gSpire_ShardCells[];
+extern u16 gSpire_ShardPictures[];
 void BattleEffect_StepPaletteToResource(s32);
 extern char ResourceId_Data0C9;
 extern char ResourceId_VioletPaletteC;
@@ -302,7 +305,7 @@ void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 // The quad meshes and corners: the card, the pictures and their spread.
 extern u8 Data_081992b0[];
 // The dagger's shards, ☀️'s palette ramp shards.
-extern u16 gStatChange_ShardCells[];
+extern u16 gStatChange_ShardPictures[];
 extern u8 gStatChange_ShardWidths[];
 extern u8 gStatChange_ShardHeights[];
 void BattleEffect_BuildWindowEdgeTable(void);
@@ -316,14 +319,14 @@ extern u8 gCybele_ObjectPoses[];
 extern u16 gCybele_ThornPictures[]; // ☀️ gCybele_ThornOffsets
 extern u8 Data_0819820c[];          // ☀️ gCybele_ThornWidths
 extern u8 Data_08198211[];          // ☀️ gCybele_ThornHeights
-extern u16 gCybele_LeafOffsets[];
-extern u8 gCybele_LeafSizes[];
+extern u16 gCybele_FlowerPictures[];
+extern u8 gCybele_FlowerSizes[];
 extern u16 gCybele_ChipPictures[]; // ☀️ the second gCybele_ThornOffsets
 extern u8 gCybele_ChipWidths[];    // ☀️ the second gCybele_ThornWidths
 extern u8 gCybele_ChipHeights[];   // ☀️ the second gCybele_ThornHeights
-extern u16 gCybele_SparkOffsets[];
+extern u16 gCybele_SparkPictures[];
 extern u8 gCybele_SparkSizes[];
-extern u16 gCybele_EmberOffsets[];
+extern u16 gCybele_BlastPictures[];
 extern u16 gCybele_BlastSizes[]; // ☀️ gCybele_EmberSizes
 extern u8 gBoreas_Points[][2];
 extern s8 gBoreas_ShakeOffsets[];
@@ -331,11 +334,11 @@ extern u16 gBoreas_CrystalPictures[]; // ☀️ gBoreas_RockCells
 extern u8 gBoreas_CrystalWidths[];    // ☀️ gBoreas_RockWidths
 extern u8 gBoreas_CrystalHeights[];   // ☀️ gBoreas_RockHeights
 extern u8 gBoreas_Animations[];
-extern struct Scale Data_08196e14; // ☀️ gBattleFx10_UnitScale
-extern u16 gBoreas_DebrisCells[];
+extern struct Scale gBoreas_UnitScale; // ☀️ gBattleFx10_UnitScale
+extern u16 gBoreas_DebrisPictures[];
 extern u8 gBoreas_DebrisWidths[];
 extern u8 gBoreas_DebrisHeights[];
-extern u16 gBoreas_SprayCells[];
+extern u16 gBoreas_SprayPictures[];
 extern u8 Data_081982c0[];                  // ☀️ gBoreas_SprayWidths
 extern u8 Data_081982c3[];                  // ☀️ gBoreas_SprayHeights
 extern u16 gBoreas_RisingCrystalPictures[]; // ☀️ gBoreas_BoulderCells
@@ -350,42 +353,42 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode);
 extern u8 gQuake_Timings[][3];
 extern struct RockWallHeights gRockWall_Heights;
 extern u8 gFire_Counts[];
-extern u16 gFire_FlareCells[];
+extern u16 gFire_FlarePictures[];
 extern u8 gFire_FlareWidths[];
 extern u8 gFire_FlareBiasY[];
 extern u8 gFire_FlareHeights[];
 extern u8 gFrost_Timings[];
-extern u8 gFrost_ColumnSpots[];
+extern u8 gFrost_MoundSpots[];
 extern u16 gFrost_MoteCells[];
 extern u8 gFrost_MoteWidths[];
 extern u8 gFrost_MoteHeights[];
-extern u16 gFrost_ColumnCells[];
-extern u8 gFrost_ColumnHeights[];
+extern u16 gFrost_MoundPictures[];
+extern u8 gFrost_MoundHeights[];
 extern u16 gFrost_ChipCells[];
 extern u8 gFrost_ChipWidths[];
 extern u8 gFrost_ChipHeights[];
 extern u8 gRay_Sparks[][2];
 void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode);
 extern u8 gEruption_Counts[][3];
-extern u16 gEruption_PuffCells[];
+extern u16 gEruption_PuffPictures[];
 extern u16 gEruption_PuffSizes[];
-extern u8 gTargetStrike_GlintDrawFlags[];
+extern u8 gProjectileVolleyB_GlintFlips[];
 extern char ResourceId_LeafWarriorTiles;
 extern s32 gAtalanta_UnitScale[];
 void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
                                     s32 mode);
 // The Broken Seal's gGrowth_* tables, in effect_table.s.
-extern u8 gGrowth_ColumnCounts[];  // _ColumnCounts: columns by strength
-extern u8 gGrowth_ColumnX[];       // _ColumnX: each column's root
-extern u8 gGrowth_HeightLimits[];  // _HeightLimits: by i % 3
-extern u16 gGrowth_VineCells[];    // _VineCells
-extern u8 gGrowth_VineWidths[];    // _VineWidths
-extern s8 gGrowth_PillarHeights[]; // _PillarHeights: by i & 7
-extern u16 gGrowth_PillarCells[];  // _PillarCells
-extern u8 gGrowth_PillarWidths[];  // _PillarWidths
-extern u16 gGrowth_PuffCells[];    // _PuffCells
-extern s8 gGrowth_PuffWidths[];    // _PuffWidths
-extern u8 gGrowth_PuffHeights[];   // _PuffHeights
+extern u8 gGrowth_ColumnCounts[];    // _ColumnCounts: columns by strength
+extern u8 gGrowth_ColumnX[];         // _ColumnX: each column's root
+extern u8 gGrowth_HeightLimits[];    // _HeightLimits: by i % 3
+extern u16 gGrowth_VinePictures[];   // _VineCells
+extern u8 gGrowth_VineWidths[];      // _VineWidths
+extern s8 gGrowth_PillarHeights[];   // _PillarHeights: by i & 7
+extern u16 gGrowth_PillarPictures[]; // _PillarCells
+extern u8 gGrowth_PillarWidths[];    // _PillarWidths
+extern u16 gGrowth_PuffPictures[];   // _PuffCells
+extern s8 gGrowth_PuffWidths[];      // _PuffWidths
+extern u8 gGrowth_PuffHeights[];     // _PuffHeights
 // The Broken Seal's table of this name: each vine's x about the
 // middle of the targets.
 extern const s8 gGrowth_ColumnOffsets[];
@@ -399,7 +402,7 @@ extern u8 gGrowth_Kinds[];
 // The Broken Seal's table of this name, _PuffCells, _PuffWidths:
 // the seven dust cels.
 extern u8 gGrowth_ThornPuffHeights[];
-extern u16 gGrowth_ThornPuffCells[];
+extern u16 gGrowth_ThornPuffPictures[];
 extern s8 gGrowth_ThornPuffWidths[];
 // The Broken Seal's table of this name: four bytes for each strength,
 // sparks, glints, glint spread and bolts.

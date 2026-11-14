@@ -157,7 +157,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
             y = spark->y >> 16;
             size = spark->variant / 8 + 1;
-            draw[k & 1](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+            draw[k & 1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                         x - size / 2, y - size, size, size * 2);
           }
         }
@@ -384,7 +384,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
               s16 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;
 
-              draw[j & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+              draw[j & 1](canvas,
+                          graphics + gBattleEffect_MotePictures[size - 1],
                           x - size / 2, y - size, size, size * 2);
             }
           }

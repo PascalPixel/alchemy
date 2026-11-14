@@ -334,7 +334,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         if (effect->side == 1) {
           BattleEffect_LoadBlitter(SLOT_BLITTER,
                                    BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
-          gBlitter(canvas, work->sheet + gTargetStrike_Offsets[picture],
+          gBlitter(canvas, work->sheet + gTargetStrike_Pictures[picture],
                    targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
                        gTargetStrike_Widths[picture] + 8,
                    targetPosition.y - (gTargetStrike_Heights[picture] / 2),
@@ -343,7 +343,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         } else {
           BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
           gBlitter(
-              canvas, work->sheet + gTargetStrike_Offsets[picture],
+              canvas, work->sheet + gTargetStrike_Pictures[picture],
               targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
@@ -437,7 +437,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
 
         while (picture > 4)
           picture -= 4;
-        stage = gTargetStrike_ColumnStages[picture];
+        stage = gTargetStrike_BiteStages[picture];
       } else {
         stage = 3;
       }
@@ -514,17 +514,19 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         s32 y;
 
         x = center.x / 2 + (Trig_Sin(angle) * (radius + 4) >> 17) -
-            (gData_08197492[image] / 2);
+            (gBattleEffect_GlintPictureWidths[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
-            (gData_08197498[image] / 2);
+            (gBattleEffect_GlintPictureHeights[image] / 2);
         BattleEffect_BuildBlitter(
             SLOT_BLITTER_ALTERNATE, 7, 7,
-            gDeathPlunge_SwordWidths[Random16() & 3] | CLIP, BLIT_ADDITIVE);
+            gTargetStrike_GlintDrawFlags[Random16() & 3] | CLIP, BLIT_ADDITIVE);
         do {
           /* FAKEMATCH(dead): an empty once-only block. */
         } while (0);
-        gBlitterAlternate(canvas, work->sheet + gBattleEffect_GlintCells[image],
-                          x, y, gData_08197492[image], gData_08197498[image]);
+        gBlitterAlternate(canvas,
+                          work->sheet + gBattleEffect_GlintPictures[image], x,
+                          y, gBattleEffect_GlintPictureWidths[image],
+                          gBattleEffect_GlintPictureHeights[image]);
         HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
       }
     }
@@ -586,7 +588,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
           if (step->variant >= 0) {
             EffectPosition_ProjectPoint((s32 *)step, &position);
             position.x >>= 1;
-            draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+            draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
             BattleEffectKernels_IntegrateVector3(step, 60, 0);
@@ -619,7 +621,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
             BattleEffectKernels_IntegrateVector3(step, 60, 0);
             size >>= 3;
             size++;
-            draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+            draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
             step->variant--;
           }
@@ -640,7 +642,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       texture.logHeight = 6;
       texture.pixels = work->sheet + 0x3200;
       model->kind = 6;
-      model->model = gData_08199340;
+      model->model = gBattleEffect_SquareMesh64;
       model->texture = &texture;
       model->corners = corners;
       if (frame == 8)
@@ -655,7 +657,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         Transform_ApplyPitch(TRIG_TURN / 4);
         Transform_ApplyYaw(TRIG_TURN / 8);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);
-        Render_TransformVertices(gData_08199210, corners, 4);
+        Render_TransformVertices(gBattleEffect_GroundSquareCorners, corners, 4);
         Render_DrawModelList(model);
       }
       Heap_Release(model);

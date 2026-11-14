@@ -99,8 +99,8 @@ struct FloraWork {
 };
 
 extern u8 gData_02014000[];
-extern const struct WordPair Data_08196ec8;
-extern u16 gBattleEffect_MoteCells[];
+extern const struct WordPair gFlora_UnitScale;
+extern u16 gBattleEffect_MotePictures[];
 extern const u8 Data_08199421[];
 extern const u16 Data_08199426[];
 extern const u16 Data_0819942e[];
@@ -108,8 +108,8 @@ extern const s16 Data_08199436[];
 extern const s16 Data_0819943e[];
 extern const s8 Data_08199446[];
 extern const s8 Data_0819944a[];
-extern const u8 gData_08199210[];
-extern const u8 gData_08199364[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
+extern const u8 gBattleEffect_SquareMesh128[];
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_GreenHairedMaidenTiles;
 extern char ResourceId_PinkPetalsTiles;
@@ -275,7 +275,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   size = 3;
   for (i = 0; i != 10; i++) {
     for (j = 0; j != 18; j++) {
-      s32 v = source[gBattleEffect_MoteCells[size - 1] + j];
+      s32 v = source[gBattleEffect_MotePictures[size - 1] + j];
 
       if (v > 0) {
         v = 63 - i * 7;
@@ -380,7 +380,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(63) - u * 0x01010101 * 8);
     }
-    req = Data_08196ec8;
+    req = gFlora_UnitScale;
     dy = 0;
     place[3] = 0;
     dx = 0;
@@ -631,7 +631,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     texture.pixels = work->sheet;
     model->kind = 7;
     model->texture = &texture;
-    model->mesh = gData_08199364;
+    model->mesh = gBattleEffect_SquareMesh128;
     model->vertices = verts;
     for (i = 0; i != 4; i++) {
       s32 d = frame - Data_0819942e[i];
@@ -653,7 +653,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           Transform_ApplyPitch(Data_0819943e[i]);
           SceneTransform_ApplyUniformScale(scale);
           Transform_ApplyYaw(frame << 11);
-          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
@@ -722,7 +722,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         out.x >>= 1;
         x = out.x + 48;
         y = out.y + 92;
-        draw[1](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+        draw[1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 x - size / 2, y - size, size, size * 2);
       }
       HeapSlot_Release(SLOT_ALT);

@@ -496,7 +496,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
 
       for (i = 0, mode = BLIT_MAX; i != 4; i++) {
         BattleEffect_BuildBlitter(SLOT_BLITTER_ALTERNATE, 7, 7,
-                                  gSpiderWeb_PictureHeights[i] | CLIP, mode);
+                                  gElementBurst_GlintFlips[i] | CLIP, mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         draw[1](canvas, work->sheet + (picture << 10), gDeathPlunge_X[i] + 32,
                 ground.y + gDeathPlunge_Y[i] - 32, 32, 32);
@@ -873,7 +873,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     s32 size = i * 2 + 2;
 
     BattleEffect_DrawShadedCirclesMirrored(
-        work->sheet + 0x3a48 + Data_08197438[i], size, 0x10000);
+        work->sheet + 0x3a48 + gCruelRuin_CirclePictures[i], size, 0x10000);
   }
   Graphics_LoadGreyRamp();
   work->transferMode = 2;
@@ -1024,7 +1024,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             if ((u32)p->variant <= 15) {
               s32 s = Trig_Sin(p->variant << 10) * p->z >> 16;
 
-              draw[0](canvas, work->sheet + 0x3a48 + Data_08197438[s - 1],
+              draw[0](canvas,
+                      work->sheet + 0x3a48 + gCruelRuin_CirclePictures[s - 1],
                       p->x - s, p->y - s * 2, s * 2, s * 4);
             }
             p->variant++;
@@ -1039,7 +1040,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           texture.logHeight = 7;
           model->kind = 6;
           model->texture = &texture;
-          model->mesh = gData_08199364;
+          model->mesh = gBattleEffect_SquareMesh128;
           model->vertices = verts;
           texture.pixels = pixels;
           shade = 0;
@@ -1054,9 +1055,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               Transform_Reset();
               SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(sc / 2, sc, sc);
-              Transform_ApplyYaw(gSpiderWeb_PictureBiasY[i]);
-              Transform_ApplyPitch(Data_081976f0[i]);
-              Render_TransformVertices(Data_081991e0, verts, 4);
+              Transform_ApplyYaw(gCruelRuin_DiscYaws[i]);
+              Transform_ApplyPitch(gCruelRuin_DiscPitches[i]);
+              Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
               Render_DrawModelList(model);
             }
           }
@@ -1073,7 +1074,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Transform_Reset();
           SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
           SceneTransform_ApplyScale3(sc >> 1, sc, sc);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
         {
@@ -1100,13 +1101,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyScale3(sc, sc / 3, sc >> 1);
             Transform_ApplyRoll(t);
             if (shade > -64) {
-              Render_TransformVertices(Data_081991e0, verts, 4);
+              Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
               Render_DrawModelList(model);
             }
             texture.pixels = work->sheet + 0x2648;
             texture.logWidth = 6;
             texture.logHeight = 6;
-            model->mesh = gData_08199340;
+            model->mesh = gBattleEffect_SquareMesh64;
             if (frame > 63) {
               shade = frame * 4 + -320;
               if (shade > 0) {
@@ -1117,7 +1118,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyPosition3(-0x40000, -0x2c0000, 0);
               SceneTransform_ApplyScale3(sc, sc >> 1, sc >> 1);
               Transform_ApplyRoll(t);
-              Render_TransformVertices(Data_081991e0, verts, 4);
+              Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
               Render_DrawModelList(model);
             }
           }
@@ -1126,7 +1127,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           ((struct ModelTextureB *)&texture)->logWidth = 5;
           texture.logHeight = 2;
           texture.pixels = work->sheet + 0x3648;
-          model->mesh = Data_08199220;
+          model->mesh = gBattleEffect_SquareMesh32;
           model->kind = 6;
           shade = -16;
           model->shade = shade;
@@ -1144,7 +1145,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyRoll(p->z);
               SceneTransform_ApplyScale3(30384, sy, Q16_ONE / 2);
-              Render_TransformVertices(Data_081991c0, verts, 4);
+              Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
               Render_DrawModelList(model);
             }
             p->variant++;
@@ -1181,7 +1182,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyRoll(0xa000);
             SceneTransform_ApplyScale3(r * 9400, Q16_ONE * 2, Q16_ONE / 2);
-            Render_TransformVertices(Data_081976e0, verts, 4);
+            Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
             Render_DrawModelList(model);
           }
         }
@@ -1213,7 +1214,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       s32 c;
 
       for (c = 0; c != 33; c++) {
-        s32 w = Data_08197702[k];
+        s32 w = gCruelRuin_PillarWidths[k];
         s8 *v;
         s32 acc;
         s32 height;
@@ -1233,7 +1234,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         half = w / 2;
         for (i = 0; i != 2; i++, acc += w, v += 4) {
           v[0] = height;
-          v[1] = (Trig_Sin(c * 0x92c) * Data_08197700[k] >> 16) + acc - half;
+          v[1] = (Trig_Sin(c * 0x92c) * gCruelRuin_PillarSways[k] >> 16) + acc -
+                 half;
           v[2] = 0;
         }
       }
@@ -1360,12 +1362,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         texture2.logHeight = 2;
         texture2.pixels = work->sheet + 0x3648;
         model->shade = zero;
-        model->mesh = Data_08199220;
+        model->mesh = gBattleEffect_SquareMesh32;
         model->texture = &texture2;
         model->vertices = verts;
         model->kind = 6;
         for (i = zero; i != 6; i++) {
-          s32 d = frame - gGatheringLights_Counts[i];
+          s32 d = frame - gCruelRuin_BlastFrames[i];
 
           if (d == 0) {
             if (i == 5) {
@@ -1377,11 +1379,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           }
           if ((u32)d <= 15) {
-            s32 r = (Trig_Sin(d << 11) * gMirroredWall_Pictures[i] >> 16) + 2;
+            s32 r = (Trig_Sin(d << 11) * gCruelRuin_BlastSizes[i] >> 16) + 2;
 
             if (r > 1) {
-              s32 x = gDjinnBeams_HeadPictures[i] + d * 8;
-              s32 y = gProcne_Pictures[i];
+              s32 x = gCruelRuin_BlastX[i] + d * 8;
+              s32 y = gCruelRuin_BlastY[i];
               s32 half;
 
               BattleEffect_DrawShadedCircles(work->sheet, r, 0x10000);
@@ -1402,12 +1404,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != 4; i++) {
         struct EffectStep *p = &work->particles[i + 18];
-        s32 start = gTiamat_EmberSpeeds[i] >> 1;
+        s32 start = gCruelRuin_StreakStarts[i] >> 1;
 
         if (frame == 0) {
           p->y = frame;
           p->variant = frame;
-          p->x = Data_08197724[i] << 16;
+          p->x = gCruelRuin_StreakX[i] << 16;
         }
         if (frame >= start && frame < start + 32) {
           s32 size = 0;
@@ -1415,11 +1417,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           s32 py = 0;
           s32 angle = 0;
           s32 scale = 0;
-          size = gTiamat_EmberSizes[i];
+          size = gCruelRuin_StreakSizes[i];
 
-          if (p->y < Data_08197730[i] << 16) {
-            p->x -= Data_08197728[i] << 16;
-            p->y += Data_0819772c[i] << 16;
+          if (p->y < gCruelRuin_StreakEndY[i] << 16) {
+            p->x -= gCruelRuin_StreakStepX[i] << 16;
+            p->y += gCruelRuin_StreakStepY[i] << 16;
           } else {
             p->variant++;
           }
@@ -1429,11 +1431,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           py = p->y + -0x400000;
           SceneTransform_ApplyPosition3(px, py, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          angle = Data_08197734[i];
+          angle = gCruelRuin_StreakRolls[i];
           Transform_ApplyRoll(angle);
           scale = size * 9400;
           SceneTransform_ApplyScale3(scale, Q16_ONE * 2, Q16_ONE / 2);
-          Render_TransformVertices(Data_081976e0, verts, 4);
+          Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
           BattleEffect_DrawShadedCircles(work->sheet, size, 0x10000);
           Canvas_BlitAtFoot(work->sheet, HI(p->x) - 1, HI(p->y), size);
           Render_DrawModelList(model);
@@ -1512,7 +1514,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       }
       Heap_Release(model);
       Heap_Release(verts);
-      req = Data_08196dd8;
+      req = gCruelRuin_UnitScale;
       place[3] = 0;
       place[1] = 0xff0000;
       scrollX += 0x180000;
@@ -1706,7 +1708,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           texture3.logHeight = 2;
           texture3.pixels = work->sheet + 0x3840;
           model->shade = zero;
-          model->mesh = Data_08199220;
+          model->mesh = gBattleEffect_SquareMesh32;
           model->texture = &texture3;
           model->vertices = verts;
           model->kind = 6;
@@ -1733,7 +1735,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyRoll(0xa000);
           SceneTransform_ApplyScale3(r * 9400, Q16_ONE * 2, Q16_ONE / 2);
-          Render_TransformVertices(Data_081976e0, verts, 4);
+          Render_TransformVertices(gCruelRuin_StreakCorners, verts, 4);
           Render_DrawModelList(model);
         }
         Heap_Release(model);

@@ -151,7 +151,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     // The nine ice objects in a 3x3 block, 32 pixels apart.
-    scale = Data_08196e14;
+    scale = gBoreas_UnitScale;
     if (frame == 174) {
       for (i = 0; i != 9; i++) {
         ((struct SpriteAttributes *)work->objects[i])->priority = 0;
@@ -241,7 +241,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
             n = i % 7 + 4;
           else
             n = i & 3;
-          drawAlt(canvas, work->sheet + gBoreas_DebrisCells[n],
+          drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[n],
                   HI(PARTICLES[i].x), HI(PARTICLES[i].y),
                   gBoreas_DebrisWidths[n], gBoreas_DebrisHeights[n]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
@@ -268,7 +268,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           s32 n = i % 3;
 
           if ((i & 1) == 0) {
-            draw(canvas, work->sheet + gBoreas_SprayCells[n],
+            draw(canvas, work->sheet + gBoreas_SprayPictures[n],
                  HI(PARTICLES[i].x), HI(PARTICLES[i].y), Data_081982c0[n],
                  Data_081982c3[n]);
           }
@@ -293,10 +293,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       for (i = 0, q = TRAILS, p = PARTICLES; i != 128; i++, q++, p++) {
         if (frame >= i + 228) {
           s32 n = q->variant / 2 % 9;
-          s32 sz = gBattleEffect_PuffSizes[n];
+          s32 sz = gBattleEffect_SparkleSizes[n];
 
-          draw(canvas, dots + gBattleEffect_PuffCells[n], HI(q->x) - sz / 2,
-               HI(q->y) - sz / 2, sz, sz);
+          draw(canvas, dots + gBattleEffect_SparklePictures[n],
+               HI(q->x) - sz / 2, HI(q->y) - sz / 2, sz, sz);
           if (++q->variant == 18) {
             q->x = p->x;
             q->y = p->y;
@@ -418,9 +418,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
           s32 n = PARTICLES[i].variant / 2 % 9;
-          s32 sz = gBattleEffect_PuffSizes[n];
+          s32 sz = gBattleEffect_SparkleSizes[n];
 
-          draw(canvas, dots + gBattleEffect_PuffCells[n],
+          draw(canvas, dots + gBattleEffect_SparklePictures[n],
                PARTICLES[i].x - sz / 2, PARTICLES[i].y - sz / 2, sz, sz);
         }
         if (++PARTICLES[i].variant == 18 && frame <= 127) {

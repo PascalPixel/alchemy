@@ -71,12 +71,12 @@ extern char ResourceId_OrangePaletteB;
 #define TEXTURE_PIXELS (Ram_MapCellBuffer + 0x1000)
 #define EMBERS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
 extern const u8 Data_08199400[][4];
-extern const u8 gData_08199364[]; // the ring's mesh
-extern const u8 gData_08199210[]; // its corners
+extern const u8 gBattleEffect_SquareMesh128[];       // the ring's mesh
+extern const u8 gBattleEffect_GroundSquareCorners[]; // its corners
 
 #define RAGING_HEAT_FRAMES 96
 
@@ -214,7 +214,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
           if (particle->variant >= 0) {
             s32 size = (particle->variant >> 3) + 1;
 
-            draw[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     HI(particle->x) - size / 2, HI(particle->y) - size, size,
                     size * 2);
             BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
@@ -236,7 +236,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
       shade = 0;
       model->kind = 7;
       model->texture = &texture;
-      model->mesh = gData_08199364;
+      model->mesh = gBattleEffect_SquareMesh128;
       model->vertices = vertices;
       model->shade = shade;
       texture.logWidth = 7;
@@ -282,7 +282,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         }
         if (scale > 0 && shade > -64) {
           SceneTransform_ApplyUniformScale(scale);
-          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
+                                   4);
           Render_DrawModelList(model);
         }
       }
@@ -481,9 +482,9 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        blitters[i & 1](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
-                        HI(spark->x) - size / 2, HI(spark->y) - size, size,
-                        size * 2);
+        blitters[i & 1](
+            canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
+            HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
         spark->variant--;
       }

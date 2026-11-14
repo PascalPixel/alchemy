@@ -88,9 +88,9 @@ extern char ResourceId_ClawSlashSheet;
 extern char ResourceId_BlueFlameSheet;
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern u16 gBattleEffect_MoteCells[];
-extern const u8 gData_08199340[]; // a head's mesh
-extern const u8 Data_081991e0[];  // its corners
+extern u16 gBattleEffect_MotePictures[];
+extern const u8 gBattleEffect_SquareMesh64[];  // a head's mesh
+extern const u8 gBattleEffect_SquareCorners[]; // its corners
 
 #define DRAGON_SEGMENTS 33
 
@@ -226,7 +226,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+          blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                   HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(mote, 60, 0x1000);
           mote->variant--;
@@ -365,12 +365,12 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
-            model->mesh = gData_08199340;
+            model->mesh = gBattleEffect_SquareMesh64;
             texture.pixels = work->sheet + 0x4000;
             SceneTransform_ApplyPosition3(endX[i] << 16, endY[i] << 16, 0);
             Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
             SceneTransform_ApplyUniformScale(20768);
-            Render_TransformVertices(Data_081991e0, vertices, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
           }
         }

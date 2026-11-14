@@ -158,7 +158,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
           s32 y = spark->y >> 16;
           s32 size = spark->variant / 8 + 1;
 
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   xOffset + x - size / 2, y - size, size, size * 2);
         }
       }

@@ -47,14 +47,14 @@ extern char ResourceId_Data0C2;
 
 // The quad mesh and the corners of the rune, the jaw-like flash and the
 // eight blades of the opening fan.
-extern const u8 gData_08199364[];
+extern const u8 gBattleEffect_SquareMesh128[];
 // The quad meshes and corners: the card, the pictures and their spread.
 extern u8 Data_081992b0[];
-extern const u8 Data_081991e0[];
+extern const u8 gBattleEffect_SquareCorners[];
 extern s32 Data_08199200[];
 
 // The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
@@ -210,7 +210,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       if (step->variant >= 0) {
         s32 size = (step->variant >> 2) + 1;
 
-        draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+        draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                 HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
         if (step->y > px(104)) {
           step->y = px(104);
@@ -233,7 +233,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       texture.logHeight = 7;
       texture.pixels = work->sheet;
       // Stored as an integer: as a pointer this store follows the kind store.
-      *(s32 *)&model->mesh = (s32)gData_08199364;
+      *(s32 *)&model->mesh = (s32)gBattleEffect_SquareMesh128;
       model->kind = 7;
       model->texture = &texture;
       model->vertices = vertices;
@@ -264,7 +264,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         Transform_ApplyRoll(frame << 9);
         SceneTransform_ApplyUniformScale(scale);
         SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
-        Render_TransformVertices(Data_081991e0, vertices, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }
 
@@ -290,7 +290,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
               Transform_ApplyYaw(-0x1900);
             Transform_ApplyRoll(frame << 9);
             SceneTransform_ApplyUniformScale(scale);
-            Render_TransformVertices(Data_081991e0, vertices, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
           }
         }
@@ -386,9 +386,9 @@ extern s32 gData_08197834[];
 extern u8 gPrism_ShardWidths[];
 extern u8 gData_08197826[];
 
-extern const u8 gData_08199268[];
+extern const u8 gBattleEffect_ColumnMesh[];
 
-extern const u8 Data_081991c0[];
+extern const u8 gBattleEffect_BeamCorners[];
 
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 void BattleEffect_StepPaletteToResource(s32 resource);
@@ -674,11 +674,11 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       Transform_ApplyRoll(frame << 10);
       SceneTransform_ApplyUniformScale(scale);
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
-      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
         SceneTransform_ApplyUniformScale(Q16_ONE / 4);
-        Render_TransformVertices(Data_081991e0, vertices, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       }
     }
 
@@ -694,7 +694,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
       texture.logHeight = 7;
       model->alpha = alpha;
       model->texture = &texture;
-      model->mesh = gData_08199268;
+      model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = vertices;
       if (mode == CARD_BRAMBLE) {
         // The vines sway, each from its own phase.
@@ -755,7 +755,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
         } else {
           SceneTransform_ApplyScale3(Q16_ONE * 2, Q16_ONE * 2, Q16_ONE);
         }
-        Render_TransformVertices(Data_081991c0, vertices, 4);
+        Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
         Render_DrawModelList(model);
       }
     }
@@ -775,7 +775,7 @@ void BattleEffect_RunElementCards(struct BattleEffectArgument *effect,
         else
           size += 3;
         for (j = 0; j != Data_08199d64[mode].steps; j++) {
-          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
           if (step->y > px(104)) {
             step->y = px(104);

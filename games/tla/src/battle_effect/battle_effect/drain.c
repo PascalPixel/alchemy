@@ -117,7 +117,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
             s32 size;
 
             size = i % 3 + 1;
-            draw(canvas, sheet + gBattleEffect_MoteCells[size - 1],
+            draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                  HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(shard, 62,
                                                  gDrain_Gravities[i & 3]);
@@ -274,7 +274,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
                    size * 2);
               BattleEffectKernels_IntegrateVector3(mote, 61, 0);
             } else {
-              draw(canvas, sheet + gBattleEffect_MoteCells[size - 1],
+              draw(canvas, sheet + gBattleEffect_MotePictures[size - 1],
                    screen.x - size / 2, screen.y - size, size, size * 2);
               BattleEffectKernels_IntegrateVector3(mote, 62, 0);
             }

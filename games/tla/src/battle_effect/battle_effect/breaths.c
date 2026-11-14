@@ -82,15 +82,15 @@ extern s8 Data_08199dbb[];
 extern u8 Data_08199dc7[];
 
 // The quad and jaw meshes and corners.
-extern const u8 gData_08199364[];
-extern const u8 gData_08199210[];
-extern const u8 Data_08198ec4[];
-extern const u8 Data_08198cac[];
-extern const u8 Data_08199220[];
-extern const u8 Data_081991c0[];
+extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
+extern const u8 gBattleEffect_CylinderMesh[];
+extern const u8 gBattleEffect_CylinderCorners[];
+extern const u8 gBattleEffect_SquareMesh32[];
+extern const u8 gBattleEffect_BeamCorners[];
 
 // The spark cells: offsets into the particle sheet by size.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
@@ -309,7 +309,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
               size++;
             else if (effect->variant == 2)
               size = (i & 3) + 3;
-            draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+            draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         HI(step->x) - size / 2, HI(step->y) - size, size,
                         size * 2);
             BattleEffectKernels_IntegrateVector2(step, 60, 0);
@@ -327,7 +327,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
 
             if (step->y > 1) {
               step->y -= 2;
-              draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+              draw[i & 1](canvas,
+                          graphics + gBattleEffect_MotePictures[size - 1],
                           x - size / 2, y - size, size, size * 2);
             }
           }
@@ -378,7 +379,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         texture.logHeight = 7;
         model->kind = 6;
         model->texture = &texture;
-        model->mesh = gData_08199364;
+        model->mesh = gBattleEffect_SquareMesh128;
         model->vertices = vertices;
         texture.pixels = Ram_MapCellBuffer;
 
@@ -421,7 +422,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
               if (mode == BREATH_PIKE)
                 scale /= 2;
               SceneTransform_ApplyScale3(scale / 2, scale, scale / 2);
-              Render_TransformVertices(gData_08199210, vertices, 4);
+              Render_TransformVertices(gBattleEffect_GroundSquareCorners,
+                                       vertices, 4);
               Render_DrawModelList(model);
             }
           }
@@ -431,7 +433,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         if (effect->variant == 2) {
           texture.pixels = JAW_TEXTURE;
           model->kind = 7;
-          model->mesh = Data_08198ec4;
+          model->mesh = gBattleEffect_CylinderMesh;
           for (i = 0; i != 4; i++) {
             s32 start = Data_08199da3[mode * 4 + i];
 
@@ -469,7 +471,8 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
                 Transform_ApplyYaw(0x36b0);
                 Transform_ApplyPitch(TRIG_TURN / 4);
                 Transform_ApplyYaw(frame << 10);
-                Render_TransformVertices(Data_08198cac, vertices, 32);
+                Render_TransformVertices(gBattleEffect_CylinderCorners,
+                                         vertices, 32);
                 Render_DrawModelList(model);
               }
             }
@@ -488,7 +491,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
           texture.logWidth = 5;
           texture.logHeight = 2;
           model->kind = 7;
-          model->mesh = Data_08199220;
+          model->mesh = gBattleEffect_SquareMesh32;
           texture.pixels = work->sheet;
           Transform_Reset();
           SceneTransform_ApplyPosition3((mouthX - 64) << 16,
@@ -500,7 +503,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
             angle = -angle;
           Transform_ApplyRoll(angle);
           SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
-          Render_TransformVertices(Data_081991c0, vertices, 4);
+          Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
           Render_DrawModelList(model);
         }
         Heap_Release(model);

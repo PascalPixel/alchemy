@@ -3,183 +3,183 @@
 @ as The Broken Seal's effect/effect.c places them: {x, y} scales and
 @ speeds in 16.16 fixed point, points and offsets.
 @ read by BattleEffect_RunCruelRuin
-	.global Data_08196dd8
-Data_08196dd8:
+	.global gCruelRuin_UnitScale
+gCruelRuin_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunEclipse
-	.global Data_08196de0
-Data_08196de0:
+	.global gEclipse_Scales
+gEclipse_Scales:
 	.4byte 0x10000, 0x10000, 0x55555556, 0x55555556
 	.4byte 0x55555556, 0x55555556
 @ read by BattleEffect_RunProcne
-	.global Data_08196df8
-Data_08196df8:
+	.global gProcne_UnitScale
+gProcne_UnitScale:
 	.4byte 0x10000, 0x10000, 0x71c71c8, 0x2d82d83
 	.4byte 0x2d82d83
 @ read by BattleEffect_RunZagan
-	.global Data_08196e0c
-Data_08196e0c:
+	.global gZagan_UnitScale
+gZagan_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunBoreas
-	.global Data_08196e14
-Data_08196e14:
+	.global gBoreas_UnitScale
+gBoreas_UnitScale:
 	.4byte 0x10000, 0x10000
 @ The Broken Seal's wallHeights in BattleEffect_RunQuake; read by BattleEffect_RunQuake
 	.global gRockWall_Heights
 gRockWall_Heights:
 	.4byte -32, -32, -32, -32
 @ The Broken Seal's points in BattleEffect_RunThor; read by BattleEffect_RunThor
-	.global Data_08196e2c
-Data_08196e2c:
+	.global gThor_Points
+gThor_Points:
 	.2byte 8, 135, 184, 135, 128, 135, 96, 32
 	.2byte 96, 32, 64, 135
 @ read by BattleEffect_RunGaia
-	.global Data_08196e44
-Data_08196e44:
+	.global gGaia_UnitScale
+gGaia_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by Ulysses_MoveLastParticle
-	.global gData_08196e4c
-gData_08196e4c:
+	.global gUlysses_ParticleScale
+gUlysses_ParticleScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunUlysses
-	.global Data_08196e54
-Data_08196e54:
+	.global gUlysses_ShipScale
+gUlysses_ShipScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_PlaceFormationObjects
-	.global gData_08196e5c
-gData_08196e5c:
+	.global gFormationObjects_Scale
+gFormationObjects_Scale:
 	.4byte 0x10000, 0x10000
 @ The Broken Seal's smallScale; read by BattleEffect_PlaceFormationObjects
-	.global gData_08196e64
-gData_08196e64:
+	.global gFormationObjects_LargeScale
+gFormationObjects_LargeScale:
 	.4byte 0x14000, 0x14000
 @ read by BattleEffect_RunRamses
-	.global gData_08196e6c
-gData_08196e6c:
+	.global gRamses_UnitScale
+gRamses_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunJudgment
-	.global Data_08196e74
-Data_08196e74:
+	.global gJudgment_UnitScale
+gJudgment_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunKirin
-	.global gData_08196e7c
-gData_08196e7c:
+	.global gKirin_RowScale
+gKirin_RowScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunKirin
-	.global gData_08196e84
-gData_08196e84:
+	.global gKirin_ChargeScale
+gKirin_ChargeScale:
 	.4byte 0x10000, 0x10000
 @ The Broken Seal's unitScale in BattleEffect_RunNeptune; read by BattleEffect_RunNeptune
-	.global Data_08196e8c
-Data_08196e8c:
+	.global gNeptune_UnitScale
+gNeptune_UnitScale:
 	.4byte 0x18000, 0x18000
 @ The Broken Seal's unitScale in BattleEffect_RunNeptune; read by BattleEffect_RunMegaera
-	.global Data_08196e94
-Data_08196e94:
+	.global gMegaera_UnitScale
+gMegaera_UnitScale:
 	.4byte 0x18000, 0x18000
 @ read by BattleEffect_RunVoidBeam
-	.global Data_08196e9c
-Data_08196e9c:
+	.global gVoidBeam_Corners
+gVoidBeam_Corners:
 	.byte 40, -40, 0, 40, -40, -40, 40, 40, 0, -40, -40, 40
 @ read by BattleEffect_RunCharon
-	.global Data_08196ea8
-Data_08196ea8:
+	.global gCharon_SwarmScale
+gCharon_SwarmScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunCharon
-	.global Data_08196eb0
-Data_08196eb0:
+	.global gCharon_PulseScale
+gCharon_PulseScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunCharon
-	.global Data_08196eb8
-Data_08196eb8:
+	.global gCharon_RevealScale
+gCharon_RevealScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunCharon
-	.global Data_08196ec0
-Data_08196ec0:
+	.global gCharon_FinaleScale
+gCharon_FinaleScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunFlora
-	.global Data_08196ec8
-Data_08196ec8:
+	.global gFlora_UnitScale
+gFlora_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunDaedalus
-	.global Data_08196ed0
-Data_08196ed0:
+	.global gDaedalus_WaveScale
+gDaedalus_WaveScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunDaedalus
-	.global Data_08196ed8
-Data_08196ed8:
+	.global gDaedalus_ShipScale
+gDaedalus_ShipScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunDaedalus
-	.global Data_08196ee0
-Data_08196ee0:
+	.global gDaedalus_ParticleScale
+gDaedalus_ParticleScale:
 	.4byte 0x11999, 0x11999
 @ read by BattleEffect_RunDaedalusAlt
-	.global Data_08196ee8
-Data_08196ee8:
+	.global gDaedalusAlt_SummonScale
+gDaedalusAlt_SummonScale:
 	.4byte 0x20000, 0x20000
 @ read by BattleEffect_RunCoatlicue
-	.global Data_08196ef0
-Data_08196ef0:
+	.global gCoatlicue_UnitScale
+gCoatlicue_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by Func_081848ec
-	.global Data_08196ef8
-Data_08196ef8:
+	.global gCatastrophe_UnitScale
+gCatastrophe_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunHaures
-	.global Data_08196f00
-Data_08196f00:
+	.global gHaures_ChargeScale
+gHaures_ChargeScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunHaures
-	.global Data_08196f08
-Data_08196f08:
+	.global gHaures_OrbitScale
+gHaures_OrbitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunHaures
-	.global Data_08196f10
-Data_08196f10:
+	.global gHaures_OpeningScale
+gHaures_OpeningScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunTrident
-	.global Data_08196f18
-Data_08196f18:
+	.global gTrident_UnitScale
+gTrident_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunMeteorBlow
-	.global Data_08196f20
-Data_08196f20:
+	.global gMeteorBlow_DoubleScale
+gMeteorBlow_DoubleScale:
 	.4byte 0x20000, 0x20000
 @ read by BattleEffect_RunMoloch
-	.global Data_08196f28
-Data_08196f28:
+	.global gMoloch_MoteSizes
+gMoloch_MoteSizes:
 	.byte 2, 3, 5, 8, 7, 6, 4, 0
 @ read by Iris_DrawPillar
-	.global Data_08196f30
-Data_08196f30:
+	.global gIris_PillarVertices
+gIris_PillarVertices:
 	.4byte 0xf0f0, 0xf010, 3312, 3088
 	.4byte 240, 16
 @ read by BattleEffect_RunIris
-	.global Data_08196f48
-Data_08196f48:
+	.global gIris_UnitScale
+gIris_UnitScale:
 	.4byte 0x10000, 0x10000
 @ read by BattleEffect_RunIris
-	.global Data_08196f50
-Data_08196f50:
+	.global gIris_RisingPillarWidths
+gIris_RisingPillarWidths:
 	.4byte 2, 3, 4, 5
 	.4byte 6
 @ read by BattleEffect_RunIris
-	.global Data_08196f64
-Data_08196f64:
+	.global gIris_WideningPillarWidths
+gIris_WideningPillarWidths:
 	.4byte 2, 3, 4, 5
 	.4byte 6, 7, 8
 @ read by BattleEffect_RunIris
-	.global Data_08196f80
-Data_08196f80:
+	.global gIris_NarrowingPillarWidths
+gIris_NarrowingPillarWidths:
 	.4byte 8, 7, 6, 5
 	.4byte 4, 3, 2
 @ read by BattleEffect_RunIris
-	.global Data_08196f9c
-Data_08196f9c:
+	.global gIris_LeftStripSpans
+gIris_LeftStripSpans:
 	.4byte 112, 27, 104, 28
 	.4byte 92, 27, 74, 27
 @ read by BattleEffect_RunIris
-	.global Data_08196fbc
-Data_08196fbc:
+	.global gIris_RightStripSpans
+gIris_RightStripSpans:
 	.4byte 196, 44, 176, 48
 	.4byte 152, 45, 116, 45

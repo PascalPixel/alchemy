@@ -152,17 +152,20 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 width;
       s32 offset;
 
-      offset = gBattleEffect_PuffArcCells[cell];
+      offset = gBattleEffect_PuffArcPictures[cell];
       /* FAKEMATCH(dead): width, read from the puff table and never used. */
-      width = gData_08197467[cell];
+      width = gBattleEffect_PuffArcPictureWidths[cell];
       draw[0](canvas, &work->sheet[offset + 0x3c00],
-              56 - gData_08197467[cell] / 2,
-              gBattleEffect_PuffArcCellBiasY[cell] + 60, gData_08197467[cell],
-              gBattleEffect_PuffArcCellHeights[cell]);
-      draw[1](canvas, &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
-              64 - gData_08197467[cell] / 2,
-              gBattleEffect_PuffArcCellBiasY[cell] + 60, gData_08197467[cell],
-              gBattleEffect_PuffArcCellHeights[cell]);
+              56 - gBattleEffect_PuffArcPictureWidths[cell] / 2,
+              gBattleEffect_PuffArcPictureBiasY[cell] + 60,
+              gBattleEffect_PuffArcPictureWidths[cell],
+              gBattleEffect_PuffArcPictureHeights[cell]);
+      draw[1](canvas,
+              &work->sheet[gBattleEffect_PuffArcPictures[cell] + 0x3c00],
+              64 - gBattleEffect_PuffArcPictureWidths[cell] / 2,
+              gBattleEffect_PuffArcPictureBiasY[cell] + 60,
+              gBattleEffect_PuffArcPictureWidths[cell],
+              gBattleEffect_PuffArcPictureHeights[cell]);
     }
 
     // Variant 1: 128 sparks thrown up from the user's side at the start.
@@ -187,7 +190,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (step->variant >= 0 && frame >= i / 8) {
           s32 size = (step->variant >> 4) + 1;
 
-          draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+          draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       HI(step->x) - size / 2, HI(step->y) - size, size,
                       size * 2);
           BattleEffectKernels_IntegrateVector2(step, 62, 0x4000);
@@ -312,7 +315,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
               BattleEffectKernels_IntegrateVector3(step, 62, 0x2000);
             }
           } else {
-            draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+            draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
             BattleEffectKernels_IntegrateVector3(step, 64, -0x2000);
           }
@@ -331,7 +334,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
             size >>= 3;
             size += 1;
             position.x >>= 1;
-            draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+            draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         position.x - size / 2, position.y - size, size,
                         size * 2);
             BattleEffectKernels_IntegrateVector3(step, 62, 0x2000);
@@ -349,7 +352,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 4) + 1;
 
-          draw[i & 1](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+          draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       HI(spark->x) - size / 2, HI(spark->y) - size, size,
                       size * 2);
           BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
@@ -375,10 +378,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 cell = step->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
-                  step->x - gData_08197467[cell] / 2,
-                  step->y + gBattleEffect_PuffArcCellBiasY[cell],
-                  gData_08197467[cell], gBattleEffect_PuffArcCellHeights[cell]);
+                  &work->sheet[gBattleEffect_PuffArcPictures[cell] + 0x3c00],
+                  step->x - gBattleEffect_PuffArcPictureWidths[cell] / 2,
+                  step->y + gBattleEffect_PuffArcPictureBiasY[cell],
+                  gBattleEffect_PuffArcPictureWidths[cell],
+                  gBattleEffect_PuffArcPictureHeights[cell]);
         }
         step->variant++;
       }

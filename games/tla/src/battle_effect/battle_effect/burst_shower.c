@@ -665,8 +665,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
           height = shardHeights[cel];
           y = HI(shot->y) - (height >> 1);
 
-          pair[0](canvas, work->sheet + gSpire_ShardCells[cel] + VOLLEY_B_GLOW,
-                  x, y, width, height);
+          pair[0](canvas,
+                  work->sheet + gSpire_ShardPictures[cel] + VOLLEY_B_GLOW, x, y,
+                  width, height);
         } else if (mode == 19) {
           s32 wobble = Trig_Sin((i * 2 + frame) << 11);
           s32 y;
@@ -724,21 +725,21 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
               angle = Random16() & 0xffff;
               x = (Trig_Sin(angle) << 4) >> 16;
               x += targets[i][0] / 2;
-              widths = gData_08197492;
+              widths = gBattleEffect_GlintPictureWidths;
               x -= widths[cel] >> 1;
               y = (Trig_Cos(angle) << 4) >> 16;
               y += targets[i][1];
-              heights = gData_08197498;
+              heights = gBattleEffect_GlintPictureHeights;
               y -= heights[cel] >> 1;
 
               HeapSlot_Release(188);
               HeapSlot_Release(104);
               BattleEffect_BuildBlitter(
                   188, 7, 7,
-                  gTargetStrike_GlintDrawFlags[Random16() & 3] | CLIP,
+                  gProjectileVolleyB_GlintFlips[Random16() & 3] | CLIP,
                   BLIT_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-                  canvas, work->sheet + gBattleEffect_GlintCells[cel], x, y,
+                  canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
                   widths[cel], heights[cel]);
               HeapSlot_Release(188);
               BattleEffect_FetchRectangleBlitters(effect->side, pair);
@@ -805,8 +806,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
             EffectPosition_ProjectPoint((s32 *)mote,
                                         (struct EffectPosition *)screen);
             screen[0] >>= 1;
-            pair[0](canvas, sheet + gBattleEffect_MoteCells[5], screen[0] - 3,
-                    screen[1] - height / 2, 6, height);
+            pair[0](canvas, sheet + gBattleEffect_MotePictures[5],
+                    screen[0] - 3, screen[1] - height / 2, 6, height);
             BattleEffectKernels_IntegrateVector3(mote, 62, 0);
             if (frame > i + 16) {
               s32 dx;

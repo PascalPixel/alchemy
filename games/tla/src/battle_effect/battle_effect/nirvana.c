@@ -11,9 +11,9 @@
 
 extern char ResourceId_Data134;
 extern char ResourceId_PinkBurstSheet;
-// The Broken Seal's gBattleEffect_MoteCells: spark cells of the
+// The Broken Seal's gBattleEffect_MotePictures: spark cells of the
 // Data134 sheet, by size - 1.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -104,7 +104,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
         EffectPosition_ProjectPoint(point, &out);
         out.x >>= 1;
         Transform_Pop();
-        blit(canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        blit(canvas, sheet + gBattleEffect_MotePictures[size - 1],
              out.x - size / 2, out.y - size, size, size * 2);
       }
       BattleEffectKernels_IntegrateVector3(orb, 62, 0);
@@ -154,7 +154,7 @@ extern char ResourceId_BoulderSheet;
 // The Broken Seal's table of this name, ShardHeights and ShardCells.
 extern u8 gSpire_ShardWidths[];
 extern u8 gData_081974ad[];
-extern u16 gSpire_ShardCells[];
+extern u16 gSpire_ShardPictures[];
 
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
@@ -261,7 +261,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
       cell = (i % 5) * 3 + rock->velocityZ / 96 % 3;
       width = gSpire_ShardWidths[cell];
 
-      blit(canvas, work->sheet + gSpire_ShardCells[cell] + 0x83c,
+      blit(canvas, work->sheet + gSpire_ShardPictures[cell] + 0x83c,
            HI(rock->x) - width / 2 + scrollX,
            HI(rock->y) - gData_081974ad[cell] / 2, width, gData_081974ad[cell]);
       if (rock->variant == 0) {
@@ -330,7 +330,7 @@ extern char ResourceId_BlastSheet;
 
 extern char ResourceId_OrangePaletteB;
 
-// The Broken Seal's gEruption_PuffCells and gCybele_EmberSizes:
+// The Broken Seal's gEruption_PuffPictures and gCybele_EmberSizes:
 // the spark pictures by stage.
 extern u16 Data_08198b5e[];
 extern u16 Data_08198b6c[];
@@ -529,7 +529,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
           s32 moteX;
 
           EffectPosition_ProjectPoint(&mote->x, &screen);
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   (screen.x >> 1) - size / 2, screen.y - size, size, size * 2);
           BattleEffectKernels_IntegrateVector3(mote, 62, 0);
           if (frame > i + 32) {
@@ -665,8 +665,8 @@ extern const s8 Data_08198b82[]; // and radii
 extern const u8 Data_08198b8a[]; // each ripple's delay
 extern const u8 Data_08198b8e[]; // its growth
 extern const s8 Data_08198b92[]; // its height
-extern const u8 Data_08198cac[];
-extern const u8 Data_08198ec4[];
+extern const u8 gBattleEffect_CylinderCorners[];
+extern const u8 gBattleEffect_CylinderMesh[];
 extern const u8 Data_0819919c[];
 extern const u8 Data_081991a4[];
 
@@ -1034,7 +1034,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           texture.pixels = mistSheet;
           model->kind = 7;
           model->texture = &texture;
-          model->mesh = Data_08198ec4;
+          model->mesh = gBattleEffect_CylinderMesh;
           model->unk04 = 0;
           model->vertices = vertices;
           model->scrollU = 0;
@@ -1061,7 +1061,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
                                           target->z);
             SceneTransform_ApplyScale3(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
-            Render_ProjectVertices(Data_08198cac, vertices, 32);
+            Render_ProjectVertices(gBattleEffect_CylinderCorners, vertices, 32);
             Render_DrawModelList(model);
             Transform_Pop();
           }

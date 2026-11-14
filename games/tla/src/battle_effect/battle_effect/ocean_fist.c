@@ -49,7 +49,7 @@ extern char ResourceId_WhirlBeamSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_BlueFlameSheet;
 extern u8 gMapCellBuffer[];
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 extern const s32 Data_081994a8[4]; // the early drops' drags
 extern u8 gData_02014000[];        // the spray sheet
 // The drops' lives: gMapCellBuffer's EffectSteps from their variant on.
@@ -230,9 +230,9 @@ void BattleEffect_RunOceanFist(struct BattleEffectArgument *effect) {
         if (drop->variant >= 0) {
           s32 size = i % 3 + 3;
 
-          blitters[i & 1](canvas, sprites + gBattleEffect_MoteCells[size - 1],
-                          HI(drop->x) - size / 2, HI(drop->y) - size, size,
-                          size * 2);
+          blitters[i & 1](
+              canvas, sprites + gBattleEffect_MotePictures[size - 1],
+              HI(drop->x) - size / 2, HI(drop->y) - size, size, size * 2);
           if (frame > 31) {
             BattleEffectKernels_IntegrateVector2(drop, 62, 0x4000);
           } else {

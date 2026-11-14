@@ -9,7 +9,7 @@ extern char ResourceId_SeaSerpentTiles;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_BlueFlameSheet;
-extern struct Scale Data_08196e8c;        // the serpent's scale
+extern struct Scale gNeptune_UnitScale;   // the serpent's scale
 extern u16 gBattleEffect_FlarePictures[]; // the sparkle cells by size
 extern s32 Data_08198aec[];               // the spray's four gravities
 
@@ -185,7 +185,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
 
     // The serpent rises, slows, then glides back right and settles.
     if (frame > 21) {
-      scale = Data_08196e8c;
+      scale = gNeptune_UnitScale;
       if (frame <= 83) {
         if (frame > 48)
           serpentVX = serpentVX * 60 / 64;
@@ -391,7 +391,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
 
-          drawSpray(canvas, cells + gBattleEffect_MoteCells[k - 1],
+          drawSpray(canvas, cells + gBattleEffect_MotePictures[k - 1],
                     HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k,
                     k * 2);
           BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 62,
@@ -512,8 +512,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
 
-          draw[i & 1](canvas, cells + gBattleEffect_MoteCells[k - 1], x - k / 2,
-                      y - k, k, k * 2);
+          draw[i & 1](canvas, cells + gBattleEffect_MotePictures[k - 1],
+                      x - k / 2, y - k, k, k * 2);
         }
       }
     }

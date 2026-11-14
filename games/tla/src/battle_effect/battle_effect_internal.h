@@ -265,9 +265,9 @@ extern u8 Data_02010800[];
 
 extern u8 Data_02012800[];
 
-extern const struct WordPair Data_08196de0;
+extern const struct WordPair gEclipse_Scales;
 
-extern const u8 Data_08197744[];
+extern const u8 gEclipse_GlintFlips[];
 
 extern const u8 Data_08197748[];
 
@@ -295,7 +295,7 @@ extern char ResourceId_EffectPalette03;
 
 extern u8 gCondemn_PictureX[]; // each panel's x, by side (7 a side)
 
-extern u8 gCondemn_PanelY[]; // each panel's y
+extern u8 gCondemn_PictureY[]; // each panel's y
 
 // The 33 pieces: each one's size, place in the sheet and starting point
 // (The Broken Seal's table of this name, Height, Offset, StartX and
@@ -312,47 +312,47 @@ extern u8 gDeathPlunge_PieceStartY[];
 
 // The four corner sparks: their flips and their place around the target
 // (The Broken Seal's gDeathPlunge_DrawFlags, _X and _Y).
-extern u8 gSpiderWeb_PictureHeights[];
+extern u8 gElementBurst_GlintFlips[];
 
 extern s8 gDeathPlunge_X[];
 
 extern s8 gDeathPlunge_Y[];
 
-extern const struct WordPair Data_08196dd8;
+extern const struct WordPair gCruelRuin_UnitScale;
 
-extern const u16 Data_08197438[];
+extern const u16 gCruelRuin_CirclePictures[];
 
-extern const u8 Data_081976e0[];
+extern const u8 gCruelRuin_StreakCorners[];
 
-extern const u16 Data_081976f0[];
+extern const u16 gCruelRuin_DiscPitches[];
 
-extern const u16 gSpiderWeb_PictureBiasY[];
+extern const u16 gCruelRuin_DiscYaws[];
 
-extern const u8 Data_08197700[];
+extern const u8 gCruelRuin_PillarSways[];
 
-extern const u8 Data_08197702[];
+extern const u8 gCruelRuin_PillarWidths[];
 
-extern const u8 gGatheringLights_Counts[];
+extern const u8 gCruelRuin_BlastFrames[];
 
-extern const u8 gMirroredWall_Pictures[];
+extern const u8 gCruelRuin_BlastSizes[];
 
-extern const u8 gDjinnBeams_HeadPictures[];
+extern const u8 gCruelRuin_BlastX[];
 
-extern const u8 gProcne_Pictures[];
+extern const u8 gCruelRuin_BlastY[];
 
-extern const u8 gTiamat_EmberSpeeds[];
+extern const u8 gCruelRuin_StreakStarts[];
 
-extern const u8 gTiamat_EmberSizes[];
+extern const u8 gCruelRuin_StreakSizes[];
 
-extern const u8 Data_08197724[];
+extern const u8 gCruelRuin_StreakX[];
 
-extern const u8 Data_08197728[];
+extern const u8 gCruelRuin_StreakStepX[];
 
-extern const u8 Data_0819772c[];
+extern const u8 gCruelRuin_StreakStepY[];
 
-extern const u8 Data_08197730[];
+extern const u8 gCruelRuin_StreakEndY[];
 
-extern const s32 Data_08197734[];
+extern const s32 gCruelRuin_StreakRolls[];
 
 extern void (*gData_08197aa0[])(s32 *script);
 
@@ -362,17 +362,17 @@ extern char ResourceId_FeatherSheet; // directory row 0xd1
 
 extern char ResourceId_CrescentRowSheet;
 
-extern const struct RequestPair Data_08196e0c;
+extern const struct RequestPair gZagan_UnitScale;
 
 extern const u16 Data_08197a38[][2]; // the charging Zagan's parts
 
 extern const u16 Data_08197a64[][2]; // the galloping Zagan's
 
-extern const u8 Data_08197a94[]; // each ring's start
+extern const u8 gZagan_RingStarts[]; // each ring's start
 
-extern const u8 Data_08197a98[]; // growth
+extern const u8 gZagan_RingGrowth[]; // growth
 
-extern const s8 Data_08197a9c[]; // height
+extern const s8 gZagan_RingHeights[]; // height
 
 // Shards and frames for each variant (The Broken Seal's
 // gFalling_IceCounts).
@@ -384,7 +384,7 @@ extern u8 gFalling_Counts[];
 extern u8
     gDjinnBeams_MotePictures[]; // the mote's picture for each step of its sway
 
-extern u16 gMirroredWall_Cells[]; // the beam's head: three pictures, offsets
+extern u16 gMirroredWall_Pictures[]; // the beam's head: three pictures, offsets
 
 extern u8 gDjinnBeams_HeadWidths[]; // ... their widths
 
@@ -399,7 +399,7 @@ extern u8 gLobbedShells_ShardWidths[]; // shard widths
 
 extern u8 gLobbedShells_ShardHeights[]; // shard heights
 
-extern u16 gLobbedShells_ShardOffsets[]; // shard cell offsets
+extern u16 gLobbedShells_ShardPictures[]; // shard cell offsets
 
 extern u8 gNereid_Columns[]; // the three columns' feet, x and y
 
@@ -425,7 +425,7 @@ extern u8 gPlasma_FlashPictures[]; // ☀️ gPlasma_FlashCells
 // that begins phase 134, for each variant.
 extern u8 Data_081979b7[];
 
-extern struct Scale Data_08196df8; // the comets' unit scale
+extern struct Scale gProcne_UnitScale; // the comets' unit scale
 
 extern u8 gProcne_GridX[]; // the nine comets' grid: x
 
@@ -433,25 +433,25 @@ extern u8 gProcne_GridY[]; // ... and depth
 
 extern u16 gProcne_Frames[]; // the four comet strikes' frames
 
-extern u8 gProcne_CellWidths[]; // a strike's three pictures: widths
+extern u8 gProcne_PictureWidths[]; // a strike's three pictures: widths
 
-extern u8 gProcne_CellHeights[]; // ... heights
+extern u8 gProcne_PictureHeights[]; // ... heights
 
-extern u8 gProcne_CellBiasY[]; // ... raise above the mark
+extern u8 gProcne_PictureBiasY[]; // ... raise above the mark
 
-extern u16 gProcne_Cells[]; // ... cell offsets
+extern u16 gProcne_Pictures[]; // ... cell offsets
 
-extern u8 gTiamat_DropSpeeds[]; // a grain's added speed, by grain
+extern u8 gTiamat_EmberSpeeds[]; // a grain's added speed, by grain
 
 extern u8 gTiamat_SparkPixels[]; // a spark's two pixels
 
-extern u8 gTiamat_DropSizes[]; // a grain's size, by grain
+extern u8 gTiamat_EmberSizes[]; // a grain's size, by grain
 
 extern u8 gTiamat_FlameWidths[]; // the streak's six pictures: widths
 
 extern u8 gTiamat_FlameHeights[]; // ... heights
 
-extern u8 gTiamat_StreakDrops[]; // ... drops below the streak
+extern u8 gTiamat_FlameDrops[]; // ... drops below the streak
 
 extern u16 gTiamat_FlamePictures[]; // ... cell offsets
 
@@ -460,30 +460,30 @@ extern s32 gStar_Points[]; // the two ring points, alternating
 extern u8 gStar_Radii[]; // ring radii, alternating: 32, 16
 
 // Four signed bytes for each mode (The Broken Seal's gStreaks_Styles).
-extern s8 gStreaks_Records[];
+extern s8 gStreaks_Styles[];
 
 // The struck target's sideways tremble, in pixels (gStreaks_Tremble).
 extern s8 gStreaks_Tremble[];
 
-extern u8 Data_08197a34[]; // ☀️ gTargetMotes_GlintFlips
+extern u8 gTargetMotes_GlintFlips[]; // ☀️ gTargetMotes_GlintFlips
 
 // Seven bytes for each mode (The Broken Seal's gTargetStrike_Styles, grown
 // from 12 modes to 21).
 extern u8 Data_0819754f[][7];
 
 // The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
-// and the column stages (gTargetStrike_ColumnStages).
+// and the column stages (gTargetStrike_BiteStages).
 extern u8 gTargetStrike_Widths[];
 
 extern u8 gTargetStrike_Heights[];
 
-extern u16 gTargetStrike_Offsets[];
+extern u16 gTargetStrike_Pictures[];
 
 extern u8 gTargetStrike_Reach[];
 
-extern u8 gTargetStrike_ColumnStages[];
+extern u8 gTargetStrike_BiteStages[];
 
-extern u8 gDeathPlunge_SwordWidths[];
+extern u8 gTargetStrike_GlintDrawFlags[];
 
 extern u8 gVolcano_Counts[]; // ☀️ gVolcano_Counts, for each variant
 

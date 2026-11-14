@@ -108,14 +108,15 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           s32 kind = j & 3;
           s32 drop = Random16() % gBolt_Counts[effect->variant * 4 + 2];
           s32 spread = gBolt_Counts[effect->variant * 4 + 2] - drop + 1;
-          s32 y = pos.y - drop - (gData_08197498[kind] >> 1) + 8;
+          s32 y =
+              pos.y - drop - (gBattleEffect_GlintPictureHeights[kind] >> 1) + 8;
           u32 r = Random16();
           s32 x = pos.x;
           u32 flip;
 
           x += r % spread;
           x -= spread / 2;
-          x -= gData_08197492[kind] >> 1;
+          x -= gBattleEffect_GlintPictureWidths[kind] >> 1;
           flip = Random16();
 
           /* FAKEMATCH(dead): an empty once-only loop. */
@@ -125,8 +126,9 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
                                     gBolt_GlintFlips[flip & 3] |
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     gBolt_GlintModes[effect->variant]);
-          DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintCells[kind], x, y,
-                     gData_08197492[kind], gData_08197498[kind]);
+          DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintPictures[kind], x,
+                     y, gBattleEffect_GlintPictureWidths[kind],
+                     gBattleEffect_GlintPictureHeights[kind]);
           HeapSlot_Release(188);
         }
       }
@@ -147,7 +149,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;
 
-          draw[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                   x - size / 2, y - size, size, size * 2);
         }
       }

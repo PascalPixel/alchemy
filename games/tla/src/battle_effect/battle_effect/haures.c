@@ -83,20 +83,20 @@ extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
 extern u8 Data_02010fa0[];
 extern struct WingVertex Data_020104f0[];
-extern const struct WordPair Data_08196f00;
-extern const struct WordPair Data_08196f08;
-extern const struct WordPair Data_08196f10;
-extern u16 gBattleEffect_MoteCells[];
-extern u8 gData_08197467[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u16 gBattleEffect_PuffArcCells[];
-extern const u8 Data_081991e0[];
-extern const u8 gData_08199210[];
-extern const u8 Data_08199244[];
+extern const struct WordPair gHaures_ChargeScale;
+extern const struct WordPair gHaures_OrbitScale;
+extern const struct WordPair gHaures_OpeningScale;
+extern u16 gBattleEffect_MotePictures[];
+extern u8 gBattleEffect_PuffArcPictureWidths[];
+extern u8 gBattleEffect_PuffArcPictureHeights[];
+extern u8 gBattleEffect_PuffArcPictureBiasY[];
+extern u16 gBattleEffect_PuffArcPictures[];
+extern const u8 gBattleEffect_SquareCorners[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
+extern const u8 gBattleEffect_SquareMesh32Reversed[];
 extern const u8 Data_081992f8[];
-extern const u8 gData_08199340[];
-extern const u8 gData_08199364[];
+extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareMesh128[];
 extern const u8 Data_08199388[];
 extern const struct HalfPair Data_08199a12[];
 extern const u8 Data_08199a3e[];
@@ -454,7 +454,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->kind = 6;
           model->shade = sh;
           model->texture = &texture;
-          model->mesh = gData_08199340;
+          model->mesh = gBattleEffect_SquareMesh64;
           model->vertices = verts;
           Transform_Reset();
           SceneTransform_ApplyPosition3(0, 0x240000, 0);
@@ -465,14 +465,14 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             s = 60000;
           }
           SceneTransform_ApplyUniformScale(s);
-          Render_TransformVertices(gData_08199210, verts, 4);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
           texture.logWidth = 5;
           texture.logHeight = 5;
           texture.pixels = work->sheet + 0x1000;
           model->kind = 9;
           model->texture = &texture;
-          model->mesh = Data_08199244;
+          model->mesh = gBattleEffect_SquareMesh32Reversed;
           model->vertices = verts;
           model->shade = sh;
           Transform_Reset();
@@ -530,7 +530,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Heap_Release(model);
           Heap_Release(verts);
         }
-        req = Data_08196f00;
+        req = gHaures_ChargeScale;
         place2[3] = 0;
         if (frame > 149) {
 
@@ -563,12 +563,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               for (i = 0; i != 8; i++) {
                 struct EffectStep *p = &work->particles[i + 4];
                 s32 n = (p->variant / 4) % 6;
-                u8 *src = work->sheet + gBattleEffect_PuffArcCells[n];
-                u32 w = gData_08197467[n];
+                u8 *src = work->sheet + gBattleEffect_PuffArcPictures[n];
+                u32 w = gBattleEffect_PuffArcPictureWidths[n];
 
                 draw[1](STAMP_CANVAS(work), src, p->x - (w >> 1),
-                        p->y + gBattleEffect_PuffArcCellBiasY[n], w,
-                        gBattleEffect_PuffArcCellHeights[n]);
+                        p->y + gBattleEffect_PuffArcPictureBiasY[n], w,
+                        gBattleEffect_PuffArcPictureHeights[n]);
                 if (++p->variant == 24) {
                   p->variant = 0;
                   p->x = (Random16() & 15) + 24;
@@ -634,7 +634,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         model->shade = 0;
         model->kind = 7;
         model->texture = &texture2;
-        model->mesh = gData_08199364;
+        model->mesh = gBattleEffect_SquareMesh128;
         model->vertices = verts;
         Transform_Reset();
         SceneTransform_ApplyPosition3(0, -0x40000, 0);
@@ -643,7 +643,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           s = (frame << 12) - 0xef710;
         }
         SceneTransform_ApplyScale3(s >> 1, s, s >> 1);
-        Render_TransformVertices(Data_081991e0, verts, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
         if ((u32)cut <= 5) {
           s32 j;
@@ -664,7 +664,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             Transform_Reset();
             SceneTransform_ApplyPosition3(0, -0x40000, 0);
             SceneTransform_ApplyScale3(0x1b1e0, 0x29c40, Q16_ONE * 2);
-            Render_TransformVertices(Data_081991e0, verts, 4);
+            Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
         }
@@ -721,7 +721,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           velocity.a = 0;
         }
         gBgScroll[1].x += 0xfff4;
-        req3 = Data_08196f08;
+        req3 = gHaures_OrbitScale;
         place2[3] = 0;
         position.a = (Trig_Sin(frame << 9) << 3) + 0x6c0000;
         position.b = 0x380000 - (Trig_Cos(frame << 9) << 3);
@@ -915,7 +915,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
-          draw[0](canvas, sprites + gBattleEffect_MoteCells[n - 1],
+          draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                   HALF_HI(p->x) - n / 2, HALF_HI(p->y) - n, n, n * 2);
           BattleEffectKernels_IntegrateVector2(p, 63, -0x8000);
           p->variant--;
@@ -944,7 +944,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     if (frame <= 73) {
       s32 t;
 
-      req2 = Data_08196f10;
+      req2 = gHaures_OpeningScale;
       place2[3] = 0;
       t = frame - 20;
       if ((u32)t <= 19) {
@@ -1041,7 +1041,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             Transform_ApplyRoll(0x27d0);
           }
           SceneTransform_ApplyScale3(Q16_ONE * 3, amp, Q16_ONE * 2);
-          Render_TransformVertices(Data_081991e0, verts, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }

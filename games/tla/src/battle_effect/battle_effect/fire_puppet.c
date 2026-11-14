@@ -103,8 +103,8 @@ extern char ResourceId_Data0F2;
 extern char ResourceId_MercuryDjinnSheet;
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
-extern const u8 gData_08199340[]; // the hand's mesh
-extern const u8 Data_081991e0[];  // its corners
+extern const u8 gBattleEffect_SquareMesh64[];  // the hand's mesh
+extern const u8 gBattleEffect_SquareCorners[]; // its corners
 
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
@@ -264,7 +264,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       Render_DrawModelList(model);
 
       // The hand at the arm's end.
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh64;
       texture.logWidth = 6;
       texture.logHeight = 6;
       model->vertices = projected;
@@ -275,7 +275,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
       Transform_ApplyRoll(22384 - (length << 5));
       SceneTransform_ApplyUniformScale(length * 23 + Q16_ONE / 2);
-      Render_TransformVertices(Data_081991e0, projected, 4);
+      Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
     }
@@ -310,7 +310,7 @@ extern char ResourceId_Data0F3;
 extern char ResourceId_EffectPalette02;
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 // A swing. A five-cel slash sweeps across the caster's front, six frames a
 // cel, mirrored on the far side; at frame 18 the target is knocked back and
@@ -433,7 +433,7 @@ void BattleEffect_RunWhiplash(struct BattleEffectArgument *effect) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 3) + 1;
 
-          draw[0](canvas, sparkCels + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
                   HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           if (i & 1)
             BattleEffectKernels_IntegrateVector2(spark, 60, -0x2000);

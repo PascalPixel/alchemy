@@ -44,7 +44,7 @@ void BattleEffect_RunLimeStreaks(void *object) {
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define RECORD(mode, field) gStreaks_Records[(mode) * 4 + (field)]
+#define RECORD(mode, field) gStreaks_Styles[(mode) * 4 + (field)]
 #define RECORD_ANIMATE 0 // cycle the streak through its three pictures
 #define RECORD_HIT 1     // sound the hit and flash the target
 #define RECORD_MOTION 2  // the target's recoil motion, or -1
@@ -396,7 +396,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
         if (position.depth > 634)
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
-        draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 position.x - size / 2, position.y - size, size, size * 2);
 
         // Slaver's drops fall and bounce off the ground; the others rise

@@ -50,8 +50,8 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_EffectPalette02;
 
 // Triple Chomp's jaw quad: its mesh and its four corners.
-extern const u8 gData_08199364[];
-extern const u8 gData_08199210[];
+extern const u8 gBattleEffect_SquareMesh128[];
+extern const u8 gBattleEffect_GroundSquareCorners[];
 
 s32 BattleUnit_GetEffectHeightFar(s32 objectId);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -259,7 +259,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
           texture.logHeight = 7;
           model->kind = 7;
           model->texture = &texture;
-          model->mesh = gData_08199364;
+          model->mesh = gBattleEffect_SquareMesh128;
           model->vertices = vertices;
           texture.pixels = pixels;
           model->alpha = alpha;
@@ -271,7 +271,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyScale3(scale, scale, scale);
             Transform_ApplyRoll(angle);
             Transform_ApplyPitch(-TRIG_TURN / 16);
-            Render_TransformVertices(gData_08199210, vertices, 4);
+            Render_TransformVertices(gBattleEffect_GroundSquareCorners,
+                                     vertices, 4);
             Render_DrawModelList(model);
           }
         }

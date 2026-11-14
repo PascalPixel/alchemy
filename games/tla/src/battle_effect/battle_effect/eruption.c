@@ -120,7 +120,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
         size = 9 - (screen.depth - 160) / 64;
         draw[0](canvas,
                 work->sheet +
-                    (gBattleEffect_MoteCells[size - 1] + (i & 1) * 770) +
+                    (gBattleEffect_MotePictures[size - 1] + (i & 1) * 770) +
                     MOTE_SHEET,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(mote, 64, -0x2000);
@@ -140,7 +140,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
             s32 cel = puff->variant / 3;
             u32 width;
 
-            draw[0](canvas, work->sheet + gEruption_PuffCells[cel],
+            draw[0](canvas, work->sheet + gEruption_PuffPictures[cel],
                     screen.x - ((width = gEruption_PuffSizes[cel]) >> 1),
                     screen.y - (width >> 1), width, width);
           }

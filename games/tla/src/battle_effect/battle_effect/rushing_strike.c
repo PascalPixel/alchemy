@@ -28,7 +28,7 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_BlueCrescentSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_OrangePaletteB;
-extern u16 gBattleEffect_MoteCells[];
+extern u16 gBattleEffect_MotePictures[];
 
 #define HI(v) (((s16 *)&(v))[1])
 #define STAR_MINE_FRAMES 144
@@ -222,7 +222,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       if (particle->variant >= 0) {
         s32 size = (particle->variant >> 3) + 1;
 
-        blitters[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+        blitters[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     HI(particle->x) - size / 2, HI(particle->y) - size, size,
                     size * 2);
         BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
@@ -331,8 +331,8 @@ extern u8 gMapCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 
-extern const u8 gData_08199340[];
-extern const u8 Data_081991e0[];
+extern const u8 gBattleEffect_SquareMesh64[];
+extern const u8 gBattleEffect_SquareCorners[];
 
 #define SEGMENTS 33
 
@@ -608,14 +608,14 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       // The claw.
       tex->logWidth = 6;
       tex->logHeight = 6;
-      model->mesh = gData_08199340;
+      model->mesh = gBattleEffect_SquareMesh64;
       model->scrollU = zero;
       tex->pixels = work->sheet + 0x4000;
       SceneTransform_ApplyPosition3((target.x - 124) << 16,
                                     (height - 144) << 16, 0);
       Transform_ApplyRoll(TRIG_TURN / 4);
       SceneTransform_ApplyScale3(0x19c40, 0x14e20, Q16_ONE);
-      Render_TransformVertices(Data_081991e0, vertices, 4);
+      Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(model);
     }
     Heap_Release(model);
@@ -719,7 +719,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         if (size <= 0) {
           size = 1;
         }
-        blit[0](canvas, sprites + gBattleEffect_MoteCells[size - 1],
+        blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
         spark->variant--;

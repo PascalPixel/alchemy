@@ -57,10 +57,10 @@ extern char ResourceId_Data101;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern u8 Data_02016000[];
-extern u16 gBattleEffect_MoteCells[];
-extern const u8 gData_08199364[];
+extern u16 gBattleEffect_MotePictures[];
+extern const u8 gBattleEffect_SquareMesh128[];
 extern const u8 Data_0819919c[];
-extern const u8 Data_081991e0[];
+extern const u8 gBattleEffect_SquareCorners[];
 extern const u8 Data_081991a4[];
 extern const s16 Data_08199f2a[];
 extern const s16 Data_08199f2e[];
@@ -275,7 +275,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         if (step->variant >= 0) {
           s32 size = (step->variant >> 2) + 1;
 
-          draw[0](canvas, graphics + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(step, 60, 0);
           step->variant--;
@@ -357,7 +357,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     texture.logWidth = 7;
     texture.logHeight = 7;
     texture.pixels = pixels;
-    model->mesh = gData_08199364;
+    model->mesh = gBattleEffect_SquareMesh128;
     model->kind = 7;
     model->texture = &texture;
     model->vertices = projected;
@@ -383,7 +383,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(Data_08199f2a[i]);
           Transform_ApplyYaw(Data_08199f2e[i]);
-          Render_TransformVertices(Data_081991e0, projected, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
       }
@@ -407,7 +407,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         Transform_ApplyPitch(Data_08199f2a[i]);
         Transform_ApplyYaw(Data_08199f2e[i]);
-        Render_TransformVertices(Data_081991e0, projected, 4);
+        Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
         Render_DrawModelList(model);
       }
 
@@ -428,7 +428,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(Data_08199f2a[i]);
           Transform_ApplyYaw(Data_08199f2e[i]);
-          Render_TransformVertices(Data_081991e0, projected, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
       }

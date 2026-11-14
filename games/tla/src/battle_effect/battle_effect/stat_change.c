@@ -622,7 +622,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
             callbacks[0](
                 canvas,
                 work->sheet +
-                    (level * RAMP_SIZE + gStatChange_ShardCells[cell]) +
+                    (level * RAMP_SIZE + gStatChange_ShardPictures[cell]) +
                     RAMP_IMAGE,
                 x, y, gStatChange_ShardWidths[cell],
                 gStatChange_ShardHeights[cell]);

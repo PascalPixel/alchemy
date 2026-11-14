@@ -19,12 +19,12 @@ struct BattleAIState {
 UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   u32 selection;
   struct BattleAIState *selectionMemory;
-  struct EnemyDefinition *enemy;
+  const struct EnemyDefinition *enemy;
   s32 itemsAllowed;
   s32 failedChoices;
   s32 needsChoice;
-  s8 *actionStrategy;
-  u8 *itemActionMask;
+  const s8 *actionStrategy;
+  const u8 *itemActionMask;
   s16 command;
   s32 allyTarget;
   s32 opponentTarget;
@@ -43,7 +43,7 @@ UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
 
   /// Picks a place in the action list from a 0-255 roll and eight weights:
   /// the first place whose running total passes the roll, else place 0.
-  s32 BattleEnemy_SelectWeightedAction(u8 *weights) {
+  s32 BattleEnemy_SelectWeightedAction(const u8 *weights) {
     s32 roll;
     s32 total;
     s32 selectedAction;
@@ -76,7 +76,7 @@ UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   if (retry != 0 && request->command != COMMAND_ENEMY_ABILITY)
     return;
 
-  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->id);
+  enemy = Enemy_GetDefinitionFar(unit->id);
   selectionMemory = (struct BattleAIState *)&unit->aiActionIndex;
   actionStrategy = &enemy->actionStrategy;
   itemActionMask = &enemy->itemActions;

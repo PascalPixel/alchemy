@@ -5,14 +5,14 @@
 #include "game_internal.h"
 
 /// Returns an item's definition; an inventory entry's other bits are ignored.
-struct ItemDefinition *Item_GetDirect(s32 item) {
+const struct ItemDefinition *Item_GetDirect(s32 item) {
   return &gItem_DefinitionTable[item & INVENTORY_ITEM_ID_MASK];
 }
 
 /// Returns whether the character can equip the item.
 s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
-  struct ItemDefinition *item = Item_GetDirect(itemId);
+  const struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 equipMask = item->equipMask;
 
   if (unit->id >= PARTY_UNIT_COUNT)
@@ -30,7 +30,7 @@ s32 Item_IsCompatibleWithUnit(s32 unit, s32 item) {
 
 /// Returns what kind of thing an item is, an enum EquipmentGroup.
 s32 Item_GetEquipmentGroup(s32 itemId) {
-  struct ItemDefinition *item = Item_GetDirect(itemId);
+  const struct ItemDefinition *item = Item_GetDirect(itemId);
 
   s32 group = EQUIPMENT_GROUP_NONE;
 
@@ -109,7 +109,7 @@ s32 PartyInventory_CountFreeSlots(void) {
 /// another slot is free.
 s32 Inventory_AddItem(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
-  struct ItemDefinition *item = Item_GetDirect(itemId);
+  const struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 slot;
 
   if (item->flags & ITEM_STACKABLE) {
@@ -201,7 +201,7 @@ s32 PartyInventory_FindMember(s32 itemId) {
 s32 Inventory_Equip(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
   u8 type;
   s32 equippedSlot;
 
@@ -238,7 +238,7 @@ s32 Inventory_Equip(s32 unitId, s32 slot) {
 s32 Inventory_FindEquipped(s32 unitId, s32 type) {
   struct Unit *base = Unit_Get(unitId);
   s32 index;
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
 
   for (index = 0; index < INVENTORY_SLOTS; index++) {
     if (base->inventory[index] & INVENTORY_EQUIPPED) {
@@ -254,10 +254,10 @@ s32 Inventory_FindEquipped(s32 unitId, s32 type) {
 
 /// Returns the definition of the unit's equipped item of `type`, or NULL.
 /// Nothing calls it by name.
-struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
-                                                       s32 type) {
+const struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
+                                                             s32 type) {
   s32 slot;
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
     if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
@@ -276,7 +276,7 @@ s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
     if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
-      struct ItemDefinition *item = Item_GetDirect(unit->inventory[slot]);
+      const struct ItemDefinition *item = Item_GetDirect(unit->inventory[slot]);
 
       if (item->type == type) {
         return unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
@@ -326,7 +326,7 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
 s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
   struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
-  struct ItemDefinition *item = Item_GetDirect(itemId);
+  const struct ItemDefinition *item = Item_GetDirect(itemId);
 
   if (itemId == 0) {
     return -1;

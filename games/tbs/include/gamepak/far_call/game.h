@@ -59,7 +59,7 @@ s32 Battle_RollEffectSuccessFar(s32 caster, s32 target, s32 resistance_category,
 s32 Battle_CalculateAttackDamageFar(s32 atk, s32 def, s32 add, s32 bonus);
 s32 Battle_CalculatePsynergyPowerFar(s32 power, s32 bonus, s32 rate);
 s32 Battle_CalculateRecoveryFar(s32 power, s32 element, s32 rate);
-const u8 *Enemy_GetDefinitionFar(s32 selector);
+const struct EnemyDefinition *Enemy_GetDefinitionFar(s32 selector);
 s32 Battle_RandomFar(void);
 s32 Djinn_GiveFar(s32 owner, s32 index, s32 bit);
 s32 Djinn_SetFar(s32 owner, s32 index, s32 bit);

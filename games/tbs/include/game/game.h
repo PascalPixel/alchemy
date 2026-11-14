@@ -127,7 +127,7 @@ s16 Unit_AddPp(s32 unitId, s32 delta);
 s32 Party_AdjustShopCredit(s32 amount);
 s32 Party_AdjustShopGifts(s32 amount);
 
-struct ItemDefinition *Item_GetDirect(s32 item);
+const struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId);
 s32 Item_IsCompatibleWithUnit(s32 unit, s32 item);
 s32 Item_GetEquipmentGroup(s32 itemId);
@@ -141,8 +141,8 @@ s32 Inventory_Find(s32 unitId, s32 itemId);
 s32 PartyInventory_FindMember(s32 itemId);
 s32 Inventory_Equip(s32 unitId, s32 slot);
 s32 Inventory_FindEquipped(s32 unitId, s32 type);
-struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
-                                                       s32 type);
+const struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
+                                                             s32 type);
 s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type);
 s32 Inventory_Remove(s32 unitId, s32 slot);
 s32 Inventory_Discard(s32 unitId, s32 slot);

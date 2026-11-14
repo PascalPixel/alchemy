@@ -62,7 +62,7 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
   struct Unit *unit;
   struct PsynergyEntry *abilities;
   struct ClassDefinition *classDefinition;
-  struct ItemDefinition *item;
+  const struct ItemDefinition *item;
   s32 slot;
   s32 sourceIndex;
   u16 originFlag;

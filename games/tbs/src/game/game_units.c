@@ -32,12 +32,12 @@ struct StatWork {
   struct {
     s32 power;
     s32 resistance;
-  } element[ELEMENT_COUNT];    ///< each element's power and resistance
-  s32 kind;                    ///< the item effect being applied
-  s32 unusedAfterKind[2];      ///< never written
-  s32 amount;                  ///< the amount of the item effect being applied
-  struct ItemDefinition *item; ///< the equipped item being applied
-  s32 unusedAfterItem;         ///< never written
+  } element[ELEMENT_COUNT]; ///< each element's power and resistance
+  s32 kind;                 ///< the item effect being applied
+  s32 unusedAfterKind[2];   ///< never written
+  s32 amount;               ///< the amount of the item effect being applied
+  const struct ItemDefinition *item; ///< the equipped item being applied
+  s32 unusedAfterItem;               ///< never written
 };
 
 /// The distance between `a` and `b`, |a - b|.
@@ -448,7 +448,7 @@ void GameFlag_RefreshLureCap(void) {
     s32 slot;
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-      struct ItemDefinition *item;
+      const struct ItemDefinition *item;
       s32 effect;
 
       if (!(unit->inventory[slot] & INVENTORY_EQUIPPED))

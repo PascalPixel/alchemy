@@ -374,9 +374,8 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     return TARGET_PICK_NONE;
 
   if (action->targetMode == ABILITY_TARGET_FOES && action->range == 1 &&
-      ((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-           Unit_GetFar(userId)->id))
-              ->targetStrategy != TARGET_STRATEGY_RANDOM &&
+      Enemy_GetDefinitionFar(Unit_GetFar(userId)->id)->targetStrategy !=
+          TARGET_STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
           ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
     // Sort the targets by HP, the most first.
@@ -388,9 +387,8 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
            innerIndex++) {
         thisUnit = Unit_GetFar(unitIds[innerIndex]);
         nextUnit = Unit_GetFar(unitIds[innerIndex + 1]);
-        if (((struct EnemyDefinition *)Enemy_GetDefinitionFar(
-                 Unit_GetFar(userId)->id))
-                ->targetStrategy == TARGET_STRATEGY_MOST_HP) {
+        if (Enemy_GetDefinitionFar(Unit_GetFar(userId)->id)->targetStrategy ==
+            TARGET_STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
         } else {

@@ -610,7 +610,7 @@ struct ActorPlacement gGabombaCatacombs_Room1Placements[] = {
 };
 
 struct ActorPlacement gGabombaCatacombs_Room2Placements[] = {
-    ACTOR_PLACEMENT(243, 0x3a, MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_MUD), MOVEMENT_TYPE_STAND, 728, 0, 312, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

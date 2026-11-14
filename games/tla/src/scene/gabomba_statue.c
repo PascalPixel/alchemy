@@ -151,7 +151,9 @@ struct Wanderer {
   u16 facingB;
 };
 
-void GabombaStatue_FightSteel(void) { Field_RequestDjinnBattle(33, DJINNI_STEEL); }
+void GabombaStatue_FightSteel(void) {
+  Field_RequestDjinnBattle(33, DJINNI_STEEL);
+}
 // A wanderer's update: it turns between its two facings at random intervals.
 s32 GabombaStatue_LookAround(struct Wanderer *actor) {
   u8 *timer = &actor->timer;
@@ -3834,7 +3836,7 @@ LATE_DATA struct ActorPlacement gGabombaStatue_Room3Placements[] = {
     ACTOR_PLACEMENT(361, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 248, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(243, 0x39, MOVEMENT_TYPE_STAND, 504, 0, 216, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_STEEL), MOVEMENT_TYPE_STAND, 504, 0, 216, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

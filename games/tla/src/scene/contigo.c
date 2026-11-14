@@ -437,7 +437,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Get(0x9b2) != 0)
         return gContigo_Room2Placements;
-      if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9d0) == 0)
+      if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
+          GameFlag_Get(0x9d0) == 0)
         return gContigo_Room2PlacementsReunion;
     }
     return gContigo_Room2PlacementsBeforeReunion;
@@ -2697,8 +2698,8 @@ struct ActorPlacement gContigo_Room1Placements[] = {
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, (s32)gContigo_WandererScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(138, CONDITION_ALWAYS, (s32)gContigo_PacerScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(243, 0x3e, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(245, 0x67, MOVEMENT_TYPE_STAND, 56, 0, 706, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SALT), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_SHINE), MOVEMENT_TYPE_STAND, 56, 0, 706, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

@@ -11,6 +11,12 @@
 /// the party members' Djinn lists take it.
 #define DJINNI_INDEX(id) ((id) % DJINN_PER_ELEMENT)
 
+/// The field sprites of each element's Djinn.
+#define SPRITE_VENUS_DJINNI 243
+#define SPRITE_MERCURY_DJINNI 244
+#define SPRITE_MARS_DJINNI 245
+#define SPRITE_JUPITER_DJINNI 246
+
 /// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINN_FIRST count them:
 /// DJINN_PER_ELEMENT to an element, in the order Venus, Mercury, Mars, Jupiter.
 /// A Djinni's English name is the message MsgDjinnName + its number. The

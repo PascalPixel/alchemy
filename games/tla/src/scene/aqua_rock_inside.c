@@ -278,7 +278,9 @@ void Tightrope_Place();
 
 extern u8 Data_0202c001[];
 
-void AquaRockInside_FightSteam(void) { Field_RequestDjinnBattle(10, DJINNI_STEAM); }
+void AquaRockInside_FightSteam(void) {
+  Field_RequestDjinnBattle(10, DJINNI_STEAM);
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -2717,7 +2719,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Room1Placements[] = {
 LATE_DATA struct ActorPlacement gAquaRockInside_Room2Placements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 247, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(244, 0x50, MOVEMENT_TYPE_STAND, 776, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_STEAM), MOVEMENT_TYPE_STAND, 776, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

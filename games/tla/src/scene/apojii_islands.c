@@ -6,6 +6,7 @@
 /// cliff where the Jupiter Djinni Haze waits (ApojiiIslands_HazeJoinsParty).
 /// Its sea, falls and stone cycle their colours.
 #include "flags.h"
+#include "djinn_ids.h"
 
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
 #include "types.h"
@@ -1116,7 +1117,7 @@ struct ActorPlacement gApojiiIslands_Room3Placements[] = {
 struct ActorPlacement gApojiiIslands_Room2Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(246, 0x77, MOVEMENT_TYPE_STAND, 376, 0, 200, FACING_WEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_HAZE), MOVEMENT_TYPE_STAND, 376, 0, 200, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

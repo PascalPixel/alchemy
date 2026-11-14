@@ -241,7 +241,9 @@ void Actor_PlaceBlocks(const void *data);
 
 extern s32 gKandoreanTemple_RightTimer;
 
-void KandoreanTemple_FightFog(void) { Field_RequestDjinnBattle(11, DJINNI_FOG); }
+void KandoreanTemple_FightFog(void) {
+  Field_RequestDjinnBattle(11, DJINNI_FOG);
+}
 
 u32 KandoreanTemple_CountDownSteam(struct Actor *object) {
   s32 left;
@@ -3234,7 +3236,7 @@ struct ActorPlacement gKandoreanTemple_FogRoomPlacements[] = {
     {407, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 3},
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 340, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(244, 0x4b, MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_FOG), MOVEMENT_TYPE_STAND, 632, 0, 280, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 

@@ -29,7 +29,7 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapCell *cells;
 
-  if ((s8)event->mode == 3) {
+  if (event->mode == 3) {
     cells = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
                                                (((z / 0x200000) & 31) << 5)];
   } else {

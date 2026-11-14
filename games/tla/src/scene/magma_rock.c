@@ -1057,9 +1057,8 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     FieldActor_SetSpriteColor(object, 0);
     object->update = NULL;
   }
-  if (work->psynergy == 0 && *(s16 *)&work->fieldMenu == 0 &&
-      work->pauseMenu == 0 && work->item == 0 &&
-      (u16)work->transitionActive != 0)
+  if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
+      work->item == 0 && (u16)work->transitionActive != 0)
     object->timer++;
 }
 

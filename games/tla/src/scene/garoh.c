@@ -987,7 +987,7 @@ loop1:
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(8, 2);
   Actor_SetScript(8, gData_0200545c);
-  (*(s16 *)&gFieldWork->message)--;
+  gFieldWork->message--;
   FieldEvent_ShowMessageThenWait(8, 0, 0);
   FieldActor_Stop(8);
   FieldEvent_Wait(20);

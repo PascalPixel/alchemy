@@ -2166,7 +2166,7 @@ s32 MarsLighthouseRoomF_SlideOnIce(void) {
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
-  if (*(u16 *)&event->transitionActive == 0) {
+  if (event->transitionActive == 0) {
     ScreenTransition_Start(event->transition, event->transitionFrames);
     event->transitionActive = 1;
   }

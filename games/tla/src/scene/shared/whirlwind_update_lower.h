@@ -6,8 +6,8 @@ void Whirlwind_UpdateLower(struct Actor *self) {
   s32 distance;
   s32 near;
 
-  if (work->psynergy != 0 || *(s16 *)&work->fieldMenu != 0 ||
-      work->pauseMenu != 0 || work->item != 0) {
+  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
+      work->item != 0) {
     Actor_SetAnimationSpeed(self, 0);
     return;
   }

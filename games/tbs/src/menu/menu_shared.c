@@ -515,13 +515,7 @@ void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
   for (; i < 8; i++) {
     menu->tabSprites[i] = 0;
   }
-  // 200 << 4 is TASK_PASS_FRAME: once a frame in the frame
-  // pass, rank 128.
-  {
-    s32 priority = 200;
-    priority <<= 4;
-    Task_Add(Menu_PlacePartyFigures, priority);
-  }
+  Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
 }
 
 /// Releases the party figures Menu_CreatePartyFigures created and

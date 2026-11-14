@@ -25,27 +25,24 @@ void Actor_SetSpeedParameters(u32 actorId, s32 speedLimit, s32 acceleration) {
 }
 
 /// Gives an actor a movement type or actor script (Actor_SetMovementType) and
-/// makes it face where it moves: sets ACTOR_FACES_MOTION, bit 0 of its
-/// actionFlags.
+/// makes it face where it moves (ACTOR_FACES_MOTION).
 void Actor_SetMovementTypeById(u32 actorId, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    s32 value = 1;
-    value |= actor->steeringFlags;
-    actor->steeringFlags = value;
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_SetMovementType(actor, action);
   }
 }
 
 /// The event command "stop actor": stops its movement type and puts it back
 /// under script control, on the idle script (a lone SC_END), and sets
-/// ACTOR_FACES_MOTION, bit 0 of its actionFlags.
+/// ACTOR_FACES_MOTION.
 void Actor_Stop(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    actor->steeringFlags |= 1;
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_StartIdleFar(actor);
   }
 }
@@ -76,9 +73,7 @@ void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    s32 value = 1;
-    value |= actor->steeringFlags;
-    actor->steeringFlags = value;
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_SetMovementType(actor, action);
     Actor_WaitForScriptEndFar(actor);
   }

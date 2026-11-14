@@ -258,7 +258,6 @@ void Text_ResetStyle(void) {
 /// (WindowSystem_Update).
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
-  s32 priority;
 
   // The glyph sheet, loaded with no source: 128 << 6 is 8192 bytes, 256 sprite
   // tiles, the four of a 16x16 glyph for each of the 64 window sprites.
@@ -268,11 +267,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
-  // 200 << 4 is TASK_PASS_FRAME: the update runs in the frame
-  // pass.
-  priority = 200;
-  priority <<= 4;
-  Task_Add(WindowSystem_Update, priority);
+  Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
 
 /// Resets the text style and starts the per-frame window update
@@ -280,7 +275,6 @@ void WindowSystem_StartFieldUpdate(void) {
 /// loadGlyphTiles is set.
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   struct WindowWork *state = WINDOW_WORK;
-  s32 priority;
 
   // As in the field's setup above.
   if (loadGlyphTiles != 0)
@@ -291,9 +285,7 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
-  priority = 200;
-  priority <<= 4;
-  Task_Add(WindowSystem_Update, priority);
+  Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
 
 /// Closes the battle message window at once, if one is open, and forgets it,

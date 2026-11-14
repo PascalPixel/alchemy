@@ -256,18 +256,26 @@ void Lemuria_TalkToLonelyChild(void) {
   System_Wait(1);
 }
 
-static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
+                                                    s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
-void Lemuria_DigFirstSpot(void) { TileCopies_CopyTouchedCells_(37, 72, 2, 2, 39, 71, 2); }
+void Lemuria_DigFirstSpot(void) {
+  TileCopies_CopyTouchedCells_(37, 72, 2, 2, 39, 71, 2);
+}
 
-void Lemuria_DigSecondSpot(void) { TileCopies_CopyTouchedCells_(59, 64, 4, 3, 49, 71, 2); }
+void Lemuria_DigSecondSpot(void) {
+  TileCopies_CopyTouchedCells_(59, 64, 4, 3, 49, 71, 2);
+}
 
-void Lemuria_DigThirdSpot(void) { TileCopies_CopyTouchedCells_(52, 69, 1, 1, 53, 69, 2); }
+void Lemuria_DigThirdSpot(void) {
+  TileCopies_CopyTouchedCells_(52, 69, 1, 1, 53, 69, 2);
+}
 
-void Lemuria_DigFourthSpot(void) { TileCopies_CopyTouchedCells_(53, 64, 1, 1, 52, 64, 2); }
+void Lemuria_DigFourthSpot(void) {
+  TileCopies_CopyTouchedCells_(53, 64, 1, 1, 52, 64, 2);
+}
 
 void Lemuria_DigFifthSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);

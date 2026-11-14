@@ -147,8 +147,8 @@ static __inline__ void TaopoSwamp_JumpDownLedge(s32 id, s32 a, s32 b) {
   Actor_JumpDownLedge(id, a, b);
 }
 
-static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void TileCopies_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
+                                                    s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
@@ -333,7 +333,9 @@ void TaopoSwamp_ScoopOtherHiddenItem(s32 a) {
 }
 
 /// Scoop digs into the mud at one of the two spots of the lowest level.
-void TaopoSwamp_DigHole(void) { TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0); }
+void TaopoSwamp_DigHole(void) {
+  TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
+}
 
 /// As TaopoSwamp_DigHole, and the first time (until flag 0xf99) the buried item
 /// comes up, throwing the leader standing on it back a step.

@@ -965,7 +965,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
+#define BACKGROUND(battle)                                                     \
+  (((union BattleBackgroundId *)&(battle)->background)->id)
 
 /// Unused: nothing refers to it. Shows the cloud swirl
 /// (BattleEffect_RunCloudSwirl), then the battle background fading in, until A.

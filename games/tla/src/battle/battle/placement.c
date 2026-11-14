@@ -67,7 +67,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
 
-  if (unit->classIndex == 0) {
+  if (unit->classId == 0) {
     sprite = BattleSprite_GetSprite(unit->enemyId);
     if (registeredSprite == 0)
       palette = BattleSprite_GetPalette(unit->enemyId);
@@ -425,7 +425,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   object->angle = facingAngle;
   object->unk59 = 3;
   object->motionFlags = 2;
-  if (unit->classIndex == 0) {
+  if (unit->classId == 0) {
     object->scaleX = 0x14ccc;
     object->scaleY = 0x14ccc;
   } else {

@@ -367,7 +367,7 @@ s32 Save_BuildFileSummary(void) {
   summary->playTime = SAVE_GAME_WORDS->playTime;
   summary->area =
       Area_GetNameIndexFar(gMainRoutineWork.next, gMainRoutineWork.entrance);
-  summary->classId = owner->classIndex;
+  summary->classId = owner->classId;
   summary->coins = gMainRoutineWork.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);

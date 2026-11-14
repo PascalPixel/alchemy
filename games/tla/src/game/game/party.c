@@ -78,7 +78,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
     }
   }
   unit->rewards = 0;
-  unit->classIndex = 0;
+  unit->classId = 0;
   unit->enemyId = enemyId;
   Unit_CalculateBaseElements(unitId, unit->baseElement);
   Unit_Calculate(unitId);

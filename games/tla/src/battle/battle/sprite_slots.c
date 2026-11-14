@@ -75,7 +75,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
   do {
     s32 slot;
 
-    if (actor->classIndex != 0)
+    if (actor->classId != 0)
       continue;
 
     for (slot = 0; slot <= 5; slot++) {

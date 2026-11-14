@@ -919,7 +919,7 @@ power_end:
     chg = -1;
     ent = Enemy_GetFreeUnitId();
     if (action->effect == 51) {
-      cls = BattleFormation_GetRandomMember(work->enemyGroup);
+      cls = BattleFormation_GetRandomMember(work->formation);
     } else if (action->effect == 86) {
       if (actor->enemyId == 164)
         cls = (Battle_RandomFar() & 3) + 378;
@@ -2058,7 +2058,7 @@ power_end:
 
     case 81:
       MESSAGE_PUSH(MsgAllResting);
-      work->unk046[1] = 1;
+      work->unk047 = 1;
       break;
 
     case 82:
@@ -2184,7 +2184,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   failedChoices = 0;
   needsChoice = 1;
   selection = -1U;
-  if (unit->classIndex != 0)
+  if (unit->classId != 0)
     return -1;
 
   selectionMemory = (struct AIState *)&unit->rewards;

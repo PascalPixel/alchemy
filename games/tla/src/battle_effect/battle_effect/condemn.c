@@ -202,7 +202,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   // The battle's own background (its id leads unk670) comes back.
-  BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
+  BattleBackground_LoadFar(1, Ram_HeapSlots->battleWork->background, 24);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

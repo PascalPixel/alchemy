@@ -710,7 +710,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;
     wait(1);
-    BattleBackground_SetModeFar(2, *(u16 *)battle->unk670, 0);
+    BattleBackground_SetModeFar(2, battle->background, 0);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7541, 0x20000);
     wait(1);
   }

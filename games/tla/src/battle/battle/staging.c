@@ -164,7 +164,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   if (unit->hp == 0)
     return -1;
   battle->actorMode = 3;
-  if (unit->classIndex == CLASS_NONE)
+  if (unit->classId == CLASS_NONE)
     BattleAI_ChooseAction(request, 1);
 
   view = Ram_HeapSlots->battleBackground;
@@ -387,7 +387,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 
   if (aid <= ALLY_MAX) {
     partyMode = completed;
-    if (scene->encounterMode != 2)
+    if (scene->firstStrike != 2)
       partyMode = 1;
 
     if (!partyMode) {

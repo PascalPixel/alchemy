@@ -146,7 +146,7 @@ void Unit_Calculate(s32 unitId) {
 
   // Apply additive equipment and set-Djinn bonuses before class scaling.
   // An enemy (CLASS_NONE) skips equipment, Djinn and class entirely.
-  if (unit->classIndex != CLASS_NONE) {
+  if (unit->classId != CLASS_NONE) {
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
@@ -247,7 +247,7 @@ void Unit_Calculate(s32 unitId) {
       /* FAKEMATCH(signature): the class read through ClassScaleView, which has
        * no word member, so the multipliers load ahead of the stores. */
       struct ClassScaleView *scale =
-          (struct ClassScaleView *)Class_GetDefinition(unit->classIndex);
+          (struct ClassScaleView *)Class_GetDefinition(unit->classId);
 
       stats->hp = stats->hp * scale->hp / STAT_SCALE_ONE;
       stats->pp = stats->pp * scale->pp / STAT_SCALE_ONE;
@@ -312,7 +312,7 @@ void Unit_Calculate(s32 unitId) {
   for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index].resistance += unit->resistanceStage * 20;
 
-  if (unit->classIndex != CLASS_NONE) {
+  if (unit->classId != CLASS_NONE) {
     lighthouse = 0;
     // Faster PP recovery inside the lighthouse of the character's own element.
     switch (unit->enemyId) {
@@ -346,7 +346,7 @@ void Unit_Calculate(s32 unitId) {
   CLAMP(stats->agi, 0, UNIT_STAT_MAX);
   CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
   // An enemy may act up to four times a turn, a character twice.
-  if (unit->classIndex == CLASS_NONE) {
+  if (unit->classId == CLASS_NONE) {
     CLAMP(stats->actionCount, 0, 4);
   } else {
     CLAMP(stats->actionCount, 0, 2);
@@ -370,7 +370,7 @@ void Unit_Calculate(s32 unitId) {
     unit->element[index].resistance = stats->element[index].resistance;
   }
 
-  if (unit->classIndex == CLASS_NONE) {
+  if (unit->classId == CLASS_NONE) {
     hpLimit = UNIT_ENEMY_HP_MAX;
     ppLimit = UNIT_HP_MAX;
   } else {
@@ -892,7 +892,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
     Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct BattleUnit));
     memcpy(unit, name, 15);
     if (byPassword == 0)
-      unit->enemyId = unit->classId;
+      unit->enemyId = unit->id;
     for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
       s32 item = unit->inventory[slot];
 

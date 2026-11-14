@@ -438,7 +438,7 @@ void Battle_ProcessTurnEnd(void) {
   struct DjinnRecoveryEntry *expiredEntry;
 
   battle = Ram_HeapSlots->battleWork;
-  sideCount = (battle->twoSided != 0) + 1;
+  sideCount = (battle->isLink != 0) + 1;
   for (side = 0; side < sideCount; side++) {
     list = &((struct TurnEndTable *)Djinn_GetRecoveryTableFar(side))->list;
     recoveryIndex = 0;
@@ -494,7 +494,7 @@ void Battle_ProcessTurnEnd(void) {
       } while (recoveryIndex < list->count);
     }
   }
-  BattleBackground_SetMode(2, *(u16 *)&Ram_HeapSlots->battleWork->unk670[0], 0);
+  BattleBackground_SetMode(2, Ram_HeapSlots->battleWork->background, 0);
   {
     s32 *groupList;
     struct BattleGroupOrder order = gBattleParty_TurnEndSideOrder;
@@ -502,7 +502,7 @@ void Battle_ProcessTurnEnd(void) {
     s32 group;
     s32 unitIndex;
 
-    if (battle->twoSided != 0 && battle->linkSide != 0) {
+    if (battle->isLink != 0 && battle->linkSide != 0) {
       order.group[0] = 2;
       order.group[1] = 1;
     }
@@ -717,7 +717,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   battleContinues = 0;
   unit = Unit_Get(unitId);
   if (unitId <= ALLY_MAX ||
-      ((struct BattleWork *)Ram_HeapSlots->battleWork)->twoSided != 0) {
+      ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink != 0) {
     list = &Djinn_GetRecoveryTableFar(unitId > ALLY_MAX)->list;
     for (strongestElement = 0; strongestElement < list->count;
          strongestElement++) {
@@ -740,7 +740,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     pending =
         &Djinn_GetRecoveryTableFar(
              unitId > ALLY_MAX &&
-             ((struct BattleWork *)Ram_HeapSlots->battleWork)->twoSided != 0)
+             ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink != 0)
              ->list;
     for (i = 0; i < 4; i++) {
       counts[i] = 0;

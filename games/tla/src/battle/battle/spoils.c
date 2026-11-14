@@ -125,7 +125,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)
     return -1;
-  if (unit->classIndex != 0)
+  if (unit->classId != 0)
     return -2;
   slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
   spoils->lastEnemyIds[slot] = unit->enemyId;
@@ -240,7 +240,7 @@ void Battle_AwardSpoils(void) {
            Unit_TryLevelUpFar(unitId, gains) != 0) {
       Sound_PlayFar(MUS_LEVEL_UP);
       MessageArgument_ClearAllFar();
-      MessageArgument_PushFar(unit->classIndex, MESSAGE_ARGUMENT_CLASS);
+      MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
       MessageArgument_PushFar(list[i], MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(unit->level, MESSAGE_ARGUMENT_NUMBER);
       // "<name> is now a level N ..."
@@ -255,7 +255,7 @@ void Battle_AwardSpoils(void) {
           }
           if (j == 32) {
             MessageArgument_ClearAllFar();
-            MessageArgument_PushFar(unit->classIndex, MESSAGE_ARGUMENT_CLASS);
+            MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
             MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
             MessageArgument_PushFar(learned & ACTION_ID_MASK,
                                     MESSAGE_ARGUMENT_ABILITY);

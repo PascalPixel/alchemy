@@ -83,12 +83,12 @@ s32 LinkBattle_SendParty(void) {
   mark = 0xff;
   work = Ram_HeapSlots->battleWork;
   for (i = 7; i >= 0; i--)
-    work->ownerSlots[i] = mark;
+    work->opponentSlots[i] = mark;
   count = BattleParty_PrepareMembers(owners);
   for (i = 0; i < count; i++) {
     Iwram_CopyWordsEntry(buffer, Unit_Get(owners[i]), size);
     ((struct BattleUnit *)buffer)->side = 2;
-    work->ownerSlots[owners[i]] = i - 128;
+    work->opponentSlots[owners[i]] = i - 128;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
@@ -110,7 +110,7 @@ s32 LinkBattle_SendParty(void) {
   } while (0);
   list = &((struct LinkOfferTable *)buffer)->list;
   for (j = 0; j < list->count;) {
-    list->entries[j].unitId = work->ownerSlots[list->entries[j].unitId];
+    list->entries[j].unitId = work->opponentSlots[list->entries[j].unitId];
     j++;
   }
   if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
@@ -154,7 +154,7 @@ s32 LinkBattle_WaitSync(void) {
   s32 lost = 0;
   s32 i;
 
-  if (work->twoSided != 0) {
+  if (work->isLink != 0) {
     u32 other = work->linkSide ^ 1;
 
     peer = (u16 *)(gSerialPeerPayloads[other] + 4);
@@ -198,7 +198,7 @@ s32 LinkBattle_SyncTurn(void) {
   // Unused: gives the stack frame its 20 bytes.
   UNUSED u16 spare[10];
 
-  if (work->twoSided != 0) {
+  if (work->isLink != 0) {
     peer = gLinkPeerSignatures[work->linkSide ^ 1];
     sig = (u16 *)gSerialTransfer.payload;
     if (work->linkPaused != 0)

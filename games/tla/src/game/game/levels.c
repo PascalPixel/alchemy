@@ -73,8 +73,8 @@ s32 Owner_UpdateClassActions(s32 owner) {
 
   st = Unit_Get(owner);
   ability = (u16 *)st->psynergy;
-  cls = Class_GetDefinition(st->classIndex);
-  if (st->classIndex == CLASS_NONE)
+  cls = Class_GetDefinition(st->classId);
+  if (st->classId == CLASS_NONE)
     return 0;
   mask = OWNER_ACTION_CLASS | OWNER_ACTION_ITEM;
   for (j = 0; j < PSYNERGY_SLOTS; j++) {
@@ -278,7 +278,7 @@ UNUSED void Unit_LevelNoOp(void) {}
 u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
   struct BattleUnit *unit = Unit_Get(unitId);
 
-  if (unit->classIndex != CLASS_NONE) {
+  if (unit->classId != CLASS_NONE) {
     if (level <= 0) {
       return 0;
     }
@@ -310,7 +310,7 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
 
   unit = Unit_Get(unitId);
   work = Heap_AllocEwram(sizeof(struct LevelUpWork));
-  work->classIndex = unit->classIndex;
+  work->classIndex = unit->classId;
   level = unit->level;
   work->level = level;
   gains->level = level;

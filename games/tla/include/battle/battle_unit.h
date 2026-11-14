@@ -198,7 +198,7 @@ enum CurseFlag {
   CURSE_REMOVABLE = 0x08
 };
 
-/// BattleUnit.classIndex of an enemy, which has no class of its own.
+/// BattleUnit.classId of an enemy, which has no class of its own.
 #define CLASS_NONE 0
 
 /// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
@@ -258,12 +258,14 @@ struct BattleUnit {
   u8 djinnActiveCounts[4]; ///< the Djinn set in each element
   u32 rewards;             ///< 0 for an enemy (the BattleUnit_Set draft)
   u32 experience;          ///< a character's experience points
-  /// Written with the character's id at a new game, and read as one (ISAAC,
-  /// GARET...) by the battle presentation.
+  /// A character's id (ISAAC to PIERS, below 8), written at a new game: the
+  /// equipment masks and the battle presentation read it. Who any unit is,
+  /// character or enemy, is enemyId.
+  u8 id;
+  /// The character's class, worked out from its Djinn (Unit_UpdateClass);
+  /// CLASS_NONE marks an enemy, and code throughout tests it to tell the two
+  /// apart.
   u8 classId;
-  /// The character's class, worked out from its Djinn (Unit_UpdateClass); 0
-  /// marks an enemy, and code throughout tests it to tell the two apart.
-  u8 classIndex;
   /// BATTLE_UNIT_ABSENT (0), BATTLE_UNIT_ENEMY (1) or BATTLE_UNIT_PARTY (2).
   /// Enemies 9 to 66 and 369 to 377 are put on side 2 (the BattleUnit_Set
   /// draft).
@@ -311,8 +313,9 @@ struct BattleUnit {
   s8 agilityStage; ///< the Agility stage, -4 to 8 (twice the Agility)
   s8 challenge;    ///< set by the challenge effect
   u8 unk149;       ///< Not named by any TLA C.
-  /// The unit's id: an enemy's (the BattleUnit_Set draft), and a character's
-  /// (0 to 7) for Unit_UpdateClass and the experience table.
+  /// Who the unit is: an enemy's id (BattleUnit_Set), or a character's id
+  /// (copied from id at a new game) for Unit_UpdateClass and the experience
+  /// table.
   u16 enemyId;
 };
 

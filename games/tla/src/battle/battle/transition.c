@@ -330,7 +330,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     wait(1);
     {
       s32 background = (s32)&ResourceId_SerpentStarsBackdrop;
-      u16 *slot = (u16 *)battle->unk670;
+      u16 *slot = &battle->background;
 
       zero = 0;
       *slot = background;

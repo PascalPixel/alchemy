@@ -21,10 +21,10 @@ void BattleCamera_Update(void) {
   s16 delta;
   u32 linkId;
 
-  if (Ram_HeapSlots->battleWork->twoSided != 0) {
+  if (Ram_HeapSlots->battleWork->isLink != 0) {
     if ((gLinkStatus & 3) != 3) {
-      Ram_HeapSlots->battleWork->unk051++;
-      if (Ram_HeapSlots->battleWork->unk051 > 24) {
+      Ram_HeapSlots->battleWork->linkMisses++;
+      if (Ram_HeapSlots->battleWork->linkMisses > 24) {
         Ram_HeapSlots->battleWork->linkPaused = 1;
       }
     } else {
@@ -32,7 +32,7 @@ void BattleCamera_Update(void) {
       if (Ram_HeapSlots->battleWork->linkSide != linkId) {
         Ram_HeapSlots->battleWork->linkPaused = 1;
       }
-      Ram_HeapSlots->battleWork->unk051 = 0;
+      Ram_HeapSlots->battleWork->linkMisses = 0;
     }
   }
 
@@ -88,11 +88,11 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 
   BattleMessage_CloseFar();
-  if (battle->encounterMode == 1) {
+  if (battle->firstStrike == 1) {
     MessageArgument_ClearAllFar();
     BattleMessage_ShowAndWaitFar((s32)MsgPartyStrikesFirst);
     BattleMessage_WaitForAdvance();
-  } else if (battle->encounterMode == 2) {
+  } else if (battle->firstStrike == 2) {
     MessageArgument_ClearAllFar();
     BattleMessage_ShowAndWaitFar((s32)MsgPartySurprised);
     BattleMessage_WaitForAdvance();
@@ -114,7 +114,7 @@ void BattleUnit_Collect(void) {
   battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
   count = BattleEnemy_List(buf);
-  kind = battle->unk042;
+  kind = battle->layout;
   if (kind >= 0) {
     if (kind <= 1) {
       for (i = 0; i < count; i++)

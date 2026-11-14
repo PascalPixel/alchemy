@@ -20,7 +20,8 @@ union BattleBackgroundId {
   u16 id;
   s32 word;
 };
-#define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
+#define BACKGROUND(battle)                                                     \
+  (((union BattleBackgroundId *)&(battle)->background)->id)
 
 // A texture for the ARM model renderer: its size as powers of two and the
 // address of its pixels.
@@ -784,7 +785,7 @@ void Iris_RestoreBattle(void) {
   gCameraSceneParameters[4] = 120;
   Palette_LoadBasicSpriteColors();
   // The battle's background.
-  BattleBackground_LoadFar(1, *(u16 *)battle->unk670, 24);
+  BattleBackground_LoadFar(1, battle->background, 24);
 }
 #undef KIND125_FRAMES
 #undef BACKGROUND

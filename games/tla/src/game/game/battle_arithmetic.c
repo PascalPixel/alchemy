@@ -110,7 +110,7 @@ s32 Item_GetEquippedElement(s32 id) {
   struct BattleUnit *unit;
 
   unit = Unit_Get(id);
-  if (unit->classIndex == 0)
+  if (unit->classId == 0)
     return Enemy_GetAttackElement(unit);
   item = Inventory_GetEquippedDefinition((void *)unit, 1); // 1: weapon.
   if (item != NULL)
@@ -143,7 +143,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   struct ItemDefinition *item;
   s32 rate;
 
-  if (owner->classIndex == 0) {
+  if (owner->classId == 0) {
     return 1;
   }
   item = Inventory_GetEquippedDefinition(owner, 1);
@@ -251,7 +251,7 @@ s32 BattleAbility_IsWeakToEffect(const struct BattleUnit *target,
   const u8 *entries;
   s32 i;
 
-  if (target->classIndex == CLASS_NONE) {
+  if (target->classId == CLASS_NONE) {
     entries = Enemy_GetDefinition(target->enemyId)->weakEffects;
     for (i = 0; i < 3; i++) {
       if (*entries == effectId)
@@ -259,7 +259,7 @@ s32 BattleAbility_IsWeakToEffect(const struct BattleUnit *target,
       entries++;
     }
   } else {
-    entries = Class_GetDefinition(target->classIndex)->weakEffects;
+    entries = Class_GetDefinition(target->classId)->weakEffects;
     for (i = 0; i < 3; i++) {
       if (*entries++ == effectId)
         return 1;
@@ -369,7 +369,7 @@ action4_done:
       return 0;
     }
   }
-  if (unit->classIndex != 0 && effectId == 82)
+  if (unit->classId != 0 && effectId == 82)
     return 0;
 
   score = Battle_GetEffectBaseSuccessRate(effectId);

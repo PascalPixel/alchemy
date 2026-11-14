@@ -1063,8 +1063,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       unit = Unit_Get(menu->members[memberColumn]);
       WindowSprite_RedrawSavedRectFar(window);
       Text_DrawStringAtOffsetFar(unit->name, window, 0, 0);
-      Text_DrawMessageAsTilesFar(unit->classIndex + (s32)MsgClassName, window,
-                                 0, 8);
+      Text_DrawMessageAsTilesFar(unit->classId + (s32)MsgClassName, window, 0,
+                                 8);
       Text_DrawStringAtOffsetFar(gDjinnMenu_TextLevel, window, 48, 0);
       Text_DrawNumberInWindowFar(unit->level, 2, window, 72, 0);
       if (mode == 0)
@@ -1748,7 +1748,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
     Text_DrawMessageAsTilesFar(label + 3, window, x * 8, y * 8 + 80);
     Text_DrawMessageAsTilesFar(label + 4, window, x * 8, y * 8 + 88);
     Text_DrawMessageAsTilesFar(label + 5, window, x * 8, y * 8 + 96);
-    Text_DrawMessageAsTilesFar((s32)MsgClassName + originalUnit->classIndex,
+    Text_DrawMessageAsTilesFar((s32)MsgClassName + originalUnit->classId,
                                window, x * 8, y * 8 + 32);
   }
 
@@ -1758,13 +1758,13 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
     if (page == 0) {
       s32 column;
 
-      if (originalUnit->classIndex != unit->classIndex) {
-        Text_DrawMessageAsTilesFar((s32)MsgClassName + unit->classIndex, window,
+      if (originalUnit->classId != unit->classId) {
+        Text_DrawMessageAsTilesFar((s32)MsgClassName + unit->classId, window,
                                    x * 8, y * 8 + 48);
         Window_SetTilemapEntryFar(window, 0xf296, x + 2, 5, 0);
       }
       column = x;
-      if (originalUnit->classIndex != unit->classIndex)
+      if (originalUnit->classId != unit->classId)
         column += 5;
       for (i = firstElement; i < 4; i++) {
         s32 tileColumn;

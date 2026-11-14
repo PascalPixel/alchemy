@@ -588,7 +588,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
     plan->staging = STAGING_ATTACK;
-    if (actor->classIndex == CLASS_NONE) {
+    if (actor->classId == CLASS_NONE) {
       plan->battleEffect =
           BattleSprite_GetAttackEffect(actor->enemyId) | EFFECT_BY_ID_RANGE;
     } else {
@@ -736,7 +736,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     else if (Ability_IsPsynergy(abilityId))
       plan->staging = STAGING_CAST;
     else if (plan->battleEffect != 0) {
-      if (actor->classIndex == CLASS_NONE)
+      if (actor->classId == CLASS_NONE)
         plan->staging = STAGING_ENEMY_CAST;
       else
         plan->staging = STAGING_CAST;

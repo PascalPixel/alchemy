@@ -1359,7 +1359,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   gBgScroll[1].y = 32;
   wait(1);
 
-  BattleBackground_SetModeFar(1, *(u16 *)battle->unk670, 0);
+  BattleBackground_SetModeFar(1, battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -1436,7 +1436,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       IO_WRITE_16);
   gBgScroll[1].y = 32;
   wait(1);
-  BattleBackground_SetModeFar(1, *(u16 *)battle->unk670, 128);
+  BattleBackground_SetModeFar(1, battle->background, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -1560,10 +1560,10 @@ void BattleEffect_EndCanvasLayer(void) {
   REG_BLDCNT = 0;
   wait(1);
 
-  BattleBackground_SetModeFar(2, *(u16 *)battle->unk670, 7);
+  BattleBackground_SetModeFar(2, battle->background, 7);
   wait(1);
   for (i = 0; i != 8; i++) {
-    BattleBackground_SetPaletteLevelFar(*(u16 *)battle->unk670, 21 - i * 3);
+    BattleBackground_SetPaletteLevelFar(battle->background, 21 - i * 3);
     wait(1);
   }
 
@@ -1589,7 +1589,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
                        DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
                            DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1);
   wait(1);
-  BattleBackground_SetModeFar(2, *(u16 *)battle->unk670, 0);
+  BattleBackground_SetModeFar(2, battle->background, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
                           BGCNT_PRIORITY(3),
@@ -1607,7 +1607,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   s32 off;
 
   BattleEffect_ClearActorTimers();
-  BattleBackground_SetModeFar(2, *(u16 *)screen->unk670, 0);
+  BattleBackground_SetModeFar(2, screen->background, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = 0;
   Iwram_ClearWords((void *)0x06003fc0, 64);

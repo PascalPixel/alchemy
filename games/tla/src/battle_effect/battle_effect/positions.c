@@ -527,7 +527,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
-  for (frame = 0, background = (u16 *)Ram_HeapSlots->battleWork->unk670;
+  for (frame = 0, background = &Ram_HeapSlots->battleWork->background;
        frame != 7; frame++) {
     BattleBackground_SetPaletteLevelFar(*background, 6 - frame);
     wait(1);

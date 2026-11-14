@@ -81,7 +81,7 @@ void Unit_CalculateBaseElements(s32 unitId,
   s32 levels[ELEMENT_COUNT];
   s32 i;
 
-  if (state->classIndex == CLASS_NONE) {
+  if (state->classId == CLASS_NONE) {
     index = Enemy_GetDefinition(state->enemyId)->elementPreset;
     if (index >= ENEMY_ELEMENT_PRESET_COUNT)
       index = 0;
@@ -213,7 +213,7 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 void Unit_UpdateClass(s32 unitId) {
   struct BattleUnit *unit = Unit_Get(unitId);
 
-  unit->classIndex = Class_Determine(
+  unit->classId = Class_Determine(
       unit->enemyId, unit->djinnHeld,
       Inventory_GetEquippedItem((struct OwnerInventoryState *)unit,
                                 ITEM_TYPE_CLASS_CHANGE));

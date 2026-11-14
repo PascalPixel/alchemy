@@ -163,7 +163,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     state->timerHidden = 0;
     state->timer = -1;
     state->timerWindow = 0;
-    if (battle->twoSided != 0) {
+    if (battle->isLink != 0) {
       s32 missedLinkFrames;
       u16 *signature;
 

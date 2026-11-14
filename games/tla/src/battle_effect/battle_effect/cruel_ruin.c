@@ -32,7 +32,7 @@ union BattleBackgroundId__f13eb70 {
   s32 word;
 };
 #define BACKGROUND(battle)                                                     \
-  (((union BattleBackgroundId__f13eb70 *)(battle)->unk670)->id)
+  (((union BattleBackgroundId__f13eb70 *)&(battle)->background)->id)
 
 // Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
 // the map cell buffer.
@@ -623,7 +623,7 @@ void BattleEffect_DimBackgroundStep(void) {
 #undef BACKGROUND
 
 // The battle background's id.
-#define BACKGROUND(battle) (*(u16 *)(battle)->unk670)
+#define BACKGROUND(battle) ((battle)->background)
 
 // Raises the light-streak backdrop in colour set kind (yellow, crystal,
 // ember, violet or dust).

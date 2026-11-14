@@ -976,8 +976,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   if (flags == 0)
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
   Text_DrawStringAtOffsetFar(unit->name, window, 40, 0);
-  Text_DrawMessageAsTilesFar(unit->classIndex + (s32)MsgClassName, window, 0,
-                             32);
+  Text_DrawMessageAsTilesFar(unit->classId + (s32)MsgClassName, window, 0, 32);
   DRAW_STAT_LABEL(gMenu_LvString, window, 104, 0);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);

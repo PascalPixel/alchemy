@@ -841,8 +841,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       Text_DrawMessageAsTiles((s32)MsgExp - 7, statusWindow, 136, 40);
       Text_DrawNumberInWindow(unit->luck, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               40);
-      Text_DrawMessageAsTiles((s32)MsgClassName + unit->classIndex,
-                              statusWindow, 0, 48);
+      Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, statusWindow,
+                              0, 48);
       if (page == 0) {
         if (hasDjinn != 0)
           Text_DrawMessageAsTiles((s32)MsgExp - 1, statusWindow, 0, 72);

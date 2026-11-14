@@ -218,7 +218,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     if (state->equipPreview)
       goto experience;
   classChange:
-    value = unit->classIndex + MESSAGE_CLASS_NAME;
+    value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
     if (!Item_CanUnitEquip(owner, item)) {
       Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window, 16, 48);
@@ -234,14 +234,14 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     }
     Unit_CalculateFar(owner);
     Window_SetTilemapEntryFar((s32)window, 0xf12a, 3, 5, 0);
-    value = unit->classIndex + MESSAGE_CLASS_NAME;
+    value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 48);
     Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
     Heap_Release(backup);
     break;
   case STATUS_PANEL_EXPERIENCE:
   experience:
-    value = unit->classIndex + MESSAGE_CLASS_NAME;
+    value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
     StatusPanel_DrawHpPp(unit, (s32)window);
     value = unit->experience;
@@ -249,7 +249,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     Text_DrawNumberInWindowFar(value, 8, (s32)window, 24, 72);
     break;
   case STATUS_PANEL_CLASS:
-    value = unit->classIndex + MESSAGE_CLASS_NAME;
+    value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
     StatusPanel_DrawHpPp(unit, (s32)window);
     break;

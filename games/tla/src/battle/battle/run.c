@@ -519,7 +519,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 index;
 
   limit = 4;
-  if (Ram_HeapSlots->battleWork->twoSided != 0)
+  if (Ram_HeapSlots->battleWork->isLink != 0)
     limit = 3;
 
   count = Party_CountMembersFar();
@@ -548,7 +548,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
     count -= 4;
   else
     count = 0;
-  if (Ram_HeapSlots->battleWork->twoSided != 0)
+  if (Ram_HeapSlots->battleWork->isLink != 0)
     count = 0;
 
   for (index = 0; index < count; index++) {

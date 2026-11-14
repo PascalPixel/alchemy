@@ -125,7 +125,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
   s32 unitCount;
   s32 shuffleOrUnitIndex;
 
-  if (battle->encounterMode == 1)
+  if (battle->firstStrike == 1)
     return 0;
 
   unitCount = BattleParty_ListLivingUnits(2, unitIds);
@@ -140,7 +140,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
     unitIds[second] = swap;
   }
 
-  if (battle->encounterMode == 2) {
+  if (battle->firstStrike == 2) {
     s32 limit = ((Random16() * 5) >> 16) + 1;
 
     if (limit <= 1)
@@ -193,7 +193,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
 
       entryCount++;
 
-      if (battle->encounterMode == 2)
+      if (battle->firstStrike == 2)
         break;
     }
   }
@@ -346,7 +346,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   for (index = 0; index < count; index++) {
     struct BattleActionRecord *action = &actions[index];
 
-    action->slot = battle->ownerSlots[action->unitId];
+    action->slot = battle->opponentSlots[action->unitId];
 
     if (battle->linkSide == 0) {
       if (action->priority & 1)
@@ -476,7 +476,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   Palette_CopyWithBrightnessOffset(8);
   // Flag set while commands are being selected.
   GameFlag_Set(FLAG_CHOOSING_COMMANDS);
-  mode = &work->encounterMode;
+  mode = &work->firstStrike;
   BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
 
@@ -493,7 +493,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   }
 
   // Link opponent or enemy actions.
-  if (Ram_HeapSlots->battleWork->twoSided != 0) {
+  if (Ram_HeapSlots->battleWork->isLink != 0) {
     add = Battle_AppendLinkedActions(acts, cnt);
     if (LinkBattle_WaitSync() < 0) {
       cnt = -1;

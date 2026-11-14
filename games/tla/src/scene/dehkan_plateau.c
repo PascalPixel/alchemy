@@ -206,22 +206,17 @@ const struct Trigger *Scene_GetEvents(void) {
   return gDehkanPlateau_Triggers;
 }
 
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                          s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
 void Func_020012c8(void) { CrumblingPillars_Step(gData_02003f44); }
 
 void Func_020012d8(void) {
   if (GameFlag_Get(FLAG_SCENE_TEMP_13) == 0)
-    Map_CopyAttributes(0, 0, 1, 1, 9, 18);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 18);
   if (GameFlag_Get(FLAG_SCENE_TEMP_15) == 0)
-    Map_CopyAttributes(0, 0, 1, 1, 11, 18);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 11, 18);
   if (GameFlag_Get(FLAG_SCENE_TEMP_21) == 0)
-    Map_CopyAttributes(0, 0, 1, 1, 14, 28);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 14, 28);
   if (GameFlag_Get(FLAG_SCENE_TEMP_23) == 0)
-    Map_CopyAttributes(0, 0, 1, 1, 16, 28);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 16, 28);
 }
 
 void Func_02001368(void) {
@@ -238,9 +233,9 @@ void Func_02001368(void) {
 
 void Func_020013b0(void) {
   if (GameFlag_Get(FLAG_SCENE_TEMP_13) == 0)
-    Map_CopyAttributes(63, 0, 1, 1, 50, 20);
+    MapGrid_CopyCellAttributes(63, 0, 1, 1, 50, 20);
   if (GameFlag_Get(FLAG_SCENE_TEMP_15) == 0)
-    Map_CopyAttributes(63, 0, 1, 1, 52, 20);
+    MapGrid_CopyCellAttributes(63, 0, 1, 1, 52, 20);
 }
 
 void Func_020013fc(void) {
@@ -364,19 +359,15 @@ void Func_020016b0(void) {
     Actor_SetSpritePriority(19, 2);
     Event_End();
   } else if (x == 46) {
-    Map_CopyAttributes(44, 13, 1, 1, 48, 13);
+    MapGrid_CopyCellAttributes(44, 13, 1, 1, 48, 13);
   }
 }
 
-static __inline__ void Actor_PlaceOnTerrain(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 void Func_0200172c(void) {
-  Actor_PlaceOnTerrain(20, 150 << 18, 134 << 18);
-  Map_CopyAttributes(38, 32, 1, 1, 37, 33);
-  Map_CopyAttributes(30, 32, 1, 2, 38, 32);
-  Map_CopyAttributes(40, 64, 4, 3, 36, 64);
+  Actor_SetPositionFixed(20, 150 << 18, 134 << 18);
+  MapGrid_CopyCellAttributes(38, 32, 1, 1, 37, 33);
+  MapGrid_CopyCellAttributes(30, 32, 1, 2, 38, 32);
+  MapGrid_CopyCellAttributes(40, 64, 4, 3, 36, 64);
   GameFlag_Set(0x841);
 }
 
@@ -789,7 +780,7 @@ void Func_0200200c(struct Actor *object) {
     cell[3] &= 0x7f;
     cell[2] = 11;
   } else if (x == 55) {
-    Map_CopyAttributes(53, 20, 1, 1, 54, 20);
+    MapGrid_CopyCellAttributes(53, 20, 1, 1, 54, 20);
     Map_CopyCellAttributeRect(57, 20, 1, 1, 56, 20);
   }
 }
@@ -824,14 +815,14 @@ void Func_02002140(void) {
 
   if (set == 0) {
     Actor_GetById(8)->motionFlags = set;
-    Map_CopyAttributes(51, 12, 1, 1, 47, 12);
+    MapGrid_CopyCellAttributes(51, 12, 1, 1, 47, 12);
     GameFlag_Set(FLAG_SCENE_TEMP_02);
   }
 }
 
 void Func_02002180(void) {
   if (GameFlag_Get(FLAG_SCENE_TEMP_07) == 0) {
-    Map_CopyAttributes(48, 11, 1, 1, 47, 12);
+    MapGrid_CopyCellAttributes(48, 11, 1, 1, 47, 12);
     GameFlag_Clear(FLAG_SCENE_TEMP_02);
   }
 }
@@ -877,14 +868,6 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
 extern void Task_Add__events_g(void (*func)(void),
                                s32 priority) __asm__("Task_Add");
 
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  FieldCamera_MoveWithinMapBounds(a, b, c, d);
-}
-
-static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
-  Actor_WalkToAndWaitById(id, x, z);
-}
-
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(id, x, z, angle);
 }
@@ -898,12 +881,12 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   Actor_FaceActorById(24, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(24, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(24, 1.6);
-  Actor_MoveTo(24, 664, 136);
+  Actor_WalkToAndWait(24, 664, 136);
   MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
   GameFlag_Set(FLAG_SCENE_TEMP_47);
-  Actor_MoveTo(24, 664, 104);
+  Actor_WalkToAndWait(24, 664, 104);
   MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
   Sound_Play(SE_SPLASH);
   DehkanPlateau_JoltCamera();
@@ -925,9 +908,9 @@ void DehkanPlateau_CannonFleesEast(void) {
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
   Actor_SetSpeed(24, 1.6);
-  Actor_MoveTo(24, 940, 168);
-  Actor_MoveTo(24, 984, 152);
-  Actor_MoveTo(24, 1040, 152);
+  Actor_WalkToAndWait(24, 940, 168);
+  Actor_WalkToAndWait(24, 984, 152);
+  Actor_WalkToAndWait(24, 1040, 152);
   Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
   Event_Wait(20);
   GameFlag_Set(0x86d);
@@ -949,7 +932,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
   Actor_SetSpriteFlags(Actor_GetById(25), 0);
   Actor_WalkToAndWaitById(25, 200, 104);
   Actor_SetSpriteFlags(Actor_GetById(25), 1);
-  Actor_MoveTo(25, 294, 104);
+  Actor_WalkToAndWait(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
   GameFlag_Set(0x86e);
   Event_End();
@@ -960,24 +943,24 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
   FieldCamera_GetActor()->motionFlags = 0;
-  Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
+  FieldCamera_MoveToFixed(212 << 17, -1, 208 << 15, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(25, gMainRoutineWork.currentOwner, 0);
   Actor_ShowEmoteById(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 1.6);
-  Actor_MoveTo(25, 424, 152);
+  Actor_WalkToAndWait(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
   DehkanPlateau_CannonCastsPound();
-  Actor_MoveTo(25, 440, 152);
-  Actor_MoveTo(25, 456, 168);
-  Actor_MoveTo(25, 456, 184);
+  Actor_WalkToAndWait(25, 440, 152);
+  Actor_WalkToAndWait(25, 456, 168);
+  Actor_WalkToAndWait(25, 456, 184);
   GameFlag_Set(FLAG_SCENE_TEMP_41);
   MapGrid_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
   Sound_Play(SE_RATTLE);
   DehkanPlateau_JoltCamera();
-  Actor_MoveTo(25, 456, 216);
-  Actor_MoveTo(25, 584, 216);
+  Actor_WalkToAndWait(25, 456, 216);
+  Actor_WalkToAndWait(25, 584, 216);
   Actor_PlaceFacing(25, 154 << 18, 140 << 17, FACING_SOUTH);
   GameFlag_Set(0x86f);
   Event_End();
@@ -990,7 +973,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
   if (work->timer != -1 && work->timer <= 7)
     object->scaleY += -0x1f00;
   if (work->active != 0) {
-    Map_CopyAttributes(27, 8, 1, 1, 27, 9);
+    MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
     Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     ((u8 *)object)[89] &= 0xfe;
@@ -1337,10 +1320,6 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Event_End();
 }
 
-static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
-  Actor_FaceDirectionById(id, angle);
-}
-
 void DehkanPlateau_CannonCornered(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1349,7 +1328,7 @@ void DehkanPlateau_CannonCornered(void) {
   Actor_FaceDirectionById(16, FACING_EAST);
   Event_Wait(20);
   Motion_SetVarCbAndRefresh(16, 3);
-  Actor_SetAngle(16, FACING_WEST);
+  Actor_FaceDirectionAndWait(16, FACING_WEST);
   Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
   FieldEffect_SetAttached(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
@@ -1372,7 +1351,7 @@ void DehkanPlateau_TakePoundCube(void) {
   PartyInventory_GiveItem(ITEM_POUND_CUBE, 0);
   if (gDehkanPlateau_PoundCube != 0)
     Actor_Release(gDehkanPlateau_PoundCube);
-  Map_CopyAttributes(1, 0, 1, 1, 15, 5);
+  MapGrid_CopyCellAttributes(1, 0, 1, 1, 15, 5);
   GameFlag_Set(0x878);
   Event_End();
 }
@@ -1429,7 +1408,7 @@ void DehkanPlateau_InitializeRoom1(void) {
   Pillars_Place(gData_02003f98);
   Actor_DisableById(12);
   if (GameFlag_Get(FLAG_AREA_TEMP_01) != 0) {
-    Map_CopyAttributes(54, 32, 2, 1, 56, 64);
+    MapGrid_CopyCellAttributes(54, 32, 2, 1, 56, 64);
     Actor_SetPositionAndResetMotion(Actor_GetById(12), 226 << 18, 128 << 15,
                                     130 << 18);
     wait(10);
@@ -1450,10 +1429,6 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z,
                                                     s32 angle);
 
 // Places an actor and resets its motion (Actor_SetPositionAndResetMotion).
-static __inline__ void Actor_PlaceAndResetMotion(struct Actor *object, s32 x,
-                                                 s32 y, s32 z) {
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
 /* VIEW(s2698): routine Actor_PlaceFacing as this part has it; dehkan_plateau
  * has its own; tried as the rest of the object declares it, it does not compile
  * in tla-ja (dehkan_plateau.c): games/tla/src/scene/dehkan_plateau.c:1964:
@@ -1477,8 +1452,9 @@ void DehkanPlateau_InitializeRoom2(void) {
   Pillars_Place(gData_02003fa0);
   if (GameFlag_Get(0x840) != 0) {
     Actor_DisableById(23);
-    Map_CopyAttributes(50, 7, 1, 1, 52, 7);
-    Actor_PlaceAndResetMotion(Actor_GetById(23), 210 << 18, 0, 240 << 15);
+    MapGrid_CopyCellAttributes(50, 7, 1, 1, 52, 7);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(23), 210 << 18, 0,
+                                         240 << 15);
   } else {
     Actor_PlaceBlocks(gData_02003fc0);
   }
@@ -1752,10 +1728,10 @@ void DehkanPlateau_InitializeRoom5(void) {
   if (GameFlag_Get(0x878) == 0) {
     Func_02003a30();
     if (GameFlag_Get(0x871) != 0) {
-      Map_CopyAttributes(0, 0, 1, 1, 15, 5);
+      MapGrid_CopyCellAttributes(0, 0, 1, 1, 15, 5);
       if (gDehkanPlateau_PoundCube != NULL) {
-        Actor_PlaceAndResetMotion(gDehkanPlateau_PoundCube, 248 << 16, 0,
-                                  176 << 15);
+        FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube,
+                                             248 << 16, 0, 176 << 15);
         wait(1);
       }
     }

@@ -159,27 +159,8 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  Actor_ArmCallback(id, angle, flags);
-}
-
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);
-}
-
-static __inline__ void Func_02003d14_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Map_CopyCellsRect(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02003d1c_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  MapGrid_CopyCellPictureCellsRect(a, b, c, d, e, f);
 }
 
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
@@ -409,7 +390,7 @@ void Func_020004bc(s32 unused, s32 id) {
     System_Wait(4);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_50))
-    Func_02003d1c_(41, 42, 1, 1, 43, 44);
+    MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
   Event_End();
   Event_SetFlag(FLAG_SCENE_TEMP_30);
 }
@@ -441,7 +422,7 @@ void Func_02000574(s32 unused, s32 id) {
 void Data_020005f4(void) {}
 
 void Func_020005f8(void) {
-  Func_02003d1c_(41, 42, 1, 1, 43, 44);
+  MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
   Event_SetFlag(FLAG_SCENE_TEMP_50);
 }
 
@@ -485,7 +466,7 @@ void Func_02000644(s32 unused, s32 id) {
 void Func_02000690(void) {
   Actor_SetAnimation(8, 4);
   FieldActor_SetSpriteColor(Actor_Get(8), 6);
-  Func_02003d14_(123, 15, 5, 3, 110, 15);
+  MapGrid_CopyCells(123, 15, 5, 3, 110, 15);
   gFieldWork->raisedTrigger = 88;
 }
 
@@ -505,7 +486,7 @@ void Func_0200071c(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
+  Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
   Event_PlaySound(SE_557);
   priority = 0x480;
   FieldTask_AddFrame(Func_020006d0, priority);
@@ -515,7 +496,7 @@ void Func_0200071c(void) {
   FieldEvent_Wait(30);
   Event_End();
   Event_SetFlag(FLAG_SCENE_TEMP_40);
-  Func_02003d1c_(59, 16, 5, 32, 46, 16);
+  MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
 }
 
 void Func_020007a8(void) {
@@ -555,7 +536,7 @@ void Func_020007d4(void) {
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
   FieldCamera_MoveTo(312, CAMERA_KEEP, 504, 1);
   Event_PlaySound(SE_SCATTER);
-  Func_02003d24_(75, 96, 7, 13, 80, 27);
+  MapGrid_CopyCellsLayered(75, 96, 7, 13, 80, 27);
   MapGrid_CopyCellsLayered(91, 96, 7, 10, 16, 31);
   MapGrid_CopyCellsLayered(99, 96, 7, 14, 16, 91);
   MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, 31);
@@ -566,8 +547,8 @@ cell:
   {
     s32 index = (i + (1 & ~j)) * 2;
 
-    Func_02003d24_(gData_02003fb8[index], gData_02003fb8[index + 1], 7, 13, 80,
-                   27);
+    MapGrid_CopyCellsLayered(gData_02003fb8[index], gData_02003fb8[index + 1],
+                             7, 13, 80, 27);
     System_Wait(1);
   }
   j++;
@@ -669,19 +650,19 @@ s32 Func_02000b24(s32 id, s32 value) {
 void Func_02000b5c(void) {
   struct Actor *object = Actor_Get(12);
 
-  Func_02003d1c_(64, 43, 1, 1, object->x >> 20, object->z >> 20);
+  MapGrid_CopyCellAttributes(64, 43, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_02000b84(void) {
   struct Actor *object = Actor_Get(12);
 
-  Func_02003d1c_(64, 42, 1, 1, object->x >> 20, object->z >> 20);
+  MapGrid_CopyCellAttributes(64, 42, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_02000bac(void) {
   struct Actor *object = Actor_Get(12);
 
-  Func_02003d1c_(64, 41, 1, 1, object->x >> 20, object->z >> 20);
+  MapGrid_CopyCellAttributes(64, 41, 1, 1, object->x >> 20, object->z >> 20);
 }
 
 void Func_02000bd4(void) {
@@ -851,7 +832,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Event_PlaySound(SE_557);
     Actor_SetAnimation(9, 2);
-    Func_02003d24_(114, 39, 1, 2, 113, 39);
+    MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
       layer[3] -= 0x10000;
       System_Wait(4);
@@ -888,13 +869,13 @@ void Func_0200101c(s32 unused, s32 id) {
   if ((u32)(id - 13) <= 2) {
     struct Actor *object = Actor_Get(id);
 
-    Func_02003d1c_(47, 45, 1, 1, object->x >> 20, object->z >> 20);
+    MapGrid_CopyCellAttributes(47, 45, 1, 1, object->x >> 20, object->z >> 20);
     Event_SetFlag(id + 0x244);
     object->priorityFlags = 0;
   }
 }
 
-void Func_02001060(void) { Func_02003d1c_(8, 63, 7, 1, 8, 34); }
+void Func_02001060(void) { MapGrid_CopyCellAttributes(8, 63, 7, 1, 8, 34); }
 
 // When object 10 or 11 arrives, stops both and redraws row 33 at each one's
 // column.
@@ -906,7 +887,7 @@ void Func_0200107c(s32 unused, s32 id) {
     {
       s32 row = 33;
 
-      Func_02003d1c_(8, row, 1, 1, object->x >> 20, 34);
+      MapGrid_CopyCellAttributes(8, row, 1, 1, object->x >> 20, 34);
     }
     object = Actor_Get(11);
     object->motionFlags = 0;
@@ -1020,13 +1001,13 @@ shake:
   }
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_End();
-  Func_02003d1c_(38, 9, 7, 6, 13, 9);
+  MapGrid_CopyCellAttributes(38, 9, 7, 6, 13, 9);
   Event_SetFlag(FLAG_AREA_TEMP_49);
 }
 
 void Func_02001328(void) {
-  Func_02003d24_(70, 8, 7, 6, 77, 8);
-  Func_02003d1c_(38, 17, 7, 6, 13, 9);
+  MapGrid_CopyCellsLayered(70, 8, 7, 6, 77, 8);
+  MapGrid_CopyCellAttributes(38, 17, 7, 6, 13, 9);
   Event_ClearFlag(FLAG_AREA_TEMP_49);
 }
 

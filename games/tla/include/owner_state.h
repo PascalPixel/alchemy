@@ -117,6 +117,14 @@ enum CurseFlag {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
+/// How many actions a unit's list holds (BattleUnit.actionSlots), and how
+/// many a class teaches (ClassDefinition.abilities).
+#define PSYNERGY_SLOTS 32
+#define CLASS_ABILITY_SLOTS 16
+
+/// Unit ids from 128 are the enemies', as The Broken Seal's.
+#define FIRST_ENEMY_UNIT 128
+
 /// BattleUnit.classIndex of an enemy, which has no class of its own.
 #define CLASS_NONE 0
 

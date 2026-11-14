@@ -20,17 +20,17 @@
 
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
-  const struct EnemyRecord *enemy;
+  const struct EnemyDefinition *enemy;
   u16 name[15];
   s32 i;
   u32 index;
   s32 q;
   s32 count;
 
-  index = enemyId - 8;
-  if (unitId <= 127)
+  index = enemyId - ENEMY_ID_FIRST;
+  if (unitId <= FIRST_ENEMY_UNIT - 1)
     return 0;
-  if (unitId > 134)
+  if (unitId > FIRST_ENEMY_UNIT + 6)
     return 0;
   if (index > 992)
     return 0;
@@ -40,9 +40,9 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
 
     clear(unit, BATTLE_UNIT_SIZE);
   }
-  if (index >= 380)
+  if (index >= ENEMY_COUNT)
     index = 0;
-  enemy = (const struct EnemyRecord *)&gEnemy_DefinitionTable[index];
+  enemy = &gEnemy_DefinitionTable[index];
   unit->level = enemy->level;
   unit->baseHp = enemy->hp;
   unit->hp = enemy->hp;
@@ -50,13 +50,13 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->basePp = enemy->pp;
   unit->pp = enemy->pp;
   unit->maxPp = enemy->pp;
-  unit->hpGauge = 0x4000;
-  unit->ppGauge = 0x4000;
+  unit->hpGauge = UNIT_GAUGE_FULL;
+  unit->ppGauge = UNIT_GAUGE_FULL;
   unit->baseAttack = enemy->atk;
   unit->baseDefense = enemy->def;
   unit->baseAgility = enemy->agi;
   unit->baseLuck = enemy->luck;
-  unit->baseActionCount = enemy->turns;
+  unit->baseActionCount = enemy->actionCount;
   unit->baseHpRegen = enemy->hpRegen;
   unit->basePpRegen = enemy->ppRegen;
   Message_DecodeRawFar(index + (s32)MsgEnemyName, name, 15);

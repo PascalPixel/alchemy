@@ -39,6 +39,7 @@
 #include "battle/battle_summon.h"
 #include "battle/battle_random.h"
 #include "game/enemy_definition.h"
+#include "ability_ids.h"
 #include "djinn_ids.h"
 #include "enemy_ids.h"
 #include "item_ids.h"
@@ -68,108 +69,32 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 #include "owner_state.h"
 
 /// One of the 48 element presets an enemy record names.
-struct ElementPreset {
-  u32 element;
-  u8 digits[4];
-  struct BattleElementStats values[4];
+/// One side's Djinn recovery list: up to 72 entries and their count, as The
+/// Broken Seal's DjinnRecoveryList.
+struct DjinnRecoveryList {
+  struct TradeOffer entries[72];
+  s32 count; ///< entries in use
 };
 
-struct TradeOfferList {
-  struct TradeOffer offers[72];
-  s32 count;
-};
-
-struct TradeOfferTable {
-  u8 unk00[8];
-  struct TradeOfferList list;
+/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it and
+/// The Broken Seal's DjinnRecoveryTable is laid out.
+struct DjinnRecoveryTable {
+  u32 summonMask; ///< the summons the side can call
+  u32 partyCoins; ///< in the party's table, gMainRoutineWork.coins
+  struct DjinnRecoveryList list;
 };
 
 enum { ITEM_COUNTER_COUNT = 300 };
 
-struct ClassAbilities {
-  u8 unk00[0x10];
-  struct ClassAbility abilities[16];
-};
-
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
-struct OwnerGrowthRecord {
-  u8 unk00[0x50];
-  s16 hp[6];
-  s16 pp[6];
-  u16 atk[6];
-  u16 def[6];
-  u16 agi[6];
-  u8 luck[6];
-  u8 unk92[0x22];
-};
-
-struct OwnerStart {
-  u8 unk00[150];
-  u8 level;
-  u8 unk97;
-  u16 items[13];
-};
-
-struct OwnerName {
-  u8 name[14];
-  u8 nameFlags;
-  u8 unk0f[5];
-  u16 hpRatio;
-  u16 ppRatio;
-};
-
-struct OwnerLevelState {
-  u8 unk000[0x0f];
-  u8 level;
-  u16 baseHp;
-  u16 basePp;
-  u8 unk014[4];
-  u16 baseAttack;
-  u16 baseDefense;
-  u16 baseAgility;
-  u8 baseLuck;
-  u8 baseTurns;
-  u8 base20;
-  u8 base21;
-  u8 unk022[0x102];
-  u32 experience;
-  u8 character;
-  u8 classId;
-};
-
-struct OwnerGrowth {
-  u8 unk00[0x50];
-  s16 hp[6];
-  s16 pp[6];
-  u16 atk[6];
-  u16 def[6];
-  u16 agi[6];
-  u8 luck[6];
-};
-
+/// Scratch for Unit_LevelUp, which takes it from EWRAM first
+/// (Heap_AllocEwram) and frees it before returning.
 struct LevelUpWork {
-  s32 classId;
-  s32 level;
-  struct OwnerGrowth *growth;
-  u8 unused0c[0x20];
-};
-
-struct EnemyRecord {
-  u8 unk00[15];
-  u8 level;
-  u16 hp;
-  u16 pp;
-  u16 atk;
-  u16 def;
-  u16 agi;
-  u8 luck;
-  u8 turns;
-  u8 hpRegen;
-  u8 ppRegen;
-  u16 items[4];
-  u8 counts[4];
-  u8 unk2a[34];
+  s32 classIndex; ///< the unit's class, written and not read again
+  s32 level;      ///< the level before this one
+  const struct CharacterDefinition *growth; ///< the character's growth curves
+  u8 unused[32];                            ///< never written
 };
 
 /// The running totals Unit_Calculate builds a unit's stats in.
@@ -205,11 +130,6 @@ struct StatWork {
   s32 amount;                  ///< the amount of the item effect being applied
   struct ItemDefinition *item; ///< the equipped item being applied
   s32 unusedAfterItem;         ///< never written
-};
-
-struct UnitDjinnSets {
-  u8 unk00[0xf8];
-  u32 djinn[4];
 };
 
 extern u8 gItemCounters[ITEM_COUNTER_COUNT];

@@ -10,6 +10,11 @@
 #include "static_assert.h"
 #include "battle/battle_unit.h"
 
+/// Levels between two points of a growth curve.
+#define GROWTH_BAND_LEVELS 20
+/// Points on a growth curve: levels 0 to 100, GROWTH_BAND_LEVELS apart.
+#define GROWTH_POINTS 6
+
 /// A character's definition: the growth curves of its stats, its element
 /// bonus, starting level and starting equipment.
 struct CharacterDefinition {

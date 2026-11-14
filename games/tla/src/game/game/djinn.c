@@ -94,7 +94,7 @@ s32 Djinn_Give(s32 owner, s32 index, s32 bit) {
 /// not set already, and no trade offer holds it unless the offer has run out.
 s32 Djinn_CanSet(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = Unit_Get(owner);
-  struct TradeOfferList *table;
+  struct DjinnRecoveryList *table;
   s32 i;
   s32 status;
   u32 owned;
@@ -111,15 +111,15 @@ s32 Djinn_CanSet(s32 owner, s32 index, s32 bit) {
   if ((state->flags.banks.active[index] & (1 << bit)) != 0)
     return 0;
 
-  table = &((struct TradeOfferTable *)Djinn_GetRecoveryTable(
+  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
                 (owner < 0 || owner > 7)))
                ->list;
   for (i = 0; i < table->count; i++) {
-    if (index == table->offers[i].element && bit == table->offers[i].djinn)
+    if (index == table->entries[i].element && bit == table->entries[i].djinn)
       break;
   }
   if (i == table->count ||
-      ((status = table->offers[i].status) <= 0 && status != -2))
+      ((status = table->entries[i].status) <= 0 && status != -2))
     return 1;
   return 0;
 }
@@ -169,22 +169,22 @@ u32 Djinn_PutOnStandby(s32 owner, s32 index, s32 bit) {
 }
 
 s32 DjinnRecovery_Remove(s32 owner, s32 index, s32 bit) {
-  struct TradeOfferList *table;
+  struct DjinnRecoveryList *table;
   s32 found = 0;
   s32 i;
 
-  table = &((struct TradeOfferTable *)Djinn_GetRecoveryTable(
+  table = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTable(
                 (owner < 0 || owner > 7)))
                ->list;
   for (i = 0; i < table->count; i++) {
-    if (index == table->offers[i].element && bit == table->offers[i].djinn) {
+    if (index == table->entries[i].element && bit == table->entries[i].djinn) {
       table->count--;
       found = 1;
       break;
     }
   }
   for (; i < table->count; i++)
-    table->offers[i] = table->offers[i + 1];
+    table->entries[i] = table->entries[i + 1];
   return found;
 }
 

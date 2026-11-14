@@ -745,4 +745,7 @@ enum AbilityId {
   ABILITY_PRESSURE
 };
 
+/// How many abilities gAbilityDefinitions holds.
+#define ABILITY_COUNT 734
+
 #endif

@@ -12,7 +12,7 @@ void Actor_SteerByPad(struct Actor *object) {
   if (Event_GetFlag(FLAG_MENU_OPEN))
     angle = -1;
   else
-    angle = gTundariaTower_SlideAngles[(gInput.held >> 4) & 15];
+    angle = gSlideOnIce_SteerAngles[(gInput.held >> 4) & 15];
   if (angle == -1) {
     Actor_SelectAnimation(object, 9);
     return;

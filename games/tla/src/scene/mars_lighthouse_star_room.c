@@ -142,7 +142,7 @@ static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
 
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-extern s16 gData_020047fc[];
+extern s16 gSlideOnIce_SteerAngles[];
 
 #endif
 
@@ -2256,184 +2256,14 @@ extern u8 gInventorySnapshot[];
 
 #include "shared/actor_park.h"
 
-void Actor_SteerByPad(struct Actor *object) {
-  s32 angle;
-  s32 turn;
+#include "shared/actor_steer_by_pad.h"
 
-  if (object->timer != 0) {
-    object->timer--;
-    return;
-  }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
-  if (Event_GetFlag(FLAG_MENU_OPEN))
-    angle = -1;
-  else
-    angle = gData_020047fc[(gInput.held >> 4) & 15];
-  if (angle == -1) {
-    Actor_SelectAnimation(object, 9);
-    return;
-  }
-  turn = (s16)(angle - object->facing);
-  if (turn > 0x1000)
-    turn = 0x1000;
-  if (turn < -0x1000)
-    turn = -0x1000;
-  object->facing += turn;
-  Actor_SelectAnimation(object, 2);
-  Actor_SetAnimationSpeed(object, 48);
-}
-
-void Leader_StopIfPending(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-  if (work->busy != 0) {
-    Event_SetFlag(FLAG_MENU_OPEN);
-    Leader_StopMoving();
-    Event_ResolveAllPendingActions();
-    Event_ClearFlag(FLAG_MENU_OPEN);
-  }
-}
+#include "shared/leader_stop_if_pending.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gSlideOnIce_AnglesByKey[];
 
-void Leader_SlideOnIce(void) {
-  struct Vector3 probe;
-  s32 startBehavior;
-  s32 x;
-  s32 z;
-  s32 startX;
-  s32 startZ;
-  u8 *layer;
-  s32 radius;
-  struct Actor *actor;
-  struct Vector3 *position;
-  struct Vector3 *next;
-  s32 heading;
-  s32 nextBehavior;
-  s32 distance;
-  struct Actor *other;
-  u8 *flags;
-  s32 i;
-  s32 dx;
-  s32 dz;
-
-  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
-
-top:
-  Leader_StopIfPending();
-  actor->speedLimit = px(1);
-  actor->acceleration = px(1) / 2;
-  actor->targetX = 0x80000000;
-  actor->targetZ = 0x80000000;
-  actor->velocityX = 0;
-  actor->velocityZ = 0;
-  position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + px(8);
-  position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + px(8);
-  x = startX;
-  z = startZ;
-  layer = &actor->terrainId;
-  startBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, x, z);
-  dz = z - actor->z;
-  dx = x - actor->x;
-  distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
-  if (distance < px(4)) {
-    heading = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
-    if ((heading << 16) == -0x10000) {
-      return;
-    }
-  } else {
-    heading = (s16)ArcTan2(z - actor->z, x - actor->x);
-    heading = (s16)((heading + 0x2000) & -0x4000);
-  }
-  FieldVector_AddPolarOffset(px(16), heading, &probe);
-  nextBehavior =
-      FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
-  if (nextBehavior == 255 ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
-          px(8)) {
-    actor->facing = heading;
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
-    actor->x = startX;
-    actor->z = startZ;
-    goto done;
-  }
-  position->x = startX;
-  position->z = startZ;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  actor->timer = 0;
-  FieldActor_SetMoveTargetFixed(actor, startX, actor->y, startZ);
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
-  FieldActor_WaitForMove(actor);
-  actor->update = Actor_SteerByPad;
-  goto test;
-body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
-    goto stop;
-  }
-  radius = actor->radius - 2;
-  other = Ram_HeapSlots->scriptObjects;
-  flags = &other->collisionFlags;
-  for (i = 0; i < 64; i++, flags += 128, other++) {
-    if (other->script != NULL && (*flags & 1) && other != actor) {
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
-       * next and actor. */
-      asm(""
-          :
-          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x, radius, &probe,
-                                    other->radius - 2) >= 0) {
-        goto stop;
-      }
-    }
-  }
-  x = next->x;
-  z = next->z;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
-  FieldActor_WaitForMove(actor);
-  if (nextBehavior != startBehavior) {
-    goto blocked;
-  }
-test:
-  {
-    struct Vector3 *step;
-
-    step = &probe;
-    FieldVector_AddPolarOffset(px(16), heading, step);
-    /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the
-     * address. */
-    step = NULL;
-  }
-  next = &probe;
-  nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
-  if (nextBehavior != 255) {
-    goto body;
-  }
-stop:
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1);
-  FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
-  FieldActor_WaitForMove(actor);
-  System_Wait(2);
-  goto top;
-
-blocked:
-  System_Wait(10);
-done:
-  actor->update = NULL;
-  actor->actionFlags |= 1;
-  actor->acceleration = px(1) / 4;
-  Actor_SelectAnimation(actor, 1);
-}
+#include "shared/leader_slide_on_ice.h"
 
 extern volatile s16 gSlideOnIce_Stopped;
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -2445,136 +2275,7 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
-void Leader_SlideOnIceAhead(void) {
-  struct Vector3 probe;
-  s32 heading;
-  s32 startBehavior;
-  s32 x;
-  s32 z;
-  s32 radius;
-  struct Actor *actor;
-  struct Vector3 *next;
-  s32 nextBehavior;
-  u8 *layer;
-  struct Actor *other;
-  struct Vector3 *position;
-  u8 *flags;
-  s32 i;
-  s32 cell;
-  s32 angle;
-  s32 zero;
-  struct Vector3 *step;
-  s32 startX;
-  s32 startZ;
-
-  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  heading = (s16)((actor->facing + 0x2000) & -0x4000);
-
-top:
-  Leader_StopIfPending();
-  actor->speedLimit = px(1);
-  actor->acceleration = px(1) / 2;
-  actor->targetX = 0x80000000;
-  actor->targetZ = 0x80000000;
-  /* Default: one zero, spilled and reloaded at each use. */
-  zero = 0;
-  actor->velocityX = zero;
-  actor->velocityZ = zero;
-  /* FAKEMATCH(temporary): cell holds the masked x. */
-  cell = actor->x & 0xfff00000;
-  i = px(8);
-  position = &probe;
-  position->x = startX = cell + i;
-  position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + i;
-  x = startX;
-  z = startZ;
-  startBehavior = FieldMapGrid_GetCellBehaviorAt(*(layer = &actor->terrainId),
-                                                 startX, startZ);
-  FieldVector_AddPolarOffset(px(16), heading, position);
-  nextBehavior =
-      FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
-  if (nextBehavior == 255 ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
-    actor->facing = heading;
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
-    actor->x = startX;
-    actor->z = startZ;
-    goto done;
-  }
-  position->x = x;
-  position->z = z;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  actor->timer = zero;
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
-  actor->update = Actor_SteerByPad;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading
-   * nextBehavior twice. */
-  asm("" : : "r"(nextBehavior), "r"(nextBehavior) : SFP_CLOBBER);
-  goto test;
-body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > px(8)) {
-    goto stop;
-  }
-  radius = actor->radius - 2;
-  other = Ram_HeapSlots->scriptObjects;
-  flags = &other->collisionFlags;
-  for (i = 0; i < 64; i++, flags += 128, other++) {
-    if (other->script != NULL && (*flags & 1) && other != actor) {
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
-       * next and actor. */
-      asm(""
-          :
-          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
-          : SFP_CLOBBER, "r4");
-      if (Field_CheckSpheresOverlap(&other->x, radius, &probe,
-                                    other->radius - 2) >= 0) {
-        goto stop;
-      }
-    }
-  }
-  x = next->x;
-  z = next->z;
-  actor->speedLimit = px(2);
-  actor->acceleration = 0x1999;
-  FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
-  FieldActor_WaitForMove(actor);
-  if (nextBehavior != startBehavior) {
-    goto blocked;
-  }
-test:
-  /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber. */
-  asm("" : "=r"(angle) : "0"(heading) : "r4");
-  step = &probe;
-  FieldVector_AddPolarOffset(px(16), angle, step);
-  /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address.
-   */
-  step = NULL;
-  next = &probe;
-  nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
-  if (nextBehavior != 255) {
-    goto body;
-  }
-stop:
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1);
-  FieldActor_SetMoveTargetFixed(actor, x, actor->y, z);
-  FieldActor_WaitForMove(actor);
-  System_Wait(2);
-  goto top;
-
-blocked:
-  System_Wait(10);
-done:
-  actor->update = NULL;
-  actor->actionFlags |= 1;
-  actor->acceleration = px(1) / 4;
-  Actor_SelectAnimation(actor, 1);
-}
+#include "shared/leader_slide_on_ice_ahead.h"
 
 #include "../field/object/set_sprite_priority.c"
 
@@ -3067,7 +2768,7 @@ u32 gData_020047b8[] = {
     1, 13, 10, 0xc0010000, 38,
 };
 
-s16 gData_020047fc[] = {
+s16 gSlideOnIce_SteerAngles[] = {
     -1, 0, -32768, -1, -16384, -8192, -24576, -16384,
     16384, 8192, 24576, 16384, -1, 0, -32768, -1,
     -1, 0, -32768, -1, -16384, -1, -1, -16384,

@@ -1017,20 +1017,11 @@ void Settlements_SpawnSplashRing(s32 objectId) {
 
 void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_SCENE_TEMP_08); }
 
-extern s16 gTundariaTower_SlideAngles[];
+extern s16 gSlideOnIce_SteerAngles[];
 
 #include "shared/actor_steer_by_pad.h"
 
-void Leader_StopIfPending(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-  if (work->busy != 0) {
-    Event_SetFlag(FLAG_MENU_OPEN);
-    Leader_StopMoving();
-    Event_ResolveAllPendingActions();
-    Event_ClearFlag(FLAG_MENU_OPEN);
-  }
-}
+#include "shared/leader_stop_if_pending.h"
 
 extern s16 gSlideOnIce_AnglesByKey[];
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -1092,7 +1083,7 @@ s16 gSettlements_WallCrate[] = {
     10, -1,
 };
 
-s16 gTundariaTower_SlideAngles[] = {                                                               
+s16 gSlideOnIce_SteerAngles[] = {                                                               
       -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
       0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
       -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          

@@ -722,7 +722,7 @@ void Func_02000548(void);
 void Func_0200058c(void);
 void Func_02000404(const u8 *data);
 
-extern s16 gTundariaTower_SlideAngles[];
+extern s16 gSlideOnIce_SteerAngles[];
 extern s16 gSlideOnIce_AnglesByKey[];
 
 extern u32 gData_020032d4[];
@@ -960,16 +960,7 @@ void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
 #include "shared/actor_steer_by_pad.h"
 
-void Leader_StopIfPending(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-
-  if (work->busy != 0) {
-    Event_SetFlag(0x106);
-    Leader_StopMoving();
-    Event_ResolveAllPendingActions();
-    GameFlag_Clear(FLAG_MENU_OPEN);
-  }
-}
+#include "shared/leader_stop_if_pending.h"
 
 #include "shared/leader_slide_on_ice.h"
 
@@ -1622,7 +1613,7 @@ s16 gData_0200326e[] = {
     8, -1,
 };
 
-s16 gTundariaTower_SlideAngles[] = {                                                               
+s16 gSlideOnIce_SteerAngles[] = {                                                               
       -1,     0,      0x8000, -1,     0xc000, 0xe000, 0xa000, 0xc000,          
       0x4000, 0x2000, 0x6000, 0x4000, -1,     0,      0x8000, -1,              
       -1,     0,      0x8000, -1,     0xc000, -1,     -1,     0xc000,          

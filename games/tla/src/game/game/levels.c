@@ -207,16 +207,10 @@ extern struct OwnerGrowthRecord
 #define gCharacter_DefinitionTable gCharacter_DefinitionTable__game
 
 struct OwnerGrowthRecord *Character_GetDefinition(s32 index) {
-  s32 stride = sizeof(struct OwnerGrowthRecord);
-  u8 *base;
+  struct OwnerGrowthRecord *base;
 
-  /* FAKEMATCH(barrier): the row width used by an empty asm. */
-  asm("" : : "r"(stride));
-  base = (u8 *)gCharacter_DefinitionTable;
-  /* FAKEMATCH(barrier): the row width and the table held at an empty asm. */
-  asm("" : "+r"(stride), "+r"(base));
-  /* FAKEMATCH(signature): the address summed as an integer. */
-  return (struct OwnerGrowthRecord *)(index * stride + (u32)base);
+  base = (struct OwnerGrowthRecord *)gCharacter_DefinitionTable;
+  return &base[index];
 }
 
 /* VIEW(game): variable gData_080b2340 as s32 gData_080b2340[];

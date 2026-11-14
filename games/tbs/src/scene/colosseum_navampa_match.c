@@ -146,7 +146,7 @@ extern struct SceneEntrance gColosseumNavampaMatchEntrances[];
 extern u32 gColosseumNavampaMatchExits[];
 extern struct ActorPlacement gColosseumNavampaMatchActorPlacements[];
 extern s32 gColosseumNavampaMatch_WallWedgePatternIndex;
-extern s32 gColosseumNavampaMatch_WallWedgeTimer;
+extern u32 gColosseumNavampaMatch_WallWedgeTimer;
 extern struct Trigger gColosseumNavampaMatchTriggers[];
 extern s32 gColosseumNavampaMatch_OpponentAfterBattle[];
 extern s32 gColosseumNavampaMatch_LeaderActionA[];
@@ -323,7 +323,8 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
       kind = gColosseumNavampaMatch_WallWedgePattern
           [gColosseumNavampaMatch_WallWedgePatternIndex]
           [i - ACTOR_FIRST_PISTON];
-      if ((u32)(actor->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe) {
+      if ((actor->x.fixed - px(i * 32) > -px(50) &&
+           actor->x.fixed - px(i * 32) <= -px(30) - 1)) {
         if (row == 11 && kind == 4)
           work->raisedTrigger = kind;
         if (row == 12 && kind == 5)
@@ -331,12 +332,10 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
       }
     }
   }
-  if ((u32)++gColosseumNavampaMatch_WallWedgeTimer > 17) {
+  if (++gColosseumNavampaMatch_WallWedgeTimer > 17) {
     gColosseumNavampaMatch_WallWedgeTimer = 0;
   }
 }
-
-// Function from another file; its callers use no declaration (implicit int).
 
 /// Resets the Wall Wedge's pistons to their first pattern.
 static void ColosseumNavampaMatch_ResetWallWedge(void) {
@@ -2035,7 +2034,7 @@ struct ActorPlacement gColosseumNavampaMatchActorPlacements[] = {
 
 s32 gColosseumNavampaMatch_WallWedgePatternIndex = 0;
 
-s32 gColosseumNavampaMatch_WallWedgeTimer = 0;
+u32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
 struct Trigger gColosseumNavampaMatchTriggers[] = {
     { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_JumpAtLogAreaEnd) },

@@ -157,7 +157,7 @@ static void ShipGlow_CyclePalette(void) {
   paletteIndex = Math_DivideUnsigned(*frame, 6);
   Dma_Set((const void *)(((u32)(paletteIndex << 16) >> 15) +
                          (u32)gShipGlowPalettes),
-          (void *)&BG_PLTT_COLOR(7, 4), (DMA_ENABLE << 16) | 6, REG_DMA3);
+          (void *)&BG_PLTT_COLOR(7, 4), DMA_COPY_HALFWORDS(6), REG_DMA3);
   (*frame)++;
   if (*frame > 35)
     *frame = 0;

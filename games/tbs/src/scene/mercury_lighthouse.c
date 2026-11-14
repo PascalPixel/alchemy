@@ -740,8 +740,6 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   u32 particleIndex;
   s32 sparkleOffset;
   s32 rowShift;
-  s32 randomX;
-  s32 randomZ;
   s32 velocityX;
   s32 velocityZ;
   u32 nextRow;
@@ -761,11 +759,9 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
     particleX = px(728) + rowShift;
     do {
       if ((particleIndex & 1) != 0) {
-        randomX = Random_Next();
-        velocityX = ((u32)randomX * 8 >> 16) * (px(1) / 5) - px(4) / 5;
+        velocityX = Random_Below(8) * (px(1) / 5) - px(4) / 5;
         sparkleOffset = -particleIndex;
-        randomZ = Random_Next();
-        velocityZ = ((u32)randomZ * 8 >> 16) * (px(1) / 5) - px(4) / 5;
+        velocityZ = Random_Below(8) * (px(1) / 5) - px(4) / 5;
         FieldEffect_Spawn(particleX, 0, px(584), velocityX, 0, velocityZ,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
@@ -981,9 +977,7 @@ enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 
 /// Chooses the random speed component used by stone-door particles.
 static inline s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
-  u32 drift = Random_Next();
-
-  return ((drift << 3) >> 16) * (px(1) / 5);
+  return Random_Below(8) * (px(1) / 5);
 }
 
 /// Opens the selected stone door with particles along its moving edge.
@@ -1689,7 +1683,6 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 /// darkens and stops, sparkles rise and the way behind it opens.
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
-  u32 random;
   u32 wave;
   u32 particleIndex;
   s32 particleX;
@@ -1732,8 +1725,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     }
     particleX = px(Random_Below(48)) + px(768);
     z = px(Random_Below(56)) + px(152);
-    random = Random_Next();
-    particleSpeed = -((random * 10 >> 16) * (px(1) / 5)) - px(1) / 5;
+    particleSpeed = -(Random_Below(10) * (px(1) / 5)) - px(1) / 5;
     FieldEffect_Spawn(particleX, 0, z, 0, 0, particleSpeed,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |

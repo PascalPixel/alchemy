@@ -8,7 +8,6 @@
 /// spot and dips up to two pixels below it, at a random pace.
 static s32 Scene_UpdateFloatingNut(OrbitingMapActor *nut) {
   struct Sprite *sprite = (struct Sprite *)nut->sprite;
-  s32 first, second;
   s32 dip = Trig_Sin(nut->orbitAngle) * 2;
 
   if (dip > 0)
@@ -17,11 +16,7 @@ static s32 Scene_UpdateFloatingNut(OrbitingMapActor *nut) {
   nut->y = nut->orbitCenterY + dip;
   sprite->rotation = Trig_Cos(nut->orbitAngle + TRIG_TURN / 2) / 8;
   // The pace: a sixty-fourth of a turn and two random steps under 1/128 each.
-  first = Random_Next();
-  second = Random_Next();
-  nut->orbitAngle = nut->orbitAngle +
-                    ((((u32)first << 9) >> 16) + (((u32)second << 9) >> 16)) +
-                    TRIG_TURN / 64;
+  nut->orbitAngle += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
   return 0;
 }
 

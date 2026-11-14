@@ -1895,8 +1895,7 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
     effect->timer = angle;
     effect->userValue = 0;
     effect->update = VenusLighthouseAerie_UpdateUpperOrbit;
-    effect->speedLimit =
-        Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
+    effect->speedLimit = Trig_Sin(Random_Below(0xffff) >> 4) * 24 >> 16;
     sprite->flags = 0;
     sprite->image.priority = 1;
   }
@@ -3031,9 +3030,9 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       angle = Random_Next() & 0xffff000;
       effect->timer = angle;
       effect->userValue = 0;
-      effect->riseCounter = (u32)Random_Next() >> 13;
+      effect->riseCounter = Random_Below(8);
       effect->update = VenusLighthouseAerie_UpdateRisingOrbit;
-      effect->speedLimit = Trig_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24;
+      effect->speedLimit = Trig_Sin(Random_Below(0xffff) >> 4) * 24;
       effect->speedLimit = center->speedLimit >> 16;
       sprite->flags = 0;
       sprite->image.priority = 1;

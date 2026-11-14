@@ -254,12 +254,12 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   if ((s16)actor->userValue == SWAY_HELD) {
     actor->y.fixed = 0;
   } else if ((s16)actor->userValue != SWAY_INCREASING) {
-    actor->y.fixed -= ((u32)Random_Next() * 3 << 14) >> 16;
+    actor->y.fixed -= Random_Below(px(3) / 4);
     if (actor->y.fixed < 0) {
       actor->userValue = SWAY_INCREASING;
     }
   } else {
-    actor->y.fixed += ((u32)Random_Next() * 3 << 14) >> 16;
+    actor->y.fixed += Random_Below(px(3) / 4);
     if (actor->y.fixed > px(16)) {
       actor->userValue = SWAY_DECREASING;
     }
@@ -650,16 +650,14 @@ static void TolbiShipMast_ShowMonsters(void) {
 /// Initializes a drifting actor, retaining the random draws' original order.
 static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   struct Actor *actor;
-  u32 randomValue;
 
   actor = Actor_Get(actorId);
   Actor_SetSpritePriority(actorId, 1);
   actor->motionFlags = 0;
-  actor->timer = (u32)Random_Next() >> 15;
-  actor->userValue = (u32)Random_Next() >> 15;
+  actor->timer = Random_Below(2);
+  actor->userValue = Random_Below(2);
   actor->y.fixed = px(Random_Below(4)) + px(6);
-  randomValue = Random_Next();
-  actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - px(3) / 16;
+  actor->riseBaseY = Random_Below(px(3) / 8) - px(3) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
   Actor_SetScript(actorId, gTolbiShipMast_DriftActions);
@@ -837,7 +835,7 @@ static void TolbiShipMast_UpdateSway(void) {
   *camera += swayY;
   gTolbiShipMast_DriftX += swayX;
   gTolbiShipMast_DriftY += swayY;
-  gTolbiShipMast_SwayX += (u32)(Random_Next() * 3 << 7) >> 16;
+  gTolbiShipMast_SwayX += Random_Below(384);
   gTolbiShipMast_SwayY += Random_Below(512);
   gTolbiShipMast_SwayX &= 0xffff;
   gTolbiShipMast_SwayY &= 0xffff;

@@ -762,16 +762,13 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
   s32 fallingIndex;
   struct Actor *fallingActor;
   s32 stateValue;
-  s32 *selectedIndex;
 
   fallingActor = Actor_Get(ACTOR_FIRST_WATER_DROP);
   if (fallingActor->paused == 0) {
     if ((++gVaultCave_DropFrames & 63) == 0) {
-      selectedIndex = &gVaultCave_SelectedDrop;
-      stateValue = Random_Next();
-      stateValue = Math_RemainderUnsigned(stateValue, 6);
-      *selectedIndex = stateValue;
-      fallingActor = Actor_Get((stateValue + ACTOR_FIRST_WATER_DROP));
+      gVaultCave_SelectedDrop = Math_RemainderUnsigned(Random_Next(), 6);
+      fallingActor =
+          Actor_Get(gVaultCave_SelectedDrop + ACTOR_FIRST_WATER_DROP);
       fallingActor->gravity = px(1) / 25;
     }
     // Each actor's paired Frost flag selects its reset height.

@@ -691,7 +691,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Talking to ACTOR_KALAY_CREW_MEMBER on deck at Kalay.
 static void TolbiShipDeck_TalkToCrewMember(void) {
   struct Actor *crewMember;
-  s32 random;
   s32 frames;
 
   Event_Start();
@@ -706,8 +705,7 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
       // "Somebody stop them..."
       Event_ShowMessage(ACTOR_KALAY_CREW_MEMBER, 0);
       crewMember = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
-      random = Random_Next();
-      frames = ((u32)(90 * random) >> 16) + 60;
+      frames = Random_Below(90) + 60;
       crewMember->timer = frames;
       Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                       gTolbiShipDeck_SquashAndStretchActions);
@@ -726,7 +724,6 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
 /// The tour guide on deck at Kalay talks about the ship's delay.
 static void TolbiShipDeck_TalkToTourGuide(void) {
   struct Actor *guide;
-  s32 random;
   s32 frames;
 
   Event_Start();
@@ -741,8 +738,7 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
       // "They can't be planning a mutiny..."
       Event_ShowMessage(ACTOR_KALAY_TOUR_GUIDE, 0);
       guide = Actor_Get(ACTOR_KALAY_TOUR_GUIDE);
-      random = Random_Next();
-      frames = ((u32)(90 * random) >> 16) + 60;
+      frames = Random_Below(90) + 60;
       guide->timer = frames;
       Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                       gTolbiShipDeck_SquashAndStretchActions);
@@ -2099,7 +2095,7 @@ static void TolbiShipDeck_RockDeck(void) {
 
   *origin++ += dx >> 1;
   *origin += dy;
-  sSwayAngleX += (u32)(Random_Next() * 3 << 7) >> 16;
+  sSwayAngleX += Random_Below(384);
   sSwayAngleY += Random_Below(512);
   sSwayAngleX &= 0xffff;
   sSwayAngleY &= 0xffff;

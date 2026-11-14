@@ -206,17 +206,13 @@ void Func_02000178(void) {
 
 #include "shared/palette_cycle_fade.h"
 
-static __inline__ void Func_02003458_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
 void Func_02000328(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->transition;
   PaletteFade_ApplyTarget(0x202108, 1);
-  Func_02003458_(0x10000, 2);
+  PaletteFade_ApplyTarget(0x10000, 2);
   gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1327,10 +1323,6 @@ loop:
   Event_End();
 }
 
-static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 void Func_02001d68(void) {
   struct Actor *object = Actor_Get(9);
 
@@ -1338,7 +1330,7 @@ void Func_02001d68(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(9, 2);
   object->y = -px(64);
-  Func_020033e0_(9, px(728), px(120));
+  Actor_SetPositionFixed(9, px(728), px(120));
   Actor_SetPosition(gMainRoutineWork.currentOwner, 728, 120);
   Actor_Get(gMainRoutineWork.currentOwner)->y = -px(48);
   Event_StartScreenTransition();

@@ -401,11 +401,6 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 
 #include "shared/actor_raise_from_cell.h"
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
-                                                   s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 void Func_02000930(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -439,7 +434,7 @@ void Func_02000930(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
-  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = px(8);
   shadow->acceleration = px(1);
@@ -1200,14 +1195,6 @@ extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
 
 #include "shared/cracked_tile_drop_in.h"
 

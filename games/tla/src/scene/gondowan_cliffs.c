@@ -338,10 +338,6 @@ void GondowanCliffs_SetUpPass(void) {
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
-  Actor_ShowEmoteById(actor, height, frames);
-}
-
 // The scene that asks where the party intends to go, to help recover the black
 // orb.
 void GondowanCliffs_TurnBackToHelpPiers(void) {
@@ -360,7 +356,7 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Actor_MoveToObject(22, gMainRoutineWork.currentOwner);
   Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
-  GondowanCliffs_Jump(22, 258, 20);
+  FieldActor_ShowEmote(22, 258, 20);
   Event_ShowMessage(22, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_WEST, 10);
   FieldActor_Jump(5, 6, 15);

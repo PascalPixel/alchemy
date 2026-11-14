@@ -438,14 +438,6 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
-
 #include "shared/cracked_tile_drop_in.h"
 
 extern struct CellTarget gCrackedTiles;

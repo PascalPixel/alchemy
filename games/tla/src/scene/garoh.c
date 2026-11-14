@@ -675,33 +675,25 @@ void Func_02000fa4(void) {
   Func_02000f3c();
 }
 
-static inline void CopyRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  MapGrid_CopyCellPictureIndicesRect(a0, a1, a2, a3, a4, a5);
-}
-
-static inline void BlendRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  Map_CopyCellAttributeRect(a0, a1, a2, a3, a4, a5);
-}
-
 void Func_02000fbc(void) {
-  CopyRect(98, 8, 86, 8, 1, 2);
-  BlendRect(34, 9, 1, 1, 22, 11);
+  MapGrid_CopyCellsTo(98, 8, 86, 8, 1, 2);
+  MapGrid_CopyCellAttributes(34, 9, 1, 1, 22, 11);
 }
 
 void Func_02000fec(void) {
-  CopyRect(25, 47, 11, 33, 1, 3);
-  BlendRect(25, 47, 1, 1, 11, 33);
+  MapGrid_CopyCellsTo(25, 47, 11, 33, 1, 3);
+  MapGrid_CopyCellAttributes(25, 47, 1, 1, 11, 33);
 }
 
 void Func_0200101c(void) {
   MapGrid_CopyCellsTo(44, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(108, 5, 83, 5, 3, 2);
-  BlendRect(44, 5, 3, 3, 19, 5);
+  MapGrid_CopyCellAttributes(44, 5, 3, 3, 19, 5);
 }
 
 void Func_0200105c(void) {
-  CopyRect(102, 8, 86, 8, 1, 2);
-  BlendRect(22, 10, 1, 1, 22, 11);
+  MapGrid_CopyCellsTo(102, 8, 86, 8, 1, 2);
+  MapGrid_CopyCellAttributes(22, 10, 1, 1, 22, 11);
 }
 
 s32 Func_0200108c(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
@@ -717,14 +709,14 @@ void Func_02001098(void) {
 }
 
 void Func_020010d4(void) {
-  CopyRect(8, 30, 11, 33, 1, 3);
-  BlendRect(8, 30, 1, 1, 11, 33);
+  MapGrid_CopyCellsTo(8, 30, 11, 33, 1, 3);
+  MapGrid_CopyCellAttributes(8, 30, 1, 1, 11, 33);
 }
 
 void Func_02001104(void) {
   MapGrid_CopyCellsTo(39, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(103, 5, 83, 5, 3, 2);
-  BlendRect(39, 5, 3, 3, 19, 5);
+  MapGrid_CopyCellAttributes(39, 5, 3, 3, 19, 5);
 }
 
 void Func_02001144(void) {
@@ -844,10 +836,6 @@ void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 
 #include "text/msg_ids.h"
 
-static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
-  MapGrid_CopyCellPictureCellsRect(a0, a1, a2, a3, a4, a5);
-}
-
 // The fourth argument is passed unextended (0xf000), where spawn.c's
 // definition takes an s16: the callers saw an int parameter.
 /* VIEW(push): routine Func_02001360 as void Func_02001360(s32 x, s32 y, s32 z,
@@ -877,7 +865,7 @@ void Func_020013b0(s32 id) {
     BattleEffect_LoadActionEffectResources(144, 1);                            \
     FieldPsynergy_SetupActorPair(actor, 0);                                    \
     FieldPsynergy_RunHandler(n1);                                              \
-    BlendBack(n2, 5, 3, 3, 19, 5);                                             \
+    MapGrid_CopyCellsLayered(n2, 5, 3, 3, 19, 5);                              \
     BattleEffect_StopMainActor();                                              \
     BattleEffect_CleanupSceneObjects();                                        \
   }

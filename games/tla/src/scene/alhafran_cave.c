@@ -130,16 +130,6 @@ static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellBehavior(x, z, a, b);
 }
 
-static __inline__ void Map_CopyCellAttributeRect_(s32 a, s32 b, s32 c, s32 d,
-                                                  s32 e, s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
-static __inline__ void MapGrid_CopyCellPictureCellsRect_(s32 a, s32 b, s32 c,
-                                                         s32 d, s32 e, s32 f) {
-  MapGrid_CopyCellPictureCellsRect(a, b, c, d, e, f);
-}
-
 const struct ActorPlacement *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
 
@@ -316,9 +306,9 @@ void AlhafranCave_SetUpCave(void) {
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     /* FAKEMATCH(wrapper): the three calls forwarded through
      * MapGrid_CopyCellPictureCellsRect_. */
-    MapGrid_CopyCellPictureCellsRect_(0, 58, 12, 7, 13, 58);
-    MapGrid_CopyCellPictureCellsRect_(0, 58, 2, 9, 25, 66);
-    MapGrid_CopyCellPictureCellsRect_(0, 58, 10, 5, 15, 74);
+    MapGrid_CopyCellsLayered(0, 58, 12, 7, 13, 58);
+    MapGrid_CopyCellsLayered(0, 58, 2, 9, 25, 66);
+    MapGrid_CopyCellsLayered(0, 58, 10, 5, 15, 74);
   }
 }
 
@@ -412,9 +402,9 @@ void AlhafranCave_SetUpJail(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_AlhafraJail &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    MapGrid_CopyCellPictureCellsRect_(23, 46, 4, 5, 21, 14);
-    MapGrid_CopyCellPictureCellsRect_(86, 44, 5, 6, 84, 12);
-    Map_CopyCellAttributeRect_(22, 45, 5, 6, 20, 13);
+    MapGrid_CopyCellsLayered(23, 46, 4, 5, 21, 14);
+    MapGrid_CopyCellsLayered(86, 44, 5, 6, 84, 12);
+    MapGrid_CopyCellAttributes(22, 45, 5, 6, 20, 13);
   }
   return 0;
 }

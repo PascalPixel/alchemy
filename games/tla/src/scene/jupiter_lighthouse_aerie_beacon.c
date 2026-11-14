@@ -217,19 +217,6 @@ void Actor_StartScript(struct Actor *object, const void *script);
 
 static inline void Event_PlayCue(s32 cue) { Sound_Play(cue); }
 
-static inline void Work_SetValuesIfNonNegative(s32 first, s32 second,
-                                               s32 third) {
-  MapGrid_SetScreenShake(first, second, third);
-}
-
-static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode) {
-  BattleEffect_ApplyColorToTargetBuffer(value, mode);
-}
-
-static inline void ColorBuffer_Interpolate(s32 frames) {
-  PaletteFade_StartInterpolation(frames);
-}
-
 void Func_02000198(void) {
   struct Actor *center;
   struct Actor *effect;
@@ -243,16 +230,16 @@ void Func_02000198(void) {
   switch (gData_02006a24) {
   case 0:
     Event_PlayCue(220);
-    Work_SetValuesIfNonNegative(0x60000, 0x60000, 0x10000);
-    ColorBuffer_ApplyTarget(0x2063ff, 1);
-    ColorBuffer_Interpolate(8);
+    MapGrid_SetShakeFixed(0x60000, 0x60000, 0x10000);
+    PaletteFade_ApplyTarget(0x2063ff, 1);
+    PaletteFade_Interpolate(8);
     break;
   case 8:
-    ColorBuffer_ApplyTarget(0x10000, 1);
-    ColorBuffer_Interpolate(8);
+    PaletteFade_ApplyTarget(0x10000, 1);
+    PaletteFade_Interpolate(8);
     break;
   case 16:
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    MapGrid_SetShakeFixed(0x10000, 0x10000, 0x10000);
     break;
   case 24:
     center->x = 152 << 17;
@@ -266,8 +253,8 @@ void Func_02000198(void) {
   case 25:
     gData_02006a24--;
     if (*(s32 *)&center->y > 0) {
-      ColorBuffer_ApplyTarget(0x203210, 0);
-      ColorBuffer_Interpolate(16);
+      PaletteFade_ApplyTarget(0x203210, 0);
+      PaletteFade_Interpolate(16);
       gData_02006a24++;
     } else {
       if ((gFrameCount & 7) == 0)
@@ -279,8 +266,8 @@ void Func_02000198(void) {
   case 26:
     gData_02006a24--;
     if (*(volatile s32 *)&center->y > (160 << 14)) {
-      ColorBuffer_ApplyTarget(0x10000, 0);
-      ColorBuffer_Interpolate(40);
+      PaletteFade_ApplyTarget(0x10000, 0);
+      PaletteFade_Interpolate(40);
       gData_02006a24++;
     } else {
       if ((gFrameCount & 7) == 0)
@@ -301,8 +288,8 @@ void Func_02000198(void) {
     break;
   case 36:
     Event_PlayCue(187);
-    ColorBuffer_ApplyTarget(0x7fff, 0);
-    ColorBuffer_Interpolate(12);
+    PaletteFade_ApplyTarget(0x7fff, 0);
+    PaletteFade_Interpolate(12);
     break;
   case 48:
     FieldActor_Stop(36);
@@ -655,63 +642,14 @@ static __inline__ s32 Func_0200592c_(void) {
   return ((s32)FieldCamera_GetActor());
 }
 static __inline__ void Func_02005984_(s32 a) { Event_ResolvePendingActions(a); }
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 b) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, b);
-}
 static __inline__ void wait_(s32 frames) { wait(frames); }
 static __inline__ void Func_020058c4_(const void *message) {
   Event_SetMessageId(message);
 }
-static __inline__ void Func_0200588c_(s32 id, s32 x, s32 z, s32 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
-}
 static __inline__ void Func_020059f4_(s32 sound) { Sound_Play(sound); }
-static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
 static __inline__ void FieldEvent_Wait_(s32 frames) { Event_Wait(frames); }
-static __inline__ void Func_02005914_(s32 a, s32 b) {
-  Camera_SetSpeedParameters(a, b);
-}
-static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  Actor_ArmCallback(id, angle, flags);
-}
-static __inline__ void Func_020058ec_(s32 id, s32 angle) {
-  Actor_FaceDirectionById(id, angle);
-}
-static __inline__ void Actor_OffsetPositionAndReset_(s32 id, s32 x, s32 z) {
-  Actor_WalkByById(id, x, z);
-}
-static __inline__ void Actor_WaitForMoveById_(s32 id) {
-  Actor_WaitForMoveById(id);
-}
-static __inline__ void Motion_SetVarCbAndRefresh_(s32 id, s32 variant) {
-  Motion_SetVarCbAndRefresh(id, variant);
-}
-static __inline__ void Func_020058d4_(s32 id, s32 a, s32 b) {
-  Event_ShowMessageThenWait(id, a, b);
-}
 static __inline__ void *Func_020058fc_(s32 id, s32 emote, s32 frames) {
   return ((void *)Actor_ShowEmoteById(id, emote, frames));
-}
-static __inline__ s32 FieldMessage_ShowAtActor_(s32 id, s32 flags) {
-  return FieldMessage_ShowAtActor(id, flags);
-}
-static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {
-  return Event_AskYesNoWithActorAnimation(id, flags);
-}
-static __inline__ void Actor_CommitPositionAndActivate_(s32 id, s32 x, s32 z) {
-  Actor_WalkByAndWaitById(id, x, z);
-}
-static __inline__ struct Actor *Actor_GetById_(s32 id) {
-  return Actor_GetById(id);
-}
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 x,
-                                                           s32 z) {
-  Actor_SetDestinationOffsetById(id, x, z);
-}
-static __inline__ void FieldMessage_Show_(s32 message, s32 position) {
-  FieldMessage_Show(message, position);
 }
 static __inline__ void PartyInventory_Add_(s32 item) {
   PartyInventory_Add(item);
@@ -719,12 +657,6 @@ static __inline__ void PartyInventory_Add_(s32 item) {
 static __inline__ void *Unit_Get_(s32 id) { return Unit_Get(id); }
 static __inline__ void Func_020057ec_(s32 id, s32 slot) {
   Inventory_Equip(id, slot);
-}
-static __inline__ void Func_02005904_(s32 id, s32 emote) {
-  FieldEffect_SetAttached(id, emote);
-}
-static __inline__ void Actor_StartRepeatedMotion_(s32 id, s32 motion) {
-  Actor_StartRepeatedMotion(id, motion);
 }
 static __inline__ void GameFlag_SetBit_(s32 flag) { GameFlag_Set(flag); }
 static __inline__ void Func_0200593c_(s32 a, s32 b) {
@@ -748,75 +680,75 @@ void Func_02000cd0(void) {
   t2 = (s32)Ram_HeapSlots->fieldWork;
   FIELD_AT(t2, s32, 428) = 0x100;
   FIELD_AT(t2, s32, 436) = 120;
-  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   t4 = Func_0200592c_();
   FIELD_AT(t4, u8, 85) = 0;
-  Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0xf00000, 0);
+  FieldCamera_MoveToFixed(0x2000000, 0x600000, 0xf00000, 0);
   wait_(1);
   Map_CenterOnFollowedPoint();
   wait_(1);
   Func_020058c4_(MsgWeHaveIgnited);
-  Func_0200588c_(4, 0x1fc0000, 0x1160000, facing = 0xc000);
-  Func_0200588c_(7, 0x2140000, 0x1160000, facing);
+  Actor_SetPositionAndFacing(4, 0x1fc0000, 0x1160000, facing = 0xc000);
+  Actor_SetPositionAndFacing(7, 0x2140000, 0x1160000, facing);
   Func_020059f4_(141);
-  Func_020057ac_(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Func_020057ac_(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShakeFixed(0x30000, 0x30000, 0x10000);
   FieldEvent_Wait_(60);
-  Func_020057ac_(0x20000, 0x20000, 0x10000);
+  MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
   FieldEvent_Wait_(60);
   Func_020059f4_(0x186);
-  Func_020057ac_(-1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
   FieldMapGrid_WaitForShakeToSettle();
-  Func_02005914_(0x6666, 0xccc);
-  Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0x1280000, 1);
+  FieldCamera_SetSpeedFixed(0x6666, 0xccc);
+  FieldCamera_MoveToFixed(0x2000000, 0x600000, 0x1280000, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait_(20);
   ACTOR_SET_MODE_AND_WAIT(7, 3, 20);
   ACTOR_SET_MODE_AND_WAIT(4, 3, 20);
-  Actor_ArmCallback_(7, 0x4000, 0);
-  Func_020058ec_(4, 0x4000);
+  Actor_FaceDirection(7, 0x4000, 0);
+  Actor_FaceDirectionAndWait(4, 0x4000);
   FieldEvent_Wait_(20);
-  Actor_OffsetPositionAndReset_(4, 0, 8);
-  Actor_OffsetPositionAndReset_(7, 0, 8);
-  Actor_OffsetPositionAndReset_(27, 32, -16);
-  Actor_OffsetPositionAndReset_(28, 48, -16);
-  Actor_WaitForMoveById_(4);
-  Actor_WaitForMoveById_(7);
-  Actor_WaitForMoveById_(27);
-  Actor_WaitForMoveById_(28);
-  Actor_ArmCallback_(4, 0x2000, 0);
-  Actor_ArmCallback_(7, 0x4000, 0);
-  Actor_ArmCallback_(27, 0xa000, 0);
-  Actor_ArmCallback_(28, 0xb000, 0);
-  Motion_SetVarCbAndRefresh_(7, 2);
+  Actor_WalkBy(4, 0, 8);
+  Actor_WalkBy(7, 0, 8);
+  Actor_WalkBy(27, 32, -16);
+  Actor_WalkBy(28, 48, -16);
+  FieldActor_WaitForMoveById(4);
+  FieldActor_WaitForMoveById(7);
+  FieldActor_WaitForMoveById(27);
+  FieldActor_WaitForMoveById(28);
+  Actor_FaceDirection(4, 0x2000, 0);
+  Actor_FaceDirection(7, 0x4000, 0);
+  Actor_FaceDirection(27, 0xa000, 0);
+  Actor_FaceDirection(28, 0xb000, 0);
+  Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait_(5);
   Func_020059f4_(78);
-  Func_020058d4_(7, 0, 0);
+  FieldEvent_ShowMessageThenWait(7, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(28, 4, 33);
   Func_020059f4_(34);
-  Func_020058d4_(4124, 0, 0);
+  FieldEvent_ShowMessageThenWait(4124, 0, 0);
   ((void *)Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0));
   Func_020058fc_(4, 256, 30);
   ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
-  Func_020058d4_(27, 0, 0);
-  Actor_ArmCallback_(4, 0, 0);
-  Func_020058ec_(7, 0x8000);
+  FieldEvent_ShowMessageThenWait(27, 0, 0);
+  Actor_FaceDirection(4, 0, 0);
+  Actor_FaceDirectionAndWait(7, 0x8000);
   FieldEvent_Wait_(10);
   ACTOR_SET_MODE_AND_WAIT(28, 4, 33);
-  Func_020058d4_(4124, 0, 0);
-  Actor_ArmCallback_(4, 0x2000, 0);
-  Func_020058ec_(7, 0x4000);
+  FieldEvent_ShowMessageThenWait(4124, 0, 0);
+  Actor_FaceDirection(4, 0x2000, 0);
+  Actor_FaceDirectionAndWait(7, 0x4000);
   FieldEvent_Wait_(10);
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
-  Func_020058d4_(27, 0, 0);
+  FieldEvent_ShowMessageThenWait(27, 0, 0);
   ((void *)Actor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_WINCE, 30));
-  Motion_SetVarCbAndRefresh_(28, 2);
+  Actor_RunRepeatedMotion(28, 2);
   FieldEvent_Wait_(5);
-  FieldMessage_ShowAtActor_(0x101c, 0);
-  if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
-    Func_020058d4_(4124, 0, 0);
+  Event_OpenMessage(0x101c, 0);
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
+    FieldEvent_ShowMessageThenWait(4124, 0, 0);
     t77 = (s32)Ram_HeapSlots->fieldWork;
     t78 = FIELD_AT(t77, u16, 452);
     FIELD_AT(t77, u16, 452) = (t78 + 1);
@@ -824,29 +756,29 @@ void Func_02000cd0(void) {
     t79 = (s32)Ram_HeapSlots->fieldWork;
     t80 = FIELD_AT(t79, u16, 452);
     FIELD_AT(t79, u16, 452) = (t80 + 1);
-    Func_020058d4_(4124, 0, 0);
+    FieldEvent_ShowMessageThenWait(4124, 0, 0);
   }
   Func_020058fc_(7, 256, 0);
   ((void *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30));
-  Actor_ArmCallback_(7, 0x8000, 0);
-  Func_020058ec_(4, 0);
+  Actor_FaceDirection(7, 0x8000, 0);
+  Actor_FaceDirectionAndWait(4, 0);
   FieldEvent_Wait_(10);
-  Actor_CommitPositionAndActivate_(28, -16, -24);
-  Actor_ArmCallback_(28, 0xd000, 0);
-  Actor_ArmCallback_(4, 0x4000, 0);
+  Actor_WalkByAndWait(28, -16, -24);
+  Actor_FaceDirection(28, 0xd000, 0);
+  Actor_FaceDirection(4, 0x4000, 0);
   Func_020058fc_(7, 258, 0);
-  Actor_GetById_(28)->actionFlags &= 0xfe;
-  Actor_GetById_(28)->velocityY = px(4);
-  Actor_OffsetPositionAndResetMotion_(28, 0, 24);
-  Actor_WaitForMoveById_(28);
-  Actor_GetById_(28)->actionFlags |= 1;
-  Actor_ArmCallback_(28, 0xa000, 0);
-  Actor_ArmCallback_(7, 0x4000, 0);
-  Func_020058d4_(7, 0, 0);
+  Actor_Get(28)->actionFlags &= 0xfe;
+  Actor_Get(28)->velocityY = px(4);
+  Actor_SetDestinationOffset(28, 0, 24);
+  FieldActor_WaitForMoveById(28);
+  Actor_Get(28)->actionFlags |= 1;
+  Actor_FaceDirection(28, 0xa000, 0);
+  Actor_FaceDirection(7, 0x4000, 0);
+  FieldEvent_ShowMessageThenWait(7, 0, 0);
   t101 = (s32)Ram_HeapSlots->fieldWork;
   t102 = FIELD_AT(t101, u16, 452);
   FIELD_AT(t101, u16, 452) = (t102 + 1);
-  FieldMessage_Show_(((t102 << 16) >> 16), 5);
+  Message_ShowCentered(((t102 << 16) >> 16), 5);
   PartyInventory_Add_(224);
   for (slot = 0; slot < 15; slot++) {
     if ((((struct UnitItems *)Unit_Get_(4))->items[slot] & 0x1ff) == 224) {
@@ -854,33 +786,33 @@ void Func_02000cd0(void) {
       break;
     }
   }
-  Motion_SetVarCbAndRefresh_(4, 2);
+  Actor_RunRepeatedMotion(4, 2);
   FieldEvent_Wait_(5);
-  Actor_OffsetPositionAndReset_(4, 0, 8);
-  Actor_CommitPositionAndActivate_(27, -24, -8);
-  Actor_GetById_(4)->actionFlags &= 0xfe;
-  Actor_OffsetPositionAndResetMotion_(4, 0, -8);
+  Actor_WalkBy(4, 0, 8);
+  Actor_WalkByAndWait(27, -24, -8);
+  Actor_Get(4)->actionFlags &= 0xfe;
+  Actor_SetDestinationOffset(4, 0, -8);
   Func_020058fc_(28, 264, 30);
-  Func_020058d4_(28, 0, 0);
-  Actor_WaitForMoveById_(4);
-  Actor_GetById_(4)->actionFlags &= 0xfe;
+  FieldEvent_ShowMessageThenWait(28, 0, 0);
+  FieldActor_WaitForMoveById(4);
+  Actor_Get(4)->actionFlags &= 0xfe;
   ((void *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30));
-  Func_020058ec_(7, 0x8000);
-  Func_020058d4_(7, 0, 0);
+  Actor_FaceDirectionAndWait(7, 0x8000);
+  FieldEvent_ShowMessageThenWait(7, 0, 0);
   Func_020058fc_(27, 264, 30);
-  Actor_ArmCallback_(27, 0xd000, 0);
-  Func_020058d4_(8219, 0, 0);
-  Func_020058ec_(7, 0x4000);
+  Actor_FaceDirection(27, 0xd000, 0);
+  FieldEvent_ShowMessageThenWait(8219, 0, 0);
+  Actor_FaceDirectionAndWait(7, 0x4000);
   FieldEvent_Wait_(10);
-  Func_02005904_(7, 258);
-  Func_02005904_(gMainRoutineWork.currentOwner, 258);
+  Actor_SetAttachedEffect(7, 258);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 258);
   FieldEvent_Wait_(30);
   ((void *)Actor_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30));
-  Actor_ArmCallback_(28, 0xb000, 0);
+  Actor_FaceDirection(28, 0xb000, 0);
   Event_OpenMessage(28, 0);
-  if (!Event_AskYesNoWithActorAnimation_(4, 0)) {
+  if (!FieldEvent_AskYesNoWithActorAnimation(4, 0)) {
     ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-    Func_020058d4_(28, 0, 0);
+    FieldEvent_ShowMessageThenWait(28, 0, 0);
     t139 = (s32)Ram_HeapSlots->fieldWork;
     t140 = FIELD_AT(t139, u16, 452);
     FIELD_AT(t139, u16, 452) = (t140 + 1);
@@ -889,29 +821,29 @@ void Func_02000cd0(void) {
     t143 = (s32)Ram_HeapSlots->fieldWork;
     t144 = FIELD_AT(t143, u16, 452);
     FIELD_AT(t143, u16, 452) = (t144 + 1);
-    Func_020058d4_(28, 0, 0);
+    FieldEvent_ShowMessageThenWait(28, 0, 0);
   }
-  Motion_SetVarCbAndRefresh_(7, 2);
+  Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait_(5);
-  Func_020058d4_(7, 0, 0);
+  FieldEvent_ShowMessageThenWait(7, 0, 0);
   Func_020058fc_(27, 265, 30);
-  Actor_ArmCallback_(27, 0xd000, 0);
-  Func_020058d4_(8219, 0, 0);
+  Actor_FaceDirection(27, 0xd000, 0);
+  FieldEvent_ShowMessageThenWait(8219, 0, 0);
   ((void *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_SMILE, 30));
-  Actor_ArmCallback_(28, 0xd000, 0);
+  Actor_FaceDirection(28, 0xd000, 0);
   ACTOR_SET_MODE_AND_WAIT(28, 4, 33);
-  Func_020058d4_(28, 0, 0);
+  FieldEvent_ShowMessageThenWait(28, 0, 0);
   ((void *)Actor_ShowEmote(4, EMOTE_IN_FRONT | EMOTE_QUESTION, 30));
-  Actor_ArmCallback_(27, 0xb000, 0);
+  Actor_FaceDirection(27, 0xb000, 0);
   ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
-  Func_020058d4_(8219, 0, 0);
+  FieldEvent_ShowMessageThenWait(8219, 0, 0);
   ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
-  Func_020058d4_(28, 0, 0);
-  Actor_StartRepeatedMotion_(4, 2);
-  Motion_SetVarCbAndRefresh_(7, 2);
+  FieldEvent_ShowMessageThenWait(28, 0, 0);
+  FieldActor_StartRepeatedMotion(4, 2);
+  Actor_RunRepeatedMotion(7, 2);
   FieldEvent_Wait_(5);
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
-  Func_020058d4_(8219, 0, 0);
+  FieldEvent_ShowMessageThenWait(8219, 0, 0);
   gMainRoutineWork.battleRule24b = 2;
   do {
     gMainRoutineWork.battleRule24b = 2;
@@ -1644,16 +1576,6 @@ void Func_02001bc4(void) {
   return;
 }
 
-static __inline__ void W_Func_020058ec(s32 a0, s32 a1) {
-  Actor_FaceDirectionById(a0, a1);
-}
-
-static __inline__ void W_Func_02005914(s32 a0, s32 a1) {
-  Camera_SetSpeedParameters(a0, a1);
-}
-static __inline__ void W_Actor_ArmCallback(s32 a0, s32 a1, s32 a2) {
-  Actor_ArmCallback(a0, a1, a2);
-}
 static __inline__ void W_Actor_EnableActionAndSetCallback(s32 a0, s32 a1) {
   Actor_SetMovementTypeById(a0, a1);
 }
@@ -1739,7 +1661,7 @@ void Func_02002ae4(void) {
   Actor_SetPositionAndFacing(30, px(592), px(392), FACING_EAST);
   Actor_SetAnimation(27, 0xa);
   Actor_SetAnimation(28, 9);
-  W_Func_02005914(0x10000, slow);
+  FieldCamera_SetSpeedFixed(0x10000, slow);
   FieldCamera_MoveTo(520, 104, 312, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1761,7 +1683,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(4, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(5, FACING_WEST);
   FieldEvent_Wait(40);
-  W_Actor_ArmCallback(4, fast, 0);
+  Actor_FaceDirection(4, fast, 0);
   Actor_FaceDirectionAndWait(5, fast);
   FieldEvent_Wait(20);
   SET_MODE_AND_WAIT(5, 4, 33);
@@ -1971,7 +1893,7 @@ void Func_02002ae4(void) {
   Actor_FaceDirection(6, FACING_SOUTH, 0);
   Actor_FaceDirectionAndWait(0, FACING_SOUTH);
   FieldEvent_Wait(60);
-  W_Func_020058ec(1, 0xc000);
+  Actor_FaceDirectionAndWait(1, 0xc000);
   Actor_SetAnimation(3, 3);
   SET_MODE_AND_WAIT(1, 3, 20);
   FieldEvent_Wait(10);
@@ -2497,7 +2419,7 @@ void Func_020040f4(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
-  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   shadow = EventCamera_GetActor();
   shadow->speedLimit = px(8);
   shadow->acceleration = px(1);
@@ -2610,10 +2532,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 
-static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
-
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 void Func_02004644(void) {
@@ -2622,10 +2540,10 @@ void Func_02004644(void) {
   struct Actor *rider = Actor_GetById(23);
   struct FieldSprite *sprite = rider->sprite;
 
-  Func_02001c10_(24, 0x2000000, 0xf80000);
-  Func_02001c10_(23, 0x2000000, 0xf80000);
-  Func_02001c10_(9, 0x1d80000, 0x1000000);
-  Func_02001c10_(10, 0x2280000, 0x1000000);
+  Actor_SetPositionFixed(24, 0x2000000, 0xf80000);
+  Actor_SetPositionFixed(23, 0x2000000, 0xf80000);
+  Actor_SetPositionFixed(9, 0x1d80000, 0x1000000);
+  Actor_SetPositionFixed(10, 0x2280000, 0x1000000);
   Actor_GetById(24)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y = rider->terrainHeight;
@@ -2796,10 +2714,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
-}
-
 #include "shared/cracked_tile_drop_in.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -2830,7 +2744,6 @@ s32 gData_02005a1c[] = {
 s32 gData_02005a20[] = {
     64,
 };
-
 
 // clang-format off
 LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               

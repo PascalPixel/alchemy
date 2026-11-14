@@ -710,14 +710,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
-
 #include "shared/cracked_tile_drop_in.h"
 
 void CrackedTile_Crack();

@@ -19,24 +19,6 @@ void Func_02001f7c(void);
 
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
-static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
-
-static inline void AnkohlRuins_CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static inline void AnkohlRuins_Call2df4(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f) {
-  Map_CopyCellsRect(a, b, c, d, e, f);
-}
-
-static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
 #include "field/field.h"
 #include "flags.h"
@@ -250,30 +232,30 @@ void Func_020006b4(void) {
 void Func_020006d0(s32 unused, s32 id) {
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
     if (id == 8) {
-      AnkohlRuins_Call2dfc(4, 68, 1, 1, 4, 69);
-      AnkohlRuins_Call2dfc(3, 68, 1, 1, 3, 70);
+      MapGrid_CopyCellAttributes(4, 68, 1, 1, 4, 69);
+      MapGrid_CopyCellAttributes(3, 68, 1, 1, 3, 70);
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
     if (id == 19) {
-      AnkohlRuins_Call2dfc(35, 72, 1, 1, 38, 72);
-      AnkohlRuins_Call2dfc(36, 72, 1, 1, 37, 73);
+      MapGrid_CopyCellAttributes(35, 72, 1, 1, 38, 72);
+      MapGrid_CopyCellAttributes(36, 72, 1, 1, 37, 73);
     }
     if (id == 8)
-      AnkohlRuins_Call2dfc(2, 113, 1, 1, 3, 113);
+      MapGrid_CopyCellAttributes(2, 113, 1, 1, 3, 113);
     if (id == 18)
-      AnkohlRuins_Call2dfc(39, 93, 1, 1, 40, 93);
+      MapGrid_CopyCellAttributes(39, 93, 1, 1, 40, 93);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
     if (id == 8) {
-      AnkohlRuins_Call2dfc(32, 69, 1, 1, 32, 70);
-      AnkohlRuins_Call2dfc(33, 69, 1, 1, 33, 71);
+      MapGrid_CopyCellAttributes(32, 69, 1, 1, 32, 70);
+      MapGrid_CopyCellAttributes(33, 69, 1, 1, 33, 71);
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins5) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(17, 85, 1, 1, 17, 83);
-      AnkohlRuins_Call2dfc(19, 84, 1, 1, 18, 82);
+      MapGrid_CopyCellAttributes(19, 84, 1, 1, 18, 82);
       MapGrid_CopyCellAttributes(19, 84, 1, 1, 19, 83);
     }
 #if !TLA_PATCH_1
@@ -281,7 +263,7 @@ void Func_020006d0(s32 unused, s32 id) {
 #else
     if (id == 9 && Event_GetFlag(FLAG_SCENE_TEMP_05))
 #endif
-      AnkohlRuins_Call2df4(35, 98, 3, 5, 25, 98);
+      MapGrid_CopyCells(35, 98, 3, 5, 25, 98);
   }
 }
 
@@ -293,15 +275,15 @@ void Func_02000850(s32 unused, s32 id) {
 
   if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins1) {
     if (object->x >> 20 == 4) {
-      AnkohlRuins_Call2dfc(4, 68, 1, 1, 2, 69);
+      MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
       Event_SetFlag(0x9c6);
     }
-    AnkohlRuins_Call2dfc(3, 68, 1, 1, 4, 69);
-    AnkohlRuins_Call2dfc(3, 69, 1, 1, 3, 70);
+    MapGrid_CopyCellAttributes(3, 68, 1, 1, 4, 69);
+    MapGrid_CopyCellAttributes(3, 69, 1, 1, 3, 70);
   }
   if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins3) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
-    AnkohlRuins_Call2dfc(31, 70, 1, 1, 32, 70);
+    MapGrid_CopyCellAttributes(31, 70, 1, 1, 32, 70);
     if (object->x >> 20 == 32) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
       Event_SetFlag(0x9c7);
@@ -309,17 +291,17 @@ void Func_02000850(s32 unused, s32 id) {
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_AnkohlRuins4) {
     if (id == 8) {
-      AnkohlRuins_Call2dfc(3, 114, 1, 1, 3, 113);
+      MapGrid_CopyCellAttributes(3, 114, 1, 1, 3, 113);
       if (object->x >> 20 == 2)
         Event_SetFlag(0x9c8);
     }
     if (id == 18) {
-      AnkohlRuins_Call2dfc(40, 94, 1, 1, 40, 93);
+      MapGrid_CopyCellAttributes(40, 94, 1, 1, 40, 93);
       if (object->x >> 20 == 39)
         Event_SetFlag(0x9c9);
     }
     if (id == 19) {
-      AnkohlRuins_Call2dfc(36, 72, 1, 1, 38, 72);
+      MapGrid_CopyCellAttributes(36, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(37, 74, 1, 1, 37, 73);
       if (object->x >> 20 == 38) {
         MapGrid_CopyCellAttributes(37, 70, 1, 1, 37, 71);
@@ -512,9 +494,9 @@ void Func_02000e60(s32 unused, s32 id) {
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_Wait(15);
   Event_PlaySound(SE_FLAME_FLARE);
-  AnkohlRuins_Call2df4(29, 70, 3, 1, 12, 71);
-  AnkohlRuins_CamBounds(px(216), -1, px(120), 1);
-  AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
+  MapGrid_CopyCells(29, 70, 3, 1, 12, 71);
+  FieldCamera_MoveToFixed(px(216), -1, px(120), 1);
+  MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
   FieldEvent_Wait(60);
   Event_PlaySound(SE_575);
   MapGrid_CopyCells(35, 6, 7, 2, 10, 7);
@@ -529,7 +511,7 @@ void Func_02000e60(s32 unused, s32 id) {
   MapGrid_CopyCells(35, 6, 7, 5, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 5, 10, 71);
   Func_02000b78(3, 10, 184, -40, 172, 5);
-  AnkohlRuins_Call2e24(-1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
   MapGrid_CopyCells(35, 6, 7, 6, 10, 7);
   MapGrid_CopyCells(35, 70, 7, 6, 10, 71);
   FieldEvent_Wait(15);
@@ -620,7 +602,7 @@ void Func_020011c0(void) {
   Actor_ShowEmoteById(gMainRoutineWork.currentOwner,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldEvent_Wait(10);
-  AnkohlRuins_CamBounds(-1, -1, -1, 0);
+  FieldCamera_MoveToFixed(-1, -1, -1, 0);
   Event_PlaySound(SE_DUST_PUFF);
   Func_02000b30(gMainRoutineWork.currentOwner, 188);
   object->actionFlags = 1;
@@ -836,11 +818,11 @@ void AnkohlRuins_RaiseFirstSand(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
   m = work->level >> 19;
   leader->motionFlags = 0;
-  AnkohlRuins_Call2e24(0x40000, 0x40000, 0x10000);
+  MapGrid_SetShakeFixed(0x40000, 0x40000, 0x10000);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_556);
-  AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 66);
-  AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 1);
+  MapGrid_CopyCells(22, 66, 3, 1, 7, 66);
+  MapGrid_CopyCells(22, 1, 3, 5, 7, 1);
   for (i = 0; i <= 15; i++) {
     struct MapCell *cells;
 
@@ -855,14 +837,14 @@ void AnkohlRuins_RaiseFirstSand(void) {
     }
     FieldEvent_Wait(1);
     if (m == 2 && i == 0) {
-      AnkohlRuins_Call2df4(11, 70, 1, 1, 11, 69);
+      MapGrid_CopyCells(11, 70, 1, 1, 11, 69);
       MapGrid_CopyCellsLayered(10, 68, 1, 1, 11, 68);
-      AnkohlRuins_Call2dfc(10, 5, 1, 1, 11, 5);
+      MapGrid_CopyCellAttributes(10, 5, 1, 1, 11, 5);
     }
     if (m == 1 && i == 15)
       MapGrid_CopyCellsLayered(18, 73, 1, 1, 11, 68);
   }
-  AnkohlRuins_Call2e24(-1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
   FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
@@ -873,33 +855,33 @@ void AnkohlRuins_RaiseFirstSand(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_04);
     Event_ClearFlag(0x17d);
   }
-  AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 66);
-  AnkohlRuins_Call2df4(18, 1, 3, 5, 7, 1);
+  MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
+  MapGrid_CopyCells(18, 1, 3, 5, 7, 1);
   i = work->level >> 19;
   for (row = 0; gAnkohlRuins_FirstSandRows[row].level != 99; row++) {
     if (i >= gAnkohlRuins_FirstSandRows[row].level) {
       for (m = 0; m < gAnkohlRuins_FirstSandRows[row].height; m++) {
         for (n = 0; n < gAnkohlRuins_FirstSandRows[row].width; n++) {
-          AnkohlRuins_Call2dfc(21, 14 - i, 1, 1,
-                               gAnkohlRuins_FirstSandRows[row].x + n,
-                               gAnkohlRuins_FirstSandRows[row].z + m);
-          AnkohlRuins_Call2dfc(25, 14 - i, 1, 1,
-                               gAnkohlRuins_FirstSandRows[row].x + n,
-                               gAnkohlRuins_FirstSandRows[row].z + m + 64);
+          MapGrid_CopyCellAttributes(21, 14 - i, 1, 1,
+                                     gAnkohlRuins_FirstSandRows[row].x + n,
+                                     gAnkohlRuins_FirstSandRows[row].z + m);
+          MapGrid_CopyCellAttributes(
+              25, 14 - i, 1, 1, gAnkohlRuins_FirstSandRows[row].x + n,
+              gAnkohlRuins_FirstSandRows[row].z + m + 64);
         }
       }
     }
   }
-  AnkohlRuins_Call2dfc(19, 14 - i, 2, 1, 2, 7);
-  AnkohlRuins_Call2dfc(22, 14 - i, 2, 1, 13, 7);
-  AnkohlRuins_Call2dfc(18, 14 - i, 1, 1, 7, 5);
-  AnkohlRuins_Call2dfc(24, 14 - i, 1, 1, 9, 5);
-  AnkohlRuins_Call2dfc(19, 14 - i, 2, 1, 2, 71);
-  AnkohlRuins_Call2dfc(22, 14 - i, 2, 1, 13, 71);
-  AnkohlRuins_Call2dfc(26, 14 - i, 1, 1, 7, 69);
-  AnkohlRuins_Call2dfc(27, 14 - i, 1, 1, 9, 69);
+  MapGrid_CopyCellAttributes(19, 14 - i, 2, 1, 2, 7);
+  MapGrid_CopyCellAttributes(22, 14 - i, 2, 1, 13, 7);
+  MapGrid_CopyCellAttributes(18, 14 - i, 1, 1, 7, 5);
+  MapGrid_CopyCellAttributes(24, 14 - i, 1, 1, 9, 5);
+  MapGrid_CopyCellAttributes(19, 14 - i, 2, 1, 2, 71);
+  MapGrid_CopyCellAttributes(22, 14 - i, 2, 1, 13, 71);
+  MapGrid_CopyCellAttributes(26, 14 - i, 1, 1, 7, 69);
+  MapGrid_CopyCellAttributes(27, 14 - i, 1, 1, 9, 69);
   if (i == 2)
-    AnkohlRuins_Call2dfc(18, 8, 1, 1, 11, 5);
+    MapGrid_CopyCellAttributes(18, 8, 1, 1, 11, 5);
 }
 
 extern struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[];
@@ -918,11 +900,11 @@ void AnkohlRuins_RaiseSecondSand(void) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 0);
   level = work->level >> 19;
   leader->motionFlags = 0;
-  AnkohlRuins_Call2e24(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShakeFixed(0x50000, 0x50000, 0x10000);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_556);
-  AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 84);
-  AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 19);
+  MapGrid_CopyCells(22, 66, 3, 1, 7, 84);
+  MapGrid_CopyCells(22, 1, 3, 5, 7, 19);
   for (i = 0; i <= 15; i++) {
     struct MapCell *cells;
 
@@ -937,14 +919,14 @@ void AnkohlRuins_RaiseSecondSand(void) {
     }
     FieldEvent_Wait(1);
     if (level == 2 && i == 0) {
-      AnkohlRuins_Call2df4(11, 70, 1, 1, 11, 69);
+      MapGrid_CopyCells(11, 70, 1, 1, 11, 69);
       MapGrid_CopyCellsLayered(10, 68, 1, 1, 4, 86);
-      AnkohlRuins_Call2dfc(4, 24, 1, 1, 4, 23);
+      MapGrid_CopyCellAttributes(4, 24, 1, 1, 4, 23);
     }
     if (level == 1 && i == 15)
       MapGrid_CopyCellsLayered(18, 73, 1, 1, 4, 86);
   }
-  AnkohlRuins_Call2e24(-1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 0xe666);
   FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
@@ -955,33 +937,33 @@ void AnkohlRuins_RaiseSecondSand(void) {
     Event_SetFlag(FLAG_SCENE_TEMP_04);
     Event_ClearFlag(0x17d);
   }
-  AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
-  AnkohlRuins_Call2df4(18, 1, 3, 5, 7, 19);
+  MapGrid_CopyCells(18, 66, 3, 1, 7, 84);
+  MapGrid_CopyCells(18, 1, 3, 5, 7, 19);
   i = work->level >> 19;
   for (row = 0; gAnkohlRuins_SecondSandRows[row].level != 99; row++) {
     if (i >= gAnkohlRuins_SecondSandRows[row].level) {
       for (m = 0; m < gAnkohlRuins_SecondSandRows[row].height; m++) {
         for (n = 0; n < gAnkohlRuins_SecondSandRows[row].width; n++) {
-          AnkohlRuins_Call2dfc(21, 14 - i, 1, 1,
-                               gAnkohlRuins_SecondSandRows[row].x + n,
-                               gAnkohlRuins_SecondSandRows[row].z + m);
-          AnkohlRuins_Call2dfc(25, 14 - i, 1, 1,
-                               gAnkohlRuins_SecondSandRows[row].x + n,
-                               gAnkohlRuins_SecondSandRows[row].z + m + 64);
+          MapGrid_CopyCellAttributes(21, 14 - i, 1, 1,
+                                     gAnkohlRuins_SecondSandRows[row].x + n,
+                                     gAnkohlRuins_SecondSandRows[row].z + m);
+          MapGrid_CopyCellAttributes(
+              25, 14 - i, 1, 1, gAnkohlRuins_SecondSandRows[row].x + n,
+              gAnkohlRuins_SecondSandRows[row].z + m + 64);
         }
       }
     }
   }
-  AnkohlRuins_Call2dfc(19, 14 - i, 2, 1, 2, 27);
-  AnkohlRuins_Call2dfc(19, 14 - i, 2, 1, 13, 25);
-  AnkohlRuins_Call2dfc(18, 14 - i, 1, 1, 7, 23);
-  AnkohlRuins_Call2dfc(24, 14 - i, 1, 1, 9, 23);
-  AnkohlRuins_Call2dfc(19, 14 - i, 2, 1, 2, 91);
-  AnkohlRuins_Call2dfc(19, 14 - i, 2, 1, 13, 89);
-  AnkohlRuins_Call2dfc(26, 14 - i, 1, 1, 7, 87);
-  AnkohlRuins_Call2dfc(27, 14 - i, 1, 1, 9, 87);
+  MapGrid_CopyCellAttributes(19, 14 - i, 2, 1, 2, 27);
+  MapGrid_CopyCellAttributes(19, 14 - i, 2, 1, 13, 25);
+  MapGrid_CopyCellAttributes(18, 14 - i, 1, 1, 7, 23);
+  MapGrid_CopyCellAttributes(24, 14 - i, 1, 1, 9, 23);
+  MapGrid_CopyCellAttributes(19, 14 - i, 2, 1, 2, 91);
+  MapGrid_CopyCellAttributes(19, 14 - i, 2, 1, 13, 89);
+  MapGrid_CopyCellAttributes(26, 14 - i, 1, 1, 7, 87);
+  MapGrid_CopyCellAttributes(27, 14 - i, 1, 1, 9, 87);
   if (i == 2)
-    AnkohlRuins_Call2dfc(18, 7, 1, 1, 4, 23);
+    MapGrid_CopyCellAttributes(18, 7, 1, 1, 4, 23);
 }
 
 void AnkohlRuins_PressFirstSandSwitch(void) {
@@ -993,7 +975,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
     MapGrid_CopyCells(18, 66, 3, 1, 7, 66);
-    AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
+    MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
     gAnkohlRuins_SandStepDelay = 7;
     gAnkohlRuins_SandTimer = done;
@@ -1032,8 +1014,8 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     Event_PlaySound(SE_584);
     FieldEvent_Wait(15);
     Event_PlaySound(SE_FLAME_FLARE);
-    AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
-    AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
+    MapGrid_CopyCells(18, 66, 3, 1, 7, 84);
+    MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
     FieldEvent_Wait(15);
     gAnkohlRuins_SandStepDelay = 3;
     gAnkohlRuins_SandTimer = done;
@@ -1081,17 +1063,17 @@ void Func_02001f7c(void) {
   }
   row = raft->z >> 20;
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
-    AnkohlRuins_Call2dfc(35, 83, 5, 4, 12, 96);
+    MapGrid_CopyCellAttributes(35, 83, 5, 4, 12, 96);
     Event_SetFlag(0x146);
   }
   if (row == 37 && AnkohlRuins_FlagCheck(0x146)) {
-    AnkohlRuins_Call2dfc(40, 83, 5, 4, 12, 96);
+    MapGrid_CopyCellAttributes(40, 83, 5, 4, 12, 96);
     Event_ClearFlag(0x146);
   }
   if (row > 41) {
     FieldTask_Remove(Func_02001f7c);
-    AnkohlRuins_Call2e24(-1, -1, 0xe666);
-    AnkohlRuins_Call2dfc(41, 48, 3, 2, 13, 41);
+    MapGrid_SetShakeFixed(-1, -1, 0xe666);
+    MapGrid_CopyCellAttributes(41, 48, 3, 2, 13, 41);
     Event_SetFlag(FLAG_SCENE_TEMP_01);
     Event_ClearFlag(0x17d);
     Event_ClearFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
@@ -1109,7 +1091,7 @@ void Func_020020fc(void) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Event_PlaySound(SE_RUSH);
-      AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
+      MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
       FieldEvent_Wait(10);
       FieldCamera_MoveTo(232, CAMERA_KEEP, 392, 1);
       FieldCamera_WaitForArrival();
@@ -1118,7 +1100,7 @@ void Func_020020fc(void) {
       EventCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
       FieldCamera_WaitForArrival();
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
-      AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
+      MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
       Event_SetFlag(381);
       Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
@@ -1133,10 +1115,10 @@ void Func_020021d4(void) {
     void (*func)(void) = Func_02001f7c;
 
     if (Task_Find(func) == -1) {
-      AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
+      MapGrid_SetShakeFixed(0x20000, 0x20000, 0x10000);
       Task_AddFrame(func, TASK_PASS_VBLANK);
       MapGrid_CopyCellAttributes(13, 30, 3, 2, 13, z);
-      AnkohlRuins_Call2dfc(14, 87, 1, 1, 14, 88);
+      MapGrid_CopyCellAttributes(14, 87, 1, 1, 14, 88);
       Event_SetFlag(381);
       Event_SetFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
       Event_End();
@@ -1153,10 +1135,6 @@ extern struct Trigger gAnkohlRuins_Room5Triggers[];
 extern struct Trigger gAnkohlRuins_Room6Triggers[];
 extern struct Trigger gAnkohlRuins_Room8Triggers[];
 
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  Map_CopyCellsRect(a, b, c, d, e, f);
-}
-
 void Func_02002260(void) {
   struct Actor *object = Actor_Get(9);
 
@@ -1169,7 +1147,7 @@ void Func_02002260(void) {
     FieldEvent_SetExitRequest(20);
   }
 #if !TLA_PATCH_1 /* The Japanese edition copies cells here. */
-  Map_CopyCells(40, 98, 3, 5, 25, 98);
+  MapGrid_CopyCells(40, 98, 3, 5, 25, 98);
 #endif
 }
 

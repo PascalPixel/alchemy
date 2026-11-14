@@ -260,10 +260,6 @@ static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
-static __inline__ void Func_020048b4_(s32 id, s32 angle) {
-  Actor_FaceDirectionById(id, angle);
-}
-
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {
   /* FAKEMATCH(wrapper): forwarded inline. */
@@ -304,24 +300,24 @@ void Func_020003b8(s32 unused, s32 id) {
       Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1000, 232);
     }
     Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 1000, 248);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     PaletteFade_ApplySource(0x10000, 0);
     PaletteFade_ApplyTarget(0x10003, 0);
     PaletteFade_Interpolate(60);
     FieldEvent_Wait(50);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x6000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x6000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x2000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x2000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x6000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x6000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x2000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x2000);
     FieldEvent_Wait(20);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0x4000);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x4000);
     FieldEvent_Wait(20);
     FieldActor_ShowEmote(gMainRoutineWork.currentOwner,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-    Func_020048b4_(gMainRoutineWork.currentOwner, 0);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimation(gMainRoutineWork.currentOwner, 22);
     FieldEvent_Wait(40);
@@ -1857,14 +1853,6 @@ struct CellTargetEntry;
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
 
 #include "shared/cracked_tile_drop_in.h"
 

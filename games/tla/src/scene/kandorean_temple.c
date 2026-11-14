@@ -120,11 +120,6 @@ static __inline__ struct Actor *Func_02005140_(s32 type, s32 x, s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
-static __inline__ void Actor_SetPositionAndResetMotion_(struct Actor *object,
-                                                        s32 x, s32 y, s32 z) {
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
 static __inline__ void Func_020053d0_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   /* FAKEMATCH(wrapper): the call through this inline. */
@@ -704,12 +699,12 @@ void KandoreanTemple_BlowStream(void) {
 
 void KandoreanTemple_LowerLeftColumn(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), px(216), 0, px(216));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(id), px(216), 0, px(216));
 }
 
 void KandoreanTemple_LowerRightColumn(s32 id) {
   Actor_GetById(id)->scaleY = 0x800;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(id), px(376), 0, px(248));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(id), px(376), 0, px(248));
 }
 
 void KandoreanTemple_GrowColumn(s32 id, s32 dy, s32 scale) {
@@ -749,15 +744,16 @@ void KandoreanTemple_StartLeftVent(void) {
   Actor_SetModeById(9, 0);
   Actor_SetSpritePriority(9, 2);
   Actor_GetById(9)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(9), px(216), px(8), px(216));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(9), px(216), px(8),
+                                       px(216));
   if (GameFlag_Get(FLAG_SCENE_TEMP_08)) {
     Actor_SetModeById(9, 4);
-    Actor_SetPositionAndResetMotion_(
+    FieldActor_SetPositionAndResetMotion(
         Actor_GetById(gMainRoutineWork.currentOwner), px(216), px(12), px(216));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById(11)->scaleY = Q16_ONE;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(11), px(216), 0, px(216));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(11), px(216), 0, px(216));
   KandoreanTemple_LowerLeftColumn(13);
   KandoreanTemple_LowerLeftColumn(14);
   if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
@@ -777,15 +773,16 @@ void KandoreanTemple_StartRightVent(void) {
   Actor_SetModeById(10, 0);
   Actor_SetSpritePriority(10, 2);
   Actor_GetById(10)->priorityFlags &= ~2;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(10), px(376), px(8), px(248));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(10), px(376), px(8),
+                                       px(248));
   if (GameFlag_Get(FLAG_SCENE_TEMP_09)) {
     Actor_SetModeById(10, 4);
-    Actor_SetPositionAndResetMotion_(
+    FieldActor_SetPositionAndResetMotion(
         Actor_GetById(gMainRoutineWork.currentOwner), px(376), px(12), px(248));
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   }
   Actor_GetById(12)->scaleY = Q16_ONE;
-  Actor_SetPositionAndResetMotion_(Actor_GetById(12), px(376), 0, px(248));
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(12), px(376), 0, px(248));
   KandoreanTemple_LowerRightColumn(17);
   KandoreanTemple_LowerRightColumn(18);
   if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
@@ -1790,12 +1787,12 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   object = Actor_GetById(8);
   object->motionFlags = 0;
   if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
-    Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1380000, 0x200000,
-                                     0x1d80000);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(8), 0x1380000, 0x200000,
+                                         0x1d80000);
     MapGrid_CopyCellAttributes(0, 0, 3, 3, 19, 28);
   } else if (GameFlag_Get(FLAG_AREA_TEMP_03)) {
-    Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1580000, 0x200000,
-                                     0x1d80000);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(8), 0x1580000, 0x200000,
+                                         0x1d80000);
     MapGrid_CopyCellAttributes(0, 4, 3, 3, 19, 28);
   }
   Actor_PlaceBlocks(gKandoreanTemple_PillarActors);
@@ -2068,7 +2065,7 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
   Actor_SetModeById(9, 1);
-  Actor_SetPositionAndResetMotion_(Actor_GetById(9), 0xd80000, 0, 0xd80000);
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(9), 0xd80000, 0, 0xd80000);
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(9, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
@@ -2131,7 +2128,8 @@ void KandoreanTemple_RiseOnRightVent(void) {
   Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
   Actor_SetModeById(10, 1);
-  Actor_SetPositionAndResetMotion_(Actor_GetById(10), 0x1780000, 0, 0xf80000);
+  FieldActor_SetPositionAndResetMotion(Actor_GetById(10), 0x1780000, 0,
+                                       0xf80000);
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(10, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
@@ -2219,15 +2217,15 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);              \
     wait(1);                                                                   \
     leader->motionFlags = 0;                                                   \
-    Actor_SetPositionAndResetMotion_(                                          \
+    FieldActor_SetPositionAndResetMotion(                                      \
         Actor_GetById(gMainRoutineWork.currentOwner), px(n3), px(-20),         \
         px(n4));                                                               \
     Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),   \
                                0);                                             \
-    Actor_SetPositionAndResetMotion_(Actor_GetById(n1), px(n3), px(-20),       \
-                                     px(n5));                                  \
-    Actor_SetPositionAndResetMotion_(Actor_GetById(n2), px(n3), px(-20),       \
-                                     px(n4));                                  \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(n1), px(n3), px(-20),   \
+                                         px(n5));                              \
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(n2), px(n3), px(-20),   \
+                                         px(n4));                              \
     Actor_SetSpritePriority(n1, 2);                                            \
     Actor_SetSpritePriority(n2, 3);                                            \
     {                                                                          \

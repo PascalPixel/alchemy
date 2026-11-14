@@ -89,24 +89,6 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return Import_ActorCreate(kind, x, y, z);
 }
 
-static __inline__ void Func_02002960_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02002958_(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                      s32 f) {
-  Map_CopyCellsRect(a, b, c, d, e, f);
-}
-
-static __inline__ void Func_02002a20_(s32 a, s32 b) {
-  BattleEffect_ApplyColorToTargetBuffer(a, b);
-}
-
-static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
-  Actor_SetDestinationById(id, x, z);
-}
-
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
 #include "field/field_sequence_event.h"
@@ -539,8 +521,8 @@ void Func_02000b68(s32 unused, s32 id) {
   Event_Wait(20);
   if (Event_GetFlag(0xa68) == 0) {
     GameFlag_Set(0xa68);
-    Func_02002958_(64, 64, 1, 2, 51, 82);
-    Func_02002958_(66, 64, 1, 2, 115, 18);
+    MapGrid_CopyCells(64, 64, 1, 2, 51, 82);
+    MapGrid_CopyCells(66, 64, 1, 2, 115, 18);
     Map_SetLayerEntryFlag(5);
     Map_SetLayerEntryFlag(6);
     Map_ClearLayerEntryFlag(7);
@@ -549,8 +531,8 @@ void Func_02000b68(s32 unused, s32 id) {
     Func_020025a8(26);
   } else {
     GameFlag_Clear(0xa68);
-    Func_02002958_(65, 64, 1, 2, 51, 82);
-    Func_02002958_(67, 64, 1, 2, 115, 18);
+    MapGrid_CopyCells(65, 64, 1, 2, 51, 82);
+    MapGrid_CopyCells(67, 64, 1, 2, 115, 18);
     Map_SetLayerEntryFlag(7);
     Map_SetLayerEntryFlag(8);
     Map_ClearLayerEntryFlag(5);
@@ -712,7 +694,7 @@ void Func_02000f8c(void) {
 }
 
 void Func_02001010(void) {
-  Func_02002960_(62, 41, 1, 2, 33, 41);
+  MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
   MapGrid_CopyCellPictureCellsRect(125, 32, 3, 13, 96, 32);
   MapGrid_CopyCellPictureCellsRect(61, 96, 3, 13, 32, 96);
   Actor_SetSpriteColor(Actor_GetById(12), 5);
@@ -752,7 +734,7 @@ void Func_0200106c(void) {
                                                                                \
     object->priorityFlags = 0;                                                 \
     object->motionFlags = 0;                                                   \
-    Func_02002960_(n1, n2, 1, 1, n3, n2);                                      \
+    MapGrid_CopyCellAttributes(n1, n2, 1, 1, n3, n2);                          \
     GameFlag_Set(n4);                                                          \
   }
 
@@ -811,7 +793,7 @@ void Func_02001224(s32 unused, s32 id) {
   MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
-  Func_02002a20_(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_StartInterpolation(30);
   Event_Wait(15);
   FieldCamera_SetSpeed(1);
@@ -980,10 +962,10 @@ scatter:
     goto scatter;
   Event_Wait(60);
   Map_CopyCellsRect(64, 69, 11, 4, 87, 53);
-  Actor_ResetAndSetPosition_(17, 392, 824);
-  Actor_ResetAndSetPosition_(18, 424, 824);
-  Actor_ResetAndSetPosition_(19, 456, 824);
-  Actor_ResetAndSetPosition_(20, 488, 824);
+  Actor_SetDestination(17, 392, 824);
+  Actor_SetDestination(18, 424, 824);
+  Actor_SetDestination(19, 456, 824);
+  Actor_SetDestination(20, 488, 824);
   Actor_SetDestinationById(21, 520, 824);
   Event_Wait(240);
   Map_CopyCellsRect(64, 66, 11, 7, 87, 50);

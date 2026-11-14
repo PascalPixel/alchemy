@@ -82,15 +82,6 @@ void Champa_ShrinkIntoDoorway(struct Actor *object) {
   object->scaleY += -1536;
 }
 
-static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
-  Actor_CenterOnColumn(id, column, offset);
-}
-
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
-                                                           s32 dz) {
-  Actor_SetDestinationOffsetById(id, dx, dz);
-}
-
 /// Stepping into a door: it opens, the leader walks through and the scene
 /// leaves by the exit given.
 void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
@@ -104,9 +95,9 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
-    Actor_CenterOnColumn_(id, 2, -8);
+    Actor_CenterAndWalk(id, 2, -8);
   else
-    Actor_OffsetPositionAndResetMotion_(id, 0, -8);
+    Actor_SetDestinationOffset(id, 0, -8);
   FieldEvent_Wait(10);
   FieldEvent_SetExitRequest(door);
   Event_FinishScreenTransition();

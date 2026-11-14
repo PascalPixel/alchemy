@@ -715,11 +715,6 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 
 #include "shared/actor_raise_from_cell.h"
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
-                                                   s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 #include "shared/whirlwind_carry_leader.h"
 
 #include "shared/position_flat_distance.h"

@@ -81,9 +81,6 @@ static __inline__ void Lift_(s32 x, s32 z, s32 a, s32 b) {
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
-static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(id, x, z);
-}
 void JupiterLighthouse_StartMovingPillar(void);
 void JupiterLighthouse_LeaveByCyclone(void);
 void JupiterLighthouse_JumpForward(void);
@@ -205,7 +202,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->terrainHeight = px(-32);
     object->y = px(-32);
-    Func_020023b0_(14, px(328), px(584));
+    Actor_SetPositionFixed(14, px(328), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
@@ -213,7 +210,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->terrainHeight = px(-32);
     object->y = px(-32);
-    Func_020023b0_(15, px(520), px(584));
+    Actor_SetPositionFixed(15, px(520), px(584));
     MapGrid_SetCellHeight(object->x, object->z, 0, 0);
   }
   Actor_Get(8)->priorityFlags |= 32;
@@ -575,14 +572,6 @@ extern u16 gPushKinds[];
 // The cells CrackedTiles_Step watches, and the cell it copies over the one the
 // leader steps on.
 extern struct CellTarget gCrackedTiles;
-
-static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
-  MapGrid_SetScreenShake(a, b, c);
-}
 
 #include "shared/cracked_tile_drop_in.h"
 

@@ -199,26 +199,6 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 0x509);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 0xbcc);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 0xc12);
 
-struct MenuArrow {
-  u8 unk00[5];
-  u8 mode;
-  u8 unk06[6];
-  u16 timer;
-};
-
-struct MenuPageWork {
-  u8 unk000[0x4c];
-  struct MenuPageIcon *icons[32];
-  u8 unk0cc[0x5c];
-  u16 colours[4];
-  u8 unk130[0x48];
-  struct MenuArrow *up;
-  struct MenuArrow *down;
-  u8 unk180[0x94];
-  u8 entryCount;
-  u8 unk215[3];
-};
-
 /// The work of the party member chooser and the Status menu (heap slot 220),
 /// which each takes as it opens and frees before it returns. The Broken Seal's
 /// StatusScreenWork, laid out as ItemMenuWork is here.

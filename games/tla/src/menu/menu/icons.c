@@ -150,59 +150,65 @@ s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   return result;
 }
 
+/// Shows the up arrow when the page of four starting at `index`'s page has one
+/// above it and the down arrow when one follows, among `count` entries.
 void Menu_SetPageArrowsA(s32 index, s32 count) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuArrow *arrow;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct WindowSprite *arrow;
 
   if (index < 0)
     index += 3;
   index = index >> 2 << 2;
-  arrow = menu->up;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[0];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
-    arrow->mode = 17;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_UP;
+    arrow->animStep = 0;
   }
-  arrow = menu->down;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[1];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
-    arrow->mode = 15;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+    arrow->animStep = 0;
   }
 }
 
+/// As Menu_SetPageArrowsA, with the arrows hopping left and right: the Djinn
+/// menu's columns of party members.
 void Menu_SetPageArrowsB(s32 index, s32 count) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuArrow *arrow;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct WindowSprite *arrow;
 
   if (index < 0)
     index += 3;
   index = index >> 2 << 2;
-  arrow = menu->up;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[0];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
-    arrow->mode = 16;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_LEFT;
+    arrow->animStep = 0;
   }
-  arrow = menu->down;
-  arrow->mode = 13;
+  arrow = menu->pageArrows[1];
+  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
-    arrow->mode = 14;
-    arrow->timer = 0;
+    arrow->active = WINDOW_SPRITE_MOTION_HOP_RIGHT;
+    arrow->animStep = 0;
   }
 }
 
+/// Sets the page arrows for `index` and sets the chosen party member's figure
+/// apart from the others on its page of four: its y 30, theirs 26.
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 top = index / 4 * 4;
   s32 i;
 
   Menu_SetPageArrowsA(index, count);
   for (i = 0; i <= 3; i++) {
     if (top + i == index)
-      menu->colours[i] = 30;
+      menu->memberY[i] = 30;
     else
-      menu->colours[i] = 26;
+      menu->memberY[i] = 26;
   }
 }
 

@@ -1073,30 +1073,24 @@ void Palette_LoadIconsIntoHighlight(void) {
           DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
-struct MenuPageIcon {
-  u8 reserved00[5];
-  u8 state;
-  u16 x;
-  u16 y;
-};
-
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
-  struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
-  struct MenuPageIcon *icon;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
+  struct WindowSprite *icon;
   s32 i;
 
   for (i = 0; i < 32; i++) {
-    icon = menu->icons[i];
+    icon = menu->entryIcons[i];
     if (icon != NULL)
-      icon->state = 13;
+      icon->active = WINDOW_SPRITE_MOTION_HIDDEN;
   }
-  for (i = first; i < pageSize + first && (icon = menu->icons[i]) != NULL &&
-                  i <= menu->entryCount - 1;
+  for (i = first;
+       i < pageSize + first && (icon = menu->entryIcons[i]) != NULL &&
+       i <= menu->itemCount - 1;
        i++) {
     icon->x = x;
     icon->y = y + (i - first) * 16;
-    Icon_PrepareActor((struct WindowSprite *)icon);
-    icon->state = 1;
+    Icon_PrepareActor(icon);
+    icon->active = WINDOW_SPRITE_MOTION_STILL;
   }
 }
 

@@ -1572,13 +1572,11 @@ static void Sanctum_UpdateOrbitingEffect(struct Actor *effect) {
 
 /// Creates an orbiting effect with the requested angular step.
 static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
-  s32 orbitStep;
   struct Actor *center;
   struct Actor *effect;
   struct Sprite *sprite;
   struct Sprite *sourceSprite;
 
-  orbitStep = angleStep;
   center = Actor_Get(actorId);
   if (center != NULL) {
     effect = FieldActor_Create(SPRITE_SPARKLE, center->x.fixed,
@@ -1588,7 +1586,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
       effect->motionFlags = 0;
       effect->timer = 0;
-      effect->userValue = orbitStep;
+      effect->userValue = angleStep;
       effect->update = Sanctum_UpdateOrbitingEffect;
       sprite->flags = 0;
       sourceSprite = center->sprite;

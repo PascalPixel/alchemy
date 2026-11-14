@@ -237,13 +237,12 @@ s32 Scene_Initialize(void) {
 
   // The residents remain visible as trees, with their sprite flags cleared.
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    actorId = ACTOR_FIRST_VILLAGER;
-    do {
+    for (actorId = ACTOR_FIRST_VILLAGER; actorId <= ACTOR_LAST_VILLAGER;
+         actorId++) {
       struct Actor *actor = Actor_Get(actorId);
 
-      actorId++;
       Actor_SetSpriteFlags(actor, 0);
-    } while (actorId <= ACTOR_LAST_VILLAGER);
+    }
   }
 
   entrance = (u16)gMainRoutineWork.entrance;

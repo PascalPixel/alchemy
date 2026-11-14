@@ -667,22 +667,18 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   if (delayFrames != 0) {
     Sound_Play(SE_GUSH);
   }
-  step = firstStep;
-  if (step < endStep) {
-    do {
-      MapGrid_CopyCellsTo(45 - (step << 1), 32, 44 - (step << 1), 32,
-                          (step + 1), 6);
-      MapGrid_CopyCellsTo(45 - step, 51, 45 - step, 32, 1, 6);
-      sourceColumn = 109 - step;
-      MapGrid_CopyCellsTo(sourceColumn, 32, 108 - step, 32, 1, 4);
-      MapGrid_CopyCellsTo(sourceColumn, 51, sourceColumn, 32, 1, 4);
-      if (delayFrames != 0) {
-        MapGrid_SetShake(5, 5, 1);
-        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-        Event_Wait(delayFrames);
-      }
-      step++;
-    } while (step < endStep);
+  for (step = firstStep; step < endStep; step++) {
+    MapGrid_CopyCellsTo(45 - (step << 1), 32, 44 - (step << 1), 32, (step + 1),
+                        6);
+    MapGrid_CopyCellsTo(45 - step, 51, 45 - step, 32, 1, 6);
+    sourceColumn = 109 - step;
+    MapGrid_CopyCellsTo(sourceColumn, 32, 108 - step, 32, 1, 4);
+    MapGrid_CopyCellsTo(sourceColumn, 51, sourceColumn, 32, 1, 4);
+    if (delayFrames != 0) {
+      MapGrid_SetShake(5, 5, 1);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
+      Event_Wait(delayFrames);
+    }
   }
   MapGrid_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
@@ -2110,8 +2106,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   u32 particleIndex;
 
   Sound_Play(SE_BURST);
-  particleIndex = 0;
-  do {
+  for (particleIndex = 0; particleIndex <= 11; particleIndex++) {
     if ((particleIndex & 1) != 0) {
       options.palette = 7;
       if ((particleIndex & 2) != 0)
@@ -2131,8 +2126,7 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
       }
     }
     wait(2);
-    particleIndex++;
-  } while (particleIndex <= 11);
+  }
 }
 
 /// Restores each lighthouse scene's puzzle state and plays its

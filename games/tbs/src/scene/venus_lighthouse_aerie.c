@@ -452,16 +452,15 @@ s32 Scene_Initialize(void) {
   mirroredScale = -Q16_ONE;
   Actor_Get(ACTOR_BEACON_STATUE_NORTHEAST)->scaleX = mirroredScale;
   Actor_Get(ACTOR_BEACON_STATUE_SOUTHEAST)->scaleX = mirroredScale;
-  platformId = ACTOR_FIRST_PLATFORM;
-  do {
+  for (platformId = ACTOR_FIRST_PLATFORM; platformId <= ACTOR_LAST_PLATFORM;
+       platformId++) {
     platform = Actor_Get(platformId);
     Actor_SetSpriteFlags(Actor_Get(platformId), 0);
     Actor_SetSpritePriority(platformId, 1);
     platform->motionFlags = ACTOR_FLOATS;
     platform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     platform->y.fixed = px(1) / 2;
-    platformId++;
-  } while (platformId <= ACTOR_LAST_PLATFORM);
+  }
 
   entrance = gMainRoutineWork.entrance;
 
@@ -935,12 +934,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Event_Wait(40);
   Scene_StartEventPsynergy();
   wait(1);
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 39; frame++) {
     VenusLighthouseAerie_FlashActorPalette(Actor_Get(ACTOR_SHEBA));
-    frame++;
     wait(1);
-  } while (frame <= 39);
+  }
   Task_AddFrame(VenusLighthouseAerie_UpdateShebaPalette, TASK_PASS_FRAME);
   Event_Wait(80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);

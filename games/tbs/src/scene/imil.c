@@ -292,24 +292,19 @@ const u32 *Scene_GetExits(void) { return gImil_Exits; }
 
 /// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  struct ActorPlacement *script;
-
-  if (gMainRoutineWork.next == (SCENE_ICE_ROOMS)) {
-    script = gImil_RoomActorPlacements;
-    Scene_AssignViewFlags(script);
+  if (gMainRoutineWork.next == SCENE_ICE_ROOMS) {
+    Scene_AssignViewFlags(gImil_RoomActorPlacements);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      // A byte view: written as script[row].talkFacing, the row's address is
-      // formed first.
-      ((u8 *)script)[(ACTOR_RESTAURANT_OWNER - ACTOR_FIRST_PLACED) *
-                         sizeof(struct ActorPlacement) +
-                     offsetof(struct ActorPlacement, talkFacing)] =
-          TALK_FACING_PARTY;
-      script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].x = px(182);
-      script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].z = px(564);
-      script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].movement =
-          MOVEMENT_TYPE_WANDER;
+      gImil_RoomActorPlacements[ACTOR_RESTAURANT_OWNER - ACTOR_FIRST_PLACED]
+          .talkFacing = TALK_FACING_PARTY;
+      gImil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].x =
+          px(182);
+      gImil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].z =
+          px(564);
+      gImil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED]
+          .movement = MOVEMENT_TYPE_WANDER;
     }
-    return script;
+    return gImil_RoomActorPlacements;
   }
 
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -1446,37 +1441,28 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
-static void Imil_TurnSlidingActor(struct Actor *updated) {
-  struct Actor *actor;
-  s32 z;
-  s32 t;
-  s32 d;
-  u16 prev;
-  s32 n;
+static void Imil_TurnSlidingActor(struct Actor *actor) {
+  s32 heading;
+  u16 facing;
+  s32 turn;
 
-  actor = updated;
-  n = (u16)actor->timer;
-  z = 0;
-  t = ((s16 *)&actor->timer)[z];
-  if (t != 0) {
-    actor->timer = n - 1;
+  if (actor->timer != 0) {
+    actor->timer--;
     return;
   }
-  actor->steeringFlags = t;
-  z = 1;
-  d = gImil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
-  z = -z;
-  if (d == z) {
+  actor->steeringFlags = 0;
+  heading = gImil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
+  if (heading == -1) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
   }
-  prev = actor->facing;
-  d = (s16)(d - prev);
-  if (d > FACING_STEP)
-    d = FACING_STEP;
-  if (d < -FACING_STEP)
-    d = -FACING_STEP;
-  actor->facing = prev + d;
+  facing = actor->facing;
+  turn = (s16)(heading - facing);
+  if (turn > FACING_STEP)
+    turn = FACING_STEP;
+  if (turn < -FACING_STEP)
+    turn = -FACING_STEP;
+  actor->facing = facing + turn;
   Actor_SelectAnimation(actor, ANIM_WALK);
   Actor_SetAnimationSpeed(actor, 48);
 }
@@ -1490,7 +1476,6 @@ static void Imil_RunIceSlide(void) {
   s32 nextBehavior;
   s32 z;
   s32 x;
-  u8 *layer;
 
   subject = Actor_Lookup(gMainRoutineWork.leaderActorId);
 
@@ -1507,13 +1492,13 @@ static void Imil_RunIceSlide(void) {
     probe.z = (subject->z.fixed & FIELD_CELL_MASK) + px(8);
     z = probe.z;
     x = probe.x;
-    layer = &subject->layer;
-    startBehavior = MapGrid_GetCellBehaviorAt(*layer, x, z);
+    startBehavior = MapGrid_GetCellBehaviorAt(subject->layer, x, z);
     Vector_AddPolarOffset(px(16), heading, &probe);
 
-    nextBehavior = MapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z);
+    nextBehavior = MapGrid_GetCellBehaviorAt(subject->layer, probe.x, probe.z);
     if (nextBehavior == CELL_BEHAVIOR_WALL ||
-        MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) - subject->y.fixed >
+        MapGrid_GetTerrainHeight(subject->layer, probe.x, probe.z) -
+                subject->y.fixed >
             px(8)) {
       subject->facing = heading;
       goto tail;
@@ -1532,11 +1517,11 @@ static void Imil_RunIceSlide(void) {
 
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
-      if ((nextBehavior =
-               MapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z)) == 255) {
+      if ((nextBehavior = MapGrid_GetCellBehaviorAt(subject->layer, probe.x,
+                                                    probe.z)) == 255) {
         break;
       }
-      if (MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) -
+      if (MapGrid_GetTerrainHeight(subject->layer, probe.x, probe.z) -
               subject->y.fixed >
           px(8)) {
         break;

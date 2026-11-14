@@ -3281,11 +3281,9 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     Actor_SetPosition(ACTOR_ROWING_KAJA, 438, 152);
     break;
   case SHIP_HIDE_OARS:
-    slot = 0;
-    do {
+    for (slot = 0; slot <= 7; slot++) {
       Actor_SetPosition(slot + ACTOR_ROWING_FIRST_OAR, 0, 0);
-      slot++;
-    } while (slot <= 7);
+    }
     break;
   case SHIP_SETUP_PASSENGER_HOLD:
     ShipRooms_PlaceActor(ACTOR_HOLD_SECOND_GUIDE, 152, 532,

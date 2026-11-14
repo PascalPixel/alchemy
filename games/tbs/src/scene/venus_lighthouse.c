@@ -1436,14 +1436,12 @@ static void VenusLighthouse_MoveCappedPillar(void) {
   destinationColumn = 11;
   destinationRow = 51;
   MapGrid_CopyCellAttributes(17, 51, 2, 2, destinationColumn, destinationRow);
-  pillarIndex = 0;
-  do {
+  for (pillarIndex = 0; pillarIndex <= 2; pillarIndex++) {
     pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CAPPED_PILLAR);
     column = FIELD_CELL(pillar->x.fixed);
     row = FIELD_CELL(pillar->z.fixed);
     MapGrid_CopyCellAttributes(12, 50, 1, 1, column, row);
-    pillarIndex++;
-  } while (pillarIndex <= 2);
+  }
   Actor_SwapPositionsByDepth(ACTOR_FIRST_CAPPED_PILLAR + 2,
                              ACTOR_FIRST_CAPPED_PILLAR + 1);
   Event_End();
@@ -1464,12 +1462,10 @@ static void VenusLighthouse_LiftCarryPillar(void) {
   u32 pillarIndex;
   struct Actor *pillar;
 
-  pillarIndex = 0;
-  do {
+  for (pillarIndex = 0; pillarIndex <= 1; pillarIndex++) {
     pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
-    pillarIndex++;
     MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed, 45);
-  } while (pillarIndex <= 1);
+  }
 }
 
 /// In VenusLighthouseFirstFloor, Move shifts one of the two pillars by the
@@ -1478,15 +1474,13 @@ static void VenusLighthouse_MoveCarryPillar(void) {
   u32 pillarIndex;
   struct Actor *pillar;
 
-  pillarIndex = 0;
-  do {
+  for (pillarIndex = 0; pillarIndex <= 1; pillarIndex++) {
     pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CARRY_PILLAR);
     if (pillar->y.fixed > -px(16)) {
       MapGrid_SetCellBehaviorAt(0, pillar->x.fixed, pillar->z.fixed,
                                 CELL_BEHAVIOR_WALL);
     }
-    pillarIndex++;
-  } while (pillarIndex <= 1);
+  }
 }
 
 /// In VenusLighthouseFirstFloor, the leader walks into a gap or a pillar by
@@ -2403,11 +2397,10 @@ static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
 static void VenusLighthouse_VisitPillarActors(void) {
   u32 actorId;
 
-  actorId = ACTOR_FIRST_SOCKET_PILLAR;
-  do {
+  for (actorId = ACTOR_FIRST_SOCKET_PILLAR;
+       actorId <= ACTOR_FIRST_SOCKET_PILLAR + 3; actorId++) {
     Actor_Get(actorId);
-    actorId++;
-  } while (actorId <= ACTOR_FIRST_SOCKET_PILLAR + 3);
+  }
 }
 
 /// Restores puzzle progress, actors and entrance effects for all six scenes,

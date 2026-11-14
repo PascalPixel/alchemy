@@ -814,11 +814,9 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Event_Start();
   opponentFinishedFirst = Colosso_TakePrize(ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   Colosso_WaitForOpponentToFinish();
-  refreshCount = 9;
-  do {
+  for (refreshCount = 9; refreshCount >= 0; refreshCount--) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
-    refreshCount = refreshCount - 1;
-  } while (refreshCount >= 0);
+  }
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 88, 256);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);

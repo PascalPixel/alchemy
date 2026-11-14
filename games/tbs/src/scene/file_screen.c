@@ -1250,21 +1250,16 @@ static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   u32 byteIndex;
   u32 bitIndex;
 
-  byteIndex = 0;
   crc = 0xFFFF;
-  if (byteCount != 0) {
-    do {
-      crc ^= *data << 8;
-      for (bitIndex = 0; bitIndex != 8; bitIndex++) {
-        if ((crc & 0x8000) != 0) {
-          crc = (crc << 1) + 0xFFFFEFDF;
-        } else {
-          crc <<= 1;
-        }
+  for (byteIndex = 0; byteIndex != byteCount; byteIndex++, data++) {
+    crc ^= *data << 8;
+    for (bitIndex = 0; bitIndex != 8; bitIndex++) {
+      if ((crc & 0x8000) != 0) {
+        crc = (crc << 1) - 0x1021;
+      } else {
+        crc <<= 1;
       }
-      byteIndex++;
-      data++;
-    } while (byteIndex != byteCount);
+    }
   }
   return ~crc;
 }

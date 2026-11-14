@@ -460,18 +460,15 @@ static void SuhallaGate_SoldierVanishes(void) {
     wait(4);
   } while (beat <= 5);
 
-  beat = 0;
-  do {
+  for (beat = 0; beat <= 11; beat++) {
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER),
                          SPRITE_FLAG_SHADOW);
     wait(2);
-
     Actor_SetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 0);
-    beat++;
     wait(2);
-  } while (beat <= 11);
+  }
 
   Actor_SetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
 

@@ -846,8 +846,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 
-/// The window work's menuState while BattleMessage_Open decodes a message (The
-/// Broken Seal's WINDOW_BATTLE_MESSAGE).
+/// The window work's menuState while BattleMessage_Open decodes a message.
 #define WINDOW_BATTLE_MESSAGE 2
 
 // An enemy's id is 8 above its name's place after MsgEnemyName.

@@ -305,8 +305,7 @@ s32 DjinnRecovery_CountDownTwenty(void) {
   return 0;
 }
 
-/// Does nothing; Battle_Run calls it at the end of each turn and of the
-/// battle (The Broken Seal's Battle_ReservedNoOpF674).
+/// Does nothing; Battle_Run calls it at the end of each turn and of the battle.
 void Battle_TurnEndNoOp(void) {}
 
 /// Counts down one side's Djinn recovery at the turn's end: an owner must be in

@@ -756,9 +756,8 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
     (f) = 7;                                                                   \
   }
 
-/// Applies the acting unit's ability to one of its targets: damage or
-/// healing by the ability kind, then its added effect, as The Broken Seal's
-/// BattleAbility_ApplyToTarget does, with this game's differences.
+/// Applies the acting unit's ability to one of its targets: damage or healing
+/// by the ability kind, then its added effect, with this game's differences.
 s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   struct BattleAct *action;
   s32 abilityId;
@@ -2124,11 +2123,10 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
 #define AI_BATTLE ((struct AIBattleWork *)Ram_HeapSlots->battleWork)
 
-/// Chooses an enemy's action, as The Broken Seal's BattleAI_ChooseAction does:
-/// one of the eight in its definition, picked by its action strategy, with an
-/// item instead where its item mask says so, and a target worth the ability.
-/// Called with retry 0 for each enemy as the turn is built and with retry 1
-/// when it acts (BattleStaging_DispatchAction).
+/// Chooses an enemy's action: one of the eight in its definition, picked by its
+/// action strategy, with an item instead where its item mask says so, and a
+/// target worth the ability. Called with retry 0 for each enemy as the turn is
+/// built and with retry 1 when it acts (BattleStaging_DispatchAction).
 s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   struct BattleUnit *unit;
   u32 selection;

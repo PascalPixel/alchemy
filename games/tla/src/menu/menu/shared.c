@@ -584,7 +584,7 @@ extern u8 gMenuCursor_BobY[];
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
 
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's window,
-/// bobbing; the twin of The Broken Seal's routine.
+/// bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuWork *work =
       (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
@@ -596,7 +596,6 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
                                      yOffset + work->auxiliaryWindow->y * 8 + 8;
 }
 
-/// The twin of The Broken Seal's MenuCursor_Slide.
 void MenuCursor_Slide(s32 x, s32 y) {
   struct PsynergyMenuWork *work =
       (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;

@@ -211,7 +211,6 @@ s32 StatusScreen_RunPages(void) {
 s32 PsynergyMenu_ChooseMember(void);
 s32 PartyMemberChooser_RunRearrange(void);
 
-/// The twin of The Broken Seal's CharacterMenu_SelectOwner.
 s32 StatusScreen_SelectMember(s32 slot) {
   struct StatusScreenWork *menu;
   struct WindowSprite *cursor;

@@ -1144,10 +1144,10 @@ void PaletteFade_CalculateSteps(s16 *src, s16 *dst, s16 *step, s32 frames) {
   }
 }
 
-/// Steps the palette fade on heap slot 0x80 by one frame, as The Broken Seal's
-/// TitlePaletteFade_Update does: adds each channel's step until the last frame,
-/// which copies the target instead, packs the channels into the hidden page
-/// of RGB555 colours and queues that page for the BG and OBJ palettes.
+/// Steps the palette fade on heap slot 0x80 by one frame: adds each channel's
+/// step until the last frame, which copies the target instead, packs the
+/// channels into the hidden page of RGB555 colours and queues that page for the
+/// BG and OBJ palettes.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = Ram_HeapSlots->block32;
   u16 *delta = work->delta;

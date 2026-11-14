@@ -1041,9 +1041,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
 
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
-/// PsynergyMenu_RunList runs the Psynergy list of the member in paneIndex, the
-/// twin of The Broken Seal's PsynergyMenu_RunList
-/// (games/tbs/src/menu/menu/psynergy.c).
+/// PsynergyMenu_RunList runs the Psynergy list of the member in paneIndex.
 s32 PsynergyMenu_RunList(s32 paneIndex) {
   struct PsynergyMenuWork *menu;
   struct BattleAct *ability;

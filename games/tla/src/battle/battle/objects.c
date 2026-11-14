@@ -337,7 +337,7 @@ static inline struct BattleObj *BattleObject_GetInline(s32 unitId) {
 
 /// Task, each frame of a battle: advances every unit's status icon, sets its
 /// shadow's priority by whether it is airborne and draws the nearer side in
-/// front, as in The Broken Seal.
+/// front.
 void BattleObject_UpdateSpritePriorities(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 unitIds[14];

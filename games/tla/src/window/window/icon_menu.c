@@ -1,10 +1,9 @@
 /// @file
-/// Collecting the party's battle commands, as The Broken Seal's
-/// Battle_CollectPartyCommands does on this game's work and menus, then
+/// Collecting the party's battle commands on this game's work and menus, then
 /// IconMenu_DrawIcons, which draws a menu's icons each frame, the selected one
-/// bouncing, and fits the window's lines around it.
-/// Then the resource selection menus: shop commands, sanctum services, Yes or
-/// No, coins or medals, and the save screen's actions.
+/// bouncing, and fits the window's lines around it. Then the resource selection
+/// menus: shop commands, sanctum services, Yes or No, coins or medals, and the
+/// save screen's actions.
 // Part of window.c.
 
 #include "../window_internal.h"

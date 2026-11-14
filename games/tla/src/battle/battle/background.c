@@ -829,12 +829,11 @@ static __inline__ s32 PolarY(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Sin(angle), radius);
 }
 
-/// Sets up the star field behind a summon, the twin of The Broken Seal's
-/// ElementGlow_InitializeStarField: sixteen sparks on random rings around the
-/// centre, three rings leaving it at thirds of a turn, the blue ring sheet and
-/// its palette with the mode's colour (0 yellow, 1 blue, 2 red, else violet)
-/// over the first 32 colours, BG2 unscaled at the origin, the additive and max
-/// blitters (BattleEffect_LoadBlitterFar, the veneer of
+/// Sets up the star field behind a summon: sixteen sparks on random rings
+/// around the centre, three rings leaving it at thirds of a turn, the blue ring
+/// sheet and its palette with the mode's colour (0 yellow, 1 blue, 2 red, else
+/// violet) over the first 32 colours, BG2 unscaled at the origin, the additive
+/// and max blitters (BattleEffect_LoadBlitterFar, the veneer of
 /// BattleEffect_LoadBlitter), and the two frame callbacks.
 s32 ElementGlow_InitializeStarField(s32 mode) {
   struct SparkWork *work;

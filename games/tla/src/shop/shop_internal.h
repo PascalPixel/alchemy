@@ -67,7 +67,7 @@ enum ShopAction {
   SHOP_ACTION_FORGE
 };
 
-/// What Item_GetEquipmentGroup sorts an item into, as The Broken Seal's.
+/// What Item_GetEquipmentGroup sorts an item into.
 enum EquipmentGroup {
   EQUIPMENT_GROUP_NONE = 0, ///< anything not a weapon or armor, rings included
   EQUIPMENT_GROUP_WEAPON = 1,

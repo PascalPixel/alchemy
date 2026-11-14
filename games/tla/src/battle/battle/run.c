@@ -1,6 +1,6 @@
 /// @file
-/// A whole battle, Battle_RunEncounter (The Broken Seal's Battle_Run), its
-/// tutorial helpers, and the lists of the units in it.
+/// A whole battle, Battle_RunEncounter, its tutorial helpers, and the lists of
+/// the units in it.
 // Part of battle.c.
 
 #include "../battle_internal.h"

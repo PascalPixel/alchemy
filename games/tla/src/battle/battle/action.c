@@ -78,8 +78,8 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   return standbyCount;
 }
 
-/// The most targets an action holds, 14 as in The Broken Seal. BattlePlan's
-/// declaration counts 13 and names each list's fourteenth entry apart.
+/// The most targets an action holds, 14. BattlePlan's declaration counts 13 and
+/// names each list's fourteenth entry apart.
 #define TARGET_MAX 14
 
 /* VIEW(presentation): routine Battle_GetUnitAtPlace as s32

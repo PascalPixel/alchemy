@@ -1387,7 +1387,6 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct ListNode *node,
   obj->field8a = 0;
 }
 
-/// The Broken Seal's Menu_ConfirmSelection in this game's form.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;

@@ -2041,8 +2041,7 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
 /// its equip bonuses and effects, a curse, the Psynergy it bestows, its uses
 /// and its count, or failing all of these whether it is rare or important.
 /// count is the count to show, which only Japanese reads;
-/// ItemMenu_DrawItemDetails passes -1, the entry's own. The twin of The Broken
-/// Seal's ItemMenu_DrawItemDetails.
+/// ItemMenu_DrawItemDetails passes -1, the entry's own.
 void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
   struct ItemDefinition *def;
   s32 i;
@@ -2487,8 +2486,7 @@ void ItemMenu_DrawItemHead(void) {
 #endif
 
 /// Asks whether to drop item (an inventory entry): its name, the question, and
-/// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start. The twin of
-/// The Broken Seal's ItemMenu_ConfirmDrop.
+/// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start.
 s32 ItemMenu_ConfirmDrop(s32 item) {
   s32 window;
   s32 itemId;
@@ -2711,8 +2709,7 @@ s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   return 1;
 }
 
-/// Draws the selected item-list row's name and highlights only that row; the
-/// twin of The Broken Seal's ItemMenu_DrawItemDetailPage.
+/// Draws the selected item-list row's name and highlights only that row.
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
                                 struct MenuResult *state) {
   struct ItemMenuWork *menu;

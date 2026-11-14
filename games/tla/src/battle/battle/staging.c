@@ -36,8 +36,7 @@ s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
   return characterId;
 }
 
-/// Called by Battle_Run at the start of every turn; does nothing, as in The
-/// Broken Seal.
+/// Called by Battle_Run at the start of every turn; does nothing.
 void Battle_TurnStartNoOp(void) {}
 
 /// The plan of an extra action queued for the turn's end (command 10): ability
@@ -143,10 +142,10 @@ void BattleParty_ReturnAllToSpots(void) {
     BattleMotion_ReturnToSpot(ids[i]);
 }
 
-/// Plays one action of the turn after delay frames, as The Broken Seal's
-/// BattleStaging_DispatchAction does: an enemy picks its ability now, the
-/// action is built and staged, and every unit returns to its spot. Returns 1
-/// when the party got away, 0 otherwise, and -1 when the unit is already down.
+/// Plays one action of the turn after delay frames: an enemy picks its ability
+/// now, the action is built and staged, and every unit returns to its spot.
+/// Returns 1 when the party got away, 0 otherwise, and -1 when the unit is
+/// already down.
 s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
                                  s32 delay) {
   struct BattlePresentationTransition *view;

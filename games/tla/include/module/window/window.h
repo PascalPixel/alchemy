@@ -44,7 +44,7 @@ void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 #define TILE_HFLIP 0x400
 #define TILE_VFLIP 0x800
 
-/// The window border's tiles, as The Broken Seal's.
+/// The window border's tiles.
 enum {
   WINDOW_TILE_BLANK = WINDOW_TILE(0),
   /// The frame a window flashes with as it swells (Window_DrawFlashBorder),
@@ -123,7 +123,7 @@ enum {
 };
 
 /// Text colours (Text_SetColor), named as both the window palette and the basic
-/// sprite palette show them, as The Broken Seal's.
+/// sprite palette show them.
 enum TextColor {
   TEXT_COLOR_RED = 2,
   TEXT_COLOR_YELLOW = 4,
@@ -134,7 +134,7 @@ enum TextColor {
 };
 
 /// The flags of a UI window (struct Window.flags), which Window_Create takes as
-/// its attributes, as The Broken Seal's.
+/// its attributes.
 enum {
   WINDOW_FLAG_OPEN = 0x1,    ///< the window slot is in use
   WINDOW_FLAG_INSTANT = 0x2, ///< opens and closes at once, with no zoom

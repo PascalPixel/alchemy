@@ -18,10 +18,10 @@ s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity) {
   u32 count;
 
   work = UI_WORK;
-  work->count = 0;
+  work->textBufferEnd = 0;
   Message_Decode(key, 1);
-  for (count = 0;
-       count < capacity - 1 && (destination[count] = work->entries[count]) != 0;
+  for (count = 0; count < capacity - 1 &&
+                  (destination[count] = work->textBuffer[count]) != 0;
        count++) {
   }
   destination[count] = 0;
@@ -143,7 +143,7 @@ void Window_CloseAll(void) {
     do {
       pollWork = slot->work;
       if (pollWork != 0) {
-        if ((*(s32 *)&pollWork->frame) == 0) {
+        if ((*(s32 *)&pollWork->zoomStage) == 0) {
           if (pollWork->flags == 0)
             slot->work = NULL;
           else
@@ -237,8 +237,8 @@ void MessageArgument_ClearAll(void) {
   no = 0;
 
   do {
-    work->values[no] = 0;
-    work->names[no] = 0;
+    work->argumentValues[no] = 0;
+    work->argumentKinds[no] = 0;
     no++;
   } while (no != 8);
 }
@@ -251,9 +251,9 @@ void MessageArgument_Push(u32 value, u32 kind) {
   u32 limit = 8;
 
   do {
-    if (work->names[no] == 0) {
-      work->values[no] = value;
-      work->names[no] = kind;
+    if (work->argumentKinds[no] == 0) {
+      work->argumentValues[no] = value;
+      work->argumentKinds[no] = kind;
       break;
     }
     no++;
@@ -266,11 +266,11 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   u32 value = 0;
 
   for (index = 0; index < 8; index++) {
-    if (work->names[index] == kind) {
-      value = work->values[index];
+    if (work->argumentKinds[index] == kind) {
+      value = work->argumentValues[index];
       if (clear != 0) {
-        work->values[index] = 0;
-        work->names[index] = 0;
+        work->argumentValues[index] = 0;
+        work->argumentKinds[index] = 0;
       }
       break;
     }
@@ -284,7 +284,7 @@ s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
 
-  if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
+  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
   if (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancel = 1;
@@ -305,10 +305,10 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
   s32 cancel = 0;
   u32 keys;
 
-  if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
+  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
   keys = gInput.pressed;
-  if (work->mode != 0)
+  if (work->mindRead != 0)
     keys = gInput.pendingPressed;
   if (keys & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancel = 1;
@@ -372,7 +372,7 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   y = 8;
   window = NULL;
   entry = Message_Decode(message, 1);
-  if (work->entries[entry] != 0) {
+  if (work->textBuffer[entry] != 0) {
     Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
     x = (30 - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
@@ -409,10 +409,10 @@ s32 Message_Decode(s32 message, s32 mode);
 /// Decodes message after the text decoded last, over its terminator.
 void Message_DecodeAppend(s32 message) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  u32 count = work->count;
+  u32 count = work->textBufferEnd;
 
   count = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
-  work->count = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
+  work->textBufferEnd = (u16)(count - 1) & (UI_TEXT_ENTRY_COUNT - 1);
   Message_Decode(message, 1);
 }
 
@@ -521,10 +521,10 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
   u16 *text;
   u32 code;
 
-  work->count = x;
+  work->textBufferEnd = x;
   entry = Message_Decode(message, 0);
   Text_MeasureDecoded(entry, (u32 *)&width, (u32 *)&height, 0);
-  text = &work->entries[entry];
+  text = &work->textBuffer[entry];
   if (text[0] == '-') {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     if (text[1] == '-')
@@ -806,7 +806,7 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   }
   minusFour = -4;
   offset = minusFour;
-  if (work->mode != 0) {
+  if (work->mindRead != 0) {
     win = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
     offset = 0;
   } else {
@@ -842,7 +842,7 @@ void Portrait_CloseWindow(s32 id) {
   id = state->outputIds[index];
 
   for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
-    entity = work->output.head;
+    entity = work->sprites.head;
     if ((u8)entity->kind == 2 && (u8)entity->index == id) {
       Window_Close(work, 2);
       return;

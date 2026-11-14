@@ -13,7 +13,7 @@
 
 #define TEXT_COLOR_NORMAL TEXT_COLOR_WHITE ///< the window text's default colour
 
-/// WindowSprite.active as the menu sets it: shown, or hidden but kept.
+/// WindowSprite.motion as the menu sets it: shown, or hidden but kept.
 #define ICON_SHOWN 1   ///< WINDOW_SPRITE_MOTION_STILL
 #define ICON_HIDDEN 13 ///< WINDOW_SPRITE_MOTION_HIDDEN
 #include "debug.h"

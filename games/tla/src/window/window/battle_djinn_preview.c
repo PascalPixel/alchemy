@@ -194,7 +194,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
     struct ArrowSprite *entry;
 
     if (output) {
-      output->active = WINDOW_SPRITE_MOTION_STILL;
+      output->motion = WINDOW_SPRITE_MOTION_STILL;
       output->kind = 1;
       output->index = VramCache_AllocEntry(128);
       entry = (struct ArrowSprite *)&output->sprite;
@@ -211,7 +211,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       entry->tile.bits.index =
           VramCache_Reload((u8)output->index, up ? gDjinnMenu_ArrowUpTiles
                                                  : gDjinnMenu_ArrowDownTiles);
-      WindowSprite_AppendToList(&window->output, output);
+      WindowSprite_AppendToList(&window->sprites, output);
     }
   }
 

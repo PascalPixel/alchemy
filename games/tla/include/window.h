@@ -19,11 +19,11 @@ enum { UI_TEXT_ENTRY_COUNT = 256 };
 /// windows' tilemap, the windows, the three text channels, the 64 render
 /// outputs, and the decoded message and its arguments.
 struct WindowWork {
-  u16 tileCursor; ///< the text tile the next search for a free one starts at
-  u8 alt;         ///< 1 lets text use the second range of tiles
+  u16 nextTextTile;  ///< the text tile the next search for a free one starts at
+  u8 extraTextTiles; ///< 1 lets text use the second range of tiles
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
   u8 dirty;
-  u8 mode;              ///< nonzero widens a message window by 2
+  u8 mindRead;          ///< nonzero widens a message window by 2
   u8 battleMode;        ///< 1 from the work's setup
   u8 holdTilemapUpload; ///< while set, the tilemap is not uploaded
   u8 textPalette;       ///< text tiles' palette; 15 by default
@@ -32,27 +32,28 @@ struct WindowWork {
   struct UiChannelSlot channels[3];
   struct WindowSprite outputs[UI_OUTPUT_COUNT];
   struct WindowSpriteList freeOutputs; ///< the outputs not in any window
-  u8 tileAttributes[0x100];            ///< per text tile, as ☀️'s
+  u8 textTileState[0x100];             ///< per text tile
   u16 lineSpacing;             ///< the current channel's, copied in to draw
   u16 unknownAfterLineSpacing; ///< set to 1 with the text style; not read
   u16 outline;                 ///< the current channel's, copied in to draw
   u16 colour;                  ///< the current channel's, copied in to draw
-  u16 entries[UI_TEXT_ENTRY_COUNT]; ///< decoded text, a ring of codes
-  u16 glyphSpacing;      ///< 9 with the text style, as ☀️'s letterSpacing
-  u16 count;             ///< where the next code goes in entries
-  u16 unknownAfterCount; ///< not named by ⚓️ code
-  u16 glyphResource;     ///< VRAM cache slot of the page arrow; 99 when none
-  u16 glyphTiles;        ///< first sprite tile of the glyph sheet (picture 95)
+  u16 textBuffer[UI_TEXT_ENTRY_COUNT]; ///< decoded text, a ring of codes
+  u16 glyphSpacing;     ///< 9 with the text style, as ☀️'s letterSpacing
+  u16 textBufferEnd;    ///< where the next code goes in textBuffer
+  u16 lastMessageStart; ///< where the last decoded message began in textBuffer
+  u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
+  u16 glyphTiles;       ///< first sprite tile of the glyph sheet (picture 95)
   u8 unknownBeforeValues[2]; ///< not named by ⚓️ code
-  u32 values[8];             ///< message argument values
-  u16 names[8];              ///< the kind of each value; 0 for a free slot
+  u32 argumentValues[8];     ///< message argument values (MessageArgument_Push)
+  u16 argumentKinds[8];  ///< the MESSAGE_ARGUMENT_ kind of each; 0 when free
   u16 resourceIds[2];    ///< picture shown in each portrait slot; 999 when free
   u16 outputIds[2];      ///< VRAM cache slot of each portrait slot's picture
   u16 speakerVoiceSound; ///< first of four voice blip sounds; 0 for none
   u16 speakerVoiceCountdown; ///< characters until the next voice blip
-  u8 unk1388;    ///< 1 while the next-page arrow is shown (☀️'s pageArrowShown)
-  u8 busy;       ///< set while a message waits on its sound
-  u8 unk138a[2]; ///< cleared together, as ☀️'s spacingBefore and spacingAfter
+  u8 pageArrowShown;         ///< 1 while the next-page arrow is shown
+  u8 waitingForSound;        ///< set while a message waits on its sound
+  u8 haltingSpeech;          ///< cleared together with spacingAfter
+  u8 spacingAfter;
   /// Nonzero lets a tall message fit in 32 pixels, its channel then placing
   /// glyphs by y / 320 (UiChannelSlot.unk26).
   s8 textMode;
@@ -68,21 +69,22 @@ STATIC_ASSERT(offsetof(struct WindowWork, freeOutputs.tailLink) == 0xe34);
 
 STATIC_ASSERT(offsetof(struct WindowWork, lineSpacing) == 0xf38);
 STATIC_ASSERT(offsetof(struct WindowWork, colour) == 0xf3e);
-STATIC_ASSERT(offsetof(struct WindowWork, entries) == 0xf40);
+STATIC_ASSERT(offsetof(struct WindowWork, textBuffer) == 0xf40);
 STATIC_ASSERT(offsetof(struct WindowWork, battleMode) == 5);
 STATIC_ASSERT(offsetof(struct WindowWork, textPalette) == 7);
-STATIC_ASSERT(offsetof(struct WindowWork, tileAttributes) == 0xe38);
+STATIC_ASSERT(offsetof(struct WindowWork, textTileState) == 0xe38);
+
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-STATIC_ASSERT(offsetof(struct WindowWork, count) == 0x1342);
+STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 0x1342);
 STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 0x1346);
-STATIC_ASSERT(offsetof(struct WindowWork, values) == 0x134c);
-STATIC_ASSERT(offsetof(struct WindowWork, names) == 0x136c);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 0x134c);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 0x136c);
 STATIC_ASSERT(sizeof(struct WindowWork) == 0x1390);
 #else
-STATIC_ASSERT(offsetof(struct WindowWork, count) == 0x1142);
+STATIC_ASSERT(offsetof(struct WindowWork, textBufferEnd) == 0x1142);
 STATIC_ASSERT(offsetof(struct WindowWork, glyphResource) == 0x1146);
-STATIC_ASSERT(offsetof(struct WindowWork, values) == 0x114c);
-STATIC_ASSERT(offsetof(struct WindowWork, names) == 0x116c);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentValues) == 0x114c);
+STATIC_ASSERT(offsetof(struct WindowWork, argumentKinds) == 0x116c);
 STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 #endif
 
@@ -92,7 +94,7 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 /// The last character code the window's text tiles cover, as ☀️'s.
 #define TEXT_LAST_FONT_CODE 255
 
-/// How a window sprite moves (WindowSprite.active); 0 is a free one.
+/// How a window sprite moves (WindowSprite.motion); 0 is a free one.
 enum {
   WINDOW_SPRITE_MOTION_PAGE_ARROW = 2 ///< the next-page arrow, bobbing
 };

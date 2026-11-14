@@ -43,9 +43,9 @@ void BattleCamera_Update(void) {
     transition->frames--;
   }
 
-  focus = camera->pos;
-  if (camera->followPos != 0) {
-    focus = camera->followPos;
+  focus = camera->focus;
+  if (camera->followPosition != 0) {
+    focus = camera->followPosition;
   }
 
   SceneTransform_RewindStack();
@@ -163,7 +163,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
     do {
       unit = Unit_Get(owners[i]);
       remaining = 3;
-      cursor = (u8 *)&unit->elementLevels[3];
+      cursor = (u8 *)&unit->summonBoost[3];
 
       do {
         remaining--;
@@ -182,7 +182,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
       unit->stun = 0;
       unit->sleep = 0;
       unit->psySeal = 0;
-      unit->refrain = 0;
+      unit->regenerate = 0;
       unit->reflect = 0;
       unit->grimReaper = 0;
       unit->equipBonus[0] = 0;
@@ -214,7 +214,7 @@ void BattleParty_ClearGuards(void) {
     do {
       struct BattleUnit *unit = Unit_Get(*id++);
 
-      unit->guardLevel = 0;
+      unit->defendLevel = 0;
       unit->immobile = 0;
       count--;
     } while (count != 0);

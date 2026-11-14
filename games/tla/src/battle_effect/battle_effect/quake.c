@@ -83,7 +83,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != gQuake_Timings[effect->variant][TIMING_FRAMES];
        frame++) {
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     // The results begin 16 frames before the end.
     if (frame == gQuake_Timings[effect->variant][TIMING_FRAMES] - 16)
       BattlePlayback_StartFar(133);

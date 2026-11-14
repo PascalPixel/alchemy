@@ -530,7 +530,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
     }
 
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = gBlitter;
     BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
@@ -925,7 +925,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
       HeapSlot_Release(SLOT_BLITTER_ALTERNATE);
     }
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     // The first 32 flecks turn 0x400, rise 5 pixels and widen 4 pixels a
     // frame.

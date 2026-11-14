@@ -180,8 +180,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         if (targetCount <= 0) {
           MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
-          if (actor->guardLevel == 0)
-            actor->guardLevel = DEFEND_NORMAL;
+          if (actor->defendLevel == 0)
+            actor->defendLevel = DEFEND_NORMAL;
           return ACTION_REPORTED;
         }
         if (ability->effect != 75)
@@ -251,8 +251,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       BattleMessage_ShowAndWaitFar((s32)&MsgIsParalyzed);
       return ACTION_REPORTED;
     }
-    if ((actor->restraint & CURSE_BOUND) &&
-        request->command != COMMAND_DEFEND && (Battle_RandomFar() & 3) == 0) {
+    if ((actor->curse & CURSE_BOUND) && request->command != COMMAND_DEFEND &&
+        (Battle_RandomFar() & 3) == 0) {
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgIsBound);
       return ACTION_REPORTED;
@@ -344,8 +344,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       Unit_RecalculateGaugesFar(request->unitId);
       if (actor->pp < 0)
         actor->pp = 0;
-      if (actor->pp > actor->maxPp)
-        actor->pp = actor->maxPp;
+      if (actor->pp > actor->ppMax)
+        actor->pp = actor->ppMax;
     }
   } break;
 
@@ -363,8 +363,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         (actor->inventory[request->parameter] & INVENTORY_BROKEN)) {
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
-      if (actor->guardLevel == 0)
-        actor->guardLevel = DEFEND_NORMAL;
+      if (actor->defendLevel == 0)
+        actor->defendLevel = DEFEND_NORMAL;
       return ACTION_REPORTED;
     }
     if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)

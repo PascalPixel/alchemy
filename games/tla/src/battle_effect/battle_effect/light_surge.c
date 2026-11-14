@@ -179,7 +179,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
   frame = 0;
   /* FAKEMATCH(dead): pos first takes the camera's look-at point. */
-  pos = (struct EffectPosition *)camera->pos;
+  pos = (struct EffectPosition *)camera->focus;
   /* FAKEMATCH(dead): the texture's address, computed as center's address
    * less 8. */
   vertices = (s16 *)((s32)&center - 8);
@@ -233,7 +233,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       }
     }
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     // The rings: four quarter circles each, upper halves for the first 16.
     for (i = 0, ring = work->particles; i != 28; ring++, i++) {

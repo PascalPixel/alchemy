@@ -406,7 +406,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 1:
         record = object->records;
         record->image.priority = partyPriority;
-        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->guardLevel ==
+        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->defendLevel ==
             4)
           record->flags |= 2;
         else
@@ -435,7 +435,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 1:
         record = object->records;
         record->image.priority = enemyPriority;
-        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->guardLevel ==
+        if (((struct BattleUnit *)Unit_Get(unitIds[unitIndex]))->defendLevel ==
             4)
           record->flags |= 2;
         else
@@ -546,9 +546,9 @@ UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   Transform_Reset();
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS) != 0) {
     Iwram_TransformMatrix(gBattleCamera_CommandMatrix);
-    Transform_ApplyLookAt(state->eye, state->pos);
+    Transform_ApplyLookAt(state->eye, state->focus);
   } else {
-    Transform_SetLookAt(state->eye, state->pos);
+    Transform_SetLookAt(state->eye, state->focus);
   }
 }
 
@@ -599,12 +599,12 @@ void BattleCamera_SetDefaultView(void) {
   state->yaw = TRIG_TURN * 3 / 16;
   state->pitch = TRIG_TURN - TRIG_TURN / 128;
   state->distance = BATTLE_CAMERA_DISTANCE;
-  SET_VECTOR(state->pos, 0, 0, 0);
-  state->followPos = 0;
-  state->unk18 = 0;
+  SET_VECTOR(state->focus, 0, 0, 0);
+  state->followPosition = 0;
+  state->followEye = 0;
 
   Transform_Reset();
-  SceneTransform_ApplyPosition(&state->pos[0]);
+  SceneTransform_ApplyPosition(&state->focus[0]);
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 

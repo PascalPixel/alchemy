@@ -40,7 +40,7 @@ s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
   if ((serviceKind == SANCTUM_SERVICE_REVIVE && unit->hp <= 0) ||
       (serviceKind == SANCTUM_SERVICE_CURE_POISON && unit->poison != 0) ||
       (serviceKind == SANCTUM_SERVICE_REPEL_EVIL && unit->haunt != 0) ||
-      (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE && unit->restraint != 0)) {
+      (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE && unit->curse != 0)) {
     eligible = 1;
   }
   return eligible;
@@ -108,16 +108,16 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
 
   shop = Ram_HeapSlots->menuRuntime;
   cursorSlot = &shop->cursor.anchor;
-  savedCursorMode = (*cursorSlot)->active;
+  savedCursorMode = (*cursorSlot)->motion;
   portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
   messageId = Sanctum_GetServiceMessage(messageId);
-  (*cursorSlot)->active = WINDOW_SPRITE_MOTION_HIDDEN;
+  (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
-  shop->cursor.anchor->active = savedCursorMode;
+  shop->cursor.anchor->motion = savedCursorMode;
 }
 
 void Portrait_CreateFar(s32 portrait, s32 a, s32 b, struct RenderInput *window,
@@ -152,7 +152,7 @@ s32 Sanctum_Run(s32 actorId) {
 
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
                                         listWindow, 0, 0);
-  cursorAnchor->active = WINDOW_SPRITE_MOTION_STILL;
+  cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
   cursorAnchor->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
@@ -233,7 +233,7 @@ s32 Sanctum_RunPartyService(void) {
   Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
 
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
-  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = redraw;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
 #if SANCTUM_HAS_PRICE_WINDOW
@@ -344,7 +344,7 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
 
   unit = Unit_Get(unitId);
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
-    unit->hp = unit->maxHp;
+    unit->hp = unit->hpMax;
     Unit_RecalculateGaugesFar(unitId);
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     unit->poison = 0;
@@ -381,14 +381,14 @@ void Sanctum_HighlightMembers(struct RenderInput *window, s32 selected) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, -12);
       icon->kind = 0;
-      icon->active = WINDOW_SPRITE_MOTION_HOP_UP;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, 0);
       icon->kind = 0;
-      icon->active = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animStep = 0;
     }
     for (i = 0; i < SHOP_PARTY_PAGE_MEMBERS; i++) {
@@ -502,9 +502,9 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   s32 effectIndex;
 
   shop = Ram_HeapSlots->menuRuntime;
-  savedCursorMode = shop->cursor.anchor->active;
+  savedCursorMode = shop->cursor.anchor->motion;
   shop->burstMember = -1;
-  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_HIDDEN;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlayFar(gSanctum_ServiceTunes[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 0);
@@ -577,5 +577,5 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   wait(30);
-  shop->cursor.anchor->active = savedCursorMode;
+  shop->cursor.anchor->motion = savedCursorMode;
 }

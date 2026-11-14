@@ -117,8 +117,8 @@ void Inn_PlaySleep(s32 roomPrice) {
   for (memberIndex = 0; memberIndex < memberCount; memberIndex++) {
     unit = Unit_Get(partyMemberIds[memberIndex]);
     if (unit->hp != 0) {
-      unit->hp = unit->maxHp;
-      unit->pp = unit->maxPp;
+      unit->hp = unit->hpMax;
+      unit->pp = unit->ppMax;
       Unit_RecalculateGaugesFar(partyMemberIds[memberIndex]);
     }
   }

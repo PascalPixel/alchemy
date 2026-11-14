@@ -587,9 +587,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       j = -1;
       WindowSprite_RedrawSavedRect(statusWindow);
       shownRow = j;
-      for (index = 0;
-           index != 32 &&
-           (id = unit->actionSlots[index].encodedAction & 0x3fff) != 0;
+      for (index = 0; index != 32 &&
+                      (id = unit->psynergy[index].encodedAction & 0x3fff) != 0;
            index++) {
         if (Ability_Get(id)->flags & 0x80)
           entries[count++] = id;
@@ -679,10 +678,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
         for (bit = 0; bit <= 19; bit++) {
-          if (unit->djinnActive[element] & (1 << bit)) {
+          if (unit->djinnSet[element] & (1 << bit)) {
             djinnList[djinnCount] = (element << 8) | bit;
             djinnCount++;
-          } else if (unit->djinnAvailable[element] & (1 << bit)) {
+          } else if (unit->djinnHeld[element] & (1 << bit)) {
             struct SummaryRecoveryList *recovery =
                 &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar(
                       (u32)member > 7))
@@ -825,11 +824,11 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
       Text_DrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 24);
-      Text_DrawNumberInWindow(unit->maxHp, 4, statusWindow, 96, 24);
+      Text_DrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
       Text_DrawStringAtOffset(gOwnerStatus_PpString, statusWindow, 40, 32);
       Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
-      Text_DrawNumberInWindow(unit->maxPp, 4, statusWindow, 96, 32);
+      Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
       Text_DrawMessageAsTiles((s32)MsgExp - 10, statusWindow, 136, 16);
       Text_DrawNumberInWindow(unit->atk, 3, statusWindow, SUMMARY_STAT_VALUE_X,
                               16);
@@ -881,7 +880,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         i = 1;
       }
       do {
-        if (unit->restraint != 0) {
+        if (unit->curse != 0) {
           statusKinds[i++] = 15;
         }
         if (i > 7)

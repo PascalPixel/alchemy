@@ -277,7 +277,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     s32 i;
 
     for (i = 0; i < 32; i++) {
-      if ((unit->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK) ==
+      if ((unit->psynergy[i].encodedAction & OWNER_ACTION_ID_MASK) ==
           psynergy) {
         known = 1;
         break;
@@ -392,10 +392,10 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   // digits.
   Text_DrawStringAtOffsetFar(gStatusPanel_HpString, window, 0, 40);
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 40);
-  value = unit->maxHp;
+  value = unit->hpMax;
   Text_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
-  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
+  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
     Text_SetColorFar(TEXT_COLOR_YELLOW);
   }
   if (value == 0) {
@@ -407,7 +407,7 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
   value = unit->pp;
   Text_DrawNumberRightAligned(value, window, 48, 48);
-  value = unit->maxPp;
+  value = unit->ppMax;
   Text_DrawNumberRightAligned(value, window, 88, 48);
 #else
   // Each row string ("HP    /" and "EP    /") holds the label and the slash,
@@ -416,10 +416,10 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   // from 16 at the font's widths, the maximum from 56 a cell a character,
   // ending at 88.
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_HpRowString, window, 0, 40);
-  value = unit->maxHp;
+  value = unit->hpMax;
   Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
-  if (value < unit->maxHp >> 2) { // below a quarter of maximum HP
+  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
     Text_SetColorFar(TEXT_COLOR_YELLOW);
   }
   if (value == 0) {
@@ -430,7 +430,7 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
   Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
   value = unit->pp;
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
-  value = unit->maxPp;
+  value = unit->ppMax;
   Text_DrawNumberInWindowFar(value, 4, window, 56, 48);
 #endif
 }
@@ -492,7 +492,7 @@ s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
 /// OAM attributes, with no affine matrix.
 void Icon_PrepareActor(struct WindowSprite *object) {
   if (object != NULL) {
-    object->active = ICON_SHOWN;
+    object->motion = ICON_SHOWN;
     object->sprite.oam.x = object->x;
     object->sprite.oam.y = object->y;
     object->sprite.oam.matrix = 0;
@@ -526,7 +526,7 @@ struct RenderInput *MenuCursor_Create(void *source) {
   window = work->auxiliaryWindow;
   Window_DrawDividerLineFar((s32)window, 0, 3, 12, 3);
   icon = (struct WindowSprite *)Icon_CreateWithResource(window, -8, 11);
-  icon->active = ICON_HIDDEN;
+  icon->motion = ICON_HIDDEN;
   work->tabIndex[0] = 255;
   work->sideIcon[0] = icon;
   sentinel = 254;
@@ -538,14 +538,14 @@ struct RenderInput *MenuCursor_Create(void *source) {
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopUpArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, -4);
-    icon->active = ICON_HIDDEN;
+    icon->motion = ICON_HIDDEN;
     work->pageArrows[0] = icon;
   }
   slot = VramCache_FindFreeEntry();
   if (slot <= 95) {
     VramBlock_LoadResourceFar(slot, 128, (s32)&ResourceId_ShopDownArrowTiles);
     icon = WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, 84, 8);
-    icon->active = ICON_HIDDEN;
+    icon->motion = ICON_HIDDEN;
     work->pageArrows[1] = icon;
   }
   return window;
@@ -746,7 +746,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   s32 top;
   s32 left;
 
-  menu->sideIcons[0]->active = ICON_HIDDEN;
+  menu->sideIcons[0]->motion = ICON_HIDDEN;
   if (y != -1) {
     Text_GetMessageSizeFar(message, &left, &top, &width, &height);
     if (Window_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
@@ -777,7 +777,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
     GameFlag_Set(337);
   }
   menu->completionFlag = 1;
-  menu->sideIcons[0]->active = ICON_SHOWN;
+  menu->sideIcons[0]->motion = ICON_SHOWN;
 #if TLA_PATCH_1
   if (y != -1)
     ((void (*)(void **, s32))Window_CloseIfOpen)((void **)&menu->modalWindow,
@@ -1081,7 +1081,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   for (i = 0; i < 32; i++) {
     icon = menu->entryIcons[i];
     if (icon != NULL)
-      icon->active = WINDOW_SPRITE_MOTION_HIDDEN;
+      icon->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   }
   for (i = first;
        i < pageSize + first && (icon = menu->entryIcons[i]) != NULL &&
@@ -1090,7 +1090,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
     icon->x = x;
     icon->y = y + (i - first) * 16;
     Icon_PrepareActor(icon);
-    icon->active = WINDOW_SPRITE_MOTION_STILL;
+    icon->motion = WINDOW_SPRITE_MOTION_STILL;
   }
 }
 

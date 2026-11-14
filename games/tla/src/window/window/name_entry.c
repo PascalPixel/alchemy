@@ -154,7 +154,7 @@ s32 Text_SetString(const u8 *str) {
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   count = 0;
   if (*str != 0) {
-    dst = work->entries;
+    dst = work->textBuffer;
     do {
       *dst = *str;
       str++;
@@ -162,7 +162,7 @@ s32 Text_SetString(const u8 *str) {
       count++;
     } while (*str != 0);
   }
-  work->entries[count] = 0;
+  work->textBuffer[count] = 0;
   Text_MeasureDecoded(0, &width, &height, 0);
   return width;
 }
@@ -492,7 +492,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == NAME_FINISH_ROW) {
         if (letterCount == 0) {
-          nameCaret.sprite->active = WINDOW_SPRITE_MOTION_HIDDEN;
+          nameCaret.sprite->motion = WINDOW_SPRITE_MOTION_HIDDEN;
           WindowSprite_PrepareForRedraw(nameWindow);
           Text_DrawString(originalName, (s32)nameWindow, 0, 0);
           wait(10);
@@ -739,7 +739,7 @@ s32 NameEntry_EditMemberName(s32 member) {
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         if (letterCount == 0) {
-          nameCaret.sprite->active = WINDOW_SPRITE_MOTION_HIDDEN;
+          nameCaret.sprite->motion = WINDOW_SPRITE_MOTION_HIDDEN;
           WindowSprite_PrepareForRedraw(nameWindow);
           NameEntry_DrawName((s32)nameWindow, originalName);
           wait(10);

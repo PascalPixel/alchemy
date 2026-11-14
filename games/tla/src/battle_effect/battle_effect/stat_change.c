@@ -285,7 +285,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       if (frame == member * 8 + 80)
         Sound_PlayFar(SE_POWER_UP);
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       // The lights turn about two thirds of the target's height.
       point[0] = object->x;
       point[1] = height;
@@ -575,12 +575,12 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
       if (time > 0) {
         // The picture stands 40 pixels above the target.
         Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        Transform_SetLookAt(camera->eye, camera->focus);
         point[0] = object->x;
         point[1] = 160 << 13;
         point[2] = object->z;
         Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        Transform_SetLookAt(camera->eye, camera->focus);
         SceneTransform_ApplyPosition(point);
         origin[0] = 0;
         origin[1] = 0;

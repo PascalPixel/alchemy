@@ -55,16 +55,16 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
   if ((s8)slot >= 0) {
     n = 0;
     do {
-      u32 value = work->tileCursor;
+      u32 value = work->nextTextTile;
       u32 following = (value + 1) % 128;
 
       slot = (u8)value;
-      work->tileCursor = following;
-      if (work->tileAttributes[slot] == 0)
+      work->nextTextTile = following;
+      if (work->textTileState[slot] == 0)
         break;
       n++;
     } while (n < 128);
-    work->tileAttributes[slot] = 1;
+    work->textTileState[slot] = 1;
     slot |= 0x80;
     *entry = slot | 0xf000;
     *mirror = slot | 0xf000;
@@ -235,16 +235,16 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
     u32 tile;
     u32 *p;
 
-    if (work->alt != 0)
+    if (work->extraTextTiles != 0)
       mask = 255;
     tile = *tiles & 0x3FF;
     if ((tile < 0x80 || tile > 0xFF) &&
-        (work->alt == 0 || tile < 0x200 || tile > 0x27F)) {
-      tile = work->tileCursor & mask;
-      for (j = 0; j <= mask && work->tileAttributes[tile] != 0; j++)
+        (work->extraTextTiles == 0 || tile < 0x200 || tile > 0x27F)) {
+      tile = work->nextTextTile & mask;
+      for (j = 0; j <= mask && work->textTileState[tile] != 0; j++)
         tile = (tile + 1) & mask;
-      work->tileCursor = (tile + 1) & mask;
-      work->tileAttributes[tile] = 1;
+      work->nextTextTile = (tile + 1) & mask;
+      work->textTileState[tile] = 1;
       if (tile > 127)
         tile += 0x180;
       else
@@ -271,7 +271,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = Ram_HeapSlots->windowTiles;
   u16 *cursor = &((struct WindowWork *)base)->tilemap[y][x];
-  u32 alternate = ((struct WindowWork *)base)->alt;
+  u32 alternate = ((struct WindowWork *)base)->extraTextTiles;
   u32 row;
 
   for (row = 0; row < height; row++) {
@@ -284,7 +284,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
         u32 index = ((tile & 0xff) ^ 0x80);
 
-        ((struct WindowWork *)base)->tileAttributes[index] &= 0xfc;
+        ((struct WindowWork *)base)->textTileState[index] &= 0xfc;
       }
     }
     cursor += 32 - width;
@@ -293,7 +293,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = Ram_HeapSlots->windowTiles;
-  u32 alternate = ((struct WindowWork *)base)->alt;
+  u32 alternate = ((struct WindowWork *)base)->extraTextTiles;
   u16 *cursor = ((struct WindowWork *)base)->tilemap[0];
   s32 width = 30;
   s32 row;
@@ -307,14 +307,14 @@ void Window_MarkVisibleTextTiles(void) {
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
         u32 index = ((tile & 0xff) ^ 0x80);
 
-        ((struct WindowWork *)base)->tileAttributes[index] |= 2;
+        ((struct WindowWork *)base)->textTileState[index] |= 2;
       }
     }
   }
 
   for (row = 0; row < 256; row++, base++) {
-    if (((struct WindowWork *)base)->tileAttributes[0] == 1)
-      ((struct WindowWork *)base)->tileAttributes[0] = 0;
+    if (((struct WindowWork *)base)->textTileState[0] == 1)
+      ((struct WindowWork *)base)->textTileState[0] = 0;
   }
 }
 
@@ -528,14 +528,14 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 
 void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  u16 *counter = &canvas->count;
+  u16 *counter = &canvas->textBufferEnd;
   s32 zero = 0;
 
   *counter = zero;
   Message_Decode(arg0, 1);
-  canvas->entries[*counter] = zero;
+  canvas->textBuffer[*counter] = zero;
   *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-  Text_DrawWideStringAtOffset(canvas->entries, (struct Window *)arg1, arg2,
+  Text_DrawWideStringAtOffset(canvas->textBuffer, (struct Window *)arg1, arg2,
                               arg3);
 }
 
@@ -555,12 +555,12 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
   u16 *counter;
 
   canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
-  counter = &canvas->count;
+  counter = &canvas->textBufferEnd;
   zero = 0;
   *counter = zero;
   Message_Decode(character, 1);
 
-  canvas->entries[*counter] = zero;
+  canvas->textBuffer[*counter] = zero;
   *counter = (u16)((*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1));
 
   cell = (((s16)position->y + (offsetY >> 3) + 1) << 5) +
@@ -568,7 +568,7 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
   if (cell < 0x280U) {
     byteOffset = cell * 2;
     vramAddress = byteOffset + 0x06002000;
-    text = canvas->entries;
+    text = canvas->textBuffer;
     Text_DrawStringAsTiles(text, (s32)((u8 *)canvas->tilemap + byteOffset),
                            vramAddress, 7 & offsetX);
   }

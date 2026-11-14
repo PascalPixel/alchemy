@@ -343,7 +343,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 lineStart = 1;
 #endif
   s32 quote = 0;
-  u32 start = work->count;
+  u32 start = work->textBufferEnd;
   u32 decodedCount = 0;
 #if TLA_PATCH_2
   s32 afterItem;
@@ -353,7 +353,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 running = 1;
   u32 writePosition = start;
   u32 previousCode;
-  u16 *entry = work->entries;
+  u16 *entry = work->textBuffer;
   s32 overflow = 0;
 #if TLA_PATCH_2
   s32 form;
@@ -389,7 +389,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   afterItem = 0;
 #endif
   if (script == -1) {
-    start = work->unknownAfterCount;
+    start = work->lastMessageStart;
   } else {
     RamCode_LoadSlot(TEXT_DECODER_SLOT, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
@@ -466,16 +466,16 @@ s32 Message_Decode(s32 script, s32 clear) {
         }
       } else {
 #if TLA_PATCH_2
-        if (work->unk138a[0] != 0) {
+        if (work->haltingSpeech != 0) {
           TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 #else
-        if (work->unk138a[0] != 0 && lineStart == 0 &&
+        if (work->haltingSpeech != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
           TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 
-        if (work->unk138a[1] != 0 && lineStart == 0 &&
+        if (work->spacingAfter != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
             previousCode != TEXT_MARK_VOICED &&
@@ -488,7 +488,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
 
         if (code > 31 && code != MESSAGE_EM_DASH) {
-          if (work->unk138a[0] != 0 && (code == 32 || decodedCount > 10)) {
+          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
@@ -832,9 +832,9 @@ s32 Message_Decode(s32 script, s32 clear) {
     TEXT_APPEND(entry, writePosition, (u16)code);
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    work->count = (u16)nextPosition;
+    work->textBufferEnd = (u16)nextPosition;
     HeapSlot_Release(TEXT_DECODER_SLOT);
-    work->unknownAfterCount = (u16)start;
+    work->lastMessageStart = (u16)start;
   }
 
   if (clear != 0)
@@ -896,11 +896,11 @@ s32 Message_Decode(s32 script, s32 clear) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 code = 0;
   s32 lineStart = 1;
-  u32 start = work->count;
+  u32 start = work->textBufferEnd;
   u32 decodedCount = 0;
   s32 running = 1;
   u32 writePosition = start;
-  u16 *entry = work->entries;
+  u16 *entry = work->textBuffer;
   u8 mode = work->battleMode & WINDOW_BATTLE_MESSAGE;
   s32 (*decode)(struct TextReader *);
   s32 overflow = 0;
@@ -923,7 +923,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   struct HeapSlots *slots;
 
   if (script == -1) {
-    start = work->unknownAfterCount;
+    start = work->lastMessageStart;
   } else {
     RamCode_LoadSlot(TEXT_DECODER_SLOT, Text_DecodeSymbolCode,
                      Text_DecodeSymbolCodeSize);
@@ -981,12 +981,12 @@ s32 Message_Decode(s32 script, s32 clear) {
           }
         }
       } else {
-        if (work->unk138a[0] != 0 && lineStart == 0 &&
+        if (work->haltingSpeech != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
           TEXT_APPEND(entry, writePosition, ENTRY_NARROW_GAP);
         }
 
-        if (work->unk138a[1] != 0 && lineStart == 0 &&
+        if (work->spacingAfter != 0 && lineStart == 0 &&
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
             previousCode != TEXT_MARK_VOICED &&
@@ -1002,7 +1002,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             TEXT_APPEND(entry, writePosition, (u16)code);
           }
           // The ellipsis here is three of code 165, then code 161.
-          if (work->unk138a[0] != 0 && (code == 32 || decodedCount > 10)) {
+          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
@@ -1151,9 +1151,9 @@ s32 Message_Decode(s32 script, s32 clear) {
     TEXT_APPEND(entry, writePosition, (u16)code);
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-    work->count = (u16)nextPosition;
+    work->textBufferEnd = (u16)nextPosition;
     HeapSlot_Release(TEXT_DECODER_SLOT);
-    work->unknownAfterCount = (u16)start;
+    work->lastMessageStart = (u16)start;
   }
 
   if (clear != 0)

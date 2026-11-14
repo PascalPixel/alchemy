@@ -267,7 +267,7 @@ void PartyStatus_Draw(s32 flags) {
   for (i = 0; i != count; i++) {
     struct BattleUnit *unit = Unit_Get(members[i]);
     s32 hp = unit->hp;
-    s32 maxHp = unit->maxHp;
+    s32 maxHp = unit->hpMax;
     s32 barLength;
     s32 current;
 
@@ -286,9 +286,9 @@ void PartyStatus_Draw(s32 flags) {
     Text_DrawStringAtOffset(unit->name, (struct RenderInput *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Text_SetColor(TEXT_COLOR_WHITE);
-    if (unit->maxHp != 0) {
+    if (unit->hpMax != 0) {
       current = unit->hp;
-      barLength = (current * 40) / unit->maxHp;
+      barLength = (current * 40) / unit->hpMax;
       if (barLength == 0 && current != 0)
         barLength = 1;
       PartyStatus_DrawBars((struct RenderInput *)window,
@@ -302,9 +302,9 @@ void PartyStatus_Draw(s32 flags) {
       Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                       (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                       y * 8 + 16, 1);
-      if (unit->maxPp != 0) {
+      if (unit->ppMax != 0) {
         current = unit->pp;
-        barLength = (current * 40) / unit->maxPp;
+        barLength = (current * 40) / unit->ppMax;
         if (barLength == 0 && current != 0)
           barLength = 1;
         PartyStatus_DrawBars((struct RenderInput *)window,

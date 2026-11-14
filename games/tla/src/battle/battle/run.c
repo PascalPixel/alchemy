@@ -63,7 +63,7 @@ void BattleParty_SwapInReserves(void) {
 void BattleCamera_Create(void) {
   struct BattleCamera *camera =
       HeapSlot_AllocEwram(48, sizeof(struct BattleCamera));
-  s32 *focus = camera->pos;
+  s32 *focus = camera->focus;
 
   SET_VECTOR(focus, 0, px(64), 0);
   SET_VECTOR(camera->eye, 0, px(180), px(64));

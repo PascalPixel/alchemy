@@ -59,13 +59,13 @@
       (count)++;                                                               \
     if ((unit)->resistanceStage > 0)                                           \
       (count)++;                                                               \
-    if ((unit)->elementLevels[0] > 0)                                          \
+    if ((unit)->summonBoost[0] > 0)                                            \
       (count)++;                                                               \
-    if ((unit)->elementLevels[1] > 0)                                          \
+    if ((unit)->summonBoost[1] > 0)                                            \
       (count)++;                                                               \
-    if ((unit)->elementLevels[2] > 0)                                          \
+    if ((unit)->summonBoost[2] > 0)                                            \
       (count)++;                                                               \
-    if ((unit)->elementLevels[3] > 0)                                          \
+    if ((unit)->summonBoost[3] > 0)                                            \
       (count)++;                                                               \
   }
 
@@ -126,7 +126,7 @@
     case ABILITY_EFFECT_HEAL_HP_30:                                            \
     case 70:                                                                   \
     case 71:                                                                   \
-      if ((unit)->hp < (unit)->maxHp)                                          \
+      if ((unit)->hp < (unit)->hpMax)                                          \
         (applies) = 1;                                                         \
       break;                                                                   \
     case ABILITY_EFFECT_BREAK:                                                 \
@@ -169,7 +169,7 @@
       break;                                                                   \
     case ABILITY_EFFECT_TOTAL_DEFENSE:                                         \
     case 88:                                                                   \
-      if ((unit)->guardLevel <= 1)                                             \
+      if ((unit)->defendLevel <= 1)                                            \
         (applies) = 1;                                                         \
       break;                                                                   \
     case 0:                                                                    \
@@ -201,11 +201,11 @@
           (applies)++;                                                         \
         break;                                                                 \
       case ABILITY_FORMULA_HEAL_HP - 1:                                        \
-        if ((unit)->hp != 0 && (unit)->hp < (unit)->maxHp)                     \
+        if ((unit)->hp != 0 && (unit)->hp < (unit)->hpMax)                     \
           (applies)++;                                                         \
         break;                                                                 \
       case ABILITY_FORMULA_HEAL_PP - 1:                                        \
-        if ((unit)->pp < (unit)->maxPp)                                        \
+        if ((unit)->pp < (unit)->ppMax)                                        \
           (applies)++;                                                         \
         break;                                                                 \
       case ABILITY_FORMULA_EFFECT - 1:                                         \
@@ -323,8 +323,8 @@ s32 BattleAI_ChooseTarget(s32 actorId, struct BattleAct *action) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
         } else {
-          value = thisUnit->maxHp;
-          nextValue = nextUnit->maxHp;
+          value = thisUnit->hpMax;
+          nextValue = nextUnit->hpMax;
         }
         if (value < nextValue) {
           temp = unitIds[innerIndex];
@@ -730,7 +730,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 
 #define GUARD_CUT()                                                            \
   {                                                                            \
-    guard = target->guardLevel;                                                \
+    guard = target->defendLevel;                                               \
     if (guard != 0) {                                                          \
       if (guard == 1)                                                          \
         dmg /= 2;                                                              \
@@ -840,7 +840,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
     }
     break;
   }
-  if (target->guardLevel == 4 && (u32)(aid ^ tid) >> 7 != 0) {
+  if (target->defendLevel == 4 && (u32)(aid ^ tid) >> 7 != 0) {
     BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, tid);
     BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
     MESSAGE_PUSH(MsgNoEffect);
@@ -1030,7 +1030,7 @@ power_end:
     case 4: {
       s32 def;
 
-      if (target->guardLevel == 4)
+      if (target->defendLevel == 4)
         break;
       hp = target->hp;
       def = target->def;
@@ -1129,7 +1129,7 @@ power_end:
     }
 
     case 10: {
-      if (target->guardLevel == 4)
+      if (target->defendLevel == 4)
         break;
       if (action->power == 0)
         break;
@@ -1180,12 +1180,12 @@ power_end:
       dmg *= adj;
       dmg += Battle_RandomFar() & 3;
       cur += dmg;
-      if (cur > target->maxHp) {
-        cur = target->maxHp;
+      if (cur > target->hpMax) {
+        cur = target->hpMax;
         dmg = cur - target->hp;
       }
       BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
-      if (cur == target->maxHp)
+      if (cur == target->hpMax)
         MESSAGE_PUSH(MsgHpFull);
       else {
         BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
@@ -1198,7 +1198,7 @@ power_end:
     }
 
     case -1: {
-      if (target->guardLevel == 4)
+      if (target->defendLevel == 4)
         break;
       if (action->power == 0)
         break;
@@ -1235,7 +1235,7 @@ power_end:
     case 8: {
       s32 round;
 
-      if (target->guardLevel == 4)
+      if (target->defendLevel == 4)
         break;
       if (action->power == 0)
         break;
@@ -1315,7 +1315,7 @@ power_end:
             rate = 40;
             break;
           }
-          value = target->maxHp;
+          value = target->hpMax;
           if (value > 10000)
             value = 10000;
           ap += value * rate / 100;
@@ -1390,12 +1390,12 @@ power_end:
       dmg = dmg * gRangeFalloff_HealPp[dist] / 100;
       dmg *= adj;
       pp += dmg;
-      if (pp > target->maxPp) {
-        pp = target->maxPp;
+      if (pp > target->ppMax) {
+        pp = target->ppMax;
         dmg = pp - target->pp;
       }
       BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, tid);
-      if (pp == target->maxPp)
+      if (pp == target->ppMax)
         MESSAGE_PUSH(MsgPpFull);
       else {
         BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
@@ -1412,7 +1412,7 @@ power_end:
       break;
 
     case 2:
-      if (target->guardLevel == 4)
+      if (target->defendLevel == 4)
         break;
       if (hit != 0) {
         if (action->power == 0)
@@ -1556,7 +1556,7 @@ power_end:
       s32 heal;
       u16 *pt;
 
-      /* FAKEMATCH(temporary): a pointer walked down from hp to maxHp reads each
+      /* FAKEMATCH(temporary): a pointer walked down from hp to hpMax reads each
        * stat twice. */
       pt = (u16 *)&target->hp;
       old = *pt--;
@@ -1574,7 +1574,7 @@ power_end:
         maxv = *(s16 *)(pt + 1);
         heal += maxv * 7 / 10;
       } else if (action->effect == 70) {
-        maxu = (u16)target->maxHp;
+        maxu = (u16)target->hpMax;
         heal += (s16)maxu / 2;
         /* FAKEMATCH(barrier): an empty asm on maxu. */
         asm("" : "+r"(maxu));
@@ -1615,14 +1615,14 @@ power_end:
       s32 maxu;
       u16 *pt;
 
-      /* FAKEMATCH(temporary): a pointer walked down from pp to maxPp reads each
+      /* FAKEMATCH(temporary): a pointer walked down from pp to ppMax reads each
        * stat twice. */
       pt = (u16 *)&target->pp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
       if (action->effect == 77) {
-        maxv = target->maxPp;
-        maxu = (u16)target->maxPp;
+        maxv = target->ppMax;
+        maxu = (u16)target->ppMax;
         heal += (s16)maxv / 10;
       } else if (action->effect == 78) {
         pt--;
@@ -1749,7 +1749,7 @@ power_end:
       if (target->hp != 0)
         break;
       MESSAGE_PUSH(MsgRevived);
-      target->hp = target->maxHp;
+      target->hp = target->hpMax;
       Unit_RecalculateGaugesFar(tid);
       break;
 
@@ -1757,7 +1757,7 @@ power_end:
       if (target->hp != 0)
         break;
       MESSAGE_PUSH(MsgRevived);
-      target->hp = target->maxHp / 2;
+      target->hp = target->hpMax / 2;
       Unit_RecalculateGaugesFar(tid);
       break;
 
@@ -1765,7 +1765,7 @@ power_end:
       if (target->hp != 0)
         break;
       MESSAGE_PUSH(MsgRevived);
-      target->hp = target->maxHp * 8 / 10;
+      target->hp = target->hpMax * 8 / 10;
       Unit_RecalculateGaugesFar(tid);
       break;
 
@@ -1773,7 +1773,7 @@ power_end:
       if (target->hp != 0)
         break;
       MESSAGE_PUSH(MsgRevived);
-      target->hp = (s16)(target->maxHp * 6 / 10);
+      target->hp = (s16)(target->hpMax * 6 / 10);
       Unit_RecalculateGaugesFar(tid);
       break;
 
@@ -1881,7 +1881,7 @@ power_end:
 
     case 29:
       MESSAGE_PUSH(MsgHpRegen);
-      target->refrain = 5;
+      target->regenerate = 5;
       break;
 
     case 30:
@@ -1898,13 +1898,13 @@ power_end:
         ap /= 2;
       kind = ap;
       dmg += kind;
-      if (dmg > actor->maxHp) {
-        dmg = actor->maxHp;
+      if (dmg > actor->hpMax) {
+        dmg = actor->hpMax;
         kind = dmg - actor->hp;
       }
       BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
       BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, aid);
-      if (dmg == actor->maxHp)
+      if (dmg == actor->hpMax)
         MESSAGE_PUSH(MsgHpFull);
       else {
         BattlePlayback_Push(BATTLE_EVENT_NUMBER, kind);
@@ -1921,13 +1921,13 @@ power_end:
       heal = actor->pp;
       amt = dealt;
       heal += amt;
-      if (heal > actor->maxPp) {
-        heal = actor->maxPp;
+      if (heal > actor->ppMax) {
+        heal = actor->ppMax;
         amt = heal - actor->pp;
       }
       BattlePlayback_Push(BATTLE_EVENT_CLEAR_ARGUMENTS, 0);
       BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, aid);
-      if (heal == actor->maxPp)
+      if (heal == actor->ppMax)
         MESSAGE_PUSH(MsgPpFull);
       else {
         BattlePlayback_Push(BATTLE_EVENT_NUMBER, amt);
@@ -1942,8 +1942,8 @@ power_end:
       dmg = dealt / 10;
       if (target->pp < dmg)
         dmg = target->pp;
-      if (actor->pp + dmg > actor->maxPp)
-        dmg = actor->maxPp - actor->pp;
+      if (actor->pp + dmg > actor->ppMax)
+        dmg = actor->ppMax - actor->pp;
       if (dmg == 0)
         break;
       BattlePlayback_Push(BATTLE_EVENT_NUMBER, dmg);
@@ -1952,7 +1952,7 @@ power_end:
       break;
 
     case 84:
-      dmg = (s16)(target->maxPp / 10);
+      dmg = (s16)(target->ppMax / 10);
       if (target->pp < dmg)
         dmg = target->pp;
       if (dmg == 0)
@@ -1977,10 +1977,10 @@ power_end:
       }
       if (target->agilityStage > 0)
         target->agilityStage = 0;
-      target->elementLevels[0] = 0;
-      target->elementLevels[1] = 0;
-      target->elementLevels[2] = 0;
-      target->elementLevels[3] = 0;
+      target->summonBoost[0] = 0;
+      target->summonBoost[1] = 0;
+      target->summonBoost[2] = 0;
+      target->summonBoost[3] = 0;
       MESSAGE_PUSH(MsgBuffsReset);
       break;
 
@@ -2025,31 +2025,31 @@ power_end:
     case 46:
 
       MESSAGE_PUSH(MsgAura);
-      if (target->guardLevel > 0)
+      if (target->defendLevel > 0)
         break;
-      target->guardLevel = 1;
+      target->defendLevel = 1;
       break;
 
     case 72:
       MESSAGE_PUSH(MsgAura);
-      if ((u32)target->guardLevel > 1)
+      if ((u32)target->defendLevel > 1)
         break;
-      target->guardLevel = 2;
+      target->defendLevel = 2;
       break;
 
     case 47:
     case 88:
       MESSAGE_PUSH(MsgAura2);
-      if (target->guardLevel > 2)
+      if (target->defendLevel > 2)
         break;
-      target->guardLevel = 3;
+      target->defendLevel = 3;
       break;
 
     case 79:
       MESSAGE_PUSH(MsgVanished);
-      if ((u32)target->guardLevel > 3)
+      if ((u32)target->defendLevel > 3)
         break;
-      target->guardLevel = 4;
+      target->defendLevel = 4;
       break;
 
     case 45:

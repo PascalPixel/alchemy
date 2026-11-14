@@ -94,7 +94,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
     if (frame == gVortices_Counts[effect->variant * 2 + 1] - 16)
       BattlePlayback_StartFar(133);
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     for (i = 0; i != gVortices_Counts[effect->variant * 2]; i++) {
       point = &work->particles[i];

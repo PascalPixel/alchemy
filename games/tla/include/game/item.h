@@ -33,7 +33,7 @@ enum InventoryEncoding {
 
 /// The bits of ItemDefinition.flags.
 enum ItemFlags {
-  ITEM_CURSED = 1, ///< equipping it curses the wearer (BattleUnit.restraint)
+  ITEM_CURSED = 1, ///< equipping it curses the wearer (BattleUnit.curse)
   /// Once equipped it cannot be taken off, or dropped while worn.
   ITEM_CANNOT_UNEQUIP = 2,
   /// A rare item: the rare weapons and armour, keys and the other

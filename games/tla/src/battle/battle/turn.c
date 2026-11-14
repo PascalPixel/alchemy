@@ -20,18 +20,18 @@ void BattleCamera_SetCommandView(s32 pos) {
   u32 result;
   s32 one;
 
-  state->pos[1] = px(5);
-  state->pos[0] = 0;
-  state->pos[2] = 0;
+  state->focus[1] = px(5);
+  state->focus[0] = 0;
+  state->focus[2] = 0;
   secondary->targetYaw = TRIG_TURN / 4;
   state->yaw = TRIG_TURN / 4;
   state->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
-  state->followPos = 0;
+  state->followPosition = 0;
   state->distance = px(750);
-  state->unk18 = 0;
+  state->followEye = 0;
 
   Transform_Reset();
-  SceneTransform_ApplyPosition(&state->pos[0]);
+  SceneTransform_ApplyPosition(&state->focus[0]);
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 
@@ -61,7 +61,7 @@ void BattleUnit_ResetGuardLevels(void) {
     struct BattleUnit *actor;
 
     actor = Unit_Get(ids[index]);
-    actor->guardLevel = 0;
+    actor->defendLevel = 0;
     Unit_CalculateFar(ids[index]);
   }
 }
@@ -155,7 +155,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
     struct BattleUnit *unit = Unit_Get(unitId);
     s32 copyIndex;
 
-    for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {
+    for (copyIndex = 0; copyIndex < unit->actionsPerTurn; copyIndex++) {
       struct BattleActionRecord *entry = &entries[entryCount];
       s32 agility;
 
@@ -163,7 +163,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
       agility = unit->agi;
       entry->priority = agility;
       entry->unk0e = copyIndex;
-      if (unit->actionEntryCount == 4) {
+      if (unit->actionsPerTurn == 4) {
         if (copyIndex == 0)
           ;
         else if (copyIndex == 1)
@@ -172,7 +172,7 @@ s32 Battle_BuildOpponentActions(struct BattleActionRecord *entries) {
           entry->priority = (s16)agility * 4 / 6;
         else
           entry->priority = (s16)agility / 2;
-      } else if (unit->actionEntryCount == 3) {
+      } else if (unit->actionsPerTurn == 3) {
         if (copyIndex == 0)
           ;
         else if (copyIndex == 1)
@@ -517,7 +517,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
     do {
       if (act->command == 3 || act->command == 7) {
         unit = Unit_Get(act->unitId);
-        unit->guardLevel = act->command == 3 ? 1 : 3;
+        unit->defendLevel = act->command == 3 ? 1 : 3;
       }
       act++;
       i--;

@@ -18,36 +18,36 @@ void Window_UpdateZooms(void) {
 
   do {
     if (work->flags != 0) {
-      if ((s16)work->frame != 0) {
+      if ((s16)work->zoomStage != 0) {
         Window_DrawZoomBorder(work, 0);
-        work->frame = (s16)work->frame - 1;
+        work->zoomStage = (s16)work->zoomStage - 1;
       } else if (work->duration != 0) {
         Window_DrawOpened(work);
       }
     } else if (work->duration != 0) {
-      if ((s16)work->frame != work->duration) {
+      if ((s16)work->zoomStage != work->duration) {
         Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
                                (s16)work->previousWidth,
                                (s16)work->previousHeight);
         Window_DrawZoomBorder(work, 1);
-        work->frame++;
+        work->zoomStage++;
         dirty = 1;
         state->dirty = dirty;
       } else {
         Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
                                (s16)work->previousWidth,
                                (s16)work->previousHeight);
-        work->output.head = NULL;
-        work->output.tailLink = NULL;
+        work->sprites.head = NULL;
+        work->sprites.tailLink = NULL;
         work->width = 0;
         work->height = 0;
         work->x = 0;
         work->y = 0;
-        work->unk10 = 0;
-        work->effect = 0;
+        work->opened = 0;
+        work->animation = 0;
         work->state = 0;
         work->flags = 0;
-        work->frame = 0;
+        work->zoomStage = 0;
         work->duration = 0;
         work->previousX = 0;
         work->previousY = 0;
@@ -82,7 +82,7 @@ void Window_DrawZoomBorder(struct Window *window, s32 save_position) {
   s32 width;
   s32 height;
 
-  stage = (s16)window->frame;
+  stage = (s16)window->zoomStage;
   duration = window->duration;
   remaining = duration - stage;
   // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point, as in The Broken
@@ -142,13 +142,13 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   if (width <= 1 || height <= 1 || width > 30 || height > 30)
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
-  if (canvas->mode != 0)
+  if (canvas->mindRead != 0)
     *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER;
   else
     *cursor++ = WINDOW_TILE_BORDER_TOP_LEFT;
   cursor = Memory_FillHalfwordsDma(
       cursor, WINDOW_TILE_PAIR(WINDOW_TILE_BORDER_TOP), width - 2);
-  if (canvas->mode != 0)
+  if (canvas->mindRead != 0)
     *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP;
   else
     *cursor++ = WINDOW_TILE_BORDER_TOP_RIGHT;
@@ -161,13 +161,13 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
     *cursor++ = WINDOW_TILE_BORDER_RIGHT;
     cursor += 32 - width;
   }
-  if (canvas->mode != 0)
+  if (canvas->mindRead != 0)
     *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_VFLIP;
   else
     *cursor++ = WINDOW_TILE_BORDER_BOTTOM_LEFT;
   cursor = Memory_FillHalfwordsDma(
       cursor, WINDOW_TILE_PAIR(WINDOW_TILE_BORDER_BOTTOM), width - 2);
-  if (canvas->mode != 0)
+  if (canvas->mindRead != 0)
     *cursor = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP | TILE_VFLIP;
   else
     *cursor = WINDOW_TILE_BORDER_BOTTOM_RIGHT;
@@ -278,7 +278,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->lineSpacing = 10;
   state->outline = 0;
   state->colour = 15;
-  state->count = 0;
+  state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
 }
 
@@ -294,7 +294,7 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
   state->lineSpacing = 10;
   state->outline = 0;
   state->colour = 15;
-  state->count = 0;
+  state->textBufferEnd = 0;
   if (initialize != 0)
     Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
   else
@@ -342,7 +342,7 @@ void BattleMessage_Open(s32 message) {
   work->battleMode = 2;
   entry = Message_Decode(message, 1);
   work->battleMode = 1;
-  if (work->entries[entry] != 0) {
+  if (work->textBuffer[entry] != 0) {
     previous = slot->window;
     if (previous == NULL) {
       window = Window_Create(0, 15, 30, 6,
@@ -387,7 +387,7 @@ s32 Message_OpenDecoded(s32 window, s32 argument) {
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
   entry = Message_Decode(argument, 1);
-  if (work->entries[entry] == 0)
+  if (work->textBuffer[entry] == 0)
     return 0;
   if (window == 0)
     return 0;
@@ -437,7 +437,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   packed &= 0xffff;
   flags = 0;
   entry = Message_Decode(message, 1);
-  if (work->entries[entry] == 0)
+  if (work->textBuffer[entry] == 0)
     return NULL;
   Window_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
@@ -457,8 +457,8 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
     Window_Close(window, 1);
     return NULL;
   }
-  work->unk138a[0] = 0;
-  work->unk138a[1] = 0;
+  work->haltingSpeech = 0;
+  work->spacingAfter = 0;
   return window;
 }
 

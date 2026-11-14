@@ -6,21 +6,22 @@
 /// A window: a bordered rectangle of the tilemap with its sprite outputs, its
 /// opening or closing animation and the rectangle it last drew.
 struct Window {
-  struct WindowSpriteList output; ///< the sprites the window carries
-  u16 width;                      ///< tiles
-  u16 height;                     ///< tiles
-  u16 x;                          ///< tiles
-  u16 y;                          ///< tiles
-  u16 unk10; ///< 1 once opened, 0 once freed; not read by name in ⚓️
-  /// The effect a message's window-state code sets, as in ☀️.
-  u16 effect;
+  struct WindowSpriteList sprites; ///< the sprites the window carries
+  u16 width;                       ///< tiles
+  u16 height;                      ///< tiles
+  u16 x;                           ///< tiles
+  u16 y;                           ///< tiles
+  u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
+  /// The animation a message's window-state code sets.
+  u16 animation;
   /// 0 while a message channel is typing into the window; nonzero once it is
   /// done, which frees the channel for the next text.
   u16 state;
   u16 flags; ///< 0 once closing or free
-  /// The zoom's step: counts down while opening, up to duration while
+  /// The zoom's stage: counts down while opening, up to duration while
   /// closing.
-  u16 frame;
+  u16 zoomStage;
+
   s16 duration;       ///< frames of the zoom under way; 0 when none
   u16 previousX;      ///< tiles
   u16 previousY;      ///< tiles
@@ -30,7 +31,7 @@ struct Window {
 
 STATIC_ASSERT(sizeof(struct Window) == 0x24);
 STATIC_ASSERT(offsetof(struct Window, width) == 8);
-STATIC_ASSERT(offsetof(struct Window, frame) == 0x18);
+STATIC_ASSERT(offsetof(struct Window, zoomStage) == 0x18);
 STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
 
 /// A text channel, one of three, which types decoded text into a window a few

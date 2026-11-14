@@ -103,8 +103,8 @@
 #define MESSAGE_NAME_HALFWORDS 24
 #define TEXT_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
 
-/// The control codes of decoded message text (WindowWork.entries). Codes from
-/// TEXT_SPACE up are characters.
+/// The control codes of decoded message text (WindowWork.textBuffer). Codes
+/// from TEXT_SPACE up are characters.
 enum {
   TEXT_END = 0,  ///< the text ends; the window stays open
   TEXT_PAGE = 1, ///< wait for a button, then clear the window for a new page

@@ -93,14 +93,14 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         if (partyResultShown == 0)
           messageOffset = 2;
       } else {
-        if (target->hp == target->maxHp) {
+        if (target->hp == target->hpMax) {
           if (partyResultShown == 0)
             messageOffset = 4;
         } else {
           target->hp += amount;
-          if (target->hp > target->maxHp) {
-            amount -= target->hp - target->maxHp;
-            target->hp = target->maxHp;
+          if (target->hp > target->hpMax) {
+            amount -= target->hp - target->hpMax;
+            target->hp = target->hpMax;
             if (partyResultShown == 0)
               messageOffset = 0;
           } else if (partyResultShown == 0) {
@@ -163,14 +163,14 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
 
     case BATTLE_DAMAGE_PP_HEAL:
-      if (target->pp == target->maxPp) {
+      if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
           messageOffset = 7;
       } else {
         target->pp += amount;
-        if (target->pp > target->maxPp) {
-          amount -= target->pp - target->maxPp;
-          target->pp = target->maxPp;
+        if (target->pp > target->ppMax) {
+          amount -= target->pp - target->ppMax;
+          target->pp = target->ppMax;
           if (partyResultShown == 0)
             messageOffset = 5;
         } else if (partyResultShown == 0) {
@@ -198,13 +198,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     switch (effect->effect) {
     case 1:
-      if (target->hp <= 0 || target->hp == target->maxHp) {
+      if (target->hp <= 0 || target->hp == target->hpMax) {
         if (partyResultShown == 0)
           messageOffset = 2;
       } else {
         target->hp += amount;
-        if (target->hp > target->maxHp) {
-          target->hp = target->maxHp;
+        if (target->hp > target->hpMax) {
+          target->hp = target->hpMax;
           if (partyResultShown == 0)
             messageOffset = 0;
         } else if (partyResultShown == 0) {
@@ -216,13 +216,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
 
     case 2:
-      if (target->pp == target->maxPp) {
+      if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
           messageOffset = 7;
       } else {
         target->pp += amount;
-        if (target->pp > target->maxPp) {
-          target->pp = target->maxPp;
+        if (target->pp > target->ppMax) {
+          target->pp = target->ppMax;
           if (partyResultShown == 0)
             messageOffset = 5;
         } else if (partyResultShown == 0) {
@@ -235,7 +235,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     case ABILITY_EFFECT_REVIVE:
       if (target->hp == 0) {
-        target->hp = target->maxHp;
+        target->hp = target->hpMax;
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
@@ -247,7 +247,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
-        target->hp = target->maxHp / 2;
+        target->hp = target->hpMax / 2;
         Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
           messageOffset = 0xc;
@@ -258,7 +258,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     case ABILITY_EFFECT_REVIVE_80:
       if (target->hp == 0) {
-        target->hp = target->maxHp * 7 / 10;
+        target->hp = target->hpMax * 7 / 10;
         Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
           messageOffset = 0xc;

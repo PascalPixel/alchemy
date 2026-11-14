@@ -210,7 +210,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         }
       }
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
 
       if (mode == 0) {
         if ((u32)frame <= 15) {

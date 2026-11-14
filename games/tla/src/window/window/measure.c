@@ -43,7 +43,7 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
     *pw = (*pw + 19) >> 3;
     *ph = (*ph + 15) >> 3;
 #if !TLA_PATCH_1
-    if (work->mode != 0) {
+    if (work->mindRead != 0) {
       *pw += 2;
       limit = 29;
     }
@@ -95,7 +95,7 @@ void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
                                                                                \
     work = (struct WindowWork *)Ram_HeapSlots->windowTiles;                    \
     idx = Message_Decode(no, 0);                                               \
-    if (work->entries[idx] == 0) {                                             \
+    if (work->textBuffer[idx] == 0) {                                          \
       return 0;                                                                \
     }                                                                          \
     Window_FitOnScreen(idx, x, y, width, height, 0, flags);                    \
@@ -140,7 +140,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   lineWidth = 0;
   count = 0;
   for (;;) {
-    code = work->entries[entryIndex];
+    code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code > 31 && code != 176) {
@@ -221,7 +221,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;
     case 9:
-      work->outline = work->entries[entryIndex];
+      work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;
     }
@@ -237,7 +237,7 @@ done:
   // The German release drops the 2 pixels a window's mode adds, and French and
   // Italian follow it; Spanish, released with Italian, keeps them.
 #if !TLA_PATCH_2 || LANGUAGE == LANGUAGE_SPANISH
-  if (work->mode)
+  if (work->mindRead)
     width = width + 2;
 #endif
   if (work->textMode != 0) {
@@ -342,7 +342,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   count = 0;
   page = 0;
   for (;;) {
-    code = work->entries[entryIndex];
+    code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code >= 32 && code != 176) {
@@ -429,7 +429,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;
     case 9:
-      work->outline = work->entries[entryIndex];
+      work->outline = work->textBuffer[entryIndex];
       entryIndex = (entryIndex + 1) & (UI_TEXT_ENTRY_COUNT - 1);
       break;
     }
@@ -437,7 +437,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 done:
   // From the German release on, a window's mode no longer adds its 2 pixels.
 #if !TLA_PATCH_2
-  if (work->mode != 0)
+  if (work->mindRead != 0)
     maxWidth += 2;
 #endif
   for (pageIndex = 0; pageIndex < page; pageIndex++) {

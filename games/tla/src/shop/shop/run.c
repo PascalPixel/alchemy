@@ -143,7 +143,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   anchor =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
   anchor->sentinel = 255;
-  anchor->active = WINDOW_SPRITE_MOTION_STILL;
+  anchor->motion = WINDOW_SPRITE_MOTION_STILL;
   anchor->kind = 0;
   // The hand waits off the left edge until a screen places it
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
@@ -246,7 +246,7 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
 
   shop = Ram_HeapSlots->menuRuntime;
   cursorSlot = &shop->cursor.anchor;
-  savedCursorMode = (*cursorSlot)->active;
+  savedCursorMode = (*cursorSlot)->motion;
   resolvedMessage = messageId;
   portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
   shopType = shop->shopType;
@@ -256,13 +256,13 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
   if (shopType == SHOP_TYPE_ITEMS)
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
-  (*cursorSlot)->active = WINDOW_SPRITE_MOTION_HIDDEN;
+  (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
-  shop->cursor.anchor->active = savedCursorMode;
+  shop->cursor.anchor->motion = savedCursorMode;
 }
 
 // The shop's Yes/No menu: one column further left in German, Spanish and
@@ -281,11 +281,11 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
 s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
-  u8 savedCursorMode = (*cursorSlot)->active;
+  u8 savedCursorMode = (*cursorSlot)->motion;
 
   Icon_PrepareActorFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
-  (*cursorSlot)->active = savedCursorMode;
+  (*cursorSlot)->motion = savedCursorMode;
   return choice;
 }
 
@@ -297,11 +297,11 @@ s32 Shop_AskYesNo(s32 choice) {
 s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopWork *)Ram_HeapSlots->menuRuntime)->cursor.anchor;
-  u8 savedCursorMode = (*cursorSlot)->active;
+  u8 savedCursorMode = (*cursorSlot)->motion;
 
   Icon_PrepareActorFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(7, 7, choice);
-  (*cursorSlot)->active = savedCursorMode;
+  (*cursorSlot)->motion = savedCursorMode;
   return choice;
 }
 

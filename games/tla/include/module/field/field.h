@@ -136,8 +136,8 @@ struct FieldUnit {
   s16 hpGauge;
   s16 ppGauge;
   u8 unk18[28];
-  s16 maxHp;
-  s16 maxPp;
+  s16 hpMax;
+  s16 ppMax;
   s16 hp;
   s16 pp;
 };

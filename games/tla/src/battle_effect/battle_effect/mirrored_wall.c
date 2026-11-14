@@ -168,7 +168,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
       s32 start = k * 16;
 
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = target->x;
       point[1] = 0;
       point[2] = target->z;
@@ -211,7 +211,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
             BattleObject_GetFar(effect->actors[i])->object;
 
         Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->pos);
+        Transform_SetLookAt(camera->eye, camera->focus);
         if (frame == start + 72)
           BattleEffect_TintBattler(effect->actors[i], 1, -1, -1, 0);
         if (frame == start + 88)

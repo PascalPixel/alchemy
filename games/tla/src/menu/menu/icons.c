@@ -83,7 +83,7 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = ICON_SHOWN;
+  object->motion = ICON_SHOWN;
   return 1;
 }
 
@@ -112,7 +112,7 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   }
   object->kind = 0;
   object->animStep = 0;
-  object->active = ICON_SHOWN;
+  object->motion = ICON_SHOWN;
   return 1;
 }
 
@@ -160,15 +160,15 @@ void Menu_SetPageArrowsA(s32 index, s32 count) {
     index += 3;
   index = index >> 2 << 2;
   arrow = menu->pageArrows[0];
-  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
+  arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
-    arrow->active = WINDOW_SPRITE_MOTION_HOP_UP;
+    arrow->motion = WINDOW_SPRITE_MOTION_HOP_UP;
     arrow->animStep = 0;
   }
   arrow = menu->pageArrows[1];
-  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
+  arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
-    arrow->active = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+    arrow->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
     arrow->animStep = 0;
   }
 }
@@ -183,15 +183,15 @@ void Menu_SetPageArrowsB(s32 index, s32 count) {
     index += 3;
   index = index >> 2 << 2;
   arrow = menu->pageArrows[0];
-  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
+  arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index != 0) {
-    arrow->active = WINDOW_SPRITE_MOTION_HOP_LEFT;
+    arrow->motion = WINDOW_SPRITE_MOTION_HOP_LEFT;
     arrow->animStep = 0;
   }
   arrow = menu->pageArrows[1];
-  arrow->active = WINDOW_SPRITE_MOTION_HIDDEN;
+  arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   if (index + 4 < count) {
-    arrow->active = WINDOW_SPRITE_MOTION_HOP_RIGHT;
+    arrow->motion = WINDOW_SPRITE_MOTION_HOP_RIGHT;
     arrow->animStep = 0;
   }
 }
@@ -578,7 +578,7 @@ s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
       output[2] = 1;
     count++;
   }
-  if (state->restraint != 0) {
+  if (state->curse != 0) {
     output[3] = 1;
     count++;
   }

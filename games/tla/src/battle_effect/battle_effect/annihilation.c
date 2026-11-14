@@ -144,7 +144,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
 
     // The shards, projected from the battle camera.
     Transform_Reset();
-    Transform_SetLookAt(view->eye, view->pos);
+    Transform_SetLookAt(view->eye, view->focus);
     if (frame > 3) {
       BattleEffect_FetchRectangleBlitters(effect->side, draw);
       for (i = 0; i != SHARD_COUNT; i++) {

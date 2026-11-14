@@ -52,16 +52,16 @@ void SuperLuckyDice_ResetViewDefaults(void) {
 
   state->pitch = 147 << 8;
   state->distance = 255 << 17;
-  SET_VECTOR(state->pos, 0, 0, 0);
+  SET_VECTOR(state->focus, 0, 0, 0);
   state->yaw = 0;
-  state->followPos = 0;
+  state->followPosition = 0;
   // The projection's centre.
   gCameraSceneParameters[3] = 0;
   gCameraSceneParameters[4] = 0;
-  state->unk18 = 0;
+  state->followEye = 0;
 
   Transform_Reset();
-  SceneTransform_ApplyPosition(&state->pos[0]);
+  SceneTransform_ApplyPosition(&state->focus[0]);
   Transform_ApplyYaw((s16)state->yaw);
   Transform_ApplyPitch((s16)state->pitch);
 

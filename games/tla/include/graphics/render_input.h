@@ -72,7 +72,8 @@ struct WindowSprite {
   /// 0 for a glyph; otherwise it owns VRAM cache slot index, freed with it,
   /// and 2 (a portrait) also its palette slot.
   s8 kind;
-  s8 active;                  ///< its sprite motion; 0 while free
+  s8 motion; ///< its WINDOW_SPRITE_MOTION_; 0 while free
+
   u16 x;                      ///< screen pixels
   u16 y;                      ///< screen pixels
   u16 unk0a;                  ///< not named by ⚓️ code

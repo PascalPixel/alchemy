@@ -148,7 +148,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
   do {
     code = 0;
     if (channel->ended == 0)
-      code = work->entries[channel->entry];
+      code = work->textBuffer[channel->entry];
 
 #if LANGUAGE != LANGUAGE_JAPANESE
     if (code <= 30 || code == 176) {
@@ -175,16 +175,17 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       case 1:
         if (channel->countdown == 0) {
           channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
-          if (work->mode != 0)
+          if (work->mindRead != 0)
             gInput.pendingPressed = 0;
         }
         if (Text_CheckTextDismissed(channel) == 0) {
           struct Window *pane = channel->work;
 
-          if (pane->width == 0 || pane->height == 0 || work->unk1388 != 0)
+          if (pane->width == 0 || pane->height == 0 ||
+              work->pageArrowShown != 0)
             break;
           Glyph_Draw(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16, 1);
-          work->unk1388 = 1;
+          work->pageArrowShown = 1;
           break;
         }
         window = channel->work;
@@ -193,13 +194,13 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         y = (s16)window->y;
         oldWidth = window->width;
         oldHeight = window->height;
-        work->unk1388 = 0;
+        work->pageArrowShown = 0;
         WindowSprite_PrepareForRedraw(window);
         if (channel->flags == 0 && (window->width | window->height) != 0)
           Window_EraseBorderRect((s16)window->x, (s16)window->y, window->width,
                                  window->height);
         entryIndex = (entryIndex + 1) & ENTRY_MASK;
-        if (work->entries[entryIndex] != 0 &&
+        if (work->textBuffer[entryIndex] != 0 &&
             (window->width | window->height) != 0) {
           if (channel->flags != 0) {
             Window_EraseBorderRect((s16)window->x, (s16)window->y,
@@ -240,7 +241,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       case 2:
         if (channel->countdown == 0) {
           channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
-          if (work->mode != 0)
+          if (work->mindRead != 0)
             gInput.pendingPressed = 0;
         }
         if (Text_CheckTextDismissed(channel) != 0)
@@ -269,19 +270,19 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case 8:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
-        channel->colour = work->entries[channel->entry];
+        channel->colour = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
       case 9:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
-        channel->outline = work->entries[channel->entry];
+        channel->outline = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
       case 10:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
-        channel->lineSpacing = work->entries[channel->entry];
+        channel->lineSpacing = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
@@ -294,7 +295,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case 15:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
-        channel->work->effect = work->entries[channel->entry];
+        channel->work->animation = work->textBuffer[channel->entry];
         channel->countdown = 11;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         break;
@@ -313,11 +314,11 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       voiceGap = gMessageSpeed_VoiceGaps[TEXT_SPEED];
       nextEntryIndex = channel->entry;
 #if !TLA_PATCH_2
-      if (work->mode != 0)
+      if (work->mindRead != 0)
         pixelX += 8;
 #endif
       nextEntryIndex = (nextEntryIndex + 1) & ENTRY_MASK;
-      nextCode = work->entries[nextEntryIndex];
+      nextCode = work->textBuffer[nextEntryIndex];
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
       if (nextCode == 222) {
         code |= 1 << 14;

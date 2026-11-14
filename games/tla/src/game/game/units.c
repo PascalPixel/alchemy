@@ -125,21 +125,21 @@ void Unit_Calculate(s32 unitId) {
 
   // HP and PP keep their share of the maximum; gauges that no longer match are
   // reset to full first.
-  if (UNIT_STAT_DIFF(unit->maxHp * unit->hpGauge / UNIT_GAUGE_FULL, unit->hp) >
+  if (UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / UNIT_GAUGE_FULL, unit->hp) >
           1 ||
-      UNIT_STAT_DIFF(unit->maxPp * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) >
+      UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) >
           1) {
     unit->hpGauge = UNIT_GAUGE_FULL;
     unit->ppGauge = UNIT_GAUGE_FULL;
-    unit->hp = unit->maxHp;
-    unit->pp = unit->maxPp;
+    unit->hp = unit->hpMax;
+    unit->pp = unit->ppMax;
   }
 
   // CURSE_KEEP_BOUND keeps CURSE_BOUND, and CURSE_REMOVABLE clears both again
   // below.
-  unit->restraint &= ~(CURSE_BOUND | CURSE_ITEM);
-  if (unit->restraint & CURSE_KEEP_BOUND)
-    unit->restraint |= CURSE_BOUND;
+  unit->curse &= ~(CURSE_BOUND | CURSE_ITEM);
+  if (unit->curse & CURSE_KEEP_BOUND)
+    unit->curse |= CURSE_BOUND;
   if (unit->ready)
     stats->actionCount++;
   unit->equipBonus[0] = 0;
@@ -152,7 +152,7 @@ void Unit_Calculate(s32 unitId) {
         continue;
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
-        unit->restraint |= CURSE_BOUND | CURSE_ITEM;
+        unit->curse |= CURSE_BOUND | CURSE_ITEM;
       stats->atk += stats->item->primaryBonus;
       /* FAKEMATCH(barrier): an empty asm after the Attack bonus. */
       asm("");
@@ -211,7 +211,7 @@ void Unit_Calculate(s32 unitId) {
           unit->equipBonus[0] += stats->amount;
           break;
         case EQUIP_EFFECT_CURSE_REMOVABLE:
-          unit->restraint |= CURSE_REMOVABLE;
+          unit->curse |= CURSE_REMOVABLE;
           break;
         case EQUIP_EFFECT_ADD_ACTIONS:
           stats->actionCount += stats->amount;
@@ -219,12 +219,12 @@ void Unit_Calculate(s32 unitId) {
         }
       }
     }
-    if (unit->restraint & CURSE_REMOVABLE)
-      unit->restraint &= ~(CURSE_REMOVABLE | CURSE_BOUND);
+    if (unit->curse & CURSE_REMOVABLE)
+      unit->curse &= ~(CURSE_REMOVABLE | CURSE_BOUND);
 
     // Only set Djinn contribute their stat bonuses.
     for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
-      u32 setDjinn = unit->djinnActive[elementIndex];
+      u32 setDjinn = unit->djinnSet[elementIndex];
 
       for (index = 0; index < DJINN_PER_ELEMENT; index++) {
         if (setDjinn & (1 << index)) {
@@ -306,8 +306,8 @@ void Unit_Calculate(s32 unitId) {
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
   for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index].power +=
-        (unit->elementLevels[index] * unit->elementLevels[index] +
-         unit->elementLevels[index]) *
+        (unit->summonBoost[index] * unit->summonBoost[index] +
+         unit->summonBoost[index]) *
         5;
   for (index = 0; index < ELEMENT_COUNT; index++)
     stats->element[index].resistance += unit->resistanceStage * 20;
@@ -362,7 +362,7 @@ void Unit_Calculate(s32 unitId) {
   unit->def = stats->def;
   unit->agi = stats->agi;
   unit->luck = stats->luck;
-  unit->actionEntryCount = stats->actionCount;
+  unit->actionsPerTurn = stats->actionCount;
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
@@ -377,10 +377,10 @@ void Unit_Calculate(s32 unitId) {
     hpLimit = ppLimit = UNIT_CHARACTER_HP_MAX;
   }
 
-  previousMaximum = unit->maxHp;
+  previousMaximum = unit->hpMax;
   CLAMP(stats->hp, 0, hpLimit);
-  unit->maxHp = stats->hp;
-  if (previousMaximum != unit->maxHp) {
+  unit->hpMax = stats->hp;
+  if (previousMaximum != unit->hpMax) {
     value = stats->hp * unit->hpGauge / UNIT_GAUGE_FULL;
     CLAMP(value, 0, hpLimit);
     if (unit->hp != 0 && value == 0)
@@ -388,10 +388,10 @@ void Unit_Calculate(s32 unitId) {
     unit->hp = value;
   }
 
-  previousMaximum = unit->maxPp;
+  previousMaximum = unit->ppMax;
   CLAMP(stats->pp, 0, ppLimit);
-  unit->maxPp = stats->pp;
-  if (previousMaximum != unit->maxPp) {
+  unit->ppMax = stats->pp;
+  if (previousMaximum != unit->ppMax) {
     value = stats->pp * unit->ppGauge / UNIT_GAUGE_FULL;
     CLAMP(value, 0, ppLimit);
     if (unit->pp != 0 && value == 0)
@@ -436,9 +436,9 @@ void GameFlag_RefreshLureCap(void) {
 static __inline__ s32 Owner_GetPpRatio(s32 owner) {
   struct BattleUnit *unit = Unit_Get(owner);
 
-  if (unit->maxPp <= 0)
+  if (unit->ppMax <= 0)
     return 0;
-  return (unit->pp << 16) / unit->maxPp;
+  return (unit->pp << 16) / unit->ppMax;
 }
 
 /// Returns the party's PP over its maximum PP, in 16.16; 0 with no members.
@@ -454,7 +454,7 @@ s32 Party_GetPpRatio(void) {
     struct BattleUnit *unit = Unit_Get(gMainRoutineWork.party[i]);
 
     pp += unit->pp;
-    max += unit->maxPp;
+    max += unit->ppMax;
   }
   if (max == 0)
     return 0;
@@ -699,8 +699,8 @@ void Party_RestoreHpPp(s32 cureConditions) {
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
 
-    unit->hp = unit->maxHp;
-    unit->pp = unit->maxPp;
+    unit->hp = unit->hpMax;
+    unit->pp = unit->ppMax;
     Unit_UpdateGauges(unit);
 
     if (cureConditions == 1) {
@@ -743,7 +743,7 @@ void Party_RestorePpOfLitElements(void) {
     }
 
     unit = Unit_Get(unitId);
-    unit->pp = unit->maxPp;
+    unit->pp = unit->ppMax;
     Unit_UpdateGauges(unit);
   }
 }
@@ -751,7 +751,7 @@ void Party_RestorePpOfLitElements(void) {
 /// Writes the element and index of unit's last Djinni and returns 0, or
 /// returns -1 when it has none.
 s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
-  u32 *sets = ((struct BattleUnit *)Unit_Get(unit))->djinnAvailable;
+  u32 *sets = ((struct BattleUnit *)Unit_Get(unit))->djinnHeld;
   s32 element = -1;
   s32 index = -1;
   s32 i;
@@ -1123,7 +1123,7 @@ void Unit_RecalculateGauges(s32 ownerId) {
   struct BattleUnit *owner;
 
   owner = Unit_Get(ownerId);
-  first = (owner->hp << 14) / owner->maxHp;
+  first = (owner->hp << 14) / owner->hpMax;
   firstValue = 0x4000;
   if (first <= 0x4000) {
     firstValue = 0;
@@ -1136,7 +1136,7 @@ void Unit_RecalculateGauges(s32 ownerId) {
     firstValue = 1;
     owner->hpGauge = firstValue;
   }
-  second = (owner->pp << 14) / owner->maxPp;
+  second = (owner->pp << 14) / owner->ppMax;
   secondValue = 0x4000;
   if (second <= 0x4000) {
     secondValue = 0;
@@ -1151,13 +1151,13 @@ void Unit_RecalculateGauges(s32 ownerId) {
   }
 }
 
-/// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
+/// Sets the unit's HP, clamped to 0..hpMax, and recomputes its HP and PP
 /// gauges inline.
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 value;
 
-  if (hp > unit->maxHp) {
-    value = unit->maxHp;
+  if (hp > unit->hpMax) {
+    value = unit->hpMax;
   } else {
     value = 0;
     if (hp >= 0) {
@@ -1165,7 +1165,7 @@ void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
     }
   }
   unit->hp = value;
-  value = ((value << 16) >> 2) / unit->maxHp;
+  value = ((value << 16) >> 2) / unit->hpMax;
 
   {
     s32 output = 0x4000;
@@ -1182,7 +1182,7 @@ void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
     }
   }
 
-  value = (unit->pp << 14) / unit->maxPp;
+  value = (unit->pp << 14) / unit->ppMax;
   {
     s32 output = 0x4000;
 
@@ -1199,13 +1199,13 @@ void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   }
 }
 
-/// Sets the unit's PP, clamped to 0..maxPp, and recomputes its HP and PP
+/// Sets the unit's PP, clamped to 0..ppMax, and recomputes its HP and PP
 /// gauges.
 void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
   s32 clamped;
 
-  if (pp > unit->maxPp) {
-    clamped = unit->maxPp;
+  if (pp > unit->ppMax) {
+    clamped = unit->ppMax;
   } else {
     clamped = 0;
     if (pp >= 0)
@@ -1215,12 +1215,12 @@ void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
   Unit_UpdateGauges(unit);
 }
 
-/// Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
+/// Adds delta to the HP of unit owner, clamped to 0..hpMax, recomputes its
 /// gauges and returns the new HP.
 s32 Unit_AddHp(s32 owner, s32 delta) {
   struct BattleUnit *state = Unit_Get(owner);
   s32 cur = state->hp;
-  s32 max = state->maxHp;
+  s32 max = state->hpMax;
   s32 value = cur + delta;
   s32 result;
 
@@ -1236,12 +1236,12 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
   return state->hp;
 }
 
-/// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
+/// Adds delta to the PP of unit owner, clamped to 0..ppMax, recomputes its
 /// gauges and returns the new PP.
 s16 Unit_AddPp(s32 owner, s32 delta) {
   struct BattleUnit *state = Unit_Get(owner);
   s32 cur = state->pp;
-  s32 max = state->maxPp;
+  s32 max = state->ppMax;
   s32 value = cur + delta;
   s32 result;
 

@@ -30,7 +30,7 @@ s32 Forge_Run(s32 actorId) {
   icon =
       WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16, window, 0, 0);
   icon->sentinel = 255;
-  icon->active = WINDOW_SPRITE_MOTION_STILL;
+  icon->motion = WINDOW_SPRITE_MOTION_STILL;
   icon->kind = 0;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
@@ -133,7 +133,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
   result = 0;
   cursorAnchor = WindowSprite_CreateFar(shop->cursorIcon, OUTPUT_SIZE_16X16,
                                         cursorWindow, 0, result);
-  cursorAnchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
+  cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   cursorAnchor->kind = result;
   MenuCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = cursorAnchor;
@@ -164,7 +164,7 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       itemSlot = ItemPicker_SelectItem(unitId);
       if (itemSlot == -1) {
-        shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
+        shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         shop->mode = 12;
         redraw = 2;
         continue;
@@ -240,7 +240,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
                                  WINDOW_FLAG_INSTANT);
   nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 
-  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
   shop->mode = 12;
   slot = 0;
   while (1) {

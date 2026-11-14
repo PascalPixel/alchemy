@@ -871,7 +871,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       camera->yaw = savedYaw;
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       flame = work->particles;
       for (i = 0; i != FLAMES; i++, flame++) {
         s32 angle;

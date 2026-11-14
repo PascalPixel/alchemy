@@ -173,7 +173,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   camera = Ram_HeapSlots->cameraWork;
   battle->brightness = Q16_ONE;
   Transform_Reset();
-  Transform_SetLookAt(camera->eye, camera->pos);
+  Transform_SetLookAt(camera->eye, camera->focus);
   {
     s32 param;
     s32 ratio;

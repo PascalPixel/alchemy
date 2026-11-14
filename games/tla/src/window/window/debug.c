@@ -651,10 +651,10 @@ done:
     ((struct BattleUnit *)Unit_Get(5))->pp = pp;
     ((struct BattleUnit *)Unit_Get(6))->pp = pp;
     ((struct BattleUnit *)Unit_Get(7))->pp = pp;
-    ((struct BattleUnit *)Unit_Get(4))->maxPp = pp;
-    ((struct BattleUnit *)Unit_Get(5))->maxPp = pp;
-    ((struct BattleUnit *)Unit_Get(6))->maxPp = pp;
-    ((struct BattleUnit *)Unit_Get(7))->maxPp = pp;
+    ((struct BattleUnit *)Unit_Get(4))->ppMax = pp;
+    ((struct BattleUnit *)Unit_Get(5))->ppMax = pp;
+    ((struct BattleUnit *)Unit_Get(6))->ppMax = pp;
+    ((struct BattleUnit *)Unit_Get(7))->ppMax = pp;
   }
   return result;
 }

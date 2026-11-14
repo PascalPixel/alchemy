@@ -240,7 +240,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   s32 zoom;
 #endif
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
-  s32 *pos = scene->pos;
+  s32 *pos = scene->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
@@ -288,7 +288,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 /// screen.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *scene = Ram_HeapSlots->cameraWork;
-  s32 *pos = scene->pos;
+  s32 *pos = scene->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];

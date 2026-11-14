@@ -75,7 +75,7 @@ s32 Shop_SelectBuy(void) {
 next_page:
   selectionIndex = selected;
   stockWindow = Window_CreateFar(0, 12, 30, 4, WINDOW_FLAG_INSTANT);
-  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
   shop->mode = 12;
   messageWindow = Window_CreateFar(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
   redraw = 1;
@@ -162,7 +162,7 @@ next_page:
   repromptRecipient = 0;
   selectionIndex = 0;
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = 12;
   Menu_PlaceOwnerEntryObjectsFar(partyWindow, 2, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
@@ -294,7 +294,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
                                     window, 216, -16);
       zero = 0;
       icon->kind = zero;
-      icon->active = WINDOW_SPRITE_MOTION_HOP_UP;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animStep = zero;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
@@ -302,7 +302,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
                                     window, 216, 24);
       zero = 0;
       icon->kind = zero;
-      icon->active = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animStep = zero;
     }
     pageSlot = 0;
@@ -318,7 +318,7 @@ void Shop_DrawStock(struct RenderInput *window, s32 selected) {
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
         icon->sentinel = 252;
         if (stockIndex == selected) {
-          icon->active = WINDOW_SPRITE_MOTION_SWELL;
+          icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           highlightFrame = 10;
           icon->animStep = highlightFrame;
           icon->sentinel = 253;
@@ -459,14 +459,14 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, -12);
       icon->kind = 0;
-      icon->active = WINDOW_SPRITE_MOTION_HOP_UP;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
       icon->animStep = 0;
     }
     if (first + SHOP_PARTY_PAGE_MEMBERS < count) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
                                     window, 88, 0);
       icon->kind = 0;
-      icon->active = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
+      icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
       icon->animStep = 0;
     }
     for (i = 0; i < SHOP_PARTY_PAGE_MEMBERS; i++) {

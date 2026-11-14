@@ -948,7 +948,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     model = Render_AllocateModelList(1);
     vertices = Data_02010108;
     shade = 0;

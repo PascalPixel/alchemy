@@ -598,7 +598,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
     else if (frame <= 7)
       draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
     if (frame >= 4 && frame <= 31) {

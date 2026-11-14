@@ -162,7 +162,7 @@ s32 DjinnMenu_RunScreen(void) {
   menuResult = 0;
   menu = Ram_HeapSlots->menuRuntime;
   icon = menu->cursor;
-  icon->active = ICON_HIDDEN;
+  icon->motion = ICON_HIDDEN;
   icon->animStep = 0;
   Menu_OpenBackdropScreen();
   wait(1);
@@ -196,9 +196,9 @@ s32 DjinnMenu_RunScreen(void) {
       menu->member = menu->members[menu->selectedColumn[0]];
       menu->shownMember[0] = menu->members[menu->selectedColumn[0]];
       icon = menu->pageArrows[0];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       result = DjinnMenu_ShowMemberStatus();
       if (result == -2)
         done = 1;
@@ -206,9 +206,9 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case 15:
       icon = menu->pageArrows[0];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       result = DjinnMenu_ShowHelp();
       if (result == -2)
         done = 1;
@@ -256,9 +256,9 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case 7:
       icon = menu->pageArrows[0];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(1);
       if (result == -2)
         done = 1;
@@ -271,18 +271,18 @@ s32 DjinnMenu_RunScreen(void) {
                                  menu->pairIndex[0], menu->shownMember[1]);
       Unit_CalculateFar(menu->shownMember[0]);
       Unit_CalculateFar(menu->shownMember[1]);
-      menu->cursor->active = ICON_HIDDEN;
+      menu->cursor->motion = ICON_HIDDEN;
       WindowSprite_ClearListFar(menu->listWindow);
       DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
-      menu->cursor->active = ICON_SHOWN;
+      menu->cursor->motion = ICON_SHOWN;
       step = 0;
       break;
     case 6:
       icon = menu->pageArrows[0];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(2);
       if (result == -2)
         done = 1;
@@ -296,16 +296,16 @@ s32 DjinnMenu_RunScreen(void) {
       result = DjinnRecovery_AddStandbyFar(
           menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownMember[0]);
-      menu->cursor->active = ICON_HIDDEN;
+      menu->cursor->motion = ICON_HIDDEN;
       WindowSprite_ClearListFar(menu->listWindow);
-      menu->cursor->active = ICON_SHOWN;
+      menu->cursor->motion = ICON_SHOWN;
       step = 2;
       break;
     case 9:
       icon = menu->pageArrows[0];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(0);
       if (result == -2)
         done = 1;
@@ -322,14 +322,14 @@ s32 DjinnMenu_RunScreen(void) {
       Unit_CalculateFar(menu->shownMember[1]);
       DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
-      menu->cursor->active = ICON_SHOWN;
+      menu->cursor->motion = ICON_SHOWN;
       step = 2;
       break;
     case 5:
       icon = menu->pageArrows[0];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       icon = menu->pageArrows[1];
-      icon->active = ICON_HIDDEN;
+      icon->motion = ICON_HIDDEN;
       result = PsynergyList_RunCompareLoop(3);
       if (result == -2)
         done = 1;
@@ -343,9 +343,9 @@ s32 DjinnMenu_RunScreen(void) {
       result = DjinnRecovery_RemoveFar(
           menu->shownMember[0], menu->pairElement[0], menu->pairIndex[0]);
       Unit_CalculateFar(menu->shownMember[0]);
-      menu->cursor->active = ICON_HIDDEN;
+      menu->cursor->motion = ICON_HIDDEN;
       WindowSprite_ClearListFar(menu->listWindow);
-      menu->cursor->active = ICON_SHOWN;
+      menu->cursor->motion = ICON_SHOWN;
       step = 2;
       break;
     default:
@@ -456,17 +456,17 @@ void Menu_OpenBackdropScreen(void) {
   window = menu->statusWindow;
   WindowSprite_ClearListFar(window);
   icon = Icon_CreateWithResource(window, -8, 11);
-  icon->active = ICON_HIDDEN;
+  icon->motion = ICON_HIDDEN;
   menu->cursor = icon;
   entry = VramCache_FindFreeEntry();
   if (entry < 96) {
     VramBlock_LoadResourceFar(entry, 128, (s32)&ResourceId_ShopGemTiles);
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
-    icon->active = ICON_HIDDEN;
+    icon->motion = ICON_HIDDEN;
     menu->pageArrows[0] = icon;
     icon->sprite.oam.matrix |= 8;
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
-    icon->active = ICON_HIDDEN;
+    icon->motion = ICON_HIDDEN;
     menu->pageArrows[1] = icon;
   }
 
@@ -839,12 +839,12 @@ s32 DjinnMenu_ShowHelp(void) {
       VramCache_FreeEntry(render->glyphResource);
       render->glyphResource = 99;
     }
-    ((struct WindowWork *)Ram_HeapSlots->windowTiles)->unk1388 = 0;
+    ((struct WindowWork *)Ram_HeapSlots->windowTiles)->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);
     {
       struct Window *window = channel->work;
 
-      window->frame = 0;
+      window->zoomStage = 0;
       window->duration = 0;
       window->state = 0;
     }
@@ -969,7 +969,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
     }
   }
-  menu->cursor->active = ICON_SHOWN;
+  menu->cursor->motion = ICON_SHOWN;
   for (;;) {
     if (redraw != 0) {
       selectedRow = -1;
@@ -1540,11 +1540,11 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   if (element == -1) {
     for (elementIndex = 0; elementIndex < 4; elementIndex++) {
       for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
-        if (unit->djinnActive[elementIndex] & (1 << djinnIndex)) {
+        if (unit->djinnSet[elementIndex] & (1 << djinnIndex)) {
           encodedDjinn = (elementIndex << 5) | djinnIndex | DJINN_ENTRY_SET;
           encodedDjinn |= memberId << 8;
           entriesOut[count++] = encodedDjinn;
-        } else if (unit->djinnAvailable[elementIndex] & (1 << djinnIndex)) {
+        } else if (unit->djinnHeld[elementIndex] & (1 << djinnIndex)) {
           entriesOut[count++] =
               (elementIndex << 5) | djinnIndex | (memberId << 8);
         }
@@ -1552,9 +1552,9 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
     }
   } else {
     for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
-      if (unit->djinnActive[element] & (1 << djinnIndex))
+      if (unit->djinnSet[element] & (1 << djinnIndex))
         entriesOut[count++] = (element << 5) | djinnIndex | DJINN_ENTRY_SET;
-      else if (unit->djinnAvailable[element] & (1 << djinnIndex))
+      else if (unit->djinnHeld[element] & (1 << djinnIndex))
         entriesOut[count++] = (element << 5) | djinnIndex;
     }
   }
@@ -1682,9 +1682,9 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
 
   if (page == 0) {
     if (previewMode == 3) {
-      Text_DrawNumberInWindowFar(unit->maxHp, 4, window, x * 8 + 72,
+      Text_DrawNumberInWindowFar(unit->hpMax, 4, window, x * 8 + 72,
                                  y * 8 + 56);
-      Text_DrawNumberInWindowFar(unit->maxPp, 4, window, x * 8 + 72,
+      Text_DrawNumberInWindowFar(unit->ppMax, 4, window, x * 8 + 72,
                                  y * 8 + 64);
       Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
       Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
@@ -1850,8 +1850,8 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
 
     rows = 6 - (previewMode != 3);
     first = rows * (page - 1);
-    count = PsynergyList_Diff(originalUnit->actionSlots, unit->actionSlots,
-                              actions, &gained, &lost);
+    count = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy, actions,
+                              &gained, &lost);
     line = 0;
     for (row = 0; first < count && row < rows; row++, first++) {
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,

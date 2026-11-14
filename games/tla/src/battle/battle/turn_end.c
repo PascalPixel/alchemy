@@ -189,7 +189,7 @@ s32 BattleUnit_CountDownPsynergySeal(s32 id) {
 
 s32 BattleUnit_CountDownRegenerate(s32 id) {
   struct BattleUnit *unit = Unit_Get(id);
-  u8 *count = &unit->refrain;
+  u8 *count = &unit->regenerate;
 
   if (*count != 0) {
     s32 max;
@@ -199,7 +199,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
 
     BattlePlayback_Reset();
     hp = unit->hp;
-    max = unit->maxHp;
+    max = unit->hpMax;
     before = hp;
     hp += max * (*count + 1) / 10;
     if (hp > max)
@@ -207,7 +207,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
     gain = hp - before;
     if (gain != 0) {
       BattlePlayback_Push(0, id);
-      if (hp == unit->maxHp) {
+      if (hp == unit->hpMax) {
         BattlePlayback_Push(4, (u32)&MsgHpFull);
       } else {
         {
@@ -221,7 +221,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
       Unit_RecalculateGaugesFar(id);
     }
     BattlePlayback_RunAll();
-    if (--unit->refrain == 0)
+    if (--unit->regenerate == 0)
       return 1;
   }
   return 0;
@@ -522,7 +522,7 @@ void Battle_ProcessTurnEnd(void) {
           unit->ready--;
         }
         if (unit->hp != 0) {
-          if (unit->hpRegen != 0 && unit->hp != unit->maxHp) {
+          if (unit->hpRegen != 0 && unit->hp != unit->hpMax) {
             hpAmount = unit->hpRegen;
             switch (unit->enemyId) {
             case 91:
@@ -536,13 +536,13 @@ void Battle_ProcessTurnEnd(void) {
               hpAmount *= 10;
               break;
             }
-            if (unit->hp + hpAmount > unit->maxHp) {
-              hpAmount = unit->maxHp - unit->hp;
+            if (unit->hp + hpAmount > unit->hpMax) {
+              hpAmount = unit->hpMax - unit->hp;
             }
             Unit_AddHpFar(unitId, hpAmount);
             MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
             MessageArgument_PushFar(hpAmount, MESSAGE_ARGUMENT_NUMBER);
-            if (unit->hp == unit->maxHp) {
+            if (unit->hp == unit->hpMax) {
               BattleMessage_ShowAndWaitFar((s32)&MsgHpFull);
             } else {
               BattleMessage_ShowAndWaitFar((s32)&MsgHpRecover);
@@ -550,15 +550,15 @@ void Battle_ProcessTurnEnd(void) {
             Sound_PlayFar(SE_NOTE_HIGH);
             BattleMessage_WaitForAdvance();
           }
-          if (unit->ppRegen != 0 && unit->pp != unit->maxPp) {
+          if (unit->ppRegen != 0 && unit->pp != unit->ppMax) {
             ppAmount = unit->ppRegen;
-            if (unit->pp + ppAmount > unit->maxPp) {
-              ppAmount = unit->maxPp - unit->pp;
+            if (unit->pp + ppAmount > unit->ppMax) {
+              ppAmount = unit->ppMax - unit->pp;
             }
             Unit_AddPpFar(unitId, ppAmount);
             MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
             MessageArgument_PushFar(ppAmount, MESSAGE_ARGUMENT_NUMBER);
-            if (unit->pp == unit->maxPp) {
+            if (unit->pp == unit->ppMax) {
               BattleMessage_ShowAndWaitFar((s32)&MsgPpFull);
             } else {
               BattleMessage_ShowAndWaitFar((s32)&MsgPpRecover);
@@ -786,8 +786,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     for (i = 0; i <= 3; i++) {
       if (counts[i] > 4)
         counts[i] = 4;
-      if (unit->elementLevels[i] < counts[i])
-        unit->elementLevels[i] = counts[i];
+      if (unit->summonBoost[i] < counts[i])
+        unit->summonBoost[i] = counts[i];
     }
     Unit_CalculateFar(unitId);
     for (i = 0; i <= 3; i++) {
@@ -842,7 +842,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     BattlePlayback_Reset();
     poison = &unit->poison;
     if (*poison != 0) {
-      s32 damage = unit->maxHp * *poison / 10;
+      s32 damage = unit->hpMax * *poison / 10;
       struct BattleWork *state = Ram_HeapSlots->battleWork;
 
       BattlePlayback_Push(BATTLE_EVENT_HIT, unitId);

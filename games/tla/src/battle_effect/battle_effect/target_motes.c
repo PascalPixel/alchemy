@@ -217,7 +217,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
                                                            COMPOSITE_CLIP_Y);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
       point[1] = 160 << 13;
       point[2] = object->z;
@@ -387,7 +387,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
 
       object = BattleObject_GetFar(effect->actors[member])->object;
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       record[0] = object->x;
       record[1] = 160 << 14;
       record[2] = object->z;
@@ -590,7 +590,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     if (frame == 80)
       Sound_PlayFar(SE_SWIRL);
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
       position[1] += delta[1];
@@ -681,7 +681,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
     // The Djinn sways over the targets, then rises away for the last 32
     // frames.
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame >= effect->count * 8 + 40)
       target[1] += 0x40000;
     point[0] = target[0];
@@ -699,7 +699,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       s32 start = member * 8;
 
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       position[0] = object->x;
       position[1] = 160 << 14;
       position[2] = object->z;

@@ -74,7 +74,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
 #endif
-  if (work->mode != 0) {
+  if (work->mindRead != 0) {
     shadowColour = 0;
     colour = 8;
   } else {
@@ -231,9 +231,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   c = 0;
   start = x;
   if (text == NULL) {
-    text = work->entries;
-    work->entries[work->count] = c;
-    work->count = (work->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    text = work->textBuffer;
+    work->textBuffer[work->textBufferEnd] = c;
+    work->textBufferEnd = (work->textBufferEnd + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   }
   for (;;) {
     c = *text++;
@@ -329,16 +329,17 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 /// Draws a string of 16-bit character codes straight into the UI tilemap, as
 /// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
 /// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-/// in WindowWork.entries. The window's position is read signed.
+/// in WindowWork.textBuffer. The window's position is read signed.
 void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
                                     s32 offsetX, s32 offsetY) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u32 cell;
 
   if (buffer == NULL) {
-    buffer = canvas->entries;
-    canvas->entries[canvas->count] = 0;
-    canvas->count = (canvas->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    buffer = canvas->textBuffer;
+    canvas->textBuffer[canvas->textBufferEnd] = 0;
+    canvas->textBufferEnd =
+        (canvas->textBufferEnd + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   }
 
   cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;
@@ -366,9 +367,9 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   start = x;
   if (text == NULL) {
-    text = work->entries;
-    work->entries[work->count] = 0;
-    work->count = (work->count + 1) & (UI_TEXT_ENTRY_COUNT - 1);
+    text = work->textBuffer;
+    work->textBuffer[work->textBufferEnd] = 0;
+    work->textBufferEnd = (work->textBufferEnd + 1) & (UI_TEXT_ENTRY_COUNT - 1);
   }
   c = *text++;
   if (c != 0)

@@ -92,7 +92,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     if (frame == 16)
       BattlePlayback_StartFar(134);
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     if (frame < 64) {
       for (pillar = 0; pillar != gVolcano_Counts[effect->variant]; pillar++) {

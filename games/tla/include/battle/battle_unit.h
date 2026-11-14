@@ -188,7 +188,7 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
 };
 
-/// The curse bits of BattleUnit.restraint, as The Broken Seal's Unit.curse.
+/// The curse bits of BattleUnit.curse, as The Broken Seal's Unit.curse.
 enum CurseFlag {
   CURSE_BOUND = 0x01,      ///< the unit is bound: one action in four is lost
   CURSE_ITEM = 0x02,       ///< a cursed item is equipped
@@ -204,7 +204,7 @@ enum CurseFlag {
 /// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
 #define ALLY_MAX 7
 
-/// BattleUnit.guardLevel set by Defend, when no guard effect has set one.
+/// BattleUnit.defendLevel set by Defend, when no guard effect has set one.
 #define DEFEND_NORMAL 1
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
@@ -214,8 +214,8 @@ struct BattleUnit {
   u8 level;           ///< 1 to 99 for a character
   s16 baseHp;         ///< before equipment, Djinn and class (Unit_Calculate)
   s16 basePp;         ///< before equipment, Djinn and class (Unit_Calculate)
-  s16 hpGauge;        ///< hp / maxHp in 0..0x4000; 1 while any HP remains
-  s16 ppGauge;        ///< pp / maxPp in 0..0x4000; 1 while any PP remains
+  s16 hpGauge;        ///< hp / hpMax in 0..0x4000; 1 while any HP remains
+  s16 ppGauge;        ///< pp / ppMax in 0..0x4000; 1 while any PP remains
   u16 baseAttack;     ///< before equipment, Djinn, class and stages
   u16 baseDefense;    ///< before equipment, Djinn, class and stages
   u16 baseAgility;    ///< before equipment, Djinn, class and stages
@@ -228,32 +228,32 @@ struct BattleUnit {
   /// element preset, a character's from its element levels
   /// (Unit_CalculateBaseElements).
   struct BattleElementStats baseElement[4];
-  s16 maxHp;           ///< maximum HP (Unit_Calculate)
-  s16 maxPp;           ///< maximum PP (Unit_Calculate)
-  s16 hp;              ///< current HP, 0 when downed
-  s16 pp;              ///< current PP
-  u16 atk;             ///< Attack (Unit_Calculate)
-  u16 def;             ///< Defense (Unit_Calculate)
-  u16 agi;             ///< Agility (Unit_Calculate)
-  u8 luck;             ///< Luck (Unit_Calculate)
-  u8 actionEntryCount; ///< actions each turn (Unit_Calculate)
-  u8 hpRegen;          ///< HP regained at each turn's end
-  u8 ppRegen;          ///< PP regained at each turn's end
-  u8 unk046[2];        ///< Not named by any TLA C.
+  s16 hpMax;         ///< maximum HP (Unit_Calculate)
+  s16 ppMax;         ///< maximum PP (Unit_Calculate)
+  s16 hp;            ///< current HP, 0 when downed
+  s16 pp;            ///< current PP
+  u16 atk;           ///< Attack (Unit_Calculate)
+  u16 def;           ///< Defense (Unit_Calculate)
+  u16 agi;           ///< Agility (Unit_Calculate)
+  u8 luck;           ///< Luck (Unit_Calculate)
+  u8 actionsPerTurn; ///< actions each turn (Unit_Calculate)
+  u8 hpRegen;        ///< HP regained at each turn's end
+  u8 ppRegen;        ///< PP regained at each turn's end
+  u8 unk046[2];      ///< Not named by any TLA C.
   /// Power and resistance in each element after equipment, element levels
   /// and Resistance stages (Unit_Calculate).
   struct BattleElementStats element[4];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's. An empty entry is 0.
-  struct OwnerActionSlot actionSlots[32];
+  struct OwnerActionSlot psynergy[32];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];
   u8 unk0f6[2]; ///< Not named by any TLA C.
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
-  u32 djinnAvailable[4];
+  u32 djinnHeld[4];
   /// The Djinn set, one bit per Djinni.
-  u32 djinnActive[4];
+  u32 djinnSet[4];
   u8 djinnOwnedCounts[4];  ///< the Djinn held in each element
   u8 djinnActiveCounts[4]; ///< the Djinn set in each element
   u32 rewards;             ///< 0 for an enemy (the BattleUnit_Set draft)
@@ -270,10 +270,10 @@ struct BattleUnit {
   u8 side;
   /// 0 to 4: each guard effect raises it to its own level and no lower;
   /// Defend's is 1.
-  u8 guardLevel;
-  s8 elementLevels[4]; ///< cleared by BattleParty_ResetActiveRuntimeFields
+  u8 defendLevel;
+  s8 summonBoost[4]; ///< cleared by BattleParty_ResetActiveRuntimeFields
   /// The curse: nonzero shows it in the menus and lets the sanctum remove it.
-  s8 restraint;
+  s8 curse;
   s8 poison; ///< 1 poisoned, 2 deadly poison
   /// Each stat change: the turns it has left, and its stage. Stages run -4 to
   /// 4 and last 7 turns.
@@ -296,7 +296,7 @@ struct BattleUnit {
   /// bits: 7..3 Luff (16 when cast, minus 8 a turn) | 2..0 Bind's turns
   /// (7 when cast). Psynergy is sealed while any bit is set.
   u8 psySeal;
-  u8 refrain;    ///< HP regeneration's turns left, 5 when cast
+  u8 regenerate; ///< HP regeneration's turns left, 5 when cast
   s8 reflect;    ///< Reflect's turns left, 7 when cast
   u8 haunt;      ///< set while an evil spirit grips the unit
   u8 grimReaper; ///< the Grim Reaper's countdown, 7 when cursed
@@ -326,9 +326,9 @@ STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);
 STATIC_ASSERT(sizeof(struct BattleUnit) == BATTLE_UNIT_SIZE);
 STATIC_ASSERT(offsetof(struct BattleUnit, baseHp) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleUnit, baseAttack) == 0x18);
-STATIC_ASSERT(offsetof(struct BattleUnit, actionSlots) == 0x58);
-STATIC_ASSERT(offsetof(struct BattleUnit, djinnAvailable) == 0xf8);
-STATIC_ASSERT(offsetof(struct BattleUnit, djinnActive) == 0x108);
+STATIC_ASSERT(offsetof(struct BattleUnit, psynergy) == 0x58);
+STATIC_ASSERT(offsetof(struct BattleUnit, djinnHeld) == 0xf8);
+STATIC_ASSERT(offsetof(struct BattleUnit, djinnSet) == 0x108);
 STATIC_ASSERT(offsetof(struct BattleUnit, rewards) == 0x120);
 STATIC_ASSERT(offsetof(struct BattleUnit, hp) == 0x038);
 STATIC_ASSERT(offsetof(struct BattleUnit, baseElement) == 0x024);
@@ -338,7 +338,7 @@ STATIC_ASSERT(offsetof(struct BattleUnit, ready) == 0x144);
 STATIC_ASSERT(offsetof(struct BattleUnit, inventory) == 0x0d8);
 STATIC_ASSERT(offsetof(struct BattleUnit, djinnOwnedCounts) == 0x118);
 STATIC_ASSERT(offsetof(struct BattleUnit, djinnActiveCounts) == 0x11c);
-STATIC_ASSERT(offsetof(struct BattleUnit, guardLevel) == 0x12b);
+STATIC_ASSERT(offsetof(struct BattleUnit, defendLevel) == 0x12b);
 STATIC_ASSERT(offsetof(struct BattleUnit, charm) == 0x13a);
 STATIC_ASSERT(offsetof(struct BattleUnit, haunt) == 0x140);
 
@@ -360,10 +360,10 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
 /// Recalculates HP and PP gauges, keeping at least one when any points remain.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
-    (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->maxHp);        \
+    (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->hpMax);        \
     if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
       (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Vitals_Clamp(((unit)->pp << 14) / (unit)->maxPp);        \
+    (unit)->ppGauge = Vitals_Clamp(((unit)->pp << 14) / (unit)->ppMax);        \
     if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
       (unit)->ppGauge = 1;                                                     \
   } while (0)

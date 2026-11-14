@@ -76,7 +76,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
     if (frame == 64)
       BattlePlayback_StartFar(134);
     Transform_Reset();
-    Transform_SetLookAt(view->eye, view->pos);
+    Transform_SetLookAt(view->eye, view->focus);
     if (frame == 72)
       BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
     if (frame == 79)
@@ -519,7 +519,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       userHalfHeight = BattleUnit_GetEffectHeightFar(effect->actor) / 2;
       camera = Ram_HeapSlots->cameraWork;
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       for (i = 0; i != MOTES; i++) {
         struct EffectStep *mote = &work->particles[SPARKS * 2 + i];
         if (mote->variant >= 0) {
@@ -827,7 +827,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       savedScrollY = gCameraSceneParameters[4];
       gCameraSceneParameters[4] = savedScrollY - 16;
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       world[0] = target->x;
       world[1] = 0;
       world[2] = target->z;

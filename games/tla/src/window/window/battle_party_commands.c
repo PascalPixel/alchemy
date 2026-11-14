@@ -166,7 +166,7 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
   for (i = 0; i < count; i++) {
     struct BattleUnit *unit = Unit_Get(unitIds[i]);
 
-    for (action = 0; action < unit->actionEntryCount; action++) {
+    for (action = 0; action < unit->actionsPerTurn; action++) {
       if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
           unit->stun != 0) {
         struct BattleActionRecord *entry = &entries[forced];

@@ -17,19 +17,20 @@ struct BattleCamera {
   /// The eye, 16.16 fixed-point pixels: written distance behind the focus
   /// along the turned view.
   s32 eye[3];
-  s32 pos[3];     ///< the focus, 16.16 fixed-point pixels
-  s32 unk18;      ///< cleared beside followPos; not read by name in TLA
-  s32 *followPos; ///< when set, the focus followed instead of pos
-  s32 distance;   ///< eye to focus, 16.16 fixed-point pixels
-  u8 unk24[16];   ///< not named by TLA code
-  u16 pitch;      ///< 1/65536 turns
-  u16 yaw;        ///< 1/65536 turns
-  u8 unk38[20];   ///< not named by TLA code
+  s32 focus[3];        ///< the focus, 16.16 fixed-point pixels
+  s32 followEye;       ///< cleared beside followPosition; nothing reads it
+  s32 *followPosition; ///< when set, followed instead of focus
+
+  s32 distance; ///< eye to focus, 16.16 fixed-point pixels
+  u8 unk24[16]; ///< not named by TLA code
+  u16 pitch;    ///< 1/65536 turns
+  u16 yaw;      ///< 1/65536 turns
+  u8 unk38[20]; ///< not named by TLA code
 };
 
 STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
-STATIC_ASSERT(offsetof(struct BattleCamera, pos) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleCamera, followPos) == 0x1c);
+STATIC_ASSERT(offsetof(struct BattleCamera, focus) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleCamera, followPosition) == 0x1c);
 STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 

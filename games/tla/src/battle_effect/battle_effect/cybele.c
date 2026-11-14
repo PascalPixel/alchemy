@@ -176,7 +176,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame == 224)
       work->transferMode = 0;
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame == 31) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_GATE_MOVE);

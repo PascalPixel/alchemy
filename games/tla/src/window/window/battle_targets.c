@@ -401,7 +401,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
                                     48, 0);
-            Text_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case 2:
             TARGET_HELP_COLUMN(7, 6, 17);
@@ -411,7 +411,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
                                     48, 0);
-            Text_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case 5:
             TARGET_HELP_COLUMN(7, 5, 18);

@@ -191,7 +191,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     if (effect->variant == 0) {
       // The flash, and the ring of flashes, at the user.
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = user->x;
       point[1] = user->y;
       point[2] = user->z;

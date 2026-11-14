@@ -435,7 +435,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
         cnt = 0;
         k = 0;
-        entryValue = unit->actionSlots[k].encodedAction & 0x3fff;
+        entryValue = unit->psynergy[k].encodedAction & 0x3fff;
         if (entryValue != 0) {
           do {
             if (Ability_Get(entryValue)->flags & 0x80) {
@@ -446,7 +446,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             k++;
             if (k == 32)
               break;
-            entryValue = unit->actionSlots[k].encodedAction & 0x3fff;
+            entryValue = unit->psynergy[k].encodedAction & 0x3fff;
           } while (entryValue != 0);
         }
         pick[cnt] = 0;
@@ -454,7 +454,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = BattlePsynergyMenu_Run(actorId, list, cnt);
         if (mode == -1)
           goto mark_visible;
-        parameter = unit->actionSlots[pick[mode]].encodedAction & 0x3fff;
+        parameter = unit->psynergy[pick[mode]].encodedAction & 0x3fff;
         ability = Ability_Get(parameter);
         cost = ability->range;
         iconSprite = &state->icons[1];

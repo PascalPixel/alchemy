@@ -127,7 +127,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       }
     }
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     for (i = 0, star = work->particles, delay = 0, firstDrop = 0; i != STARS;
          star++, delay += 8, firstDrop += 32, i++) {

@@ -84,7 +84,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
       BattlePlayback_StartFar(133);
     BattleCamera_SetViewFar(0, 0, 0, 100);
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
 
     // The embers in flight, two more each frame.
     for (i = 0; i != gFire_Counts[effect->variant]; i++) {

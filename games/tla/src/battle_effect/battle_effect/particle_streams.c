@@ -1219,7 +1219,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     // The embers fountain up from the ground in front of the camera.
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     for (i = 0; i != 64; i++) {
       struct EffectStep *ember = &EMBERS[i];
 

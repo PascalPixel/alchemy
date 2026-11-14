@@ -142,8 +142,8 @@ void Party_RemoveMemberRestored(s32 unit) {
   Party_RemoveMemberFar(unit);
   Party_ClearUnusableShortcuts();
   vitals = Unit_Get(unit);
-  vitals->hp = vitals->maxHp;
-  vitals->pp = vitals->maxPp;
+  vitals->hp = vitals->hpMax;
+  vitals->pp = vitals->ppMax;
   Unit_UpdateGauges(vitals);
   vitals->poison = 0;
   // Count the party members who remain and still have HP.

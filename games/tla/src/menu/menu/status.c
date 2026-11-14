@@ -221,7 +221,7 @@ s32 StatusScreen_SelectMember(s32 slot) {
   index = menu->memberIndex[slot];
   result = 0;
   cursor = menu->memberCursors[slot];
-  cursor->active = ICON_SHOWN;
+  cursor->motion = ICON_SHOWN;
   cursor->animStep = 0;
   WindowSprite_RedrawSavedRectFar(menu->memberWindow);
   if (GameFlag_Get(FLAG_LINK_BATTLE_ARRANGED))
@@ -259,11 +259,11 @@ void DjinnMenu_ShowCurrentList(void) {
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
   Text_DrawMessageAsTilesFar(MsgButtonReturn, menu->helpWindow, 0, 16);
   Text_DrawMessageFar(MsgCurrentDjinn, menu->helpWindow, -96, 132);
-  menu->pageArrows[0]->active = ICON_HIDDEN;
-  menu->pageArrows[1]->active = ICON_HIDDEN;
+  menu->pageArrows[0]->motion = ICON_HIDDEN;
+  menu->pageArrows[1]->motion = ICON_HIDDEN;
   MenuIcon_SetActive(0);
-  menu->cursor->active = ICON_HIDDEN;
-  menu->secondCursor->active = ICON_HIDDEN;
+  menu->cursor->motion = ICON_HIDDEN;
+  menu->secondCursor->motion = ICON_HIDDEN;
   for (i = 0; i < 4; i++) {
     menu->slotX[i] = 32 + i * 56;
     menu->slotY[i] = 56;
@@ -312,8 +312,8 @@ void DjinnMenu_ShowCurrentList(void) {
     menu->slotX[i] = 130 + i * 32;
     menu->slotY[i] = 128;
   }
-  menu->cursor->active = ICON_SHOWN;
-  menu->secondCursor->active = ICON_SHOWN;
+  menu->cursor->motion = ICON_SHOWN;
+  menu->secondCursor->motion = ICON_SHOWN;
   MenuIcon_SetActive(1);
   Sound_PlayFar(SE_MENU_CANCEL);
 }
@@ -416,8 +416,8 @@ s32 PartyMemberChooser_RunRearrange(void) {
   menu->memberIndex[0] = ownerIndex;
   menu->selectedMember = menu->memberIds[ownerIndex];
   menu->selectedIds[0] = menu->memberIds[ownerIndex];
-  menu->pageArrows[0]->active = ICON_HIDDEN;
-  menu->pageArrows[1]->active = ICON_HIDDEN;
+  menu->pageArrows[0]->motion = ICON_HIDDEN;
+  menu->pageArrows[1]->motion = ICON_HIDDEN;
   return result;
 }
 
@@ -896,7 +896,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
     djinnRow = 7;
   else
     djinnRow = 10;
-  menu->statusCursor->active = ICON_SHOWN;
+  menu->statusCursor->motion = ICON_SHOWN;
   ItemMenu_DrawMemberStatus(window, ownerId, mode);
   StatusScreen_BuildAvailability(ailments, 1, ownerId);
   keepDrawn = mode & 0x100;
@@ -971,7 +971,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
 
   menu = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(owner);
-  menu->cursor->active = 1;
+  menu->cursor->motion = 1;
   flags &= 0x100;
   if (flags == 0)
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
@@ -983,11 +983,11 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   Text_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
   DRAW_STAT_LABEL(gMenu_HpString, window, 40, 16);
   Text_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
-  Text_DrawNumberInWindowFar(unit->maxHp, 4, window, 112, 16);
+  Text_DrawNumberInWindowFar(unit->hpMax, 4, window, 112, 16);
   Text_DrawStringInWindowFar(gMenu_SlashString, window, 104, 16);
   DRAW_STAT_LABEL(gMenu_PpString, window, 40, 24);
   Text_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
-  Text_DrawNumberInWindowFar(unit->maxPp, 4, window, 112, 24);
+  Text_DrawNumberInWindowFar(unit->ppMax, 4, window, 112, 24);
   Text_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel, window, 40, 8);
   Text_DrawNumberInWindowFar(unit->experience, 8, window, 80, 8);

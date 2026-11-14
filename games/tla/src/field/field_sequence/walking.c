@@ -326,7 +326,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
     if (!scaled) {
       value = amount;
     } else {
-      value = unit->maxHp * amount / 100;
+      value = unit->hpMax * amount / 100;
       if (value == 0) {
         value = amount;
         if (value < 0)
@@ -356,14 +356,14 @@ s32 Party_ApplyPoisonDamage(void) {
 
       switch (object->poison) {
       case 1:
-        amount = -((object->maxHp + 10) / 20);
+        amount = -((object->hpMax + 10) / 20);
         if (amount == 0)
           amount = -1;
         if (result <= 0)
           result = 1;
         break;
       case 2:
-        amount = -((object->maxHp + 5) / 10);
+        amount = -((object->hpMax + 5) / 10);
         if (amount == 0)
           amount = -1;
         if (result <= 1)

@@ -251,7 +251,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 64)
       BattlePlayback_StartFar(133);
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame == 40)
       BattleEffect_TintBattler(effect->actor, 7, -1, -1, 0);
     if (frame == effect->count * 20 + 52)

@@ -343,7 +343,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
 
       // The motes turn about a point 40 pixels above the target.
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
       point[1] = px(40);
       point[2] = object->z;

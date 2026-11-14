@@ -32,7 +32,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   output->next = NULL;
   output->index = (s8)slot;
   output->kind = 1;
-  output->active = 1;
+  output->motion = 1;
   WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
   /* FAKEMATCH(dead): an empty once-only block after the call. */
   do {
@@ -160,7 +160,7 @@ void Portrait_Reload(u32 slot, s32 key, s32 unused) {
 /// out: sprite output; nothing happens if NULL.
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode) {
   if (out != NULL) {
-    out->active = mode;
+    out->motion = mode;
     out->animStep = 0;
   }
 }

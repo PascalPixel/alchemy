@@ -115,7 +115,7 @@ void WindowSystem_InitBattle(s32 kind) {
     u8 mode = 4;
 
     for (i = 2; i >= 0; i--)
-      work->tileAttributes[i] = mode;
+      work->textTileState[i] = mode;
   }
 }
 
@@ -248,10 +248,10 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->width = width;
     found->height = height;
     found->x = x;
-    found->output.head = NULL;
+    found->sprites.head = NULL;
     found->state = 0;
-    found->output.tailLink = &slot->output.head;
-    found->unk10 = 1;
+    found->sprites.tailLink = &slot->sprites.head;
+    found->opened = 1;
     found->flags = WINDOW_FLAG_OPEN;
     // Text_ResetStyle takes no arguments: x is passed and ignored.
     Text_ResetStyle(x);
@@ -272,12 +272,12 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     }
     if (attrs & WINDOW_FLAG_INSTANT) {
       found->flags |= WINDOW_FLAG_INSTANT;
-      found->frame = 0;
+      found->zoomStage = 0;
       found->duration = 1;
       Window_DrawOpened(found);
     } else {
       found->duration = WINDOW_OPEN_FRAMES;
-      found->frame = WINDOW_OPEN_FRAMES - 1;
+      found->zoomStage = WINDOW_OPEN_FRAMES - 1;
       Window_WaitZoom(found);
       wait(1);
     }
@@ -314,24 +314,24 @@ void Window_Close(struct Window *work, s32 release) {
   if (release != 0) {
     Window_EraseBorderRect((s16)work->x, (s16)work->y, work->width,
                            work->height);
-    work->output.head = NULL;
-    work->output.tailLink = NULL;
+    work->sprites.head = NULL;
+    work->sprites.tailLink = NULL;
     work->width = zero;
     work->height = zero;
     work->x = zero;
     work->y = zero;
-    work->unk10 = zero;
-    work->effect = zero;
+    work->opened = zero;
+    work->animation = zero;
     work->state = zero;
     work->flags = zero;
-    work->frame = zero;
+    work->zoomStage = zero;
     work->duration = zero;
     work->previousX = zero;
     work->previousY = zero;
     work->previousWidth = zero;
     work->previousHeight = zero;
   } else {
-    work->frame = release;
+    work->zoomStage = release;
     work->duration = WINDOW_CLOSE_FRAMES;
   }
 }
@@ -460,7 +460,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
       *(u16 *)(dst + idx) = 0x3E7;
     }
   }
-  entry->active = 0;
+  entry->motion = 0;
 }
 
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,

@@ -487,7 +487,7 @@ void ShopTest_DamageAndAfflictParty(void) {
   unit->poison = 1;
   unit->haunt = 1;
   unit = Unit_Get(JENNA);
-  unit->restraint = 1;
+  unit->curse = 1;
   unit->poison = 2;
   unit = Unit_Get(FELIX);
   for (i = 0; i <= 14; i++) {

@@ -97,7 +97,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 
     camera = Ram_HeapSlots->cameraWork;
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame == 2)
       Sound_PlayFar(SE_CLATTER);
     if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)

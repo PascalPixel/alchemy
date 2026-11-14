@@ -368,9 +368,9 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   result = 0;
   icon = menu->sideIcon[partySlot];
-  icon->active = ICON_SHOWN;
+  icon->motion = ICON_SHOWN;
   icon->animStep = result;
-  menu->cursorIcon->active = ICON_HIDDEN;
+  menu->cursorIcon->motion = ICON_HIDDEN;
   menu->tabCounts[partySlot] = menu->memberCount;
 
   if (memberIndex == -1) {
@@ -423,7 +423,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   if (Window_UpdateOrCreate(&menu->shortcutWindow, 13, 13, 17, 4, 2)) {
     menu->cursorIcon = WindowSprite_CreateFromResourceFar(
         2, 0, menu->shortcutWindow, 0, result);
-    menu->cursorIcon->active = ICON_HIDDEN;
+    menu->cursorIcon->motion = ICON_HIDDEN;
   }
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
@@ -488,8 +488,8 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   menu->tabIndex[0] = selection;
   menu->selectedMember = ownerIds[selection];
   menu->memberIds[0] = ownerIds[selection];
-  menu->pageArrows[0]->active = ICON_HIDDEN;
-  menu->pageArrows[1]->active = ICON_HIDDEN;
+  menu->pageArrows[0]->motion = ICON_HIDDEN;
+  menu->pageArrows[1]->motion = ICON_HIDDEN;
   return result;
 }
 
@@ -592,7 +592,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   }
   icon = menu->sideIcon[1];
   Icon_PrepareActor(icon);
-  icon->active = ICON_HIDDEN;
+  icon->motion = ICON_HIDDEN;
   wait(1);
   menu->tabIndex[1] = selection;
   menu->selectedMember = menu->memberTable[selection];
@@ -601,8 +601,8 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   count = menu->tabCounts[0];
   Menu_CreateOwnerEntryObjects(selection / 4 * 4);
   Menu_HighlightPageEntry(menu->auxiliaryWindow, selection, count);
-  menu->pageArrows[0]->active = ICON_HIDDEN;
-  menu->pageArrows[1]->active = ICON_HIDDEN;
+  menu->pageArrows[0]->motion = ICON_HIDDEN;
+  menu->pageArrows[1]->motion = ICON_HIDDEN;
   return result;
 }
 
@@ -813,30 +813,30 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
 
   if (mode == 1) {
     for (i = 0; i < 32; i++) {
-      if (unit->actionSlots[i].encodedAction != 0) {
-        if (Ability_Get(unit->actionSlots[i].encodedAction & 0x3fff)
+      if (unit->psynergy[i].encodedAction != 0) {
+        if (Ability_Get(unit->psynergy[i].encodedAction & 0x3fff)
                 ->fieldEffect != 0) {
-          actions[count] = unit->actionSlots[i].encodedAction;
+          actions[count] = unit->psynergy[i].encodedAction;
           count++;
         }
       }
     }
   } else {
     for (i = 0; i < 32; i++) {
-      if (unit->actionSlots[i].encodedAction != 0) {
-        ability = Ability_Get(unit->actionSlots[i].encodedAction & 0x3fff);
+      if (unit->psynergy[i].encodedAction != 0) {
+        ability = Ability_Get(unit->psynergy[i].encodedAction & 0x3fff);
         if (ability->fieldEffect != 0 || (ability->flags & 0x40) != 0) {
-          actions[count] = unit->actionSlots[i].encodedAction;
+          actions[count] = unit->psynergy[i].encodedAction;
           count++;
         }
       }
     }
     if (mode != 2) {
       for (i = 0; i < 32; i++) {
-        if (unit->actionSlots[i].encodedAction != 0) {
-          ability = Ability_Get(unit->actionSlots[i].encodedAction & 0x3fff);
+        if (unit->psynergy[i].encodedAction != 0) {
+          ability = Ability_Get(unit->psynergy[i].encodedAction & 0x3fff);
           if (ability->fieldEffect == 0 && (ability->flags & 0x40) == 0) {
-            actions[count] = unit->actionSlots[i].encodedAction;
+            actions[count] = unit->psynergy[i].encodedAction;
             count++;
           }
         }
@@ -1066,7 +1066,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   result = 0;
   previous = 0;
   shortcutHelp = 0;
-  menu->sideIcon[paneIndex]->active = ICON_HIDDEN;
+  menu->sideIcon[paneIndex]->motion = ICON_HIDDEN;
   Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
@@ -1083,7 +1083,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     PsynergyMenu_BuildPagedList(&state, paneIndex);
     changed = 1;
     redraw = 1;
-    menu->sideIcon[paneIndex]->active = ICON_SHOWN;
+    menu->sideIcon[paneIndex]->motion = ICON_SHOWN;
 
     while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
       MenuCursor_Position(CURSOR_X, state.row * 16 + 36);
@@ -1101,10 +1101,10 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         }
         PsynergyMenu_DrawDetailPage(window, work, &state);
         menu->sideAction[paneIndex] = menu->psynergies[state.selectedIndex];
-        menu->cursorIcon->active = ICON_HIDDEN;
+        menu->cursorIcon->motion = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          icon->active = WINDOW_SPRITE_MOTION_SWELL;
+          icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animStep = 0;
           icon->sentinel = 250;
         }
@@ -1207,8 +1207,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         menu->tabIndex[paneIndex] = member;
         Menu_CreateOwnerEntryObjects(member / 4 * 4);
         Menu_HighlightPageEntry(menu->auxiliaryWindow, member, ownerCount);
-        menu->pageArrows[0]->active = ICON_HIDDEN;
-        menu->pageArrows[1]->active = ICON_HIDDEN;
+        menu->pageArrows[0]->motion = ICON_HIDDEN;
+        menu->pageArrows[1]->motion = ICON_HIDDEN;
         wait(1);
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0, 0);
         PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberTable[member]);

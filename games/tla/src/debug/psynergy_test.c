@@ -244,7 +244,7 @@ void PsynergyTest_DamageAndAfflictParty(void) {
   state += offsetof(struct BattleUnit, haunt);
   *state = 1;
   state = Unit_Get(JENNA);
-  state[offsetof(struct BattleUnit, restraint)] = 1;
+  state[offsetof(struct BattleUnit, curse)] = 1;
   state[offsetof(struct BattleUnit, poison)] = 2;
   Unit_Calculate(FELIX);
   Unit_Calculate(JENNA);

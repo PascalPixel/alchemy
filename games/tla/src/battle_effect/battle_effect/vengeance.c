@@ -1070,7 +1070,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectArgument *effect, s32 mode) {
 
       // The swarm turns about its point, which rises from frame 4.
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       if (frame >= start + 4 && start < 44)
         BattleEffectKernels_IntegrateVector3(point, 64, 0);
       SceneTransform_ApplyPosition(&point->x);

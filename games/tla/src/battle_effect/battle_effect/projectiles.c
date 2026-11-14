@@ -238,7 +238,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     if (frame == 8)
       Sound_PlayFar(SE_POWER_UP);
     Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->pos);
+    Transform_SetLookAt(camera->eye, camera->focus);
     if (frame >= 6 && frame <= 45) {
       base[0] += step[0];
       base[1] += step[1];
@@ -880,7 +880,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
       // The shots.
       Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->pos);
+      Transform_SetLookAt(camera->eye, camera->focus);
       index = 0;
       for (i = 0; i != effect->count; i++) {
         struct MotionObject *target =

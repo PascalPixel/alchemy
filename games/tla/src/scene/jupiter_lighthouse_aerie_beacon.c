@@ -1178,11 +1178,11 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
       struct MainRoutineWork *party = &gMainRoutineWork;
 
       member = Unit_Get(party->party[n]);
-      maxHp = member->hp = member->maxHp;
+      maxHp = member->hp = member->hpMax;
       member->hpGauge = Vitals_Clamp((maxHp << 14) / maxHp);
       if (member->hpGauge == 0 && member->hp != 0)
         member->hpGauge = 1;
-      member->ppGauge = Vitals_Clamp((member->pp << 14) / member->maxPp);
+      member->ppGauge = Vitals_Clamp((member->pp << 14) / member->ppMax);
       if (member->ppGauge == 0 && member->pp != 0)
         member->ppGauge = 1;
       if (clearStatus == 1) {

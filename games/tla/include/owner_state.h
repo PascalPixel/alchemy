@@ -107,7 +107,7 @@ enum ClassSeries {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
-/// How many actions a unit's list holds (BattleUnit.actionSlots), and how
+/// How many actions a unit's list holds (BattleUnit.psynergy), and how
 /// many a class teaches (ClassDefinition.abilities).
 #define PSYNERGY_SLOTS 32
 #define CLASS_ABILITY_SLOTS 16

@@ -1497,7 +1497,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
     struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
     for (n = 0; n != 4; n++)
-      Iwram_ClearWordsEntry(unit->djinnAvailable, 40);
+      Iwram_ClearWordsEntry(unit->djinnHeld, 40);
   }
 
   for (i = 0; i != 28; i++) {
@@ -1667,7 +1667,7 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
       unit->level = 1;
     levels |= unit->level << (i * 7);
     for (j = 0; j != 4; j++)
-      djinn += unit->djinnAvailable[j] << (j * 7);
+      djinn += unit->djinnHeld[j] << (j * 7);
     for (j = 0; j != 15; j++) {
       s32 item = unit->inventory[j] & 0x1ff;
 

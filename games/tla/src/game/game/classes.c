@@ -8,7 +8,7 @@
 
 /// Writes ten times each element level: an enemy's from its preset, a
 /// character's from the Djinn set on it plus its own bonus. `source` points at
-/// the unit's Djinn bits (djinnAvailable); the counts of set Djinn by element
+/// the unit's Djinn bits (djinnHeld); the counts of set Djinn by element
 /// follow them in the unit.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   if (record > PIERS) {
@@ -29,7 +29,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 
     for (i = 0; i < ELEMENT_COUNT; i++)
       output[i] = source[offsetof(struct BattleUnit, djinnActiveCounts) -
-                         offsetof(struct BattleUnit, djinnAvailable) + i] *
+                         offsetof(struct BattleUnit, djinnHeld) + i] *
                   10;
     if (record <= PIERS) {
       const struct CharacterDefinition *definition =
@@ -50,8 +50,7 @@ s32 Unit_GetElementLevel(s32 unitId, s32 element) {
   s32 result = 0;
 
   if (element < ELEMENT_COUNT) {
-    Unit_GetElementLevels(unit->enemyId, (const u8 *)unit->djinnAvailable,
-                          levels);
+    Unit_GetElementLevels(unit->enemyId, (const u8 *)unit->djinnHeld, levels);
     result = levels[element] / 10;
   }
   return result;
@@ -99,8 +98,7 @@ void Unit_CalculateBaseElements(s32 unitId,
 
   // Element levels in tenths: the whole level picks the table's row, the
   // tenths add to it.
-  Unit_GetElementLevels(state->enemyId, (const u8 *)state->djinnAvailable,
-                        levels);
+  Unit_GetElementLevels(state->enemyId, (const u8 *)state->djinnHeld, levels);
   for (i = 0; i < ELEMENT_COUNT; i++) {
     s32 tenths;
     s32 level;
@@ -216,7 +214,7 @@ void Unit_UpdateClass(s32 unitId) {
   struct BattleUnit *unit = Unit_Get(unitId);
 
   unit->classIndex = Class_Determine(
-      unit->enemyId, unit->djinnAvailable,
+      unit->enemyId, unit->djinnHeld,
       Inventory_GetEquippedItem((struct OwnerInventoryState *)unit,
                                 ITEM_TYPE_CLASS_CHANGE));
   Owner_UpdateClassActions(unitId);

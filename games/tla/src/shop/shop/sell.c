@@ -24,7 +24,7 @@ s32 Shop_ChooseMember(void) {
   shop->itemWindow = Window_CreateFar(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
   listWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->listWindow = listWindow;
-  shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
+  shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->mode = 12;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
   while (1) {
@@ -59,7 +59,7 @@ s32 Shop_ChooseMember(void) {
         if (result == 0)
           break;
       }
-      shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
+      shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
       shop->mode = 12;
       redraw = 2;
     } else if (gInput.pressed & KEY_B) {
@@ -127,7 +127,7 @@ s32 Shop_SelectSell(s32 unitId) {
                                  WINDOW_FLAG_INSTANT);
   do {
     nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
-    shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
+    shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
     shop->mode = 12;
     redraw = 1;
     while (1) {
@@ -298,7 +298,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessage((s32)MsgHowManyToSell);
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
-    shop->cursor.anchor->active = WINDOW_SPRITE_MOTION_WOBBLE;
+    shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
     shop->mode = 12;
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, selection, price);

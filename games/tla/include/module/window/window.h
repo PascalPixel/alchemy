@@ -96,7 +96,7 @@ enum {
   WINDOW_TILE_COMMAND_PANEL = WINDOW_TILE(127),
 };
 
-/// How a window sprite moves (WindowSprite.active), run each frame by
+/// How a window sprite moves (WindowSprite.motion), run each frame by
 /// WindowSprite_UpdateAll, as The Broken Seal's; 0 is a free window sprite and
 /// WINDOW_SPRITE_MOTION_PAGE_ARROW (2) is window.h's.
 enum {

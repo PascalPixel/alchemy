@@ -110,26 +110,26 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     if (output == NULL)
       return 0;
     index = (output - work->outputs) * 4;
-    output->active = WINDOW_SPRITE_MOTION_STILL;
+    output->motion = WINDOW_SPRITE_MOTION_STILL;
     output->kind = 0;
     if (mode == 1) {
       width = 1;
-      output->active = WINDOW_SPRITE_MOTION_PAGE_ARROW;
+      output->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     } else {
       switch (work->outline) {
       case 3:
-        output->active = WINDOW_SPRITE_MOTION_SHAKE;
+        output->motion = WINDOW_SPRITE_MOTION_SHAKE;
         break;
       case 4:
-        output->active = WINDOW_SPRITE_MOTION_POP;
+        output->motion = WINDOW_SPRITE_MOTION_POP;
         output->animStep = 8;
         break;
       case 5:
-        output->active = WINDOW_SPRITE_MOTION_SPIN;
+        output->motion = WINDOW_SPRITE_MOTION_SPIN;
         output->animStep = 0;
         break;
       case 2:
-        output->active = WINDOW_SPRITE_MOTION_WOBBLE;
+        output->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         output->animStep = 0;
         break;
       }
@@ -145,7 +145,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       }
     }
 
-    if ((u8)output->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+    if ((u8)output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
       sprite = &output->sprite;
       if (work->glyphResource == 99)
         work->glyphResource = VramCache_FindFreeEntry();
@@ -170,7 +170,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     output->y = sprite->oam.y;
     output->index = index;
     output->next = NULL;
-    WindowSprite_AppendToList(&window->output, output);
+    WindowSprite_AppendToList(&window->sprites, output);
   }
 done:
   return width;
@@ -215,7 +215,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   if (output == NULL)
     return 0;
   index = (output - work->outputs) * 4;
-  output->active = WINDOW_SPRITE_MOTION_STILL;
+  output->motion = WINDOW_SPRITE_MOTION_STILL;
   output->kind = 0;
   width = Text_DrawGlyphPair(character, tiles);
   Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
@@ -231,7 +231,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output->y = sprite->y;
   output->index = index;
   output->next = NULL;
-  WindowSprite_AppendToList(&window->output, output);
+  WindowSprite_AppendToList(&window->sprites, output);
   return width;
 }
 
@@ -273,7 +273,7 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   if (output == NULL)
     return NULL;
   index = (output - work->outputs) * 4;
-  output->active = WINDOW_SPRITE_MOTION_STILL;
+  output->motion = WINDOW_SPRITE_MOTION_STILL;
   output->kind = 0;
   vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
   ((u16 *)&output->sprite.oam)[0] =
@@ -291,8 +291,8 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output->next = NULL;
   /* FAKEMATCH(dead): active stored a second time with the 1 it already holds.
    */
-  output->active = WINDOW_SPRITE_MOTION_STILL;
-  WindowSprite_AppendToList(&window->output, output);
+  output->motion = WINDOW_SPRITE_MOTION_STILL;
+  WindowSprite_AppendToList(&window->sprites, output);
   return vram;
 }
 
@@ -332,7 +332,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     if (out == NULL)
       return;
     idx = (out - base->outputs) * 4;
-    out->active = WINDOW_SPRITE_MOTION_PAGE_ARROW;
+    out->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     sprite = &out->sprite;
     slot = &base->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
@@ -352,9 +352,9 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     out->y = sprite->oam.y;
     out->index = idx;
     out->next = NULL;
-    if ((u8)out->active == 0)
-      out->active = mode;
-    WindowSprite_AppendToList(&win->output, out);
+    if ((u8)out->motion == 0)
+      out->motion = mode;
+    WindowSprite_AppendToList(&win->sprites, out);
   } else if (tile <= TEXT_LAST_FONT_CODE) {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     if (tile == TEXT_MARK_VOICED || tile == TEXT_MARK_SEMIVOICED) {
@@ -469,7 +469,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   struct OutputSprite *sprite = (struct OutputSprite *)&windowSprite->sprite;
   struct AffineTransform effect;
 
-  switch ((u8)windowSprite->active) {
+  switch ((u8)windowSprite->motion) {
   case WINDOW_SPRITE_MOTION_SWELL:
     scale = gWindowSprite_BounceScales[windowSprite->animStep++ & 31];
     break;
@@ -566,7 +566,7 @@ void WindowSprite_UpdateAll(void) {
 
     if (!(window->flags & 1))
       continue;
-    output = (struct AnimOutput *)window->output.head;
+    output = (struct AnimOutput *)window->sprites.head;
     while (phase = (gVBlankCount >> 2) & 7, output != NULL) {
       struct AnimSprite *sprite = &output->attr;
 

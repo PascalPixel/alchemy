@@ -247,10 +247,10 @@ void Battle_AwardSpoils(void) {
       BattleMessage_ShowAndWaitFar((s32)MsgLevelUp);
       BattleMessage_WaitForAdvance();
       for (cnt = 0; cnt < 32; cnt++) {
-        learned = unit->actionSlots[cnt].encodedAction;
+        learned = unit->psynergy[cnt].encodedAction;
         if ((learned & ACTION_ID_MASK) && (learned >> 15)) {
           for (j = 0; j < 32; j++) {
-            if (learned == backup->actionSlots[j].encodedAction)
+            if (learned == backup->psynergy[j].encodedAction)
               break;
           }
           if (j == 32) {

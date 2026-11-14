@@ -1,20 +1,20 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global Data_02006fc8
-Data_02006fc8:
+	.global gGabombaStatue_PathDirections
+gGabombaStatue_PathDirections:
 	.space 0x00000020
-	.global Data_02006fe8
-Data_02006fe8:
+	.global gGabombaStatue_PathXs
+gGabombaStatue_PathXs:
 	.space 0x00000020
-	.global Data_02007008
-Data_02007008:
+	.global gGabombaStatue_PathZs
+gGabombaStatue_PathZs:
 	.space 0x00000020
-	.global Data_02007028
-Data_02007028:
+	.global gGabombaStatue_PathKinds
+gGabombaStatue_PathKinds:
 	.space 0x00000020
-	.global Data_02007048
-Data_02007048:
+	.global gGabombaStatue_PathTried
+gGabombaStatue_PathTried:
 	.space 0x00000020
-	.global gData_02007068
-gData_02007068:
+	.global gGabombaStatue_PathFlags
+gGabombaStatue_PathFlags:

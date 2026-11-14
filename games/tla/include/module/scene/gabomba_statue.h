@@ -21,74 +21,74 @@ struct Unk02004d48 {
   u16 unk66;
 };
 
-void Func_020020f0(s32 value);
+void GabombaStatue_TurnCogs(s32 value);
 
-void Func_0200533c(void);
-s32 Func_02004d48(s32 a, s32 b);
+void GabombaStatue_StopClock(void);
+s32 GabombaStatue_RunCharges(s32 a, s32 b);
 
-void Func_02000740(void);
+void GabombaStatue_TurnWithCog(void);
 
-void Func_02000978(void);
+void GabombaStatue_RideSlidingCog(void);
 
-void Func_02000ad4(void);
+void GabombaStatue_RideRollingCog(void);
 
-void Func_02000c38(void);
+void GabombaStatue_HopAcrossEastOrWest(void);
 
-void Func_02000c8c(void);
+void GabombaStatue_HopAcrossNorthOrSouth(void);
 
 void GabombaStatue_HearTheOffering(void);
 
-void Func_02001284(void);
+void GabombaStatue_StepIntoRoom1Hole(void);
 
-void Func_020012ec(void);
+void GabombaStatue_StepIntoRoom2Hole(void);
 
-void Func_02001364(void);
+void GabombaStatue_StepIntoFirstRoom3Hole(void);
 
-void Func_02001430(void);
-void Func_02001498(void);
+void GabombaStatue_StepIntoThirdRoom3Hole(void);
+void GabombaStatue_StepIntoFirstRoom4Hole(void);
 
-void Func_02001500(void);
+void GabombaStatue_StepIntoSecondRoom4Hole(void);
 
-void Func_020015b8(void);
+void GabombaStatue_StepIntoRoom5Hole(void);
 
-void Func_02001630(void);
+void GabombaStatue_JumpDownHole(void);
 
-void Func_0200176c(void);
-void Func_020019d0(void);
+void GabombaStatue_PinionThrowsLeader(void);
+void GabombaStatue_CogsTurnBack(void);
 
-void Func_02004530(void);
-void Func_020045d8(void);
-void Func_02004620(void);
-void Func_020046c8(void);
+void GabombaStatue_LowerArrowA(void);
+void GabombaStatue_RedrawArrowA(void);
+void GabombaStatue_RaiseArrowB(void);
+void GabombaStatue_RedrawArrowB(void);
 
-extern s32 gData_02005fbc[];
-extern s32 gData_02005fc8[];
-extern u32 gData_02005b1c[];
-extern u32 gData_02005b60[];
-extern u32 gData_02005ba4[];
-extern u32 gData_02005be8[];
-extern s32 gData_02005c74[];
-extern s32 gData_02005ca0[];
+extern s32 gGabombaStatue_TurntableScript[];
+extern s32 gGabombaStatue_LookAroundScript[];
+extern u32 gGabombaStatue_JennaFocusScript[];
+extern u32 gGabombaStatue_PiersFocusScript[];
+extern u32 gGabombaStatue_KradenFocusScript[];
+extern u32 gGabombaStatue_KradenPointsScript[];
+extern s32 gGabombaStatue_StepBackScript[];
+extern s32 gGabombaStatue_GirlsStepBackScript[];
 
-extern u32 gData_02005944[];
+extern u32 gGabombaStatue_Room2GuardScript[];
 
-extern u32 gData_02005ccc[];
-extern u32 gData_02005d24[];
+extern u32 gGabombaStatue_JennaWatchesScript[];
+extern u32 gGabombaStatue_ShebaWatchesScript[];
 
-void Func_02005364(void);
+void GabombaStatue_RestartClock(void);
 
-void Func_02001b38(void);
-void Func_02001b68(void);
+void GabombaStatue_DimRoom1Actors(void);
+void GabombaStatue_DimRoom2Actors(void);
 
-s32 Func_02003604(void);
-s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id);
-void Func_02004f40(u32 *x_out, u32 *z_out);
+s32 GabombaStatue_GetPuzzleSeed(void);
+s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);
+void GabombaStatue_FindFreeTileCell(u32 *x_out, u32 *z_out);
 
 void Import_ActorRelease(struct Actor *object);
 
-extern u32 gData_02005c40[];
+extern u32 gGabombaStatue_LookAtChannelScript[];
 
-void Func_02001c10(void);
+void GabombaStatue_DrawCogCells(void);
 
 void GabombaStatue_InitializeRoom1(void);
 void GabombaStatue_InitializeRoom2(void);
@@ -96,39 +96,39 @@ void GabombaStatue_InitializeRoom3(void);
 void GabombaStatue_InitializeRoom5(void);
 void GabombaStatue_InitializeRoom6(void);
 void GabombaStatue_InitializeRoom7(void);
-void Func_020052a4();
-void Func_020053ac();
-s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
-void Func_02004270(s32 col, s32 row, s32 a, s32 b);
+void GabombaStatue_StartClock();
+void GabombaStatue_ResetClock();
+s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c,
+                          s32 d);
+void GabombaStatue_WritePiece(s32 col, s32 row, s32 a, s32 b);
 s32 abs(s32);
-s32 Func_02004224(s32 from, s32 to, s32 kind);
-void Func_02004288(s32 id, s32 value);
+s32 GabombaStatue_PickPiece(s32 from, s32 to, s32 kind);
+void GabombaStatue_ShowTiles(s32 id, s32 value);
 
-void Func_020038ac(void);
-void Func_02003974(void);
-s32 Func_02003a64(s32 value);
+void GabombaStatue_LoadTileGraphics(void);
+void GabombaStatue_ClearGrid(void);
+s32 GabombaStatue_LayChannel(s32 value);
 
 void Import_ActorStartIdle();
 
-void Func_02005210(void);
-void Func_0200525c(void);
+void GabombaStatue_CountDownShowingClock(void);
+void GabombaStatue_CountDown(void);
 extern char ResourceId_ClockDigits;
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
-s32 Func_02005844(struct Actor *object);
 
-void Func_02002074(void);
+void GabombaStatue_FadeByDepth(void);
 
 void Actors_SetHidden(s32 show, s32 first, u32 count);
 
-void Func_02002394(void);
+void GabombaStatue_LandFromFall(void);
 
-void Func_020011bc(s32 message, s32 value);
+void GabombaStatue_DropIntoHole(s32 message, s32 value);
 
-s32 Func_020053a0(void);
-extern u32 gData_02005910[];
+s32 GabombaStatue_GetClock(void);
+extern u32 gGabombaStatue_CogCellPictures[];
 
-void Func_0200582c(s32 index, s32 a, s32 b);
-void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
+void GabombaStatue_CoilRope(s32 index, s32 a, s32 b);
+void GabombaStatue_PlaceRope(s32 index, s32 flag, s32 a, s32 b);
 
 #endif

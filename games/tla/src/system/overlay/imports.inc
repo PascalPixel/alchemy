@@ -385,7 +385,7 @@
 	export Rope_Initialize, Rope_InitializeFar
 	export Rope_Tie, Rope_TieFar
 	export Rope_Coil, Rope_CoilFar
-	export Func_0200582c, Rope_CoilFar
+	export GabombaStatue_CoilRope, Rope_CoilFar
 	export Rope_Lash, Rope_LashFar
 	export Tightrope_Initialize, Tightrope_InitializeFar
 	export Tightrope_Place, Tightrope_PlaceFar
@@ -394,7 +394,7 @@
 	export Func_02003bf4, Tightrope_PlaceFar
 	export FlagBlock_PlaceAllMarkingEdges, FlagBlock_PlaceAllMarkingEdgesFar
 	export FlagBlock_PlaceAll, FlagBlock_PlaceAllFar
-	export Func_0200583c, Rope_PlaceFar
+	export GabombaStatue_PlaceRope, Rope_PlaceFar
 	export Func_02003bfc, Rope_PlaceFar
 	export FlagBlock_ApplyFlags, FlagBlock_ApplyFlagsFar
 	export Actor_GetCellIndex, Actor_GetCellIndexFar

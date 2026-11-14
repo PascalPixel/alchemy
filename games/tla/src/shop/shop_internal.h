@@ -227,13 +227,14 @@ struct ShopWork {
                   ///< enum SanctumService)
   s8 burstMember; ///< the sanctum's party member whose pose is randomized; -1
                   ///< none
-  /// 0 while the item picker's details window shows over the grid, 1 after.
-  u8 detailsHidden;
-  u8 unk50a;
+  /// ItemMenuWork's: nonzero while Menu_UpdateEntryObjectTransforms places
+  /// the party figures; cleared while a details window covers them.
+  u8 memberSpritesShown;
+  u8 figuresShown; ///< ItemMenuWork's; not named here
   /// The item picker's check: 0 for an item to drop, 1 for one to remove.
   s8 itemMode;
   struct FieldParticle effects[24]; ///< the sanctum service's particles
-  u8 unknownBeforeIcons[0x48];
+  u8 menuIcons[0x48]; ///< ItemMenuWork's five menu icons; not named here
   /// The item icon grid (ItemIconGrid_ShowInventory): a sprite and a VRAM
   /// cache slot (ICON_NONE when empty) for each inventory slot.
   struct IconSprite iconSprites[ICON_COUNT];

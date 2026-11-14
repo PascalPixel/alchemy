@@ -293,10 +293,10 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       detailsWindow =
           Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
       ItemMenu_DrawItemDetailsFar(detailsWindow, inventoryEntry);
-      shop->detailsHidden = 0;
+      shop->memberSpritesShown = 0;
       while (gInput.held & KEY_SELECT)
         wait(1);
-      shop->detailsHidden = 1;
+      shop->memberSpritesShown = 1;
       Window_CloseFar(detailsWindow, 2);
       WindowSprite_PrepareForRedrawFar(shop->listWindow);
       wait(1);

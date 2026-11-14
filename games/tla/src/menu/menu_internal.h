@@ -74,6 +74,7 @@
 #include "menu/djinn_menu.h"
 #include "macros.h"
 #include "graphics/vram_tab.h"
+#include "item_icon.h"
 
 /// The item menu's work, Ram_HeapSlots->menuRuntime (heap slot 220): its
 /// windows, the party figures, the items listed and the two choices a command
@@ -139,7 +140,18 @@ struct ItemMenuWork {
   /// Japanese)
   u16 flags;
   s16 completionFlag; ///< set to 1 as item commands end
-  u8 unk220[0x3e];
+  /// The row of four figures the Djinn and status screens and the file list
+  /// show (DjinnFigures_InitializeTopRow): each one's sprite, place in screen
+  /// pixels and depth, and its scale in 16.16, which closes a quarter of its
+  /// gap to Q16_ONE each frame, or holds -scale while negative.
+  ///@{
+  void *figures[4];
+  s16 figureX[4];
+  s16 figureY[4];
+  s32 figureScales[4];
+  u16 figureDepths[4];
+  ///@}
+  u8 unk258[6];
   s16 messageOffset; ///< the item use's result, after MsgItemUseResult
   s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
   s8 listMode;       ///< the command chosen last; -1 for none
@@ -147,6 +159,21 @@ struct ItemMenuWork {
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 unk26c[0x282];
   u16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
+  u8 unk4f2[0x17];
+  /// Nonzero while Menu_UpdateEntryObjectTransforms places the party figures
+  /// (memberSprites); the shops clear it while a details window covers them.
+  s8 memberSpritesShown;
+  /// Nonzero while the row of four figures is drawn
+  /// (Menu_SetEntryObjectsHidden).
+  s8 figuresShown;
+  u8 unk50b[0x6c1];
+  /// The five menu icons (MenuIcon_LoadSlots): a sprite and a VRAM cache
+  /// slot each, queued while menuIconsShown is nonzero.
+  ///@{
+  struct IconSprite menuIcons[5];
+  u16 menuIconSlots[5];
+  s8 menuIconsShown;
+  ///@}
 };
 
 STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 0x24);
@@ -165,7 +192,12 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, completionFlag) == 0x21e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25e);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 0x261);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 0x264);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, figures) == 0x220);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, figureDepths) == 0x250);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 0x4ee);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberSpritesShown) == 0x509);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIcons) == 0xbcc);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, menuIconsShown) == 0xc12);
 
 struct MenuArrow {
   u8 unk00[5];

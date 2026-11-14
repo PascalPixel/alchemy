@@ -171,10 +171,10 @@ s32 Shop_SelectSell(s32 unitId) {
         window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10,
                                   WINDOW_FLAG_INSTANT);
         ItemMenu_DrawItemDetailsFar(window, inventoryEntry);
-        *(u8 *)&shop->detailsHidden = 0;
+        *(u8 *)&shop->memberSpritesShown = 0;
         while (gInput.held & KEY_SELECT)
           wait(1);
-        shop->detailsHidden = 1;
+        shop->memberSpritesShown = 1;
         Window_CloseFar(window, 2);
         Shop_DrawMoney();
         WindowSprite_PrepareForRedrawFar(shop->listWindow);

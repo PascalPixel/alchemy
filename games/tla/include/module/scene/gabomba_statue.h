@@ -116,7 +116,6 @@ void GabombaStatue_CountDown(void);
 extern char ResourceId_ClockDigits;
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
-
 void GabombaStatue_FadeByDepth(void);
 
 void Actors_SetHidden(s32 show, s32 first, u32 count);

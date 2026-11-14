@@ -33,6 +33,22 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
+/// Set once the party has taken the test of luck offered at the Spring of
+/// Lemuria (Lemuria_OfferSpringLuck).
+#define FLAG_LEMURIA_SPRING_LUCK_TRIED 0x908
+/// Set once Growth has grown the vine (Lemuria_GrowVine); the set-up grows it
+/// again on every visit.
+#define FLAG_LEMURIA_VINE_GROWN 0x963
+/// Set once the party has marvelled at the city ("This place is remarkable...
+/// Truly remarkable...").
+#define FLAG_LEMURIA_CITY_ADMIRED 0x964
+/// Set once the Lemurian at the window has told the party the door is broken
+/// and to climb through ("The door's broken, I'm afraid.").
+#define FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN 0x968
+/// Set once the Lemurian has let a rope down from the window ("There! Is that
+/// better? Now climb up here.").
+#define FLAG_LEMURIA_ROPE_LET_DOWN 0x96f
+
 void FieldCamera_WaitForArrival();
 
 void Rope_Lash();
@@ -332,21 +348,37 @@ void Lemuria_GrowVine(void) {
 }
 
 /// The Scoop spots: each digs up its treasure actor and sets its flag.
-void Lemuria_ScoopFirstTreasure(s32 a) { Event_DigUpTreasure(a, 64, 0x300); }
+void Lemuria_ScoopFirstTreasure(s32 a) {
+  Event_DigUpTreasure(a, 64, FLAG_AREA_TEMP_00);
+}
 
-void Lemuria_ScoopSecondTreasure(s32 a) { Event_DigUpTreasure(a, 65, 0x301); }
+void Lemuria_ScoopSecondTreasure(s32 a) {
+  Event_DigUpTreasure(a, 65, FLAG_AREA_TEMP_01);
+}
 
-void Lemuria_ScoopThirdTreasure(s32 a) { Event_DigUpTreasure(a, 66, 0x302); }
+void Lemuria_ScoopThirdTreasure(s32 a) {
+  Event_DigUpTreasure(a, 66, FLAG_AREA_TEMP_02);
+}
 
-void Lemuria_ScoopFourthTreasure(s32 a) { Event_DigUpTreasure(a, 67, 0x303); }
+void Lemuria_ScoopFourthTreasure(s32 a) {
+  Event_DigUpTreasure(a, 67, FLAG_AREA_TEMP_03);
+}
 
-void Lemuria_ScoopFifthTreasure(s32 a) { Event_DigUpTreasure(a, 68, 0x304); }
+void Lemuria_ScoopFifthTreasure(s32 a) {
+  Event_DigUpTreasure(a, 68, FLAG_AREA_TEMP_04);
+}
 
-void Lemuria_ScoopSixthTreasure(s32 a) { Event_DigUpTreasure(a, 70, 0x306); }
+void Lemuria_ScoopSixthTreasure(s32 a) {
+  Event_DigUpTreasure(a, 70, FLAG_AREA_TEMP_06);
+}
 
-void Lemuria_ScoopSeventhTreasure(s32 a) { Event_DigUpTreasure(a, 71, 0x307); }
+void Lemuria_ScoopSeventhTreasure(s32 a) {
+  Event_DigUpTreasure(a, 71, FLAG_AREA_TEMP_07);
+}
 
-void Lemuria_ScoopEighthTreasure(s32 a) { Event_DigUpTreasure(a, 72, 0x308); }
+void Lemuria_ScoopEighthTreasure(s32 a) {
+  Event_DigUpTreasure(a, 72, FLAG_AREA_TEMP_08);
+}
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -370,12 +402,13 @@ void Lemuria_KnockAtBrokenDoor(void) {
     gFieldWork->fieldMenu = 1;
     return;
   }
-  if (!Event_GetFlag(0x966) || Event_GetFlag(0x968)) {
+  if (!Event_GetFlag(0x966) ||
+      Event_GetFlag(FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN)) {
     FieldEvent_SetMessageId((s32)&MsgTheDoorDoesn);
     Event_ShowMessage(-1, 0);
     return;
   }
-  Event_SetFlag(0x968);
+  Event_SetFlag(FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)&MsgAreYouKids);
@@ -439,7 +472,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Actor_WalkByAndWait(12, 32, 0);
   EventCamera_FollowActor(4, 1);
   Actor_WalkByAndWait(12, 0, -32);
-  Event_SetFlag(0x96f);
+  Event_SetFlag(FLAG_LEMURIA_ROPE_LET_DOWN);
 done:
   Lemuria_PoseActor12();
   Event_End();
@@ -461,10 +494,9 @@ void Lemuria_DrinkFromSpring(void) {
   }
 }
 
-/// Actor 30 offers a test of luck at the Spring of Lemuria; flag 0x908
-/// records that the party took it.
+/// Actor 30 offers a test of luck at the Spring of Lemuria, once.
 void Lemuria_OfferSpringLuck(void) {
-  if (Event_GetFlag(0x908)) {
+  if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_FaceActor(30, gMainRoutineWork.currentOwner, 0);
     FieldActor_RefreshSelectorById(30);
     FieldEvent_SetMessageId((s32)MsgYouLookLike);
@@ -494,7 +526,7 @@ void Lemuria_OfferSpringLuck(void) {
     FieldEvent_Wait(5);
     Actor_SetSpeed(30, 1.2);
     Actor_WalkToAndWait(30, 440, 1048);
-    Event_SetFlag(0x908);
+    Event_SetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED);
   }
   Actor_FaceDirectionAndWait(30, FACING_NORTH + FACING_STEP);
   Event_End();
@@ -608,10 +640,10 @@ s32 Scene_Initialize(void) {
   actor = Actor_Get(19);
   actor->watchedObject = Actor_Get(18);
   actor->update = Lemuria_NoticeLeader;
-  if (Event_GetFlag(0x908)) {
+  if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_SetPosition(30, 440, 1048);
   }
-  if (Event_GetFlag(0x964) && !Event_GetFlag(0x969)) {
+  if (Event_GetFlag(FLAG_LEMURIA_CITY_ADMIRED) && !Event_GetFlag(0x969)) {
     Actor_SetPosition(24, 456, 520);
     Actor_SetPosition(25, 472, 520);
   }
@@ -628,15 +660,15 @@ s32 Scene_Initialize(void) {
   Rope_Place(0, 0x962, 8, 9);
   Actor_Get(8)->priorityFlags |= 32;
   Actor_Get(9)->priorityFlags |= 32;
-  if (Event_GetFlag(0x96f)) {
+  if (Event_GetFlag(FLAG_LEMURIA_ROPE_LET_DOWN)) {
     FieldActor_SetSpritePriority(28, 2);
     FieldActor_SetSpritePriority(27, 2);
     Actor_SetPosition(28, 840, 920);
     Actor_SetPosition(27, 840, 936);
-    Call4(Rope_Place, 1, 0x96f, 28, 27);
+    Call4(Rope_Place, 1, FLAG_LEMURIA_ROPE_LET_DOWN, 28, 27);
   }
   Actor_SetSpriteFlags(Actor_Get(28), 0);
-  if (Event_GetFlag(0x963)) {
+  if (Event_GetFlag(FLAG_LEMURIA_VINE_GROWN)) {
     HangingVine_Place(10, 1);
     Lemuria_GrowVine();
   }
@@ -768,7 +800,7 @@ void Lemuria_MarvelAtCity(void) {
   struct Actor *leader;
   s32 result;
 
-  Event_SetFlag(0x964);
+  Event_SetFlag(FLAG_LEMURIA_CITY_ADMIRED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgThisPlaceIs);
@@ -1194,10 +1226,11 @@ struct Trigger gSceneEvents[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
      EVENT(Lemuria_EnterDoor)},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 20, 0x964, EVENT(Lemuria_MarvelAtCity)},
-    {TRIGGER_STEP, 21, 0x964, EVENT(Lemuria_AdmirePalace)},
-    {TRIGGER_STEP, 22, 0x964, EVENT(Lemuria_AdmirePalace)},
-    {TRIGGER_STEP, 23, 0x964, EVENT(Lemuria_KeepLookingAround)},
+    {TRIGGER_STEP, 20, FLAG_LEMURIA_CITY_ADMIRED, EVENT(Lemuria_MarvelAtCity)},
+    {TRIGGER_STEP, 21, FLAG_LEMURIA_CITY_ADMIRED, EVENT(Lemuria_AdmirePalace)},
+    {TRIGGER_STEP, 22, FLAG_LEMURIA_CITY_ADMIRED, EVENT(Lemuria_AdmirePalace)},
+    {TRIGGER_STEP, 23, FLAG_LEMURIA_CITY_ADMIRED,
+     EVENT(Lemuria_KeepLookingAround)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgICannotRemember)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaHasNo)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgInLemuriaWe)},
@@ -1269,7 +1302,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Lemuria_KnockAtBrokenDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x962, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, 0x963, EVENT(Lemuria_GrowVine)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, FLAG_LEMURIA_VINE_GROWN,
+     EVENT(Lemuria_GrowVine)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(Lemuria_DigFirstSpot)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
@@ -1280,13 +1314,13 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, EVENT(Lemuria_DigFourthSpot)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 38,
      CONDITION_ALWAYS, EVENT(Lemuria_DigFifthSpot)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 104, 0x303,
-     EVENT(Lemuria_ScoopFourthTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 105, 0x304,
-     EVENT(Lemuria_ScoopFifthTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 107, 0x306,
-     EVENT(Lemuria_ScoopSixthTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 108, 0x307,
-     EVENT(Lemuria_ScoopSeventhTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 104,
+     FLAG_AREA_TEMP_03, EVENT(Lemuria_ScoopFourthTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 105,
+     FLAG_AREA_TEMP_04, EVENT(Lemuria_ScoopFifthTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 107,
+     FLAG_AREA_TEMP_06, EVENT(Lemuria_ScoopSixthTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 108,
+     FLAG_AREA_TEMP_07, EVENT(Lemuria_ScoopSeventhTreasure)},
     {TRIGGER_TABLE_END},
 };

@@ -12,6 +12,16 @@
 #include "flags.h"
 #include "item_ids.h"
 
+/// Set once the party has found the dead end by the statue and turned back
+/// (Kibombo_DeadEndByTheStatue).
+#define FLAG_KIBOMBO_DEAD_END_SEEN 0x8f5
+/// Set while Piers goes about Kibombo with the party: as he joins it, and as he
+/// thanks it; cleared when he stays behind.
+#define FLAG_KIBOMBO_PIERS_WITH_PARTY 0x92e
+/// Set once Piers has refused to leave the village without the orb and stayed
+/// behind (Kibombo_PiersRefusesToLeave).
+#define FLAG_KIBOMBO_PIERS_STAYED_BEHIND 0x92f
+
 // Story flags: the vent Scoop uncovers by the statue, the block Moved for
 // Piers, the ceremony begun and Piers joined.
 #define FLAG_KIBOMBO_VENT_UNCOVERED 0x86a
@@ -595,8 +605,8 @@ void Kibombo_PiersThanksParty(void) {
                              *(s16 *)((u8 *)leader + 18));
   Actor_WaitForMoveById(7);
   Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
-  GameFlag_Clear(0x92f);
-  GameFlag_Set(0x92e);
+  GameFlag_Clear(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
+  GameFlag_Set(FLAG_KIBOMBO_PIERS_WITH_PARTY);
   Event_PrepareObjectAndApplyValue(7, 0);
   Event_End();
 }
@@ -732,7 +742,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
 }
 
 void Kibombo_PiersRefusesToLeave(void) {
-  if (!Kibombo_FlagCheck(0x92e)) {
+  if (!Kibombo_FlagCheck(FLAG_KIBOMBO_PIERS_WITH_PARTY)) {
     Import_EventSetExitRequest(5);
     return;
   }
@@ -758,8 +768,8 @@ void Kibombo_PiersRefusesToLeave(void) {
   Kibombo_ObjPlace(gMainRoutineWork.currentOwner, 80, 510);
   Event_Wait(10);
   Import_EventSetExitRequest(5);
-  GameFlag_Clear(0x92e);
-  GameFlag_Set(0x92f);
+  GameFlag_Clear(FLAG_KIBOMBO_PIERS_WITH_PARTY);
+  GameFlag_Set(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
   Party_RemoveMemberRestored(7);
   Event_End();
 }
@@ -1092,7 +1102,7 @@ void Kibombo_PiersJoinsParty(void) {
   Actor_SetMovementTypeById(26, gKibombo_PartyFollowsScript + 0);
   Actor_SetMovementTypeAndWaitById(7, gKibombo_PartyFollowsScript + 0);
   GameFlag_Set(FLAG_PIERS_JOINED);
-  GameFlag_Set(0x92e);
+  GameFlag_Set(FLAG_KIBOMBO_PIERS_WITH_PARTY);
   Event_PrepareObjectAndApplyValue(7, 1);
   Party_GivePiersDjinn();
 }
@@ -1381,7 +1391,7 @@ ask:
   Actor_SetMovementTypeById(6, gKibombo_PartyLeavesDeadEndScript);
   Actor_SetMovementTypeById(26, gKibombo_PartyLeavesDeadEndScript);
   Actor_SetMovementTypeAndWaitById(7, gKibombo_PartyLeavesDeadEndScript);
-  GameFlag_Set(0x8f5);
+  GameFlag_Set(FLAG_KIBOMBO_DEAD_END_SEEN);
   Event_End();
 }
 
@@ -2890,11 +2900,11 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
 }
 
 // Unless flag 265 is set, places actor 11 and, arriving by entrance 19 with
-// unit 7 in the party (flag 7), restores unit 7's HP and PP, sets their
-// gauges, clears two of its bytes, sets flag 0x92f, clears 0x92e and removes
-// it from the party; then saves four palette colours, frees actors 30 to 35,
-// sets flags 0x202 and 0x209, places actor 29, places actors 21 and 26 to 28
-// when flag 0x8fd is set, sets flag 0x86b and fades in with
+// Piers in the party, restores his HP and PP, sets his gauges, clears two of
+// his bytes, marks him as staying behind (FLAG_KIBOMBO_PIERS_STAYED_BEHIND)
+// and removes him from the party; then saves four palette colours, frees
+// actors 30 to 35, sets flags 0x202 and 0x209, places actor 29, places actors
+// 21 and 26 to 28 when flag 0x8fd is set, sets flag 0x86b and fades in with
 // Kibombo_FlickerVillageFires scheduled.
 void Kibombo_InitializeRoom4(void) {
   struct Actor *actor = Actor_GetById(11);
@@ -2935,8 +2945,8 @@ void Kibombo_InitializeRoom4(void) {
       }
       unit[0x131] = 0;
       unit[0x140] = 0;
-      GameFlag_Set(0x92f);
-      GameFlag_Clear(0x92e);
+      GameFlag_Set(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
+      GameFlag_Clear(FLAG_KIBOMBO_PIERS_WITH_PARTY);
       Party_RemoveMemberRestored(7);
     }
   }
@@ -3090,9 +3100,9 @@ void Kibombo_InitializeRoom5(void) {
   Actor_SetSpritePriority(26, 2);
   Actor_SetSpritePriority(5, 2);
   Actor_SetSpritePriority(6, 2);
-  if (GameFlag_Get(0x92e))
+  if (GameFlag_Get(FLAG_KIBOMBO_PIERS_WITH_PARTY))
     Actor_SetHorizontalPositionWithTerrain(7, 0, 0);
-  else if (GameFlag_Get(0x92f)) {
+  else if (GameFlag_Get(FLAG_KIBOMBO_PIERS_STAYED_BEHIND)) {
     s32 angle = 0x2000;
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);
@@ -3906,7 +3916,8 @@ struct Trigger gKibombo_Room5Triggers[] = {
      IF_FLAG_SET(FLAG_KIBOMBO_VENT_UNCOVERED), EVENT(Kibombo_EnterVent)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoomFading)},
     {TRIGGER_STEP, 5, 0x8f3, EVENT(Kibombo_LeaveRoom)},
-    {TRIGGER_STEP, 5, 0x92f, EVENT(Kibombo_PiersRefusesToLeave)},
+    {TRIGGER_STEP, 5, FLAG_KIBOMBO_PIERS_STAYED_BEHIND,
+     EVENT(Kibombo_PiersRefusesToLeave)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Kibombo_LeaveRoom)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, FLAG_SCENE_TEMP_01,
      EVENT(Kibombo_FreezePuddle)},
@@ -3925,11 +3936,13 @@ struct Trigger gKibombo_Room5Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 14,
      FLAG_FOURTH_MARKING_DUG, EVENT(Kibombo_ScoopFourthMarking)},
     {TRIGGER_STEP, 20, 0x8f3, EVENT(Kibombo_MeetPiers)},
-    {TRIGGER_STEP, 22, 0x92e, EVENT(Kibombo_PiersThanksParty)},
+    {TRIGGER_STEP, 22, FLAG_KIBOMBO_PIERS_WITH_PARTY,
+     EVENT(Kibombo_PiersThanksParty)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS,
      MSGNO(MsgIAmCertain)},
-    {TRIGGER_STEP, 21, 0x8f5, EVENT(Kibombo_DeadEndByTheStatue)},
+    {TRIGGER_STEP, 21, FLAG_KIBOMBO_DEAD_END_SEEN,
+     EVENT(Kibombo_DeadEndByTheStatue)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAhhSomethingIs)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgYouLookHuman)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAkafubuPossessesThe)},

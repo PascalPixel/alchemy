@@ -183,9 +183,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   if (mode == PARTICLE_STREAMS_OUTER_SPACE)
     Iwram_CopyWords(colors,
                     Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
-  fill = CANVAS_FILL_WORD(1);
-  Dma_Set(&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(256 * 128 / 4),
-          REG_DMA3);
+  Dma_Fill32Cell(fill, CANVAS_FILL_WORD(1), Ram_MapGridCellBuffer, 256 * 128);
   Iwram_CopyWords(BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer,
                   BATTLE_BACKGROUND_BYTES);
   wait(1);
@@ -202,8 +200,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     BG_PLTT_COLOR(8, i) = RGB(red, green, blue);
   }
-  fill = 0;
-  Dma_Set(&fill, canvas, DMA_FILL_WORDS(CANVAS_BYTES / 4), REG_DMA3);
+  Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;
     s32 y = Random16() & 127;

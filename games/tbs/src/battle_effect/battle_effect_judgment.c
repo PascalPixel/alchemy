@@ -48,11 +48,6 @@ struct JudgmentWork {
 /// Each explosion picture is 32x54.
 #define JUDGMENT_EXPLOSION_PICTURE_BYTES (32 * 54)
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
-/// DMA word that fills the 128x128 canvas.
-#define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(CANVAS_BYTES / 4)
-/// DMA word that fills the 120x120 wave picture.
-#define JUDGMENT_DMA_FILL_WAVE                                                 \
-  DMA_FILL_WORDS((JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE) / 4)
 
 /// Sets a ring's four mirrored points (left or right, top or bottom) of the
 /// wave picture to level 20.
@@ -430,8 +425,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
-  fill = 0;
-  Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+  Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
 
   cx = 60;
   cy = 44;
@@ -441,8 +435,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   rings = 2;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  fill = shift;
-  Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+  Dma_Fill32Cell(fill, shift, work, JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE);
 
   // The sweep, on its own frame clock.
   for (frame = 0; frame != JUDGMENT_SWEEP_FRAMES; frame++) {
@@ -481,8 +474,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 64) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_16);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, IO_WRITE_32);
-      fill = 0;
-      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
       Resource_LoadAndDecompress(RESOURCE_EXPLOSION_SHEET,
                                  work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
       Resource_LoadAndDecompress(RESOURCE_OVERLAY_IMAGE_A,
@@ -499,8 +491,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == 69) {
-      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
-      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Fill32Cell(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
+                     CANVAS_BYTES);
     }
 
     // Undo the inversion, rewriting the battle background's palette from the
@@ -515,22 +507,20 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       cx = 112;
       cy = 32;
       ring = 0;
-      fill = 0;
       rings = 4;
       squash = 8;
-      Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
-      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Fill32Cell(fill, 0, work, JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE);
+      Dma_Fill32Cell(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
+                     CANVAS_BYTES);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, RESOURCE_BEACH_BACKDROP,
                                0);
     }
 
     // The forest.
     if (frame == 214) {
-      fill = 0;
-      Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
-      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Fill32Cell(fill, 0, work, JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE);
+      Dma_Fill32Cell(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
+                     CANVAS_BYTES);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_FOREST_BACKDROP, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
@@ -546,10 +536,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 280) {
       // Back to the battle.
       BattleEffect_SetupBlendedDisplay();
-      fill = 0;
-      Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = CANVAS_FILL_WORD(1);
-      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Fill32Cell(fill, 0, work, JUDGMENT_WAVE_SIZE * JUDGMENT_WAVE_SIZE);
+      Dma_Fill32Cell(fill, CANVAS_FILL_WORD(1), canvas, CANVAS_BYTES);
       view->busy = 0;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
@@ -588,8 +576,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == 182) {
-      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
-      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Fill32Cell(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
+                     CANVAS_BYTES);
     }
 
     // A flare falls onto the aerial view, drawn as four mirrored quarters, its
@@ -788,8 +776,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == 238) {
-      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
-      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Fill32Cell(fill, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
+                     CANVAS_BYTES);
     }
 
     if (frame >= 214 && frame < 280) {
@@ -896,5 +884,3 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_GLOW
 #undef JUDGMENT_EXPLOSION_PICTURE_BYTES
 #undef JUDGMENT_WAVE_SIZE
-#undef JUDGMENT_DMA_FILL_CANVAS
-#undef JUDGMENT_DMA_FILL_WAVE

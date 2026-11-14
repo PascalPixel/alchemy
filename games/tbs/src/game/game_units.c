@@ -495,19 +495,13 @@ void MainRoutineWork_InitializeDefaults(void) {
 
   // Clear the state up to the characters, the scene state with its snapshots,
   // and the flags.
-  zero = 0;
-  START_DMA(&zero, &gMainRoutineWork,
-            DMA_FILL_WORDS(sizeof(gMainRoutineWork) / 4));
-  zero = 0;
-  START_DMA(&zero, gSceneLocalState, DMA_FILL_WORDS(993));
+  Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
+  Dma_Fill32Cell(zero, 0, gSceneLocalState, 993 * 4);
   WAIT_DMA();
-  zero = 0;
-  START_DMA(&zero, gGameFlagBytes, DMA_FILL_WORDS(128));
+  Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
   ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
       ACTOR_SNAPSHOT_EMPTY;
-  zero = 0;
-  START_DMA(&zero, gCharacterUnits,
-            DMA_FILL_WORDS(sizeof(gCharacterUnits) / 4));
+  Dma_Fill32Cell(zero, 0, gCharacterUnits, sizeof(gCharacterUnits));
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;

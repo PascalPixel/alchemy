@@ -83,10 +83,7 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 /// same entries in mirror) at them.
 s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
-   * addresses the 32 at sp+36 to sp+67, above pens, and The Lost Age's
-   * Text_DrawStringAsTiles reserves the same 32; as without it, 4 of 402
-   * instructions differ in tbs-en. */
+   * touches. */
   UNUSED u32 reserve[8];
   u8 pens[16];
   struct WindowWork *work;

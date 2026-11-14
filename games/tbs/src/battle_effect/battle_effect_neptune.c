@@ -265,14 +265,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     if (frame > 221) {
       for (i = 0; i != 64; i++) {
-        /* FAKEMATCH(temporary): pictures holds gBattleEffect_FlarePictures; as
-         * gBattleEffect_FlarePictures[r - 1], 104 of 1474 instructions differ
-         * in tbs-en. */
+        /* FAKEMATCH(temporary): pictures holds gBattleEffect_FlarePictures. */
         u16 *pictures = gBattleEffect_FlarePictures;
-        /* LEFTOVER(template): r holds 1, the smallest flare's size; the
-         * sibling loop in BattleEffect_RunNeptune, the flares from frame 152
-         * above, runs the same draw with a size that varies, (i & 3) + 5; as
-         * 0, 1 and 2 written out, 62 of 1474 instructions differ in tbs-en. */
+        /* LEFTOVER(template): r holds 1, the smallest flare's size. */
         s32 r = 1;
         if (frame >= i / 2 + 222) {
           blit[0](canvas, work->sheet + pictures[r - 1] + NEPTUNE_FLARE_SHEET,

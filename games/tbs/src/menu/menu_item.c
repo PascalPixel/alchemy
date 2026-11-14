@@ -1453,8 +1453,7 @@ UNUSED void ItemMenu_NoOp(void) {}
 /// teaches.
 void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
   /* FAKEMATCH(temporary): member, an s32, takes the saved unit's address, and
-   * for Psynergy items buffer copies it twice; as a separate void *saved, 44 of
-   * 171 instructions differ in tbs-en. */
+   * for Psynergy items buffer copies it twice. */
   struct ItemMenuWork *menu = gMenuWork;
   s32 panelStyle = 0;
   struct Unit *unit = Unit_GetFar(member);

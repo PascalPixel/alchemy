@@ -152,9 +152,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       *(void **)&entry->tile = NULL;
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
-      /* FAKEMATCH(dead): advancing and restoring the captured pointer; without
-       * the pair, 8 of 80 instructions of the nested DjinnMenu_DrawStatArrow
-       * differ in tbs-en. */
+      /* FAKEMATCH(dead): advancing and restoring the captured pointer. */
       win++;
       win--;
       entry->tile.bits.index = VramCache_Reload(

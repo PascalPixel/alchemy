@@ -102,8 +102,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 529);
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage
-     * used directly, 209 of 770 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage. */
     struct CursorSprite *sprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {

@@ -204,8 +204,7 @@ static void OrbGlow_Fade(void) {
 
 /// Keeps the raised ship alive with a glow, a swell and spray.
 static void Ship_UpdateSwell(void) {
-  /* FAKEMATCH(volatile): the blend passes through a halfword on the stack;
-   * as a plain u16, 5 of 225 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): the blend passes through a halfword on the stack. */
   volatile u16 blend;
   struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
@@ -591,8 +590,8 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
-   * as a plain u16, 6 of 231 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack.
+   */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
@@ -679,8 +678,8 @@ static void LemurianShip_RaiseTheShip(void) {
 /// Sets the Lemurian ship's map up.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  /* FAKEMATCH(volatile): each control passes through a halfword on the stack;
-   * as a plain u16, 2 of 165 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): each control passes through a halfword on the stack.
+   */
   volatile u16 cnt;
 
   grid = gMapGridWork[0];

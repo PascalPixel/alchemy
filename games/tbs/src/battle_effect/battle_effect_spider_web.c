@@ -29,12 +29,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   struct Actor *actor;
   struct ScreenPoint position;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
-   * reserves 32 bytes (sub sp, #32), 8 more than one blitter needs, and no
-   * instruction addresses the word at sp+16; BlitterPair is the blitter set
-   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
-   * battle-effect files fill or call its second half; as one DrawRectangle
-   * draw[1], 136 of 256 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
   s32 frames;
   s32 frame;

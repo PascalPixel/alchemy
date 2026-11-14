@@ -33,9 +33,7 @@ s32 Battle_Run(s32 enemyGroup) {
   u32 actingUnit;
   s16 cue;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
-   * addresses the 48 at sp+20 to sp+67; as without it, 4 of 645 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED u8 unused[48];
   volatile u32 fill;
 
@@ -95,8 +93,7 @@ s32 Battle_Run(s32 enemyGroup) {
     Battle_SetType(BATTLE_TYPE_LINK);
   }
   if (battle->isLink != 0) {
-    /* FAKEMATCH(dead): the seed's store in a once-only block; as the plain
-     * store, 4 of 645 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): the seed's store in a once-only block. */
     do {
       gBattleRandomSeed = 0;
     } while (0);

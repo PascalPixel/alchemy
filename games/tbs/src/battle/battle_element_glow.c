@@ -192,16 +192,13 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   s32 effectIndex;
   u8 *graphics;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 36 bytes it reserves (sub sp, #36), no instruction
-   * addresses the 28 at sp+8 to sp+35; as without it, 4 of 246 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED struct Spark unused;
 
   gBattleBackgroundWork->mode = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 128 * 128);
-  /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 246 instructions
-   * differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
   // Each spark at a random angle and height, swirling inward; the further out,
@@ -321,9 +318,7 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 /// star field, the streaks, the pillar or the burst.
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 240 bytes it reserves (sub sp, #240), no instruction
-   * addresses the 40 at sp+200 to sp+239; as without it, 4 of 249 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED s32 spare[10];
   struct ScreenPoint starFieldPosition;
   struct ScreenPoint streakPosition;

@@ -22,12 +22,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
-   * reserves 116 bytes (sub sp, #116), 4 more than one blitter needs, and no
-   * instruction addresses the word at sp+64; BlitterPair is the blitter set
-   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
-   * battle-effect files fill or call its second half; as one DrawRectangle
-   * draw[1], 48 of 490 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;
@@ -190,12 +185,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
-   * reserves 64 bytes (sub sp, #64), 4 more than one blitter needs, and no
-   * instruction addresses the word at sp+36; BlitterPair is the blitter set
-   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
-   * battle-effect files fill or call its second half; as one DrawRectangle
-   * draw[1], 40 of 415 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;
@@ -243,10 +233,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
     point++;
   }
 
-  /* LEFTOVER(template): size holds 2; Camelot's template:
-   * BattleEffect_RunAstralBlast above draws the same motes with a size that
-   * grows, (frame - start) / 4 + 2; as 2 in EFFECT_DRAW_MOTE, 69 of 415
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(template): size holds 2. */
   size = 2;
   trails = PARTICLES;
   for (frame = 0; frame != 128; frame++) {

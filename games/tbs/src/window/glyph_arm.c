@@ -62,11 +62,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
   u32 glyphIndex;
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE
-  /* LEFTOVER(frame): an unused local the tbs-ja ROM's frame reserves and
-   * never touches: of the 100 bytes it reserves (sub sp, sp, #100), no
-   * instruction addresses the 64 at sp+36 to sp+99, and The Lost Age's
-   * Glyph_DrawArm reserves the same 64 in tla-ja alone; as
-   * without it, 6 of 193 instructions differ in tbs-ja. */
+  /* LEFTOVER(frame): an unused local the tbs-ja ROM's frame reserves and never
+   * touches. */
   UNUSED struct GlyphRect unusedStackFrame[4];
 #endif
 

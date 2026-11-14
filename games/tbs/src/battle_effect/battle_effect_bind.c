@@ -83,8 +83,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   /* FAKEMATCH(temporary): one workspace for the target's position and each
-   * projected corner; as two locals, 166 of 524 instructions differ in tbs-en.
-   */
+   * projected corner. */
   union {
     struct Vector3 world;
     struct ScreenPoint projected;
@@ -240,8 +239,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   /* FAKEMATCH(temporary): one workspace for the target's position and each
-   * projected corner; as two locals, 211 of 436 instructions differ in tbs-en.
-   */
+   * projected corner. */
   union {
     struct Vector3 world;
     struct ScreenPoint projected;

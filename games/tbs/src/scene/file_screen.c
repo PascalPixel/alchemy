@@ -848,8 +848,7 @@ menu_top:;
           for (index = pageIndex * PASSWORD_SYMBOLS_PER_PAGE,
               pageGlyphIndex = 0;
                index != result; index++, pageGlyphIndex++) {
-            /* FAKEMATCH(dead): a once-only block round the draw call; as the
-             * plain call, 170 of 920 instructions differ in tbs-en. */
+            /* FAKEMATCH(dead): a once-only block round the draw call. */
             do {
               FileScreen_NameEntryCharacter(
                   password[index] & PASSWORD_SYMBOL_MASK, glyph);
@@ -1141,8 +1140,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
                 INVENTORY_QUANTITY_SHIFT;
           }
         }
-        /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads;
-         * without it, 71 of 485 instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads. */
         quantity = j;
         if (bitOffset < 0) {
           out[outputIndex] += (u16)j >> -bitOffset;

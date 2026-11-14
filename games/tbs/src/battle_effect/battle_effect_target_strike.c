@@ -169,10 +169,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                              work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 
   /* LEFTOVER(template): a per-target loop whose count is 1, the first target
-   * only; Camelot's template: the sibling effects BattleEffect_RunStreakVolley
-   * and BattleEffect_RunDjinnBeams open the same loop, run to the target count,
-   * with the same lookup of targets[k]; as its body alone, with 0 for k, 967 of
-   * 1259 instructions differ in tbs-en. */
+   * only. */
   for (k = 0; k != 1; k++) {
     target = GetBattleObjectSlotFar(work->args->targets[k])->actor;
     for (i = 0; i != 64; i++) {
@@ -415,11 +412,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = *lower;
-    /* LEFTOVER(template): a per-target loop whose count is 1, the user only;
-     * Camelot's template, as the loop above: the sibling effects
-     * BattleEffect_RunStreakVolley and BattleEffect_RunDjinnBeams run k to the
-     * target count; as its body alone, with 0 for k, 891 of 1259
-     * instructions differ in tbs-en. */
+    /* LEFTOVER(template): a per-target loop whose count is 1, the user only. */
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->args->user)->actor;
       // Smoke puffs rise and spread.

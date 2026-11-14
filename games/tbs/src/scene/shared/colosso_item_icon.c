@@ -13,8 +13,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
   u8 *icon;
   s32 tile;
   /* FAKEMATCH(temporary): one local holds the 0 the icon's clear and the
-   * sprite's resets store; as 0 at each, 14 of 83 instructions differ in
-   * tbs-en. */
+   * sprite's resets store. */
   s32 zero;
 
   actor = Actor_GetById(id);

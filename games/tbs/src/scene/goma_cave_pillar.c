@@ -485,12 +485,8 @@ static void GomaCavePillar_JumpGapWest(void) {
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
   target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - px(32);
-  /* LEFTOVER(template): destination holds &target, the landing reached
-   * through a pointer; Camelot's template: the same leap body in the sibling
-   * leap routines MogallForest_TryJumpLeaderTo, LogRoomsA_TryJumpTo,
-   * TunnelRuins_HopLeaderTo and shared/kolima_jump.c takes its landing as a
-   * struct FieldPosition *; as target.y and &target, 51 of 79 instructions
-   * differ in tbs-ja. */
+  /* LEFTOVER(template): destination holds &target, the landing reached through
+   * a pointer. */
   destination = &target;
   destination->y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   destination->z = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;

@@ -261,8 +261,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
           Iwram_CopyWords(saved, work, size);
           window = Message_OpenWindowFar(MsgDjinnTutorialSetChanges, 8, 0, 1);
-          /* FAKEMATCH(dead): the cursor, message and step in a once-only block;
-           * as plain statements, 12 of 1276 instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): the cursor, message and step in a once-only block.
+           */
           do {
             menu->cursor->motion = ICON_SHOWN;
             MenuCursor_Slide(2, 96);
@@ -288,9 +288,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           Iwram_CopyWords(saved, work, size);
           window =
               Message_OpenWindowFar(MsgDjinnTutorialClassPsynergy, 8, 0, 1);
-          /* FAKEMATCH(dead): as in step 10, a once-only block round the
-           * cursor, message and step; as plain statements, 14 of 1276
-           * instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): as in step 10, a once-only block round the cursor,
+           * message and step. */
           do {
             menu->cursor->motion = ICON_SHOWN;
             MenuCursor_Slide(106, 56);

@@ -39,8 +39,7 @@ loop:
                              (s16)window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
-      /* FAKEMATCH(temporary): the flag through a local; as a plain store, 4 of
-       * 101 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): the flag through a local. */
       {
         u8 dirty = 1;
 
@@ -372,10 +371,7 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
   s32 entry;
   s32 typing = 0;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 16 bytes it reserves (sub sp, #16), no instruction
-   * addresses the 8 at sp+8 to sp+15, above the outgoing arguments, and The
-   * Lost Age's Message_OpenDecoded reserves the same 8; as without it, 4 of 42
-   * instructions differ in tbs-en. */
+   * touches. */
   UNUSED u16 frameReserve[4];
 
   work->voiceSound = 0;

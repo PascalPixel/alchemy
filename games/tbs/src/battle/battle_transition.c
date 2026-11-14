@@ -15,8 +15,7 @@
 /// grows, then shows no layer.
 s32 BattleTransition_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
-   * stored and loaded again; as plain u16 locals, 61 of 90 instructions
-   * differ in tbs-en. */
+   * stored and loaded again. */
   volatile u16 bg0cnt;
   volatile u16 bg1cnt;
   volatile u16 bg2cnt;

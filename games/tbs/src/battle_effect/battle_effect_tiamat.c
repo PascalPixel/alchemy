@@ -262,10 +262,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
     for (i = 0; i != DRAGON_FIRE_SPARKS; i++) {
       struct Particle *spark = &work->particles[DRAGON_FIRE_FIRST_SPARK + i];
-      /* LEFTOVER(template): the dot's size held in a local, 1; Camelot's
-       * template, from a sibling loop: BattleEffect_RunDragonFire's embers
-       * below run the same draw with a size that varies, gTiamat_EmberSizes[i &
-       * 3]; as 1 and 2 in the call, 16 of 987 instructions differ in tbs-en. */
+      /* LEFTOVER(template): the dot's size held in a local, 1. */
       s32 size = 1;
 
       if (spark->variant >= 0) {
@@ -363,11 +360,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
           if (fireball->variant == 12)
             fireball->variant = 0;
         } else if (fireball->variant == 0) {
-          /* LEFTOVER(template): the ball's size held in a local, 10; Camelot's
-           * template, from a sibling loop: BattleEffect_RunDragonFire's embers
-           * above draw the same mote pictures with a size that varies,
-           * gTiamat_EmberSizes[i & 3]; as 10 and 20 in the call, 302 of 987
-           * instructions differ in tbs-en. */
+          /* LEFTOVER(template): the ball's size held in a local, 10. */
           s32 size = 10;
 
           fireball->x -= dir * 6;

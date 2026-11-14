@@ -77,8 +77,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   // Move usable summons to the front in reverse traversal; keep others in
   // order.
   count = Summon_ListLearnedFar(learnedSummons);
-  /* FAKEMATCH(dead): the first scan in a once-only block; as a plain block, 224
-   * of 946 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the first scan in a once-only block. */
   do {
     s32 i;
 
@@ -111,8 +110,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* FAKEMATCH(temporary): cur holds &cursorStorage; as cursorStorage used
-     * directly, 275 of 946 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): cur holds &cursorStorage. */
     cur = &cursorStorage;
 
     //------------------------------------------------------------------

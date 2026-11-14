@@ -135,8 +135,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   work->dirty = 1;
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage
-     * used directly, 398 of 1201 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage. */
     struct CursorSprite *sprite = &cursorStorage;
 
     // Rebuild descriptions only when the selection or preview page changes:

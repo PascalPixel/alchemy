@@ -852,8 +852,7 @@ prompt:
       if (prizeIndex < result * 3 + 3) {
         do {
           /* FAKEMATCH(temporary): the weight read as a byte from the work's
-           * start; as routine->prizeWeights[prizeIndex], 6 of 280 instructions
-           * differ in tbs-en. */
+           * start. */
           u8 weight =
               ((u8 *)routine)[prizeIndex +
                               offsetof(struct MainRoutineWork, prizeWeights)];
@@ -873,8 +872,7 @@ prompt:
         prizeIndex = 14;
       }
       TolbiSpring_RevealPrize(gTolbiSpring_PrizeItems[prizeIndex]);
-      /* FAKEMATCH(dead): stepping routine away and back; without it, 6 of 280
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): stepping routine away and back. */
       routine++;
       routine--;
       {
@@ -883,8 +881,7 @@ prompt:
         s8 *weights = (s8 *)routine + 1;
 
         if (weights[slot] > 1) {
-          /* FAKEMATCH(dead): the halving in both arms of a test of slot; as one
-           * halving, 10 of 280 instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): the halving in both arms of a test of slot. */
           if (slot)
             weights[slot] /= 2;
           else
@@ -1003,9 +1000,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   s32 minZ;
   s32 maxZ;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 24 bytes it reserves (sub sp, #24), no instruction
-   * addresses the 12 at sp+12 to sp+23; as without it, 4 of 947 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED struct Vector3 spare;
 
   toss = &sToss;

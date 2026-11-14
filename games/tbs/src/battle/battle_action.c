@@ -508,9 +508,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     s32 side;
     u8 counts[ELEMENT_COUNT];
     /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-     * touches: of the 48 bytes it reserves (sub sp, #48), no instruction
-     * addresses the 8 at sp+16 to sp+23, just below counts; as without it, 28
-     * of 1393 instructions differ in tbs-en. */
+     * touches. */
     UNUSED u8 unused[8];
     s32 index;
 

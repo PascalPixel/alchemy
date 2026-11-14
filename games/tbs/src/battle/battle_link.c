@@ -130,8 +130,7 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     size = LINK_PARTY_OFFER_BYTES;
     Heap_Release(buffer);
     buffer = (u8 *)Heap_AllocEwram(size);
-    /* FAKEMATCH(dead): the copy in a once-only block; as the plain call, 2 of
-     * 152 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): the copy in a once-only block. */
     do {
       Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
                       size);
@@ -231,9 +230,7 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *signature;
   s32 missed = 0;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: no instruction addresses any of the 20 bytes it reserves (sub sp,
-   * #20), and The Lost Age's LinkBattle_SyncTurn declares the same spare[10];
-   * as without it, 20 of 232 instructions differ in tbs-en. */
+   * touches. */
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {

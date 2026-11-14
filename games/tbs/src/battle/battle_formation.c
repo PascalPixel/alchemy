@@ -25,8 +25,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   s32 levelTotal;
   s32 enemyCount;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: no instruction addresses any of the 28 bytes it reserves (sub sp,
-   * #28); as without it, 4 of 94 instructions differ in tbs-en. */
+   * touches. */
   UNUSED s32 levels[7];
 
   enemyCount = 0;

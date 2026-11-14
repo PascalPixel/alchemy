@@ -208,14 +208,11 @@ static __inline__ void Serial_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
-  /* FAKEMATCH(temporary): zero holds the stores' 0; as 0 in each store, 29 of
-   * 62 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): zero holds the stores' 0. */
   zero = 0;
-  /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): state set again. */
   state = &gSerialTransfer;
-  /* FAKEMATCH(dead): an empty once-only loop ends CSE's block; without it, 29
-   * of 62 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop ends CSE's block. */
   do {
   } while (0);
   state->status = SERIAL_STATUS_RUNNING;

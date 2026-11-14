@@ -37,8 +37,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  /* FAKEMATCH(temporary): draw stands in for callbacks; as callbacks used
-   * directly, 10 of 747 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): draw stands in for callbacks. */
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(work->args->user)->actor;
   goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
@@ -176,13 +175,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
               Projection_Point(spark, &view);
               view.x >>= 1;
-              /* LEFTOVER(template): the clamp and size by depth, idle here:
-               * nothing reads view.depth after, and the next line sets
-               * pictureIndex for real; Camelot's template: the sibling routine
-               * BattleEffect_RunHealingMotes (battle_effect_healing.c) clamps
-               * the depth and sizes its motes by it the same way, then replaces
-               * the size in Ply's mode as here; without the clamp and the
-               * store, 673 of 747 instructions differ in tbs-en. */
+              /* LEFTOVER(template): the clamp and size by depth, idle here. */
               CLAMP(view.depth, 314, 634);
               pictureIndex = 3 - (view.depth - 314) / 128;
               pictureIndex = (i * 4 + frame) % 9;

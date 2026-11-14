@@ -79,8 +79,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   else
     target = Unit_GetFar(ISAAC);
 
-  /* FAKEMATCH(dead): a test that is never true (partyResultShown is still 0);
-   * without it, 21 of 485 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a test that is never true (partyResultShown is still 0).
+   */
   if (effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
     messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 

@@ -987,13 +987,11 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     effect->timer = 1;
   }
   {
-    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
-     * sprite->flags, 2 of 141 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags. */
     u8 *spriteFlags = &sprite->flags;
 
     effect->update = Vault_UpdateDriftingEffect;
-    /* FAKEMATCH(dead): the flags store in both arms of a test; as one store, 2
-     * of 141 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): the flags store in both arms of a test. */
     if (flags < 0)
       *spriteFlags = 0;
     else

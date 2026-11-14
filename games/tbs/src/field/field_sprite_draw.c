@@ -376,9 +376,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   s32 groundHeight = *pos;
   s32 slot;
   /* LEFTOVER(frame): two unused locals the ROM's frame reserves and never
-   * touches: of the 68 bytes it reserves (sub sp, #68), no instruction
-   * addresses the 24 at sp+44 to sp+67; as without them, 4 of 250 instructions
-   * differ in tbs-en. */
+   * touches. */
   UNUSED s32 ground[3];
   UNUSED s32 screen[3];
   struct AffineTransform effect;

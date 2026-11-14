@@ -125,8 +125,8 @@ void DjinnFigures_UpdateBottomRow(void) {
       placement.y = px((u32)(s32)menu->figureY[figure]) + projectedY;
       placement.groundHeight = 0;
       rowY = menu->figureY[figure];
-      /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live;
-       * as no statement, 81 of 119 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live.
+       */
       scale.x = scale.x;
       limit = FACING_WEST;
       if (rowY >= 0)

@@ -3181,8 +3181,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   // it opens starts to smoke.
   extraBursts = 0;
   row = 0;
-  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
-   * at the spawn, 10 of 179 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): options holds &optionsStorage. */
   options = &optionsStorage;
   rowOffset = 0;
   do {
@@ -3190,8 +3189,8 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
     // One burst of rubble: four bits down the row, each over a random one of
     // seven 8-pixel columns.
   burst:
-    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each
-     * burst starts; as 0 in both, 2 of 179 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each burst
+     * starts. */
     particleZ = px(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {
@@ -3252,8 +3251,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   // As the western wave, but its smoke task is added again on every row.
   extraBursts = 0;
   row = 0;
-  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
-   * at the spawn, 10 of 179 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): options holds &optionsStorage. */
   options = &optionsStorage;
   rowOffset = 0;
   do {
@@ -3261,8 +3259,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
     // One burst of rubble: four bits down the row, each over a random one of
     // seven 8-pixel columns.
   burst:
-    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each
-     * burst starts; as 0 in both, 2 of 179 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): zero holds the velocities' 0, set as each burst
+     * starts. */
     particleZ = px(192);
     for (particleIndex = 0, zero = 0, particleZ += rowOffset;
          particleIndex <= 3; particleIndex++) {

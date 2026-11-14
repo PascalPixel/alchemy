@@ -99,12 +99,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   struct ScreenPoint center;
   struct ScreenPoint screen;
   s32 frame;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
-   * reserves 88 bytes (sub sp, #88), 4 more than one blitter needs, and no
-   * instruction addresses the word at sp+40; BlitterPair is the blitter set
-   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
-   * battle-effect files fill or call its second half; as one DrawRectangle
-   * draw[1], 22 of 265 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
   s32 member;
   struct BattleCamera *camera;
@@ -130,8 +125,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  /* FAKEMATCH(dead): the scroll's store in a once-only block; as the plain
-   * store, 2 of 265 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the scroll's store in a once-only block. */
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
@@ -162,8 +156,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
         SET_VECTOR(rec, actor->x.fixed, actor->y.fixed, actor->z.fixed);
         Projection_Point(rec, &center);
         center.x += xOffset;
-        /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 265
-         * instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): an empty once-only loop. */
         do {
         } while (0);
         for (i = 0; i != 3; i++) {

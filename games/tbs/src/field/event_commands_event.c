@@ -284,8 +284,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       // one.
       {
         struct Unit *unit = Unit_GetFar(member);
-        /* FAKEMATCH(dead): unit and the picked item read through it; with the
-         * call's result unused, 2 of 181 instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): unit and the picked item read through it. */
         UNUSED s32 pickedItem = unit->inventory[slot];
 
         discardQuantity = Shop_GetSelectionState(member, slot);

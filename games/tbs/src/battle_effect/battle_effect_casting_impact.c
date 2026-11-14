@@ -289,9 +289,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   /* FAKEMATCH(temporary): targetScreen holds &targetPos, casterScreen
-   * &casterPos and drawPair blitters, each set inside the call that fills
-   * what it names; as &targetPos, &casterPos and blitters used directly, 118
-   * of 3070 instructions differ in tbs-en. */
+   * &casterPos and drawPair blitters, each set inside the call that fills what
+   * it names. */
   Projection_ScaledUnit(work->args->targets[0], targetScreen = &targetPos);
   Projection_ScaledUnit(work->args->user, casterScreen = &casterPos);
   BattleEffect_FetchRectangleBlitters(work->args->side, drawPair = blitters);
@@ -371,8 +370,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     EFFECT_PRESENT_CANVAS(work);
     frame++;
   } while (frame != CASTING_IMPACT_GATHER_FRAMES);
-  /* FAKEMATCH(dead): position set again to the &djinnPos it holds; as one
-   * assignment, 150 of 3070 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): position set again to the &djinnPos it holds. */
   position = &djinnPos;
 
   // Phase 2: place BG2 so the impact stands over the target.

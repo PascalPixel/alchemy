@@ -90,8 +90,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
     resource = (u16)menu->resourceSlots[1];
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
   if (object == 0) {
-    /* FAKEMATCH(dead): a test whose two arms both return -1; as a plain return
-     * -1, 16 of 36 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): a test whose two arms both return -1. */
     if (variant || x)
       return -1;
     else
@@ -121,8 +120,7 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
   }
   object = WindowSprite_CreateFar(resource, OUTPUT_SIZE_16X16, window, x, y);
   if (object == 0) {
-    /* FAKEMATCH(dead): a test whose two arms both return -1; as a plain return
-     * -1, 22 of 40 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): a test whose two arms both return -1. */
     if (variant || x)
       return -1;
     else

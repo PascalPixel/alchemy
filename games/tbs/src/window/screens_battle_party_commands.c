@@ -384,8 +384,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm; without it, 14
-         * of 1727 instructions differ in tbs-en. */
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm. */
         __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
@@ -467,8 +466,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm; without it, 12
-         * of 1727 instructions differ in tbs-en. */
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
@@ -666,8 +664,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
-        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm; without it, 10
-         * of 1727 instructions differ in tbs-en. */
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;

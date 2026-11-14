@@ -66,8 +66,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct Sprite *info;
   s32 scale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: no instruction addresses any of the 12 bytes it reserves (sub sp,
-   * #12); as without it, 6 of 52 instructions differ in tbs-en. */
+   * touches. */
   UNUSED s32 unused[3];
 
   actor = GetBattleObjectSlotFar(unit)->actor;

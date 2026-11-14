@@ -446,8 +446,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
       }
       temporaryActor = Actor_PrepareFixed(x, y, z, kind);
       height = actor->z.fixed - z + y;
-      /* FAKEMATCH(dead): an empty once-only loop; without it, 2 of 117
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): an empty once-only loop. */
       do {
       } while (0);
       found = 1;
@@ -1047,8 +1046,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     if (*flags & 1) {
       if (MapGrid_GetCellBehaviorAt(2, actor->x.fixed, actor->z.fixed) == 50) {
         Sound_Play(SE_STONE_GRIND);
-        /* FAKEMATCH(temporary): the priority flags changed as a plain byte; as
-         * the field, 100 of 265 instructions differ in tbs-en. */
+        /* FAKEMATCH(temporary): the priority flags changed. */
         *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_LowerActorToLedge(id, 1);
         *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;

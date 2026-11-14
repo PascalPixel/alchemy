@@ -786,16 +786,14 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
             red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31), 10);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
-        /* FAKEMATCH(dead): two XORs with red that cancel fold late; as green =
-         * blue, 6 of 803 instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): two XORs with red that cancel fold late. */
         green = blue ^ red;
         green ^= red;
         if (red < 8)
           red = 8;
         if (blue < 8) {
           green = 8;
-          /* FAKEMATCH(dead): two XORs that cancel, green being 8; as no pair,
-           * 46 of 803 instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): two XORs that cancel, green being 8. */
           blue ^= green;
           blue ^= 8;
         }

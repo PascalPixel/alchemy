@@ -288,8 +288,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   s32 projectionScale;
   s32 spriteScale;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: no instruction addresses any of the 12 bytes it reserves (sub sp,
-   * #12); as without it, 4 of 42 instructions differ in tbs-en. */
+   * touches. */
   UNUSED struct ScreenPoint input;
 
   BattleCamera_ApplyTransform();

@@ -340,9 +340,7 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
     dst = output;
     src = sStockTable[stockRow];
     do {
-      /* FAKEMATCH(dead): the copy under a test of copying, always 1; as the
-       * copy and increments without the test, 41 of 30 instructions differ in
-       * tbs-en. */
+      /* FAKEMATCH(dead): the copy under a test of copying, always 1. */
       if (copying) {
         *dst = *src;
         count++;

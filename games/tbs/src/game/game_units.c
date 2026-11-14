@@ -84,7 +84,7 @@ struct Unit *Unit_Get(u32 unitId) {
 
   states = gMainRoutineWork.units;
   /* FAKEMATCH(dead): the party return repeated under a test of the return
-   * address; as one return, 7 of 28 instructions differ in tbs-en. */
+   * address. */
   if (caller == NULL) {
     if (unitId <= PIERS) {
       unit = &states[unitId];
@@ -199,8 +199,7 @@ void Unit_Calculate(s32 unitId) {
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
       stats->atk += stats->item->primaryBonus;
-      /* FAKEMATCH(dead): an empty once-only loop after the Attack bonus; as no
-       * loop, 2 of 864 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): an empty once-only loop after the Attack bonus. */
       do {
       } while (0);
       stats->def += stats->item->secondaryBonus;

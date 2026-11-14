@@ -222,8 +222,7 @@ void Debug_SelectShortcuts(void) {
         Sound_PlayFar(SE_MENU_CANCEL);
       else
         continue;
-      /* FAKEMATCH(dead): an unread flag; without the flag, 5 of 362
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): an unread flag. */
       done = 1;
       break;
     }

@@ -461,8 +461,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     actor->radius = 32;
     height = px(
         MapGrid_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel));
-    /* FAKEMATCH(temporary): the height added as a plain word, outside its
-     * union; as actor->y.fixed, 1 of 82 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the height added. */
     *(s32 *)&actor->y += height;
     actor->groundHeight = height;
   }

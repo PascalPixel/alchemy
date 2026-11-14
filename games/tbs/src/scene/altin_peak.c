@@ -619,8 +619,8 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
 static void AltinPeak_FlickerWaterOut(void) {
   s16 control = REG_DISPCNT & ~DISPCNT_BG1_ON;
   s32 bg1 = DISPCNT_BG1_ON;
-  /* FAKEMATCH(temporary): the new control widened into a word before its
-   * store; as REG_DISPCNT = control, 2 of 22 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): the new control widened into a word before its store.
+   */
   u32 value;
 
   if (Random_Below(100) >= gAltinPeak_FlickerTimer)

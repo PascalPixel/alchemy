@@ -1511,8 +1511,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairMember[mode] = DJINN_MEMBER(entry);
     /* FAKEMATCH(dead): updates of entry that cancel out, under a test of entry,
-     * keep it live after the member's mask; without them, 8 of 2105
-     * instructions differ in tbs-en. */
+     * keep it live after the member's mask. */
     if (entry) {
       entry++;
       entry--;

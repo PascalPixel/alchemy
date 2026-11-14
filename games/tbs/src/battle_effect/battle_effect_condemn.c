@@ -30,10 +30,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   BlitterPair draw;
   struct Actor *target;
   /* LEFTOVER(frame): position[1], which the ROM's frame reserves and never
-   * touches: of the 76 bytes it reserves (sub sp, #76), no instruction
-   * addresses the 12 at sp+64 to sp+75, and The Lost Age's
-   * BattleEffect_RunCondemn reserves the same second position; as one
-   * ScreenPoint, 4 of 580 instructions differ in tbs-en. */
+   * touches. */
   struct ScreenPoint position[2];
   s32 swayCenter[2];
   s32 drawReaper;
@@ -46,8 +43,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   cursor = slots;
   work = *cursor++;
   canvas = *cursor;
-  /* FAKEMATCH(temporary): transferValue set here, after the slots; as declared
-   * with its 0, 14 of 580 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): transferValue set here, after the slots. */
   transferValue = 0;
   work->args = args;
   BattleEffect_StartTiledCanvas(0);
@@ -156,8 +152,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         pictureRow = 0;
       } else {
         pictureColumn = 1;
-        /* FAKEMATCH(dead): i is 160 here; as pictureRow = 0, 452 of 580
-         * instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): i is 160 here. */
         pictureRow = i >> 31;
       }
       if (frame <= 87) {

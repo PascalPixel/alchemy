@@ -34,9 +34,7 @@ struct ActorCameraFixed {
 /// screen.
 void ActorSystem_PlaceSprites(void) {
   /* LEFTOVER(frame): three unused points the ROM's frame reserves and never
-   * touches: of the 80 bytes it reserves (sub sp, #80), no instruction
-   * addresses the 36 at sp+44 to sp+79, above the position; as without them, 4
-   * of 267 instructions differ in tbs-en. */
+   * touches. */
   UNUSED struct ActorCameraPoint unusedPoints[3];
   s32 actorIndex;
   struct MapGridScrollWork *grid;
@@ -182,9 +180,7 @@ void ActorSystem_ProjectSprites(void) {
   s32 groupScale[2];
   s32 scale[2];
   /* LEFTOVER(frame): two unused points the ROM's frame reserves and never
-   * touches: of the 52 bytes it reserves (sub sp, #52), no instruction
-   * addresses the 24 at sp+28 to sp+51, above the scales; as without them, 4 of
-   * 181 instructions differ in tbs-en. */
+   * touches. */
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);

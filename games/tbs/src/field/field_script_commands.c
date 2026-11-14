@@ -77,8 +77,7 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
   s16 *waitCounter = &interpreter->wait;
-  /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 10 of
-   * 24 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
   s32 zero = 0;
 
   *waitCounter = zero;
@@ -432,12 +431,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
       // The distance in the XZ plane: dy is computed as in
       // Actor_SetMoveTarget but not used for the distance.
       dx = (x - cameraActor->x.fixed) / Q16_ONE;
-      /* LEFTOVER(template): this whole-pixel dy, overwritten below and not
-       * used for the distance; Camelot's template: the sibling routine
-       * Actor_SetMoveTarget
-       * (field_actor_motion.c) computes the same three whole-pixel deltas and
-       * uses y's in its distance; without it, 52 of 224 instructions differ in
-       * tbs-en. */
+      /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
+       * for the distance. */
       dy = (y - cameraActor->y.fixed) / Q16_ONE;
       dz = (z - cameraActor->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));
@@ -583,8 +578,7 @@ retry:
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
     if (MapGrid_CheckCollision(actor, &probePosition) != COLLISION_NONE)
       goto retry;
-    /* FAKEMATCH(dead): the offsets in both arms of a test of actor; as plain
-     * statements, 8 of 184 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): the offsets in both arms of a test of actor. */
     if (actor != 0) {
       dx = candidatePosition.x / Q16_ONE - actor->homeX;
       dz = candidatePosition.z / Q16_ONE - actor->homeZ;

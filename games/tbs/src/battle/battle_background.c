@@ -36,13 +36,11 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
   u32 ime;
-  /* FAKEMATCH(temporary): a pointer to ime; as ime directly, 24 of 43
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): a pointer to ime. */
   u32 *savedInterruptEnable = &ime;
 
   /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge that the
-   * pointer is the stack slot's address; without them, 2 of 43 instructions
-   * differ in tbs-en. */
+   * pointer is the stack slot's address. */
   if (palette) {
     savedInterruptEnable++;
     savedInterruptEnable--;
@@ -156,8 +154,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     void *vram;
 
     /* FAKEMATCH(dead): two updates that cancel, under a test that emits
-     * nothing, end a CSE block; without them, 4 of 103 instructions differ in
-     * tbs-en. */
+     * nothing, end a CSE block. */
     if (battle) {
       offset++;
       offset--;

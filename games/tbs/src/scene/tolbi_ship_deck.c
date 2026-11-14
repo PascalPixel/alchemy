@@ -1471,8 +1471,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   } while (Actor_Get(ACTOR_SEA_FIRST_ATTACK_MONSTER)->timer == 0);
   TolbiShipDeck_OpenFirstDoor();
   /* FAKEMATCH(dead): the walk in a once-only block loads its actor id straight
-   * after the call above; as the plain call, 1 of 163 instructions differ in
-   * tbs-en. */
+   * after the call above. */
   do {
     Actor_WalkTo(ACTOR_SEA_OURANOS, 196, 612);
   } while (0);

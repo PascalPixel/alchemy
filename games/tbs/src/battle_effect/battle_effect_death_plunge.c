@@ -18,12 +18,7 @@
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
-   * reserves 84 bytes (sub sp, #84), 4 more than one blitter needs, and no
-   * instruction addresses the word at sp+52; BlitterPair is the blitter set
-   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
-   * battle-effect files fill or call its second half; as one DrawRectangle, 14
-   * of 363 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
   struct BattleObject *first;
   struct BattleObject *second;
@@ -455,9 +450,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 /// grey disc grows over it and the battle background's colours return.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 56 bytes it reserves (sub sp, #56), no instruction
-   * addresses the 12 at sp+44 to sp+55, a ScreenPoint's size; as without it, 4
-   * of 1051 instructions differ in tbs-en. */
+   * touches. */
   UNUSED struct ScreenPoint position;
   struct BattleEffectWork *work;
   void *canvas;
@@ -878,8 +871,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
           s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
           s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
 
-          /* FAKEMATCH(dead): size is at least 1 here; without this test, 224
-           * of 349 instructions differ in tbs-en. */
+          /* FAKEMATCH(dead): size is at least 1 here. */
           if (size <= 0)
             size = 1;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, x, y, size);

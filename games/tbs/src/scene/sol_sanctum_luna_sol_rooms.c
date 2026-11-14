@@ -1171,8 +1171,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     actor = Actor_Get(ACTOR_KRADEN);
     {
       /* FAKEMATCH(temporary): the mask built in steeringFlags and frame reused
-       * for the zero; as actor->steeringFlags &= ~ACTOR_FACES_MOTION and a 0,
-       * 57 of 442 instructions differ in tbs-en. */
+       * for the zero. */
       s32 steeringFlags = 254;
 
       steeringFlags &= actor->steeringFlags;

@@ -198,8 +198,7 @@ void Battle_AwardSpoils(void) {
   }
   // Experience and level ups: each party member is copied before every level it
   // may gain, so that what the level brought can be read against the copy.
-  /* FAKEMATCH(temporary): unitIds stands in for units' own address; as
-   * units used directly, 9 of 302 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): unitIds stands in for units' own address. */
   unitIds = units;
   count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
   beforeLevelUp = Heap_AllocEwram(sizeof(struct Unit));

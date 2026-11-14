@@ -182,8 +182,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  /* FAKEMATCH(temporary): draw stands in for blit; as blit used directly, 14
-   * of 348 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): draw stands in for blit. */
   draw = blit;
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);

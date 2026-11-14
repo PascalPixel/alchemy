@@ -131,8 +131,7 @@ s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = gMenuWork;
   s32 result = 0;
 
-  /* FAKEMATCH(dead): the slot's clearing in both arms of a test; as a plain
-   * statement, 4 of 22 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the slot's clearing in both arms of a test. */
   if ((s32)work < 0)
     work->selectedSlots[0] = result;
   else
@@ -618,8 +617,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   }
 
   {
-    /* FAKEMATCH(temporary): zero holds the clear's 0; as 0 in the store, 2
-     * of 113 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): zero holds the clear's 0. */
     u32 zero = 0;
 #ifdef UBFIX
     s32 clearIndex = 13;
@@ -633,8 +631,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 #else
     u32 *clear = &reordered[13];
 
-    /* FAKEMATCH(temporary): the loop test compares the pointers as s32; as
-     * clear >= reordered, 2 of 113 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the loop test compares the pointers as s32. */
     do {
       *clear = zero;
       clear--;

@@ -82,8 +82,7 @@ void FieldPsynergy_Avoid(void) {
   slot = VramCache_FindFreeEntry();
   {
     s16 *tileSlot = &effectWork->arcTileSlot;
-    /* FAKEMATCH(temporary): zero holds the 0 its stores take; as 0 at each, 75
-     * of 147 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): zero holds the 0 its stores take. */
     s32 zero = 0;
 
     // The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the

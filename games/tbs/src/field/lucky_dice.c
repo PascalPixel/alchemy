@@ -258,14 +258,10 @@ void LuckyDice_Run(void) {
   s32 groundPoint[3];
   s32 screen[3];
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 768 bytes it reserves (add sp, r5, r5 being -768), no
-   * instruction addresses the 32 at sp+168 to sp+199, and The Lost Age's
-   * LuckyDice_Run declares the same unused[8]; as without it, 42 of 2046
-   * instructions differ in tbs-en. */
+   * touches. */
   UNUSED s32 unused[8];
-  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
-   * reloaded with ldrh; as plain u16 locals, 902 of 2046 instructions differ
-   * in tbs-en. */
+  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each reloaded
+   * with ldrh. */
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;

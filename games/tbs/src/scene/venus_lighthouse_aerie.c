@@ -578,8 +578,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Event_Wait(10);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   {
-    /* FAKEMATCH(temporary): south holds the facing; as FACING_SOUTH at the
-     * store, 4 of 923 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): south holds the facing. */
     u16 south = FACING_SOUTH;
 
     leader->y.fixed = -px(32);

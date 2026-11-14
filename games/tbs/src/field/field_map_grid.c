@@ -689,8 +689,7 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       (struct MapGridCellAnimationStep *)steps;
   u32 source = step->source;
   /* FAKEMATCH(temporary): the end test reads a copy of source, and the updates
-   * that cancel out end CSE's knowledge of it; with the plain loop, 23 of 54
-   * instructions differ in tbs-en. */
+   * that cancel out end CSE's knowledge of it. */
   u32 test = source;
 
   if (step) {

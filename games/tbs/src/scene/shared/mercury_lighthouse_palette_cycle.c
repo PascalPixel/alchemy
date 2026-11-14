@@ -8,8 +8,8 @@
 /// 15 dimmed by four tenths), so the shimmer runs up the ramp; green and blue
 /// stay those of gPaletteCycleGreen and gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
-  /* FAKEMATCH(volatile): the red level below passes through a halfword on
-   * the stack; as a plain local, 22 of 65 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): the red level below passes through a halfword on the
+   * stack. */
   volatile u16 below;
   u32 i;
   s32 red;

@@ -822,9 +822,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
 
   struct FieldPosition position;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: of the 80 bytes it reserves (sub sp, #80), no instruction
-   * addresses the 68 at sp+0 to sp+67, below the position; as without it, 8 of
-   * 213 instructions differ in tbs-en. */
+   * touches. */
   UNUSED u8 unused[68];
   struct MapGridCell *sourceCell;
   struct MapGridCell *destinationCell;

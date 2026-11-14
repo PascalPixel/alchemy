@@ -56,8 +56,7 @@ s32 Save_InitializeWork(void) {
     status = Save_ReadSector(index);
     START_DMA(&work->slot, &headerStorage, DMA_COPY_WORDS(4));
     WAIT_DMA();
-    /* FAKEMATCH(temporary): header holds &headerStorage; as headerStorage
-     * used directly, 98 of 140 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): header holds &headerStorage. */
     header = &headerStorage;
 
     // Not a save sector, or one for no part, or a damaged one: it stays free.

@@ -41,7 +41,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
   /* FAKEMATCH(temporary): the leader's sprite read through a pointer to its
-   * slot; as leader->sprite, 2 of 241 instructions differ in tbs-en. */
+   * slot. */
   leaderSprite = &leader->sprite;
   sprite->image.priority = (*leaderSprite)->image.priority;
   effect->scaleRateX = 0;

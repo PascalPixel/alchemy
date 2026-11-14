@@ -238,9 +238,7 @@ void FieldMotes_Start(void) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     s32 *pos = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-    /* FAKEMATCH(temporary): the attribute stores' cursor kept as an integer; as
-     * an s32 * cursor and an x of its own, 16 of 83 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(temporary): the attribute stores' cursor kept as an integer. */
     u32 p = (u32)mote;
     s32 z;
     *(s32 *)p = 0;
@@ -379,8 +377,7 @@ void FieldEffect_InitializeSparkles(void) {
   do {
     struct MapGridScrollWork *view = gMapGridWork[0];
     s32 *leader;
-    /* FAKEMATCH(temporary): the stores' cursor kept as an integer; as a u32 *
-     * cursor and an x of its own, 14 of 74 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the stores' cursor kept as an integer. */
     u32 attr;
     s32 z;
 

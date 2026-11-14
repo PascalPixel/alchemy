@@ -35,9 +35,8 @@ static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
         from = (u32 *)(Ram_CellPictures + 4 + picture);
         to = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
         *to = *from;
-        /* FAKEMATCH(temporary): end takes the row's bound where the loop
-         * tests it, apart from the guard's; as ++col < destinationX + width,
-         * 12 of 80 instructions differ in tbs-en. */
+        /* FAKEMATCH(temporary): end takes the row's bound where the loop tests
+         * it, apart from the guard's. */
       } while (end = destinationX + width, ++col < end);
     cell += 128 - width;
   }

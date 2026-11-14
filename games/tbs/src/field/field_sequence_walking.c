@@ -176,7 +176,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct UnitHpPoisonView, whose
-   * alias set; as struct Unit, 2 of 472 instructions differ in tbs-en. */
+   * alias set. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 leaderId = gMainRoutineWork.leaderActorId;

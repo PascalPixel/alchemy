@@ -431,7 +431,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   BattleEffect_RunFromTableFar(&work.effect);
   Actor_SelectAnimationFar(object, POSE_STANDING);
   /* FAKEMATCH(dead): an empty once-only loop ends CSE's knowledge of work's
-   * address; without it, 103 of 180 instructions differ in tbs-en. */
+   * address. */
   do {
   } while (0);
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++)

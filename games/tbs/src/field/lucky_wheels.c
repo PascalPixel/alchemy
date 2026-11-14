@@ -221,11 +221,8 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       y0 = y1;
       y1 = tmp;
       dx = x1 - x0;
-      /* LEFTOVER(template): dy recomputed after the swap and never read again;
-       * Camelot's template: the swap recomputes both deltas in both halves of
-       * this routine and of its sibling BattleEffect_DrawClippedCanvasLine,
-       * and the shallow half reads its dy; without the store, 92 of 189
-       * instructions differ in tbs-en. */
+      /* LEFTOVER(template): dy recomputed after the swap and never read again.
+       */
       dy = y1 - y0;
     }
     step = (ABS(x1 - x0) << 8) / ABS(y1 - y0);
@@ -252,11 +249,8 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       tmp = y0;
       y0 = y1;
       y1 = tmp;
-      /* LEFTOVER(template): dx recomputed after the swap and never read again;
-       * Camelot's template: the swap recomputes both deltas in both halves of
-       * this routine and of its sibling BattleEffect_DrawClippedCanvasLine,
-       * and the steep half reads its dx; without the store, 149 of 189
-       * instructions differ in tbs-en. */
+      /* LEFTOVER(template): dx recomputed after the swap and never read again.
+       */
       dx = x1 - x0;
       dy = y1 - y0;
     }

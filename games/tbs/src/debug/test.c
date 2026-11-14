@@ -444,11 +444,7 @@ static void MenuTest_GiveConsumableTestStock(void) {
 
 /// Grants and sets test Djinn.
 static void MenuTest_GivePartyDjinn(void) {
-  /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times; the
-   * other editions drop the loop but keep its 256 bytes, the whole of the ROM's
-   * frame (sub sp, #256), which no instruction addresses there, leaving them
-   * untouched; as declared only with the loop, 4 of 232 instructions differ in
-   * tbs-en. */
+  /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times. */
   UNUSED u8 fillBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;

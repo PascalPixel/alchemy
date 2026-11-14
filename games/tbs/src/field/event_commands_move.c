@@ -282,8 +282,7 @@ next_state:
 /// frames and then turns into particles.
 void FieldPsynergy_Move(void) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-   * touches: no instruction addresses any of the 12 bytes it reserves (sub sp,
-   * #12); as without it, 4 of 24 instructions differ in tbs-en. */
+   * touches. */
   UNUSED s32 work[3];
   struct FieldEffectWork *effectWork;
   struct Actor *caster;
@@ -292,8 +291,7 @@ void FieldPsynergy_Move(void) {
   effectWork = gFieldEffectWork;
   caster = effectWork->mainActor;
 
-  /* FAKEMATCH(dead): an empty once-only loop before the call; without it, 2 of
-   * 24 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop before the call. */
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();

@@ -338,8 +338,7 @@ s32 Message_Decode(s32 script, s32 clear) {
     decode = (s32 (*)(struct MessageReader *))HEAP_SLOT_BLOCK(
         HEAP_SLOT_MESSAGE_DECODER);
     Message_Find(&reader, script);
-    /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
-     * 2 of 706 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): messageReader holds &reader. */
     messageReader = &reader;
 
     do {
@@ -828,8 +827,7 @@ s32 Message_Decode(s32 script, s32 clear) {
     decode = (s32 (*)(struct MessageReader *))HEAP_SLOT_BLOCK(
         HEAP_SLOT_MESSAGE_DECODER);
     Message_Find(&reader, script);
-    /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
-     * 2 of 895 instructions differ in tbs-ja. */
+    /* FAKEMATCH(temporary): messageReader holds &reader. */
     messageReader = &reader;
     do {
       previousCode = code;

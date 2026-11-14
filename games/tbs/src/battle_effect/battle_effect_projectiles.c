@@ -611,8 +611,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               if (target->x.fixed < 0) {
                 hit = x < 0;
                 /* FAKEMATCH(dead): two updates that cancel, under a test that
-                 * emits nothing; without them, 55 of 1605 instructions differ
-                 * in tbs-en. */
+                 * emits nothing. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;
@@ -621,8 +620,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   goto drawShot;
               } else {
                 hit = x >= 0;
-                /* FAKEMATCH(dead): the same pair for the other side; without
-                 * it, 38 of 1605 instructions differ in tbs-en. */
+                /* FAKEMATCH(dead): the same pair for the other side. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;

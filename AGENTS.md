@@ -35,7 +35,7 @@ A change in your own game may move bytes freely: it no longer matches `rom.sha1`
 ## Marks in the source
 
 Marks left by the reconstruction, whose rules are in the devtools' `AGENTS.md`; a change keeps them true:
-- `FAKEMATCH(<kind>)`: a form kept only so the old compiler emits the original's code, with what the plain form costs (S2).
+- `FAKEMATCH(<kind>)`: a form kept only so the old compiler emits the original's code, and a few words saying what the device is; what the plain form costs is a row of the devtools' `evidence/<game>-fakematch.tsv` (S2, H8).
 - `LEFTOVER(<kind>)`: Camelot's own code that does nothing in this edition but still shapes its bytes (S2).
 - `// DEAD:`: code whose instructions the ROM keeps and that cannot change the result (S2, S3).
 - `// BUG:` and `BUGFIX`, `// UB:` and `UBFIX`: the original's bug or undefined behaviour, kept, with its fix behind the option (S3).

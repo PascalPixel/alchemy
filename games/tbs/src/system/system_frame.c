@@ -108,8 +108,7 @@ void wait(s32 frames) {
       // CPU load: the scanline the frame's work ended on, counted from the
       // last VBlank, plus 256 for each VBlank it overran; the peak is held
       // for 30 frames
-      /* FAKEMATCH(volatile): the line read without volatile; as REG_VCOUNT, 2
-       * of 463 instructions differ in tbs-en. */
+      /* FAKEMATCH(volatile): the line read without volatile. */
       line = *(u16 *)&REG_VCOUNT;
       if (line >= DISPLAY_HEIGHT)
         line -= DISPLAY_HEIGHT;
@@ -228,12 +227,11 @@ void wait(s32 frames) {
 
     if (*size != 0) {
       /* FAKEMATCH(barrier): the read also takes the old base as an input
-       * ("+r"); as an output only ("=r"), 134 of 403 instructions differ in
-       * tbs-en. */
+       * ("+r"). */
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
       __asm__ volatile("mov %0, sp" : "+r"(base));
-      /* FAKEMATCH(volatile): the size read again, a load apart from the
-       * test's; as *size, 17 of 403 instructions differ in tbs-en. */
+      /* FAKEMATCH(volatile): the size read again, a load apart from the test's.
+       */
       base -= *(volatile u32 *)size;
       sp = base;
       CAMELOT_ASM(

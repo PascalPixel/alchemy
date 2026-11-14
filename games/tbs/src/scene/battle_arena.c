@@ -698,8 +698,7 @@ padNext:
   // Then the recovery table.
   size = LOBBY_RECOVERY_RECORD_BYTES;
   buffer = Heap_AllocEwram(size);
-  /* FAKEMATCH(dead): the recovery table's copy in a once-only block; as a plain
-   * call, 6 of 254 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the recovery table's copy in a once-only block. */
   do {
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -739,8 +738,7 @@ padNext:
     wait(1);
     wait(2);
   }
-  /* FAKEMATCH(dead): the shared exit in a once-only block; as a plain label, 62
-   * of 254 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the shared exit in a once-only block. */
   do {
   done:
     Heap_Release(buffer);
@@ -756,8 +754,8 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   s32 receiveFirst;
 
   result = 0;
-  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it
-   * ahead of the call; without it, 4 of 62 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it ahead
+   * of the call. */
   do {
   } while (0);
   receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);

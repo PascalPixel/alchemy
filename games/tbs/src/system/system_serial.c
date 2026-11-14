@@ -29,8 +29,7 @@ void Serial_Initialize(void) {
   s32 index;
   struct SerialWork *state;
 
-  /* FAKEMATCH(temporary): ime holds &REG_IME, set inside the save; as
-   * IRQ_LOCK(interruptEnable), 2 of 123 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): ime holds &REG_IME, set inside the save. */
   IME_SAVE((ime = &REG_IME), interruptEnable);
   IME_DISABLE(ime);
   // Replace both interrupt handlers before configuring multiplayer transfers.
@@ -533,9 +532,8 @@ void Serial_StepBlockTransfer(void) {
   u32 id;
   struct SerialTransferState *own;
   u32 gap;
-  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the
-   * pool into r8 at entry; as the constant 1 at both stores, 105 of 257
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the pool
+   * into r8 at entry. */
   struct SerialHalfword one;
 
   // The partner's payload: of multiplayer ids 0 and 1, the one not ours

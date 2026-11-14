@@ -57,12 +57,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sprites;
   s32 frame;
-  /* LEFTOVER(frame): blit[1], the idle half of the pair; the ROM's frame
-   * reserves 336 bytes (sub sp, #336), 4 more than one blitter needs, and no
-   * instruction addresses the word at sp+112; BlitterPair is the blitter set
-   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
-   * battle-effect files fill or call its second half; as one DrawRectangle
-   * blit[1], 202 of 1640 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): blit[1], the idle half of the pair. */
   BlitterPair blit;
   s32 size;
   s32 count;
@@ -280,9 +275,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != beamHeight; i++) {
-        /* FAKEMATCH(dead): the width set to 0 and at once to 32; as the
-         * constant 32 in the call, 209 of 1817 instructions differ in tbs-en.
-         */
+        /* FAKEMATCH(dead): the width set to 0 and at once to 32. */
         s32 fullWidth = 0;
 
         fullWidth = 32;

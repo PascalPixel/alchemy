@@ -24,8 +24,8 @@ struct ContigoObject;
 void Actor_MoveToObject(s32 actor, s32 target);
 void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
-void Func_02001938(s32 mode);
-void Func_02001c5c(s32 a, s32 b, s32 c, s32 d);
+void Contigo_SendToLuckyWheels(s32 mode);
+void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d);
 void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode);
 
@@ -64,94 +64,94 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 extern s32 gFieldEffect_DurationScripts[];
 extern struct ActorPlacement gContigo_Room1Placements[];
 extern struct ActorPlacement gContigo_Room4Placements[];
-extern struct ActorPlacement gData_02005018[];
-extern s16 gData_02005228[];
+extern struct ActorPlacement gContigo_Room2PlacementsBeforeReunion[];
+extern s16 gContigo_Room2PlacementsReunion[];
 extern struct ActorPlacement gContigo_Room2Placements[];
 extern struct ActorPlacement gContigo_Room3Placements[];
 extern struct Trigger gContigo_Room1Triggers[];
 extern struct Trigger gContigo_Room2Triggers[];
-extern struct Trigger gData_02005e70[];
+extern struct Trigger gContigo_Room2ReunionTriggers[];
 
 void Contigo_StartSlowPaletteCycle(void);
 
 void Contigo_StopPaletteCycle(void);
 
-extern u32 gData_02004630[];
-extern s32 gData_0200466c[];
-extern u32 gData_02004b18[];
+extern u32 gContigo_Topics[];
+extern s32 gContigo_EnterGameDoorScript[];
+extern u32 gContigo_HostScript[];
 void Contigo_InitializeRoom1(void);
 void Contigo_InitializeRoom4(void);
 void Contigo_InitializeRoom2(void);
 void Contigo_InitializeRoom3(void);
-extern s16 gData_0200469c[];
-extern s16 gData_020046ac[];
-extern s16 gData_020046d8[];
-extern u16 gData_02004704[];
-extern s32 gData_02004a1c[];
-extern s32 gData_020042bc[];
-void Func_02000608(void);
-void Func_020008ec(void);
-void Func_0200090c(void);
+extern s16 gContigo_PaletteSlots[];
+extern s16 gContigo_PaletteColors[];
+extern s16 gContigo_DimColors[];
+extern u16 gContigo_CycleSlots[];
+extern s32 gContigo_Room2WatcherScript[];
+extern s32 gContigo_SparkleTiles[];
+void Contigo_FreedDjinniJoinsParty(void);
+void Contigo_ExamineWall(void);
+void Contigo_ReadSign(void);
 
-void Func_0200092c(void);
+void Contigo_ReadLuckyWheelsSign(void);
 
-void Func_0200094c(void);
+void Contigo_ReadLuckyDiceSign(void);
 void Scene_ShowEntranceLocked(void);
-void Func_020009ac(void);
-void Func_02000af4(void);
+void Contigo_AskAboutWindLegend(void);
+void Contigo_BabyThinks(void);
 void Contigo_TalkToWeaponMerchant(void);
 void Contigo_TalkToArmorMerchant(void);
 
 void Contigo_TalkToInnkeeper(void);
 
-void Func_02000eb8(void);
-void Func_02000edc(void);
-void Func_02000f40(void);
-void Func_02000f7c(void);
-void Func_02000fc8(void);
-void Func_02000fe0(void);
-void Func_0200102c(void);
-void Func_02001070(void);
-void Func_02001094(void);
-void Func_0200118c(void);
-void Func_02001284(void);
-void Func_020012a4(void);
+void Contigo_AskAboutSuperDice(void);
+void Contigo_ExplainSuperDice(void);
+void Contigo_ExplainLuckyDice(void);
+void Contigo_ExplainLuckyDiceAgain(void);
+void Contigo_TalkToWheelsAttendant(void);
+void Contigo_ExplainLuckyWheels(void);
+void Contigo_ListLuckyWheelsPrizes(void);
+void Contigo_AskAboutGeoglyph(void);
+void Contigo_TalkToWanderer(void);
+void Contigo_TalkAboutTheShip(void);
+void Contigo_ClearFirstBushes(void);
+void Contigo_ClearSecondBushes(void);
 
-void Func_020012c4(void);
+void Contigo_ClearBushesBySalt(void);
 
-void Func_02001354(void);
-void Func_02001374(void);
-void Func_02001394(void);
-void Func_020013b4(void);
-void Func_020013d4(void);
-void Func_020013f4(void);
-void Func_02001414(void);
-void Func_02001434(void);
-void Func_02001454(void);
-void Func_02001474(void);
-void Func_02001494(void);
-void Func_020014b4(void);
-void Func_020014d4(void);
-void Func_0200152c(void);
+void Contigo_ClearFourthBushes(void);
+void Contigo_ClearFifthBushes(void);
+void Contigo_ClearSixthBushes(void);
+void Contigo_ClearSeventhBushes(void);
+void Contigo_ClearEighthBushes(void);
+void Contigo_ClearFirstHedgeRow(void);
+void Contigo_ClearSecondHedgeRow(void);
+void Contigo_ClearThirdHedgeRow(void);
+void Contigo_ClearFourthHedgeRow(void);
+void Contigo_ClearFifthHedgeRow(void);
+void Contigo_WidenCameraBounds(void);
+void Contigo_NarrowCameraBounds(void);
+void Contigo_ScoopForSalt(void);
+void Contigo_RevealSteps(void);
 
-void Func_020015ac(void);
+void Contigo_ForceFreesDjinni(void);
 
-void Func_02001abc(void);
-void Func_02001b84(void);
-void Func_02001d08(void);
-void Func_02001d38(void);
-void Func_02002e18(void);
-extern u32 gData_0200457c[];
-extern u32 gData_020045b8[];
-extern u32 gData_020045f4[];
-extern u32 gData_02004758[];
-extern u32 gData_020047fc[];
-extern s32 gData_02004b54[];
+void Contigo_SendToLuckyDice(void);
+void Contigo_SendToSuperLuckyDice(void);
+void Contigo_EnterLuckyWheels(void);
+void Contigo_EnterSuperLuckyDice(void);
+void Contigo_ReturnToNewHome(void);
+extern u32 gContigo_ShortScript[];
+extern u32 gContigo_MediumScript[];
+extern u32 gContigo_LongScript[];
+extern u32 gContigo_WandererScript[];
+extern u32 gContigo_PacerScript[];
+extern s32 gContigo_StatueScript[];
 
 extern u16 *gPaletteSlots;
 extern u16 *gPaletteCycleColors;
 
-void Func_02000328(void);
+void Contigo_TeleportIn(void);
 
 extern u16 gPaletteCycleBright;
 extern u16 gPaletteCycleTimer;
@@ -192,7 +192,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
-    Func_02000328();
+    Contigo_TeleportIn();
 }
 
 void Contigo_StartSlowPaletteCycle(void) {
@@ -233,7 +233,7 @@ s32 List_CountEntries(u16 *list) {
 
 void Teleport_PlayWhirl(void);
 
-void Func_02000328(void) {
+void Contigo_TeleportIn(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
@@ -346,9 +346,9 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-void Func_020005f8(void) { Djinn_JoinParty(16, 0, 14); }
+void Contigo_SaltJoinsParty(void) { Djinn_JoinParty(16, 0, 14); }
 
-void Func_02000608(void) {
+void Contigo_FreedDjinniJoinsParty(void) {
   Djinn_JoinParty(17, 2, 15);
   GameFlag_Set(2534);
 }
@@ -371,7 +371,7 @@ s32 Lemuria_Distance(s32 *a, s32 *b) {
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
-s32 Func_020006d0(struct Actor *self) {
+s32 Contigo_FaceTalker(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
   u32 mode;
@@ -412,7 +412,7 @@ near:
   return 0;
 }
 
-s32 Func_020007a4(void) {
+s32 Contigo_ShowSurprise(void) {
   FieldActor_ShowEmote(11, 257, 0);
   return 0;
 }
@@ -437,9 +437,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
       if (GameFlag_Get(0x9b2) != 0)
         return gContigo_Room2Placements;
       if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
-        return gData_02005228;
+        return gContigo_Room2PlacementsReunion;
     }
-    return gData_02005018;
+    return gContigo_Room2PlacementsBeforeReunion;
   }
   if (scene == (s32)&SceneId_Contigo3)
     return gContigo_Room3Placements;
@@ -459,7 +459,7 @@ const struct Trigger *Scene_GetEvents(void) {
     return gContigo_Room4Triggers;
   if (scene == (s32)&SceneId_Contigo2) {
     if (gMainRoutineWork.entrance == 4)
-      return gData_02005e70;
+      return gContigo_Room2ReunionTriggers;
     return gContigo_Room2Triggers;
   }
   if (scene == (s32)&SceneId_Contigo3)
@@ -467,35 +467,35 @@ const struct Trigger *Scene_GetEvents(void) {
   return gContigo_Triggers;
 }
 
-void Func_020008ec(void) {
+void Contigo_ExamineWall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo110, 1);
   Event_End();
 }
 
-void Func_0200090c(void) {
+void Contigo_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo111, 1);
   Event_End();
 }
 
-void Func_0200092c(void) {
+void Contigo_ReadLuckyWheelsSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo112, 1);
   Event_End();
 }
 
-void Func_0200094c(void) {
+void Contigo_ReadLuckyDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo113, 1);
   Event_End();
 }
 
-void Func_0200096c(void) {
+void Contigo_ReadSuperDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldMessage_Show((s32)MsgContigo114, 1);
@@ -504,7 +504,7 @@ void Func_0200096c(void) {
 
 #include "shared/scene_show_entrance_locked.h"
 
-void Func_020009ac(void) {
+void Contigo_AskAboutWindLegend(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo35);
@@ -525,7 +525,7 @@ struct OrbitEffect {
 
 s32 Trig_Cos(s32 angle);
 
-void Func_020009d0(struct OrbitEffect *effect) {
+void Contigo_CircleGlow(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
   s32 dx;
@@ -548,13 +548,13 @@ void Func_020009d0(struct OrbitEffect *effect) {
     Actor_Release(effect);
 }
 
-void Func_02000a80(void) {
+void Contigo_RaiseMotes(void) {
   if ((gFrameCount & 7) == 0) {
     struct Actor *object = Actor_Spawn(308, 0x02c20000, 52428, 0x740000);
 
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
-      object->update = Func_020009d0;
+      object->update = Contigo_CircleGlow;
       object->motionFlags = 0;
       object->timer = -(s32)((u32)(Random16() * 16) >> 16) * 2 + 20;
       object->unk66 = 0;
@@ -577,7 +577,7 @@ struct ContigoGlow {
 
 // The glow that grows over actor 17 and sinks away again, then the scene goes
 // on.
-void Func_02000af4(void) {
+void Contigo_BabyThinks(void) {
   struct ContigoGlow *effect;
   s32 x = px(706);
   s32 z = px(116);
@@ -612,9 +612,9 @@ void Func_02000af4(void) {
     if (i < 28)
       goto grow;
   }
-  Task_Add(Func_02000a80, 0x480);
+  Task_Add(Contigo_RaiseMotes, 0x480);
   Event_Wait(120);
-  Task_Remove(Func_02000a80);
+  Task_Remove(Contigo_RaiseMotes);
   if (effect != 0) {
     i = 0;
   shrink:
@@ -737,7 +737,7 @@ void Contigo_TalkToHealer(void) {
   }
 }
 
-void Func_02000eb8(void) {
+void Contigo_AskAboutSuperDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo26);
@@ -745,7 +745,7 @@ void Func_02000eb8(void) {
   Event_End();
 }
 
-void Func_02000edc(void) {
+void Contigo_ExplainSuperDice(void) {
   s32 msg;
 
   Event_Start();
@@ -763,7 +763,7 @@ void Func_02000edc(void) {
   Event_End();
 }
 
-void Func_02000f40(void) {
+void Contigo_ExplainLuckyDice(void) {
   s32 msg;
 
   Event_Start();
@@ -776,7 +776,7 @@ void Func_02000f40(void) {
   Event_End();
 }
 
-void Func_02000f7c(void) {
+void Contigo_ExplainLuckyDiceAgain(void) {
   s32 msg;
 
   Event_Start();
@@ -791,14 +791,14 @@ void Func_02000f7c(void) {
   Event_End();
 }
 
-void Func_02000fc8(void) {
+void Contigo_TalkToWheelsAttendant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Func_02001938(0);
+  Contigo_SendToLuckyWheels(0);
   Event_End();
 }
 
-void Func_02000fe0(void) {
+void Contigo_ExplainLuckyWheels(void) {
   s32 msg;
 
   Event_Start();
@@ -813,7 +813,7 @@ void Func_02000fe0(void) {
   Event_End();
 }
 
-void Func_0200102c(void) {
+void Contigo_ListLuckyWheelsPrizes(void) {
   s32 msg;
 
   Event_Start();
@@ -831,7 +831,7 @@ void Func_0200102c(void) {
   Event_End();
 }
 
-void Func_02001070(void) {
+void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigo102);
@@ -845,10 +845,10 @@ struct TalkActor {
   u8 unk00[6];
   u16 angle; ///< 1/65536 turns
   u8 unk08[0x5b];
-  u8 unk63; ///< Func_020006d0 reads it
+  u8 unk63; ///< Contigo_FaceTalker reads it
 };
 
-void Func_02001094(void) {
+void Contigo_TalkToWanderer(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_GetById(14));
   s16 angle = object->angle;
@@ -886,7 +886,7 @@ struct ContigoObject {
   u8 unk63;
 };
 
-void Func_0200118c(void) {
+void Contigo_TalkAboutTheShip(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct ContigoObject *object = ((struct ContigoObject *)Actor_GetById(15));
   s16 angle = object->angle;
@@ -915,7 +915,7 @@ void Func_0200118c(void) {
 
 void Teleport_PlaySparks(void);
 
-void Func_02001250(void) {
+void Contigo_TeleportOut(void) {
   Contigo_StartSlowPaletteCycle();
   Teleport_PlaySparks();
 
@@ -925,19 +925,19 @@ void Func_02001250(void) {
   Contigo_StopPaletteCycle();
 }
 
-void Func_02001284(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }
+void Contigo_ClearFirstBushes(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }
 
-void Func_020012a4(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
+void Contigo_ClearSecondBushes(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
 
-static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
+static __inline__ void Contigo_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d,
+                                                s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
 
-void Func_020012c4(void) {
+void Contigo_ClearBushesBySalt(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
+  Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Get(0xfc7) == 0) {
     Actor_SetPosition(66, 280, 664);
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
@@ -953,37 +953,47 @@ void Func_020012c4(void) {
   }
 }
 
-void Func_02001354(void) { Contigo_Tiles(29, 35, 1, 2, 23, 47, 0); }
+void Contigo_ClearFourthBushes(void) { Contigo_Tiles(29, 35, 1, 2, 23, 47, 0); }
 
-void Func_02001374(void) { Contigo_Tiles(32, 55, 2, 3, 29, 58, 0); }
+void Contigo_ClearFifthBushes(void) { Contigo_Tiles(32, 55, 2, 3, 29, 58, 0); }
 
-void Func_02001394(void) { Contigo_Tiles(3, 60, 1, 1, 3, 56, 0); }
+void Contigo_ClearSixthBushes(void) { Contigo_Tiles(3, 60, 1, 1, 3, 56, 0); }
 
-void Func_020013b4(void) { Contigo_Tiles(7, 62, 2, 1, 7, 58, 0); }
+void Contigo_ClearSeventhBushes(void) { Contigo_Tiles(7, 62, 2, 1, 7, 58, 0); }
 
-void Func_020013d4(void) { Contigo_Tiles(10, 63, 2, 1, 10, 59, 0); }
+void Contigo_ClearEighthBushes(void) { Contigo_Tiles(10, 63, 2, 1, 10, 59, 0); }
 
-void Func_020013f4(void) { Contigo_Tiles(32, 55, 3, 1, 40, 57, 0); }
+void Contigo_ClearFirstHedgeRow(void) {
+  Contigo_Tiles(32, 55, 3, 1, 40, 57, 0);
+}
 
-void Func_02001414(void) { Contigo_Tiles(32, 55, 5, 1, 39, 58, 0); }
+void Contigo_ClearSecondHedgeRow(void) {
+  Contigo_Tiles(32, 55, 5, 1, 39, 58, 0);
+}
 
-void Func_02001434(void) { Contigo_Tiles(32, 55, 5, 1, 39, 59, 0); }
+void Contigo_ClearThirdHedgeRow(void) {
+  Contigo_Tiles(32, 55, 5, 1, 39, 59, 0);
+}
 
-void Func_02001454(void) { Contigo_Tiles(32, 55, 5, 1, 39, 60, 0); }
+void Contigo_ClearFourthHedgeRow(void) {
+  Contigo_Tiles(32, 55, 5, 1, 39, 60, 0);
+}
 
-void Func_02001474(void) { Contigo_Tiles(32, 55, 3, 1, 40, 61, 0); }
+void Contigo_ClearFifthHedgeRow(void) {
+  Contigo_Tiles(32, 55, 3, 1, 40, 61, 0);
+}
 
-void Func_02001494(void) {
+void Contigo_WidenCameraBounds(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x3700000, 0x4000000);
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
-void Func_020014b4(void) {
+void Contigo_NarrowCameraBounds(void) {
   Field_SetCameraBounds(0, 0x2000000, 0x2000000, 0x4000000);
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
-void Func_020014d4(void) {
+void Contigo_ScoopForSalt(void) {
   if (!GameFlag_Get(62)) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -997,19 +1007,19 @@ void Func_020014d4(void) {
   }
 }
 
-void Func_0200152c(void) {
+void Contigo_RevealSteps(void) {
   MapGrid_CopyCellsTo(27, 4, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 1, 2, 1, 48, 19);
 }
 
-void Func_0200156c(void) {
+void Contigo_HideSteps(void) {
   MapGrid_CopyCellsTo(27, 8, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 10, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
 }
 
-void Func_020015ac(void) {
+void Contigo_ForceFreesDjinni(void) {
   struct Actor *object = Actor_GetById(17);
   struct Actor *leader;
   struct EffectOptions options;
@@ -1053,7 +1063,7 @@ void Func_020015ac(void) {
   Event_End();
 }
 
-void Func_02001724(void) {
+void Contigo_OpenGamesRooms(void) {
   MapGrid_CopyCellsTo(0, 1, 26, 42, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 48, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(0, 1, 11, 54, 1, 2);
@@ -1064,7 +1074,7 @@ void Func_02001724(void) {
   Map_CopyCellAttributeRect(0, 32, 1, 1, 16, 57);
 }
 
-void Func_020017bc(s32 id) {
+void Contigo_PlaceStatue(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   Actor_SetSpritePriority(id, 3);
@@ -1074,9 +1084,9 @@ void Func_020017bc(s32 id) {
   object->y = px(64);
 }
 
-// Sets up actors 19 to 33: their modes, Func_020017bc for 19 to 26, and child
-// and collision flags for 27 to 33.
-void Func_020017f4(void) {
+// Sets up actors 19 to 33: their modes, Contigo_PlaceStatue for 19 to 26, and
+// child and collision flags for 27 to 33.
+void Contigo_SetUpStatues(void) {
   Actor_SetModeById(19, 0);
   Actor_SetModeById(20, 1);
   Actor_SetModeById(21, 2);
@@ -1085,14 +1095,14 @@ void Func_020017f4(void) {
   Actor_SetModeById(24, 2);
   Actor_SetModeById(25, 3);
   Actor_SetModeById(26, 4);
-  Func_020017bc(19);
-  Func_020017bc(20);
-  Func_020017bc(21);
-  Func_020017bc(22);
-  Func_020017bc(23);
-  Func_020017bc(24);
-  Func_020017bc(25);
-  Func_020017bc(26);
+  Contigo_PlaceStatue(19);
+  Contigo_PlaceStatue(20);
+  Contigo_PlaceStatue(21);
+  Contigo_PlaceStatue(22);
+  Contigo_PlaceStatue(23);
+  Contigo_PlaceStatue(24);
+  Contigo_PlaceStatue(25);
+  Contigo_PlaceStatue(26);
   Actor_SetSpriteFlags(Actor_GetById(27), 0);
   Actor_SetSpriteFlags(Actor_GetById(28), 0);
   Actor_SetSpriteFlags(Actor_GetById(29), 0);
@@ -1117,7 +1127,7 @@ void Event_LeaveFor(s32 scene, s32 entrance);
 
 // The lucky wheels attendant: checks the game tickets and free item slots,
 // then sends the player in.
-void Func_02001938(s32 spoken) {
+void Contigo_SendToLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
 
@@ -1181,7 +1191,7 @@ struct ContigoTopicState {
   s8 cursor[6];
 };
 
-s32 Func_02001a60(s32 topic) {
+s32 Contigo_PickTopic(s32 topic) {
   struct ContigoTopicState *state;
   s32 cursor;
   s32 variant;
@@ -1197,13 +1207,13 @@ s32 Func_02001a60(s32 topic) {
   state->cursor[topic] = variant;
   index = topic * 2;
 
-  return gData_02004630[index + topic + variant];
+  return gContigo_Topics[index + topic + variant];
 }
 
 extern u8 gSceneState[];
 
 // The dice game attendant: the fee is ten coins a level.
-void Func_02001abc(void) {
+void Contigo_SendToLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * 10;
 
   Event_Start();
@@ -1236,7 +1246,7 @@ void Func_02001abc(void) {
 }
 
 // The Super Lucky Dice attendant: the same check without the fee shown.
-void Func_02001b84(void) {
+void Contigo_SendToSuperLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * 10;
 
   Event_Start();
@@ -1267,7 +1277,7 @@ void Func_02001b84(void) {
   Event_End();
 }
 
-void Func_02001c44(s32 id) {
+void Contigo_ShrinkActor(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   object->scaleX = 0xb333;
@@ -1275,7 +1285,7 @@ void Func_02001c44(s32 id) {
   object->radius = 8;
 }
 
-void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
+void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_THUMP);
@@ -1288,37 +1298,38 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   }
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.5);
-  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200466c);
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
+                            gContigo_EnterGameDoorScript);
   wait(12);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
 
-void Func_02001d08(void) {
-  Func_02001c5c(27, 0, 42, 13);
+void Contigo_EnterLuckyWheels(void) {
+  Contigo_OpenGameDoor(27, 0, 42, 13);
   Import_EventSetExitRequest(22);
 }
 
-void Func_02001d20(void) {
-  Func_02001c5c(27, 4, 48, 12);
+void Contigo_EnterLuckyDice(void) {
+  Contigo_OpenGameDoor(27, 4, 48, 12);
   Import_EventSetExitRequest(23);
 }
 
-void Func_02001d38(void) {
-  Func_02001c5c(27, 0, 54, 13);
+void Contigo_EnterSuperLuckyDice(void) {
+  Contigo_OpenGameDoor(27, 0, 54, 13);
   Import_EventSetExitRequest(24);
 }
 
-extern u32 gData_020048a0[];
-extern u32 gData_020048f8[];
-extern u32 gData_0200493c[];
-extern u32 gData_02004980[];
-extern u32 gData_020049c4[];
-extern const u8 gData_02006030[];
+extern u32 gContigo_JennaReunionScript[];
+extern u32 gContigo_PiersReunionScript[];
+extern u32 gContigo_ShebaReunionScript[];
+extern u32 gContigo_KradenReunionScript[];
+extern u32 gContigo_IsaacLeavesScript[];
+extern const u8 gContigo_SparkleWork[];
 
 // The reunion scene. It opens with "Glad you kept your promise".
-void Func_02001d50(void) {
+void Contigo_TheReunion(void) {
   struct ContigoObject *object;
   s32 answer;
   /* FAKEMATCH(pin): the leader pinned to r5, reloaded after each yes/no prompt
@@ -1350,10 +1361,10 @@ void Func_02001d50(void) {
   Actor_SetSpeed(7, 0.8);
   Actor_SetSpeed(9, 0.8);
   Actor_SetSpeed(6, 0.8);
-  Actor_SetMovementTypeById(5, gData_020048a0);
-  Actor_SetMovementTypeById(9, gData_02004980);
-  Actor_SetMovementTypeById(6, gData_0200493c);
-  Actor_SetMovementTypeAndWaitById(7, gData_020048f8);
+  Actor_SetMovementTypeById(5, gContigo_JennaReunionScript);
+  Actor_SetMovementTypeById(9, gContigo_KradenReunionScript);
+  Actor_SetMovementTypeById(6, gContigo_ShebaReunionScript);
+  Actor_SetMovementTypeAndWaitById(7, gContigo_PiersReunionScript);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(1);
   Actor_Stop(3);
@@ -1644,16 +1655,16 @@ void Func_02001d50(void) {
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageThenWait(5, 0, 10);
-  Func_02003e54(object, gData_02006030);
+  Contigo_StartSparkle(object, gContigo_SparkleWork);
   Event_Wait(80);
-  Func_02003f54(object);
+  Contigo_StopSparkle(object);
   Motion_SetModeAndWaitAnimation(8, 4);
   Event_ShowMessageAndWait(8, 0);
   Actor_SetAttachedEffect(7, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageThenWait(7, 0, 10);
-  Func_02003e54(object, gData_02006030);
+  Contigo_StartSparkle(object, gContigo_SparkleWork);
   Event_Wait(80);
-  Func_02003f54(object);
+  Contigo_StopSparkle(object);
   Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
   Actor_SetModeById(8, 4);
   Event_ShowMessageAndWait(8, 0);
@@ -1756,22 +1767,22 @@ void Func_02001d50(void) {
   Actor_SetModeById(5, 3);
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(7, 3);
-  Actor_SetMovementTypeById(0, gData_020049c4);
-  Actor_SetMovementTypeById(1, gData_020049c4);
-  Actor_SetMovementTypeById(3, gData_020049c4);
-  Actor_SetMovementTypeById(2, gData_020049c4);
-  Actor_SetMovementTypeById(9, gData_020049c4);
-  Actor_SetMovementTypeById(5, gData_020049c4);
-  Actor_SetMovementTypeById(6, gData_020049c4);
-  Actor_SetMovementTypeAndWaitById(7, gData_020049c4);
+  Actor_SetMovementTypeById(0, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(1, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(3, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(2, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(9, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(5, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(6, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeAndWaitById(7, gContigo_IsaacLeavesScript);
   Party_AddIsaacsParty();
   GameFlag_Set(2512);
   Event_End();
 }
 
-extern u32 gData_02004ac0[];
+extern u32 gContigo_LeaderVisitsScript[];
 
-void Func_02002e18(void) {
+void Contigo_ReturnToNewHome(void) {
   if (GameFlag_Get(0x9b2)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -1827,7 +1838,8 @@ void Func_02002e18(void) {
     Actor_MoveToObject(9, gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0.8);
-    Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02004ac0);
+    Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
+                              gContigo_LeaderVisitsScript);
     Actor_SetSpeed(9, 0.8);
     Actor_WalkToAndWait(9, 182, 378);
     Actor_WalkToAndWaitById(9, 182, 360);
@@ -1973,9 +1985,9 @@ void Func_02002e18(void) {
     Actor_SetSpeed(2, 1.2);
     Actor_SetSpeed(0, 1.2);
     Actor_SetSpeed(9, 1.2);
-    Actor_SetMovementTypeById(2, gData_02004b18);
-    Actor_SetMovementTypeById(0, gData_02004b18);
-    Actor_SetMovementTypeAndWaitById(9, gData_02004b18);
+    Actor_SetMovementTypeById(2, gContigo_HostScript);
+    Actor_SetMovementTypeById(0, gContigo_HostScript);
+    Actor_SetMovementTypeAndWaitById(9, gContigo_HostScript);
     GameFlag_Set(2513);
     Event_End();
   }
@@ -2003,7 +2015,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_020036f0(void) {
+void Contigo_KeepPriorityWithLeader(void) {
   if (Actor_GetById(65) != 0) {
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
 
@@ -2014,33 +2026,33 @@ void Func_020036f0(void) {
 
 void Map_CenterOnFollowedPoint(void);
 
-// Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
-// Func_020006d0 as their update (object 15 brought in and placed while flag
-// 0xa21 is set and 0x9b2 clear), places or hides object 17 by flags 0x9e7 and
-// 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109 is set, and
-// while flag 0x200 is set has the camera follow the leader; it ends with
-// Palette_SetColors.
+// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
+// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
+// placed while flag 0xa21 is set and 0x9b2 clear), places or hides object 17 by
+// flags 0x9e7 and 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag 0x109
+// is set, and while flag 0x200 is set has the camera follow the leader; it ends
+// with Palette_SetColors.
 void Contigo_InitializeRoom1(void) {
   struct Actor *object = Actor_GetById(14);
   s32 zero;
 
-  Task_Add(Func_020036f0, 0x480);
+  Task_Add(Contigo_KeepPriorityWithLeader, 0x480);
   /* FAKEMATCH(temporary): the second byte's 0 built after the first byte's
    * address. */
   zero = 0;
   BYTE_AT(object, 98) = 1;
   BYTE_AT(object, 99) = zero;
-  *(void **)((u8 *)object + 108) = Func_020006d0;
+  *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
   if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9b2) == 0) {
     Actor_Stop(15);
     Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
     Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
-    Func_02001724();
+    Contigo_OpenGamesRooms();
   } else {
     object = Actor_GetById(15);
     BYTE_AT(object, 98) = 0;
     BYTE_AT(object, 99) = 0;
-    *(void **)((u8 *)object + 108) = Func_020006d0;
+    *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
   }
   if (GameFlag_Get(0x9e7) != 0 && GameFlag_Get(0x9e6) == 0) {
     Actor_SetPosition(17, 32, 708);
@@ -2067,12 +2079,12 @@ void Contigo_InitializeRoom1(void) {
     Map_CenterOnFollowedPoint();
     wait(1);
   }
-  Palette_SetColors(gData_0200469c, gData_020046ac, gData_020046d8,
-                    gData_02004704);
+  Palette_SetColors(gContigo_PaletteSlots, gContigo_PaletteColors,
+                    gContigo_DimColors, gContigo_CycleSlots);
 }
 
 void Contigo_InitializeRoom4(void) {
-  Func_02001c44(18);
+  Contigo_ShrinkActor(18);
   if (GameFlag_Get(0xa21) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
     Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
@@ -2106,7 +2118,7 @@ void Contigo_InitializeRoom4(void) {
       wait(1);
     }
   } else {
-    Func_020017f4();
+    Contigo_SetUpStatues();
   }
 }
 
@@ -2119,14 +2131,14 @@ void Contigo_InitializeRoom2(void) {
   gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(0xa21) != 0 && GameFlag_Get(0x9d0) == 0)
-      Func_02001d50();
+      Contigo_TheReunion();
   } else if (gMainRoutineWork.entrance == 21) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
     Actor_SetModeById(17, 2);
     Actor_SetSpriteFlags(Actor_GetById(17), 0);
     if (GameFlag_Get(0x9b2) != 0)
-      Actor_SetMovementTypeById(11, gData_02004a1c);
+      Actor_SetMovementTypeById(11, gContigo_Room2WatcherScript);
     if (GameFlag_Get(0x9d0) != 0) {
       Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
@@ -2170,11 +2182,11 @@ void Contigo_InitializeRoom3(void) {
   s32 item;
 
   gFieldWork->transition = 0x209;
-  Func_02001c44(13);
-  Func_02001c44(16);
-  Func_02001c44(17);
-  Func_02001c44(19);
-  Func_02001c44(20);
+  Contigo_ShrinkActor(13);
+  Contigo_ShrinkActor(16);
+  Contigo_ShrinkActor(17);
+  Contigo_ShrinkActor(19);
+  Contigo_ShrinkActor(20);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(14)), 1);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(15)), 2);
   Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
@@ -2238,7 +2250,7 @@ void Contigo_InitializeRoom3(void) {
     Event_WaitTransitionFrames();
     Event_Wait(20);
     if (list[0] == -1) {
-      Func_02001938(1);
+      Contigo_SendToLuckyWheels(1);
     } else if (list[0] == -2) {
       Event_SetMessageId(MSG_READ_SIGN);
       Event_ShowMessageAndWait(18, 0);
@@ -2252,7 +2264,7 @@ void Contigo_InitializeRoom3(void) {
           Event_SetMessageId(MSG_FIRST_PRIZE);
         else
           Event_SetMessageId(MSG_NEXT_PRIZE);
-        item = Func_02001a60(*prize);
+        item = Contigo_PickTopic(*prize);
         MessageArgument_Push(item, 2);
         Event_ShowMessageAndWait(18, 0);
         ItemDisplay_ShowItem(item, 3);
@@ -2302,7 +2314,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 // The sparkle's update: raises two pairs of sprites over the object, each pair
 // starting when its counter is cleared, until both counters pass 31.
-void Func_02003cd8(struct Actor *object) {
+void Contigo_RaiseSparkle(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;
   s32 i, j;
@@ -2368,8 +2380,8 @@ void Func_02003cd8(struct Actor *object) {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 
-// The sparkle's setup, Func_02003f54, which sets byte 0x62 of an object, and
-// the overlay's data.
+// The sparkle's setup, Contigo_StopSparkle, which sets byte 0x62 of an object,
+// and the overlay's data.
 
 /* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
@@ -2401,22 +2413,23 @@ struct SparkleWork__s3e54 {
 };
 
 // Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
-// hands the object to its update, Func_02003cd8.
-void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
+// hands the object to its update, Contigo_RaiseSparkle.
+void Contigo_StartSparkle(struct Actor *object,
+                          struct SparkleWork__s3e54 *work) {
   struct SparkleSprite__s3e54 *sprite;
   s32 tile;
   s32 row;
   s32 col;
 
   work->vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(work->vramEntry, 256, gData_020042bc);
+  VramCache_Load(work->vramEntry, 256, gContigo_SparkleTiles);
   work->unka6 = 0;
   work->unka0 = 999;
   work->unka2 = 999;
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
-  object->update = Func_02003cd8;
+  object->update = Contigo_RaiseSparkle;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
@@ -2439,10 +2452,12 @@ struct ContigoObject__s3e54 {
   u8 unk62;
 };
 
-void Func_02003f54(struct ContigoObject__s3e54 *object) { object->unk62 = 1; }
+void Contigo_StopSparkle(struct ContigoObject__s3e54 *object) {
+  object->unk62 = 1;
+}
 
 // clang-format off
-s32 gData_020042bc[] = {
+s32 gContigo_SparkleTiles[] = {
     0, 0, 0, 0, 0, 0,
     0x70000000, (s32)0xf7700000, 0, 0, 0, 0,
     0x77770000, (s32)0xffff7770, -9, 0x7777ffff, 0, 0,
@@ -2475,107 +2490,107 @@ s32 gData_020042bc[] = {
     (s32)0xe9000000, 233,
 };
 
-u32 gData_0200457c[] = {
+u32 gContigo_ShortScript[] = {
     0, 1, 13, 22, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020045b8[] = {
+u32 gContigo_MediumScript[] = {
     0, 1, 13, 44, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_020045f4[] = {
+u32 gContigo_LongScript[] = {
     0, 1, 13, 126, 0, 0,
     1, 2, 0, 0, 0, 0,
     1, 38, 17,
 };
 
-u32 gData_02004630[] = {
+u32 gContigo_Topics[] = {
     250, 251, 252, 256, 257, 258,
     262, 263, 264, 183, 182, 181,
     189, 186, 188,
 };
 
-s32 gData_0200466c[] = {
+s32 gContigo_EnterGameDoorScript[] = {
     22, 26, 0, 23, 7, -0x8000,
     0, 1, 13, 24, 0, 17,
 };
 
-s16 gData_0200469c[] = {
+s16 gContigo_PaletteSlots[] = {
     89, 90, 91, 92, 93, 94, 95, -1,
 };
 
-s16 gData_020046ac[] = {
+s16 gContigo_PaletteColors[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
     25, 22, 23, 25, 22, -1,
 };
 
-s16 gData_020046d8[] = {
+s16 gContigo_DimColors[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
     5, 21, 31, 31, 31, -1,
 };
 
-u16 gData_02004704[] = {                                                               
+u16 gContigo_CycleSlots[] = {                                                               
       94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91,  
       91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94, 89, 89, 90, 91, 92, 93, 94,  
   };
 
 s32 gFieldEffect_DurationScripts[] = {
-    (s32)gData_0200457c,
-    (s32)gData_020045b8,
-    (s32)gData_020045f4,
+    (s32)gContigo_ShortScript,
+    (s32)gContigo_MediumScript,
+    (s32)gContigo_LongScript,
 };
 
-u32 gData_02004758[] = {                                                               
+u32 gContigo_WandererScript[] = {                                                               
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 4,  0x1520000, 0,  0x34c0000,     1,  4,      
       0x13e0000, 0,  0x34c0000, 1,  4,       0x1300000, 0,  0x3680000,     1,  4,  0x1400000, 0,      0x3740000, 1,      
       4,  0x1500000, 0,  0x3740000, 1,       4,  0x1600000, 0,      0x3680000, 1,  13, 0xffff, 0,          
   };
 
-u32 gData_020047fc[] = {                                                               
+u32 gContigo_PacerScript[] = {                                                               
       39, 2,  22, 15, 0x10000, 22, 16, 0x6666, 4,  0x13e0000, 0,  0x3740000,     1,  4,      
       0x1520000, 0,  0x3740000, 1,  4,       0x1600000, 0,  0x3680000,     1,  4,  0x1520000, 0,      0x34c0000, 1,      
       4,  0x13e0000, 0,  0x34c0000, 1,       4,  0x1300000, 0,      0x3680000, 1,  13, 0xffff, 0,          
   };
 
-u32 gData_020048a0[] = {
+u32 gContigo_JennaReunionScript[] = {
     39, 2, 4, 0xa40000, 0, 0x1680000,
     1, 39, 1, 0, 10, 22,
     3, 0xa000, 0, 10, 22, 3,
     0x8000, 0, 10, 17,
 };
 
-u32 gData_020048f8[] = {
+u32 gContigo_PiersReunionScript[] = {
     39, 2, 4, 0xbe0000, 0, 0x1600000,
     1, 39, 1, 0, 10, 22,
     3, 0x8000, 0, 10, 17,
 };
 
-u32 gData_0200493c[] = {
+u32 gContigo_ShebaReunionScript[] = {
     39, 2, 4, 0xbe0000, 0, 0x1860000,
     1, 39, 1, 0, 10, 22,
     3, 0x8000, 0, 10, 17,
 };
 
-u32 gData_02004980[] = {
+u32 gContigo_KradenReunionScript[] = {
     39, 2, 4, 0xb60000, 0, 0x1700000,
     1, 39, 1, 0, 10, 22,
     3, 0x8000, 0, 10, 17,
 };
 
-u32 gData_020049c4[] = {
+u32 gContigo_IsaacLeavesScript[] = {
     39, 2, 4, 0xa00000, 0, 0x17e0000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17, 39, 2, 0,
     10, 13, 0xffff, 0,
 };
 
-s32 gData_02004a1c[] = {
+s32 gContigo_Room2WatcherScript[] = {
     22, 9, 0x10000, 22, 10, 0x10000,
     23, 9, -0x2800, 23, 10, 0x800,
     0, 2, 23, 9, 0x1400, 23,
@@ -2585,20 +2600,20 @@ s32 gData_02004a1c[] = {
     0, 2, 13, 0xffff, 0,
 };
 
-u32 gData_02004ac0[] = {
+u32 gContigo_LeaderVisitsScript[] = {
     39, 2, 4, 0x800000, 0, 0x17a0000,
     1, 4, 0x840000, 0, 0x1680000, 1,
     39, 1, 0, 10, 22, 3,
     0, 0, 10, 17,
 };
 
-u32 gData_02004b18[] = {
+u32 gContigo_HostScript[] = {
     39, 2, 4, 0x840000, 0, 0x1670000,
     1, 39, 1, 0, 1, 3,
     0, 1, 17,
 };
 
-s32 gData_02004b54[] = {
+s32 gContigo_StatueScript[] = {
     22,
     3,
     0x8000,
@@ -2620,7 +2635,7 @@ s32 gData_02004b54[] = {
     0,
     40,
     46,
-    (s32)Func_020007a4,
+    (s32)Contigo_ShowSurprise,
     0,
     120,
     13,
@@ -2679,8 +2694,8 @@ struct ActorPlacement gContigo_Room1Placements[] = {
     ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 116, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 792, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTHWEST + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, (s32)gData_02004758, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, (s32)gData_020047fc, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, (s32)gContigo_WandererScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, (s32)gContigo_PacerScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(243, 0x3e, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(245, 0x67, MOVEMENT_TYPE_STAND, 56, 0, 706, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
@@ -2690,7 +2705,7 @@ struct ActorPlacement gContigo_Room4Placements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 846, 0, 660, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, (s32)gData_02004b54, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(79, CONDITION_ALWAYS, (s32)gContigo_StatueScript, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 588, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 806, 0, 596, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(202, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 832, 0, 310, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
@@ -2716,7 +2731,7 @@ struct ActorPlacement gContigo_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gData_02005018[] = {
+struct ActorPlacement gContigo_Room2PlacementsBeforeReunion[] = {
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 84, FACING_SOUTH + FACING_STEP, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 88, FACING_SOUTHEAST + FACING_STEP, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 130, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2741,7 +2756,7 @@ struct ActorPlacement gData_02005018[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gData_02005228[] = {
+s16 gContigo_Room2PlacementsReunion[] = {
     59, -1, 1, 0, 0, 0, 0, 0,
     0, 0, FACING_NORTH, 2, 5, -1, 1, 0,
     0, 0, 0, 0, 0, 0, FACING_WEST, 2,
@@ -2801,25 +2816,25 @@ struct Trigger gContigo_Room1Triggers[] = {
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(Func_02001250)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 39, CONDITION_ALWAYS, EVENT(Func_02001284)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Func_020012a4)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Func_020012c4)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42, CONDITION_ALWAYS, EVENT(Func_02001354)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43, CONDITION_ALWAYS, EVENT(Func_02001374)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44, CONDITION_ALWAYS, EVENT(Func_02001394)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45, CONDITION_ALWAYS, EVENT(Func_020013b4)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 46, CONDITION_ALWAYS, EVENT(Func_020013d4)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 47, CONDITION_ALWAYS, EVENT(Func_020013f4)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 48, CONDITION_ALWAYS, EVENT(Func_02001414)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49, CONDITION_ALWAYS, EVENT(Func_02001434)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Func_02001454)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 51, CONDITION_ALWAYS, EVENT(Func_02001474)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Func_020014b4)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_02001494)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 17, 0x9e7, EVENT(Func_020015ac)},
-    {TRIGGER_TALK, 17, IF_FLAG_SET(0x9e7), EVENT(Func_02000608)},
-    {TRIGGER_TALK, 8, 0xa21, EVENT(Func_020009ac)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(Contigo_TeleportOut)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 39, CONDITION_ALWAYS, EVENT(Contigo_ClearFirstBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Contigo_ClearSecondBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Contigo_ClearBushesBySalt)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42, CONDITION_ALWAYS, EVENT(Contigo_ClearFourthBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43, CONDITION_ALWAYS, EVENT(Contigo_ClearFifthBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44, CONDITION_ALWAYS, EVENT(Contigo_ClearSixthBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45, CONDITION_ALWAYS, EVENT(Contigo_ClearSeventhBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 46, CONDITION_ALWAYS, EVENT(Contigo_ClearEighthBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 47, CONDITION_ALWAYS, EVENT(Contigo_ClearFirstHedgeRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 48, CONDITION_ALWAYS, EVENT(Contigo_ClearSecondHedgeRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49, CONDITION_ALWAYS, EVENT(Contigo_ClearThirdHedgeRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Contigo_ClearFourthHedgeRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 51, CONDITION_ALWAYS, EVENT(Contigo_ClearFifthHedgeRow)},
+    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Contigo_NarrowCameraBounds)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Contigo_WidenCameraBounds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 17, 0x9e7, EVENT(Contigo_ForceFreesDjinni)},
+    {TRIGGER_TALK, 17, IF_FLAG_SET(0x9e7), EVENT(Contigo_FreedDjinniJoinsParty)},
+    {TRIGGER_TALK, 8, 0xa21, EVENT(Contigo_AskAboutWindLegend)},
     {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgContigo119)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo138)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa21, MSGNO(MsgContigo43)},
@@ -2853,24 +2868,24 @@ struct Trigger gContigo_Room1Triggers[] = {
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigo142)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigo48)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo148)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02001094)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Func_02001094)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_0200118c)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Func_0200118c)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Func_020014d4)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Func_020005f8)},
-    {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Func_0200092c)},
-    {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Func_0200094c)},
-    {TRIGGER_EXAMINE, 26, CONDITION_ALWAYS, EVENT(Func_0200096c)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Contigo_ScoopForSalt)},
+    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Contigo_SaltJoinsParty)},
+    {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyWheelsSign)},
+    {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyDiceSign)},
+    {TRIGGER_EXAMINE, 26, CONDITION_ALWAYS, EVENT(Contigo_ReadSuperDiceSign)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT(Scene_ShowEntranceLocked)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gContigo_Room4Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 21},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Func_02001d08)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterLuckyWheels)},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, 23},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Func_02001d38)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSuperLuckyDice)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo90)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo96)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo91)},
@@ -2885,7 +2900,7 @@ struct Trigger gContigo_Room4Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo100)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigo95)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo101)},
-    {TRIGGER_TALK, 14, 0x9b2, EVENT(Func_02001070)},
+    {TRIGGER_TALK, 14, 0x9b2, EVENT(Contigo_AskAboutGeoglyph)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigo190)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgContigo106)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo194)},
@@ -2901,10 +2916,10 @@ struct Trigger gContigo_Room4Triggers[] = {
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgContigo193)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigo109)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigo197)},
-    {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Func_020008ec)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_0200090c)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_0200152c)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_0200156c)},
+    {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Contigo_ExamineWall)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_ReadSign)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Contigo_RevealSteps)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Contigo_HideSteps)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2951,7 +2966,7 @@ struct Trigger gContigo_Room2Triggers[] = {
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigo162)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgContigo68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigo167)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000af4)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_BabyThinks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigo69)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigo168)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWeaponMerchant)},
@@ -3000,11 +3015,11 @@ struct Trigger gContigo_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gData_02005e70[] = {
+struct Trigger gContigo_Room2ReunionTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo170)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo171)},
-    {TRIGGER_STEP, 20, 0x9d1, EVENT(Func_02002e18)},
+    {TRIGGER_STEP, 20, 0x9d1, EVENT(Contigo_ReturnToNewHome)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo206))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo207))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo208))},
@@ -3015,27 +3030,27 @@ struct Trigger gContigo_Room3Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02001b84)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Contigo_SendToSuperLuckyDice)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo29)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo24)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo30)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Func_02000edc)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_02000eb8)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_ExplainSuperDice)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Contigo_AskAboutSuperDice)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo31)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo27)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo32)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo28)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo33)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Func_02001abc)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_SendToLuckyDice)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo08)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigo02)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigo09)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000f40)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_02000f7c)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000fc8)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDice)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDiceAgain)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWheelsAttendant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigo22)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000fe0)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Func_0200102c)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyWheels)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
     {TRIGGER_TABLE_END},
 };
 #undef BYTE_AT

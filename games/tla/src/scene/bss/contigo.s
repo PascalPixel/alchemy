@@ -29,5 +29,5 @@ gPaletteCycleLength:
 	.global gPaletteCycleIndex
 gPaletteCycleIndex:
 	.space 0x00000010
-	.global gData_02006030
-gData_02006030:
+	.global gContigo_SparkleWork
+gContigo_SparkleWork:

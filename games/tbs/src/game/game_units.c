@@ -82,7 +82,7 @@ struct Unit *Unit_Get(u32 unitId) {
   // lr into r3.
   UNUSED void *caller = __builtin_return_address(0);
 
-  states = gMainRoutineWork.units;
+  states = gCharacterUnits;
   /* FAKEMATCH(dead): the party return repeated under a test of the return
    * address. */
   if (caller == NULL) {
@@ -497,19 +497,17 @@ void MainRoutineWork_InitializeDefaults(void) {
   // and the flags.
   zero = 0;
   START_DMA(&zero, &gMainRoutineWork,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 176);
+            DMA_FILL_WORDS(sizeof(gMainRoutineWork) / 4));
   zero = 0;
-  START_DMA(&zero, gSceneLocalState,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 993);
+  START_DMA(&zero, gSceneLocalState, DMA_FILL_WORDS(993));
   WAIT_DMA();
   zero = 0;
-  START_DMA(&zero, gGameFlagBytes,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
+  START_DMA(&zero, gGameFlagBytes, DMA_FILL_WORDS(128));
   ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
       ACTOR_SNAPSHOT_EMPTY;
   zero = 0;
-  START_DMA(&zero, gBattleArenaRecord + 0x1c,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
+  START_DMA(&zero, gCharacterUnits,
+            DMA_FILL_WORDS(sizeof(gCharacterUnits) / 4));
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;

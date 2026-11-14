@@ -126,8 +126,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     PARTICLES[i].variant = 0;
   }
 
-  frame = 0;
-  do {
+  for (frame = 0;
+       frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B)));
+       frame++) {
     // The first stage: Neptune leaps from the sea and the beam joins it to the
     // sky.
     if (frame == 24) {
@@ -322,10 +323,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 4) {
         z = 4;
       }
-      blit[1](canvas,
-              work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
-              108 - z, 60 - z, z * 2, z * 2);
+      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
+                        60, z);
     }
     if (frame >= 192 && frame < 200) {
       s32 z;
@@ -333,10 +332,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 6) {
         z = 6;
       }
-      blit[1](canvas,
-              work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
-              108 - z, 60 - z, z * 2, z * 2);
+      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
+                        60, z);
     }
     if (frame > 199) {
       s32 z;
@@ -345,19 +342,15 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 8) {
         z = 8;
       }
-      blit[1](canvas,
-              work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                  NEPTUNE_FLARE_SHEET,
-              108 - z, 60 - z, z * 2, z * 2);
+      EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
+                        60, z);
       if (frame <= 213) {
         z = u / 4 + 1;
         if (z > 4) {
           z = 4;
         }
-        blit[1](canvas,
-                work->sheet + gBattleEffect_FlarePictures[z - 1] +
-                    NEPTUNE_FLARE_SHEET,
-                100 - z, 52 - z, z * 2, z * 2);
+        EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET,
+                          100, 52, z);
       }
     }
     if (frame >= 214 && frame < 222) {
@@ -405,7 +398,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
               32);
     }
     EFFECT_PRESENT_CANVAS(work);
-  } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
+  }
 
   // The second stage: five columns of water crash down on the targets.
   gBgScroll[1].x = savedBg1ScrollX;
@@ -432,8 +425,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  frame = 0;
-  do {
+  for (frame = 0; frame != 144; frame++) {
     if (frame == 96) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
@@ -507,7 +499,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     BattleCamera_Shake(4, 8);
     EFFECT_END_FRAME(work);
-  } while (++frame != 144);
+  }
 
   for (i = 0; i != 8; i++) {
     Sprite_DestroyFar(work->sprites[i]);

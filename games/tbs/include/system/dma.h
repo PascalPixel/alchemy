@@ -30,8 +30,7 @@ struct DmaRegisters {
 #define Dma_Fill32(value, destination, size)                                   \
   {                                                                            \
     volatile u32 fill_ = (value);                                              \
-    Dma_Set((const void *)&fill_, (destination),                               \
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
+    Dma_Set((const void *)&fill_, (destination), DMA_FILL_WORDS((size) / 4),   \
             REG_DMA3);                                                         \
   }
 
@@ -42,8 +41,7 @@ struct DmaRegisters {
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \
-    Dma_Set((const void *)&(cell), (destination),                              \
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | ((size) / 4),     \
+    Dma_Set((const void *)&(cell), (destination), DMA_FILL_WORDS((size) / 4),  \
             REG_DMA3);                                                         \
   }
 

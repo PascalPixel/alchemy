@@ -1432,14 +1432,16 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -1449,7 +1451,8 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -1479,10 +1482,6 @@ static void Kolima_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
   s32 framePhase;
-  s32 spawnX = px(98);
-  s32 spawnZ = px(105);
-  s32 targetX = px(98);
-  s32 targetZ = px(269);
 
   framePhase = gFrameCount & 7;
   if (framePhase != 0) {
@@ -1491,7 +1490,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   if (gKolima_EffectActive != 0) {
     Sound_Play(SE_SPARKLE_FALL);
   }
-  sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
+  sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, px(98), 0, px(105));
   if (sparkle == NULL) {
     return;
   }
@@ -1504,7 +1503,7 @@ static void Kolima_SpawnCurseSparkle(void) {
   sparkle->acceleration = px(8);
   sparkle->motionFlags = framePhase;
   Actor_SelectAnimation(sparkle, 2);
-  FieldActor_SetMoveTargetFixed(sparkle, targetX, 0, targetZ);
+  FieldActor_SetMoveTargetFixed(sparkle, px(98), 0, px(269));
   Actor_StartScript(sparkle, gKolima_GoldenRingsScript);
 }
 

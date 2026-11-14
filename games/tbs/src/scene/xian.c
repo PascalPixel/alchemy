@@ -157,7 +157,7 @@ static void Xian_MistJoins(void) {
 /// it.
 static void Xian_UpdateFrozenPuddleLayer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->y.part.pixel > 31) {
+  if (leader->y.part[0].pixel > 31) {
     Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
     Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
@@ -173,8 +173,7 @@ static void Xian_RotateTrainingTree(void) {
 
 /// Emits particles beside the student every fourth frame.
 static void Xian_SpawnTrainingParticles(void) {
-  /* FAKEMATCH(temporary): the student read through a byte pointer. */
-  u8 *student = (u8 *)Actor_Get(ACTOR_KUNG_FU_STUDENT);
+  struct Actor *student = Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {
     struct EffectOptions options;
@@ -183,10 +182,8 @@ static void Xian_SpawnTrainingParticles(void) {
     options.palette = 9;
     options.type = SPRITE_GIRL_IN_PINK;
     options.script = gXian_TrainingParticleScript;
-    FieldEffect_Spawn(*(s32 *)(student + offsetof(struct Actor, x)),
-                      *(s32 *)(student + offsetof(struct Actor, y)),
-                      *(s32 *)(student + offsetof(struct Actor, z)) - px(1), 0,
-                      -px(1), -px(1),
+    FieldEffect_Spawn(student->x.fixed, student->y.fixed,
+                      student->z.fixed - px(1), 0, -px(1), -px(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
                       &options);
@@ -422,7 +419,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0.8);
   if (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed) != 14) {
     Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER,
-                        Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.part.pixel,
+                        Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.part[0].pixel,
                         232);
   }
   Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, 280, 232);

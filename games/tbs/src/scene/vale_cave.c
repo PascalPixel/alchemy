@@ -377,7 +377,7 @@ static void ValeCave_PushEastCratesIntoWater(void) {
 /// In Vale Cave's second room, walking south off a ledge has Isaac hop down if
 /// the cell below is free.
 static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
-  union FieldCoordinate landingPosition[3];
+  struct FieldCoordinate landingPosition[3];
   struct Actor *leader;
   s32 savedMotionFlags;
 
@@ -404,8 +404,8 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     leader->velocityY = px(4);
     leader->motionFlags &= 126;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
-                        landingPosition[2].part.pixel);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part[0].pixel,
+                        landingPosition[2].part[0].pixel);
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     leader->motionFlags = savedMotionFlags;

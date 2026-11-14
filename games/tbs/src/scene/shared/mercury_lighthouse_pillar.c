@@ -101,9 +101,7 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
 
   // Alternate the light's draw parameter every two frames and redraw it.
   {
-    /* FAKEMATCH(temporary): the sprite read through a pointer to its slot. */
-    struct Sprite **slot = &actor->sprite;
-    struct Sprite *sprite = *slot;
+    struct Sprite *sprite = actor->sprite;
     struct SpriteAnimation *entry = sprite->entries[0];
 
     entry->colorMode = ((gFrameCount >> 1) & 1) * 7;
@@ -181,8 +179,7 @@ void MercuryLighthouse_ChargeLights(void) {
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
       actor->watchedActor = leader;
       actor->motionFlags = ACTOR_FLOATS;
-      /* FAKEMATCH(temporary): the height lowered. */
-      *(s32 *)&actor->y -= px(1) / 2;
+      actor->y.fixed -= px(1) / 2;
       if (sprite != NULL) {
         sprite->flags = 0;
         sprite->image.priority = 1;
@@ -257,7 +254,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   u32 keys;
   s32 n;
   s32 i;
-  union FieldCoordinate pos[3];
+  struct FieldCoordinate pos[3];
 
   state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
@@ -330,8 +327,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   actor->velocityY = px(4);
   *flags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlags(actor, 0);
-  Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part.pixel,
-                          pos[2].part.pixel);
+  Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part[0].pixel,
+                          pos[2].part[0].pixel);
   Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
   wait(2);
   if (to->behavior != state->poolBehavior)

@@ -233,7 +233,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       spriteSlots =
           (void **)((u32 *)gActorSystemWork + gActorSystemWork->count++ + 2);
       actor->spriteStorageKind = spriteStorageKind;
-      *(void ***)&actor->sprites = spriteSlots;
+      actor->sprite = (struct Sprite *)spriteSlots;
       Dma_Fill32(0, spriteSlots, 16);
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {

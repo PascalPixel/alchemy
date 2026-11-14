@@ -90,8 +90,7 @@ void InventorySnapshot_Restore(void) {
   u16 *source = gInventorySnapshot;
 
   if (*source++ == INVENTORY_SNAPSHOT_SENTINEL) {
-    unitId = 0;
-    do {
+    for (unitId = 0; unitId <= 3; unitId++) {
       u16 *inventory = Unit_Get(unitId)->inventory;
       s32 remaining = 14;
 
@@ -101,8 +100,7 @@ void InventorySnapshot_Restore(void) {
       } while (remaining >= 0);
       Unit_UpdateClass(unitId);
       Unit_Calculate(unitId);
-      unitId++;
-    } while (unitId <= 3);
+    }
 
     gMainRoutineWork.firstShortcut = *source++;
     gMainRoutineWork.secondShortcut = *source++;

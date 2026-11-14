@@ -22,7 +22,8 @@ static inline void Scene_WalkTowardLeader(s32 actorId) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (leader != NULL) {
-    Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
+    Actor_SetDestination(actorId, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
 }
 
@@ -34,7 +35,8 @@ static inline void Scene_WalkIntoLeader(s32 actorId) {
   Actor_SetAnimation(actorId, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
+    Actor_SetDestination(actorId, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(actorId);
   Actor_SetPosition(actorId, 0, 0);

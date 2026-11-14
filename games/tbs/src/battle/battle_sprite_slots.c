@@ -58,17 +58,15 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   struct Unit *unit = Unit_GetFar(unitId);
   s32 needsSingleSlot = BattleSprite_IsSmall(unit->id);
-  /* FAKEMATCH(temporary): result cleared a halfword at a time. */
-  union {
-    s32 value;
-    u16 halves[2];
-  } result;
+  s32 result;
   s32 sprite;
 
-  result.halves[0] = 0;
-  result.halves[1] = 0;
+  result = spritePart = 0;
   sprite = BattleSprite_GetSprite(unit->id);
-  spritePart = result.value;
+  /* FAKEMATCH(dead): spritePart set again to the 0 it holds, from result;
+   * without it, 85 of 114 instructions differ in tbs-en, and as result = 0;
+   * spritePart = 0, 2. */
+  spritePart = result;
   // Once for the sprite, and again for its second part if it has one.
   do {
     s32 slot;
@@ -106,7 +104,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
     sprite ^= 1;
     sprite ^= 1;
     if (spritePart == 0)
-      result.value = (slot << 12) | sprite;
+      result = (slot << 12) | sprite;
 
     battle->spriteSlots[slot] = unitId;
     if (!needsSingleSlot)
@@ -117,7 +115,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
       break;
   } while (++spritePart <= 1);
 
-  return result.value;
+  return result;
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.

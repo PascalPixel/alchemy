@@ -34,14 +34,14 @@ struct Actor;
 struct Actor {
   /// The actor script it runs; null when its slot is free.
   const s32 *script;
-  s16 scriptCursor;        ///< the script cursor, in words
-  u16 facing;              ///< 1/65536 turns
-  union FieldCoordinate x; ///< 16.16 fixed-point pixels
-  union FieldCoordinate y; ///< 16.16 fixed-point pixels
-  union FieldCoordinate z; ///< 16.16 fixed-point pixels
-  s32 groundHeight;        ///< 16.16 fixed-point pixels
-  s32 scaleX;              ///< 16.16 fixed point, Q16_ONE full size
-  s32 scaleY;              ///< 16.16 fixed point, Q16_ONE full size
+  s16 scriptCursor;         ///< the script cursor, in words
+  u16 facing;               ///< 1/65536 turns
+  struct FieldCoordinate x; ///< 16.16 fixed-point pixels
+  struct FieldCoordinate y; ///< 16.16 fixed-point pixels
+  struct FieldCoordinate z; ///< 16.16 fixed-point pixels
+  s32 groundHeight;         ///< 16.16 fixed-point pixels
+  s32 scaleX;               ///< 16.16 fixed point, Q16_ONE full size
+  s32 scaleY;               ///< 16.16 fixed point, Q16_ONE full size
   /// Collision radius in pixels: 16, or half the sprite metadata's boxY, when
   /// created; the overlap checks use it less 2.
   u16 radius;
@@ -72,11 +72,9 @@ struct Actor {
   /// Zeroed by FieldActor_Create and not read by the field; scene code keeps a
   /// resting height, a sway or a countdown here.
   s32 riseBaseY;
-  /// Its sprite, by spriteStorageKind.
-  union {
-    struct Sprite *sprite; ///< ACTOR_SPRITE_ONE
-    void **sprites;        ///< ACTOR_SPRITE_GROUP: four, empty ones null
-  };
+  /// Its sprite, by spriteStorageKind: one sprite for ACTOR_SPRITE_ONE; for
+  /// ACTOR_SPRITE_GROUP four, empty ones null, read as void **.
+  struct Sprite *sprite;
   /// Zero hides sprites; one draws a single sprite, two draws a group.
   u8 spriteStorageKind;
   /// ActorMotionFlag bits; none is free flight in 3D, and

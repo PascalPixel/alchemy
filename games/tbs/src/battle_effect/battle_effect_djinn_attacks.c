@@ -516,9 +516,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
         size = (index & 1) + 3;
         x = Q_16_16_TO_INT(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-        blitters[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                    x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
-                    size * 2);
+        EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x, Q_16_16_TO_INT(step->y),
+                         size);
         Particle_AdvanceWithGravity2D(step, 64, -px(1) / 8);
         step->z += TRIG_TURN / 32;
         if (step->z > TRIG_ANGLE_MASK)

@@ -103,8 +103,8 @@ void Field_PlaceTreasureSpots(void) {
           marker->id = trigger->subject;
           marker->actor = markerActor;
           // Plain words: through .fixed, the union moves the store above.
-          marker->column = *(s32 *)&markerActor->x / px(16);
-          marker->row = *(s32 *)&markerActor->z / px(16);
+          marker->column = markerActor->x.fixed / px(16);
+          marker->row = markerActor->z.fixed / px(16);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -131,8 +131,8 @@ void Field_PlaceTreasureSpots(void) {
           marker->actor = markerActor;
           marker->id = trigger->subject;
           // Plain words: through .fixed, the union moves the store above.
-          marker->column = *(s32 *)&markerActor->x / px(16);
-          marker->row = *(s32 *)&markerActor->z / px(16);
+          marker->column = markerActor->x.fixed / px(16);
+          marker->row = markerActor->z.fixed / px(16);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)

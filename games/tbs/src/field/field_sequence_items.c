@@ -10,7 +10,7 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 
 /// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item).
-s32 Field_FindItemTrigger(s32 item) {
+const struct Trigger *Field_FindItemTrigger(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing =
@@ -41,9 +41,9 @@ s32 Field_FindItemTrigger(s32 item) {
       if (item == 0 || eventItem == item) {
         if ((flags & TRIGGER_ITEM_ON_ACTOR) != 0) {
           if (eventTarget == actorAhead)
-            return (s32)trigger;
+            return trigger;
         } else if (eventTarget == tileAhead) {
-          return (s32)trigger;
+          return trigger;
         }
       }
     }
@@ -107,7 +107,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
   }
 
-  trigger = (const struct Trigger *)Field_FindItemTrigger(itemId);
+  trigger = Field_FindItemTrigger(itemId);
   if (trigger != 0 && trigger->value != 0) {
     // The scene's event: a message, or a function.
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);
@@ -186,7 +186,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// given group that applies to what the leader faces, or NULL; stores the actor
 /// the Psynergy would target in *target. eventFlags gives the event's phase and
 /// kind (PSYNERGY_TRIGGER_ANY for any phase).
-void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
+void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, s32 *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
   s32 facing =
@@ -196,7 +196,7 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   s32 tileAhead;
   s32 anyPhase = 0;
 
-  *(s32 *)target = actorAhead;
+  *target = actorAhead;
   // The target output is filled even when no event ultimately matches.
   tileAhead = Field_GetCollisionAheadOfLeader();
   if (eventFlags == PSYNERGY_TRIGGER_ANY)

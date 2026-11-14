@@ -253,8 +253,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // Garet and Jenna step out of Isaac and stand either side of him.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    x = leader->x.part.pixel;
-    z = leader->z.part.pixel;
+    x = leader->x.part[0].pixel;
+    z = leader->z.part[0].pixel;
     Actor_SetPosition(ACTOR_JENNA, x, z);
     Actor_SetPosition(ACTOR_GARET, x, z);
     Actor_SetSpeed(ACTOR_JENNA, 0.5);
@@ -608,8 +608,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  x = actor->x.part.pixel;
-  z = actor->z.part.pixel;
+  x = actor->x.part[0].pixel;
+  z = actor->z.part[0].pixel;
   Actor_SetPosition(ACTOR_JENNA, x, z);
   Actor_SetPosition(ACTOR_GARET, x, z);
 
@@ -826,8 +826,8 @@ static void ValeKradensCottage_OverhearKraden(void) {
     Event_ShowMessage(ACTOR_KRADEN, 0);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     {
-      s32 x = leader->x.part.pixel;
-      s32 z = leader->z.part.pixel;
+      s32 x = leader->x.part[0].pixel;
+      s32 z = leader->z.part[0].pixel;
 
       Actor_SetPosition(ACTOR_JENNA, x, z);
       Actor_SetPosition(ACTOR_GARET, x, z);

@@ -288,10 +288,12 @@ enum DisplayControl {
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
   (DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT)
 
-// DMA control words: copy n words or halfwords at once, or one halfword or
-// word each HBlank to a register reloaded every line (a scanline table that
-// drives a window edge, a scroll or an affine register).
+// DMA control words: copy n words or halfwords at once, fill n words from one
+// fixed source word, or one halfword or word each HBlank to a register reloaded
+// every line (a scanline table that drives a window edge, a scroll or an affine
+// register).
 #define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
+#define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
 /// A halfword each HBlank, as for a scroll or a window edge.
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \

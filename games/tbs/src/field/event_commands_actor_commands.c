@@ -145,7 +145,7 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
     // The column's left edge, from a division by 16 that rounds toward zero
     // (left of x = 0 it finds the edge to the right); its middle is 8 pixels
     // in.
-    pixelX = ((union FieldCoordinate *)&actor->x.fixed)->part.pixel;
+    pixelX = actor->x.part[0].pixel;
     columnX = pixelX;
     if (pixelX < 0) {
       columnX += 15;

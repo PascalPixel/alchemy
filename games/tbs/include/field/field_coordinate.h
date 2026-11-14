@@ -8,15 +8,18 @@
 #include "types.h"
 
 /// A field coordinate, read whole or as its fraction and its whole pixels.
-union FieldCoordinate {
-  s32 fixed; ///< 16.16 fixed-point pixels
+/// The halves are a zero-length array over the whole, not a union: a union
+/// member may alias anything, and the game's code reads coordinates as plain
+/// words.
+struct FieldCoordinate {
   struct {
     u16 fraction; ///< 1/65536 pixels
     s16 pixel;
-  } part;
+  } part[0];
+  s32 fixed; ///< 16.16 fixed-point pixels
 };
 
-STATIC_ASSERT(sizeof(union FieldCoordinate) == 4);
-STATIC_ASSERT(offsetof(union FieldCoordinate, part.pixel) == 2);
+STATIC_ASSERT(sizeof(struct FieldCoordinate) == 4);
+STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].pixel) == 2);
 
 #endif

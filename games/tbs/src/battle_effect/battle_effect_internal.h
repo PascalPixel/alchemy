@@ -81,9 +81,6 @@
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
 
-/// DMA control word that fills n words from one fixed source word.
-#define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
-
 /// Stops a DMA channel and reads its control back, so the stop takes effect
 /// before the channel is set up again.
 static inline void Dma_Stop(volatile u16 *channel) {

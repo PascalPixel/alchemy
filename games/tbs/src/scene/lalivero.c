@@ -451,8 +451,8 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_IODEM);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
@@ -765,23 +765,24 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);

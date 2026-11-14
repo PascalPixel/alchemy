@@ -336,8 +336,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_JENNA);
-  FieldCamera_MoveToFixed(px(actor->x.part.pixel), CAMERA_KEEP,
-                          px(actor->z.part.pixel), 1);
+  FieldCamera_MoveToFixed(px(actor->x.part[0].pixel), CAMERA_KEEP,
+                          px(actor->z.part[0].pixel), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
@@ -584,23 +584,19 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   actor->motionFlags = 0;
   Sound_Play(SE_ASCEND);
-  frame = 0;
-  do {
+  for (frame = 0; frame != 60; frame++) {
     actor->y.fixed += px(1) / 2;
     Event_Wait(1);
-    frame++;
-  } while (frame != 60);
+  }
   Sound_Play(SE_WARP);
-  frame = 0;
-  do {
+  for (frame = 0; frame != 90; frame++) {
     actor->y.fixed += px(1) / 10;
     actor->scaleX -= Q16_ONE / 100;
     actor->scaleY -= Q16_ONE / 100;
     shadow->scaleX -= Q16_ONE / 100;
     shadow->scaleY -= Q16_ONE / 100;
     Event_Wait(1);
-    frame++;
-  } while (frame != 90);
+  }
   Actor_SetPosition(actorId, 0, 0);
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
 }
@@ -1529,7 +1525,7 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
 /// Randomly alternates the first tile patch on even frames.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
+    if (Math_RemainderUnsigned(Random_Next(), 100) > 50) {
       SolSanctumEruption_DrawFirstCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawFirstCollapseTiles(0);
@@ -1540,7 +1536,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
 /// Randomly alternates the second tile patch on even frames, as the first.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
-    if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
+    if (Math_RemainderUnsigned(Random_Next(), 100) > 50) {
       SolSanctumEruption_DrawSecondCollapseTiles(1);
     } else {
       SolSanctumEruption_DrawSecondCollapseTiles(0);

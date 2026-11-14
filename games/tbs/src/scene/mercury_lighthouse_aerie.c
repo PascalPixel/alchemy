@@ -338,15 +338,16 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_WaitForMoveById(ACTOR_IVAN);
@@ -1802,7 +1803,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   beacon = Actor_Get(ACTOR_BEACON);
   grid = gMapGridWork[0];
   height = (Random_Below(48)) << 16;
-  if (((union FieldCoordinate *)&grid->view[1])->part.pixel <= 129) {
+  if (((struct FieldCoordinate *)&grid->view[1])->part[0].pixel <= 129) {
     if (gFrameCount & 1) {
       Import_ActorSetPosition(ACTOR_BEACON, px(304), px(144));
       scale = Q16_ONE;

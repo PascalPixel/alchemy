@@ -136,13 +136,13 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
     // The stat items.
     case ABILITY_FORMULA_NO_POWER:
+      // The rise varies by -1, 0 (half the time) or 1.
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
         randomAdjust = -1;
       } else {
-        randomDifference = 1 ^ randomAdjust;
-        randomAdjust = (u32)((-randomDifference) | randomDifference) >> 31;
-        randomAdjust = 1 - randomAdjust;
+        randomDifference = randomAdjust ^ 1;
+        randomAdjust = 1 - (randomDifference != 0);
       }
 
       switch (effectId & PSYNERGY_ABILITY_MASK) {

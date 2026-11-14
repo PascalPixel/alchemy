@@ -41,11 +41,11 @@
 
 /// Scratch work while WorldPicture_Show owns gMapGridCellBuffer.
 struct WorldPictureWork {
-  u16 markerVramBlock;           ///< owns the four generated marker tiles
-  u16 cursorVramBlock;           ///< owns the cursor picture's tiles
-  union FieldCoordinate cursorX; ///< screen column, 16.16 pixels
-  union FieldCoordinate cursorY; ///< screen row, 16.16 pixels
-  u8 padding0c[6];               ///< not read by this screen
+  u16 markerVramBlock;            ///< owns the four generated marker tiles
+  u16 cursorVramBlock;            ///< owns the cursor picture's tiles
+  struct FieldCoordinate cursorX; ///< screen column, 16.16 pixels
+  struct FieldCoordinate cursorY; ///< screen row, 16.16 pixels
+  u8 padding0c[6];                ///< not read by this screen
   s16 namedMarker;           ///< actor whose name is drawn; -1 clears the name
   u8 padding14[4];           ///< not read by this screen
   s32 cursorSpeed;           ///< 16.16 screen pixels per frame
@@ -124,8 +124,9 @@ void WorldPicture_Initialize(void) {
   } else {
     work->cursorX.fixed = px(((actor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
                              WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
-    work->cursorY.fixed = px((actor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) /
-                             WORLD_MAP_WORLD_SIZE);
+    work->cursorY.fixed =
+        px((actor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT) /
+           WORLD_MAP_WORLD_SIZE);
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramCacheEntries[work->cursorVramBlock].offset;
@@ -224,7 +225,7 @@ void WorldPicture_UpdateMarkers(void) {
     if (areaActor != NULL) {
       cursorX = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
                 WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-      cursorY = areaActor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+      cursorY = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
                 WORLD_MAP_WORLD_SIZE;
     }
   } else {
@@ -250,8 +251,8 @@ void WorldPicture_UpdateMarkers(void) {
     } else {
       work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
     }
-    cursorX = work->cursorX.part.pixel;
-    cursorY = work->cursorY.part.pixel;
+    cursorX = work->cursorX.part[0].pixel;
+    cursorY = work->cursorY.part[0].pixel;
   }
 
   // Actor id 0 consumes no marker row.
@@ -291,7 +292,7 @@ void WorldPicture_UpdateMarkers(void) {
     // Field x starts at 4096; the picture covers 4096 square world pixels.
     x = ((areaActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
         WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-    y = areaActor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+    y = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
         WORLD_MAP_WORLD_SIZE;
     marker->objectMode = mode;
     marker->tile = tileBase + tile;
@@ -336,8 +337,8 @@ void WorldPicture_UpdateMarkers(void) {
         if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
           work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
       }
-      cursorX = work->cursorX.part.pixel;
-      cursorY = work->cursorY.part.pixel;
+      cursorX = work->cursorX.part[0].pixel;
+      cursorY = work->cursorY.part[0].pixel;
     } else {
       work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
     }

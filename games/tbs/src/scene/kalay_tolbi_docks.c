@@ -459,7 +459,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Inventory_Discard(ticketHolder, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER,
-                          Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 1304);
+                          Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel, 1304);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 1304);
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1304);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_EAST, 0);
@@ -851,7 +851,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   // Garet rejoins the leader and the man wanders again from where he stands.
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);

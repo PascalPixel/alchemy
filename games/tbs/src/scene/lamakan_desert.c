@@ -777,8 +777,8 @@ static void LamakanDesert_FallIntoPit(void) {
       (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
   pit = Actor_Get(best);
   if (pit != NULL) {
-    Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part.pixel,
-                         pit->z.part.pixel);
+    Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part[0].pixel,
+                         pit->z.part[0].pixel);
   }
   Event_Wait(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);

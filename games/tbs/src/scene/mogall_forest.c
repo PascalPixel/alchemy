@@ -535,8 +535,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   Event_Wait(60);
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE,
-                          Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel,
-                          Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel, 4);
+                          Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel,
+                          Actor_Get(ACTOR_PARTY_LEADER)->z.part[0].pixel, 4);
 
   Event_Wait(10);
   GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT);
@@ -955,10 +955,10 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Sound_Play(SE_BEAST_CRY);
   Event_Wait(60);
-  leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
+  leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel;
   leaderForZ = Actor_Get(ACTOR_PARTY_LEADER);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, leaderX,
-                          leaderForZ->z.part.pixel, 6);
+                          leaderForZ->z.part[0].pixel, 6);
   Event_Wait(10);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -1190,10 +1190,10 @@ static void MogallForest_KillerApeAttacks(void) {
   Event_Wait(20);
   // Jump toward the leader, then enter the final ape encounter.
   {
-    s32 leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
+    s32 leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel;
 
     MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, leaderX,
-                            Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel - 16,
+                            Actor_Get(ACTOR_PARTY_LEADER)->z.part[0].pixel - 16,
                             8);
   }
   Event_Wait(10);

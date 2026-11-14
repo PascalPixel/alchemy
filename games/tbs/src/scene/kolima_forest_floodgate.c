@@ -480,10 +480,9 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
     actor->radius = 32;
-    height = px(
-        MapGrid_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel));
-    /* FAKEMATCH(temporary): the height added. */
-    *(s32 *)&actor->y += height;
+    height = px(MapGrid_GetTerrainHeight(0, actor->x.part[0].pixel,
+                                         actor->z.part[0].pixel));
+    actor->y.fixed += height;
     actor->groundHeight = height;
   }
 }

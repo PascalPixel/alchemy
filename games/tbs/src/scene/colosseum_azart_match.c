@@ -146,7 +146,7 @@ extern s32 gColosso_PrizeScript[];
 extern struct SceneEntrance gColosseumAzartMatch_Entrances[];
 extern u32 gColosseumAzartMatch_Exits[];
 extern struct ActorPlacement gColosseumAzartMatch_ActorPlacements[];
-extern s32 gColosseumAzartMatch_Countdown;
+extern u32 gColosseumAzartMatch_Countdown;
 extern struct Trigger gColosseumAzartMatch_Triggers[];
 extern s16 gColosso_LetteringTitle[];
 extern s16 gColosso_LetteringGo[];
@@ -252,7 +252,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Advances the bridge animation and the cell behaviors that make it
 /// walkable.
 static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
-  switch ((u32)gColosseumAzartMatch_Countdown) {
+  switch (gColosseumAzartMatch_Countdown) {
   case 66:
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 50, 38);
     MapGrid_CopyCellsLayered(92, 31, 2, 2, 54, 38);
@@ -794,8 +794,8 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   s32 z;
 
   actor = Actor_Get(guide);
-  x = actor->x.part.pixel;
-  z = actor->z.part.pixel;
+  x = actor->x.part[0].pixel;
+  z = actor->z.part[0].pixel;
   Event_Start();
   Actor_SetSpeed(guide, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -921,17 +921,20 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WalkToAndWait(guide, x - 16, z - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -1285,7 +1288,7 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-s32 gColosseumAzartMatch_Countdown = 0;
+u32 gColosseumAzartMatch_Countdown = 0;
 
 struct Trigger gColosseumAzartMatch_Triggers[] = {
     { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRockOrCheckAhead) },

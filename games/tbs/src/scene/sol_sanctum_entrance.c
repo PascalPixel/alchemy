@@ -571,8 +571,8 @@ static void SolSanctumEntrance_PushStatue(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
   statue = Actor_FindAtCell(
-      (leader->x.part.pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
-      (leader->z.part.pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
+      (leader->x.part[0].pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
+      (leader->z.part[0].pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
     Actor_StepFrom(&target, statue, gSolSanctumPushSteps[direction]);
@@ -1004,18 +1004,18 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
 
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_GARET, 0, 0);

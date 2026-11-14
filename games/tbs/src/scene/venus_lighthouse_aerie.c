@@ -1213,13 +1213,10 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_SetScript(ACTOR_FELIX, gVenusLighthouseAerie_StepBackWestAction);
   Actor_RunScriptAndWait(ACTOR_SHEBA, gVenusLighthouseAerie_StepBackWestAction);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  {
-    s32 actorId = SCENE_VENUS_LIGHTHOUSE_AERIE;
-
-    Event_SetAfterBattleDestination(actorId,
-                                    VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
-    Event_SetDefeatDestination(actorId, VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
-  }
+  Event_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
+                                  VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_AERIE,
+                             VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 1);
   GameFlag_Set(FLAG_AERIE_FIRST_BATTLE_BEGUN);
 }

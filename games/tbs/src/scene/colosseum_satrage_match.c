@@ -1075,8 +1075,8 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   struct Actor *actor;
 
   actor = Actor_Get(attendantId);
-  attendantX = actor->x.part.pixel;
-  attendantZ = actor->z.part.pixel;
+  attendantX = actor->x.part[0].pixel;
+  attendantZ = actor->z.part[0].pixel;
   Event_Start();
   Actor_SetSpeed(attendantId, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -1118,17 +1118,20 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WalkToAndWait(attendantId, attendantX - 16, attendantZ - 64);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -1301,14 +1304,12 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     FieldCamera_SetSpeed(1);
     FieldCamera_MoveTo(536, CAMERA_KEEP, 192, 1);
     {
-      s32 z = 264;
-
       FieldCamera_WaitForMove();
       // "The fans just call this The Wall."
       Event_ShowMessage(attendant, 0);
-      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, z);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, 264);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, 264);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Field_ClimbUp();
       FieldCamera_SetSpeed(0.25);

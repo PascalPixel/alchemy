@@ -625,8 +625,8 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
   s32 z;
 
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) == 0) {
-    x = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
-    z = Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel;
+    x = Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel;
+    z = Actor_Get(ACTOR_PARTY_LEADER)->z.part[0].pixel;
     if (x >= 84 && x <= 91 && z > 211 && z <= 219) {
       Event_Start();
       GameFlag_Set(FLAG_LEADER_ON_FLOOR_SWITCH);
@@ -932,8 +932,8 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
 
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0)
     return;
-  x = Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel;
-  z = Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel;
+  x = Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel;
+  z = Actor_Get(ACTOR_PARTY_LEADER)->z.part[0].pixel;
   if (x < 164 || x > 171)
     return;
   if (z < 372)
@@ -1596,14 +1596,14 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel,
-                           actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
-                           actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_SetPosition(ACTOR_GARET, 0, 0);

@@ -197,8 +197,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     Projection_ScaledUnit(work->args->targets[i], &targetSpots[i]);
   }
 
-  frame = 0;
-  do {
+  for (frame = 0; frame != BURST_SHOWER_FRAMES; frame++) {
     target = frame % work->args->targetCount;
     if (frame == 4) {
       Sound_PlayFar(SE_WHOOSH);
@@ -242,8 +241,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     }
 
     // The bursts fly.
-    i = 0;
-    do {
+    for (i = 0; i != 64; i++) {
       struct Particle *spark = &work->particles[i];
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
@@ -277,8 +275,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           spark->variant = -1;
         }
       }
-      i += 1;
-    } while (i != 64);
+    }
 
     // Each target is hit in turn.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
@@ -313,8 +310,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       BattleEffect_CountDownBattlerTints();
     }
     EFFECT_PRESENT_CANVAS(work);
-    frame += 1;
-  } while (frame != BURST_SHOWER_FRAMES);
+  }
 
   EFFECT_FINISH_CANVAS();
 }

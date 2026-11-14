@@ -524,9 +524,9 @@ static void AltmillerCave_HopSelectedActor(void) {
   union {
     struct FieldPosition position;
     s32 coordinates[3];
-    union FieldCoordinate components[3];
+    struct FieldCoordinate components[3];
   } destination;
-  union FieldCoordinate *components = destination.components;
+  struct FieldCoordinate *components = destination.components;
 
   components[0].fixed = actor->x.fixed;
   components[1].fixed = actor->y.fixed;
@@ -547,8 +547,8 @@ static void AltmillerCave_HopSelectedActor(void) {
     actor->velocityY = px(4);
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part.pixel,
-                        components[2].part.pixel);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part[0].pixel,
+                        components[2].part[0].pixel);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = motionFlags;
@@ -877,8 +877,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     s32 x;
     s32 z;
 
-    x = Actor_Get(ACTOR_INVISIBLE_BABI)->x.part.pixel;
-    z = Actor_Get(ACTOR_INVISIBLE_BABI)->z.part.pixel;
+    x = Actor_Get(ACTOR_INVISIBLE_BABI)->x.part[0].pixel;
+    z = Actor_Get(ACTOR_INVISIBLE_BABI)->z.part[0].pixel;
     Actor_SetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     Actor_SetPosition(ACTOR_BABI, x, z);
   }
@@ -1870,23 +1870,24 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);

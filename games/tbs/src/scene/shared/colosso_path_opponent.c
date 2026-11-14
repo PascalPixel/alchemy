@@ -86,8 +86,8 @@ static void Colosso_UpdatePathOpponent(void) {
       Actor_SelectAnimation(actor, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
-    x = actor->x.part.pixel;
-    z = actor->z.part.pixel;
+    x = actor->x.part[0].pixel;
+    z = actor->z.part[0].pixel;
     work->path[(s16)rec->pathIndex++] = x;
     work->path[(s16)rec->pathIndex++] = z;
     if ((s16)rec->pathIndex == COLOSSO_PATH_HALFWORDS - 2) {

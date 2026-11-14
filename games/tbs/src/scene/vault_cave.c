@@ -295,10 +295,11 @@ static void VaultCave_PushPillarAhead(void) {
   s32 column;
   s32 row;
 
-  column =
-      (leader->x.part.pixel + (gVaultCave_DirectionSteps[direction] >> 16)) >>
-      4;
-  row = (leader->z.part.pixel + (s16)gVaultCave_DirectionSteps[direction]) >> 4;
+  column = (leader->x.part[0].pixel +
+            (gVaultCave_DirectionSteps[direction] >> 16)) >>
+           4;
+  row = (leader->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
+        4;
   pillar = VaultCave_FindCollidableActorAtCell(column, row);
   // UB: the pillar's collisionFlags is read before the test for no pillar.
 #ifdef UBFIX
@@ -315,10 +316,11 @@ static void VaultCave_PushPillarAhead(void) {
       return;
     }
   }
-  column =
-      (pillar->x.part.pixel + (gVaultCave_DirectionSteps[direction] >> 16)) >>
-      4;
-  row = (pillar->z.part.pixel + (s16)gVaultCave_DirectionSteps[direction]) >> 4;
+  column = (pillar->x.part[0].pixel +
+            (gVaultCave_DirectionSteps[direction] >> 16)) >>
+           4;
+  row = (pillar->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
+        4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != NULL && (beyond->collisionFlags & 1)) {
     return;

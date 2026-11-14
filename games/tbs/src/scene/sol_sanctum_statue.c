@@ -785,9 +785,12 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_MOVED_CENTER_STATUE)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_MOVED_CENTER_STATUE, 1);
-  // Only entrances 3 and 4 keep Jenna and Garet staged for their
-  // conversations.
-  if ((u16)(gMainRoutineWork.entrance - 3) > 1) {
+  // Only the returns with the trap disarmed or triggered keep Jenna and Garet
+  // staged for their conversations.
+  if (gMainRoutineWork.entrance !=
+          SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED &&
+      gMainRoutineWork.entrance !=
+          SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) {
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetPosition(ACTOR_GARET, 0, 0);
   }
@@ -985,7 +988,7 @@ static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
-  if (row == 7 && (u32)(column - 13) <= 1) {
+  if (row == 7 && (column >= 13 && column <= 14)) {
     Field_SetCellBehaviorAt(2, 208, 112, CELL_BEHAVIOR_WALL);
   }
 }
@@ -996,7 +999,7 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
-  if (row == 7 && (u32)(column - 21) <= 1) {
+  if (row == 7 && (column >= 21 && column <= 22)) {
     Field_SetCellBehaviorAt(2, 352, 112, CELL_BEHAVIOR_WALL);
   }
 }
@@ -1094,7 +1097,7 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
       Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
       Actor_SetDestination(ACTOR_PARTY_LEADER,
-                           Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel, 136);
+                           Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel, 136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
       Actor_WaitForMoveById(ACTOR_CENTER_STATUE);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

@@ -296,7 +296,8 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Actor_SetAnimation(leaderId, ANIM_LEADER_LOOK_AROUND);
     storm = Actor_Get(stormId);
     if (storm != NULL) {
-      Actor_SetDestination(leaderId, storm->x.part.pixel, storm->z.part.pixel);
+      Actor_SetDestination(leaderId, storm->x.part[0].pixel,
+                           storm->z.part[0].pixel);
     }
     Actor_WaitForMoveById(leaderId);
     Sound_Play(SE_SANDSTORM);
@@ -365,8 +366,8 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   storm = Actor_Get(stormId);
   hazeShown = GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
-  leaderX = leader->x.part.pixel;
-  leaderZ = leader->z.part.pixel;
+  leaderX = leader->x.part[0].pixel;
+  leaderZ = leader->z.part[0].pixel;
   Event_Start();
   Sound_Play(SE_SANDSTORM);
   for (frame = 0; frame < 16; frame++) {

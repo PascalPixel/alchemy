@@ -903,7 +903,7 @@ static void FuchinTemple_ForceTree(void) {
   FieldCamera_MoveToActorById(ACTOR_TRAINING_TREE_TARGET, 1);
   FieldCamera_WaitForArrival();
 
-  if (leader->z.part.pixel <= 209) {
+  if (leader->z.part[0].pixel <= 209) {
     if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU) == 0 ||
         GameFlag_Get(FLAG_FEH_SAW_KI) != 0) {
       FuchinTemple_StudentExplainsChiRules(FUCHIN_TEMPLE_CHI_NOT_FROM_LINE);

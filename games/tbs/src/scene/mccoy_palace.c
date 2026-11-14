@@ -728,21 +728,21 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel,
-                           actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
-                           actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
     if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != NULL) {
-        Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel,
-                             actor->z.part.pixel);
+        Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                             actor->z.part[0].pixel);
       }
     }
     Actor_WaitForMoveById(ACTOR_IVAN);
@@ -949,8 +949,8 @@ accepted:
   Actor_Jump(ACTOR_BARRICADE_KEY, 6, 0);
   actor = Actor_Get(ACTOR_LORD_MCCOY);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_BARRICADE_KEY, actor->x.part.pixel,
-                         actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_BARRICADE_KEY, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_BARRICADE_KEY);
   Actor_SetPosition(ACTOR_BARRICADE_KEY, 0, 0);
@@ -1045,18 +1045,21 @@ accepted:
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
@@ -1389,17 +1392,20 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
 
   Actor_WaitForMoveById(ACTOR_GARET);

@@ -344,9 +344,10 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     leader->velocityY = px(4);
     leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
-                        ((union FieldCoordinate *)&position->x)->part.pixel,
-                        ((union FieldCoordinate *)&position->z)->part.pixel);
+    Actor_MoveToAndWait(
+        ACTOR_PARTY_LEADER,
+        ((struct FieldCoordinate *)&position->x)->part[0].pixel,
+        ((struct FieldCoordinate *)&position->z)->part[0].pixel);
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     wait(6);
@@ -976,8 +977,8 @@ static void LogRoomsA_MeetIvan(void) {
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel,
-                           actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -988,7 +989,8 @@ static void LogRoomsA_MeetIvan(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -2871,7 +2873,8 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                         actor->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);

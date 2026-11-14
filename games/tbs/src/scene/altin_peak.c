@@ -1036,8 +1036,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_GARET, actor->x.part.pixel,
-                           actor->z.part.pixel);
+      Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
+                           actor->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_SetPosition(ACTOR_GARET, 0, 0);

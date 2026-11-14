@@ -312,8 +312,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     Sound_PlayFar(SE_POWER_UP);
 
     // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES).
-    frame = 0;
-    do {
+    for (frame = 0; frame != CASTING_IMPACT_GATHER_FRAMES; frame++) {
       n = 0;
       for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
         struct Particle *step = &work->particles[i];
@@ -358,8 +357,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
       EFFECT_PRESENT_CANVAS(work);
-      frame++;
-    } while (frame != CASTING_IMPACT_GATHER_FRAMES);
+    }
     /* FAKEMATCH(dead): position set again to the &djinnPos it holds. */
     position = &djinnPos;
 
@@ -558,8 +556,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       duration = 80;
     }
     // Phase 3, the impact, for duration frames.
-    frame = 0;
-    while (frame != duration) {
+    for (frame = 0; frame != duration; frame++) {
       if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
         if (mode != CASTING_IMPACT_IMPACT_ASURA) {
           s32 base;
@@ -712,10 +709,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               s32 size = (i & 1) + 6;
               Projection_Point(step, &projected);
               projected.x >>= 1;
-              blitters[0](canvas,
-                          sprites + gBattleEffect_MotePictures[size - 1],
-                          projected.x - (u32)size / 2, projected.y - size, size,
-                          size * 2);
+              EFFECT_DRAW_MOTE(blitters[0], canvas, sprites, projected.x,
+                               projected.y, size);
               Particle_AdvanceWithGravity3D(step, 62, 0);
               if (frame > i + 22) {
                 s32 dx = (caster->x.fixed - step->x) >> 8;
@@ -1209,7 +1204,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
-      frame++;
     }
   }
   // Phase 4: Meltdown hands the cleared canvas to the stat reduction (Impair),

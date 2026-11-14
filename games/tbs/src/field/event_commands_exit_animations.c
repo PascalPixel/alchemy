@@ -96,8 +96,8 @@ void Exit_PrepareAnimation(s32 animation) {
     // Keep the cell and put the leader at its middle in x and its south edge in
     // z.
     // Each coordinate read and written as the word it is.
-    *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
-    *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
+    actor->x.fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+    actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + px(16);
     actor->velocityX = cleared;
     actor->velocityZ = cleared;
     actor->targetX = ACTOR_NO_TARGET;
@@ -134,8 +134,8 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   spriteAnimation->flags = 0;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&leader->x = (*(s32 *)&leader->x & FIELD_CELL_MASK) + px(8);
-  *(s32 *)&leader->z &= FIELD_CELL_MASK;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  leader->z.fixed &= FIELD_CELL_MASK;
   Actor_SelectAnimationFar(leader, animation);
   wait(30);
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1

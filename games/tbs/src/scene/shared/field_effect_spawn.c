@@ -35,15 +35,10 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
                                                 struct Actor *leader,
                                                 s32 velocityX, s32 velocityY,
                                                 s32 velocityZ) {
-  struct Sprite **leaderSprite;
-
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  /* FAKEMATCH(temporary): the leader's sprite read through a pointer to its
-   * slot. */
-  leaderSprite = &leader->sprite;
-  sprite->image.priority = (*leaderSprite)->image.priority;
+  sprite->image.priority = leader->sprite->image.priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;

@@ -1459,18 +1459,21 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_WalkTo(ACTOR_JENNA, actor->x.part.pixel + 16, actor->z.part.pixel);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel + 16,
-                      actor->z.part.pixel - 16);
+  Actor_WalkTo(ACTOR_JENNA, actor->x.part[0].pixel + 16,
+               actor->z.part[0].pixel);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel + 16,
+                      actor->z.part[0].pixel - 16);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
-  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part.pixel, actor->z.part.pixel);
+  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part[0].pixel,
+                      actor->z.part[0].pixel);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel,
+                      actor->z.part[0].pixel);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(377, 160, 887, 1);
@@ -2821,18 +2824,21 @@ static void Vale_RoofMended(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_WalkTo(ACTOR_JENNA, actor->x.part.pixel + 16, actor->z.part.pixel);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel + 16,
-                      actor->z.part.pixel - 16);
+  Actor_WalkTo(ACTOR_JENNA, actor->x.part[0].pixel + 16,
+               actor->z.part[0].pixel);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel + 16,
+                      actor->z.part[0].pixel - 16);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
-  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part.pixel, actor->z.part.pixel);
+  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part[0].pixel,
+                      actor->z.part[0].pixel);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel,
+                      actor->z.part[0].pixel);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(377, 160, 887, 1);

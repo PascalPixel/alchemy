@@ -538,13 +538,9 @@ static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
 /// Reveal in CrossboneIsleKeys: the hidden Red Key appears on its
 /// cell.
 static void CrossboneIsleKeys_ShowRedKey(void) {
-  s32 keyActorId = ACTOR_RED_KEY;
-  s32 x = px(408);
-  s32 z = px(776);
-
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
-    Actor_SetPositionFixed(keyActorId, x, z);
+    Actor_SetPosition(ACTOR_RED_KEY, 408, 776);
   Event_Wait(1);
 }
 
@@ -606,7 +602,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   if (!Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) &&
       gMainRoutineWork.cloaked == 0 &&
       gMainRoutineWork.haltedActor != ACTOR_FIRST_STATUE &&
-      (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
+      (column >= 21 && column <= 23) && row >= 10 && row <= 11) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     work->raisedTrigger = RAISED_FIRST_CHASE;
   }
@@ -623,8 +619,8 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_FIRST_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
@@ -648,7 +644,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
       gMainRoutineWork.cloaked == 0 &&
       gMainRoutineWork.haltedActor != ACTOR_SECOND_STATUE && column == 10 &&
-      (u32)(row - 16) <= 2) {
+      (row >= 16 && row <= 18)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     MapLocalState_StoreStep(&work->raisedTrigger, RAISED_SECOND_CHASE);
   }
@@ -665,8 +661,8 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_SECOND_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -733,8 +729,8 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     Sound_Play(SE_THUMP);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part.pixel,
-                           leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_THIRD_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -770,8 +766,8 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part.pixel,
-                           leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -796,7 +792,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
 
   if (state->haltedActor != ACTOR_FIFTH_STATUE &&
       Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
-      state->cloaked == 0 && column == 19 && (u32)(row - 15) <= 1) {
+      state->cloaked == 0 && column == 19 && (row >= 15 && row <= 16)) {
     Event_SetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
     MapLocalState_StoreStep(&work->raisedTrigger, RAISED_FIFTH_CHASE);
   }
@@ -813,8 +809,8 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part[0].pixel,
+                         leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_FIFTH_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);

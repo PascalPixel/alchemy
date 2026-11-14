@@ -282,8 +282,8 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part.pixel,
-                           leader->z.part.pixel);
+      Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
+                           leader->z.part[0].pixel);
     }
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -547,12 +547,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, px(32));
-  // UB: the update routine is cleared as a word.
-#ifdef UBFIX
   stump->update = NULL;
-#else
-  *(u32 *)&stump->update = 0;
-#endif
   stump->sprite->rotation = TRIG_TURN / 16;
   params.type = SPRITE_SPLASH;
   params.startScaleX = Q16_ONE / 2;

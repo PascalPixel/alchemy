@@ -808,22 +808,22 @@ menu_top:;
           if (pageCount > 1) {
             index = 0;
             if (pageCount != 0) {
-              /* FAKEMATCH(temporary): result holds the 0 the entries take; as 0
-               * at the call, 36 of 920 instructions differ in tbs-en. */
-              result = 0;
+              u32 mode = TILEMAP_ENTRY_PLAIN;
+
               do {
                 tileValue = index + WINDOW_TILE(769);
                 if (index == pageIndex) {
                   tileValue = index + WINDOW_TILE(779);
                 }
                 Window_SetTilemapEntry(pageWindow, tileValue,
-                                       index + 18 - pageCount, -1, result);
+                                       index + 18 - pageCount, -1, mode);
                 index++;
               } while (index != pageCount);
             }
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT, 17 - pageCount,
-                                   -1, 0);
-            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1, 0);
+                                   -1, TILEMAP_ENTRY_PLAIN);
+            Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1,
+                                   TILEMAP_ENTRY_PLAIN);
             Window_MarkTilemapRow((struct WindowWork *)gWindowWork[0],
                                   pageWindow->y);
           }
@@ -1255,15 +1255,13 @@ static u16 FileScreen_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   if (byteCount != 0) {
     do {
       crc ^= *data << 8;
-      bitIndex = 0;
-      do {
+      for (bitIndex = 0; bitIndex != 8; bitIndex++) {
         if ((crc & 0x8000) != 0) {
           crc = (crc << 1) + 0xFFFFEFDF;
         } else {
           crc <<= 1;
         }
-        bitIndex++;
-      } while (bitIndex != 8);
+      }
       byteIndex++;
       data++;
     } while (byteIndex != byteCount);

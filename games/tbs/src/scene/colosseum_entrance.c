@@ -490,11 +490,7 @@ static void ColosseumEntrance_TalkToAzart(void) {
 
     *timer = duration;
   }
-  {
-    u16 value = 112;
-
-    contestant->userValue = value;
-  }
+  contestant->userValue = 112;
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Event_End();
 }
@@ -1635,11 +1631,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
 
     *timer = duration;
   }
-  {
-    u16 value = 112;
-
-    contestant->userValue = value;
-  }
+  contestant->userValue = 112;
   Actor_SetMovementTypeById(ACTOR_AZART, MOVEMENT_TYPE_WANDER);
   Actor_FaceDirection(ACTOR_MORGAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GALAHAD, FACING_NORTH_NORTHWEST, 0);

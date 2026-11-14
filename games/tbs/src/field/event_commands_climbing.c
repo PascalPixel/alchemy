@@ -55,8 +55,8 @@ again:
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(
         gMainRoutineWork.leaderActorId,
-        ((union FieldCoordinate *)&position->x)->part.pixel,
-        ((union FieldCoordinate *)&position->z)->part.pixel);
+        ((struct FieldCoordinate *)&position->x)->part[0].pixel,
+        ((struct FieldCoordinate *)&position->z)->part[0].pixel);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
@@ -99,10 +99,8 @@ again:
 /// Climbing down (the player presses down at a climbable wall).
 s32 Field_ClimbDown(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 gridX =
-      8 + ((((union FieldCoordinate *)&actor->x.fixed)->part.pixel) & 0xfff0);
-  s32 gridZ =
-      8 + ((((union FieldCoordinate *)&actor->z.fixed)->part.pixel) & 0xfff0);
+  s32 gridX = 8 + ((actor->x.part[0].pixel) & 0xfff0);
+  s32 gridZ = 8 + ((actor->z.part[0].pixel) & 0xfff0);
   s32 result;
 
   Event_Start();
@@ -169,10 +167,8 @@ failure:
 s32 Field_ClimbUp(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s16 spriteFlags = 1;
-  s32 gridX =
-      8 + ((((union FieldCoordinate *)&actor->x.fixed)->part.pixel) & 0xfff0);
-  s32 gridZ =
-      8 + ((((union FieldCoordinate *)&actor->z.fixed)->part.pixel) & 0xfff0);
+  s32 gridX = 8 + ((actor->x.part[0].pixel) & 0xfff0);
+  s32 gridZ = 8 + ((actor->z.part[0].pixel) & 0xfff0);
   s32 result;
 
   Event_Start();

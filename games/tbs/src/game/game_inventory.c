@@ -135,14 +135,12 @@ s32 Inventory_AddItem(s32 unitId, s32 itemId) {
     }
   }
 
-  slot = 0;
-  do {
+  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
     if (unit->inventory[slot] == 0) {
       unit->inventory[slot] = itemId;
       return slot;
     }
-    slot++;
-  } while (slot < INVENTORY_SLOTS);
+  }
   return -1;
 }
 

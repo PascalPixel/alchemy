@@ -243,8 +243,8 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   s32 z;
 
   actor = Actor_GetById(actorId);
-  x = actor->x.part.pixel;
-  z = actor->z.part.pixel;
+  x = actor->x.part[0].pixel;
+  z = actor->z.part[0].pixel;
   Event_Start();
 
   if (Party_CountMembers() <= 1) {
@@ -357,8 +357,8 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   u8 members[8];
 
   actor = Actor_GetById(guide);
-  guideX = actor->x.part.pixel;
-  guideZ = actor->z.part.pixel;
+  guideX = actor->x.part[0].pixel;
+  guideZ = actor->z.part[0].pixel;
   if (mode != COLOSSO_GUIDE_NOTHING) {
     memberCount = Party_CountMembers();
     for (i = 0; i < memberCount; i++) {

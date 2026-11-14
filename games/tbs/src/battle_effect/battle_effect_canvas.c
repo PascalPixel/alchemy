@@ -211,8 +211,7 @@ void BattleEffect_CountDownBattlerTints(void) {
   s32 actorIndex;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  actorIndex = 0;
-  do {
+  for (actorIndex = 0; actorIndex != 8; actorIndex++) {
     if (work->actorTimers[actorIndex] != 0) {
       if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
           0) {
@@ -220,8 +219,7 @@ void BattleEffect_CountDownBattlerTints(void) {
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
-    actorIndex += 1;
-  } while (actorIndex != 8);
+  }
 }
 
 /// Opens the canvas layer over the battle, darkening the battle background

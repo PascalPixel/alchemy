@@ -187,7 +187,7 @@ CrossboneIsleSteppingStones_SettleActorOnGround(struct Actor *actor) {
       break;
     }
     wait(1);
-    if ((u32)actor->y.fixed == (u32)actor->groundHeight) {
+    if (actor->y.fixed == actor->groundHeight) {
       break;
     }
     remainingFrames--;
@@ -294,7 +294,6 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   s32 layerOriginX, layerOriginZ;
   struct PushedActorProbe probe;
   s32 cellX, cellZ;
-  u8 mask = 2;
 
   if (CrossboneIsleSteppingStones_QueryFootprint(
           actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
@@ -306,7 +305,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
   Actor_SelectAnimation(actor, 4);
-  actor->priorityFlags |= mask;
+  actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 
   if (width > depth) {
     MapGrid_CopyCellsTo(70, 40, probe.position.x + 32, probe.position.z + 2,
@@ -1058,12 +1057,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       CrossboneIsleSteppingStones_SetCellAttributes(
           0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
-      /* FAKEMATCH(temporary): x and z read as plain words outside their unions;
-       * as actor->x.fixed and z.fixed, 3 of 265 instructions differ in tbs-en.
-       */
       CrossboneIsleSteppingStones_SetCellAttributes(
-          2, FIELD_CELL(*(s32 *)&actor->x), FIELD_CELL(*(s32 *)&actor->z),
-          &cell);
+          2, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
     }
     sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
     sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);

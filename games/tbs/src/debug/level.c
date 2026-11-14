@@ -21,10 +21,10 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
-u8 *Scene_GetEntrances(void);
-u8 *Scene_GetExits(void);
-u8 *Scene_GetActorPlacements(void);
-u8 *Scene_GetTriggers(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const u32 *Scene_GetExits(void);
+const struct ActorPlacement *Scene_GetActorPlacements(void);
+const struct Trigger *Scene_GetTriggers(void);
 s32 Scene_Initialize(void);
 extern char gIncreaseItemAndLevel_LvLabel[4];
 extern char gIncreaseItemAndLevel_ItemPrompt[12];
@@ -94,15 +94,17 @@ enum IncreaseItemAndLevelActorId {
   ACTOR_SECOND_EMOTE_TESTER
 };
 
-u8 *Scene_GetEntrances(void) { return (u8 *)gIncreaseItemAndLevel_Entrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gIncreaseItemAndLevel_Entrances;
+}
 
 /// The scene has no exit regions: its regions entry returns none.
-s32 Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-u8 *Scene_GetExits(void) { return (u8 *)gIncreaseItemAndLevel_Exits; }
+const u32 *Scene_GetExits(void) { return gIncreaseItemAndLevel_Exits; }
 
-u8 *Scene_GetActorPlacements(void) {
-  return (u8 *)gIncreaseItemAndLevel_ActorPlacements;
+const struct ActorPlacement *Scene_GetActorPlacements(void) {
+  return gIncreaseItemAndLevel_ActorPlacements;
 }
 
 #if TBS_PATCH_1
@@ -123,7 +125,9 @@ static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
 }
 #endif
 
-u8 *Scene_GetTriggers(void) { return (u8 *)gIncreaseItemAndLevel_Triggers; }
+const struct Trigger *Scene_GetTriggers(void) {
+  return gIncreaseItemAndLevel_Triggers;
+}
 
 /// Raises one party member's level by amount, then recalculates that unit.
 static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {

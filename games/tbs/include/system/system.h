@@ -172,7 +172,7 @@ s32 ArcTan2(s32 x, s32 y);
 s32 Math_IntegerSqrt(s32 value);
 s32 FixedSqrt(s32 value);
 
-s32 Palette_GetBasicSpriteColors(void);
+const u8 *Palette_GetBasicSpriteColors(void);
 void String_FormatHex(u32 value);
 void String_FormatDecimal(s32 number);
 void DebugText_PrintBlanks(u32 count);

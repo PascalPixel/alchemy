@@ -19,7 +19,10 @@ gPlayerActorId:
 	.space 90
 	.global gBattleArenaRecord
 gBattleArenaRecord:
-	.space 2844
+	.space 28
+	.global gCharacterUnits
+gCharacterUnits:
+	.space 2816
 	.global gSceneLocalState
 gSceneLocalState:
 	.space 120

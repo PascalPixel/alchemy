@@ -465,7 +465,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       state->count = count;
       state->check = Battle_RandomFar();
       IRQ_LOCK(saved);
-      gBattleRandomSeed = state->seed = gRandomSeed;
+      Battle_SetRandomSeed(state->seed = gRandomSeed);
       IRQ_UNLOCK(saved);
       if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;
@@ -477,7 +477,7 @@ s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
       state->count = count;
       if (LinkBattle_SendActions() < 0 || Battle_RandomFar() != state->check)
         goto fail;
-      gBattleRandomSeed = state->seed;
+      Battle_SetRandomSeed(state->seed);
     }
 
     // The received actions, seen from this side: the xor with 0x80 moves a

@@ -58,7 +58,7 @@ s32 Battle_Random(void) {
   u32 seed;
 
   seed = ((u32)gBattleRandomSeed * 1103515245U) + 12345U;
-  gBattleRandomSeed = seed;
+  Battle_SetRandomSeed(seed);
   return (seed << 8) >> 16;
 }
 

@@ -93,10 +93,7 @@ s32 Battle_Run(s32 enemyGroup) {
     Battle_SetType(BATTLE_TYPE_LINK);
   }
   if (battle->isLink != 0) {
-    /* FAKEMATCH(dead): the seed's store in a once-only block. */
-    do {
-      gBattleRandomSeed = 0;
-    } while (0);
+    Battle_SetRandomSeed(0);
     for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;

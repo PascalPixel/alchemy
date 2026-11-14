@@ -82,12 +82,8 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 /// Abilities: Bind; Luff.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
-  /* FAKEMATCH(temporary): one workspace for the target's position and each
-   * projected corner. */
-  union {
-    struct Vector3 world;
-    struct ScreenPoint projected;
-  } position;
+  // The target's position, then each corner projected around it.
+  struct ScreenPoint corner;
   struct ScreenPoint screen;
   struct Vector3 scale;
   s32 originX;
@@ -174,10 +170,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        position.world.x = actor->x.fixed;
-        position.world.y = actor->y.fixed;
-        position.world.z = actor->z.fixed;
-        Projection_Point(&position.world, &screen);
+        SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,
+                   actor->y.fixed, actor->z.fixed);
+        Projection_Point(&corner, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         // The triangle.
@@ -194,9 +189,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
-            Projection_Point(gBind_Vertex, &position.projected);
-            point->velocityX = position.projected.x + screen.x;
-            point->velocityY = position.projected.y + screen.y + 16;
+            Projection_Point(gBind_Vertex, &corner);
+            point->velocityX = corner.x + screen.x;
+            point->velocityY = corner.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
             struct Particle *from = &work->particles[j + member * 32];
@@ -238,12 +233,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 /// the first target.
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
-  /* FAKEMATCH(temporary): one workspace for the target's position and each
-   * projected corner. */
-  union {
-    struct Vector3 world;
-    struct ScreenPoint projected;
-  } position;
+  // The target's position, then each corner projected around it.
+  struct ScreenPoint corner;
   struct ScreenPoint screen;
   struct Vector3 scale;
   struct BattleEffectWork *work;
@@ -307,10 +298,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
       actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       if (memberFrame >= 0 && memberFrame < 96) {
         EFFECT_VIEW_FROM_CAMERA(camera);
-        position.world.x = actor->x.fixed;
-        position.world.y = actor->y.fixed;
-        position.world.z = actor->z.fixed;
-        Projection_Point(&position.world, &screen);
+        SET_VECTOR(ScreenPoint_Coordinates(&corner), actor->x.fixed,
+                   actor->y.fixed, actor->z.fixed);
+        Projection_Point(&corner, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
         if (memberFrame <= 67) {
@@ -326,9 +316,9 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
               Transform_ApplyYaw((64 - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
-            Projection_Point(gBind_TriangleStrikeVertex, &position.projected);
-            point->velocityX = position.projected.x + screen.x;
-            point->velocityY = position.projected.y + screen.y + 16;
+            Projection_Point(gBind_TriangleStrikeVertex, &corner);
+            point->velocityX = corner.x + screen.x;
+            point->velocityY = corner.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
             struct Particle *from = &work->particles[j + member * 32];

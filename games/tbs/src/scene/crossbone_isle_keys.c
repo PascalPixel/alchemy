@@ -538,13 +538,9 @@ static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
 /// Reveal in CrossboneIsleKeys: the hidden Red Key appears on its
 /// cell.
 static void CrossboneIsleKeys_ShowRedKey(void) {
-  s32 keyActorId = ACTOR_RED_KEY;
-  s32 x = px(408);
-  s32 z = px(776);
-
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
-    Actor_SetPositionFixed(keyActorId, x, z);
+    Actor_SetPosition(ACTOR_RED_KEY, 408, 776);
   Event_Wait(1);
 }
 

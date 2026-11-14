@@ -1301,14 +1301,12 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     FieldCamera_SetSpeed(1);
     FieldCamera_MoveTo(536, CAMERA_KEEP, 192, 1);
     {
-      s32 z = 264;
-
       FieldCamera_WaitForMove();
       // "The fans just call this The Wall."
       Event_ShowMessage(attendant, 0);
-      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, z);
+      Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, 264);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
+      Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, 264);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Field_ClimbUp();
       FieldCamera_SetSpeed(0.25);

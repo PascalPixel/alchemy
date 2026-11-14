@@ -339,11 +339,7 @@ static void Imil_TalkToFreezingYoungMan(void) {
   } else {
     Event_SetMessageId(MSGNO(MsgImilBrrrrrChooImFreezingMia));
   }
-  {
-    s32 val = 0;
-    s32 speaker = ACTOR_FREEZING_YOUNG_MAN;
-    Event_ShowMessage(speaker, val);
-  }
+  Event_ShowMessage(ACTOR_FREEZING_YOUNG_MAN, 0);
   Event_End();
 }
 

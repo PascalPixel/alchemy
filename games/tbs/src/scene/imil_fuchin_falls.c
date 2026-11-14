@@ -528,11 +528,9 @@ static void FuchinFallsCave_ZephyrRoom_MoveThirdLogSouth(void) {
 /// trigger 16) floats it 272 pixels north and sets
 /// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH.
 static void FuchinFallsCave_ZephyrRoom_MoveThirdLogNorth(void) {
-  s32 depth = -96;
-
   Sound_Play(SE_WATER_MOVE);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, depth);
-  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, depth);
+  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -96);
+  Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -96);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -80);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   GameFlag_Set(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH);
@@ -1257,7 +1255,10 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
 /// (SceneId_FuchinFallsCaveArcticBlade), in both of its halves, at the cells
 /// their flags name.
 static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
-  if (((u32)((u16)gMainRoutineWork.entrance - 1) << 16) <= 1 << 16) {
+  if (gMainRoutineWork.entrance ==
+          FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE ||
+      gMainRoutineWork.entrance ==
+          FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF) {
     MapGrid_CopyCellAttributes(22, 20, 9, 8, 14, 10);
   } else {
     MapGrid_CopyCellAttributes(20, 45, 11, 4, 7, 45);
@@ -1342,7 +1343,10 @@ static void ImilFuchinFalls_PrepareRoom(void) {
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
       ImilFuchinFalls_PlaceDragonsEye();
     }
-    if ((u16)(gMainRoutineWork.entrance - 2) <= 3) {
+    if (gMainRoutineWork.entrance >=
+            FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE &&
+        gMainRoutineWork.entrance <=
+            FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR) {
       FuchinFallsCave_CreateForegroundActor(px(156), 0, px(452), SPRITE_CRATE);
       FuchinFallsCave_CreateForegroundActor(px(188), 0, px(452), SPRITE_CRATE);
     }

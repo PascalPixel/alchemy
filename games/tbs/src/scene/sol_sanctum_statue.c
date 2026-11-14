@@ -785,9 +785,12 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_MOVED_CENTER_STATUE)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_MOVED_CENTER_STATUE, 1);
-  // Only entrances 3 and 4 keep Jenna and Garet staged for their
-  // conversations.
-  if ((u16)(gMainRoutineWork.entrance - 3) > 1) {
+  // Only the returns with the trap disarmed or triggered keep Jenna and Garet
+  // staged for their conversations.
+  if (gMainRoutineWork.entrance !=
+          SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED &&
+      gMainRoutineWork.entrance !=
+          SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) {
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_SetPosition(ACTOR_GARET, 0, 0);
   }

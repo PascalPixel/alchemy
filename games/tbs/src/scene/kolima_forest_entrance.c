@@ -129,8 +129,7 @@ static s32 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *actor) {
   else
     Actor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
   if (actor->timer > 1200) {
-    u16 z = 0;
-    actor->timer = z;
+    actor->timer = 0;
   }
   return 1;
 }
@@ -1052,17 +1051,13 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   struct Actor *sparkle;
   struct Sprite *sprite;
   s32 framePhase;
-  s32 spawnX = px(231);
-  s32 spawnZ = px(460);
-  s32 targetX = px(231);
-  s32 targetZ = px(624);
 
   framePhase = gFrameCount & 7;
   if (framePhase != 0)
     return;
   if (gKolimaForestEntrance_SparkleSoundOn != 0)
     Sound_Play(SE_SPARKLE_FALL);
-  sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, spawnX, 0, spawnZ);
+  sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, px(231), 0, px(460));
   if (sparkle == NULL)
     return;
   sprite = sparkle->sprite;
@@ -1074,7 +1069,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   sparkle->acceleration = px(8);
   sparkle->motionFlags = framePhase;
   Actor_SelectAnimation(sparkle, 2);
-  FieldActor_SetMoveTargetFixed(sparkle, targetX, 0, targetZ);
+  FieldActor_SetMoveTargetFixed(sparkle, px(231), 0, px(624));
   Actor_StartScript(sparkle, gKolimaForestEntrance_SparkleScript);
 }
 

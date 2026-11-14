@@ -362,7 +362,7 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 memberIndex = menu->tabIndex[partySlot];
-  struct MenuIcon *icon;
+  struct WindowSprite *icon;
   struct BattleUnit *unit;
   u16 *actions;
   s32 result;
@@ -525,7 +525,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   s32 redraw;
   s32 result;
   s32 shown;
-  struct MenuIcon *icon;
+  struct WindowSprite *icon;
   s32 column;
 
   menu = Ram_HeapSlots->menuRuntime;
@@ -541,7 +541,8 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
       Unit_Get(menu->memberTable[selection]);
       icon = menu->sideIcon[1];
       column = (selection % 4) * 3;
-      icon->oam.x = icon->x = (menu->auxiliaryWindow->x + column) * 8 - 2;
+      icon->sprite.oam.x = icon->x =
+          (menu->auxiliaryWindow->x + column) * 8 - 2;
       if (browseOnly == 0) {
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[selection], 0,
                          0);
@@ -1051,7 +1052,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 s32 PsynergyMenu_RunList(s32 paneIndex) {
   struct PsynergyMenuWork *menu;
   struct BattleAct *ability;
-  struct MenuIcon *icon;
+  struct WindowSprite *icon;
   s32 window;
   s32 changed;
   s32 moved;

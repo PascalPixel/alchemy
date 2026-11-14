@@ -59,9 +59,9 @@ struct DjinnMenuWork {
   u8 unk138[0x30];
   u16 selection[2];
   u16 pairEntries[2];
-  struct MenuIcon *selector;
+  struct WindowSprite *selector;
   u8 unk174[4];
-  struct MenuIcon *arrows[2];
+  struct WindowSprite *arrows[2];
   struct DjinnMenuBackdrop *backdrop;
   u8 unk184[0x80];
   u16 owners[8];

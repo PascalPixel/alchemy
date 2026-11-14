@@ -15,8 +15,8 @@ s32 PartyMemberChooser_Run(void);
 /// party member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 PartyMemberChooser_Open(void) {
-  struct OwnerMenuState *state =
-      (struct OwnerMenuState *)HeapSlot_Alloc(220, 0x0cec);
+  struct StatusScreenWork *state =
+      (struct StatusScreenWork *)HeapSlot_Alloc(220, 0x0cec);
   s32 result;
   s32 index;
 
@@ -25,7 +25,7 @@ s32 PartyMemberChooser_Open(void) {
   wait(1);
   Window_InitializeWork(0);
 
-  state->partyCount = Party_ListMembersFar(state->ownerIds);
+  state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   {
@@ -35,7 +35,7 @@ s32 PartyMemberChooser_Open(void) {
 
     y.value = 26;
     for (index = 3; index >= 0; index--)
-      state->rowPositions[index] = y.value;
+      state->memberY[index] = y.value;
   }
   state->page = 3;
 
@@ -49,20 +49,13 @@ s32 PartyMemberChooser_Open(void) {
   return result;
 }
 
-struct MenuRuntimeSelect {
-  u8 unk000[0x168];
-  u16 selectedSlots[1];
-  u8 unk16a[0xac];
-  u8 selectedIds[1];
-};
-
 s32 StatusScreen_SelectMember(s32 slot);
 
 /// The party member chooser's loop. Returns the chosen party member's id, or
 /// -1.
 s32 PartyMemberChooser_Run(void) {
-  struct MenuRuntimeSelect *work =
-      (struct MenuRuntimeSelect *)Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *work =
+      (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
   s32 result = 0;
 
   /* FAKEMATCH(dead): the cursor store in a once-only block. */
@@ -82,8 +75,8 @@ void MenuIcon_LoadSlots(void);
 void MenuIcon_ReleaseSlots(void);
 
 s32 StatusScreen_Run(void) {
-  struct OwnerMenuState *state =
-      (struct OwnerMenuState *)HeapSlot_Alloc(220, 0x0cec);
+  struct StatusScreenWork *state =
+      (struct StatusScreenWork *)HeapSlot_Alloc(220, 0x0cec);
   void *palette = Heap_AllocEwram(64);
   void *tiles = Heap_AllocEwram(0x2800);
   s32 result = -1;
@@ -103,7 +96,7 @@ s32 StatusScreen_Run(void) {
   Window_InitializeWork(0);
   page = &state->page;
   *page = 0;
-  state->partyCount = Party_ListMembersFar(state->ownerIds);
+  state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
   Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), 0x2800);
@@ -162,8 +155,8 @@ s32 ItemMenu_SelectItem(void);
 /// row. Returns -1 when the player backs out of the party member row or presses
 /// Start.
 s32 StatusScreen_RunPages(void) {
-  struct MenuRuntimeSelect *state =
-      (struct MenuRuntimeSelect *)Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *state =
+      (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
   s32 step = 0;
   s32 finished = step;
   s32 result = 0;
@@ -215,42 +208,35 @@ s32 StatusScreen_RunPages(void) {
   return result;
 }
 
-struct OwnerCursor {
-  u8 unk00[5];
-  u8 active;
-  u8 unk06[6];
-  u16 animStep;
-};
-
 s32 PsynergyMenu_ChooseMember(void);
 s32 PartyMemberChooser_RunRearrange(void);
 
 /// The twin of The Broken Seal's CharacterMenu_SelectOwner.
 s32 StatusScreen_SelectMember(s32 slot) {
-  struct OwnerMenuState *menu;
-  struct OwnerCursor *cursor;
+  struct StatusScreenWork *menu;
+  struct WindowSprite *cursor;
   s32 result;
   s32 index;
 
-  menu = (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
-  index = menu->tabIndex[slot];
+  menu = (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
+  index = menu->memberIndex[slot];
   result = 0;
-  cursor = menu->sideIcon[slot];
+  cursor = menu->memberCursors[slot];
   cursor->active = ICON_SHOWN;
   cursor->animStep = 0;
-  WindowSprite_RedrawSavedRectFar(menu->auxiliaryWindow);
+  WindowSprite_RedrawSavedRectFar(menu->memberWindow);
   if (GameFlag_Get(FLAG_LINK_BATTLE_ARRANGED))
-    Window_DrawDividerLineFar(menu->auxiliaryWindow, 9, 1, 9, 3);
-  Window_DrawDividerLineFar(menu->auxiliaryWindow, 0, 3, 12, 3);
+    Window_DrawDividerLineFar(menu->memberWindow, 9, 1, 9, 3);
+  Window_DrawDividerLineFar(menu->memberWindow, 0, 3, 12, 3);
   if (index == -1)
-    menu->tabIndex[slot] = 0;
+    menu->memberIndex[slot] = 0;
   else
     MenuCursor_Slide(index * 24 - 10, 16);
   if (menu->page == 3)
     result = PsynergyMenu_ChooseMember();
   else
     result = PartyMemberChooser_RunRearrange();
-  cursor = menu->sideIcon[slot];
+  cursor = menu->memberCursors[slot];
   Icon_PrepareActor(cursor);
   wait(1);
   return result;
@@ -336,43 +322,12 @@ void DjinnMenu_ShowCurrentList(void) {
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 
-struct CharacterMenuState {
-  u8 unk000[8];
-  s32 selectedOwner;
-  u8 unk00c[4];
-  s32 rowWindow;
-  u8 unk014[8];
-  s8 ownerIndex;
-  u8 unk01d;
-  s8 ownerCount;
-  u8 unk01f[9];
-  s32 statusWindow;
-  u8 unk02c[4];
-  s32 helpWindow;
-  u8 unk034[0xbc];
-  s32 selectorWindow;
-  u8 unk0f4[0x7c];
-  struct MenuIcon *statusCursor;
-  u8 unk174[4];
-  struct MenuIcon *arrows[2];
-  u8 unk180[0x84];
-  u16 ownerIds[8];
-  u8 unk214;
-  u8 partyCount;
-  u8 selectedIds[2];
-  u8 unk218[4];
-  u16 page;
-  u8 unk21e[0x12];
-  u16 rowX[4];
-  s16 rowY[4];
-};
-
 void StatusScreen_ShowMemberStatus(s32 resource, s32 frame);
 
 s32 PartyMemberChooser_MoveEntry(s32 selection, s32 direction);
 
 s32 PartyMemberChooser_RunRearrange(void) {
-  struct CharacterMenuState *menu;
+  struct StatusScreenWork *menu;
   s32 ownerIndex;
   s32 ownerCount;
   s32 page;
@@ -381,12 +336,12 @@ s32 PartyMemberChooser_RunRearrange(void) {
   s32 rowIndex;
 
   menu = Ram_HeapSlots->menuRuntime;
-  ownerIndex = menu->ownerIndex;
-  ownerCount = menu->ownerCount;
+  ownerIndex = menu->memberIndex[0];
+  ownerCount = menu->memberCount[0];
   redraw = 2;
   result = 0;
   page = menu->page;
-  Unit_Get(menu->ownerIds[ownerIndex]);
+  Unit_Get(menu->memberIds[ownerIndex]);
   for (rowIndex = 0; rowIndex < 4; rowIndex++) {
     menu->rowX[rowIndex] = 130 + rowIndex * 32;
     menu->rowY[rowIndex] = 128;
@@ -409,15 +364,15 @@ s32 PartyMemberChooser_RunRearrange(void) {
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp - 3, menu->selectorWindow, 0,
                                  8);
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
-      Unit_Get(menu->ownerIds[ownerIndex]);
+      Unit_Get(menu->memberIds[ownerIndex]);
       page = (page + 3) % 3;
-      StatusScreen_ShowMemberStatus(menu->ownerIds[ownerIndex], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
+      StatusScreen_ShowMemberStatus(menu->memberIds[ownerIndex], page);
+      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[ownerIndex]);
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
+      Menu_HighlightPageEntry(menu->memberWindow, ownerIndex, ownerCount);
       redraw = 0;
     }
     MenuCursor_Position((ownerIndex % 4) * 24 - 10, 16);
@@ -437,7 +392,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex++;
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
-        Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
+        Menu_HighlightPageEntry(menu->memberWindow, ownerIndex, ownerCount);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
       }
@@ -447,7 +402,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         ownerIndex--;
         Menu_CreateOwnerEntryObjects(ownerIndex / 4 * 4);
-        Menu_HighlightPageEntry(menu->rowWindow, ownerIndex, ownerCount);
+        Menu_HighlightPageEntry(menu->memberWindow, ownerIndex, ownerCount);
       } else {
         Sound_PlayFar(SE_MENU_ERROR);
       }
@@ -459,71 +414,51 @@ s32 PartyMemberChooser_RunRearrange(void) {
       redraw = Menu_MoveGridCursor(&ownerIndex, ownerCount, 4);
     }
   }
-  menu->ownerIndex = ownerIndex;
-  menu->selectedOwner = menu->ownerIds[ownerIndex];
-  menu->selectedIds[0] = menu->ownerIds[ownerIndex];
-  menu->arrows[0]->active = ICON_HIDDEN;
-  menu->arrows[1]->active = ICON_HIDDEN;
+  menu->memberIndex[0] = ownerIndex;
+  menu->selectedMember = menu->memberIds[ownerIndex];
+  menu->selectedIds[0] = menu->memberIds[ownerIndex];
+  menu->pageArrows[0]->active = ICON_HIDDEN;
+  menu->pageArrows[1]->active = ICON_HIDDEN;
   return result;
 }
 
 #undef KEYS_PRESSED
 
-struct OwnerPageState {
-  u8 unk000[8];
-  s32 selectedOwner;
-  u8 unk00c[4];
-  void *ownerWindow;
-  u8 unk014[8];
-  s8 ownerIndex;
-  u8 unk01d;
-  s8 ownerCount;
-  u8 unk01f[0xd1];
-  void *messageWindow;
-  u8 unk0f4[0xd0];
-  u16 psynergies[32];
-  u16 ownerIds[8];
-  u8 psynergyCount;
-  u8 unk215;
-  u8 selectedIds[6];
-  u16 page;
-};
-
 void Menu_PlaceEntryActorsInGrid(s32 x, s32 y, s32 columns);
 
 s32 PsynergyMenu_ChooseMember(void) {
-  struct OwnerPageState *menu =
-      (struct OwnerPageState *)Ram_HeapSlots->menuRuntime;
-  s32 selection = menu->ownerIndex;
-  s32 count = menu->ownerCount;
+  struct StatusScreenWork *menu =
+      (struct StatusScreenWork *)Ram_HeapSlots->menuRuntime;
+  s32 selection = menu->memberIndex[0];
+  s32 count = menu->memberCount[0];
   s32 pending = 2;
   s32 page = menu->page;
   s32 result;
 
-  Unit_Get(menu->ownerIds[selection]);
-  WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-  Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter, menu->messageWindow, 0,
+  Unit_Get(menu->memberIds[selection]);
+  WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
+  Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter, menu->selectorWindow, 0,
                              0);
-  Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter + 1, menu->messageWindow,
+  Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter + 1, menu->selectorWindow,
                              0, 16);
   while (1) {
     // PERM
     if (pending) {
       selection = (selection + count) % count;
-      Unit_Get(menu->ownerIds[selection]);
+      Unit_Get(menu->memberIds[selection]);
       page = (page + 3) % 3;
-      StatusScreen_ShowMemberStatus(menu->ownerIds[selection], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[selection]);
-      menu->psynergyCount = PsynergyMenu_CollectActions(
-          Unit_Get(menu->ownerIds[selection]), menu->psynergies, 0);
-      PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
+      StatusScreen_ShowMemberStatus(menu->memberIds[selection], page);
+      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[selection]);
+      menu->entryCount = PsynergyMenu_CollectActions(
+          Unit_Get(menu->memberIds[selection]), menu->entries, 0);
+      PsynergyMenu_DrawPsynergyIcons(menu->entries);
       Menu_PlaceEntryActorsInGrid(96, 96, 8);
-      Menu_HideEmptyEntryIcons(menu->psynergies);
+      Menu_HideEmptyEntryIcons(menu->entries);
       if (pending == 2) {
         Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
-      Menu_HighlightPageEntry(menu->ownerWindow, selection, count);
+      Menu_HighlightPageEntry(menu->memberWindow, selection, count);
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
@@ -539,16 +474,16 @@ s32 PsynergyMenu_ChooseMember(void) {
     }
     pending = Menu_MoveGridCursor(&selection, count, 4);
   }
-  menu->ownerIndex = selection;
-  menu->selectedOwner = menu->ownerIds[selection];
-  menu->selectedIds[0] = menu->ownerIds[selection];
+  menu->memberIndex[0] = selection;
+  menu->selectedMember = menu->memberIds[selection];
+  menu->selectedIds[0] = menu->memberIds[selection];
   return result;
 }
 
 /// Moves the party member at selectedIndex one place later (direction 1) or
 /// earlier (0) in the party order. Returns 1, or 0 when it cannot move.
 s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
-  struct CharacterMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *menu = Ram_HeapSlots->menuRuntime;
   u32 reordered[14];
   s32 index;
 
@@ -572,7 +507,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
     } while ((s32)clear >= (s32)reordered);
   }
   for (index = 0; index < *(u8 *)&menu->partyCount; index++)
-    reordered[index] = menu->ownerIds[index];
+    reordered[index] = menu->memberIds[index];
 
   if (direction == 1) {
     index = reordered[selectedIndex];
@@ -585,25 +520,12 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   }
 
   for (index = 0; index < menu->partyCount; index++)
-    Party_RemoveMemberFar(menu->ownerIds[index]);
+    Party_RemoveMemberFar(menu->memberIds[index]);
   for (index = 0; index < menu->partyCount; index++)
     Party_AddMemberFar(reordered[index]);
-  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
+  menu->partyCount = Party_ListMembersFar(menu->memberIds);
   return 1;
 }
-
-struct MenuRuntimeCursor {
-  u8 unk00[0x24];
-  s32 unk24;
-  s32 unk28;
-  s32 unk2c;
-  s32 unk30;
-  u8 unk34[0xc0];
-  u8 unkf4;
-  u8 unkf5;
-  u8 unkf6;
-  u8 unkf7;
-};
 
 void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
                                  s32 originY);
@@ -611,29 +533,20 @@ void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
 /// Its callers pass four values it does not read.
 void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
                              s32 unused3) {
-  struct MenuRuntimeCursor *work = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *work = Ram_HeapSlots->menuRuntime;
 
   Menu_PlaceOwnerEntryObjects(MenuCursor_Create(work), 2, 2);
-  work->unk2c = 0;
-  work->unk28 = 0;
-  work->unk30 = 0;
-  work->unk24 = 0;
-  work->unkf4 = 0;
-  work->unkf5 = 0;
-  work->unkf6 = 8;
-  work->unkf7 = 2;
+  work->unopenedWindow = 0;
+  work->statusWindow = 0;
+  work->helpWindow = 0;
+  work->actionWindow = 0;
+  work->selectedColumn = 0;
+  work->selectedRow = 0;
+  work->columnCount = 8;
+  work->rowCount = 2;
 }
 
 /// The character menu work block, as this function reads it.
-struct State080a8088 {
-  u8 unk000[0x28];
-  s32 handle;
-  u8 unk02c[0x144];
-  void *object;
-  u8 unk174[0xa8];
-  u16 mode;
-};
-
 typedef struct {
   u8 padding[15];
   u8 field0f;
@@ -651,19 +564,19 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   s32 created;
   s32 handle;
   void *object;
-  struct State080a8088 *state;
+  struct StatusScreenWork *state;
 
   state = Ram_HeapSlots->menuRuntime;
   created = 0;
-  handle = state->handle;
+  handle = state->statusWindow;
   if (handle == 0) {
-    created = Window_UpdateOrCreate(&state->handle, 0, 5, 0x1E, 0xF, 2);
-    handle = state->handle;
+    created = Window_UpdateOrCreate(&state->statusWindow, 0, 5, 0x1E, 0xF, 2);
+    handle = state->statusWindow;
   }
   if (created != 0) {
     object = Portrait_CreateFar(resource, 0, 0, handle, 0, 0);
-    state->object = object;
-    if ((((Object0f *)object)->field0f = 0xF0, state->mode) == 3) {
+    state->statusCursor = object;
+    if ((((Object0f *)object)->field0f = 0xF0, state->page) == 3) {
       Menu_SpawnIconEntries(state, handle);
     }
     StatusScreen_DrawStatusAilments(handle, resource, 0x100);
@@ -691,7 +604,7 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
 void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full);
 
 s32 StatusScreen_SelectCommand(void) {
-  struct CharacterMenuState *menu;
+  struct StatusScreenWork *menu;
   s32 pane;
   s32 result;
   s32 selected;
@@ -807,16 +720,16 @@ s32 StatusScreen_SelectCommand(void) {
       }
       if ((gInput.repeat & KEY_R) || (gInput.repeat & KEY_L)) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-        member = menu->ownerIndex;
+        member = menu->memberIndex[0];
         if (gInput.repeat & KEY_R)
           member++;
         else
           member--;
         member = (member + menu->partyCount) % menu->partyCount;
-        menu->selectedOwner = menu->ownerIds[member];
-        menu->selectedIds[0] = menu->ownerIds[member];
-        menu->ownerIndex = member;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[member]);
+        menu->selectedMember = menu->memberIds[member];
+        menu->selectedIds[0] = menu->memberIds[member];
+        menu->memberIndex[0] = member;
+        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[member]);
         break;
       }
     }
@@ -831,18 +744,13 @@ s32 StatusScreen_SelectCommand(void) {
 #undef KEYS_PRESSED
 #undef SWITCH_CHARACTER_HELP_X
 
-struct CursorMenuState {
-  u8 padding[40];
-  u8 *object;
-};
-
 /// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
 /// status page: in side 0 the selected status row, as wide as its label
 /// (gStatusScreen_CursorWidths); in side 1 one of the first four status rows
 /// or of the rows below.
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                       s32 invert) {
-  struct CursorMenuState *state = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *state = Ram_HeapSlots->menuRuntime;
   u32 different;
   s32 count;
   s32 index;
@@ -879,7 +787,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
 
   different = 1 ^ invert;
   last = 15 - (((0u - different) | different) >> 31);
-  Render_SetTilemapFlagRect(state->object, x, y, width, 1, last);
+  Render_SetTilemapFlagRect(state->statusWindow, x, y, width, 1, last);
 }
 
 /// Writes the advice for the selected status (two lines, for example how to
@@ -973,7 +881,7 @@ s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
 /// levels, Power and Resist. With STATUS_PAGE_NO_CLEAR in mode the window is
 /// not cleared first.
 void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
-  struct CharacterMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct StatusScreenWork *menu = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit;
   s32 element;
   s32 djinnRow;
@@ -1043,16 +951,6 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
 
 #undef DRAW_LEVEL_LABEL
 
-struct ItemMenuCursor {
-  u8 unk00[5];
-  u8 state;
-};
-
-struct ItemMenuState {
-  u8 unk000[0x170];
-  struct ItemMenuCursor *cursor;
-};
-
 extern const u8 gMenu_HpString[];
 extern const u8 gMenu_PpString[];
 
@@ -1070,12 +968,12 @@ extern const u8 gMenu_PpString[];
 #endif
 
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
-  struct ItemMenuState *menu;
+  struct ItemMenuWork *menu;
   struct BattleUnit *unit;
 
   menu = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(owner);
-  menu->cursor->state = 1;
+  menu->cursor->active = 1;
   flags &= 0x100;
   if (flags == 0)
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
@@ -1226,13 +1124,6 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 #undef RANGE_ICON_TILE
 
 // The psynergy menu work block, as this function reads it.
-struct PsynergyListWork {
-  u8 unk000[0x30];
-  void *infoWindow;
-  u8 unk034[0x190];
-  u16 psynergies[32];
-};
-
 #define ACTION_ID_MASK OWNER_ACTION_ID_MASK
 
 // The Japanese page lists six abilities rather than five, a row higher, and
@@ -1272,12 +1163,12 @@ extern u8 MsgUsableAnywhere[];
 
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct MenuResult *state) {
-  struct PsynergyListWork *menu;
+  struct PsynergyMenuWork *menu;
   struct BattleAct *ability;
   s32 row;
   s32 base;
 
-  menu = (struct PsynergyListWork *)Ram_HeapSlots->menuRuntime;
+  menu = (struct PsynergyMenuWork *)Ram_HeapSlots->menuRuntime;
   state->selectedIndex = state->page * PAGE_ROWS + state->row;
   // The Japanese release clears the info window; from patch 1 it redraws the
   // window's saved rectangle.
@@ -1909,13 +1800,8 @@ s32 ItemMenu_SelectItem(void) {
 #undef PAGE_ROWS
 #undef CURSOR_X
 
-struct CategoryMenuState {
-  u8 unk000[0x1c4];
-  u16 items[15];
-};
-
 void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
-  struct CategoryMenuState *menu = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   u8 *items;
 
   ItemMenu_PositionCategory();
@@ -1961,11 +1847,6 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
   }
 }
 
-struct EntryIconMenu {
-  u8 unk000[0x4c];
-  struct WindowSprite *entryIcons[32];
-};
-
 /// Places each of the 32 entry icons on the grid.
 // The Broken Seal's Menu_PlaceEntryObjectsInGrid.
 void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
@@ -1974,7 +1855,7 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **table;
 
   i = 0;
-  table = ((struct EntryIconMenu *)Ram_HeapSlots->menuRuntime)->entryIcons;
+  table = ((struct ItemMenuWork *)Ram_HeapSlots->menuRuntime)->entryIcons;
   do {
     obj = *table++;
     if (obj != NULL)
@@ -1996,27 +1877,16 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *obj, s32 index,
   Icon_PrepareActor(obj);
 }
 
-struct CategoryItemIcon {
-  u8 reserved00[6];
-  s16 x;
-  s16 y;
-};
-
-struct CategoryItemIconState {
-  u8 reserved00[76];
-  struct CategoryItemIcon *icons[32];
-};
-
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
-  struct CategoryItemIconState *state;
-  struct CategoryItemIcon *icon;
+  struct ItemMenuWork *state;
+  struct WindowSprite *icon;
   s32 i;
 
   state = Ram_HeapSlots->menuRuntime;
   ItemMenu_PositionCategory();
   for (i = 0; i < 15; i++) {
     if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
-      icon = state->icons[i];
+      icon = state->entryIcons[i];
       if (icon != 0) {
         switch (Item_GetDirectFar(items[i] & ITEM_ID_MASK)->type) {
         case 1:
@@ -2043,14 +1913,14 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 }
 
 void ItemMenu_PositionCategory(void) {
-  struct CategoryItemIconState *state = Ram_HeapSlots->menuRuntime;
+  struct ItemMenuWork *state = Ram_HeapSlots->menuRuntime;
   s32 x = 248;
-  struct CategoryItemIcon **entry = state->icons;
+  struct WindowSprite **entry = state->entryIcons;
   s32 y = 168;
   s32 remaining = 31;
 
   do {
-    struct CategoryItemIcon *icon = *entry++;
+    struct WindowSprite *icon = *entry++;
 
     if (icon != 0) {
       icon->x = x;

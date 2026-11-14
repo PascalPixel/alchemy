@@ -161,7 +161,7 @@ void DjinnMenu_BuildLists(struct OwnerList *list);
 s32 DjinnMenu_RunScreen(void) {
   // icon holds the cursor, then each arrow in turn.
   struct DjinnMenuWork *menu;
-  struct MenuIcon *icon;
+  struct WindowSprite *icon;
   s32 result;
   s32 step;
   s32 menuResult;
@@ -447,8 +447,8 @@ s32 Palette_GetBasicSpriteColors(void);
 void Menu_OpenBackdropScreen(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
-  struct MenuWindow *window;
-  struct MenuIcon *icon;
+  struct RenderInput *window;
+  struct WindowSprite *icon;
   s32 entry;
   s32 x;
   s32 y;
@@ -482,7 +482,7 @@ void Menu_OpenBackdropScreen(void) {
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = ICON_HIDDEN;
     menu->arrows[0] = icon;
-    icon->oam.affineIndex |= 8;
+    icon->sprite.oam.matrix |= 8;
     icon = WindowSprite_CreateFar(entry, 0x40000000, window, 0, 0);
     icon->active = ICON_HIDDEN;
     menu->arrows[1] = icon;
@@ -491,13 +491,13 @@ void Menu_OpenBackdropScreen(void) {
   window = menu->listWindow;
   icon = menu->arrows[0];
   x = window->x * 8;
-  icon->oam.x = icon->x = x;
+  icon->sprite.oam.x = icon->x = x;
   y = window->y * 8 + 4;
-  icon->oam.y = icon->y = y;
+  icon->sprite.oam.y = icon->y = y;
   icon = menu->arrows[1];
   x += 224;
-  icon->oam.x = icon->x = x;
-  icon->oam.y = icon->y = y;
+  icon->sprite.oam.x = icon->x = x;
+  icon->sprite.oam.y = icon->y = y;
 }
 
 #define ACTION_MASK 0x3fff

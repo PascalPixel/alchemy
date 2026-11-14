@@ -167,38 +167,6 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, listMode) == 0x261);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 0x264);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 0x4ee);
 
-struct SpriteAttr {
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-};
-
-struct MenuIcon {
-  struct MenuIcon *next; ///< the window sprite's list link
-  s8 kind;
-  u8 active;
-  u16 x;
-  u16 y;
-  u8 unk00a[2];
-  u16 animStep;
-  u8 unk0e;
-  u8 sentinel;
-  u8 unk010[4];
-  struct SpriteAttr oam;
-};
-
-struct MenuWindow {
-  u8 unk000[0xc];
-  u16 x;
-  u16 y;
-};
-
 struct MenuArrow {
   u8 unk00[5];
   u8 mode;
@@ -219,30 +187,71 @@ struct MenuPageWork {
   u8 unk215[3];
 };
 
-struct OwnerMenuState {
-  u8 unk000[0x10];
-  struct RenderInput *auxiliaryWindow;
-  struct WindowSprite *sideIcon[2];
-  s8 tabIndex[2];
-  u8 unk01e[0xa];
-  void *statusWindow;
-  u8 unk02c[0xc4];
-  void *selectorWindow;
-  u8 unk0f4[4];
-  struct AnimationObject *tabObjects[8];
-  s16 tabX[8];
-  s16 rowPositions[8];
-  s32 ownerScale[8];
-  u8 unk158[0x20];
-  struct WindowSprite *arrows[2];
-  u8 unk180[0x84];
-  s16 ownerIds[8];
-  u8 unk214;
+/// The work of the party member chooser and the Status menu (heap slot 220),
+/// which each takes as it opens and frees before it returns. The Broken Seal's
+/// StatusScreenWork, laid out as ItemMenuWork is here.
+struct StatusScreenWork {
+  u8 unused[8];                    ///< no view of the menu work names it
+  s32 selectedMember;              ///< the party member chosen
+  struct RenderInput *moneyWindow; ///< ShopWork's; not named here
+  struct RenderInput *memberWindow;
+  struct WindowSprite *memberCursors[2];
+  s8 memberIndex[2]; ///< each side's party member, in memberIds
+  s8 memberCount[2]; ///< party members each side chooses from
+  u8 unk020[4];
+  struct RenderInput *actionWindow;
+  struct RenderInput *statusWindow;
+  struct RenderInput *unopenedWindow; ///< never given a window; only cleared
+  struct RenderInput *helpWindow;
+  /// ItemMenuWork's equipWindow to gridCursor; not named here.
+  u8 itemWindows[24];
+  struct WindowSprite *entryIcons[32];
+  u8 unk0cc[0x24];
+  struct RenderInput *selectorWindow;
+  u8 selectedColumn;
+  u8 selectedRow;
+  u8 columnCount;
+  u8 rowCount;
+  void *memberSprites[8];
+  s16 memberX[8];         ///< screen pixels
+  s16 memberY[8];         ///< screen pixels
+  s32 memberScale[8];     ///< 16.16 fixed point, Q16_ONE full size
+  s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
+  u16 selectedSlots[2];
+  u16 selectedActions[2];
+  struct WindowSprite *statusCursor;
+  u8 unk174[4];
+  /// The up and down arrows beside the party row (MenuCursor_Create).
+  struct WindowSprite *pageArrows[2];
+  u8 unk180[0x44];
+  u16 entries[32];
+  u16 memberIds[8]; ///< the party in order (Party_ListMembersFar)
+  u8 entryCount;
   u8 partyCount;
-  u8 unk216[6];
-  u16 page;
-  u16 skipSlide;
+  u8 selectedIds[2]; ///< each side's party member
+  struct WindowSprite *selectedIcon;
+  u16 page;           ///< 3 for the party member chooser, 0 for the Status menu
+  s16 completionFlag; ///< ItemMenuWork's; not named here
+  void *rowSprites[4];
+  s16 rowX[4]; ///< screen pixels
+  s16 rowY[4]; ///< screen pixels
 };
+
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberWindow) == 0x10);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, actionWindow) == 0x24);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, entryIcons) == 0x4c);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectorWindow) == 0xf0);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedColumn) == 0xf4);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberY) == 0x128);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedSlots) == 0x168);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, statusCursor) == 0x170);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, pageArrows) == 0x178);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, memberIds) == 0x204);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, selectedIds) == 0x216);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, page) == 0x21c);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, rowSprites) == 0x220);
+STATIC_ASSERT(offsetof(struct StatusScreenWork, rowX) == 0x230);
+STATIC_ASSERT(sizeof(struct StatusScreenWork) == 0x240);
 
 /// The Psynergy menu's work (heap slot 220): its windows, icons and cursors,
 /// the party members' tabs and the Psynergy listed for the chosen party

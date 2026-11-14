@@ -507,7 +507,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
   slot = Inventory_FindEquippedFar(unitId, item->type);
   if (slot == -1) {
     for (i = 0; i <= 14; i++) {
-      if (!(unit->inventory[i] & 0x200))
+      if (!(unit->inventory[i] & INVENTORY_EQUIPPED))
         break;
     }
     if (i == 15) {
@@ -520,7 +520,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
     }
     slot = i;
   } else {
-    replaced = unit->inventory[slot] & 0x1ff;
+    replaced = unit->inventory[slot] & ITEM_ID_MASK;
   }
   saved = unit->inventory[slot];
   unit->inventory[slot] = itemId | 0x200;
@@ -567,8 +567,10 @@ void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
       quantityOffset = slot * 2 + 216;
-      MessageArgument_PushFar((*(u16 *)(unitBytes + quantityOffset) >> 11) + 1,
-                              MESSAGE_ARGUMENT_NUMBER);
+      MessageArgument_PushFar(
+          (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
+              1,
+          MESSAGE_ARGUMENT_NUMBER);
       Text_DrawMessageAsTilesFar((s32)MsgYouHave, window, 0, 0);
     } else {
       Text_DrawMessageAsTilesFar((s32)MsgShopNoneInStock, window, 0, 0);
@@ -606,7 +608,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
     Shop_ShowKeeperMessage((s32)MsgHowManyToBuy);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1)
-      quantity = (unit->inventory[slot] >> 11) + 1;
+      quantity = (unit->inventory[slot] >> INVENTORY_QUANTITY_SHIFT) + 1;
     else
       quantity = 0;
 
@@ -802,7 +804,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   itemId &= raw;
   info = Item_GetDirectFar(itemId);
 
-  if (unit->inventory[slot] & 0x200)
+  if (unit->inventory[slot] & INVENTORY_EQUIPPED)
     return 0;
 
   if (Item_CanUnitEquip(unitId, itemId) == 0)
@@ -872,7 +874,7 @@ s32 Shop_SalePrice(s32 item_id) {
   price = (u16)Item_GetDirectFar(item_id)->price;
   if (Item_GetDirectFar(item_id)->flags & 8)
     price = 0;
-  else if (item_id & 0x400)
+  else if (item_id & INVENTORY_BROKEN)
     price /= 2;
   else
     price = price * 3 / 4;

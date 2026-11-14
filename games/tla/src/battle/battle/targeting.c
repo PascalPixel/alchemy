@@ -2300,7 +2300,7 @@ select_again:
   abilityId = halfwords->abilities[selection];
   request->command = COMMAND_ABILITY;
   if (useItem != 0 && retry != 0) {
-    if (!(0x1ff & unit->inventory[0])) {
+    if (!(ITEM_ID_MASK & unit->inventory[0])) {
       useItem = 0;
       if (enemy->targetStrategy == 0) {
         request->command = COMMAND_ITEM;

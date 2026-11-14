@@ -235,7 +235,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       inventoryCount = Inventory_CountFar(unitId);
       if (slot > inventoryCount - 1)
         slot = inventoryCount - 1;
-      itemId = 0x1ff & unit->inventory[slot];
+      itemId = ITEM_ID_MASK & unit->inventory[slot];
       window = shop->itemWindow;
       x = slot % 5;
       y = slot / 5;
@@ -366,9 +366,9 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 void ItemPicker_DrawItem(void *window, s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = Unit_Get(unitId);
-  s32 item = unit->inventory[slot] & 0x1ff;
+  s32 item = unit->inventory[slot] & ITEM_ID_MASK;
   u32 raw = unit->inventory[slot];
-  s32 quantity = (raw >> 11) + 1;
+  s32 quantity = (raw >> INVENTORY_QUANTITY_SHIFT) + 1;
   s32 flags;
   s32 price;
   s32 message;

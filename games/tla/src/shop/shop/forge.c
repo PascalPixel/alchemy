@@ -77,7 +77,9 @@ s32 Forge_PartyHasMaterial(void) {
   return 0;
 }
 
-void Forge_SetItem(s32 item) { gMainRoutineWork.forgeItem = item & 0x1ff; }
+void Forge_SetItem(s32 item) {
+  gMainRoutineWork.forgeItem = item & ITEM_ID_MASK;
+}
 
 s32 Forge_GetItem(void) {
   u32 item = gMainRoutineWork.forgeItem;

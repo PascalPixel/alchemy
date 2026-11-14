@@ -11,7 +11,7 @@
 s32 Shop_RepairPrice(s32 item) {
   s32 price = (u16)Item_GetDirectFar(item)->price >> 2;
 
-  if ((item & 0x400) == 0)
+  if ((item & INVENTORY_BROKEN) == 0)
     price = 0;
   return price;
 }
@@ -26,7 +26,7 @@ s32 Shop_SelectRepair(s32 unitId) { return Shop_SelectSell(unitId); }
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = Unit_Get(unitId);
-  s32 itemId = unit->inventory[slot] & 0x1ff;
+  s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
   u32 price;
@@ -42,13 +42,13 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotHandled);
     return;
   }
-  if (!(unit->inventory[slot] & 0x400)) {
+  if (!(unit->inventory[slot] & INVENTORY_BROKEN)) {
     MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
     // MsgRepairNotDamaged: MsgNotDamaged
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairNotDamaged);
     return;
   }
-  if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
+  if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (kind & item->flags)) {
     MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
     // MsgRepairStuckOn: MsgCursedWontComeOff
     Shop_ShowKeeperMessageHidingCursor((s32)MsgRepairStuckOn);

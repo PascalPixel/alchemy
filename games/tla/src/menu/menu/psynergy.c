@@ -466,9 +466,9 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
       }
       Sound_PlayFar(SE_MENU_ERROR);
     }
-    if ((KEYS_PRESSED & 0x200) || (KEYS_PRESSED & 0x100)) {
+    if ((KEYS_PRESSED & KEY_L) || (KEYS_PRESSED & KEY_R)) {
       result = ownerIds[selection];
-      if (KEYS_PRESSED & 0x200)
+      if (KEYS_PRESSED & KEY_L)
         menu->mode = 1;
       else
         menu->mode = 2;

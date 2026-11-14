@@ -202,7 +202,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                                     entries[firstEntry + selectedRow]) == 2)
           MENU_TEXT_COPY((s32)MsgKey0d4f, messageText, CURSOR_TEXT_LENGTH);
         else
-          MENU_TEXT_COPY((entries[firstEntry + selectedRow] & 0x1ff) +
+          MENU_TEXT_COPY((entries[firstEntry + selectedRow] & ITEM_ID_MASK) +
                              (s32)MsgItemPlainName,
                          messageText, CURSOR_TEXT_LENGTH);
       } else {
@@ -222,8 +222,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
             Text_SetColor(TEXT_COLOR_YELLOW);
           else if (item & ITEM_BROKEN)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName, window, 16,
-                                  i * 16);
+          Text_DrawMessageAsTiles((item & ITEM_ID_MASK) + (s32)MsgItemName,
+                                  window, 16, i * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }

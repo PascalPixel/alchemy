@@ -349,7 +349,7 @@ void Sanctum_ApplyService(s32 id, s32 mode) {
     s32 i;
 
     for (i = 0; i < 15; i++) {
-      if (unit->inventory[i] & 0x200) {
+      if (unit->inventory[i] & INVENTORY_EQUIPPED) {
         if (Item_GetDirectFar(unit->inventory[i])[3] & 1) {
           unit->inventory[i] ^= 0x200;
           Unit_CalculateFar(id);

@@ -539,8 +539,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (Item_ClassifyUseAbility(member, *entry) == 2)
           SUMMARY_TEXT_COPY((s32)MsgKey0d4f, itemText, 32);
         else
-          SUMMARY_TEXT_COPY((*entry & 0x1ff) + (s32)MsgItemPlainName, itemText,
-                            SUMMARY_ITEM_HELP_CAPACITY);
+          SUMMARY_TEXT_COPY((*entry & ITEM_ID_MASK) + (s32)MsgItemPlainName,
+                            itemText, SUMMARY_ITEM_HELP_CAPACITY);
       } else {
         SUMMARY_TEXT_COPY((s32)MsgKey0d46, itemText, 32);
       }
@@ -556,9 +556,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           Text_SetColor(TEXT_COLOR_WHITE);
           if (Item_ClassifyUseAbility(member, item) != 0)
             Text_SetColor(TEXT_COLOR_YELLOW);
-          else if (item & 0x400)
+          else if (item & INVENTORY_BROKEN)
             Text_SetColor(TEXT_COLOR_RED);
-          Text_DrawMessageAsTiles((item & 0x1ff) + (s32)MsgItemName,
+          Text_DrawMessageAsTiles((item & ITEM_ID_MASK) + (s32)MsgItemName,
                                   statusWindow, 32, 64 + j * 16);
           Text_SetColor(TEXT_COLOR_WHITE);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);

@@ -818,12 +818,12 @@ s32 PauseMenu_Choose(s32 initial) {
       continue;
     }
     if (gDebugMode != 0) {
-      if (KEYS_PRESSED & 0x100) {
+      if (KEYS_PRESSED & KEY_R) {
         result = 20;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
-      if (KEYS_PRESSED & 0x200) {
+      if (KEYS_PRESSED & KEY_L) {
         result = 21;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;

@@ -160,7 +160,7 @@ s32 BattleUnit_GetWeaponSprite(s32 owner) {
   if (slot >= 0) {
     s32 index;
 
-    index = BattleUnit_GetWeaponKind(unit->inventory[slot] & 0x1ff);
+    index = BattleUnit_GetWeaponKind(unit->inventory[slot] & ITEM_ID_MASK);
     switch (unit->classId) {
     case ISAAC:
       result = gData_081287d4[index];

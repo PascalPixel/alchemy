@@ -721,7 +721,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;
-        Text_DrawMessageAsTiles((unit->inventory[selection] & 0x1ff) +
+        Text_DrawMessageAsTiles((unit->inventory[selection] & ITEM_ID_MASK) +
                                     (s32)MsgItemName,
                                 commandWindow, 24, 0);
         command->range = cost;

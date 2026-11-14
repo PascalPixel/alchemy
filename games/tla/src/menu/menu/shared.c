@@ -834,9 +834,9 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
         item = Item_GetDirectFar(items[i]);
         if ((order[pass] & 0x7f) != item->type)
           continue;
-        if ((order[pass] & 0x80) && (items[i] & 0x200) == 0)
+        if ((order[pass] & 0x80) && (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
-        value = items[i] & 0x1ff;
+        value = items[i] & ITEM_ID_MASK;
         if (best < value) {
           best_slot = i;
           best = value;

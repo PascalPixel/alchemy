@@ -2021,10 +2021,10 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   state = Ram_HeapSlots->menuRuntime;
   ItemMenu_PositionCategory();
   for (i = 0; i < 15; i++) {
-    if (items[i] != 0 && (items[i] & 0x200) != 0) {
+    if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
       icon = state->icons[i];
       if (icon != 0) {
-        switch (Item_GetDirectFar(items[i] & 0x1ff)->type) {
+        switch (Item_GetDirectFar(items[i] & ITEM_ID_MASK)->type) {
         case 1:
           icon->x = 216;
           icon->y = 32;

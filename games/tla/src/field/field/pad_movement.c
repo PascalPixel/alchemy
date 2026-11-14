@@ -63,7 +63,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   movementAnimation = 2;
   collision = 0;
   count = 0;
-  if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->dashKeys) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(1);
     object->acceleration = px(1) / 2;
     movementAnimation = 5;
@@ -197,7 +197,7 @@ update_object:
     }
   }
   Field_CheckConfiguredKeys();
-  if (gInput.pressed & gMainRoutineWork.keys230)
+  if (gInput.pressed & gMainRoutineWork.aKeys)
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 251;
   object->step++;
   return 1;
@@ -444,7 +444,7 @@ counted:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gMainRoutineWork.keys230) {
+  if (gInput.pressed & gMainRoutineWork.aKeys) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
     collision |= 4;
   }
@@ -514,16 +514,6 @@ struct PlayerSprite__s28534 {
   u8 high09 : 4;
   u8 unk0a[0x10];
   u8 flags;
-};
-
-/* VIEW(s28534): tag struct PartyKeys as struct PartyKeys__s28534;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/pad_movement.c:648: structure has no member named
- * `keys23c'. */
-struct PartyKeys__s28534 {
-  u8 unk000[0x23c];
-  u16 keys23c;
 };
 
 // The heading of each direction-pad combination, -1 for none.
@@ -649,12 +639,11 @@ update_object:
   else
     Actor_SelectAnimation(object, 2);
 
-  if (gInput.pressed & gMainRoutineWork.keys230) {
+  if (gInput.pressed & gMainRoutineWork.aKeys) {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->unk16a = 252;
     collision |= 4;
   }
-  if (gInput.pressed &
-      ((struct PartyKeys__s28534 *)&gMainRoutineWork)->keys23c) {
+  if (gInput.pressed & gMainRoutineWork.dashKeys) {
     struct WorldEventWork *keyWork = Ram_HeapSlots->eventWork;
     if (keyWork->unkd39 != 0) {
       GameFlag_Clear(0x147);
@@ -975,7 +964,7 @@ update_object:
   }
 
   flightWork = Ram_HeapSlots->eventWork;
-  if (gInput.held & (gMainRoutineWork.keys230 | gMainRoutineWork.unk232)) {
+  if (gInput.held & (gMainRoutineWork.aKeys | gMainRoutineWork.bKeys)) {
     flightWork->climbing = 1;
     object->y += px(1) / 8;
   } else {

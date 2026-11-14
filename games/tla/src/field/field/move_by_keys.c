@@ -382,9 +382,9 @@ s32 Sand_CheckEndKeys(s32 arg) {
 
   if (work == NULL)
     return 0;
-  if ((gInput.pressed & gMainRoutineWork.keys234) ||
-      (gInput.pressed & gMainRoutineWork.keys230) ||
-      (gInput.pressed & gMainRoutineWork.keys236))
+  if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
+      (gInput.pressed & gMainRoutineWork.aKeys) ||
+      (gInput.pressed & gMainRoutineWork.startKeys))
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {

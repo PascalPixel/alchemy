@@ -13,16 +13,6 @@
 #include "module/field/resource_slot.h"
 #include "macros.h"
 
-/* VIEW(f0267bc): tag struct PartyKeys as struct PartyKeys__f0267bc;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/player_control.c:54: structure has no member named
- * `keys23c'. */
-struct PartyKeys__f0267bc {
-  u8 unk000[0x23c];
-  u16 keys23c;
-};
-
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
@@ -60,7 +50,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   movementAnimation = 2;
   collision = 0;
   pushed = 0;
-  if (gInput.held & ((struct PartyKeys__f0267bc *)&gMainRoutineWork)->keys23c) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(1);
     object->acceleration = 0xccc;
     movementAnimation = 5;
@@ -326,28 +316,28 @@ s32 Field_CheckConfiguredKeys(void) {
   if (work == NULL)
     return 0;
   if (work->pendingSecond != 0) {
-    if ((gInput.pressed & gMainRoutineWork.keys234) ||
-        (gInput.pressed & gMainRoutineWork.keys230) ||
-        (gInput.pressed & gMainRoutineWork.keys236) ||
-        (gInput.pressed & gMainRoutineWork.keys238) ||
-        (gInput.pressed & gMainRoutineWork.keys23a)) {
+    if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
+        (gInput.pressed & gMainRoutineWork.aKeys) ||
+        (gInput.pressed & gMainRoutineWork.startKeys) ||
+        (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
+        (gInput.pressed & gMainRoutineWork.secondShortcutKeys)) {
       work->choice[0] = 0x209b;
       return 1;
     }
     return 0;
   } else {
-    if (gInput.pressed & gMainRoutineWork.keys234) {
+    if (gInput.pressed & gMainRoutineWork.selectKeys) {
       work->menu = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.keys230) {
+    } else if (gInput.pressed & gMainRoutineWork.aKeys) {
       work->examine = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.keys236) {
+    } else if (gInput.pressed & gMainRoutineWork.startKeys) {
       work->start = 1;
       result = 1;
-    } else if (gInput.pressed & gMainRoutineWork.keys238) {
+    } else if (gInput.pressed & gMainRoutineWork.firstShortcutKeys) {
       result = Field_RequestShortcut(gMainRoutineWork.packedEvents[0]);
-    } else if (gInput.pressed & gMainRoutineWork.keys23a) {
+    } else if (gInput.pressed & gMainRoutineWork.secondShortcutKeys) {
       result = Field_RequestShortcut(gMainRoutineWork.packedEvents[1]);
     }
   }
@@ -402,16 +392,6 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
 #include "module/field/object.h"
 #include "module/field/resource_slot.h"
 
-/* VIEW(f027064): tag struct PartyKeys as struct PartyKeys__f027064;
- * resource_slot.c has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field/player_control.c:456: structure has no member named
- * `keys23c'. */
-struct PartyKeys__f027064 {
-  u8 unk000[0x23c];
-  u16 keys23c;
-};
-
 extern struct MapCell gMapCellBuffer[];
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
@@ -459,7 +439,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   map = (struct MapFlagsWork *)Ram_HeapSlots->mapWork;
   collision = 0;
   pushed = 0;
-  if (gInput.held & ((struct PartyKeys__f027064 *)&gMainRoutineWork)->keys23c) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(3) / 2;
     object->acceleration = px(1) / 4;
     movementAnimation = 5;

@@ -660,13 +660,13 @@ void MainRoutineWork_InitializeDefaults(void) {
   START_DMA(&zero, gOwnerStates,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);
   Party_InitializeCharacters();
-  gMainRoutineWork.keys230 = 1;
-  gMainRoutineWork.unk232 = 2;
-  gMainRoutineWork.keys234 = 4;
-  gMainRoutineWork.keys236 = 8;
-  gMainRoutineWork.keys238 = 0x200;
-  gMainRoutineWork.keys23a = 0x100;
-  *(u16 *)gMainRoutineWork.unk23c = 2;
+  gMainRoutineWork.aKeys = 1;
+  gMainRoutineWork.bKeys = 2;
+  gMainRoutineWork.selectKeys = 4;
+  gMainRoutineWork.startKeys = 8;
+  gMainRoutineWork.firstShortcutKeys = 0x200;
+  gMainRoutineWork.secondShortcutKeys = 0x100;
+  gMainRoutineWork.dashKeys = 2;
   gMainRoutineWork.packedEvents[0] = 0;
   gMainRoutineWork.packedEvents[1] = 0;
   gMainRoutineWork.currentOwner = 4;

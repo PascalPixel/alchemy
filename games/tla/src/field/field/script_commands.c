@@ -1642,7 +1642,7 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
   movementAnimation = 2;
   collision = 0;
   object->motionFlags = 4;
-  if (gInput.held & ((struct PartyKeys *)&gMainRoutineWork)->dashKeys) {
+  if (gInput.held & gMainRoutineWork.dashKeys) {
     object->speedLimit = px(1) / 2;
     object->acceleration = px(1) / 8;
     movementAnimation = 5;
@@ -1790,11 +1790,11 @@ s32 Actor_UpdateHoverControl(struct Actor *object) {
   pressed = 0;
   if (Ram_HeapSlots->eventWork == NULL)
     return 0;
-  if ((gInput.pressed & gMainRoutineWork.keys234) ||
-      (gInput.pressed & gMainRoutineWork.keys230) ||
-      (gInput.pressed & gMainRoutineWork.keys236) ||
-      (gInput.pressed & gMainRoutineWork.keys238) ||
-      (gInput.pressed & gMainRoutineWork.keys23a))
+  if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
+      (gInput.pressed & gMainRoutineWork.aKeys) ||
+      (gInput.pressed & gMainRoutineWork.startKeys) ||
+      (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
+      (gInput.pressed & gMainRoutineWork.secondShortcutKeys))
     pressed = 1;
   if (pressed) {
     Sound_PlayFar(SE_MENU_CANCEL);

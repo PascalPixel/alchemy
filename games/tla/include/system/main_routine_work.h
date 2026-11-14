@@ -58,19 +58,20 @@ struct MainRoutineWork {
   /// and restore it after.
   u8 eventMode;
   u8 unk22d[3]; ///< byte 2 goes into the save summary's sendFlag
-  /// The buttons for each field command, as key masks, set on a new game.
+  /// The buttons for each field command, as KEY_ masks, set on a new game;
+  /// read with gInput.pressed except dashKeys, held.
   ///@{
-  u16 keys230;  ///< examine; KEY_A
-  u16 unk232;   ///< KEY_B; held, as keys230, it makes flight climb
-  u16 keys234;  ///< the menu; KEY_SELECT
-  u16 keys236;  ///< start; KEY_START
-  u16 keys238;  ///< the first shortcut; KEY_L
-  u16 keys23a;  ///< the second shortcut; KEY_R
-  u8 unk23c[2]; ///< KEY_B on a new game; read by name as PartyKeys.keys23c
+  u16 aKeys;              ///< examine; KEY_A
+  u16 bKeys;              ///< KEY_B; held with aKeys, it makes flight climb
+  u16 selectKeys;         ///< the menu; KEY_SELECT
+  u16 startKeys;          ///< KEY_START
+  u16 firstShortcutKeys;  ///< KEY_L
+  u16 secondShortcutKeys; ///< KEY_R
+  u16 dashKeys;           ///< KEY_B
   ///@}
   s16 returnCue; ///< the music to play on returning, -1 for the scene's own
-  /// The shortcuts' assignments, run by keys238 and keys23a
-  /// (PsynergyMenu_SetShortcut: kind << 10 | id).
+  /// The shortcuts' assignments, run by firstShortcutKeys and
+  /// secondShortcutKeys (PsynergyMenu_SetShortcut: kind << 10 | id).
   u16 packedEvents[2];
   /// Not named by ⚓️ code; byte 6 is option 4, the idle sleep, as ☀️'s
   /// idleSleepEnabled.

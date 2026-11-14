@@ -371,7 +371,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
       }
     }
   }
-  ((struct WindowWork *)gWindowWork[0])->dirty = 1;
+  WINDOW_WORK->dirty = 1;
   for (;;) {
     if (GameFlag_GetFar(FLAG_MENU_START_PRESSED))
       break;
@@ -617,23 +617,22 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   }
 
   {
-    /* FAKEMATCH(temporary): zero holds the clear's 0. */
-    u32 zero = 0;
+    u32 fill = 0;
 #ifdef UBFIX
     s32 clearIndex = 13;
 
-    // UB: the pointer walk below forms reordered - 1 after its last store;
-    // this clear counts an index down instead.
+    // UB: the pointer walk below forms reordered - 1 after its last store and
+    // compares the addresses as signed numbers; this clear counts an index
+    // down instead.
     do {
-      reordered[clearIndex] = zero;
+      reordered[clearIndex] = fill;
       clearIndex--;
     } while (clearIndex >= 0);
 #else
     u32 *clear = &reordered[13];
 
-    /* FAKEMATCH(temporary): the loop test compares the pointers as s32. */
     do {
-      *clear = zero;
+      *clear = fill;
       clear--;
     } while ((s32)clear >= (s32)reordered);
 #endif

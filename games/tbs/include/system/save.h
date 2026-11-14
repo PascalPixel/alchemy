@@ -54,7 +54,7 @@ struct SaveFileSummary {
   u16 frames;
   /// Filled on reading: the play time from the file's second part. A file
   /// whose playTime differs is listed as corrupted.
-  u8 secondPartPlayTime[4];
+  u32 secondPartPlayTime;
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 

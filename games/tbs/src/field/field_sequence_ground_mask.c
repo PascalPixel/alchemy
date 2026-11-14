@@ -10,7 +10,7 @@
 /// at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
-  struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 *view = grid->view;
   s32 cameraX = (s16)(view[0] >> 16);
   s32 cameraZ = (s16)(view[1] >> 16);

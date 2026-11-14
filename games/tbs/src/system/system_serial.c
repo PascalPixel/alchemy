@@ -25,13 +25,10 @@ enum {
 /// which starts the per-frame exchange.
 void Serial_Initialize(void) {
   u32 interruptEnable;
-  volatile u16 *ime;
   s32 index;
   struct SerialWork *state;
 
-  /* FAKEMATCH(temporary): ime holds &REG_IME, set inside the save. */
-  IME_SAVE((ime = &REG_IME), interruptEnable);
-  IME_DISABLE(ime);
+  IRQ_LOCK(interruptEnable);
   // Replace both interrupt handlers before configuring multiplayer transfers.
   Irq_SetHandler(IRQ_SERIAL, 0, Serial_HandleTransferInterrupt);
   Irq_SetHandler(IRQ_TIMER3, 0, Serial_HandleTransferInterrupt);

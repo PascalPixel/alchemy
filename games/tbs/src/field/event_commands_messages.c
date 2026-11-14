@@ -32,7 +32,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
   s32 none;
 #endif
 
-  win = (struct WindowWork *)gWindowWork[0];
+  win = WINDOW_WORK;
   work = gFieldWork;
   handle = 0;
   portrait = 0;
@@ -454,7 +454,7 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 /// Sets the voice of the messages that follow to that of actorId's sprite, at
 /// the rate the message speed option picks (gMessageSpeed_VoiceRates).
 void Message_SetVoiceFromActor(s32 actorId) {
-  struct WindowWork *state = (struct WindowWork *)gWindowWork[0];
+  struct WindowWork *state = WINDOW_WORK;
   u8 rate;
   s32 voice;
 

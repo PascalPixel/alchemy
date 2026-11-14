@@ -224,7 +224,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     nameSprite.oam.f.x = 8;
     nameSprite.oam.f.y = 24;
     nameSprite.oam.f.palette = 14;
-    Oam_AddSpriteAtDepth((s32 *)&nameSprite, 240);
+    Oam_AddSpriteAtDepth(&nameSprite, 240);
 
     // The group follows the help shown: the general rows have 9 stops with
     // Djinn, 7 without.
@@ -371,7 +371,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       portraitSprite.oam.f.tile = face->oam.f.tile;
       portraitSprite.oam.f.x = 172;
       portraitSprite.oam.f.y = 56;
-      Oam_AddSpriteAtDepth((s32 *)&portraitSprite, 240);
+      Oam_AddSpriteAtDepth(&portraitSprite, 240);
     }
 
     cursorSprite.oam.word.attr01 =
@@ -390,7 +390,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     // 8 sets attribute 1's bit 12, a sprite's horizontal flip when it is not
     // affine: the hand is mirrored.
     cursorSprite.oam.f.affineIndex = 8;
-    Oam_AddSpriteAtDepth((s32 *)&cursorSprite, 241);
+    Oam_AddSpriteAtDepth(&cursorSprite, 241);
 
     if (redraw != 0) {
       unit = Unit_GetFar(member);
@@ -751,7 +751,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         statusSprite->oam.f.x = iconX;
         statusSprite->oam.f.y = (u8)(statusWindow->y * 8 + 8);
         if (statusKinds[i] > OWNER_CONDITION_NORMAL) {
-          Oam_AddSpriteAtDepth((s32 *)statusSprite, 240);
+          Oam_AddSpriteAtDepth(statusSprite, 240);
         }
         iconX += 15;
         statusSprite++;

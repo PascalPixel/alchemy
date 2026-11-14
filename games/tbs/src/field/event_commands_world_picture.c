@@ -395,7 +395,7 @@ void WorldPicture_UpdateMarkers(void) {
 /// Borrows the map-cell buffer for the still map until A or B closes it.
 /// FieldSequence_Run reaches this for raised trigger -888 in World Map mode.
 void WorldPicture_Show(s32 picture) {
-  struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);

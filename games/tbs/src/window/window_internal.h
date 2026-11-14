@@ -62,7 +62,7 @@
 #endif
 
 #ifdef MODERN
-// In the matching build these calls precede their declarations.
+// The window code calls these before any declaration of them.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif

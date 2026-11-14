@@ -40,15 +40,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
   mirrored = 0;
   system = gActorSystemWork;
   decoderWasLoaded = 1;
-  // UB: gActorSystemWork is one pointer, not an array reaching the decoder
-  // cell.
-#ifdef UBFIX
   decodePicture = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
-#else
-  decodePicture = (SpriteDrawFn)(*(void *(*)[]) &
-                                 gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                   HEAP_SLOT_ACTOR_SYSTEM];
-#endif
   if (decodePicture == 0) {
     code = HeapSlot_Alloc(HEAP_SLOT_FRAME_SCRATCH,
                           (s32)Render_DecodePictureCodeSize);
@@ -56,13 +48,7 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
             (((u32)gRender_DecodePictureEnd - (u32)Render_DecodePicture) >> 2) |
                 (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
-#ifdef UBFIX
     decodePicture = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
-#else
-    decodePicture = (SpriteDrawFn)(*(void *(*)[]) &
-                                   gActorSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                     HEAP_SLOT_ACTOR_SYSTEM];
-#endif
     decoderWasLoaded = 0;
   }
 

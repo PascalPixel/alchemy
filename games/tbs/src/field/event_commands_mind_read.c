@@ -247,7 +247,7 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
   // Window mode 1: messages show as thoughts until
   // FieldPsynergy_RestoreMindReadPalette clears it.
-  ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
+  WINDOW_WORK->mindRead = 1;
   p = &BG_PLTT_COLOR(WINDOW_PALETTE, 1);
   *p = MIND_READ_GREY;
   p += 2;

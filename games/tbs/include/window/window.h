@@ -705,8 +705,8 @@ void SelectionMenu_LoadLargeIcon(void);
 void Resource_ResetPendingTransfer(void);
 s32 FieldMenu_Run(void);
 void PartyStatus_OpenAndWait(void);
-// The matching build calls this before its void definition and uses the
-// result. FieldMenu_Run keeps that form outside UBFIX.
+// UB: FieldMenu_Run calls it with no prototype and uses the result, though it
+// returns nothing.
 #ifdef UBFIX
 void PartyStatus_CloseWithMenu(void);
 #endif

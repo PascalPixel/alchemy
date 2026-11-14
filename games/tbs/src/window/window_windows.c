@@ -72,8 +72,8 @@ void WindowSystem_InitField(void) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_WINDOW, sizeof(struct WindowWork));
 #if TBS_PATCH_1
   fill = 0;
-  Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(struct WindowWork) / 4),
-          REG_DMA3);
+  Dma_Set((const void *)&fill, work,
+          DMA_FILL_WORDS(sizeof(struct WindowWork) / 4), REG_DMA3);
 #else
   Iwram_ClearWords(work, sizeof(struct WindowWork));
 #endif
@@ -82,7 +82,7 @@ void WindowSystem_InitField(void) {
   work->textPalette = WINDOW_PALETTE;
 #if TBS_PATCH_1
   fill = WINDOW_TILE_PAIR(WINDOW_TILE_BLANK);
-  Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4),
+  Dma_Set((const void *)&fill, work, DMA_FILL_WORDS(sizeof(work->tilemap) / 4),
           REG_DMA3);
 #else
   Iwram_FillWords(work, sizeof(work->tilemap),
@@ -120,8 +120,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
                                                   sizeof(struct WindowWork));
 #if TBS_PATCH_1
   fill = 0;
-  Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(struct WindowWork) / 4),
-          REG_DMA3);
+  Dma_Set((const void *)&fill, work,
+          DMA_FILL_WORDS(sizeof(struct WindowWork) / 4), REG_DMA3);
 #else
   Iwram_ClearWords(work, sizeof(struct WindowWork));
 #endif
@@ -131,7 +131,7 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   work->textPalette = WINDOW_PALETTE;
 #if TBS_PATCH_1
   fill = WINDOW_TILE_PAIR(WINDOW_TILE_BLANK);
-  Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4),
+  Dma_Set((const void *)&fill, work, DMA_FILL_WORDS(sizeof(work->tilemap) / 4),
           REG_DMA3);
 #else
   Iwram_FillWords(work, sizeof(work->tilemap),

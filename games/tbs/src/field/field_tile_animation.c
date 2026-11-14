@@ -238,8 +238,7 @@ void BlendScript_Start(u16 *script) {
   hasScript = 0;
   zero = 0;
   blend = &((struct MapGridScrollWork *)gMapGridWork[0])->blend;
-  Dma_Set((const void *)&zero, blend,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
+  Dma_Set((const void *)&zero, blend, DMA_FILL_WORDS(3), REG_DMA3);
   if (*script != BLEND_SCRIPT_LOOP) {
     blend->script = script;
     blend->cursor = script;

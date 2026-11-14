@@ -335,10 +335,6 @@ enum {
 #define TILE_HFLIP 0x400
 #define TILE_VFLIP 0x800
 
-/// The DMA control word that fills count words from one fixed source word.
-#define DMA_FILL32(count)                                                      \
-  ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (count))
-
 /// How a window sprite moves (struct WindowSprite.motion), run each frame
 /// by WindowSprite_UpdateAll. 0 is a free window sprite.
 enum {

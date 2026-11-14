@@ -355,10 +355,8 @@ static void CottageRoomsA_LeaveToValePlazaNorth(void) {
 
 /// Sets up a house of Vale as the party arrives.
 s32 Scene_Initialize(void) {
-  // The heap slots from the field's on.
-  void **slots = (void **)&gFieldWork;
 
-  ((struct FieldWork *)slots[0])->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -378,13 +376,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 0, 0);
     Actor_SetPosition(ACTOR_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
-    // UB: the blend's slot is read past gFieldWork, a single pointer.
-#ifdef UBFIX
     ((struct FieldBlendWork *)gHeapSlots[HEAP_SLOT_FIELD_BLEND])->loud = 1;
-#else
-    ((struct FieldBlendWork *)slots[HEAP_SLOT_FIELD_BLEND - HEAP_SLOT_FIELD])
-        ->loud = 1;
-#endif
     Weather_LastLightning();
     wait(30);
     Event_StartScreenTransition();

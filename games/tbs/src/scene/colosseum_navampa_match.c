@@ -771,25 +771,12 @@ static void ColosseumNavampaMatch_HaltWall(void) {
 /// northern opening.
 static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   struct Actor *actor;
-#ifndef UBFIX
-  s16 *gameWords;
-#endif
-  s32 *actorId;
   s32 z;
 
-#ifdef UBFIX
-  actorId = &gMainRoutineWork.leaderActorId;
-#else
-  // UB: the leader's id is found by indexing the main routine's work as
-  // halfwords and reading a word there.
-  gameWords = (s16 *)&gMainRoutineWork;
-  actorId = (s32 *)&gameWords[offsetof(struct MainRoutineWork, leaderActorId) /
-                              sizeof(s16)];
-#endif
-  actor = Actor_Get(*actorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   actor->acceleration = px(1);
   actor->speedLimit = px(2);
-  Actor_SetAttachedEffect(*actorId,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
   z = actor->z.fixed & FIELD_CELL_MASK;
@@ -802,22 +789,9 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
 /// southern opening.
 static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   struct Actor *actor;
-#ifndef UBFIX
-  s16 *gameWords;
-#endif
-  s32 *actorId;
   s32 z;
 
-#ifdef UBFIX
-  actorId = &gMainRoutineWork.leaderActorId;
-#else
-  // UB: the leader's id is found by indexing the main routine's work as
-  // halfwords and reading a word there.
-  gameWords = (s16 *)&gMainRoutineWork;
-  actorId = (s32 *)&gameWords[offsetof(struct MainRoutineWork, leaderActorId) /
-                              sizeof(s16)];
-#endif
-  actor = Actor_Get(*actorId);
+  actor = Actor_Get(gMainRoutineWork.leaderActorId);
   if (actor->x.fixed > px(664)) {
     actor->x.fixed = px(664);
   }
@@ -828,9 +802,9 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
                                 z + px(12));
   Actor_WaitForMove(actor);
-  Actor_SetAttachedEffect(*actorId,
+  Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_JumpDownLedge(*actorId, 6, 0);
+  FieldActor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
 }
 
 /// Unused: an empty function nothing refers to.

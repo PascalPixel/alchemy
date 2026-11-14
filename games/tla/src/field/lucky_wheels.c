@@ -408,8 +408,8 @@ void LuckyWheels_Update(void) {
 
   Random16();
 
-  keys = *(volatile u32 *)&gInput.held;
-  dpad = *(volatile u32 *)&gInput.held & KEYS_DPAD;
+  keys = gInput.held;
+  dpad = gInput.held & KEYS_DPAD;
   work->pressed = keys & ~work->keys;
   work->direction = dpad;
   if ((work->keys & 0xf0) == work->direction) {

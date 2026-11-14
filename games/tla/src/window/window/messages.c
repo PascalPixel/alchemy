@@ -293,15 +293,12 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 s32 Text_CheckPauseSkipped(struct UiChannelSlot *ch) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
-  /* FAKEMATCH(volatile): the held keys read through a volatile pointer. */
-  volatile u32 *held;
 
   if (work->busy != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancel = 1;
-  held = &gInput.held;
-  if (*held & (KEY_A | KEY_B | KEYS_SHOULDERS))
+  if (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancel = 1;
-  if (*held & KEY_B)
+  if (gInput.held & KEY_B)
     cancel = 1;
   if (cancel) {
     ch->countdown = 0;

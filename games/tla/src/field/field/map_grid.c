@@ -94,7 +94,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     collision = 0;
     // DEAD: the debug read of the held keys is never used.
     if (gDebugMode != 0)
-      (void)*(volatile u32 *)&gInput.held;
+      (void)gInput.held;
     actor->speedLimit = px(1) / 2;
     actor->acceleration = px(1) / 4;
     angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];

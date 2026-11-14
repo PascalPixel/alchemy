@@ -37,16 +37,12 @@ void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
 s32 Message_AllTyped(void);
 
-#define INPUT_HELD (gInput.held)
-
 void Test_ReceiveFlint(s32 message, s32 count) {
   s32 i;
   s32 frames;
   void *window;
   s32 typed;
-  volatile struct InputState *input;
 
-  /* FAKEMATCH(volatile): the input read through a volatile pointer. */
   window = Portrait_OpenWindow(206, 0, 0, 0);
   i = 0;
   if (i >= count)
@@ -58,29 +54,28 @@ loop:
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
   frames = 0;
-  if (INPUT_HELD & 3)
+  if (gInput.held & 3)
     goto shown;
   do {
     wait(1);
     frames++;
     if (frames > 59)
       goto shown;
-  } while (!(INPUT_HELD & 3));
+  } while (!(gInput.held & 3));
   for (;;) {
   shown:
     typed = Message_AllTyped();
-    input = (volatile struct InputState *)&gInput;
     if (typed != 0)
       break;
-    input->held = 1;
-    input->pressed = 1;
-    input->repeat = 1;
+    gInput.held = 1;
+    gInput.pressed = 1;
+    gInput.repeat = 1;
     wait(1);
   }
   frames = 0;
-  if (input->held & KEY_B)
+  if (gInput.held & KEY_B)
     goto done;
-  if (!(input->held & KEY_A))
+  if (!(gInput.held & KEY_A))
     goto hold;
   goto next;
 hold:
@@ -88,10 +83,9 @@ hold:
   frames++;
   if (frames > 9)
     goto next;
-  input = (volatile struct InputState *)&gInput;
-  if (input->held & KEY_B)
+  if (gInput.held & KEY_B)
     goto done;
-  if (!(input->held & KEY_A))
+  if (!(gInput.held & KEY_A))
     goto hold;
 next:
   message++;
@@ -415,7 +409,6 @@ struct Trigger gSceneEvents[] = {
     {0, 33, CONDITION_ALWAYS, (u32)(Func_02000664)},
     {TRIGGER_TABLE_END},
 };
-#undef INPUT_HELD
 
 // Overlay 0x6ba's code from Func_02000520 on, in ROM order.
 

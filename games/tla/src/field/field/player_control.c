@@ -297,12 +297,9 @@ s32 Field_RequestShortcut(u32 value) {
   if (GameFlag_Get(0x107) != 0) {
     event->result = 250;
   } else if (event->mode == 3) {
-    /* FAKEMATCH(volatile): the held keys. */
-    volatile u32 *held = &gInput.held;
-
-    if (*held & KEY_R)
+    if (gInput.held & KEY_R)
       event->result = 0xfc88;
-    else if (*held & KEY_L)
+    else if (gInput.held & KEY_L)
       event->result = 0xfc87;
   } else {
     switch (kind) {

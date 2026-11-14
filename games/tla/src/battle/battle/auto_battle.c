@@ -77,8 +77,7 @@ void BattleCamera_AdjustByShoulderKeys(void) {
   if ((gInput.held & KEY_L) != 0) {
     cam->yaw += 512;
   }
-  /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
-  if ((*(volatile u32 *)&gInput.held & KEY_R) != 0) {
+  if ((gInput.held & KEY_R) != 0) {
     cam->yaw -= 512;
   }
   if (trans->flag == 0) {

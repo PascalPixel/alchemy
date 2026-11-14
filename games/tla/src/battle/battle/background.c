@@ -483,8 +483,7 @@ s32 Battle_AdjustDebugValue(s32 value) {
   }
   if (gInput.held & KEY_SELECT)
     value = DEBUG_VALUE_SELECT;
-  /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
-  if (*(volatile u32 *)&gInput.held & KEY_R)
+  if (gInput.held & KEY_R)
     value = 399;
   return value;
 }

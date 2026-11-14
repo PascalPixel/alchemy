@@ -457,11 +457,9 @@ void BattleMessage_WaitForAdvance(void) {
     Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
-    /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
     if ((gInput.held & KEY_B) ||
         (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) ||
-        (frame > 15 &&
-         (*(volatile u32 *)&gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
+        (frame > 15 && (gInput.held & (KEY_A | KEY_B | KEYS_SHOULDERS))))
       break;
     wait(1);
   }

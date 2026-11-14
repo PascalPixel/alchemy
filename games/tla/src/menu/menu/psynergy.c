@@ -1178,9 +1178,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
             Text_DrawMessageAsTilesFar(MsgShortcutHelp, window, 0, 88);
           }
         }
-        /* FAKEMATCH(volatile): held read afresh for this test. */
-        if ((*(volatile u32 *)&gInput.held & KEY_SELECT) == 0 &&
-            shortcutHelp == 1) {
+        if ((gInput.held & KEY_SELECT) == 0 && shortcutHelp == 1) {
           shortcutHelp = 0;
           menu->flags &= ~2;
           Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);

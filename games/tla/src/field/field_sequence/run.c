@@ -399,8 +399,8 @@ s32 FieldSequence_Run(void) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         WorldMap_Freeze();
         GameFlag_Set(262);
-        if (gDebugMode && (*(volatile u32 *)&gInput.held & KEY_B) != 0 &&
-            ((*(volatile u32 *)&gInput.held & KEY_SELECT) != 0)) {
+        if (gDebugMode && (gInput.held & KEY_B) != 0 &&
+            ((gInput.held & KEY_SELECT) != 0)) {
           DebugFlagEditor_RunFar();
         } else if (GameFlag_Get(263)) {
           work->raisedEvent = 250;

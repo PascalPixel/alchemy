@@ -203,8 +203,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     s32 index;
     s32 id;
 
-    /* FAKEMATCH(volatile): the held keys reread through a volatile pointer. */
-    if (KEYS_HELD & 4)
+    if (gInput.held & KEY_SELECT)
       enemy = 0;
     for (index = 0;; index++) {
       if (enemy)

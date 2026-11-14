@@ -82,8 +82,6 @@ void Shop_Run(s32, s32);
 void TileCopies_CopyTouchedCells(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
 
-#define INPUT_HELD (*(volatile u32 *)&gInput.held)
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -124,17 +122,17 @@ void MenuTest_BrowseMessageRange(s32 message, s32 count) {
     MenuTest_ShowMessageAndWait(message);
     goto check;
   wait:
-    if (INPUT_HELD != 0)
+    if (gInput.held != 0)
       goto next;
     System_Wait(1);
   check:
-    if (INPUT_HELD & 2)
+    if (gInput.held & 2)
       goto done;
-    if ((INPUT_HELD & 1) || (INPUT_HELD & 0x80)) {
+    if ((gInput.held & 1) || (gInput.held & 0x80)) {
       message++;
       goto next;
     }
-    if (!(INPUT_HELD & 0x40))
+    if (!(gInput.held & 0x40))
       goto wait;
     message--;
   next:;
@@ -802,7 +800,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(Func_02000744)},
     {TRIGGER_TABLE_END},
 };
-#undef INPUT_HELD
+#undef gInput.held
 
 // Overlay 0x6b8's code from Func_02000c4c on, in ROM order.
 

@@ -1788,23 +1788,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/cracked_tiles_find.h"
 
-void Leader_CenterInCell(void) {
-  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = object->x;
-  s32 z = object->z;
-
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
-
-  x >>= 20;
-  z >>= 20;
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                          (z << 4) + 8);
-  System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(object, (x << 20) + 0x80000, object->y,
-                                       (z << 20) + 0x80000);
-  FieldEvent_Wait(4);
-  FieldCamera_GetActor()->y -= px(8);
-}
+#include "shared/leader_center_in_cell.h"
 
 // Map_CopyCellsRect through this overlay's import.
 

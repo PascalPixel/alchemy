@@ -546,23 +546,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
-void Leader_CenterInCell(void) {
-  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 x = leader->x;
-  s32 z = leader->z;
-
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 4);
-
-  x >>= 20;
-  z >>= 20;
-  Actor_MoveToAndWaitById(gMainRoutineWork.currentOwner, (x << 4) + 8,
-                          (z << 4) + 8);
-  System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(leader, (x << 20) + px(8), leader->y,
-                                       (z << 20) + px(8));
-  FieldEvent_Wait(4);
-  FieldCamera_GetActor()->y -= px(8);
-}
+#include "shared/leader_center_in_cell.h"
 
 // Centers the leader on its cell, plays sound 161 and copies the cell below
 // the table's source cell over the leader's, keeping the source column's and

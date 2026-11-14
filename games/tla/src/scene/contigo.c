@@ -30,12 +30,7 @@ void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
                                  s32 destX, s32 destY, s32 mode);
 
 static inline void Contigo_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH(pin): the height pinned to r1. */
-  register s32 h __asm__("r1") = height;
-  s32 f = frames;
-  s32 a = actor;
-
-  Actor_ShowEmoteById(a, h, f);
+  Actor_ShowEmoteById(actor, height, frames);
 }
 
 static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,

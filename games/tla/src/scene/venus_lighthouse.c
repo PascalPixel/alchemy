@@ -409,14 +409,8 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
   Actor_RefreshSelectorById(leader);
   Actor_SetSpriteColor(Actor_GetById__floor(leader), 6);
-  {
-    /* FAKEMATCH(pin): the leader pinned to r0. */
-    register s32 who __asm__("r0");
-
-    actor->speed = 0x40000;
-    who = leader;
-    Actor_SetSpeed(who, 4);
-  }
+  actor->speed = 0x40000;
+  Actor_SetSpeed(leader, 4);
   if (*(s32 *)&actor->zLow >> 20 <= 54) {
     Actor_GetById__floor(leader)->selectFlags &= ~1;
     z = 210;

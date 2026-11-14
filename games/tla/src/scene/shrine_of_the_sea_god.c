@@ -131,12 +131,7 @@ void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 static inline void ShrineOfTheSeaGod_Jump(s32 actor, s32 height, s32 frames) {
-  /* FAKEMATCH(pin): the height pinned to r1. */
-  register s32 h __asm__("r1") = height;
-  /* FAKEMATCH(pin): the frames pinned to r2 with the height above. */
-  register s32 f __asm__("r2") = frames;
-
-  Actor_ShowEmoteById(actor, h, f);
+  Actor_ShowEmoteById(actor, height, frames);
 }
 
 static inline void ShrineOfTheSeaGod_ObjSpeed(s32 actor, s32 speed,

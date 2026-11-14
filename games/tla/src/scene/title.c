@@ -200,12 +200,7 @@ void Title_RevealSpriteRow(void) {
 
   p = gTitle_SpriteRow;
   w = gTitle_SpriteRow[0].attr;
-  {
-    register u32 offset asm("r3") =
-        gResourceTableEntries[gTitleVramBlock].offset;
-
-    tile = offset >> 5;
-  }
+  tile = gResourceTableEntries[gTitleVramBlock].offset >> 5;
   i = 0;
   y = 0x88;
   do {

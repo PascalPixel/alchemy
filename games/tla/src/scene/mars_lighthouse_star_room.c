@@ -1436,7 +1436,6 @@ void Func_02001d7c(void) {
   animation->flag11 = 1;
 }
 
-
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 void Actor_Release(struct Actor *object);
 
@@ -2039,7 +2038,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #include "shared/leader_slide_on_ice_ahead.h"
 
 #include "../field/object/set_sprite_priority.c"
-
 
 #include "../field/field_effect/move.c"
 

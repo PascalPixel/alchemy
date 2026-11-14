@@ -2667,7 +2667,6 @@ test:
 
 #include "../field/field_effect/advance_motion_priority.c"
 
-
 #undef CLOSED_BLEND
 // Magma Rock's inside: its falling rocks and rubble, and its tables.
 

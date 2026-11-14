@@ -979,10 +979,10 @@ extern u32 gChampaCliffCaves_BriggsSecondScript[];
 extern u32 gChampaCliffCaves_AvimanderScript[];
 extern u32 gChampaCliffCaves_BriggsLastScript[];
 
-/// The scene that opens with MsgMySalamanderYou: persons 8 and 11 talk and
-/// move with the party through three yes-or-no answers (each counted in the
-/// event work), person 14 is brought in and the others follow it, then
-/// persons 5, 6, 7 and 15 join the leader and flag 0x97e is set.
+/// Briggs mourns his beaten salamander ("My salamander! You... beat my
+/// salamander..."), talks with the party through three answers, each counted
+/// in the event work, and the party gathers again; the Avimander stays beaten
+/// (FLAG_CHAMPA_AVIMANDER_BEATEN).
 void ChampaCliffCaves_BriggsMournsSalamander(void) {
   const u8 *scriptA, *scriptB, *scriptC, *scriptD;
   s32 *owner;

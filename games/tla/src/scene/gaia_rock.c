@@ -36,6 +36,11 @@
 #include "objcmd.h"
 #include "text/msg_ids.h"
 
+/// The two pillars Moved into the gaps: the first dropped in at the west end,
+/// the second at (79, 12).
+#define FLAG_FIRST_PILLAR_DROPPED 0x920
+#define FLAG_SECOND_PILLAR_DROPPED 0x921
+
 struct Actor;
 
 extern s16 gGaiaRock_Room1Regions[];
@@ -164,21 +169,20 @@ void GaiaRock_StartMovingPillar(void) {
 #define DROP_OBJECT(id) GaiaRock_DropPillar(id, 181)
 #endif
 
-/// Copies cells by where the object with the given id has moved, its position
-/// counted in 8-pixel steps: object 16, at x 11 or less while flag 0x920 is
-/// clear, drops and sets the flag; object 19, while flag 0x921 is clear, copies
-/// cells at x 77, drops at (79, 12) and at x 81 sets the flag.
+/// A pillar set down after a Move: the first drops into its gap once Moved far
+/// enough west, the second bridges its gap as it passes over it to (79, 12).
 void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   struct Actor *p;
 
   MapGrid_CopyCellAttributes(8, 90, 1, 1, 8, 91);
-  if (id == 16 && Event_GetFlag(0x920) == 0 && (object->x >> 19) <= 11) {
+  if (id == 16 && Event_GetFlag(FLAG_FIRST_PILLAR_DROPPED) == 0 &&
+      (object->x >> 19) <= 11) {
     DROP_OBJECT_CALLED(16);
-    Event_SetFlag(0x920);
+    Event_SetFlag(FLAG_FIRST_PILLAR_DROPPED);
     MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
   }
-  if (id == 19 && Event_GetFlag(0x921) == 0) {
+  if (id == 19 && Event_GetFlag(FLAG_SECOND_PILLAR_DROPPED) == 0) {
     if ((object->x >> 19) == 77)
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
     /* FAKEMATCH(temporary): the object read again through p for the last two
@@ -189,7 +193,7 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(38, 46, 1, 1, 39, 46);
     }
     if ((p->x >> 19) == 81) {
-      Event_SetFlag(0x921);
+      Event_SetFlag(FLAG_SECOND_PILLAR_DROPPED);
       {
         s32 row = 46;
 
@@ -462,7 +466,7 @@ s32 Scene_Initialize(void) {
     Call2((void (*)())HangingVine_Place, 13, 1);
     Call2((void (*)())HangingVine_Place, 14, 1);
     HangingVine_Place(15, 1);
-    if (GameFlag_Get(0x920)) {
+    if (GameFlag_Get(FLAG_FIRST_PILLAR_DROPPED)) {
       actor = Actor_GetById(16);
       actor->motionFlags = 0;
       actor->x = px(88);
@@ -472,7 +476,7 @@ s32 Scene_Initialize(void) {
     }
     actor = Actor_GetById(19);
     actor->priorityFlags = 0;
-    if (GameFlag_Get(0x921)) {
+    if (GameFlag_Get(FLAG_SECOND_PILLAR_DROPPED)) {
       actor->motionFlags = 0;
       actor->x = px(648);
       actor->y = px(64);
@@ -781,9 +785,9 @@ struct Trigger gGaiaRock_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 15, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(GaiaRock_CycloneClearsWall)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, 0x920, EVENT(GaiaRock_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x920, EVENT(GaiaRock_FinishMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x921, EVENT(GaiaRock_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 16, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, FLAG_SECOND_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(GaiaRock_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };

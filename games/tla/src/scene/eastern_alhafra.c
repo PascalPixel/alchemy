@@ -1139,8 +1139,8 @@ extern u32 gEasternAlhafra_PuffScript[];
 void Actor_StartScript(struct SpawnObject *object, const void *script);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority);
 
-/// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
-/// its timer set.
+/// Spawns a puff (actor type 0x1e8) at x, y, z, turned to value, for timer
+/// frames.
 void EasternAlhafra_SpawnPuff(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   struct SpawnObject *object;
   struct FieldSprite *sprite;

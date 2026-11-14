@@ -289,10 +289,9 @@ void IzumoInteriors_HeroesComeFromTheWest(void) {
   IzumoInteriors_RecognizeTheHeroes(1);
 }
 
-/// The scene that opens with MsgWarriorsAppearedFrom: the warriors confront
-/// the party in front of persons 20, 21 and 22 through three yes-or-no
-/// answers, then persons 5, 6, 7 and 23 join the leader and flags
-/// FLAG_IZUMO_RECOGNIZED_THE_HEROES and 0x350 are set. Mode 0 and mode 1
+/// Izumo hears that warriors appeared from within Mt. Mikage and recognizes
+/// the party as the heroes, through three answers; the party gathers again
+/// and FLAG_IZUMO_RECOGNIZED_THE_HEROES is set. Mode 0 and mode 1
 /// (IzumoInteriors_HeroesComeFromTheEast and
 /// IzumoInteriors_HeroesComeFromTheWest) start the party at different spots.
 void IzumoInteriors_RecognizeTheHeroes(s32 mode) {

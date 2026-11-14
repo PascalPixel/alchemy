@@ -112,7 +112,7 @@ void MadraInteriors_AskWillWeBeSafe(void) {
 void MadraInteriors_TalkToInnkeeper(void) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(1, 22);
   } else {
 #if !TLA_PATCH_1
@@ -155,7 +155,7 @@ void MadraInteriors_TalkToInnkeeper(void) {
 void MadraInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))

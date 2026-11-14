@@ -201,7 +201,7 @@ s32 Inn_CheckIn(s32 mode, s32 objectId);
 void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(1, actor);
   } else {
     Event_Start();
@@ -215,7 +215,7 @@ void DailaInteriors_TalkToWeaponMerchant(s32 actor) {
 void DailaInteriors_TalkToArmorMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(2, actor);
   } else {
     Event_Start();
@@ -231,7 +231,7 @@ void DailaInteriors_TalkToArmorMerchant(s32 actor) {
 void DailaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(0, actor);
   } else {
     Event_Start();
@@ -246,7 +246,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
   s32 msg;
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     if (GameFlag_Get(FLAG_DAILA_HEALER_SENT_TO_POI) == 0) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -288,7 +288,7 @@ void DailaInteriors_TalkToHealer(s32 actor) {
 void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -302,7 +302,7 @@ void DailaInteriors_TalkToHealerOnceTaviIsRescued(s32 actor) {
 void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(1, actor);
   } else {
     Event_Start();
@@ -316,7 +316,7 @@ void DailaInteriors_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
 void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(2, actor);
   } else {
     Event_Start();
@@ -331,7 +331,7 @@ void DailaInteriors_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
 void DailaInteriors_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_WEST) {
     Inn_CheckIn(0, actor);
   } else {
     Event_Start();

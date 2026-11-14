@@ -205,7 +205,7 @@ void Daila_TalkBoat(void) {
 void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(3, keeper);
   } else {
     Event_Start();
@@ -223,7 +223,7 @@ void Daila_TalkHip(void) {
   Event_ResolvePendingActions(0);
   msg = (s32)MsgDailaHurtHip;
   Event_SetMessageId(msg);
-  FieldMessage_ShowAtActor(12, 0);
+  FieldMessage_ShowAtActor(ACTOR_FALLEN_OLD_MAN, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -238,7 +238,7 @@ void Daila_TalkHip(void) {
 void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(3, keeper);
   } else {
     Event_Start();
@@ -462,12 +462,12 @@ void Actor_SetWideSprite(s32 actor, s32 flag);
 #include "shared/scene_raise_held_actor.h"
 
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = 0x100;
+  gFieldWork->transition = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila1)
-    Actor_FallOverById(12, 0);
+    Actor_FallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
   else if (gMainRoutineWork.scene == (s32)&SceneId_Daila2)
     FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
-  Actor_SetSpritePriority(21, 1);
+  Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
   if (gMainRoutineWork.scene == (s32)&SceneId_Daila2 &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
     Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, 0);

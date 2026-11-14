@@ -102,7 +102,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void IzumoInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -121,7 +121,7 @@ void IzumoInteriors_TalkToHealer(s32 actor) {
 void IzumoInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(9, actor);
   } else {
     Event_Start();
@@ -138,7 +138,7 @@ void IzumoInteriors_TalkToInnkeeper(s32 actor) {
 void IzumoInteriors_TalkToMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(24, actor);
   } else {
     Event_Start();

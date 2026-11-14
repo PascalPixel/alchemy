@@ -569,9 +569,9 @@ const struct Trigger *Scene_GetEvents(void) {
 void Loho_ReadInnSign(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
-  if (facing == 0xc000)
+  if (facing == FACING_NORTH)
     FieldMessage_Show((s32)MsgLoho57, 1);
 }
 
@@ -601,9 +601,9 @@ void Loho_TalkAboutCommerce(void) {
 void Loho_TalkAboutCannon(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
-  if (facing == 0xc000) {
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     if (Event_GetFlag(0xa5f))

@@ -11,6 +11,12 @@
 #include "scene_tables.h"
 #include "system/vector3.h"
 
+/// A facing rounded to the nearest of east, south, west and north, as The
+/// Broken Seal's: a shopkeeper sells only to a leader who faces him across the
+/// counter, FACING_NORTH.
+#define FACING_NEAREST_CARDINAL(facing)                                        \
+  ((u16)(((facing) + TRIG_TURN / 8) & ~0x3fff))
+
 struct Actor;
 struct FieldEffect;
 struct FieldPosition;

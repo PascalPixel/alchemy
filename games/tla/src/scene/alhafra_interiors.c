@@ -141,7 +141,7 @@ void AlhafraInteriors_MeetAlex(void) {
 void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(9, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors14);
@@ -153,7 +153,7 @@ void AlhafraInteriors_TalkToItemMerchant(s32 actor) {
 void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(2, actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors16);
@@ -165,7 +165,7 @@ void AlhafraInteriors_TalkToInnkeeper(s32 actor) {
 void AlhafraInteriors_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_SetMessageId((s32)MsgAlhafraInteriors49);

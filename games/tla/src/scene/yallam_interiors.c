@@ -238,7 +238,7 @@ void YallamInteriors_TalkToWeaponMerchant(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(20, actor);
   } else {
     Event_Start();
@@ -256,7 +256,7 @@ void YallamInteriors_TalkToArmorMerchant(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(21, actor);
   } else {
     Event_Start();
@@ -274,7 +274,7 @@ void YallamInteriors_TalkToItemMerchant(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(22, actor);
   } else {
     Event_Start();
@@ -292,7 +292,7 @@ void YallamInteriors_TalkToInnkeeper(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(7, actor);
     Event_ClearFlag(FLAG_AREA_TEMP_01);
   } else {
@@ -309,7 +309,7 @@ void YallamInteriors_TalkToHealer(s32 actor) {
                     gMainRoutineWork.currentOwner))
                    ->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();

@@ -80,7 +80,7 @@ const struct Trigger *Scene_GetEvents(void) {
 void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(14, actor);
   } else {
     Event_Start();
@@ -94,7 +94,7 @@ void NaribweInteriors_RecommendFortuneTeller(s32 actor) {
 void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(14, actor);
   } else {
     Event_Start();
@@ -108,7 +108,7 @@ void NaribweInteriors_RecommendFortuneTellerOnReturn(s32 actor) {
 void NaribweInteriors_SendToFortuneTeller(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(15, actor);
   } else {
     Event_Start();
@@ -122,7 +122,7 @@ void NaribweInteriors_SendToFortuneTeller(s32 actor) {
 void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Shop_Run(15, actor);
   } else {
     Event_Start();
@@ -137,7 +137,7 @@ void NaribweInteriors_SendToFortuneTellerOnReturn(s32 actor) {
 void NaribweInteriors_TalkAboutCooking(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(5, actor);
   } else {
     Event_Start();
@@ -151,7 +151,7 @@ void NaribweInteriors_TalkAboutCooking(s32 actor) {
 void NaribweInteriors_TalkAboutTravelers(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
-  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
     Inn_CheckIn(5, actor);
   } else {
     Event_Start();

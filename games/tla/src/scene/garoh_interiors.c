@@ -29,6 +29,7 @@
 #include "scene_ids.h"
 #include "field/event_inline.h"
 #include "text/msg_ids.h"
+#include "module/scene/scene.h"
 
 /// The inn's actors, numbering the rows of gGarohInteriors_InnActorPlacements.
 enum GarohInnActorId {
@@ -120,7 +121,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 void GarohInteriors_TalkToWeaponMerchant(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH && GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
     Shop_Run(10, actor);
@@ -142,7 +143,7 @@ void GarohInteriors_TalkToWeaponMerchant(s32 actor) {
 void GarohInteriors_TalkToArmorMerchant(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH && GameFlag_Get(FLAG_GAROH_SECRET_SHARED)) {
     Shop_Run(11, actor);
@@ -162,7 +163,7 @@ void GarohInteriors_TalkToArmorMerchant(s32 actor) {
 void GarohInteriors_TalkToItemMerchant(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH) {
     Shop_Run(12, actor);
@@ -193,7 +194,7 @@ void GarohInteriors_TalkToItemMerchant(s32 actor) {
 void GarohInteriors_TalkToInnkeeper(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(leader->facing);
 
   if (facing == FACING_NORTH) {
     Inn_CheckIn(3, actor);

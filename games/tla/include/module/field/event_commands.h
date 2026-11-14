@@ -7,6 +7,7 @@
 #include "types.h"
 #include "effect_sprite.h"
 #include "field/field_particle.h"
+#include "field/world_map_marker.h"
 
 struct Actor;
 struct AnimationEntry;
@@ -442,24 +443,10 @@ struct WorldMapPlace {
   s16 unk02;
   s16 x;
   s16 z;
-  u8 unk08[12];
-};
-
-struct WorldMapMarker {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
+  u8 unk08[4];
+  s16 name;         ///< the place name's message
+  s16 nameEntrance; ///< the name's message for the entrance
+  u8 unk10[4];
 };
 
 // A halfword typed beside a word, for the FAKEMATCH that reads the name box's

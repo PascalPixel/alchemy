@@ -131,44 +131,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4;
- * f0ec2b8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/world_map_picture.c:208: structure
- * has no member named `scrollX'. */
-struct WorldMapWork__f0ec4d4 {
-  u16 vramBlock;
-  u16 windowSlot;
-  s32 x;
-  s32 z;
-  u8 unk0c[6];
-  s16 shown;
-  u8 unk14[4];
-  s32 speed;
-  void *window;
-  struct WorldMapMarker markers[129];
-  u8 unk62c[4];
-  s32 scrollX;
-  s32 scrollZ;
-};
-
-/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4;
- * f0ec2b8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands/radial/world_map_picture.c:281: structure
- * has no member named `name'. */
-struct WorldMapPlace__f0ec4d4 {
-  u8 flag;
-  u8 value;
-  s16 unk02;
-  s16 x;
-  s16 z;
-  u8 unk08[4];
-  s16 name;
-  s16 nameEntrance;
-  u8 unk10[4];
-};
-
 #define WORK Ram_WorldMapWork
 #define NAME_BOX_X Ram_WorldMapNameBox[0]
 #define NAME_BOX_Y Ram_WorldMapNameBox[1]
@@ -181,7 +143,7 @@ void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
 void WorldPicture_UpdateMarkers(void) {
-  struct WorldMapWork__f0ec4d4 *work;
+  struct WorldMapWork *work;
   struct WorldMapMarker *marker;
   s32 tileBase;
   s32 blend;
@@ -193,10 +155,10 @@ void WorldPicture_UpdateMarkers(void) {
   s32 nearestName;
   s32 nearestEntrance;
   s32 entrance;
-  struct WorldMapPlace__f0ec4d4 *places;
+  struct WorldMapPlace *places;
   s32 scrollX;
   s32 scrollY;
-  struct WorldMapPlace__f0ec4d4 *place;
+  struct WorldMapPlace *place;
   s32 width;
   s32 height;
   s32 placeX;

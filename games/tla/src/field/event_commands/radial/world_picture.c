@@ -23,7 +23,7 @@ void WorldPicture_Initialize(void) {
   s32 left;
 
   markerTiles = Heap_AllocEwram(32);
-  oam = work->markers;
+  oam = (u32 *)work->markers;
   Actor_GetById(Party_GetLeaderActor());
   screenX = 0;
   screenY = 0;

@@ -36,28 +36,6 @@ s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
 s32 Leader_StepOffTightrope(void);
 
-static __inline__ s32 Unit_ClampGauge(s32 ratio) {
-  s32 clamped;
-
-  if (ratio > 0x4000)
-    clamped = 0x4000;
-  else if (ratio < 0)
-    clamped = 0;
-  else
-    clamped = ratio;
-  return clamped;
-}
-
-#define Unit_UpdateGauges(unit)                                                \
-  do {                                                                         \
-    (unit)->hpGauge = Unit_ClampGauge(((unit)->hp << 14) / (unit)->maxHp);     \
-    if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
-      (unit)->hpGauge = 1;                                                     \
-    (unit)->ppGauge = Unit_ClampGauge(((unit)->pp << 14) / (unit)->maxPp);     \
-    if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
-      (unit)->ppGauge = 1;                                                     \
-  } while (0)
-
 #define HAZARD (*(struct HazardView *)&gMainRoutineWork)
 #define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
 

@@ -47,19 +47,6 @@ struct EventWordWork {
   s32 word10;
 };
 
-struct OwnerVitals {
-  u8 unk000[20];
-  s16 hpRatio;
-  s16 ppRatio;
-  u8 unk018[28];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  u8 unk03c[0x131 - 60];
-  u8 status;
-};
-
 struct ItemHead {
   u8 unk00[3];
   u8 flags;

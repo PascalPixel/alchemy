@@ -59,9 +59,8 @@ void BattleEffect_InitializeTilemapAndFlushQueue(void) {
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
 
-#define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
-#define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
-
+#define HEAP_BLITTER 104
+#define HEAP_BLITTER_ALTERNATE 188
 #define FORMATION_THORN_VINES 645 // eight objects
 
 static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {

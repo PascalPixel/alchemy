@@ -831,7 +831,7 @@ void BattleMotion_ApplyKnockbackFar(s32 actor, s32 mode);
 void Palette_LoadBasicSpriteColors(void);
 
 /// Iris's teardown: sets each target back on the ground at the battle
-/// origin with the usual bounce (The Broken Seal's 0xab85 motion strength)
+/// origin with the usual bounce
 /// and restarts its idle motion, ends the presentation transition, centres the
 /// camera at (120, 120), reloads the battle palette and redraws the battle's
 /// own backdrop over the summon's.
@@ -855,7 +855,7 @@ void Iris_RestoreBattle(void) {
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
   Palette_LoadBasicSpriteColors();
-  // The battle's background (The Broken Seal's battle->background).
+  // The battle's background.
   BattleBackground_LoadFar(1, *(u16 *)battle->unk670, 24);
 }
 #undef HI

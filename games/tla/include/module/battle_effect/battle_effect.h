@@ -83,8 +83,7 @@ void Canvas_BlitAtFoot(void *, s32, s32, s32);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // ☀️ SpawnObjects
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -101,13 +100,11 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 extern u8 Data_02011000[];
 extern u8
     Data_02012000[]; // the crystal texture and the flashes, after the map cells
-extern u16
-    gBattleEffect_MotePictures[]; // ☀️ gBattleEffect_MotePictures: dot sizes 1
-                                  // to 10, cell offsets in the sheet
+extern u16 gBattleEffect_MotePictures[]; // dot sizes 1
+                                         // to 10, cell offsets in the sheet
 extern u16 gBattleEffect_GlintPictures[];
-extern u8 gBattleEffect_GlintPictureWidths[]; // ☀️ gBattleEffect_GlintCellWidths
-extern u8
-    gBattleEffect_GlintPictureHeights[]; // ☀️ gBattleEffect_GlintCellHeights
+extern u8 gBattleEffect_GlintPictureWidths[];
+extern u8 gBattleEffect_GlintPictureHeights[];
 extern const u8 gBattleEffect_TaperedBeamCorners[];
 extern const u8 gBattleEffect_BeamCorners[];
 extern const u8 gBattleEffect_GroundSquareCorners[]; // a quad's four corners, x
@@ -183,10 +180,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                                      s32 mode);
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 void Palette_MirrorBgColors(void);       // mode 3 only
-extern s32 gPrism_ShardPictures[];       // ☀️ gPrism_ShardOffsets
+extern s32 gPrism_ShardPictures[];
 extern u8 gPrism_ShardWidths[];
-extern u8 gPrism_ShardHeights[]; // ☀️ gPrism_ShardHeights
-extern u8 gPrism_ShardStarts[];  // ☀️ gPrism_ShardStarts: x, y for each shard
+extern u8 gPrism_ShardHeights[];
+extern u8 gPrism_ShardStarts[]; // x, y for each shard
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x,
@@ -316,37 +313,37 @@ extern const u8 gLiquifier_SplashCorners[];
 extern const u8 gCanvasBurst_FlamePictures[];
 void BattleEffect_RunDrainMotes(struct BattleEffectArgument *effect, s32 mode);
 extern u8 gCybele_ObjectPoses[];
-extern u16 gCybele_ThornPictures[]; // ☀️ gCybele_ThornOffsets
-extern u8 gCybele_ThornWidths[];    // ☀️ gCybele_ThornWidths
-extern u8 gCybele_ThornHeights[];   // ☀️ gCybele_ThornHeights
+extern u16 gCybele_ThornPictures[];
+extern u8 gCybele_ThornWidths[];
+extern u8 gCybele_ThornHeights[];
 extern u16 gCybele_FlowerPictures[];
 extern u8 gCybele_FlowerSizes[];
-extern u16 gCybele_ChipPictures[]; // ☀️ the second gCybele_ThornOffsets
-extern u8 gCybele_ChipWidths[];    // ☀️ the second gCybele_ThornWidths
-extern u8 gCybele_ChipHeights[];   // ☀️ the second gCybele_ThornHeights
+extern u16 gCybele_ChipPictures[];
+extern u8 gCybele_ChipWidths[];
+extern u8 gCybele_ChipHeights[];
 extern u16 gCybele_SparkPictures[];
 extern u8 gCybele_SparkSizes[];
 extern u16 gCybele_BlastPictures[];
-extern u16 gCybele_BlastSizes[]; // ☀️ gCybele_EmberSizes
+extern u16 gCybele_BlastSizes[];
 extern u8 gBoreas_Points[][2];
 extern s8 gBoreas_ShakeOffsets[];
-extern u16 gBoreas_CrystalPictures[]; // ☀️ gBoreas_RockCells
-extern u8 gBoreas_CrystalWidths[];    // ☀️ gBoreas_RockWidths
-extern u8 gBoreas_CrystalHeights[];   // ☀️ gBoreas_RockHeights
+extern u16 gBoreas_CrystalPictures[];
+extern u8 gBoreas_CrystalWidths[];
+extern u8 gBoreas_CrystalHeights[];
 extern u8 gBoreas_Animations[];
-extern struct Scale gBoreas_UnitScale; // ☀️ gBattleFx10_UnitScale
+extern struct Scale gBoreas_UnitScale;
 extern u16 gBoreas_DebrisPictures[];
 extern u8 gBoreas_DebrisWidths[];
 extern u8 gBoreas_DebrisHeights[];
 extern u16 gBoreas_SprayPictures[];
-extern u8 gBoreas_SprayWidths[];            // ☀️ gBoreas_SprayWidths
-extern u8 gBoreas_SprayHeights[];           // ☀️ gBoreas_SprayHeights
-extern u16 gBoreas_RisingCrystalPictures[]; // ☀️ gBoreas_BoulderCells
-extern u8 gBoreas_RisingCrystalWidths[];    // ☀️ gBoreas_BoulderWidths
-extern u8 gBoreas_RisingCrystalHeights[];   // ☀️ gBoreas_BoulderHeights
-extern u16 gBoreas_FallPictures[];          // ☀️ gBoreas_FallCells
-extern u8 gBoreas_FallWidths[];             // ☀️ gBoreas_FallWidths
-extern u8 gBoreas_FallHeights[];            // ☀️ gBoreas_FallHeights
+extern u8 gBoreas_SprayWidths[];
+extern u8 gBoreas_SprayHeights[];
+extern u16 gBoreas_RisingCrystalPictures[];
+extern u8 gBoreas_RisingCrystalWidths[];
+extern u8 gBoreas_RisingCrystalHeights[];
+extern u16 gBoreas_FallPictures[];
+extern u8 gBoreas_FallWidths[];
+extern u8 gBoreas_FallHeights[];
 extern s32 gDrain_Gravities[];
 extern u8 gDrainMotes_Sizes[]; // the mote size by mode
 void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode);
@@ -389,14 +386,14 @@ extern u8 gGrowth_PillarWidths[];    // _PillarWidths
 extern u16 gGrowth_PuffPictures[];   // _PuffCells
 extern s8 gGrowth_PuffWidths[];      // _PuffWidths
 extern u8 gGrowth_PuffHeights[];     // _PuffHeights
-// The Broken Seal's table of this name: each vine's x about the
+// Each vine's x about the
 // middle of the targets.
 extern const s8 gGrowth_ColumnOffsets[];
-// The Broken Seal's table of this name: thorns by strength.
+// Thorns by strength.
 extern u8 gGrowth_Counts[];
-// The Broken Seal's table of this name: each thorn's root.
+// Each thorn's root.
 extern s8 gGrowth_X[];
-// The Broken Seal's table of this name: 0-1 large, 2-3 small; odd ones
+// 0-1 large, 2-3 small; odd ones
 // grow to the left.
 extern u8 gGrowth_Kinds[];
 // The Broken Seal's table of this name, _PuffCells, _PuffWidths:
@@ -404,7 +401,7 @@ extern u8 gGrowth_Kinds[];
 extern u8 gGrowth_ThornPuffHeights[];
 extern u16 gGrowth_ThornPuffPictures[];
 extern s8 gGrowth_ThornPuffWidths[];
-// The Broken Seal's table of this name: four bytes for each strength,
+// Four bytes for each strength,
 // sparks, glints, glint spread and bolts.
 extern u8 gBolt_Counts[];
 // The Broken Seal's gBolt_GlintFlips and _GlintModes.

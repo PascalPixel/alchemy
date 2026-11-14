@@ -21,9 +21,8 @@
 #define PHASE_HIT 212
 
 extern char ResourceId_LimeColumnSheet;
-extern const u16 gUndeadSword_SparkPictures[]; // ☀️ gUndeadSword_SparkCells
-extern const u16 gUndeadSword_SparkSizes[];    // ☀️ gUndeadSword_SparkSizes
-
+extern const u16 gUndeadSword_SparkPictures[];
+extern const u16 gUndeadSword_SparkSizes[];
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.
 //

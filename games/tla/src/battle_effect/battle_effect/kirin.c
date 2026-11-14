@@ -30,10 +30,10 @@ struct FxControl {
 };
 
 extern char ResourceId_FireBlobSheet;
-extern struct FxPair gKirin_RowScale;    // ☀️ gObjectRow_SweepPair
-extern struct FxPair gKirin_ChargeScale; // ☀️ gObjectRow_RisePair
-extern u8 gKirin_Columns[];              // the row's x offsets
-extern u8 gKirin_Rows[];                 // the row's heights
+extern struct FxPair gKirin_RowScale;
+extern struct FxPair gKirin_ChargeScale;
+extern u8 gKirin_Columns[]; // the row's x offsets
+extern u8 gKirin_Rows[];    // the row's heights
 
 // Summon 3: the battlefield turns to forest; a row of nine riders gallops in
 // from the right over a ring of embers, trailing fire, while flames climb at

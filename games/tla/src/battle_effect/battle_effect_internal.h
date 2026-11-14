@@ -297,9 +297,7 @@ extern u8 gCondemn_PictureX[]; // each panel's x, by side (7 a side)
 
 extern u8 gCondemn_PictureY[]; // each panel's y
 
-// The 33 pieces: each one's size, place in the sheet and starting point
-// (The Broken Seal's table of this name, Height, Offset, StartX and
-// StartY).
+// The 33 pieces: each one's size, place in the sheet and starting point.
 extern u8 gDeathPlunge_PieceWidths[];
 
 extern u8 gDeathPlunge_PieceHeights[];
@@ -310,8 +308,7 @@ extern u8 gDeathPlunge_PieceStartX[];
 
 extern u8 gDeathPlunge_PieceStartY[];
 
-// The four corner sparks: their flips and their place around the target
-// (The Broken Seal's gDeathPlunge_DrawFlags, _X and _Y).
+// The four corner sparks: their flips and their place around the target.
 extern u8 gElementBurst_GlintFlips[];
 
 extern s8 gDeathPlunge_X[];
@@ -378,7 +375,7 @@ extern const s8 gZagan_RingHeights[]; // height
 // gFalling_IceCounts).
 extern u8 gFalling_IceCounts[];
 
-// Four bytes for each variant (as The Broken Seal has it).
+// Four bytes for each variant.
 extern u8 gFalling_Counts[];
 
 extern u8
@@ -411,18 +408,17 @@ extern u8 gGatheringLights_Counts[];
 
 extern u8 gPlasma_Counts[];
 
-extern u8 gPlasma_Columns[]; // ☀️ gPlasma_Columns, 7 for each side
+extern u8 gPlasma_Columns[]; // 7 for each side
 
-extern u16 gPlasma_Sparks[]; // ☀️ gPlasma_Sparks: sparks, shake
+extern u16 gPlasma_Sparks[]; // sparks, shake
 
-// ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
+// Five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
 extern u16 gPlasma_Shapes[][5];
 
-extern u8 gPlasma_FlashPictures[]; // ☀️ gPlasma_FlashCells
+extern u8 gPlasma_FlashPictures[];
 
-// ☀️ gPrism_Counts, with a third byte: crystals, frames and the frame
-// that begins phase 134, for each variant.
+// Crystals, frames and the frame that begins phase 134, for each variant.
 extern u8 gPrism_Counts[];
 
 extern struct Scale gProcne_UnitScale; // the comets' unit scale
@@ -459,16 +455,14 @@ extern s32 gStar_Points[]; // the two ring points, alternating
 
 extern u8 gStar_Radii[]; // ring radii, alternating: 32, 16
 
-// Four signed bytes for each mode (The Broken Seal's gStreaks_Styles).
+// Four signed bytes for each mode.
 extern s8 gStreaks_Styles[];
 
 // The struck target's sideways tremble, in pixels (gStreaks_Tremble).
 extern s8 gStreaks_Tremble[];
 
-extern u8 gTargetMotes_GlintFlips[]; // ☀️ gTargetMotes_GlintFlips
-
-// Seven bytes for each mode (The Broken Seal's gTargetStrike_Styles, grown
-// from 12 modes to 21).
+extern u8 gTargetMotes_GlintFlips[];
+// Seven bytes for each mode.
 extern u8 gTargetStrike_Styles[][7];
 
 // The strike pictures (gTargetStrike_Widths, Heights, Offsets, Reach)
@@ -485,16 +479,16 @@ extern u8 gTargetStrike_BiteStages[];
 
 extern u8 gTargetStrike_GlintDrawFlags[];
 
-extern u8 gVolcano_Counts[]; // ☀️ gVolcano_Counts, for each variant
+extern u8 gVolcano_Counts[]; // for each variant
 
 extern s8 gVolcano_Depths[][4];
 
 extern u8 gVolcano_StartFrames[];
 
-// ☀️ gVortices_Counts: motes, then frames, for each variant.
+// Motes, then frames, for each variant.
 extern u8 gVortices_Counts[];
 
-// ☀️ gVortices_Shapes: funnels, sway radius and shake, for each variant.
+// Funnels, sway radius and shake, for each variant.
 extern u8 gVortices_Shapes[];
 
 #endif // ALCHEMY_BATTLE_EFFECT_INTERNAL_H

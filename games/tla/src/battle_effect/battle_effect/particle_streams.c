@@ -67,13 +67,12 @@ struct FxPartyList;
 
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
-extern char ResourceId_Data134;  // ☀️ ParticleSpritesA
+extern char ResourceId_Data134;
 extern u8 gNereidCopy_Columns[]; // the pillars' feet, x and y
-// ☀️ gBattleEffect_MotePictures: the Data134 sheet's spark cells, by size - 1
+// The Data134 sheet's spark pictures, by size - 1
 // (byte offsets).
 extern u16 gBattleEffect_MotePictures[];
-extern const s32 gNereidCopy_Gravity[]; // ☀️ gNereid_Gravity
-
+extern const s32 gNereidCopy_Gravity[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
@@ -730,9 +729,8 @@ extern char ResourceId_BlastSheet;
 
 extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_FireballPoints[][2];
-extern u16 gParticleStreams_FlashPictures[]; // ☀️ gParticleStreams_FlashCells
-extern u16 gParticleStreams_FlashSizes[];    // ☀️ gParticleStreams_FlashSizes
-
+extern u16 gParticleStreams_FlashPictures[];
+extern u16 gParticleStreams_FlashSizes[];
 void BattleEffect_ConfigureEffectDisplay(void);
 
 void BattleEffect_WipeCanvas(s32 mode, s32 value);

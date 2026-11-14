@@ -29,8 +29,7 @@ extern char ResourceId_FlameBladeSheet;
 extern char ResourceId_FlashBurstSheet;
 
 extern u8 gRagnarok_StrikeColumns[];
-extern u8 gRagnarok_FlashPictures[]; // ☀️ gPlasma_FlashCells
-
+extern u8 gRagnarok_FlashPictures[];
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 
 void BattleEffect_StepPaletteToResource(s32 resourceId);
@@ -293,8 +292,8 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
 
 extern char ResourceId_SwordSheet;
 
-extern u8 gTitanBlade_FlashPictures[]; // ☀️ gPlasma_FlashCells
-extern s32 gTitanBlade_DustGravity[];  // the dust's four gravities
+extern u8 gTitanBlade_FlashPictures[];
+extern s32 gTitanBlade_DustGravity[]; // the dust's four gravities
 
 void Palette_MirrorBgColors(void);
 

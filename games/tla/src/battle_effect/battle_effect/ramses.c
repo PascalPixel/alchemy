@@ -42,9 +42,8 @@ extern char ResourceId_DesertBackdrop;
 extern struct FxScale gRamses_UnitScale; // one to one
 extern u8 gRamses_StatueColumns[];
 extern u8 gRamses_StatueRows[];
-extern u16 gRamses_PuffPictures[]; // ☀️ gEruption_PuffPictures
-extern u16 gRamses_PuffSizes[];    // ☀️ gCybele_EmberSizes
-
+extern u16 gRamses_PuffPictures[];
+extern u16 gRamses_PuffSizes[];
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 
 void BattleMotion_ApplyKnockbackFar(

@@ -15,9 +15,8 @@
 #undef HEAP_BLITTER_ALTERNATE
 
 // Heap slots The Lost Age addresses by byte offset in Ram_HeapSlots.
-#define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
-#define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
-
+#define HEAP_BLITTER 104
+#define HEAP_BLITTER_ALTERNATE 188
 #define MOTE_COUNT 30
 #define SEAT_FIRST 32 // the particles that hold each target's seat
 
